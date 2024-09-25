@@ -674,6 +674,11 @@ class ViewJobRequestPage extends Component {
         var he = this.props.height-180
         if(this.get_focused_message() != null) he = this.props.height-240
         var size = this.props.screensize
+        var ww = '80%'
+        if(size == 'l') ww = '90%'
+        if(this.props.app_state.width > 1100){
+            ww = '80%'
+        }
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
@@ -691,16 +696,20 @@ class ViewJobRequestPage extends Component {
                         {/* {this.render_image_picker()} */}
                         <div>
                             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked()}>
-                                <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
+                                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
                     </div>
-                    <div style={{'margin': '0px 0px 0px 0px', width:'70%'}}>
-                        <TextInput font={this.props.app_state.font} height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
-                    </div>
-
-                    <div style={{'padding': '2px 5px 0px 5px', 'width':110}} onClick={()=>this.add_message_to_stack()}>
-                        {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
+                    <div style={{width:10}}/>
+                    <div className="row" style={{width:ww}}>
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                            <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                <img alt="" className="text-end" onClick={()=>this.add_message_to_stack()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> 
@@ -757,7 +766,7 @@ class ViewJobRequestPage extends Component {
 
     show_add_comment_bottomsheet(){
         var object = this.state.request_item;
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message() : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'request', this.state.contractor_object['id'])
     }
   
@@ -778,11 +787,11 @@ class ViewJobRequestPage extends Component {
     }
 
     componentDidUpdate(){
-        var object = this.state.request_item;
-        var has_scrolled = this.has_user_scrolled[object['job_request_id']]
-        if(has_scrolled == null){
-            this.scroll_to_bottom()
-        }
+        // var object = this.state.request_item;
+        // var has_scrolled = this.has_user_scrolled[object['job_request_id']]
+        // if(has_scrolled == null){
+        //     this.scroll_to_bottom()
+        // }
     }
 
     render_sent_received_messages(){
@@ -839,8 +848,8 @@ class ViewJobRequestPage extends Component {
                 return(
                 <div style={{ 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items.concat(stacked_items))}
                         <div ref={this.messagesEnd}/>
+                        {this.render_messages(items.concat(stacked_items))}
                     </ul>
                 </div>
             )
@@ -848,8 +857,8 @@ class ViewJobRequestPage extends Component {
                 return(
                     <div style={{ 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {this.render_all_comments()}
                             <div ref={this.messagesEnd}/>
+                            {this.render_all_comments()}
                         </ul>
                     </div>
                 )
@@ -1095,8 +1104,20 @@ class ViewJobRequestPage extends Component {
                     </div>
                 </div>
                 <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
+
+                {this.render_award_object_if_any(_item)}
             </div>
         )
+    }
+
+    render_award_object_if_any(item){
+        if(item['award_tier'] != null && item['award_tier'] != ''){
+            return(
+                <div style={{'font-size': '8px'}}>
+                    <p>{item['award_tier']['label']['title']}</p>
+                </div>
+            )
+        }
     }
 
     truncate(source, size) {

@@ -421,10 +421,6 @@ class BagDetailsSection extends Component {
     }
 
 
-    truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
-    }
-
     when_variant_item_clicked(item){
         if(this.selected_variant == item){
             this.setState({selected_variant: null})
@@ -822,7 +818,7 @@ class BagDetailsSection extends Component {
 
     show_add_comment_bottomsheet(object){
         // var object = this.get_bag_items()[this.props.selected_bag_item];
-        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'bag')
     }
   
@@ -933,7 +929,7 @@ class BagDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1069,7 +1065,7 @@ class BagDetailsSection extends Component {
                 <div>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -1078,16 +1074,15 @@ class BagDetailsSection extends Component {
         return(
             <div>
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                            <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)}>{this.get_sender_title_text(item, object)}</p>
-                            </div>
-                            <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                            </div>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)}>{this.get_sender_title_text(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
                     {this.render_images_if_any(item)}
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['2064']}</p>
@@ -1117,8 +1112,20 @@ class BagDetailsSection extends Component {
                     </div>
                 </div>
                 <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
+
+                {this.render_award_object_if_any(_item)}
             </div>
         )
+    }
+
+    render_award_object_if_any(item){
+        if(item['award_tier'] != null && item['award_tier'] != ''){
+            return(
+                <div style={{}}>
+                    <p style={{'margin': '0px 0px 0px 0px', 'font-size': '8px'}}>{item['award_tier']['label']['title']}</p>
+                </div>
+            )
+        }
     }
 
     truncate(source, size) {

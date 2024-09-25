@@ -26,7 +26,7 @@ class AddCommentPage extends Component {
     
     state = {
         selected: 0, object: null, focused_message_id: 0, page: '', contractor_object: null,
-        entered_title_text:'', entered_image_objects:[],
+        entered_title_text:'', entered_image_objects:[], award_amount:0,
     };
 
     render(){
@@ -45,6 +45,9 @@ class AddCommentPage extends Component {
             return(
                 <div>
                     {this.render_content()}
+                    <div style={{height:10}}/>
+                    {this.render_award_ui()}
+                    {this.render_finish()}
                 </div>
             )
         }
@@ -53,8 +56,10 @@ class AddCommentPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_finish()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_award_ui()}
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -66,8 +71,10 @@ class AddCommentPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_finish()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_award_ui()}
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -103,7 +110,7 @@ class AddCommentPage extends Component {
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'16px','text':this.props.app_state.loc['1038']/* 'Detailed message.' */})}
-                <div style={{height:10}}/>
+                {this.render_focused_message()}
                 <TextInput font={this.props.app_state.font} height={110} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
                 {this.render_detail_item('0')}
 
@@ -111,10 +118,14 @@ class AddCommentPage extends Component {
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
+            </div>
+        )
+    }
 
-                <div style={{'padding': '5px 0px 0px 0px'}} onClick={()=>this.finish()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':'-'})}
-                </div>
+    render_finish(){
+        return(
+            <div style={{'padding': '5px 0px 0px 0px', 'margin':'10px 0px 20px 0px'}} onClick={()=>this.finish()}>
+                {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':'-'})}
             </div>
         )
     }
@@ -222,6 +233,161 @@ class AddCommentPage extends Component {
 
 
 
+    render_focused_message(){
+        var item = this.state.focused_message_id;
+        if(item != 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 10px 0px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}}> 
+                        <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                            <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
+                            </div>
+                            <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            </div>
+                        </div>
+                        <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 41)}</p>
+                    </div>
+                </div>
+                
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    get_sender_title_text(item){
+        if(item['sender'] == this.props.app_state.user_account_id[this.state.object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
+            return alias
+        }
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+
+
+
+
+
+
+
+    render_award_ui(){
+        var focused_message_id = this.state.focused_message_id;
+        if(focused_message_id == 0) return;
+        var award_amount = this.state.award_amount
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1164']/* 'Award Tiers' */, 'details':this.props.app_state.loc['1042a']/* 'Pick an award tier you wish to send to the comment\'s author.' */, 'size':'l'})}
+                {this.load_award_tiers()}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'number':award_amount, 'relativepower':'SPEND'})}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                </div>
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    load_award_tiers(){
+        var items = [].concat(this.get_award_tiers())
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_tier_clicked(item, index)}>
+                            {this.render_tier_element(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_award_tiers(){
+        var tiers = [
+            {'id':'1', 'label':{'title':'🌕🌕🌕', 'details':this.props.app_state.loc['1171']/* 'Gold' */, 'size':'l'}},
+            {'id':'2', 'label':{'title':'💎💎💎', 'details':this.props.app_state.loc['1172']/* 'Diamond' */, 'size':'l'}},
+            {'id':'3', 'label':{'title':'🪙🪙🪙', 'details':this.props.app_state.loc['1173']/* 'Silver' */, 'size':'l'}},
+            {'id':'4', 'label':{'title':'🛢️🛢️🛢️', 'details':this.props.app_state.loc['1174']/* 'Oil' */, 'size':'l'}},
+            {'id':'5', 'label':{'title':'🪵🪵🪵', 'details':this.props.app_state.loc['1175']/* 'Wood' */, 'size':'l'}},
+            {'id':'6', 'label':{'title':'🍺🍺🍺', 'details':this.props.app_state.loc['1176']/* 'Beer' */, 'size':'l'}},
+            {'id':'7', 'label':{'title':'🌽🌽🌽', 'details':this.props.app_state.loc['1177']/* 'Corn' */, 'size':'l'}},
+            {'id':'8', 'label':{'title':'🥩🥩🥩', 'details':this.props.app_state.loc['1178']/* 'Beef' */, 'size':'l'}},
+            {'id':'9', 'label':{'title':'🍫🍫🍫', 'details':this.props.app_state.loc['1179']/* 'Chocolate' */, 'size':'l'}},
+        ]
+
+        return tiers
+    }
+
+    get_award_amount(tier){
+        var spend_exchange = this.props.app_state.created_token_object_mapping[this.state.object['e5']][5]
+        var min_amount = bigInt(spend_exchange['data'][1][0]).divide(bigInt(10000))
+        var obj = {'1':5000, '2':1000, '3':600, '4':300, '5':100, '6':50, '7':10, '8':5, '9':1}
+        return bigInt(obj[tier]).multiply(min_amount)
+    }
+
+    render_tier_element(item, index){
+        if(this.state.selected_tier == index){
+            return(
+                <div>
+                    {this.render_detail_item('3', item['label'])}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 0px 0px 0px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', item['label'])}
+                </div>
+            )
+        }
+    }
+
+    when_tier_clicked(item, index){
+        if(this.state.selected_tier == index){
+            this.setState({selected_tier: null, selected_tier_object: null, award_amount:0})
+            this.set_award_amount(index)
+        }else{
+            this.setState({selected_tier: index, selected_tier_object: item})
+            this.set_award_amount(index)
+        }
+    }
+
+    set_award_amount(selected_tier){
+        if(selected_tier != null){
+            var award_amount = this.get_award_amount(this.get_award_tiers()[selected_tier]['id'])
+            this.setState({award_amount: award_amount})
+        }
+    }
+
+
+
+
 
 
 
@@ -241,7 +407,7 @@ class AddCommentPage extends Component {
         }
         var message = this.state.entered_title_text.trim()
         var message_id = Date.now()
-        var focused_message_id = this.state.focused_message_id
+        var focused_message_id = this.state.focused_message_id == 0 ? 0 : this.state.focused_message_id['message_id']
 
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1041']/* 'Type something.' */, 700)
@@ -249,31 +415,36 @@ class AddCommentPage extends Component {
         }
         var tx = {};
         var page = this.state.page
+
+        var award_tier = this.state.selected_tier_object == null ? '' : this.state.selected_tier_object;
+        var award_amount = this.state.award_amount
+        var award_receiver = this.state.focused_message_id != 0 ? this.state.focused_message_id['sender'] : 0
+
         if(page == 'channel'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
         else if(page == 'job'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
         else if(page == 'mail'){
             var mail = object;
             var convo_id = mail['convo_id']
-            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5']}
+            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
         else if(page == 'post'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5']}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
         else if(page == 'proposal'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5']}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
         else if(page == 'storefront'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
         else if(page == 'bag'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
         else if(page == 'request'){
-            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5']}
+            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }
 
         this.props.add_comment_to_respective_forum_page(tx, page)
@@ -297,6 +468,95 @@ class AddCommentPage extends Component {
             </div>
         )
 
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ this.props.app_state.loc['29']
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['30'] 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['31'] + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['32'] + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['33'] + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['34'] + s;
+        }
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return 'e0'
+        }
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
+        }
+    }
+
+    get_number_width(number){
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
     }
 
 

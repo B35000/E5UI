@@ -610,7 +610,7 @@ class PostListSection extends Component {
 
 
     render_jobs_list_group(){
-       var background_color = this.props.theme['card_background_color']
+        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
@@ -638,8 +638,6 @@ class PostListSection extends Component {
                 </div>
             );
         }else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
             return (
                 <div>
                     <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
@@ -2450,7 +2448,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'tokens')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
-                                {this.render_small_empty_object()}
+                                {this.render_empty_object()}
                             </li>
                         ))}
                     </ul>
@@ -2462,12 +2460,12 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
-                        <div>
+                        <div style={{'margin':'7px 0px 7px 0px'}}>
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}
                     <div style={{'padding': '1px 5px 1px 5px'}}>
-                        {this.render_small_empty_object_loading_card()}
+                        {this.render_empty_object()}
                     </div>
                 </ul>
             </div>
@@ -2496,20 +2494,23 @@ class PostListSection extends Component {
             )
         }
         return ( 
-            // <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-            //     <div style={{'padding': '0px 0px 0px 5px'}}>
-            //         {this.render_detail_item('1', item['tags'])}
-            //         <div style={{height: 10}}/>
-            //         <div style={{'padding': '0px 10px 0px 10px'}}>
-            //             {this.render_detail_item('8', item['label'])}
-            //         </div>
-            //         <div style={{height: 20}}/>
-            //         {this.render_detail_item('2', item['number_label'])}
-            //     </div>         
-            // </div>
-            <div style={{'padding': '1px 5px 1px 5px'}} onClick={() => this.when_ends_object_clicked(index, object)}>
-                {this.render_detail_item('8', item['label'])}
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div onClick={() => this.when_ends_object_clicked(index, object)}>
+                        <div style={{'padding': '0px 10px 0px 10px'}}>
+                            {this.render_detail_item('8', item['label'])}
+                        </div>
+                        <div style={{height: 20}}/>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
             </div>
+            // <div style={{'padding': '1px 5px 1px 5px'}} onClick={() => this.when_ends_object_clicked(index, object)}>
+            //     {this.render_detail_item('8', item['label'])}
+            // </div>
         );
     }
 
@@ -2540,10 +2541,13 @@ class PostListSection extends Component {
         }
 
         var balance = item['balance']
+        var age = item['event'] == null ? 0 : item['event'].returnValues.p5
+        var time = item['event'] == null ? 0 : item['event'].returnValues.p4
         return{
-            'tags':{'active_tags':[item['e5'], token_id].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
+            'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
-            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',}
+            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
@@ -2591,7 +2595,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics(items2, 'tokens')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
-                                {this.render_small_empty_object()}
+                                {this.render_empty_object()}
                             </li>
                         ))}
                     </ul>
@@ -2604,12 +2608,12 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
-                        <div>
+                        <div style={{'margin':'7px 0px 7px 0px'}}>
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}
                     <div style={{'padding': '1px 5px 1px 5px'}}>
-                        {this.render_small_empty_object_loading_card()}
+                        {this.render_empty_object()}
                     </div>
                 </ul>
             </div>
@@ -2632,20 +2636,22 @@ class PostListSection extends Component {
             return;
         }
         return (
-            // <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-            //     <div style={{'padding': '0px 0px 0px 5px'}}>
-            //         {this.render_detail_item('1', item['tags'])}
-            //         <div style={{height: 10}}/>
-            //         <div style={{'padding': '0px 10px 0px 10px'}}>
-            //             {this.render_detail_item('8', item['label'])}
-            //         </div>
-            //         <div style={{height: 20}}/>
-            //         {this.render_detail_item('2', item['number_label'])}
-            //     </div>         
-            // </div>
-            <div style={{'padding': '1px 5px 1px 5px'}} onClick={() => this.when_spends_object_item_clicked(index, object)}>
-                {this.render_detail_item('8', item['label'])}
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div onClick={() => this.when_spends_object_item_clicked(index, object)}>
+                        <div style={{'padding': '0px 10px 0px 10px'}}>
+                            {this.render_detail_item('8', item['label'])}
+                        </div>
+                        <div style={{height: 20}}/>
+                        {this.render_detail_item('2', item['number_label'])}
+                    </div>
+                </div>         
             </div>
+            // <div style={{'padding': '1px 5px 1px 5px'}}>
+            //     {this.render_detail_item('8', item['label'])}
+            // </div>
         );
     }
 

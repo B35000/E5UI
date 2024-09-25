@@ -692,7 +692,7 @@ class ChannelDetailsSection extends Component {
 
     show_add_comment_bottomsheet(object){
         // var object = this.get_channel_items()[this.props.selected_channel_item];
-        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
 
         if(!this.is_object_interactable(object)){
             return
@@ -946,7 +946,7 @@ class ChannelDetailsSection extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                             </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
                     {this.render_images_if_any(item)}
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['2064']}</p>
@@ -976,12 +976,20 @@ class ChannelDetailsSection extends Component {
                     </div>
                 </div>
                 <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
+
+                {this.render_award_object_if_any(_item)}
             </div>
         )
     }
 
-    truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    render_award_object_if_any(item){
+        if(item['award_tier'] != null && item['award_tier'] != ''){
+            return(
+                <div style={{}}>
+                    <p style={{'margin': '0px 0px 0px 0px', 'font-size': '8px'}}>{item['award_tier']['label']['title']}</p>
+                </div>
+            )
+        }
     }
 
     get_item_in_message_array(message_id, object_array){

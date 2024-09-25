@@ -322,8 +322,6 @@ class GiveAwardPage extends Component {
 
     load_award_tiers(){
         var items = [].concat(this.get_award_tiers())
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>

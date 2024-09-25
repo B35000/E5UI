@@ -417,7 +417,7 @@ class App extends Component {
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
 
-    number_board:[], clip_number:"0", dialog_size: 400,
+    number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600,
   };
 
   get_static_assets(){
@@ -1013,7 +1013,7 @@ class App extends Component {
         '1018':'transfer','1019':'send','1020':'Transfer the specified token.','1021':'Your Balance','1022':'Your Balance after Set Transfers','1023':'Set the recipient of the transfer action.','1024':'Recipient of action.','1025':'Recipient ID','1026':'Amount to transfer to the speicified target account.','1027':'Amount for Transfer.','1028':'Set Maximum','1029':'Add Transaction','1030':'Please put a valid account ID.','1031':'Please put a valid amount.','1032':'You dont have enough tokens to add that transaction.','1033':'','1034':'Transaction added.','1035':'Recipient account: ','1036':'Transaction removed.','1037':'Transfer Amount',
         
         /* add comment page */
-        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.',
+        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'','1042c':'','1042d':'','1042e':'','1042f':'','1042g':'',
         
         /* add to bag page */
         '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.',
@@ -1079,7 +1079,7 @@ class App extends Component {
         '1667':'accept-job-request','1668':'accept','1669':'job','1670':'request','1671':'linear','1672':'nested','1673':'contract','1674':'activity','1675':'activity','1676':'contract','1677':'activity','1678':'Expiry time from now: ','1679':'Payment Option','1680':'Job Description','1681':'Sender ID','1682':'Accepted','1683':'Set Pay','1684':'The requested pay for the job','1685':'','1686':'Payment Option','1687':'Sender ID','1688':'Job Description','1689':'Set Pay','1690':'The amounts youll be receiving for the job.','1691':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1692':'Copied message to clipboard.','1693':'responses','1694':'You','1695':'Type something first.','1696':'You need to make at least 1 transaction to participate.','1697':'Message added to stack.','1698':'The contractor Accepted the job request.','1698a':' ago','1698b':' In ','1698c':'The job request has already expired.',
         
         /* view searched account */
-        '1699':'main-data','1700':'subscription-data','1701':'contract-data','1702':'exchange-data','1703':'creations','1704':'withdraws','1705':'pending-withdraws','1706':'runs','1707':'payments','1708':'cancellations','1709':'entries','1710':'exits','1711':'votes','1712':'swaps','1713':'transfers','1714':'Address','1715':'Ether Balance in Ether','1716':'Ether Balance in Wei','1717':'Last Transaction Block','1718':'Last Transaction age','1719':'Number of entered contracts','1720':'Number of E5 runs','1721':'Balance Search','1722':'Search the accounts balance in a specified exchange','1723':'Exchange ID or Symbol...','1724':'Balance','1725':'Transaction Runs','1726':'hart containing the total number of E5 runs theyve made over time.','1727':'Y-Axis: Total Runs Made','1728':'X-Axis: Time','1729':'job object','1730':'post object','1731':'shadow object','1732':'storefront bag object','1733':'contractor object','1734':'storefront item object','1735':'storefront object','1736':'account object','1737':'contract object','1738':'token exchange object','1739':'consensus object','1740':'subscription object','1741':'custom object','1742':'channel object','1743':'Object ID','1744':'Block Number','1745':'transaction ID','1746':'Amount in Wei','1747':'Amount in Ether','1748':'Age','1749':'Amount Added in Wei','1750':'Transaction ID','1751':'Transaction Stack Size','1752':'Estimated Gas Consumed','1753':'Included Wei','1754':'Gas Price Paid','1755':'Coinbase (Miner)','1756':'Subscription ID','1757':'Time Units: ','1758':'Subscription ID:  ','1759':'Contract ID','1760':'Contract ID: ','1761':'Proposal ID','1762':'Contract ID: ','1763':'Exchange ID','1764':'Amount Swapped','1765':'Updted Token Exchange Liquidity','1766':'Updated Exchange Ratio X','1767':'Updated Exchange Ratio Y','1768':'Updated Exchange Ratios X:Y','1769':'','1770':'Action: ','1770a':'balances','1770b':'income','1770c':' exchanges.','1770d':'Yearly Income.','1770e':'Heres how much money the account has made in the last few years.','1770f':'Yearly Expenditure.','1770g':'Heres how much money the account has spent in the last few years.','1770h':'expenditure',
+        '1699':'main-data','1700':'subscription-data','1701':'contract-data','1702':'exchange-data','1703':'creations','1704':'withdraws','1705':'pending-withdraws','1706':'runs','1707':'payments','1708':'cancellations','1709':'entries','1710':'exits','1711':'votes','1712':'swaps','1713':'transfers','1714':'Address','1715':'Ether Balance in Ether','1716':'Ether Balance in Wei','1717':'Last Transaction Block','1718':'Last Transaction age','1719':'Number of entered contracts','1720':'Number of E5 runs','1721':'Balance Search','1722':'Search the accounts balance in a specified exchange','1723':'Exchange ID or Symbol...','1724':'Balance','1725':'Transaction Runs','1726':'hart containing the total number of E5 runs theyve made over time.','1727':'Y-Axis: Total Runs Made','1728':'X-Axis: Time','1729':'job object','1730':'post object','1731':'shadow object','1732':'storefront bag object','1733':'contractor object','1734':'storefront item object','1735':'storefront object','1736':'account object','1737':'contract object','1738':'token exchange object','1739':'consensus object','1740':'subscription object','1741':'custom object','1742':'channel object','1743':'Object ID','1744':'Block Number','1745':'transaction ID','1746':'Amount in Wei','1747':'Amount in Ether','1748':'Age','1749':'Amount Added in Wei','1750':'Transaction ID','1751':'Transaction Stack Size','1752':'Estimated Gas Consumed','1753':'Included Wei','1754':'Gas Price Paid','1755':'Coinbase (Miner)','1756':'Subscription ID','1757':'Time Units: ','1758':'Subscription ID:  ','1759':'Contract ID','1760':'Contract ID: ','1761':'Proposal ID','1762':'Contract ID: ','1763':'Exchange ID','1764':'Amount Swapped','1765':'Updted Token Exchange Liquidity','1766':'Updated Exchange Ratio X','1767':'Updated Exchange Ratio Y','1768':'Updated Exchange Ratios X:Y','1769':'','1770':'Action: ','1770a':'balances','1770b':'income','1770c':' exchanges.','1770d':'Yearly Income.','1770e':'Heres how much money the account has made in the last few years.','1770f':'Yearly Expenditure.','1770g':'Heres how much money the account has spent in the last few years.','1770h':'expenditure','1770i':'activity','1770j':'','1770k':'','1770l':'','1770m':'',
         
         /* view transaction log */
         '1771':'Timestamp','1772':'Transaction Age','1773':'Transaction Block','1774':'Transaction Stack Size','1775':'Gas Consumed','1776':'Sender Account ID','1777':'Sender Account Address','1778':'Included Value in Ether','1779':'Included Value in Wei','1780':'Coinbase Address',
@@ -1843,7 +1843,7 @@ class App extends Component {
   }
 
   is_allowed_in_e5(){
-    return true
+    // return true
     var obj = ['United States', 'Kenya']
     var user_country = this.get_country()
 
@@ -7715,12 +7715,13 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
+    var h = this.state.comment_size
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.add_comment_bottomsheet} onClose={this.open_add_comment_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        <div style={{ height: 550, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                        <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
                           <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
                         </div>
                     </Sheet.Content>
@@ -7732,7 +7733,7 @@ class App extends Component {
     }
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_comment_bottomsheet.bind(this)} open={this.state.add_comment_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: 550, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+          <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
@@ -7766,6 +7767,7 @@ class App extends Component {
   }
 
   show_add_comment_bottomsheet(object, focused_message_id, page, contractor_object){
+    this.set_comment_bottomsheet_size(focused_message_id)
     this.open_add_comment_bottomsheet()
     var me = this;
     setTimeout(function() {
@@ -7774,6 +7776,19 @@ class App extends Component {
       }
     }, (1 * 500));
     
+  }
+
+  set_comment_bottomsheet_size(focused_message_id){
+    var size = this.getScreenSize();
+    if(focused_message_id != 0){
+      if(size == 's'){
+        this.setState({comment_size: 880})
+      }else{
+        this.setState({comment_size: 630})
+      }
+    }else{
+      this.setState({comment_size: 550})
+    }
   }
 
   add_comment_to_respective_forum_page(tx, page){
@@ -12848,7 +12863,8 @@ class App extends Component {
     ]
 
     var gateways = [
-      `https://ipfs.io/ipfs/${cid}`
+      // `https://ipfs.io/ipfs/${cid}`,
+      `https://gateway.pinata.cloud/ipfs/${cid}`
     ]
     
     await this.wait(this.state.ipfs_delay)
@@ -13770,7 +13786,6 @@ class App extends Component {
 
     var received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: id})
 
-    // console.log('get_token_event_data',send_tokens_event_data)
     // console.log('get_token_event_data',received_tokens_event_data)
 
     var all_events = [];
@@ -14032,6 +14047,9 @@ class App extends Component {
           var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances}
 
           data.push(obj)
+
+          this.get_accounts_uploaded_object_data(make_object_event_data, e5, web3, id);
+          this.get_accounts_message_activities(id, e5);
         }
       }
     }
@@ -14077,6 +14095,65 @@ class App extends Component {
 
     // return exchanges
     return {'exchanges':exchanges, 'depths':exchanges_depth_data}
+  }
+
+  get_accounts_message_activities = async (account_id, e5) => {
+    var messages = []
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    if(this.state.addresses[e5] != null){
+      const E52_address = this.state.addresses[e5][1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+      var e5_id = parseInt(e5.replace('E',''))
+
+      var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 17, p2/* sender_id */:account_id, p5: e5_id,})
+      // created_channel_data = created_channel_data.reverse()
+      var is_first_time = this.state.account_message_history[account_id] == null ? true: false
+      for(var j=0; j<created_channel_data.length; j++){
+        var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
+        if(ipfs_message != null){
+          ipfs_message['time'] = created_channel_data[j].returnValues.p6
+          if(!messages.includes(ipfs_message)){
+            messages = [ipfs_message].concat(messages)
+          }
+        }
+        if(is_first_time){
+          var clone = JSON.parse(JSON.stringify(this.state.account_message_history))
+          clone[account_id] = messages
+          this.setState({account_message_history: clone})
+        }
+      }
+    }
+    var clone = JSON.parse(JSON.stringify(this.state.account_message_history))
+    clone[account_id] = messages
+    this.setState({account_message_history: clone})
+  }
+
+  get_accounts_uploaded_object_data = async (events, e5, web3, account_id) => {
+    var data = []
+    var contract_addresses = this.state.addresses[e5]
+    if(contract_addresses != null){
+      var is_first_time = this.state.account_post_history[account_id] == null ? true: false
+      for(var i=0; i<events.length; i++){
+        var event = events[i]
+        var object_type = event.returnValues.p2/* object_type */
+        var id = event.returnValues.p1 /* object_id */
+        var block = event.returnValues.p5/* blocknumber */
+        var timestamp = event.returnValues.p4/* timestamp */
+        var ipfs = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        if(ipfs != null){
+          data.push({'e5':e5, 'id':id, 'type':object_type, 'ipfs':ipfs, 'block':block, 'timestamp':timestamp})
+        }
+        if(is_first_time){
+          var clone = JSON.parse(JSON.stringify(this.state.account_post_history))
+          clone[account_id] = data
+          this.setState({account_post_history: clone})
+        }
+      }
+    }
+    var clone = JSON.parse(JSON.stringify(this.state.account_post_history))
+    clone[account_id] = data
+    this.setState({account_post_history: clone})
   }
 
 

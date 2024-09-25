@@ -2253,7 +2253,14 @@ class StackPage extends Component {
                     
                     strs.push(message_obj.str)
                     adds.push([])
-                    ints.push(message_obj.int)    
+                    ints.push(message_obj.int) 
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1510']/* 'channel-messages' */){
                     var message_obj = await this.format_channel_message_object(txs[i], calculate_gas, ipfs_index)
@@ -2261,20 +2268,41 @@ class StackPage extends Component {
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
+
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
                     var message_obj = await this.format_post_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
-                    ints.push(message_obj.int)    
+                    ints.push(message_obj.int)
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
                     var message_obj = await this.format_job_application_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
-                    ints.push(message_obj.int)    
+                    ints.push(message_obj.int)  
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1513']/* 'accept-job-application' */){
                     var message_obj = await this.format_accept_application_object(txs[i], calculate_gas, ipfs_index)
@@ -2288,14 +2316,28 @@ class StackPage extends Component {
                     
                     strs.push(message_obj.str)
                     adds.push([])
-                    ints.push(message_obj.int)    
+                    ints.push(message_obj.int)  
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
                     var message_obj = await this.format_proposal_message_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
-                    ints.push(message_obj.int)    
+                    ints.push(message_obj.int) 
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
                     var storefront_bag_obj = this.format_storefront_bag_object(txs[i])
@@ -2368,14 +2410,28 @@ class StackPage extends Component {
                     
                     strs.push(message_obj.str)
                     adds.push([])
-                    ints.push(message_obj.int)    
+                    ints.push(message_obj.int) 
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                     var message_obj = await this.format_storefront_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
-                    ints.push(message_obj.int)    
+                    ints.push(message_obj.int)
+
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1503']/* 'contractor' */){
                     var contractor_obj = this.format_contractor_object(txs[i])
@@ -2404,6 +2460,13 @@ class StackPage extends Component {
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
+
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1506']/* 'alias' */){
                     var alias_obj = await this.format_alias_object(txs[i], calculate_gas, ipfs_index)
@@ -4917,6 +4980,29 @@ class StackPage extends Component {
     calculate_payout_amount_for_individual_shareholder(price, total_shares, shareholder_amount, payout_amount){
         var total_amount_of_token_being_distributed =  bigInt(price).multiply(payout_amount);
         return bigInt(total_amount_of_token_being_distributed).multiply(bigInt(shareholder_amount)).divide(total_shares)
+    }
+
+    get_message_transfers(t){
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            if(t.messages_to_deliver[i]['award_amount'] != 0){
+                var award_receiver = t.messages_to_deliver[i]['award_receiver'].toString().toLocaleString('fullwide', {useGrouping:false})
+                var award_amount = t.messages_to_deliver[i]['award_amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+                transfers_obj[1].push('5')
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(award_receiver)
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(award_amount)
+                transfers_obj[6].push(0)
+            }
+        }
+        return transfers_obj
     }
 
     optimize_run_if_enabled(ints, strs, adds, should_optimize_run){

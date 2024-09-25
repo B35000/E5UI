@@ -205,9 +205,9 @@ class ViewGroups extends Component {
                     <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word', 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>

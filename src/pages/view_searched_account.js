@@ -3,6 +3,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 // import Letter from './../assets/letter.png'; 
+import Linkify from "linkify-react";
 
 var bigInt = require("big-integer");
 
@@ -44,6 +45,7 @@ class SearchedAccountPage extends Component {
         this.votes_ref = React.createRef();
         this.swaps_ref = React.createRef();
         this.transfers_ref = React.createRef();
+        this.activity_ref = React.createRef();
     }
 
     get_searched_account_page_tags_object(){
@@ -55,7 +57,7 @@ class SearchedAccountPage extends Component {
                 ['or','',0], ['e','e.'+this.props.app_state.loc['1699']/* 'e.main-data' */,'e.'+this.props.app_state.loc['1700']/* 'e.subscription-data' */,'e.'+this.props.app_state.loc['1701']/* 'e.contract-data' */,'e.'+this.props.app_state.loc['1702']/* 'e.exchange-data' */], [0]
             ],
             'main-data':[
-              ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' *//* ,this.props.app_state.loc['1703'] *//* 'creations' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' */ ,this.props.app_state.loc['1703']/* 'creations' */, this.props.app_state.loc['1770i']/* 'activity' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
             ],
             'subscription-data':[
               ['xor','',0], [this.props.app_state.loc['1700']/* 'subscription-data' */,this.props.app_state.loc['1707']/* 'payments' */,this.props.app_state.loc['1708']/* cancellations' */], [1],[1]
@@ -69,7 +71,7 @@ class SearchedAccountPage extends Component {
         };
 
         obj[this.props.app_state.loc['1699']/* 'main-data' */] = [
-              ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' *//* ,this.props.app_state.loc['1703'] *//* 'creations' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' */ ,this.props.app_state.loc['1703']/* 'creations' */, this.props.app_state.loc['1770i']/* 'activity' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1700']/* 'subscription-data' */] = [
               ['xor','',0], [this.props.app_state.loc['1700']/* 'subscription-data' */,this.props.app_state.loc['1707']/* 'payments' */,this.props.app_state.loc['1708']/* cancellations' */], [1],[1]
@@ -118,14 +120,14 @@ class SearchedAccountPage extends Component {
     render(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
         var f = 170
-        if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e'){
+        if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e' || selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
             f = 120
         }
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-f}}>
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-f}}>
                     {this.render_everything()}
                 </div>
             </div>
@@ -221,13 +223,20 @@ class SearchedAccountPage extends Component {
                 </div>
             )
         }
-        // else if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
-        //     return(
-        //         <div>
-        //             {this.render_creations_item_logs()}
-        //         </div>
-        //     )
-        // }
+        else if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
+            return(
+                <div>
+                    {this.render_created_items()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
+            return(
+                <div>
+                    {this.render_activity_items()}
+                </div>
+            )
+        }
         else if(selected_item == this.props.app_state.loc['1704']/* 'withdraws' */){
             return(
                 <div>
@@ -310,9 +319,9 @@ class SearchedAccountPage extends Component {
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
         var search_id_text = this.state.typed_search_id[selected_item]
         if(search_id_text == null) search_id_text = ''
-        var obj = {'creations':'Object Type','withdraws':'Address','runs':'Transaction ID', 'payments':'Subscription ID','cancellations':'Subscription ID', 'entries':'Contract ID','exits':'Contract ID','votes':'Contract ID', 'swaps':'Exchange ID','transfers':'Account ID'}
+        var obj = {'creations':'Title','withdraws':'Address','runs':'Transaction ID', 'payments':'Subscription ID','cancellations':'Subscription ID', 'entries':'Contract ID','exits':'Contract ID','votes':'Contract ID', 'swaps':'Exchange ID','transfers':'Account ID'}
 
-        obj[this.props.app_state.loc['1703']/* creations */] = 'Object Type'
+        obj[this.props.app_state.loc['1703']/* creations */] = 'Title'
         obj[this.props.app_state.loc['1704']/* withdraws */] = 'Address'
         obj[this.props.app_state.loc['1706']/* runs */] = 'Transaction ID'
         obj[this.props.app_state.loc['1707']/* payments */] = 'Subscription ID'
@@ -323,7 +332,7 @@ class SearchedAccountPage extends Component {
         obj[this.props.app_state.loc['1712']/* swaps */] = 'Exchange ID'
         obj[this.props.app_state.loc['1713']/* transfers */] = 'Account ID'
 
-        if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e') return;
+        if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e' || selected_item == this.props.app_state.loc['1770i']/* 'activity' */) return;
 
         return(
             <div>
@@ -373,6 +382,9 @@ class SearchedAccountPage extends Component {
         if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
             this.creations_ref.current?.scrollTo(0, pos);
         }
+        else if(selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
+            this.activity_ref.current?.scrollTo(0, pos);
+        }
         else if(selected_item == this.props.app_state.loc['1704']/* 'withdraws' */){
             this.withdraws_ref.current?.scrollTo(0, pos);
         }
@@ -403,6 +415,7 @@ class SearchedAccountPage extends Component {
         else if(selected_item == this.props.app_state.loc['1713']/* 'transfers' */){
             this.transfers_ref.current?.scrollTo(0, pos);
         }
+        
     }
 
 
@@ -1016,6 +1029,290 @@ class SearchedAccountPage extends Component {
 
 
 
+
+
+    render_created_items(){
+        var account_id = this.state.searched_account['id']
+        var items = this.filter_objects(this.props.app_state.account_post_history[account_id])
+        var middle = this.props.height - 170;
+        if(items != null){
+            if(items.length == 0){
+                items = ['0','1','2'];
+                return ( 
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 0px 2px 0px'}}>
+                                    {this.render_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                );
+            }else{
+                console.log('view_searched_account', 'number of objects', items.length)
+                return(
+                    <div ref={this.creations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '5px 0px 5px 0px' }}>
+                                    <div key={index}>
+                                        {this.render_object(item, index)}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
+        }else{
+            items = ['0','1','2'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_empty_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
+        return(
+            <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                </div>
+            </div>
+        )
+    }
+
+    render_object(object){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_item(object)
+        var object_type = object['type']
+        
+         if(this.get_object_type(object_type) == this.props.app_state.loc['1732']/* 'storefront bag object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1741']/* 'custom object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1731']/* 'shadow object' */) {
+                return(
+                    <div>
+                        {this.render_empty_object()}
+                    </div>
+                )
+        }
+
+        return(
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div>
+                        <div style={{'padding': '0px 0px 0px 0px'}} >
+                            {this.render_title_or_image_title(object_type, item)}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    render_title_or_image_title(object_type, item){
+        if(object_type == 31/* token_exchange */){
+            return(
+                <div>
+                    {this.render_detail_item('8', item['label'])}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', item['id'])}
+                </div>
+            )
+        }
+    }
+
+
+    format_item(object){
+        var tags = object['ipfs'] == null ? ['Object'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Object ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var image = null
+        var name = object['ipfs'] == null ? 'Token' : object['ipfs'].entered_title_text
+        var symbol = object['ipfs'] == null ? 'tokens' : object['ipfs'].entered_symbol_text
+        if(object['ipfs'].token_image!= null){
+            image = object['ipfs'].token_image
+        }
+        var object_type = object['type']
+        if(object_type == 31/* token_exchange */){
+            return{
+                'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
+                'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
+                'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            }
+        }else{
+            return{
+                'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
+                'id':{'title':object['e5']+' • '+this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l'},
+                'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            }
+        }
+    }
+
+    get_number_width(number){
+        if(number == null) return '0%'
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
+    get_object_type(object_type){
+        var object_id_obj = {'17':this.props.app_state.loc['1729']/* 'job object' */,'18':this.props.app_state.loc['1730']/* 'post object' */,'24':this.props.app_state.loc['1731']/* 'shadow object' */,'25':this.props.app_state.loc['1732']/* 'storefront bag object' */,'26':this.props.app_state.loc['1733']/* 'contractor object' */,'27':this.props.app_state.loc['1734']/* 'storefront item object' */,'28':this.props.app_state.loc['1735']/* 'storefront object' */,'29':this.props.app_state.loc['1736']/* 'account object' */,'30':this.props.app_state.loc['1737']/* 'contract object' */,'31':this.props.app_state.loc['1738']/* 'token exchange object' */,'32':this.props.app_state.loc['1739']/* 'consensus object' */,'33':this.props.app_state.loc['1740']/* 'subscription object' */,'34':this.props.app_state.loc['1741']/* 'custom object' */,'36':this.props.app_state.loc['1742']/* 'channel object' */}
+        return object_id_obj[(object_type.toString())]
+    }
+
+    filter_objects(items){
+        var search = this.state.typed_search_id['creations']
+        if(search == null || items == null) return items;
+        var return_items = []
+        items.forEach(item => {
+            var title = item['ipfs'].entered_title_text == null ? '' : item['ipfs'].entered_title_text
+            var object_type = this.get_object_type(item['type'])
+            var id = item['id']
+            if(title.includes(search) || id.toString() == search){
+                return_items.push(item)
+            }
+        });
+        return return_items;
+    }
+
+
+
+
+
+
+
+
+    render_activity_items(){
+        var account_id = this.state.searched_account['id']
+        var account_activity = this.props.app_state.account_message_history[account_id]
+        var middle = this.props.height - 170;
+        if(account_activity != null && account_activity.length != 0 ){
+            var items = account_activity;
+            return(
+                <div>
+                    <div ref={this.activity_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '5px 0px 5px 0px' }}>
+                                    <div>
+                                        {this.render_message_item(item)}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            var items = ['0','1','2'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_empty_message()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    render_empty_message(){
+        return(
+            <div>
+                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_message_item(item){
+        var title = ''+this.get_sender_title_text2(item)
+        var time = ''+this.get_time_difference(item['time'])
+        var message = ''+this.format_message(item['message'])
+        return(
+            <div>
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}}>{title}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{time}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}}><Linkify options={{target: '_blank'}}>{message}</Linkify></p>
+                    {this.render_images_if_any(item)}
+                </div>
+            </div>
+        )
+    }
+
+    get_sender_title_text2(item){
+        var e5 = this.state.searched_account['e5']
+        if(item['sender'] == this.props.app_state.user_account_id[e5]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
+            return alias
+        }
+    }
+
+    format_message(message){
+        if(message == ''){
+            return '...'
+        }
+        return message
+    }
+
+    render_images_if_any(item){
+        if(item.type == 'image'){
+            return(
+                <div>
+                    {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
     render_withdraws_item_logs(){
         var items = this.withdraws_filter(this.state.searched_account['withdraw'])
         var middle = this.props.height - 170;
@@ -1086,7 +1383,7 @@ class SearchedAccountPage extends Component {
 
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1747']/* 'Amount in Ether' */, 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': this.props.app_state.loc['1378']/* 'transactions' */, })}
+                        
                     </div>
                     <div style={{ height: 2 }}/>
 
@@ -1102,7 +1399,7 @@ class SearchedAccountPage extends Component {
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1746']/* 'Amount in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                    {/* <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -1193,7 +1490,6 @@ class SearchedAccountPage extends Component {
 
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1747']/* 'Amount in Ether' */, 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
                     </div>
                     <div style={{ height: 2 }}/>
 
@@ -1209,7 +1505,7 @@ class SearchedAccountPage extends Component {
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1749']/* 'Amount Added in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                    {/* <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
