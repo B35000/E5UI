@@ -3496,7 +3496,7 @@ class NewProposalPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_proposal_to_stack(me.state)
 
-                me.setState({selected: 0, id: makeid(32), type:me.props.app_state.loc['312']/* 'proposal' */,
+                me.setState({selected: 0, id: makeid(8), type:me.props.app_state.loc['312']/* 'proposal' */,
                 entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
                 new_proposal_title_tags_object:me.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:me.get_new_proposal_type_tags_object(),
@@ -3543,7 +3543,7 @@ class NewProposalPage extends Component {
 
     reset_state(){
         this.setState({
-            selected: 0, id: makeid(32)
+            selected: 0, id: makeid(8)
         })
     }
 

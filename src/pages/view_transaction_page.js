@@ -679,6 +679,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                return(
+                    <div>
+                        {this.render_upcoming_subscription_payment_data()}
+                    </div>
+                )
+            }
 
         }
     }
@@ -5092,6 +5099,105 @@ class ViewTransactionPage extends Component {
 
 
 
+
+
+
+
+
+
+    render_upcoming_subscription_payment_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var upcoming_subs = this.get_selected_subscriptions(transaction_item.upcoming_subs)
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':upcoming_subs.length+ this.props.app_state.loc['2903']/* ' targeted subscriptions.' */})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.time_amount), 'details':this.props.app_state.loc['2900']/* 'Your set time.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_total_payments()}
+            </div>
+        )
+    }
+
+    render_total_payments(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var data = this.get_total_payment_amounts()
+        var exchanges_used = [].concat(data.exchanges_used)
+        var exchange_amounts = data.exchange_amounts
+        var e5 = transaction_item.e5
+
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {exchanges_used.map((item, index) => (
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':exchange_amounts[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(exchange_amounts[item]), 'barwidth':this.calculate_bar_width((exchange_amounts[item])), 'number':this.format_account_balance_figure((exchange_amounts[item])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>  
+        )
+    }
+
+    get_total_payment_amounts(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var upcoming_subs = this.get_selected_subscriptions(transaction_item.upcoming_subs)
+        var exchanges_used = []
+        var exchange_amounts = {}
+        upcoming_subs.forEach(subscription_obj => {
+            var time_units_to_pay = this.get_time_unit(subscription_obj)
+            if(time_units_to_pay != 0){
+                var exchanges = subscription_obj['data'][2]
+                var amounts = subscription_obj['data'][3]
+                for(var i=0; i<exchanges.length; i++){
+                    var exchange_id = exchanges[i]
+                    var amount = bigInt(amounts[i]).multiply(time_units_to_pay)
+                    if(exchange_amounts[exchange_id] == null){
+                        exchange_amounts[exchange_id] = bigInt(0)
+                        exchanges_used.push(exchange_id)
+                    }
+                    exchange_amounts[exchange_id] = bigInt(exchange_amounts[exchange_id]).plus(amount)
+                }
+            }
+        });
+
+        return {exchanges_used: exchanges_used, exchange_amounts: exchange_amounts}
+    }
+
+    get_time_unit(subscription_obj){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var subscription_config = subscription_obj['data'][1]
+        var time_unit = subscription_config[5/* time_unit */] == 0 ? 60*53 : subscription_config[5/* time_unit */]
+        var time_units_to_pay = bigInt(transaction_item.time_amount).divide(time_unit)
+        if(subscription_config[1/* minimum_buy_amount */] != 0){
+            if(time_units_to_pay < subscription_config[1/* minimum_buy_amount */]){
+                time_units_to_pay = subscription_config[1/* minimum_buy_amount */]
+            }
+        }
+        // if(subscription_config[3/* maximum_buy_amount */] != 0){
+        //     if(time_units_to_pay > subscription_config[3/* maximum_buy_amount */]){
+        //         time_units_to_pay = subscription_config[3/* maximum_buy_amount */]
+        //     }
+        // }
+        var t =  time_units_to_pay
+        return t
+    }
+
+    get_selected_subscriptions(upcoming_subs){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var selected_subs = []
+        for(var i=0; i<upcoming_subs.length; i++){
+            if(!transaction_item.selected_subscriptions.includes(i)){
+                selected_subs.push(upcoming_subs[i])
+            }
+        }
+        return selected_subs
+    }
 
 
 

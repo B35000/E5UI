@@ -204,7 +204,7 @@ class NewStorefrontItemPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -870,7 +870,7 @@ class NewStorefrontItemPage extends Component {
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.indexed_title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['496']/* 'Set tags for indexing your new Storefront Item' */})}
@@ -2749,7 +2749,7 @@ class NewStorefrontItemPage extends Component {
         else if(title == ''){
             this.props.notify(this.props.app_state.loc['530']/* 'add a title for your Item' */, 2700)
         }
-        else if(title.length > this.props.app_state.title_size){
+        else if(title.length > this.props.app_state.indexed_title_size){
             this.props.notify(this.props.app_state.loc['531']/* 'that title is too long' */, 2700)
         }
         else if(variants.length == 0){

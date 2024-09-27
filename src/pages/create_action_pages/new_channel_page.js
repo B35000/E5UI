@@ -305,6 +305,7 @@ class NewChannelPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
+                
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
@@ -1910,7 +1911,7 @@ class NewChannelPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({ id: makeid(32), type:me.props.app_state.loc['109'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), 
+                me.setState({ id: makeid(8), type:me.props.app_state.loc['109'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), 
                 new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(),
                 moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],typed_link_text:'', link_search_results:[], added_links:[],})
             }, (1 * 1000));

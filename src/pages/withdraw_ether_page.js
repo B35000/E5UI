@@ -406,12 +406,16 @@ class WithdrawEtherPage extends Component {
 
     finish(){
         var e5 = this.state.e5
+        
 
         if(!this.isValidAddress(this.state.recipient_address)){
             this.props.notify(this.props.app_state.loc['2016']/* 'Please set a valid receiver' */, 3500)
         }
         else if(this.props.app_state.withdraw_balance[e5['id']] == 0){
             this.props.notify(this.props.app_state.loc['2017']/* 'You cant withdraw 0 ether.' */, 3500)
+        }
+        else if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
         }
         else{
             // this.setState({confirmation_dialog_box: true}) 

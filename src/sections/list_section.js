@@ -968,12 +968,11 @@ class PostListSection extends Component {
                 </div>
             );
         }else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics(items, 'subscriptions')}
+                        {this.render_pay_all_upcoming_subscriptions_button(items)}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_subscription_object(item, index)}
@@ -984,6 +983,21 @@ class PostListSection extends Component {
                 </div>
             );
         }
+    }
+
+    render_pay_all_upcoming_subscriptions_button(items){
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+        if(selected_option_name == this.props.app_state.loc['1264b']/* upcoming */ && items.length != 0){
+            return(
+                <div style={{'margin':'5px 0px 10px 0px'}} onClick={() => this.when_pay_all_upcoming_subscriptions_button_tapped(items)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2895']/* pay all. */, 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    when_pay_all_upcoming_subscriptions_button_tapped(items){
+        this.props.show_pay_upcoming_subscriptions_bottomsheet(items)
     }
 
     get_subscription_items(){
@@ -2544,7 +2558,7 @@ class PostListSection extends Component {
         var age = item['event'] == null ? 0 : item['event'].returnValues.p5
         var time = item['event'] == null ? 0 : item['event'].returnValues.p4
         return{
-            'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
+            'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
@@ -2645,7 +2659,7 @@ class PostListSection extends Component {
                             {this.render_detail_item('8', item['label'])}
                         </div>
                         <div style={{height: 20}}/>
-                        {this.render_detail_item('2', item['number_label'])}
+                        {this.render_detail_item('2', item['age'])}
                     </div>
                 </div>         
             </div>

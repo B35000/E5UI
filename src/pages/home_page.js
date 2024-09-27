@@ -824,7 +824,7 @@ class home_page extends Component {
         alpha = 0.2;
       }
       return(
-        <img className="text-end" onClick={()=> this.when_e_button_tapped()} src={this.props.theme['add_icon']} style={{height:36, width:'auto', opacity:alpha}} />
+        <img alt="" className="text-end" onClick={()=> this.when_e_button_tapped()} src={this.props.theme['add_icon']} style={{height:36, width:'auto', opacity:alpha}} />
       )
     }
 
@@ -985,8 +985,9 @@ class home_page extends Component {
         clone[id] = entered_text;
         this.setState({page_search_data: clone})
         var me = this;
-        setTimeout(function() {    
+        setTimeout(function() {
             me.reset_scroll_height()
+            me.get_searched_data()
         }, (1 * 100));
     }
 
@@ -996,8 +997,9 @@ class home_page extends Component {
         clone[id] = tag_obj
         this.setState({tags_search_data: clone})
         var me = this;
-        setTimeout(function() {    
+        setTimeout(function() {
             me.reset_scroll_height()
+            me.get_searched_data()
         }, (1 * 100));
     }
 
@@ -1034,6 +1036,36 @@ class home_page extends Component {
                 me.update_scroll_position()
             }, (1 * 10));
         }
+    }
+
+    get_searched_data(){
+        var id = this.get_page_id()
+        var posts_to_load = []
+        var searched_data = this.state.page_search_data[id]
+        var searched_tags = this.state.tags_search_data[id]
+        if(searched_data != null){
+            posts_to_load = [searched_data].concat(posts_to_load)
+        }
+        if(searched_tags != null){
+            posts_to_load = posts_to_load.concat(searched_tags)
+        }
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page())
+    }
+
+    get_selected_page(){
+        var selected_page = ''
+        if(this.state.page == '?'){
+            selected_page = this.state.work_page_tags_object['i'].active
+            if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
+        }
+        else if(this.state.page == 'e'){
+            selected_page = this.state.explore_page_tags_object['i'].active
+        }
+        else{
+            //wallet
+            selected_page = 'w'
+        }
+        return selected_page;
     }
 
 
@@ -1206,22 +1238,33 @@ class home_page extends Component {
     }
 
     when_tags_updated(tag_group){
+        var selected_page = ''
         if(this.state.page == '?'){
             this.setState({work_page_tags_object: tag_group})
-            var selected_page = tag_group['i'].active
+            selected_page = tag_group['i'].active
             if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
-            this.props.load_data_from_page_in_focus(selected_page)
         }
         else if(this.state.page == 'e'){
             this.setState({explore_page_tags_object: tag_group})
-            var selected_page = tag_group['i'].active
-            this.props.load_data_from_page_in_focus(selected_page)
+            selected_page = tag_group['i'].active
         }
         else{
             //wallet
             this.setState({wallet_page_tags_object: tag_group})
-            this.props.load_data_from_page_in_focus('w')
+            selected_page = 'w'
         }
+
+        var id = this.get_page_id()
+        var posts_to_load = []
+        var searched_data = this.state.page_search_data[id]
+        var searched_tags = this.state.tags_search_data[id]
+        if(searched_data != null){
+            posts_to_load = [searched_data].concat(posts_to_load)
+        }
+        if(searched_tags != null){
+            posts_to_load = posts_to_load.concat(searched_tags)
+        }
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page)
 
         // this.setState({ selected_job_post_item:null, selected_contract_item:null, selected_subscription_item:null, selected_post_item:null, selected_channel_item:null, selected_proposal_item:null, selected_storefront_item:null, selected_bag_item:null, selected_contractor_item: null})
 
@@ -2040,9 +2083,14 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264b']/* upcoming */){
             var my_paid_subscriptions = []
             var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            var now = Math.floor(Date.now()/1000)
+            var selected_e5 = this.props.app_state.selected_e5
             for(var i=0; i<all_subscriptions.length; i++){
                 var object = all_subscriptions[i]
-                if(object['payment'] != 0 && object['payment'] <= 60*60*24){
+                if(object['payment'] != 0 && object['payment'] <= 60*60*24*5 && object['e5'] == selected_e5){
+                    my_paid_subscriptions.push(object)
+                }
+                else if(parseInt(object['last_expiration_time'].toString()) >= (now-(60*60*24*5)) && object['e5'] == selected_e5){
                     my_paid_subscriptions.push(object)
                 }
             }
@@ -2371,6 +2419,8 @@ class home_page extends Component {
 
             show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
             get_all_sorted_notifications={this.get_all_sorted_notifications.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} view_number={this.props.view_number.bind(this)}
+
+            show_pay_upcoming_subscriptions_bottomsheet={this.props.show_pay_upcoming_subscriptions_bottomsheet.bind(this)}
             />
         )
     }
@@ -2637,7 +2687,7 @@ class home_page extends Component {
     }
 
     select_deselect_tag(tag, pos){
-        if(!this.props.app_state.has_wallet_been_set){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['1234']/* 'First set your wallet to follow that tag.' */, 4500)
             return;
         }
@@ -2648,7 +2698,9 @@ class home_page extends Component {
         else if(page == 'e'){
             this.props.when_select_deselect_explore_tag(tag, pos)
         }
-        else{}
+        else if(page == 'w'){
+            this.props.when_select_deselect_explore_tag(tag, pos)
+        }
     }
 
     set_detail_data(){
@@ -2761,7 +2813,9 @@ class home_page extends Component {
                 open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)} open_enter_contract_ui={this.open_enter_contract_ui.bind(this)} open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} open_new_proposal_ui={this.open_new_proposal_ui.bind(this)}
                 open_vote_proposal_ui={this.open_vote_proposal_ui.bind(this)} open_sumbit_proposal_ui={this.open_sumbit_proposal_ui.bind(this)} open_pay_subscription_ui={this.open_pay_subscription_ui.bind(this)} open_cancel_subscription_ui={this.open_cancel_subscription_ui.bind(this)} open_collect_subscription_ui={this.open_collect_subscription_ui.bind(this)} open_modify_subscription_ui={this.open_modify_subscription_ui.bind(this)} open_modify_contract_ui={this.open_modify_contract_ui.bind(this)} open_modify_token_ui={this.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.open_exchange_transfers_ui.bind(this)} open_force_exit_ui={this.open_force_exit_ui.bind(this)} open_archive_proposal_ui={this.open_archive_proposal_ui.bind(this)} open_freeze_unfreeze_ui={this.open_freeze_unfreeze_ui.bind(this)} open_authmint_ui={this.open_authmint_ui.bind(this)} open_moderator_ui={this.open_moderator_ui.bind(this)} show_images={this.props.show_images.bind(this)}
 
-                add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)} open_respond_to_job_ui={this.open_respond_to_job_ui.bind(this)} view_application_contract={this.view_application_contract.bind(this)} add_job_message_to_stack_object={this.props.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.props.add_proposal_message_to_stack_object.bind(this)} open_add_to_bag={this.props.open_add_to_bag.bind(this)} open_fulfil_bag_request={this.props.open_fulfil_bag_request.bind(this)} view_bag_application_contract={this.view_bag_application_contract.bind(this)} open_direct_purchase={this.open_direct_purchase.bind(this)} open_send_job_request_ui={this.props.open_send_job_request_ui.bind(this)} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)}
+                add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)} open_respond_to_job_ui={this.open_respond_to_job_ui.bind(this)} view_application_contract={this.view_application_contract.bind(this)} add_job_message_to_stack_object={this.props.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.props.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)}
+                
+                open_add_to_bag={this.props.open_add_to_bag.bind(this)} open_fulfil_bag_request={this.props.open_fulfil_bag_request.bind(this)} view_bag_application_contract={this.view_bag_application_contract.bind(this)} open_direct_purchase={this.open_direct_purchase.bind(this)} open_send_job_request_ui={this.props.open_send_job_request_ui.bind(this)} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)}
 
                 open_clear_purchase={this.props.open_clear_purchase.bind(this)} add_bag_message_to_stack_object={this.props.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.props.add_storefront_message_to_stack_object.bind(this)} open_view_job_request_ui={this.props.open_view_job_request_ui} open_view_contract_ui={this.props.open_view_contract_ui.bind(this)}
 

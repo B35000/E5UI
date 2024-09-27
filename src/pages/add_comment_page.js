@@ -298,6 +298,7 @@ class AddCommentPage extends Component {
     render_award_ui(){
         var focused_message_id = this.state.focused_message_id;
         if(focused_message_id == 0) return;
+        if(focused_message_id['e5'] != this.props.app_state.selected_e5) return;
         var award_amount = this.state.award_amount
         return(
             <div>

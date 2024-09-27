@@ -1277,6 +1277,7 @@ class StackPage extends Component {
                 <div style={{'padding': '5px'}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1456']/* 'Run ' */+this.props.app_state.selected_e5+this.props.app_state.loc['1457']/* ' Transactions' */, 'action':''})}
                 </div>
+                <div style={{height:7}}/>
             </div>
         )
     }
@@ -1663,6 +1664,11 @@ class StackPage extends Component {
         var gas_limit = this.get_latest_block_data(this.props.app_state.selected_e5).gasLimit
         var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
 
+        var is_running = this.props.app_state.is_running[this.props.app_state.selected_e5]
+        if(is_running == null){
+            is_running = false;
+        }
+
         if(pushed_txs.length == 0){
             this.props.notify(this.props.app_state.loc['1487']/* 'Add some transactions first.' */,3600)
         }
@@ -1681,7 +1687,15 @@ class StackPage extends Component {
         else if(estimated_gas_to_be_consumed > run_gas_limit){
             this.props.notify(this.props.app_state.loc['1492']/* 'Set a gas limit above ' */+estimated_gas_to_be_consumed+this.props.app_state.loc['1493']/* ' gas' */,5900)
         }
+        else if(is_running){
+            console.log('opening_confirmation!', 'e is already message')
+            this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
+        }
+        else if(!this.props.app_state.has_wallet_been_set){
+                this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
+            }
         else{
+            console.log('opening_confirmation!')
             this.props.show_confirm_run_bottomsheet(run_data)
         }
     }
@@ -1726,6 +1740,12 @@ class StackPage extends Component {
                     var contract_type = this.get_selected_item(txs[i].new_contract_type_tags_object, txs[i].new_contract_type_tags_object['i'].active)
 
                     var contract_stack_id = ints.length-1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
+
                     if(contract_type == this.props.app_state.loc['165']/* 'private' */){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
@@ -1736,7 +1756,6 @@ class StackPage extends Component {
                         ints.push(enable_interactibles_checker)
                         should_optimize_run = false
                     }
-
                     if(txs[i].interactibles.length != 0){
                         var add_interactibles_accounts = [ /* set account to be interactible */
                             [20000, 2, 0],
@@ -1823,6 +1842,12 @@ class StackPage extends Component {
                         var buy_amount = obj[liquidity]
 
                         var token_stack_id = ints.length-1
+
+                        var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                        strs.push(index_data.str)
+                        adds.push([])
+                        ints.push(index_data.int)
+
                         var buy_token = [
                             [30000, 8, 0],
                             [token_stack_id], [35],/* exchanges */
@@ -1859,6 +1884,11 @@ class StackPage extends Component {
                         ints.push(token_obj)
 
                         var token_stack_id = ints.length-1
+
+                        var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                        strs.push(index_data.str)
+                        adds.push([])
+                        ints.push(index_data.int)
                         
                         var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
@@ -1939,6 +1969,11 @@ class StackPage extends Component {
 
                     var subscription_stack_id = ints.length-1
 
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
+
                     var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
                     if(access_rights_setting == this.props.app_state.loc['1428']/* 'enabled' */){
@@ -2001,12 +2036,22 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(post_obj)
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['760']/* 'job' */){
                     var job_obj = this.format_job_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(job_obj)
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
                     var channel_obj = this.format_channel_object(txs[i])
@@ -2015,6 +2060,11 @@ class StackPage extends Component {
                     ints.push(channel_obj)
 
                     var channel_stack_id = ints.length-1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
                     
                     var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
@@ -2076,6 +2126,11 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(storefront_data)
+
+                    var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
                     var buy_sell_obj = this.format_buy_sell_object(txs[i], ints)
@@ -2133,6 +2188,11 @@ class StackPage extends Component {
                     var include_yes_vote = this.get_selected_item(txs[i].get_auto_vote_yes_object, txs[i].get_auto_vote_yes_object['i'].active)
 
                     var proposal_stack_id = ints.length-1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
 
                     if(include_yes_vote == this.props.app_state.loc['438o']/* 'vote' */){
                         var yes_vote_object = [/* vote proposal */
@@ -2345,6 +2405,11 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(storefront_bag_obj)
 
+                     var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
+
                     var bag_variants = []
                     txs[i].items_to_deliver.forEach(item => {
                         bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count})
@@ -2438,6 +2503,11 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(contractor_obj)
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
                     var now = parseInt(now.toString() + i)
@@ -2535,6 +2605,12 @@ class StackPage extends Component {
                     strs.push(royalty_payout_obj.str)
                     adds.push([])
                     ints.push(royalty_payout_obj.transfers_record)
+                }
+                else if(txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                    var pay_subscription = this.format_pay_upcoming_subscriptions(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(pay_subscription)
                 }
                 
                 delete_pos_array.push(i)
@@ -4309,7 +4385,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.id);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4341,7 +4417,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.id);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4991,7 +5067,7 @@ class StackPage extends Component {
             []/* depths */
         ]
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            if(t.messages_to_deliver[i]['award_amount'] != 0){
+            if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
                 var award_receiver = t.messages_to_deliver[i]['award_receiver'].toString().toLocaleString('fullwide', {useGrouping:false})
                 var award_amount = t.messages_to_deliver[i]['award_amount'].toString().toLocaleString('fullwide', {useGrouping:false})
                 transfers_obj[1].push('5')
@@ -5003,6 +5079,56 @@ class StackPage extends Component {
             }
         }
         return transfers_obj
+    }
+
+    format_pay_upcoming_subscriptions(t){
+        var obj = [/* ✔️pay subscription */
+            [30000, 2, 0],
+            [], [],/* target subscription ids */
+            []/* subscription buy amounts */
+        ];
+
+        var time_units_to_pay = t.time_units_to_pay
+        var subscriptions = t.subscriptions
+
+        for(var i=0; i<subscriptions.length; i++){
+            obj[1].push(subscriptions[i].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+            obj[3].push(time_units_to_pay[i].toString().toLocaleString('fullwide', {useGrouping:false}))
+        }
+
+        return obj
+    }
+
+    format_indexing_post_item(t, should_index_title, target_stack_index, target_type){
+        var transaction_obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        for(var i=0; i<t.entered_indexing_tags.length; i++){
+            transaction_obj[1].push(target_stack_index)
+            transaction_obj[2].push(35)
+            transaction_obj[3].push(20/* 20(tag_registry) */)
+            transaction_obj[4].push(target_type)
+
+            string_obj[0].push(t.entered_indexing_tags[i].toString())
+        }
+
+        if(should_index_title){
+            transaction_obj[1].push(target_stack_index)
+            transaction_obj[2].push(35)
+            transaction_obj[3].push(20/* 20(tag_registry) */)
+            transaction_obj[4].push(target_type)
+
+            string_obj[0].push(t.entered_title_text.toString())
+        }
+
+        return {int: transaction_obj, str: string_obj}
+        
     }
 
     optimize_run_if_enabled(ints, strs, adds, should_optimize_run){
@@ -6690,7 +6816,7 @@ class StackPage extends Component {
 
     render_wallet_address(){
         var ether_name = this.props.app_state.e5s[this.props.app_state.selected_e5].token
-        if(this.props.app_state.has_wallet_been_set){
+        if(this.props.app_state.has_wallet_been_set || this.props.app_state.has_account_been_loaded_from_storage){
             return(
                 <div>
                     <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>

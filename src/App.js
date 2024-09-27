@@ -227,6 +227,7 @@ import PaySubscriptionPage from './pages/subscription_action_pages/pay_subscript
 import CancelSubscriptionPage from './pages/subscription_action_pages/cancel_subscription_page';
 import CollectSubscriptionPage from './pages/subscription_action_pages/collect_subscription_page';
 import ModifySubscriptionPage from './pages/subscription_action_pages/modify_subscription_page';
+import PayUpcomingSubscriptions from './pages/subscription_action_pages/pay_upcoming_subscriptions_page'
 
 import ModeratorPage from './pages/moderator_page';
 import RespondToJobPage from './pages/respond_to_job_page';
@@ -363,7 +364,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -387,7 +388,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(65), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7,
+    sync_steps:(65), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -417,7 +418,7 @@ class App extends Component {
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
 
-    number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600,
+    number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600, has_account_been_loaded_from_storage:false, show_stack:true
   };
 
   get_static_assets(){
@@ -1161,7 +1162,14 @@ class App extends Component {
         
         '2884':'royalty-payouts','2885':'stage-details','2886':'completed','2887':'The details for the royalty payout are listed below.','2888':'The royalty payout batches are listed below. Tap a batch to stage it and tap a staged batch to remove.','2889':'You cant stack royalty payouts in the same exchange twice.',
         
-        '2890':'copy to clipboard.','2891':'Copied to clipboard.','2892':'remember','2893':'Remember Account.','2894':'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','2916':'','2917':'','2918':'','2919':'','2920':'','2921':'','2922':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2890':'copy to clipboard.','2891':'Copied to clipboard.','2892':'remember','2893':'Remember Account.','2894':'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.','2895':'Pay All.',
+        
+        '2896':'upcoming-subscriptions','2897':' upcoming subscriptions.','2898':'Total Subscription Payment Amounts.','2899':'Here\'s the total amount of money you\'ll be paying for the subscriptions.','2900':'Your set time.','2901':'Please set a valid time.','2902':'You dont have enough money to fulfil those subscription payments.','2903':' targeted subscriptions.','c':'You can\'t target no subscriptions.','2905':'Your upcoming subscriptions. Select a subscription to ignore it in the transaction.',
+        
+        '2906':'You need to set your wallet first.','2907':'You can\'t delete that message.','2908':'Delete.','2909':'Message Deleted.','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','2916':'','2917':'','2918':'','2919':'','2920':'','2921':'','2922':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1241,9 +1249,11 @@ class App extends Component {
     this.stage_royalties_page = React.createRef();
     this.view_staged_royalties_page = React.createRef();
     this.dialog_page = React.createRef();
+    this.pay_upcoming_subscriptions_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
+    this.posts_to_load = []
   }
 
   componentDidMount() {
@@ -1449,7 +1459,11 @@ class App extends Component {
       var cupcake_account_data = cupcake_state.account_data
       
       if(cupcake_theme != null){
-        this.setState({theme:cupcake_theme})
+        this.setState({theme: cupcake_theme})
+        var me = this;
+        setTimeout(function() {
+          me.reset_theme()
+        }, (1 * 500));
       }
 
       if(cupcake_stack_items != null){
@@ -1635,7 +1649,7 @@ class App extends Component {
         _accounts[focused_e5] = {address: data[focused_e5].address, privateKey:''}
       }
     }
-    this.setState({accounts: _accounts})
+    this.setState({accounts: _accounts, has_account_been_loaded_from_storage: true})
   }
 
 
@@ -1703,7 +1717,7 @@ class App extends Component {
       var ln = language.split('-')
       language = ln[0]
     }
-    console.log(language)
+    // console.log(language)
     return language
   }
 
@@ -2209,7 +2223,7 @@ class App extends Component {
           {this.render_stage_royalties_bottomsheet()}
           {this.render_view_staged_royalties_bottomsheet()}
           {this.render_dialog_bottomsheet()}
-
+          {this.render_pay_upcoming_subscriptions_bottomsheet()}
 
           {this.render_view_number_bottomsheet()}
           <ToastContainer limit={3} containerId="id"/>
@@ -2249,7 +2263,9 @@ class App extends Component {
       show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
       show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
 
-      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
+      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}
+      
+      open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
 
       get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} add_bag_message_to_stack_object={this.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.add_storefront_message_to_stack_object.bind(this)} get_contractor_applications={this.get_contractor_applications.bind(this)} open_view_job_request_ui={this.open_view_job_request_ui.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_withdraw_ether_bottomsheet={this.show_withdraw_ether_bottomsheet.bind(this)}
 
@@ -2259,11 +2275,14 @@ class App extends Component {
       get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
 
       when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} load_data_from_page_in_focus={this.load_data_from_page_in_focus.bind(this)}
+      fetch_objects_to_load_from_searched_tags={this.fetch_objects_to_load_from_searched_tags.bind(this)}
       
       show_stage_royalties_bottomsheet={this.show_stage_royalties_bottomsheet.bind(this)}
       load_exchanges_royalty_event_data={this.load_exchanges_royalty_event_data.bind(this)}
       show_view_staged_royalties_bottomsheet={this.show_view_staged_royalties_bottomsheet.bind(this)}
       load_exchanges_royalty_payout_event_data={this.load_exchanges_royalty_payout_event_data.bind(this)}
+
+      show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)}
       />
     )
   }
@@ -2424,6 +2443,37 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack)
   }
 
+  delete_message_from_stack(message, type){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == type && stack[i].e5 == this.state.selected_e5){
+        pos = i
+        break;
+      }
+    }
+    if(pos != -1){
+      var messages = stack[pos].messages_to_deliver;
+      var message_pos = -1
+      for(var i=0; i<messages.length; i++){
+        if(messages[i]['message_id'] == message['message_id']){
+          message_pos = i
+          break;
+        }
+      }
+      if(message_pos != -1){
+        stack[pos].messages_to_deliver.splice(message_pos, 1);
+        this.setState({stack_items: stack})
+        this.set_cookies_after_stack_action(stack)
+        this.prompt_top_notification(this.getLocale()['2909']/* 'Message Deleted.' */, 1000)
+      }else{
+        this.prompt_top_notification(this.getLocale()['2907']/* 'You cant delete that message.' */, 3000)
+      }
+    }else{
+      this.prompt_top_notification(this.getLocale()['2907']/* 'You cant delete that message.' */, 3000)
+    }
+  }
+
   when_select_deselect_work_tag(tag, pos){
     var clone = this.state.job_section_tags.slice()
     const index = clone.indexOf(tag);
@@ -2582,6 +2632,7 @@ class App extends Component {
 
   render_stack_bottomsheet(){
     // if(this.state.stack_bottomsheet2 != true) return;
+    if(!this.state.show_stack) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
@@ -2610,6 +2661,7 @@ class App extends Component {
   }
 
   render_stack_item(size){
+    if(!this.state.show_stack) return;
     return(
       <StackPage ref={this.stack_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
       encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} 
@@ -2864,6 +2916,7 @@ class App extends Component {
     const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
+    const e5 = this.state.selected_e5
 
     var now = await contractInstance.methods.f147(2).call((error, result) => {})
     var run_expiry_time = now + run_expiry_duration
@@ -2895,23 +2948,34 @@ class App extends Component {
       }
     }
 
+    var os = getOS()
+    if(os == 'iOS'){
+      this.open_stack_bottomsheet()
+      setTimeout(function() {
+        me.open_stack_bottomsheet()
+      }, (1 * 500));
+    }
+
+
+    
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[this.state.selected_e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          var clone = structuredClone(this.state.is_running)
-          clone[this.state.selected_e5] = false
+          var clone = structuredClone(me.state.is_running)
+          clone[e5] = false
           me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false})
-          this.delete_stack_items(delete_pos_array)
-          // this.start_get_accounts_data(false)
-          this.start_get_accounts_for_specific_e5(false, this.state.selected_e5, false)
+          me.delete_stack_items(delete_pos_array)
           me.reset_gas_calculation_figure(me)
-          this.prompt_top_notification(this.getLocale()['2700']/* 'run complete!' */, 2600)
+          me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+          setTimeout(function() {
+            me.start_get_accounts_for_specific_e5(false, e5, false)
+          }, (1 * 500));
         }).on('error', (error) => {
           console.error('Transaction error:', error);
           var clone = structuredClone(this.state.is_running)
-          clone[this.state.selected_e5] = false
+          clone[e5] = false
           me.setState({is_running: clone})
-          this.prompt_top_notification(this.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+          me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
         });
     })
 
@@ -6505,7 +6569,16 @@ class App extends Component {
             me.view_staged_royalties_page.current?.setState(tx)
           }
         }, (1 * 500));  
-    }       
+    }
+    else if(tx.type == this.getLocale()['2896']/* 'upcoming-subscriptions' */){
+        this.open_pay_upcoming_subscriptions_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.pay_upcoming_subscriptions_page.current){
+            me.pay_upcoming_subscriptions_page.current?.setState(tx)
+          }
+        }, (1 * 500));  
+    }      
   }
 
   delete_message_item(item, transaction_item){
@@ -7117,6 +7190,10 @@ class App extends Component {
 
 
   generate_signature = async (data) => {
+    if(!this.state.has_wallet_been_set){
+      this.prompt_top_notification(this.getLocale()['2906']/* 'You need to set your wallet first.' */, 5000)
+      return;
+    }
     const web3 = new Web3(this.state.web3);
     var address = this.state.accounts[this.state.default_e5].address
     web3.eth.accounts.wallet.add(this.state.accounts[this.state.default_e5].privateKey);
@@ -7272,7 +7349,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}/>
+                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -7284,7 +7361,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}/>
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -7780,11 +7857,19 @@ class App extends Component {
 
   set_comment_bottomsheet_size(focused_message_id){
     var size = this.getScreenSize();
-    if(focused_message_id != 0){
+    if(focused_message_id != 0 && focused_message_id['e5'] != this.props.app_state.selected_e5){
       if(size == 's'){
-        this.setState({comment_size: 880})
+        if(this.state.height < 880){
+          this.setState({comment_size: this.state.height})
+        }else{
+          this.setState({comment_size: 880})
+        }
       }else{
-        this.setState({comment_size: 630})
+         if(this.state.height < 630){
+          this.setState({comment_size: this.state.height})
+        }else{
+          this.setState({comment_size: 630})
+        }
       }
     }else{
       this.setState({comment_size: 550})
@@ -8769,6 +8854,95 @@ class App extends Component {
 
 
 
+  render_pay_upcoming_subscriptions_bottomsheet(){
+    if(this.state.pay_upcoming_subscriptions_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.pay_upcoming_subscriptions_bottomsheet} onClose={this.open_pay_upcoming_subscriptions_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+                        'overflow-y':'auto'}}>
+                          <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} />
+                        </div>
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_pay_upcoming_subscriptions_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_pay_upcoming_subscriptions_bottomsheet.bind(this)} open={this.state.pay_upcoming_subscriptions_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+          'overflow-y':'auto'}}>
+            <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_pay_upcoming_subscriptions_bottomsheet(){
+    if(this.state.pay_upcoming_subscriptions_bottomsheet == true){
+      //closing
+      this.pay_upcoming_subscriptions_bottomsheet = this.pay_upcoming_subscriptions_page.current?.state;
+
+      this.setState({pay_upcoming_subscriptions_bottomsheet: !this.state.pay_upcoming_subscriptions_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({pay_upcoming_subscriptions_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({pay_upcoming_subscriptions_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({pay_upcoming_subscriptions_bottomsheet: !me.state.pay_upcoming_subscriptions_bottomsheet});
+
+          if(me.pay_upcoming_subscriptions_bottomsheet != null){
+            me.pay_upcoming_subscriptions_page.current?.setState(me.pay_upcoming_subscriptions_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_pay_upcoming_subscriptions_bottomsheet(data){
+    this.open_pay_upcoming_subscriptions_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.pay_upcoming_subscriptions_page.current != null){
+        me.pay_upcoming_subscriptions_page.current.set_data(data)
+      }
+    }, (1 * 500));
+  }
+
+  add_pay_upcoming_subscriptions_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
 
 
 
@@ -8887,7 +9061,8 @@ class App extends Component {
   prompt_top_notification(data, duration){
       var os = getOS()
       var id = "id"
-      if(os == 'iOS') id = "id2" 
+      if(os == 'iOS' && !this.state.syncronizing_page_bottomsheet) id = "id2";
+      // console.log('top_notification', 'showing', data, 'on id:', id)
       var time = duration == null ? 1000: duration;
       // data = 'toast item blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah '
       // time = 1500000
@@ -9760,7 +9935,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- SECTION TAGS DATA ------------------------------------------- */
-    this.get_section_tags_data(web3, E52contractInstance, e5, account)
+    await this.get_section_tags_data(web3, E52contractInstance, e5, account)
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -9841,7 +10016,8 @@ class App extends Component {
 
 
     /* ---------------------------------------- JOB DATA ------------------------------------------- */
-    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0)
+    var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
+    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, posts_to_prioritize)
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -10057,6 +10233,9 @@ class App extends Component {
       }
     }
   }
+
+
+
 
 
   //here
@@ -10845,9 +11024,9 @@ class App extends Component {
         }
         const data = await response.text();
         e5_address_obj = JSON.parse(data);
-        console.log('--------------------------------E745:load_ether_history-----------------------------------')
-        console.log(e5_address_obj)
-        console.log(address)
+        // console.log('--------------------------------E745:load_ether_history-----------------------------------')
+        // console.log(e5_address_obj)
+        // console.log(address)
       } catch (error) {
         console.log('Error fetching data: ', error)
       }
@@ -11042,8 +11221,34 @@ class App extends Component {
     }
   }
 
-  get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance) => {
+
+
+
+
+
+
+  get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts) => {
     var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ , p1/* object_id */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p1)
+        final_object_events.push(element)
+      });
+      created_subscription_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p1)){
+          added_ids.push(element.returnValues.p1)
+          final_object_events.push(element)
+        }
+      });
+      created_subscription_events = final_object_events
+    }
+
+    var payment_history_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account})
 
     var created_subscriptions = []
     for(var i=0; i<created_subscription_events.length; i++){
@@ -11142,13 +11347,16 @@ class App extends Component {
 
       var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_subscriptions[i]
 
+      var subscription_config = created_subscription_data[i][1]
+      var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+      var last_expiration_time = this.get_last_expiration_time(payment_history_events, created_subscriptions[i], time_unit, my_payment/* [0] */[0] )
 
-      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment/* [0] */[0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3}
+      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment/* [0] */[0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3, 'last_expiration_time':last_expiration_time}
 
       if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){}
       else if(my_blocked_time_value/* [0] */[0] > Date.now()/1000){}
       else{
-        created_subscription_object_data.push(subscription_object)
+        if(created_subscription_object_mapping[created_subscriptions[i]+e5] == null)created_subscription_object_data.push(subscription_object)
       }
 
       created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
@@ -11172,11 +11380,45 @@ class App extends Component {
 
     this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
     
-    console.log('subscription count for e5: ',e5,' : ',created_subscription_object_data.length)
+    // console.log('subscription count for e5: ',e5,' : ',created_subscription_object_data.length)
   }
 
-  get_contract_data = async (contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance) => {
+  get_last_expiration_time(payment_history_events, subscription_id, time_unit, expiration_time){
+    if(expiration_time != 0) return expiration_time
+    var subscription_id_payment_history_events = []
+    payment_history_events.forEach(event => {
+      if(event.returnValues.p1 == subscription_id){
+        subscription_id_payment_history_events.push(event)
+      }
+    });
+    if(subscription_id_payment_history_events.length == 0) return 0
+    var last_payment_expiration_time_event = subscription_id_payment_history_events[subscription_id_payment_history_events.length -1];
+
+    var timestamp = bigInt(last_payment_expiration_time_event.returnValues.p5/* timestamp */).plus(bigInt(last_payment_expiration_time_event.returnValues.p3/* time_units_paid_for */).multiply(time_unit))
+
+    return timestamp
+  }
+
+  get_contract_data = async (contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts) => {
     var created_contract_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ })
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ , p1/* object_id */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p1)
+        final_object_events.push(element)
+      });
+      created_contract_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p1)){
+          added_ids.push(element.returnValues.p1)
+          final_object_events.push(element)
+        }
+      });
+      created_contract_events = final_object_events
+    }
 
     var created_contracts = [2]
     var accounts_for_expiry_time = [[account]]
@@ -11316,6 +11558,7 @@ class App extends Component {
 
   get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account) => {
     var contracts_ive_entered_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */})
+    
     var contracts_ive_entered = []
     for(var i=0; i<contracts_ive_entered_events.length; i++){
       var contract = contracts_ive_entered_events[i].returnValues.p1
@@ -11424,8 +11667,26 @@ class App extends Component {
     console.log('proposal count for e5: ',e5,' : ',created_proposal_object_data.length)
   }
 
-  get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account) => {
+  get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts) => {
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */ , p1/* object_id */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p1)
+        final_object_events.push(element)
+      });
+      created_token_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p1)){
+          added_ids.push(element.returnValues.p1)
+          final_object_events.push(element)
+        }
+      });
+      created_token_events = final_object_events
+    }
 
     var token_registry = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:19/* 19(token_symbol_registry) */});
     var registered_token_names = {}
@@ -11640,9 +11901,29 @@ class App extends Component {
     // return JSON.parse(JSON.stringify(page_data))
   }
 
-  get_post_data = async (E52contractInstance, web3, e5, contract_addresses) => {
+  get_post_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts) => {
     var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */})
     created_post_events = created_post_events.reverse()
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:18/* post_object */ , p2/* item */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_post_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_post_events = final_object_events
+    }
+
+    
     this.record_number_of_items(e5, 'posts', created_post_events.length)
     var created_posts = []
     var is_first_time = this.state.created_posts[e5] == null
@@ -11668,9 +11949,28 @@ class App extends Component {
     console.log('post count: '+created_posts.length)
   }
 
-  get_channel_data = async (E52contractInstance, web3, e5, contract_addresses, account) => {
+  get_channel_data = async (E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts) => {
     var created_channel_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */})
     created_channel_events = created_channel_events.reverse()
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:36/* channel_object */ , p2/* item */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_channel_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_channel_events = final_object_events
+    }
+
     this.record_number_of_items(e5, 'channels', created_channel_events.length)
     var created_channel = []
     var is_first_time = this.state.created_channels[e5] == null
@@ -11729,10 +12029,28 @@ class App extends Component {
     console.log('channel count: '+created_channel.length)
   }
 
-  get_job_data = async (E52contractInstance, web3, e5, contract_addresses, account, loop_count) => {
+  get_job_data = async (E52contractInstance, web3, e5, contract_addresses, account, loop_count, prioritized_accounts) => {
     var created_job_events =  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */})
     created_job_events = created_job_events.reverse()
-    console.log('created_job_events', created_job_events)
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:17/* job_object */ , p2/* item */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_job_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_job_events = final_object_events
+    }
+
+    // console.log('created_job_events', created_job_events)
     this.record_number_of_items(e5, 'jobs', created_job_events.length)
 
 
@@ -11949,9 +12267,28 @@ class App extends Component {
     console.log('mail activity: ', mail_activity)
   }
 
-  get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account) => {
+  get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts) => {
     var created_store_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */})
     created_store_events = created_store_events.reverse()
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:27/* storefront_object */ , p2/* item */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_store_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_store_events = final_object_events
+    }
+
     this.record_number_of_items(e5, 'storefront', created_store_events.length)
     var created_stores = []
     var created_store_mappings = {}
@@ -12005,9 +12342,27 @@ class App extends Component {
     console.log('store count: '+created_stores.length)
   }
 
-  get_bag_data = async (contractInstance, web3, e5, contract_addresses, E52contractInstance, account) => {
+  get_bag_data = async (contractInstance, web3, e5, contract_addresses, E52contractInstance, account, prioritized_accounts) => {
     var created_bag_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */})
     created_bag_events = created_bag_events.reverse();
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:25/* bag_object */ , p2/* item */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_bag_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_bag_events = final_object_events
+    }
+
     this.record_number_of_items(e5, 'bags', created_bag_events.length)
     var created_bags = []
     var my_created_bag_ids = []
@@ -12110,9 +12465,27 @@ class App extends Component {
     console.log(e5, ' bag count: '+created_bags.length)
   }
 
-  get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3, account) => {
+  get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3, account, prioritized_accounts) => {
     var created_contractor_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */ })
     created_contractor_events = created_contractor_events.reverse()
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:26/* contractor_object */ , p2/* item */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_contractor_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_contractor_events = final_object_events
+    }
+
     this.record_number_of_items(e5, 'contractor', created_contractor_events.length)
     var created_contractor = []
     var my_contractor_posts = []
@@ -12200,66 +12573,49 @@ class App extends Component {
 
   load_data_from_page_in_focus(page){
     this.focused_page = page
-    if(page == this.getLocale()['1196']/* 'jobs' */ || (this.load_contracts_data_bool && this.load_jobs_data_bool)){
-      this.load_contract_data()
-      this.load_jobs_data()
-      this.load_contracts_data_bool = true
-      this.load_jobs_data_bool = true
+    var posts_to_load = this.posts_to_load
+    if(page == this.getLocale()['1196']/* 'jobs' */){
+      this.load_contract_data(posts_to_load)
+      this.load_jobs_data(posts_to_load)
     }
-    if(page == this.getLocale()['1197']/* 'contracts' */ || (this.load_contracts_data_bool)){
-      this.load_contract_data()
-      this.load_contracts_data_bool = true
+    if(page == this.getLocale()['1197']/* 'contracts' */){
+      this.load_contract_data(posts_to_load)
     }
-    if(page == this.getLocale()['1199']/* 'proposals' */ || (this.load_proposal_data_bool)){
-      this.load_proposal_data()
-      this.load_proposal_data_bool = true;
+    if(page == this.getLocale()['1199']/* 'proposals' */){
+      this.load_proposal_data(posts_to_load)
     }
-    if(page == this.getLocale()['1198']/* 'contractors' */ || (this.load_contracts_data_bool && this.load_contractor_data_bool)){
-      this.load_contract_data()
-      this.load_contractor_data()
-
-      this.load_contracts_data_bool = true
-      this.load_contractor_data_bool = true
+    if(page == this.getLocale()['1198']/* 'contractors' */){
+      this.load_contract_data(posts_to_load)
+      this.load_contractor_data(posts_to_load)
     }
-    if(page == this.getLocale()['1200']/* 'subscriptions' */ || (this.load_subscription_data_bool)){
-      this.load_subscription_data()
-      this.load_subscription_data_bool = true
+    if(page == this.getLocale()['1200']/* 'subscriptions' */){
+      this.load_subscription_data(posts_to_load)
     }
-    if(page == this.getLocale()['1201']/* 'mail' */ || (this.load_mail_data_bool)){
-      this.load_mail_data()
-      this.load_mail_data_bool = true
+    if(page == this.getLocale()['1201']/* 'mail' */){
+      this.load_mail_data(posts_to_load)
     }
-
-    if(page == this.getLocale()['1213']/* 'posts' */ || (this.load_subscription_data_bool && this.load_posts_data_bool)){
-      this.load_subscription_data()
-      this.load_post_data()
-
-      this.load_subscription_data_bool = true
-      this.load_posts_data_bool = true
+    if(page == this.getLocale()['1213']/* 'posts' */){
+      this.load_subscription_data(posts_to_load)
+      this.load_post_data(posts_to_load)
     }
-    if(page == this.getLocale()['1214']/* 'channels' */ || (this.load_channel_data_bool)){
-      this.load_channel_data()
-      this.load_channel_data_bool = true
+    if(page == this.getLocale()['1214']/* 'channels' */){
+      this.load_channel_data(posts_to_load)
     }
-    if(page == this.getLocale()['1215']/* 'storefront' */ || (this.load_storefront_data_bool && this.load_bag_data_bool)){
-      this.load_storefront_data()
-      this.load_bag_data()
-
-      this.load_storefront_data_bool = true
-      this.load_bag_data_bool = true
+    if(page == this.getLocale()['1215']/* 'storefront' */){
+      this.load_storefront_data(posts_to_load)
+      this.load_bag_data(posts_to_load)
     }
-    if(page == this.getLocale()['1216']/* 'bags' */ || (this.load_storefront_data_bool && this.load_bag_data_bool && this.load_contracts_data_bool)){
-      this.load_storefront_data()
-      this.load_bag_data()
-      this.load_contract_data()
-      
-      this.load_storefront_data_bool = true
-      this.load_bag_data_bool = true
-      this.load_contracts_data_bool = true
+    if(page == this.getLocale()['1216']/* 'bags' */){
+      this.load_storefront_data(posts_to_load)
+      this.load_bag_data(posts_to_load)
+      this.load_contract_data(posts_to_load)
+    }
+    if(page == 'w'){
+      this.load_token_data(posts_to_load)
     }
   }
 
-  load_jobs_data = async () => {
+  load_jobs_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12273,12 +12629,12 @@ class App extends Component {
         const E52contractArtifact = require('./contract_abis/E52.json');
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-        this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account)
+        this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, posts_to_load)
       }
     }
   }
 
-  load_contract_data = async () => {
+  load_contract_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var e5_address = this.state.e5s[e5].e5_address;
@@ -12305,13 +12661,13 @@ class App extends Component {
         const G52_address = contract_addresses[4];
         const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
-        this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance)
+        this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, posts_to_load)
       }
     }
     // this.has_gotten_contracts = true
   }
 
-  load_proposal_data = async () => {
+  load_proposal_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12340,7 +12696,7 @@ class App extends Component {
     }
   }
 
-  load_contractor_data = async () => {
+  load_contractor_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12355,12 +12711,12 @@ class App extends Component {
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account)
+        this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account, posts_to_load)
       }
     }
   }
 
-  load_subscription_data = async () => {
+  load_subscription_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12383,7 +12739,7 @@ class App extends Component {
         const F5_address = contract_addresses[2];
         const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
-        this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance)
+        this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, posts_to_load)
       }
     }
   }
@@ -12410,7 +12766,7 @@ class App extends Component {
     }
   }
 
-  load_post_data = async () => {
+  load_post_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12425,12 +12781,12 @@ class App extends Component {
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.get_post_data(E52contractInstance, web3, e5, contract_addresses)
+        this.get_post_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load)
       }
     }
   }
 
-  load_channel_data = async () => {
+  load_channel_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12445,12 +12801,12 @@ class App extends Component {
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account)
+        this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, posts_to_load)
       }
     }
   }
 
-  load_storefront_data = async () => {
+  load_storefront_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12469,12 +12825,12 @@ class App extends Component {
         const H52_address = contract_addresses[6];
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-        this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account)
+        this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, posts_to_load)
       }
     }
   }
 
-  load_bag_data = async () => {
+  load_bag_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -12493,12 +12849,12 @@ class App extends Component {
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account)
+        this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account, posts_to_load)
       }
     }
   }
 
-  load_token_data = async () => {
+  load_token_data = async (posts_to_load) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var e5_address = this.state.e5s[e5].e5_address;
@@ -12525,11 +12881,10 @@ class App extends Component {
         const H52_address = contract_addresses[6];
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-        this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account)
+        this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, posts_to_load)
       }
     }
   }
-
 
   load_my_contracts = async () => {
     var e5 = this.state.selected_e5
@@ -12709,6 +13064,97 @@ class App extends Component {
   }
 
 
+  
+
+
+
+  fetch_objects_to_load_from_searched_tags = async (searched_tags, page) => {
+    var target_type = this.get_target_type_from_page(page)
+    if(target_type == 0) return;
+
+    var searched_tags_including_prioritized_tags = (this.load_selected_tags(page)).concat(searched_tags)
+    var posts_to_load = []
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != ''){
+        var web3_url = this.get_web3_url_from_e5(e5)
+        const web3 = new Web3(web3_url);
+        var contract_addresses = this.state.addresses[e5]
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var all_indexed_tags_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */: 20/* 20(tag_registry) */, p5/* int_data */:target_type});
+
+        all_indexed_tags_events.forEach(event_item => {
+          var items_tag = event_item.returnValues.p4/* string_data */
+          var items_id = event_item.returnValues.p1/* target_id */
+          if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id)){
+            posts_to_load.push(items_id)
+          }
+        });
+      }
+    }
+
+    this.posts_to_load = posts_to_load
+    this.load_data_from_page_in_focus(page)
+  }
+
+  get_target_type_from_page(page){
+    var obj={'e':0}
+    obj[this.getLocale()['1196']/* 'jobs' */] = 17
+    obj[this.getLocale()['1197']/* 'contracts' */] = 30
+    obj[this.getLocale()['1199']/* 'proposals' */] = 32
+    obj[this.getLocale()['1198']/* 'contractors' */] = 26
+    obj[this.getLocale()['1200']/* 'subscriptions' */] = 33
+    obj[this.getLocale()['1213']/* 'posts' */] = 18
+    obj[this.getLocale()['1214']/* 'channels' */] = 36
+    obj[this.getLocale()['1215']/* 'storefront' */] = 28
+    obj[this.getLocale()['1216']/* 'bags' */] = 25
+    obj['w'] = 31
+
+    return obj[page]
+  }
+
+  load_selected_tags(page){
+    var job_section_tags = this.state.job_section_tags;
+    var explore_section_tags = this.state.explore_section_tags;
+
+    var should_prioritise_followed_tags = this.state.section_tags_setting == this.getLocale()['1427'] /* 'filtered' */
+
+    if(!should_prioritise_followed_tags) return []
+
+    if(page == this.getLocale()['1196']/* 'jobs' */ || page == this.getLocale()['1197']/* 'contracts' */ || page == this.getLocale()['1198']/* 'contractors' */ || page == this.getLocale()['1200']/* 'subscriptions' */){
+      return job_section_tags
+    }
+    else{
+      return explore_section_tags
+    }
+  }
+
+  load_prioritised_job_posts = async (e5, web3, contract_addresses) => {
+    var searched_tags_including_prioritized_tags = this.load_selected_tags(this.getLocale()['1196']/* 'jobs' */)
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var all_indexed_tags_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */: 20/* 20(tag_registry) */, p5/* int_data */:17/* jobs */});
+
+    var posts_to_load = []
+    all_indexed_tags_events.forEach(event_item => {
+      var items_tag = event_item.returnValues.p4/* string_data */
+      var items_id = event_item.returnValues.p1/* target_id */
+      if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id)){
+        posts_to_load.push(items_id)
+      }
+    });
+
+    return posts_to_load
+  }
+
+
 
 
 
@@ -12745,13 +13191,13 @@ class App extends Component {
     var id = cid;
     var internal_id = ''
     if(cid.includes('_')){
-      console.log('found_underscore', cid)
+      // console.log('found_underscore', cid)
       included_underscore = true;
       var split_cid_array2 = cid.split('_');
       id = split_cid_array2[0]
       internal_id = split_cid_array2[1]
-      console.log('found_underscore', 'id', id)
-      console.log('found_underscore', 'internal_id', internal_id)
+      // console.log('found_underscore', 'id', id)
+      // console.log('found_underscore', 'internal_id', internal_id)
     }
     
     if(option == 'in'){
@@ -12761,7 +13207,7 @@ class App extends Component {
         this.store_in_local_storage(id, data)
       }
       if(included_underscore){
-        console.log('found_underscore', data)
+        // console.log('found_underscore', data)
         if(data == null) return null;
         return data[internal_id]
       }
@@ -13015,7 +13461,7 @@ class App extends Component {
     await this.wait(this.state.ipfs_delay)
     // var selected_gateway = gateways[Math.round(Math.random() * 12)]
     var selected_gateway = gateways[0]
-    console.log('selected_gateway', selected_gateway)
+    // console.log('selected_gateway', selected_gateway)
     try {
       const response = await fetch(selected_gateway);
       if (!response.ok) {
@@ -13097,7 +13543,7 @@ class App extends Component {
 
     var bal = [];
     var balance_data = []
-    console.log('positions: ', positions)
+    // console.log('positions: ', positions)
     for(var i=0; i<token_balances.length; i++){
       // var bal_pos = Math.floor(i/(exchanges_depth+1))
       var bal_pos = positions[i]
@@ -13110,7 +13556,7 @@ class App extends Component {
       
       balance = bigInt(balance).add(balance_at_depth)
       bal[bal_pos] = balance.toString().toLocaleString('fullwide', {useGrouping:false})
-      console.log('balance data pos: ',bal_pos, 'balance_data: ',balance_data)
+      // console.log('balance data pos: ',bal_pos, 'balance_data: ',balance_data)
       balance_data[bal_pos][depths[i]] = token_balances[i].toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
