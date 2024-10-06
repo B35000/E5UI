@@ -31,6 +31,7 @@ class PostListSection extends Component {
         scroll_positions:{}, typed_search_id:'', searched_account:'', typed_search_ether_id:'',
         loading_screen_opacity:1.0,
         direction:'positive',
+        typed_search_coin_id:'',
     };
 
 
@@ -219,6 +220,13 @@ class PostListSection extends Component {
                 <div>{this.render_my_notifications(this.props.app_state.loc['1264i']/* 'wallet-notifications' */)}</div>
                 )
             }
+            else if(selected_option_name == this.props.app_state.loc['1264j']/* 'coins 🪙' */){
+                return(
+                    <div>
+                        {this.render_coins_list_group()}
+                    </div>
+                )
+            }
         }
 
     }
@@ -274,6 +282,7 @@ class PostListSection extends Component {
         this.storefront_list = React.createRef();
         this.bag_list = React.createRef();
 
+        this.coin_list = React.createRef();
         this.ether_list = React.createRef();
         this.end_list = React.createRef();
         this.spend_list = React.createRef();
@@ -516,6 +525,10 @@ class PostListSection extends Component {
     }
 
 
+
+    set_coin_list(pos){
+        this.coin_list.current?.scrollTo(0, pos)
+    }
 
     set_ether_list(pos){
         this.ether_list.current?.scrollTo(0, pos);
@@ -1516,7 +1529,7 @@ class PostListSection extends Component {
     render_small_empty_object(){
         return(
             <div>
-                <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
                         <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
@@ -2169,6 +2182,157 @@ class PostListSection extends Component {
 
 
 
+    render_coins_list_group(){
+        var middle = this.props.height;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_coins_data()
+        var x = this.props.app_state.os == 'iOS' ? 60 : 53
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return (
+                <div>
+                    <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
+                    </div>
+                    <div style={{overflow: 'auto', height: middle-x}}>
+                        <ul style={{'list-style-type':'none', 'margin': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '1px 5px 1px 5px'}}>
+                                    {this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <div>
+                <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                    <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
+                </div>
+                <div ref={this.coin_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '1px 5px 1px 5px'}}>
+                                {this.render_coin_item(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        );
+    }
+
+    when_coin_search_coin_input_field_changed(text){
+        this.setState({typed_search_coin_id: text})
+    }
+
+    render_coin_item(item, index){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('0')} 
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_coin_object(item, index)}
+                </div>
+            )
+        }
+    }
+
+    render_coin_object(item, index){
+        return ( 
+            <div onClick={() => this.when_coin_object_clicked(index, item)}>
+                {this.render_detail_item('8', item['label'])}
+            </div>
+        );
+    }
+
+    get_coins_data(){
+        var list = [
+            this.get_coin_info('BTC', 'Bitcoin', 'https://bafkreie2kzwwxljfs2vfnha5dey4m2mol7isouyozsmfervtqovv4dxwjy.ipfs.w3s.link/', 'satoshi', 8, 100_000_000),
+            this.get_coin_info('BCH', 'Bitcoin Cash', 'https://bafkreieqzh5ukzx7xkqbat6enbs6vvui45mzrdel72nrpvquggddnyqzge.ipfs.w3s.link/', 'satoshi', 8, 100_000_000),
+            this.get_coin_info('LTC', 'Litecoin', 'https://bafkreibssgaxtckfjpfi3rwrhq24aapqukesjliidbuo2tefsfyvudccia.ipfs.w3s.link/', 'litoshi', 8, 100_000_000),
+            this.get_coin_info('DOGE', 'Dogecoin', 'https://bafkreigu2tax5e3kfiisfcx3yo4k54ly5za4p33n7cs4lvgdsrnqezkqey.ipfs.w3s.link/', 'koinu', 8, 100_000_000),
+            this.get_coin_info('DASH', 'Dash', 'https://bafkreicc4b6lb6pz2ql3iefz2graqvm5apk44jf3tjtwomdzi7pmsr3wiu.ipfs.w3s.link/', 'duff', 8, 100_000_000),
+            this.get_coin_info('TRX', 'Tron', 'https://bafkreibogf2z4apmef7soghheiudwel67br5nxnuq4hydtvcqppme6lsre.ipfs.w3s.link/', 'sun', 6, 1_000_000),
+            this.get_coin_info('XRP', 'Xrp', 'https://bafkreidql7b6v2emvlcnyl7qkhbzjknyvhu33ifxogf34236mmwue6bo4y.ipfs.w3s.link/', 'drops', 6, 1_000_000),
+            this.get_coin_info('XLM', 'Stellar', 'https://bafkreiaeipmjvsizk6sbucvudjg332iaumravdte3p6gdnotfjbxsriqre.ipfs.w3s.link/', 'stroop', 7, 10_000_000),
+            this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000),
+            this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000),
+            this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', 'microalgorand', 6, 1_000_000),
+            this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000),
+            this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000_000),
+            this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000),
+        ]
+
+        var sorted_list =  this.sortByAttributeDescending(list, 'name')
+        var prioritized_list = []
+        sorted_list.forEach(token => {
+            if(this.does_coin_have_balance(token['id'])){
+                prioritized_list.push(token)
+            }
+        });
+        if(prioritized_list.length != 0) {
+            prioritized_list.push('e')
+        }
+        sorted_list.forEach(token => {
+            if(!prioritized_list.includes(token)){
+                prioritized_list.push(token)
+            }
+        });
+
+
+
+        if(this.state.typed_search_coin_id == '') return prioritized_list;
+        else{
+            var filtered_list = []
+            prioritized_list.forEach(token => {
+                var name = token['name']
+                var symbol = token['id']
+                var typed_word = this.state.typed_search_coin_id.toLowerCase()
+                if(name.toLowerCase().startsWith(typed_word) || symbol.toLowerCase().startsWith(typed_word)){
+                    filtered_list.push(token)
+                }
+            });
+            return filtered_list;
+        }
+    }
+
+    does_coin_have_balance(symbol){
+        return false
+    }
+
+    get_coin_info(symbol, name, image_url, base_unit, decimals, conversion){
+        return{
+            'name':name,
+            'id':symbol,
+            'symbol':symbol,
+            'base_unit':base_unit,
+            'decimals':decimals,
+            'conversion':conversion,
+            'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
+            'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
+        }
+    }
+
+    when_coin_object_clicked(index, item){
+        this.props.when_coin_object_clicked(item['id'])
+    }
+
+
+
+
+
+
 
     render_ethers_list_group(){
         var middle = this.props.height;
@@ -2433,8 +2597,6 @@ class PostListSection extends Component {
         return last_two_digits+'%'
     }
 
-    
-
     when_ether_object_clicked(index, item){
         this.props.when_ether_object_clicked(index, item['id'])
     }
@@ -2474,7 +2636,7 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
-                        <div style={{'margin':'7px 0px 7px 0px'}}>
+                        <div style={{'margin':'7px 5px 7px 5px'}}>
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}
@@ -2622,7 +2784,7 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
-                        <div style={{'margin':'7px 0px 7px 0px'}}>
+                        <div style={{'margin':'7px 5px 7px 5px'}}>
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}

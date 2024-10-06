@@ -833,6 +833,8 @@ class StackPage extends Component {
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount /10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount /10**9), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_priority_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -845,6 +847,8 @@ class StackPage extends Component {
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount/10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_fee_per_gas_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -859,6 +863,8 @@ class StackPage extends Component {
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'number':this.state.run_gas_price, 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_pric/10**9), 'number':this.format_account_balance_figure(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>

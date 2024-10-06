@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
-// import Letter from './../assets/letter.png'; 
-import EthereumTestnet from './../assets/ethereum_testnet.png';
-
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 import { from } from "@iotexproject/iotex-address-ts";
 
@@ -115,7 +112,7 @@ class EthersDetailsSection extends Component {
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -189,7 +186,7 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('0')} */}
 
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'number':this.props.app_state.account_balance[item['e5']], 'relativepower':'wei'})}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'number':this.props.app_state.account_balance[item['e5']], 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2451']/* 'Your Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
@@ -198,7 +195,7 @@ class EthersDetailsSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'number':this.get_gas_price(item['e5']), 'relativepower':'wei'})}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'number':this.get_gas_price(item['e5']), 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])), 'number':this.format_account_balance_figure(this.get_gas_price(item['e5'])), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2454']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])/10**9), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])/10**9), 'number':(this.get_gas_price(item['e5'])/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
@@ -206,7 +203,7 @@ class EthersDetailsSection extends Component {
                     <div style={{height:10}}/>
 
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2455']/* 'E5 txs/ether (2.3M Gas average)' */, 'subtitle':'', 'barwidth':this.calculate_bar_width(e5_transactions_per_ether), 'number':this.format_account_balance_figure(e5_transactions_per_ether), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2456']/* 'Gas txs/ether (23K Gas average)' */, 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_transactions_per_ether), 'number':this.format_account_balance_figure(gas_transactions_per_ether), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}

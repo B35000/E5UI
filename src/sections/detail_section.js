@@ -23,6 +23,7 @@ import MailDetailsSection from './mail_details_section'
 import StorefrontDetailsSection from './storefront_details_section'
 import BagDetailsSection from './bag_details_section'
 import ContractorDetailsSection from './contractor_detail_section'
+import CoinsDetailsSection from './coins_details_section'
 
 var bigInt = require("big-integer");
 
@@ -128,7 +129,13 @@ class PostDetailSection extends Component {
             // var selected_item = this.props.wallet_page_tags_object['e'][2][0];
             // var selected_option_name = this.props.wallet_page_tags_object['e'][1][selected_item];
             var selected_option_name = this.props.detail_selected_tag
-            if(selected_option_name == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_option_name == 'e'){
+            if(selected_option_name == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_option_name == 'e'){
+                return(
+                    <CoinsDetailsSection
+                    app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_coin_item={this.props.selected_coin_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)}/>
+                )
+            }
+            else if(selected_option_name == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
                 return(
                     <EthersDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_ether_item={this.props.selected_ether_item} notify={this.props.notify.bind(this)} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} open_rpc_settings={this.props.open_rpc_settings.bind(this)} get_wallet_data_for_specific_e5={this.props.get_wallet_data_for_specific_e5.bind(this)} view_number={this.props.view_number.bind(this)}/>
                 )

@@ -190,7 +190,7 @@ class ViewGroups extends Component {
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
-                                <img src={img} style={{height:50 ,width:50, 'border-radius': image_border_radius}} />
+                                <img  src={img} alt={title} style={{height:50 ,width:50, 'border-radius': image_border_radius}} />
                             </div>
                             <div style={{'margin':'0px 0px 0px 10px'}}>
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 

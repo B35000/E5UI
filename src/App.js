@@ -164,8 +164,23 @@ import React, { Component } from 'react';
 /* blockchain stuff */
 import { mnemonicToSeedSync } from 'bip39';
 import { Buffer } from 'buffer';
-// import { bigInt } from 'big-integer';
-
+import * as bitcoin from 'bitcoinjs-lib';
+import * as StellarSdk from "@stellar/stellar-sdk";
+import { TronWeb } from 'tronweb';
+import { Keyring, ApiPromise, WsProvider } from '@polkadot/api'; 
+import { waitReady, } from '@polkadot/wasm-crypto';
+import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
+import algosdk from 'algosdk';
+import { TezosToolkit } from "@taquito/taquito";
+import { InMemorySigner } from '@taquito/signer';
+import { b58cencode, prefix, validateAddress, ValidationResult } from '@taquito/utils';
+import * as sodium from 'libsodium-wrappers';
+import { DirectSecp256k1Wallet } from '@cosmjs/proto-signing';
+import { Secp256k1 } from '@cosmjs/crypto';
+import { sha256 } from '@cosmjs/crypto';
+import { SigningStargateClient, StargateClient } from "@cosmjs/stargate"
+import bchaddr from 'bchaddrjs';
+import { isValidClassicAddress } from 'ripple-address-codec';
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -252,6 +267,7 @@ import ConfirmRunPage from './pages/confirm_run_page'
 import SuccessfulSend from './pages/successful_send'
 import ViewNumber from './pages/view_number'
 import DialogPage from './pages/dialog_page'
+import SendReceiveCoinPage from './pages/send_receive_coin_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -263,15 +279,17 @@ import { NFTStorage, Blob } from 'nft.storage'
 import Dexie from 'dexie';
 import { locale } from 'dayjs';
 
+const { countries, zones } = require("moment-timezone/data/meta/latest.json");
+const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const Web3 = require('web3');
 const { ethers } = require("ethers");
 const ecies = require('ecies-geth');
 var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
 var bigInt = require("big-integer");
-
-const { countries, zones } = require("moment-timezone/data/meta/latest.json");
-const { toBech32, fromBech32,} = require('@harmony-js/crypto');
+const xrpl = require("xrpl")
+const BITBOXSDK = require('bitbox-sdk').BITBOX;
+const BITBOX = new BITBOXSDK();
 
 
 var TextDecoder = textEncoding.TextDecoder;
@@ -364,7 +382,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -413,12 +431,14 @@ class App extends Component {
 
     my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{},
     
-    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, 
+    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{},
 
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
 
-    number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600, has_account_been_loaded_from_storage:false, show_stack:true
+    number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600, has_account_been_loaded_from_storage:false, show_stack:true,
+
+    coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:''
   };
 
   get_static_assets(){
@@ -942,7 +962,9 @@ class App extends Component {
         '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.',
         
         /* new contract page */
-        '163':'configuration','164':'entry-fees','165':'private','166':'public','167':'Set a title for your new Contract.','168':'Set tags for indexing your new Contract.','169':'Add.','170':'Enter Contract.','171':'If set to enter-contract, youll enter the contract your creating in one transaction.','172':'Preset the new contract settings based on common use cases.','173':'👥 Workgroup Contract','174':'A contract representing shared consensus within an organization or group of people.','175':'🧘 Personal Contract','176':'A contract primarily used by one person.','177':'👷🏼 Work Contract','178':'A contract used for the job and contractor markets.','179':'⚭ Life Contract','180':'A contract representing shared consensus between two or more people for an extended period of time.','181':'Workgroup contract preset has been applied.','182':'Personal contract preset has been applied.','183':'Work contract preset has been applied.','184':'Life contract preset has been applied.','185':'Create a basic E5 contract.','186':'Next.','187':'Previous.','188':'Contract Type.','189':'set the type of contract, either private or public.','190':'Note: if set to private, youll be giving new accounts access to the contract manually after its created.','191':'Vote Bounty Split Proportion (Optional).','192':'The mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then, the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.','193':'Vote Bounty Split Proportion.','194':'Recommended: 3% - 5%','195':'Maximum Extend Enter Contract Limit.','196':'The maximum amount of time a sender can extend their stay in your new contract.','197':'Recommended: 1 dy.','198':'Minimum End Bounty Amount (Optional).','199':'The minimum amount of end that can be used as bounty for creating a proposal for your new contract.','200':'Minimum End Bounty Amount.','201':'Minimum Spend Bounty Amount (Optional).','202':'The minimum amount of spend that can be used as bounty for new proposals targeting your new contract.','203':'Minimum Spend Bounty Amount.','204':'Maximum Enter Contract Duration.','205':'The maximum amount of time an account can enter your new contract for.','206':'Recommended: 4wks.','207':'Auto Wait.','208':'If set to yes, all new propsals sent to your new contract are automatically voted wait for each participant in the contract.','209':'Recommended: no.','210':'Proposal Modify Expiry Duration Limit.','211':'The period of time before the expiry of a proposal, during which the propsal cannot be modified.','212':'Recommended: 3 Hrs.','213':'Moderator Modify Privelage.','214':'If set to modifiable, you as a moderator can directly modify your contracts configuration.','215':'Recommended: modifiable.','216':'Unlimited Extend Contract Time.','217':'If set to enabled, you can extend your stay in this contract at any time after entry.','218':'Recommended: enabled','219':'Maximum Proposal Expiry Submit Expiry Time Difference.','220':'The maximum difference in time between the proposal expiry and submit expiry time for all proposals sent to your new contract.','221':'Recommended: at least 2wks.','222':'Bounty Limit Type.','223':'If set to absolute, the bounty limits set for end and spend will be used as is and if set to relative, the bounty limits will be set relative to the state of the network and demand.','224':'Recommended: absolute','225':'Force Exit Enabled','226':'If set to enabled, you as a moderator can force other members of the contract to exit the contract.','227':'Recommended: enabled.','228':'Proposal Expiry Duration Limit.','229':'The minimum amount of time difference that can be used while setting the expiry time for a new proposal sent to your new contract.','230':'Recommended: 1hr - 3hrs.','231':'Default Consensus Majority Limit (optional).','232':'If you prefer the contract to be consensus majority instead of unanimous, set the majority proportion here. By default, 0% and 100% means unanimous consensus.','233':'Recommended: 70% to 80%.','234':'Voter Weight Exchange.','235':'Specify an exchange that will be used to calculate voter weights for all proposals sent to your new contract.','236':'Please put a valid date and time.','237':'Exchange ID.','238':'Add an exchange by its id or name, then the desired amount. The first exchange must be the End or Spend exchange.','239':'Minimum End Contract Amount.','240':'Minimum Spend Contract Amount.','241':'Price.','242':'Add Price.','243':'Please put a valid exchange id.','244':'Please put a valid amount.','245':'The first exchange must be the End or Spend exchange.','246':'You cant use the same exchange twice.','247':'Added entry fee price.','248':'That End amount is less than the minimum required by the main contract.','249':'That Spend amount is less than the minimum required by the main contract.','250':'Please put a valid voter weight exchange id.','251':'Please add a title for your Contract.','252':'That Contract title is too long.', '252a':'Auto-Wait will be disabled if you opt for this voter weight feature.',
+        '163':'configuration','164':'entry-fees','165':'private','166':'public','167':'Set a title for your new Contract.','168':'Set tags for indexing your new Contract.','169':'Add.','170':'Enter Contract.','171':'If set to enter-contract, youll enter the contract your creating in one transaction.','172':'Preset the new contract settings based on common use cases.','173':'👥 Workgroup Contract','174':'A contract representing shared consensus within an organization or group of people.','175':'🧘 Personal Contract','176':'A contract primarily used by one person.','177':'👷🏼 Work Contract','178':'A contract used for the job and contractor markets.',
+        '179':'⚭ Life Contract','180':'A contract representing shared consensus between two or more people for an extended period of time.','181':'Workgroup contract preset has been applied.','182':'Personal contract preset has been applied.','183':'Work contract preset has been applied.','184':'Life contract preset has been applied.','185':'Create a basic E5 contract.','186':'Next.','187':'Previous.','188':'Contract Type.','189':'set the type of contract, either private or public.','190':'Note: if set to private, youll be giving new accounts access to the contract manually after its created.','191':'Vote Bounty Split Proportion (Optional).','192':'The mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then, the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.','193':'Vote Bounty Split Proportion.','194':'Recommended: 3% - 5%','195':'Maximum Extend Enter Contract Limit.','196':'The maximum amount of time a sender can extend their stay in your new contract.','197':'Recommended: 1 dy.','198':'Minimum End Bounty Amount (Optional).','199':'The minimum amount of end that can be used as bounty for creating a proposal for your new contract.','200':'Minimum End Bounty Amount.','201':'Minimum Spend Bounty Amount (Optional).','202':'The minimum amount of spend that can be used as bounty for new proposals targeting your new contract.','203':'Minimum Spend Bounty Amount.','204':'Maximum Enter Contract Duration.','205':'The maximum amount of time an account can enter your new contract for.','206':'Recommended: 4wks.','207':'Auto Wait.','208':'If set to yes, all new propsals sent to your new contract are automatically voted wait for each participant in the contract.','209':'Recommended: no.','210':'Proposal Modify Expiry Duration Limit.','211':'The period of time before the expiry of a proposal, during which the propsal cannot be modified.','212':'Recommended: 3 Hrs.','213':'Moderator Modify Privelage.','214':'If set to modifiable, you as a moderator can directly modify your contracts configuration.','215':'Recommended: modifiable.','216':'Unlimited Extend Contract Time.','217':'If set to enabled, you can extend your stay in this contract at any time after entry.',
+        '218':'Recommended: enabled','219':'Maximum Proposal Expiry Submit Expiry Time Difference.','220':'The maximum difference in time between the proposal expiry and submit expiry time for all proposals sent to your new contract.','221':'Recommended: at least 2wks.','222':'Bounty Limit Type.','223':'If set to absolute, the bounty limits set for end and spend will be used as is and if set to relative, the bounty limits will be set relative to the state of the network and demand.','224':'Recommended: absolute','225':'Force Exit Enabled','226':'If set to enabled, you as a moderator can force other members of the contract to exit the contract.','227':'Recommended: enabled.','228':'Proposal Expiry Duration Limit.','229':'The minimum amount of time difference that can be used while setting the expiry time for a new proposal sent to your new contract.','230':'Recommended: 1hr - 3hrs.','231':'Default Consensus Majority Limit (optional).','232':'If you prefer the contract to be consensus majority instead of unanimous, set the majority proportion here. By default, 0% and 100% means unanimous consensus.','233':'Recommended: 70% to 80%.','234':'Voter Weight Exchange.','235':'Specify an exchange that will be used to calculate voter weights for all proposals sent to your new contract.','236':'Please put a valid date and time.','237':'Exchange ID.','238':'Add an exchange by its id or name, then the desired amount. The first exchange must be the End or Spend exchange.','239':'Minimum End Contract Amount.','240':'Minimum Spend Contract Amount.','241':'Price.','242':'Add Price.','243':'Please put a valid exchange id.','244':'Please put a valid amount.','245':'The first exchange must be the End or Spend exchange.','246':'You cant use the same exchange twice.','247':'Added entry fee price.','248':'That End amount is less than the minimum required by the main contract.','249':'That Spend amount is less than the minimum required by the main contract.','250':'Please put a valid voter weight exchange id.','251':'Please add a title for your Contract.','252':'That Contract title is too long.', '252a':'Auto-Wait will be disabled if you opt for this voter weight feature.',
         
         /* new contractor page */
         '253':'contractor','254':'rates','255':'Set a title for your new contractor post. It should be task specific.','256':'Set tags for indexing your new contractor post.','257':'Search an object by its title or id, then tap it to add it to the new Contractor Post.','258':'The link is already in the Contractor Post.','259':'Link added to Contractor Post.','260':'Select an exchange by its ID.','261':'Fee per hour.','262':'Set your desired fee per hour.','263':'Add fee.','264':'Please put a valid Exchange ID.','265':'Please put a valid amount.','266':'You cant use the same exchange twice.','267':'Added your desired fee.','268':'Account 3','269':'Account 5','270':'Add at least 3 tags first.','271':'Please add a title for your Contractor Post','272':'That title is too long.', '272a':'Fee type.','272b':'Set your preferred fee type below.','272c':'Fee per job.','272d':'Set your desired fee per job.','272e':'Fees Per Job.','272f':'The amounts they charge per job.','272g':'',
@@ -957,16 +979,25 @@ class App extends Component {
         '297':'post','298':'subscription-lock','299':'invisible','300':'visible','301':'Set a title for your new Post.','302':'Set tags for indexing your new Post.','303':'Subscription Locked Post Preview.','304':'If set to visible, a preview of your new post will be shown to outsiders if subscription locked.','305':'Subscription Lock (Optional).','306':'Post exclusively to accounts that have paid the subscription you choose below.','307':'Enter your preferred text then tap add to add it.','308':'Search an object by its title or ID, then tap it to add it to the new Post.','309':'The link is already in the Post.','310':'Link added to Post.','311':'Please add a title for your new Post.', '311a':'nsfw', '311b':'masked', '311c':'Mark as NSFW.', '311d':'If set to nsfw, post will be marked as not safe for work.', '311e':'Masked for Outsiders.', '311f':'If set to masked, your post will not be visible to users without accounts.', '311g':'',
         
         /* new proposal page */
-        '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ','345':'Set tags for indexing your new Proposal.','346':'Consensus Type.','347':'Set the type of action you wish to perform with the contract through your new proposal.','348':'Proposal Expiry Time','349':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.','350':'Proposal Expiry Duration Limit.','351':'Time from now.','352':'Modify Target (For Reconfiguration Action)','353':'The target object thats being modified if the consensus type is reconfig.','354':'Object ID...','355':'Consensus Submit Expiry Time.','356':'The time after which you cannot submit your new proposal.','357':'Maximum Proposal Expiry Submit Expiry Time Difference.','358':'You cant use a time before now.','359':'That submit time is invalid','360':'That proposal expiry time is less than the minimum required by the contract.','361':'Contract','362':'This Contract','363':'Main Contract','364':'Contract ID 2','365':'End Exchange','366':'Account ID 3','367':'Spend Exchange','368':'Account ID 5','369':'My Account','370':'Account','371':'End Token','372':'Spend Token','373':'Exchange ID 3','374':'Exchange ID 5','375':'Burn Account','376':'Account ID 0','377':'End Balance.','378':'Spend Balance.','379':'Spend Target.','380':'Set a target for the spend action.','381':'Target ID...','382':'Exchange.','383':'Set the token your spending.','384':'Spend Amount.','385':'Set an amount for the spend action.','386':'Picked Amount.','387':'Please put a valid spend target.','388':'Please put a valid exchange id.','389':'Please put a valid amount.','390':'Spend action added to proposal.','391':'Units','392':'Add Change.','393':'Current ','394':'Current Value','395':'Exchange Ratio X','396':'Exchange Ratio Y','397':'Reconfiguration action added.','398':'Please put a valid account ID.','399':'Position.','400':'Proportion.','401':'Duration.','402':'Value: ','403':'Target ID.','404':'Target Exchange.','405':'Set the exchange id you wish to run the exchange transfer from.','406':'Target Receiver','407':'Target Receiver...','408':'Token Targets','409':'Set the target token ID your transferring from the exchange.','410':'Token Target ID...','411':'Target Amount','412':'Add Transfer Action.','413':'Set the account set to receive the token amounts.','414':'Please put a valid exchange ID.','415':'Please put a valid receiver ID.','416':'Please put a valid token ID.','417':'Please put a valid amount.','418':'Transfer action added.','419':'Receiver ID: ','420':'The first bounty exchange should be the End or Spend Exchange.','421':'Minimum Spend Bounty Amount.','422':'Minimum End Bounty Amount.','423':'Spend Balance.','424':'End Balance.','425':'Target Amount.','426':'Add Bounty.','427':'You cant use the same exchange twice.','428':'Bounty amount added.','429':'Token ID: ','430':'Add some tags first.','431':'Add a title first.','432':'That title is too long.','433':'You need to add bounty for your new proposal.','434':'One of your token balances is insufficient for the bounty amount specified.','435':'The proposal submit expiry time youve set cant be before now.','436':'The proposal submit expiry time youve set is less than the time difference required by the contract.','437':'That proposal expiry time youve set is less than the minimum required by the contract.','438':'The proposal expiry time youve set cant be before now', '438a':'Target Authority', '438b':'Target Beneficiary', '438c':'Minimum Buy Amount', '438d':'Maximum Buy Amount', '438e':'Minimum Cancellable Balance Amount','438f':'Search an object by its title or id, then tap it to add it to the new Proposal','438g':'Link added to new Proposal Item.','438h':'Transaction Gas Limit','438i':'Enter your preferred text then tap add to add it to the new Proposal.', '438j':'Edit Reconfig Prices', '438k':'Change the prices of your target reconfig object.', '438l':'The modify target youve set is invalid.', '438m':'Auto-Vote Yes.', '438n':'If set to vote, e will automatically vote yes for you in this new proposal.', '438o':'vote', '438p':'', '438q':'',
+        '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ',
+        '345':'Set tags for indexing your new Proposal.','346':'Consensus Type.','347':'Set the type of action you wish to perform with the contract through your new proposal.','348':'Proposal Expiry Time','349':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.','350':'Proposal Expiry Duration Limit.','351':'Time from now.','352':'Modify Target (For Reconfiguration Action)','353':'The target object thats being modified if the consensus type is reconfig.','354':'Object ID...','355':'Consensus Submit Expiry Time.','356':'The time after which you cannot submit your new proposal.','357':'Maximum Proposal Expiry Submit Expiry Time Difference.','358':'You cant use a time before now.','359':'That submit time is invalid','360':'That proposal expiry time is less than the minimum required by the contract.','361':'Contract','362':'This Contract','363':'Main Contract','364':'Contract ID 2','365':'End Exchange','366':'Account ID 3','367':'Spend Exchange','368':'Account ID 5','369':'My Account','370':'Account','371':'End Token','372':'Spend Token','373':'Exchange ID 3','374':'Exchange ID 5','375':'Burn Account','376':'Account ID 0','377':'End Balance.','378':'Spend Balance.','379':'Spend Target.','380':'Set a target for the spend action.','381':'Target ID...','382':'Exchange.','383':'Set the token your spending.','384':'Spend Amount.','385':'Set an amount for the spend action.','386':'Picked Amount.','387':'Please put a valid spend target.',
+        '388':'Please put a valid exchange id.','389':'Please put a valid amount.','390':'Spend action added to proposal.','391':'Units','392':'Add Change.','393':'Current ','394':'Current Value','395':'Exchange Ratio X','396':'Exchange Ratio Y','397':'Reconfiguration action added.','398':'Please put a valid account ID.','399':'Position.','400':'Proportion.','401':'Duration.','402':'Value: ','403':'Target ID.','404':'Target Exchange.','405':'Set the exchange id you wish to run the exchange transfer from.','406':'Target Receiver','407':'Target Receiver...','408':'Token Targets','409':'Set the target token ID your transferring from the exchange.','410':'Token Target ID...','411':'Target Amount','412':'Add Transfer Action.','413':'Set the account set to receive the token amounts.','414':'Please put a valid exchange ID.','415':'Please put a valid receiver ID.','416':'Please put a valid token ID.','417':'Please put a valid amount.','418':'Transfer action added.','419':'Receiver ID: ','420':'The first bounty exchange should be the End or Spend Exchange.','421':'Minimum Spend Bounty Amount.','422':'Minimum End Bounty Amount.','423':'Spend Balance.',
+        '424':'End Balance.','425':'Target Amount.','426':'Add Bounty.','427':'You cant use the same exchange twice.','428':'Bounty amount added.','429':'Token ID: ','430':'Add some tags first.','431':'Add a title first.','432':'That title is too long.','433':'You need to add bounty for your new proposal.','434':'One of your token balances is insufficient for the bounty amount specified.','435':'The proposal submit expiry time youve set cant be before now.','436':'The proposal submit expiry time youve set is less than the time difference required by the contract.','437':'That proposal expiry time youve set is less than the minimum required by the contract.','438':'The proposal expiry time youve set cant be before now', '438a':'Target Authority', '438b':'Target Beneficiary', '438c':'Minimum Buy Amount', '438d':'Maximum Buy Amount', '438e':'Minimum Cancellable Balance Amount','438f':'Search an object by its title or id, then tap it to add it to the new Proposal','438g':'Link added to new Proposal Item.','438h':'Transaction Gas Limit','438i':'Enter your preferred text then tap add to add it to the new Proposal.', '438j':'Edit Reconfig Prices', '438k':'Change the prices of your target reconfig object.', '438l':'The modify target youve set is invalid.', '438m':'Auto-Vote Yes.', '438n':'If set to vote, e will automatically vote yes for you in this new proposal.', '438o':'vote', '438p':'', '438q':'',
         
         /* new storefront item page */
-        '439':'storefront-item','440':'configuration','441':'variants','442':'invisible','443':'masked','444':'unmasked','445':'items','446':'grams','447':'kilograms','448':'ounces','449':'pounds','450':'centimeters','451':'meters','452':'inches','453':'feet','454':'mililiters','455':'liters','456':'gallons','457':'listed','458':'delisted','459':'in-stock','460':'out-of-stock','461':'Unit Denomination.','462':'Specify the denomination of the item below.','463':'Unit Denomination.','464':'Specify the denomination of the item from the tag picker below.','465':'Set denomination: ','466':'Target Payment Recipient.','467':'Set the account ID thats set to receive the purchase payments for your new item.','468':'Fulfilment Location.','469':'Set location of the pick up station for your item when its ordered using a bag and contractors.','470':'Location Details...','471':'Direct Purchase Option.','472':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients.','473':'Product Chatroom.','474':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section.','475':'Product Listing.','476':'If set to delisted, the item will not be visible for purchasing.','477':'Product Stock.','478':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.','479':'Fulfilment Accounts.','480':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients.','481':'Direct Purchase Shipping Fee.','482':'The shipping fee you charge for shipping your item when directly purchased by your clients.','483':'tokens','484':'Price','485':'Add Price.','486':'Please put a valid exchange ID.','487':'Please put a valid amount.','488':'You cant use the same exchange twice.','489':'Added shipping price.','490':'Please put a valid account ID.','491':'Added the account.','492':'Account.','493':'My Account.','494':'Set a title for your new Storefront Item.','495':'Enter Title...','496':'Set tags for indexing your new Storefront Item.','497':'Enter your preferred text then tap add to add it to the new Storefront Item.','498':'Search an object by its title or ID, then tap it to add it to the new Storefront Item.','499':'Search.','500':'The link is already in the Storefront Item.','501':'Link added to new Storefront Item.','502':'Price per unit.','503':'Specify the price for one unit of your new items variant.','504':'Exchange ID','505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'Enter Account ID','535c':'Set the details for a variant of your new storefront item.','535d':'Editing that variant.','535e':'Add Variant.','535f':'Add a new variant of the item with the details set above.',
+        '439':'storefront-item','440':'configuration','441':'variants','442':'invisible','443':'masked','444':'unmasked','445':'items','446':'grams','447':'kilograms','448':'ounces','449':'pounds','450':'centimeters','451':'meters','452':'inches','453':'feet','454':'mililiters','455':'liters','456':'gallons','457':'listed','458':'delisted','459':'in-stock','460':'out-of-stock','461':'Unit Denomination.','462':'Specify the denomination of the item below.','463':'Unit Denomination.','464':'Specify the denomination of the item from the tag picker below.','465':'Set denomination: ','466':'Target Payment Recipient.','467':'Set the account ID thats set to receive the purchase payments for your new item.','468':'Fulfilment Location.','469':'Set location of the pick up station for your item when its ordered using a bag and contractors.','470':'Location Details...','471':'Direct Purchase Option.','472':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients.','473':'Product Chatroom.',
+        '474':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section.','475':'Product Listing.','476':'If set to delisted, the item will not be visible for purchasing.','477':'Product Stock.','478':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.','479':'Fulfilment Accounts.','480':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients.','481':'Direct Purchase Shipping Fee.','482':'The shipping fee you charge for shipping your item when directly purchased by your clients.','483':'tokens','484':'Price','485':'Add Price.','486':'Please put a valid exchange ID.','487':'Please put a valid amount.','488':'You cant use the same exchange twice.','489':'Added shipping price.','490':'Please put a valid account ID.','491':'Added the account.','492':'Account.','493':'My Account.','494':'Set a title for your new Storefront Item.','495':'Enter Title...','496':'Set tags for indexing your new Storefront Item.','497':'Enter your preferred text then tap add to add it to the new Storefront Item.','498':'Search an object by its title or ID, then tap it to add it to the new Storefront Item.','499':'Search.','500':'The link is already in the Storefront Item.','501':'Link added to new Storefront Item.','502':'Price per unit.','503':'Specify the price for one unit of your new items variant.','504':'Exchange ID',
+        '505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'Enter Account ID','535c':'Set the details for a variant of your new storefront item.','535d':'Editing that variant.','535e':'Add Variant.','535f':'Add a new variant of the item with the details set above.',
         
         /* new subscription page */
         '536':'subscription','537':'configuration','538':'authorities','539':'prices','540':'false','541':'true','542':'moderators','543':'interactable','544':'enabled','545':'disabled','546':'Set a name for your new Subscription.','547':'Enter Title...','548':'Set some tags for indexing your new Subscription.','549':'Enter Tag...','550':'Add.','551':'Create a basic E5 Subscription.','552':'Next','553':'Previous','554':'Cancellable.','555':'If set to true, subscription payers can refund their subscription payments.','556':'Recommended: false.','557':'Time Unit','558':'The amount of time thats used as a unit when paying for your new subscription.','559':'Recommended: 1 min.','560':'Minimum Buy Amount.','561':'Minimum amount of time units that can be paid for your new subscription.','562':'units','563':'Recommended: at least 1','564':'Maximum Buy Amount','565':'Maximum amount of time units that can be paid for your new subscription.','566':'Minimum Cancellable Amount(For Cancellable Subscriptions)','567':'The minimum amount of time units that can be left when cancelling your new subscriptions payments.','568':'Minimum Cancellable Amount','569':'Recommended: at least 1','570':'Access Rights','571':'If enabled, access to the subscription will be restricted to moderators and specified accounts.','572':'Set the authority ID for your new subscription.','573':'Set the subscription beneficiary ID for your new subscription.','574':'moderators','575':'interactable','576':'Moderator ID','577':'Set the account id for your targeted moderator','578':'Add Moderator','579':'Account ID','580':'Interactable ID','581':'Set the account id for your targeted account, and expiry time for their interactability','582':'Add Interactable Account.','583':'Please put a valid account ID.','584':'Added interactable account.','585':'Interactable Account ID: ','586':'Until: ','587':'Exchange ID','588':'Type an exchange by its id, then the desired price and click add.','589':'Price','590':'tokens','591':'Add Price','592':'Please put a valid exchange ID.','593':'Please put a valid amount.','594':'You cant use the same exchange twice.','595':'Added price.','596':'My Account','597':'Account','598':'Add some tags first.','599':'Add a name first.','600':'That name is too long.', '600a':'Enter Authority', '600b':'Enter Beneficiary ID...',
         
         /* new token page */
-        '601':'token','602':'basic','603':'custom','604':'token-authorities','605':'token-prices','606':'capped','607':'uncapped','608':'locked','609':'unlocked','610':'locked','611':'unlocked','612':'partially-custom','613':'fully-custom','614':'fixed','615':'spread','616':'enabled','617':'disabled','618':'moderators','619':'interactable','620':'Set a name for your Token. No spaces should be used.','621':'Enter Name..','622':'Set a symbol for your Token. No spaces should be used.','623':'Enter Symbol...','624':'Set tags for indexing your Token.','625':'Enter Tag...','626':'Set an image for your Token.','627':'Use a smaller image.','628':'Preset the new tokens settings based on common use cases.','629':'📈 E-Token','630':'A fixed supply token used for managing stake and funding a workgroup.','631':'☝️ Paid Token','632':'A fixed supply token with a very large supply similar to END.','633':'🫰 Free Token','634':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.','635':'🔧 Utility Token','636':'An uncapped, general purpose token which is bought and sold from its exchange.','637':'e-token preset has been applied.','638':'End token preset has been applied.','639':'Spend token preset has been applied.','640':'Utility token preset has been applied.','641':'Next.','642':'Previous.','643':'Token Supply(For Capped Tokens)','644':'The supply of a capped token available for buying (for capped tokens)','645':'Token Supply','646':'tokens','647':'Recommended: 100,000,000e2','648':'Buy Limit','649':'The maximum amount of tokens that can be bought in one transaction.','650':'Trust Fee','651':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.','652':'Recommended: 3.5%','653':'Sell Limit','654':'The maximum amount of your new token a sender can sell in a transaction.','655':'Create a custom E5 token.','656':'Set the token type.','657':'Capped token (with limited supply) or uncapped token (with unlimited supply)','658':'Minimum Time Between Swap','659':'The minimum amount of time a sender has to wait between making a swap for a given token.','660':'Trust Fee.','661':'Proportion or percentage fee enforced on all contract spending that takes place using token.','662':'Recommended: 3.5%','663':'Minimum Transactions Between Swap','664':'The minimum number of transactions sender has to make between swaps for your new token.','665':'transactions','666':'Minimum Blocks Between Swap','667':'The minimum number of blocks sender has to wait between making a swap for your new token.','668':'blocks','669':'Minimum Entered Contracts Between Swap','670':'The minimum amount of contracts sender should enter before interacting with your new exchange again.','671':'Minimum Transactions For First Buy','672':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.','673':'contracts','674':'Minimum Entered Contracts For First Buy.','675':'The minimum number of contracts sender should have entered before first buy.','676':'Unlocked Liquidity','677':'If set to unlocked, You have direct access to the token exchanges liquidity','678':'Recommended: unlocked','679':'Unlocked Supply','680':'If set to unlocked, you can mint more of the token outside the exchange.','681':'Recommended: unlocked','682':'Fully Custom','683':'If set to fully-custom, you have full access to the token exchanges configuration','684':'Recommended: fully-custom','685':'Block Limit(For Uncapped Spend Tokens)','686':'The maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.','687':'Block Limit.','688':'Recommended: ','689':'Halving type (for Uncapped Spend Tokens)','690':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.','691':'Recommended: Spread','692':'Maturity Limit(For Uncapped Spend Tokens)','693':'Amount of your token used in calculating the active block limit.','694':'Maturity Limit','695':'Internal Block Halving(For Uncapped Spend Tokens)','696':'Proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.','697':'Internal Block Halving Proportion','698':'Recommended: 40% - 51%','699':'Block Limit Reduction(For Uncapped Spend Tokens)','700':'Proportion or percentage used in reducing the active block limit reduction proportion between blocks if the block limit is exceeded in current block.','701':'Block Limit Reduction Proportion','702':'Recommended: 65% - 91%','703':'Block Reset Limit(For Uncapped Spend Tokens)','704':'The maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.','705':'Block Reset Limit','706':'Recommended: 3','707':'Block Limit Sensitivity (for Uncapped Spend Tokens)','708':'The sensitivity of your new exchange to increasing demand','709':'Recommended: 2','710':'Exchange Ratio X','711':'The buy output exchange ratio X for your new token','712':'Exchange Ratio X:Y','713':'Exchange Ratio Y','714':'The buy input exchange ratio Y for your new token','715':'Access Rights','716':'If enabled, access to the exchange will be restricted to moderators and specified accounts','717':'Exchange Authority ID','718':'The account set to control the exchange','719':'Set Exchange Authority ID','720':'Trust Fee Target ID','721':'The account set to receive trust fee when collected from contract spend actions','722':'Set Trust Fee Target ID','723':'My Account','724':'Account','725':'Moderator ID','726':'Moderator ID','727':'Set the account id for your targeted moderator.','728':'Add Moderator','729':'Please put a valid account ID.','730':'Added the account as a moderator.','731':'Account ID','732':'Interactable ID','733':'Set the account id for your targeted account, and expiry time for their interactability','734':'Add Interactable Account','735':'Please put a valid account id','736':'Added interactable account.','737':'Exchange ID','738':'The an exchange by its id, then the desired price and click add.','739':'Price.','740':'Add Price.','741':'Please put a valid exchange ID.','742':'Please put a valid amount.','743':'You cant use the same exchange twice','744':'Added your set price.','745':'Add some tags first.','746':'Please add a name for your token.','747':'Please add a symbol for your token.','748':'That token name is too long.','749':'That token name is invalid.','750':'That token symbol is invalid.','751':'','752':'That token symbol is already in use.','752a':'That token symbol is too long.','752b':'spend-simulator','752c':'control','752d':'config','752e':'Mint Volume.','752f':'The simulated mint volume to be used.','752g':'Simulated Block Limit Sensitivity','752h':'The sensitivity of the simulated exchange to increasing demand.','752i':'Simulated Internal Block Halving','752j':'Simulated Block Limit Reduction','752k':'Simulated Block Reset Limit','752l':'Simulated Mint Limit.','752m':'Simulated Block Limit.','752n':'Simulated Maturity Limit','752o':'Simulated Halving Type.','752p':'Simulate a Spend token based on a custom configuration of your choice.','752q':'Chart containing the total supply of the simulated token over simulated time.','752r':'Simulator Block Time.','752s':'Simulator Block Number.','752t':'Simulator Active Block Limit Reduction Proportion.','752u':'Total Minted For Current Block','752v':'Simulated Total Supply.','752w':'Pause/Play.','752x':'Reset.','752y':'Pause, Start or Resume the simulator with the set configuration.','752z':'Stop and Reset the simulator.', '752aa':'Simulator Started.','752ab':'Simulator Paused.','752ac':'Simulator Resumed.','752ad':'Simulator Stopped','752ae':'Mint Rate','752af':' mints per second', '752ag':'The simulator configuration has been applied to your new token.', '752ah':'Apply Configuration','752ai':'Set and apply the simulator`s configuration in your new token.', '752aj':'Simulated Block Time.', '752ak':'Set the simulated block time below.',
+        '601':'token','602':'basic','603':'custom','604':'token-authorities','605':'token-prices','606':'capped','607':'uncapped','608':'locked','609':'unlocked','610':'locked','611':'unlocked','612':'partially-custom','613':'fully-custom','614':'fixed','615':'spread','616':'enabled','617':'disabled','618':'moderators','619':'interactable','620':'Set a name for your Token. No spaces should be used.','621':'Enter Name..','622':'Set a symbol for your Token. No spaces should be used.','623':'Enter Symbol...','624':'Set tags for indexing your Token.','625':'Enter Tag...','626':'Set an image for your Token.','627':'Use a smaller image.','628':'Preset the new tokens settings based on common use cases.','629':'📈 E-Token','630':'A fixed supply token used for managing stake and funding a workgroup.','631':'☝️ Paid Token','632':'A fixed supply token with a very large supply similar to END.','633':'🫰 Free Token','634':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.','635':'🔧 Utility Token','636':'An uncapped, general purpose token which is bought and sold from its exchange.','637':'e-token preset has been applied.','638':'End token preset has been applied.','639':'Spend token preset has been applied.','640':'Utility token preset has been applied.','641':'Next.','642':'Previous.','643':'Token Supply(For Capped Tokens)','644':'The supply of a capped token available for buying (for capped tokens)','645':'Token Supply','646':'tokens','647':'Recommended: 100,000,000e2','648':'Buy Limit','649':'The maximum amount of tokens that can be bought in one transaction.','650':'Trust Fee','651':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.','652':'Recommended: 3.5%','653':'Sell Limit','654':'The maximum amount of your new token a sender can sell in a transaction.','655':'Create a custom E5 token.','656':'Set the token type.',
+        '657':'Capped token (with limited supply) or uncapped token (with unlimited supply)','658':'Minimum Time Between Swap','659':'The minimum amount of time a sender has to wait between making a swap for a given token.','660':'Trust Fee.','661':'Proportion or percentage fee enforced on all contract spending that takes place using token.','662':'Recommended: 3.5%','663':'Minimum Transactions Between Swap','664':'The minimum number of transactions sender has to make between swaps for your new token.','665':'transactions','666':'Minimum Blocks Between Swap','667':'The minimum number of blocks sender has to wait between making a swap for your new token.','668':'blocks','669':'Minimum Entered Contracts Between Swap','670':'The minimum amount of contracts sender should enter before interacting with your new exchange again.','671':'Minimum Transactions For First Buy','672':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.','673':'contracts','674':'Minimum Entered Contracts For First Buy.','675':'The minimum number of contracts sender should have entered before first buy.','676':'Unlocked Liquidity','677':'If set to unlocked, You have direct access to the token exchanges liquidity','678':'Recommended: unlocked','679':'Unlocked Supply','680':'If set to unlocked, you can mint more of the token outside the exchange.','681':'Recommended: unlocked','682':'Fully Custom','683':'If set to fully-custom, you have full access to the token exchanges configuration','684':'Recommended: fully-custom','685':'Block Limit(For Uncapped Spend Tokens)','686':'The maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.','687':'Block Limit.','688':'Recommended: ','689':'Halving type (for Uncapped Spend Tokens)','690':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.','691':'Recommended: Spread','692':'Maturity Limit(For Uncapped Spend Tokens)',
+        '693':'Amount of your token used in calculating the active block limit.','694':'Maturity Limit','695':'Internal Block Halving(For Uncapped Spend Tokens)','696':'Proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.','697':'Internal Block Halving Proportion','698':'Recommended: 40% - 51%','699':'Block Limit Reduction(For Uncapped Spend Tokens)','700':'Proportion or percentage used in reducing the active block limit reduction proportion between blocks if the block limit is exceeded in current block.','701':'Block Limit Reduction Proportion','702':'Recommended: 65% - 91%','703':'Block Reset Limit(For Uncapped Spend Tokens)','704':'The maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.','705':'Block Reset Limit','706':'Recommended: 3','707':'Block Limit Sensitivity (for Uncapped Spend Tokens)','708':'The sensitivity of your new exchange to increasing demand','709':'Recommended: 2','710':'Exchange Ratio X','711':'The buy output exchange ratio X for your new token','712':'Exchange Ratio X:Y',
+        '713':'Exchange Ratio Y','714':'The buy input exchange ratio Y for your new token','715':'Access Rights','716':'If enabled, access to the exchange will be restricted to moderators and specified accounts','717':'Exchange Authority ID','718':'The account set to control the exchange','719':'Set Exchange Authority ID','720':'Trust Fee Target ID','721':'The account set to receive trust fee when collected from contract spend actions','722':'Set Trust Fee Target ID','723':'My Account','724':'Account','725':'Moderator ID','726':'Moderator ID','727':'Set the account id for your targeted moderator.','728':'Add Moderator','729':'Please put a valid account ID.','730':'Added the account as a moderator.','731':'Account ID','732':'Interactable ID','733':'Set the account id for your targeted account, and expiry time for their interactability','734':'Add Interactable Account','735':'Please put a valid account id','736':'Added interactable account.','737':'Exchange ID','738':'The an exchange by its id, then the desired price and click add.','739':'Price.','740':'Add Price.','741':'Please put a valid exchange ID.','742':'Please put a valid amount.','743':'You cant use the same exchange twice','744':'Added your set price.','745':'Add some tags first.','746':'Please add a name for your token.','747':'Please add a symbol for your token.','748':'That token name is too long.','749':'That token name is invalid.','750':'That token symbol is invalid.','751':'','752':'That token symbol is already in use.','752a':'That token symbol is too long.','752b':'spend-simulator','752c':'control',
+        '752d':'config','752e':'Mint Volume.','752f':'The simulated mint volume to be used.','752g':'Simulated Block Limit Sensitivity','752h':'The sensitivity of the simulated exchange to increasing demand.','752i':'Simulated Internal Block Halving','752j':'Simulated Block Limit Reduction','752k':'Simulated Block Reset Limit','752l':'Simulated Mint Limit.','752m':'Simulated Block Limit.','752n':'Simulated Maturity Limit','752o':'Simulated Halving Type.','752p':'Simulate a Spend token based on a custom configuration of your choice.','752q':'Chart containing the total supply of the simulated token over simulated time.','752r':'Simulator Block Time.','752s':'Simulator Block Number.','752t':'Simulator Active Block Limit Reduction Proportion.','752u':'Total Minted For Current Block','752v':'Simulated Total Supply.','752w':'Pause/Play.','752x':'Reset.','752y':'Pause, Start or Resume the simulator with the set configuration.','752z':'Stop and Reset the simulator.', '752aa':'Simulator Started.','752ab':'Simulator Paused.','752ac':'Simulator Resumed.','752ad':'Simulator Stopped','752ae':'Mint Rate','752af':' mints per second', '752ag':'The simulator configuration has been applied to your new token.', '752ah':'Apply Configuration','752ai':'Set and apply the simulator`s configuration in your new token.', '752aj':'Simulated Block Time.', '752ak':'Set the simulated block time below.',
         
         /* edit pages */
         '753':'edit-channel','754':'unlocked','755':'locked','756':'tokens','757':'Add some tags first.','758':'Add a title fro your job post.','759':'That title is too long.','760':'job','761':'edit-token','762':'edit-channel','763':'edit-contractor','764':'edit-job','765':'edit-post','766':'edit-storefront-item','767':'edit-token', '767a':'Take down post.', '767b':'If set to taken-down, your post will not be visible to others except for yourself.', '767c':'taken-down',
@@ -1038,7 +1069,7 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'','1264k':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
@@ -1062,7 +1093,10 @@ class App extends Component {
         '1369':'send','1370':'receive','1371':'Send Ether using the address shown below.','1372':'Sender Wallet Address','1373':'Receiver Wallet Address','1374':'Set Receiver Address Here','1375':'Balance in Wei','1376':'Balance in Ether','1377':'Transactions (2.3M Gas average)','1378':'transactions','1379':'Gas Price','1380':'Gas Price in Gwei.','1381':'Amount to Send.','1382':'Set the amount to send in the number picker below.','1383':'Picked Amount In Ether and Wei.','1384':'Set Maximum','1385':'Transaction Gas Price','1386':'Set the gas price for your transaction below.','1387':'Picked Gas Price.','1388':'Send Ether to Address','1389':'Maximum amount set.','1390':'Open Scanner','1391':'Scan for an address using a built in scanner','1392':'Scan','1393':'Send Ether Confirmation','1394':'Confirm that you want to send Ether to the targeted recipient','1395':'Picked Amount In Ether and Wei','1396':'Sender Wallet Address','1397':'Receiver Wallet Address','1398':'Send Ether','1399':'Value in Ether and Wei ','1400':'Receive Ether using the address shown below','1401':'Wallet Address','1402':'Copy to Clipboard','1403':'Copied to clipboard.','1404':'Your ether balance is insufficient to fulfil that transaction.','1405':'running your send transaction...','1406':'Please set a valid amount.','1407':'Please set a valid recipient.','1407a':'Max Priority Fee per Gas.', '1407b':'Set the max priority fee per gas for your transaction below.', '1407c':'Max Fee per Gas.', '1407d':'Set the maximum amount of gas fee your willing to pay for your transaction below.', '1407e':'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.', '1407f':'Confirmation.', '1407g':'Picked Max Priority Gas Price.', '1407h':'Picked Max Fee Gas Price.', '1407i':'', '1407j':'', '1407k':'', '1407l':'', '1407m':'',
         
         /* stack */
-        '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID: ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count','1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.','1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Transaction Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.',
+        '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID: ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count',
+        '1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.',
+        '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
+        '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Transaction Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1086,7 +1120,9 @@ class App extends Component {
         '1771':'Timestamp','1772':'Transaction Age','1773':'Transaction Block','1774':'Transaction Stack Size','1775':'Gas Consumed','1776':'Sender Account ID','1777':'Sender Account Address','1778':'Included Value in Ether','1779':'Included Value in Wei','1780':'Coinbase Address',
         
         /* view transaction page */
-        '1781':'view-transaction','1782':'Stack ID: ','1783':'Type:','1784':'Delete the transaction completely','1785':'Delete','1786':'Confirm Delete Action','1787':'Are you sure?','1788':'Make some changes to the transaction.','1789':'Edit','1790':'If set to shown, the transaction will be included during a run','1791':'If set to hidden, the transaction will be ignored when running your transactions','1792':'Show Transaction','1793':'Hide Transaction','1794':'The transaction is Hidden','1795':'The transaction is Shown','1796':'status','1797':'Item deleted from stack.','1798':'transaction shown','1799':'transaction hidden','1800':'The set access rights setting for your new contract.','1801':'Moderator Accounts','1802':'Youve set ','1803':' moderators','1804':'Interactable Accounts','1805':' accounts','1806':'For ','1807':'The set access rights setting for your new token.','1808':'Capped','1809':'Uncapped','1810':'2 (Main Contract)','1811':'Fixed','1812':'Spread','1813':'Token Identifier','1814':'Token Type','1814':'Unlocked Supply','1815':'Unlocked Liquidity','1816':'Fully Custom','1817':'Mint Limit','1818':'Authority: ','1819':'Exchange Authority Identifier','1820':'Target: ','1821':'Trust Fee Target Identifier','1822':'Mint/Burn Token','1823':'Authority Mint Limit (percentage of supply)','1824':'Current Block Mint Total','1825':'Active Block Limit Reduction Proportion','1826':'The set access rights setting for your new contract','1827':'non-cancellable','1828':'cancellable','1829':'Block ID','1830':'Authority ID','1831':'Minimum Buy Amount','1832':'time-units','1833':'Subscription Type','1834':'Maximum Buy Amount','1835':'time-units','1836':'Minimum Cancellable Amount','1837':'Time Unit','1838':'Remaining Subscription Time','1839':'Subscription Beneficiary','1840':'Entry Fees','1841':' tokens used','1842':'Price Amounts','1843':'The amounts you are offering for the job.','1844':'The set access rights setting for your new channel','1845':'The items variant details are shown below','1846':'Number of Units','1847':'Your account ID: ','1848':'Amount','1849':'Your Balance','1850':'Selected Action','1851':'Target Recipient Account','1852':'Enter Contract Until: ','1853':'Entry Exipry Time','1854':'Time remaining','1855':'Below are the individual transfer actions.','1856':'Transfer actions','1857':'recipient account: ','1858':'Extend Stay In Contract Until: ','1859':'New Exipry Time','1860':'Time remaining','1861':'Consensus Type','1862':'Proposal Expiry time','1863':'Proposal expiry time from now','1864':'Proposal Submit Expiry time','1865':'Proposal submit expiry time from now','1866':'','1867':'','1868':'','1869':'','1870':'','1871':'','1872':'','1873':'','1874':'Contract Authority ID','1875':'Modify Target','1876':'target: ','1877':', token ID: ','1878':'Modify Target','1879':'position','1880':'units','1881':'proportion','1882':'duration','1883':'value: ','1884':'target ID','1885':'tokens','1886':'Receiver ID: ','1887':'Your set vote for the proposal','1888':'Bounty Exchange ID: ','1889':'Time Units','1890':'Token ID: ','1891':'Time Unit','1892':'Time Units To Cancel','1893':'Total Collectible Time','1894':'Total Collectible Time Units','1895':'Token ID: ','1896':'Modify Subscription Action','1897':' action added','1898':'Modify Target','1899':'position','1900':'Modify Contract Action','1901':' actions added','1902':'Modify Target','1903':'position','1904':'units','1905':'Modify Token Exchange Action','1906':' actions added','1907':'Modify Target','1908':'position','1909':'Exchange Transfer Action','1910':'Receiver ID:','1911':'Force Exit Action','1912':'Archive Action','1913':' bounty exchanges included','1914':'Bounty Exchange ID: ','1915':'Default depth 0','1916':'Freeze/Unfreeze Action','1917':' actions included','1918':'Target Account ID: ','1919':'Authmint Actions','1920':'Target Recipient ID: ','1921':'Access Rights Actions','1922':' actions included','1923':'Target: ','1924':'Target: Revoke Moderator Privelages','1925':', time from now: ','1926':' messages included','1927':'Selected Contract','1928':'The contract you picked for the application action','1929':'Selected Expiry Time','1930':'The expiry time you picked for the application action','1931':'Set Prices','1932':'The amounts youre youll be charging for the job','1933':' items','1934':'in your bag.','1935':'items','1936':' units in ','1937':'Edit','1938':'Selected Contract','1939':'The contract you picked for the fulfilment action','1940':'Selected Expiry Time','1941':'The expiry time you picked for the fulfilment action','1942':'Estimated Delivery time','1943':'The payment option you prefer','1944':'The amounts youre youll be charging for the bag fulfilment','1945':'Contract ID: ','1946':'Sender ID: ','1947':'Expiry time from now: ','1948':'Shipping Details','1949':'Number of Units ordered in ','1950':'Number of Units','1951':'Purchase Amounts','1952':'This is the final amount for the price of the item your buying','1953':'Shipping Fee','1954':'The charged shipping fee for buying the items','1955':'Collected Signatures','1956':'Below are the collected signatures from your direct purchases','1957':'Delete','1958':'Variant ID: ','1959':'Received Signature','1960':'The expiry time you picked for the application action','1961':'Set Description','1962':'Set Prices','1963':'The amounts youll be charging for the job','1964':'Selected Contract','1965':'The contract you picked for the job.','1966':'Set Description','1967':'Set Prices','1968':'The amounts youll be receiving for the job','1969':'Reset Alias.','1970':'Price Amounts','1971':'The amounts you are offering for the job.','1972':'Item Variants','1973':'The items variant details are shown below','1974':'Multiplier','1975':'message:','1976':'Total amount of spend','1977':'Custom Amounts','1978':'Your included custom amounts for the award action.','1979':'Depth-mint Actions',
+        '1781':'view-transaction','1782':'Stack ID: ','1783':'Type:','1784':'Delete the transaction completely','1785':'Delete','1786':'Confirm Delete Action','1787':'Are you sure?','1788':'Make some changes to the transaction.','1789':'Edit','1790':'If set to shown, the transaction will be included during a run','1791':'If set to hidden, the transaction will be ignored when running your transactions','1792':'Show Transaction','1793':'Hide Transaction','1794':'The transaction is Hidden','1795':'The transaction is Shown','1796':'status','1797':'Item deleted from stack.','1798':'transaction shown','1799':'transaction hidden','1800':'The set access rights setting for your new contract.','1801':'Moderator Accounts','1802':'Youve set ','1803':' moderators','1804':'Interactable Accounts','1805':' accounts','1806':'For ','1807':'The set access rights setting for your new token.','1808':'Capped','1809':'Uncapped','1810':'2 (Main Contract)','1811':'Fixed','1812':'Spread','1813':'Token Identifier','1814':'Token Type',
+        '1814':'Unlocked Supply','1815':'Unlocked Liquidity','1816':'Fully Custom','1817':'Mint Limit','1818':'Authority: ','1819':'Exchange Authority Identifier','1820':'Target: ','1821':'Trust Fee Target Identifier','1822':'Mint/Burn Token','1823':'Authority Mint Limit (percentage of supply)','1824':'Current Block Mint Total','1825':'Active Block Limit Reduction Proportion','1826':'The set access rights setting for your new contract','1827':'non-cancellable','1828':'cancellable','1829':'Block ID','1830':'Authority ID','1831':'Minimum Buy Amount','1832':'time-units','1833':'Subscription Type','1834':'Maximum Buy Amount','1835':'time-units','1836':'Minimum Cancellable Amount','1837':'Time Unit','1838':'Remaining Subscription Time','1839':'Subscription Beneficiary','1840':'Entry Fees','1841':' tokens used','1842':'Price Amounts','1843':'The amounts you are offering for the job.','1844':'The set access rights setting for your new channel','1845':'The items variant details are shown below','1846':'Number of Units','1847':'Your account ID: ','1848':'Amount','1849':'Your Balance','1850':'Selected Action','1851':'Target Recipient Account','1852':'Enter Contract Until: ','1853':'Entry Exipry Time','1854':'Time remaining','1855':'Below are the individual transfer actions.','1856':'Transfer actions','1857':'recipient account: ','1858':'Extend Stay In Contract Until: ','1859':'New Exipry Time','1860':'Time remaining','1861':'Consensus Type','1862':'Proposal Expiry time','1863':'Proposal expiry time from now','1864':'Proposal Submit Expiry time','1865':'Proposal submit expiry time from now','1866':'','1867':'','1868':'','1869':'','1870':'','1871':'','1872':'','1873':'','1874':'Contract Authority ID','1875':'Modify Target','1876':'target: ','1877':', token ID: ','1878':'Modify Target','1879':'position','1880':'units','1881':'proportion','1882':'duration','1883':'value: ','1884':'target ID','1885':'tokens','1886':'Receiver ID: ','1887':'Your set vote for the proposal','1888':'Bounty Exchange ID: ','1889':'Time Units','1890':'Token ID: ','1891':'Time Unit','1892':'Time Units To Cancel','1893':'Total Collectible Time','1894':'Total Collectible Time Units','1895':'Token ID: ','1896':'Modify Subscription Action','1897':' action added','1898':'Modify Target','1899':'position','1900':'Modify Contract Action','1901':' actions added','1902':'Modify Target','1903':'position','1904':'units',
+        '1905':'Modify Token Exchange Action','1906':' actions added','1907':'Modify Target','1908':'position','1909':'Exchange Transfer Action','1910':'Receiver ID:','1911':'Force Exit Action','1912':'Archive Action','1913':' bounty exchanges included','1914':'Bounty Exchange ID: ','1915':'Default depth 0','1916':'Freeze/Unfreeze Action','1917':' actions included','1918':'Target Account ID: ','1919':'Authmint Actions','1920':'Target Recipient ID: ','1921':'Access Rights Actions','1922':' actions included','1923':'Target: ','1924':'Target: Revoke Moderator Privelages','1925':', time from now: ','1926':' messages included','1927':'Selected Contract','1928':'The contract you picked for the application action','1929':'Selected Expiry Time','1930':'The expiry time you picked for the application action','1931':'Set Prices','1932':'The amounts youre youll be charging for the job','1933':' items','1934':'in your bag.','1935':'items','1936':' units in ','1937':'Edit','1938':'Selected Contract','1939':'The contract you picked for the fulfilment action','1940':'Selected Expiry Time','1941':'The expiry time you picked for the fulfilment action','1942':'Estimated Delivery time','1943':'The payment option you prefer','1944':'The amounts youre youll be charging for the bag fulfilment','1945':'Contract ID: ','1946':'Sender ID: ','1947':'Expiry time from now: ','1948':'Shipping Details','1949':'Number of Units ordered in ','1950':'Number of Units','1951':'Purchase Amounts','1952':'This is the final amount for the price of the item your buying','1953':'Shipping Fee','1954':'The charged shipping fee for buying the items','1955':'Collected Signatures','1956':'Below are the collected signatures from your direct purchases','1957':'Delete','1958':'Variant ID: ','1959':'Received Signature','1960':'The expiry time you picked for the application action','1961':'Set Description','1962':'Set Prices','1963':'The amounts youll be charging for the job','1964':'Selected Contract','1965':'The contract you picked for the job.','1966':'Set Description','1967':'Set Prices','1968':'The amounts youll be receiving for the job','1969':'Reset Alias.','1970':'Price Amounts','1971':'The amounts you are offering for the job.','1972':'Item Variants','1973':'The items variant details are shown below','1974':'Multiplier','1975':'message:','1976':'Total amount of spend','1977':'Custom Amounts','1978':'Your included custom amounts for the award action.','1979':'Depth-mint Actions',
         
         /* wiki page */
         '1980':'One more step.','1981':'You need to set your wallet and fill it with some ether','1982':'The wallet section is in the settings-data...','1983':'Under the Wallet tag...','1984':'Then afterwards fill it with the E5s ether of your choice','1985':'Action Required','1986':'You need to set your wallet first','1987':'The wallet section is in the stack page...','1988':'In the settings-data section...','1989':'Under the Wallet tag...',
@@ -1101,16 +1137,19 @@ class App extends Component {
         '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101':'The channel has been locked by its moderators.','2102':'In Channel ','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
         
         /* contract details section */
-        '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay','2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account',
+        '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay',
+        '2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account',
         
         /* contractor detail section */
         '2215':'details','2216':'job-requests','2217':'Fees Per Hour','2218':'The amounts they charge per hour for their work.','2219':'Send Job Request.','2220':'Send a job request to the contractor to do a job for you.','2221':'Send Request','2222':'Pin the contractor to your feed.','2223':'Pin Contractor','2224':'Pin/Unpin Contractor','2225':'Edit Contractor Post','2226':'Change the basic details for your Contractor Post','2227':'Perform Action','2228':'Job Requests','2229':'Job Description','2230':'Accepted','2231':'Expiry time from now: ',
         
         /* E5 details section */
-        '2232':'details','2233':'End Balance of Burn Account','2234':'E5 Ether balance in Ether and wei','2235':'E5 Ether balance in Wei','2236':'Last Transaction Block','2237':'Last Transaction age','2238':'Number of entered contracts','2239':'Number of E5 runs','2240':'Withdraw balance','2241':'Withdraw your Ether to a specified address','2242':'Withdraw Ether','2243':'Withdraw','2244':'E5','2245':'Main','2246':'E5 Address:','2247':'Vote Bounty Split Proportion','2248':'Minimum End Contract Amount','2249':'E5 block invocation Limit','2250':'E5 time invocation Limit','2251':'Minimum Entered Contracts for Consensus Participation','2252':'','2253':'Tag Indexing Limit','2254':'Minimum Transaction Count for Consensus Particiation','2255':'Gas Anchor Price','2256':'Transaction Gas Reduction Proportion','2257':'Transaction Gas Anchor Price','2258':'Transaction Gas Lower Limit','2259':'Absolute Proposal Expiry Duration Limit','2260':'Primary Transaction Account','2261':'Primary Account Transaction Period','2262':'Subscriptions Created','2263':'Chart containing the total number of subscriptions made over time.','2264':'','2265':'','2266':'','2267':'','2269e':'Y-Axis: Total Subscriptions Made','2269':'X-Axis: Time','2270':'Total Subscriptions','2271':'subscriptions','2272':'Contracts Created','2273':'Chart containing the total number of contracts made over time.','2274':'Y-Axis: Total Contracts Made','2275':'X-Axis: Time','2276':'Total Contracts','2277':'contracts','2278':'Proposals Created','2279':'Chart containing the total number of proposals made over time.','2280':'Y-Axis: Total Proposals Made','2281':'Total Proposals','2282':'proposals','2283':'Exchanges Created','2284':'Chart containing the total number of exchanges made over time.','2285':'Y-Axis: Total Exchanges Made','2286':'Total Exchanges','2287':'exchanges','2288':'Indexed Posts Created','2289':'Chart containing the total number of indexed posts made over time.','2290':'Y-Axis: Total Posts Made','2291':'Total Posts','2292':'posts','2293':'Indexed Channels Created','2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers',
+        '2232':'details','2233':'End Balance of Burn Account','2234':'E5 Ether balance in Ether and wei','2235':'E5 Ether balance in Wei','2236':'Last Transaction Block','2237':'Last Transaction age','2238':'Number of entered contracts','2239':'Number of E5 runs','2240':'Withdraw balance','2241':'Withdraw your Ether to a specified address','2242':'Withdraw Ether','2243':'Withdraw','2244':'E5','2245':'Main','2246':'E5 Address:','2247':'Vote Bounty Split Proportion','2248':'Minimum End Contract Amount','2249':'E5 block invocation Limit','2250':'E5 time invocation Limit','2251':'Minimum Entered Contracts for Consensus Participation','2252':'','2253':'Tag Indexing Limit','2254':'Minimum Transaction Count for Consensus Particiation','2255':'Gas Anchor Price','2256':'Transaction Gas Reduction Proportion','2257':'Transaction Gas Anchor Price','2258':'Transaction Gas Lower Limit','2259':'Absolute Proposal Expiry Duration Limit','2260':'Primary Transaction Account','2261':'Primary Account Transaction Period','2262':'Subscriptions Created','2263':'Chart containing the total number of subscriptions made over time.','2264':'','2265':'','2266':'','2267':'','2269e':'Y-Axis: Total Subscriptions Made','2269':'X-Axis: Time','2270':'Total Subscriptions','2271':'subscriptions','2272':'Contracts Created','2273':'Chart containing the total number of contracts made over time.','2274':'Y-Axis: Total Contracts Made','2275':'X-Axis: Time','2276':'Total Contracts','2277':'contracts','2278':'Proposals Created','2279':'Chart containing the total number of proposals made over time.','2280':'Y-Axis: Total Proposals Made','2281':'Total Proposals','2282':'proposals','2283':'Exchanges Created','2284':'Chart containing the total number of exchanges made over time.','2285':'Y-Axis: Total Exchanges Made','2286':'Total Exchanges','2287':'exchanges','2288':'Indexed Posts Created','2289':'Chart containing the total number of indexed posts made over time.','2290':'Y-Axis: Total Posts Made','2291':'Total Posts','2292':'posts','2293':'Indexed Channels Created',
+        '2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers',
         
         /* end detail section */
-        '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions','2370':'Perform Action','2371':'Edit Token Post','2372':'Change the basic details for your Token Post','2373':'Perform Action','2374':'0 (Burn Account)','2375':'ID: ','2376':'Token Identifier','2377':'Token Type','2378':'Block Number','2379':'Exchanges Liquidity','2380':'Buy/Sell Token','2381':'Tokens Total Supply','2382':'The Market Capitalization of the token in its respective denominations.','2383':'Token Market Cap','2384':'Depth-Mint Tokens','2385':'Mint your token from outside its exchange.','2386':'Depth-Mint','2387':'Y-Aggregate','2388':'Chart containing the y-aggregate of ','2389':' over time.','2390':'Y-Axis: Y-aggregate','2391':'X-Axis: Time','2392':'Total Transactions','2393':'Chart containing the total number of buy/sell transactions over time.','2394':'Y-Axis: Total Transactions','2395':'Total Transactions','2396':'Exchange Liquidity','2397':'Chart containing the total supply of ','2398':' in the exchange over time.','2399':'Y-Axis: Exchange Liquidity','2400':'Action','2401':'Amount Swapped','2402':'Updted Token Exchange Liquidity','2403':'Updated Exchange Ratio X','2404':'Updated Exchange Ratio Y','2405':'Updated Exchange Ratios X:Y','2406':'Set an accounts access rights, moderator privelages or block an account','2407':'In Exchange ','2408':'Updated Exchange Ratio Events','2409':'Buy','2410':'Sell','2411':'Swapping Account ID','2412':'Your Transfer Events','2413':'Action: ','2414':'Exchange Modification Events','2415':'Modifier','2416':'Targeted Modify Item','2417':'target ID','2418':'Exchange Transfer Events','2419':'To: ','2420':'From: ','2421':'Action: ','2422':'New Balance ','2423':'Action: Freeze','2424':'Action: Unfreeze','2425':'Amount, depth: ','2426':'Exchange Modify Moderator Events','2427':'Not Moderator','2428':'Moderator',
+        '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions',
+        '2370':'Perform Action','2371':'Edit Token Post','2372':'Change the basic details for your Token Post','2373':'Perform Action','2374':'0 (Burn Account)','2375':'ID: ','2376':'Token Identifier','2377':'Token Type','2378':'Block Number','2379':'Exchanges Liquidity','2380':'Buy/Sell Token','2381':'Tokens Total Supply','2382':'The Market Capitalization of the token in its respective denominations.','2383':'Token Market Cap','2384':'Depth-Mint Tokens','2385':'Mint your token from outside its exchange.','2386':'Depth-Mint','2387':'Y-Aggregate','2388':'Chart containing the y-aggregate of ','2389':' over time.','2390':'Y-Axis: Y-aggregate','2391':'X-Axis: Time','2392':'Total Transactions','2393':'Chart containing the total number of buy/sell transactions over time.','2394':'Y-Axis: Total Transactions','2395':'Total Transactions','2396':'Exchange Liquidity','2397':'Chart containing the total supply of ','2398':' in the exchange over time.','2399':'Y-Axis: Exchange Liquidity','2400':'Action','2401':'Amount Swapped','2402':'Updted Token Exchange Liquidity','2403':'Updated Exchange Ratio X','2404':'Updated Exchange Ratio Y','2405':'Updated Exchange Ratios X:Y','2406':'Set an accounts access rights, moderator privelages or block an account','2407':'In Exchange ','2408':'Updated Exchange Ratio Events','2409':'Buy','2410':'Sell','2411':'Swapping Account ID','2412':'Your Transfer Events','2413':'Action: ','2414':'Exchange Modification Events','2415':'Modifier','2416':'Targeted Modify Item','2417':'target ID','2418':'Exchange Transfer Events','2419':'To: ','2420':'From: ','2421':'Action: ','2422':'New Balance ','2423':'Action: Freeze','2424':'Action: Unfreeze','2425':'Amount, depth: ','2426':'Exchange Modify Moderator Events','2427':'Not Moderator','2428':'Moderator',
         '2429':'Targeted Account','2430':'Moderator Account','2431':'Authority value','2432':'Exchange Access Rights Settings Events','2433':'Access Rights Disabled(Public)','2434':'Access Rights Enabled(Private)','2435':'Access Rights Status','2436':'Moderator Account','2437':'Exchange  Account Access Settings Events','2438':'Targeted Account','2439':'Moderator Account','2440':'In Exchange ','2441':'Exchange  Blocked Account Events','2442':'Targeted Account','2443':'Moderator Account','2444':'Exchange  Depth-Mint Events','2445':'Targeted Receiver','2446':'Moderator Sender','2447':'Amount, depth: ', '2447a':'Your Wallets Dominance', '2447b':'Stage Royalties.', '2447c':'Stage payouts to the token-holders.', '2447d':'royalty-stagings','2447e':'Exchange Royalty Payment Stagings.','2447f':'Scheduled for: ','2447g':'Exchange Liquidity Proportions.','2447h':'Proportions of the exchange\'s balances that have not been transfered out by its moderators.','2447i':'',
         
         /* ethers details section */
@@ -1166,8 +1205,15 @@ class App extends Component {
         
         '2896':'upcoming-subscriptions','2897':' upcoming subscriptions.','2898':'Total Subscription Payment Amounts.','2899':'Here\'s the total amount of money you\'ll be paying for the subscriptions.','2900':'Your set time.','2901':'Please set a valid time.','2902':'You dont have enough money to fulfil those subscription payments.','2903':' targeted subscriptions.','c':'You can\'t target no subscriptions.','2905':'Your upcoming subscriptions. Select a subscription to ignore it in the transaction.',
         
-        '2906':'You need to set your wallet first.','2907':'You can\'t delete that message.','2908':'Delete.','2909':'Message Deleted.','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','2916':'','2917':'','2918':'','2919':'','2920':'','2921':'','2922':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
-        '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2906':'You need to set your wallet first.','2907':'You can\'t delete that message.','2908':'Delete.','2909':'Message Deleted.',
+        
+        /* coins details section */
+        '2910':'Coin Name.','2911':'Coin Symbol.','2912':'Coin Decimal.','2913':'Base Unit Name.','2914':'Decimal Conversion Ratio.','2915':'Ledger Account Type.','2916':'Accounting','2917':'Wallet Address.','2918':'Unset','2919':'Your balance in ','2920':'Existential Deposit','2921':'Average Transaction Fee...','2922':'Per','2923':'Fee Type','2924':'Send/Receive ','2925':'Send or receive the coin from a specified account.','2926':'Pending...','2927':'Wait first, the wallet is pending.','2927a':'Ledger Consensus Mechanism.', '2927b':'Block Time',
+        
+        /* send_receive_coin */
+        '2928':'Receive the coin using the address shown below.','2929':'Send the coin using the address shown below.','2930':'Default Transaction Fee','2931':'Transaction Fee.','2932':'Set the amount you wish to pay for your transaction.','2933':'Send to Address.','2934':'Your balance is too low to make a transaction.','2935':'Please Set an amount to transfer.','2936':'You can\'t include the minimum deposit in your transaction.','2937':'You don\'t have enough coin to make that transaction.','2938':'Please set a recipient for the transfer.','2939':'That recipient address is not valid.','2940':'That transaction fee is invalid.','2941':'Send Coin Confirmation.',
+        '2942':'Confirm that you want to send the coin to the target recipient.','2943':'Picked Amount.','2944':'Picked Fee.','2945':'Broadcast Transaction.','2946':'Something went wrong with the transaction broadcast.','2947':'Amount Sent','2948':'Fee Used','2949':'Transaction Size.','2950':'UTXOs consumed.','2951':'Broadcasting your Transaction...','2952':'You need to send at least 1XLM since the receiver doesnt have a XLM account.','2953':'Included Memo.','2954':'Memo (Optional)','2955':'','2956':'','2957':'','2958':'','2959':'','2960':'','2961':'','2962':'','2963':'','2964':'','2965':'','2966':'','2967':'','2968':'','2969':'','2970':'','2971':'','2972':'','2973':'','2974':'','2975':'','2976':'','2977':'','2978':'','2979':'','2980':'','2981':'','2982':'','2983':'','2984':'','2985':'','2986':'','2987':'','2988':'','2989':'','2990':'','2991':'','2992':'','2993':'','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
+        '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -1250,6 +1296,7 @@ class App extends Component {
     this.view_staged_royalties_page = React.createRef();
     this.dialog_page = React.createRef();
     this.pay_upcoming_subscriptions_page = React.createRef();
+    this.send_receive_coin_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -2222,9 +2269,11 @@ class App extends Component {
           {this.render_successful_send_bottomsheet()}
           {this.render_stage_royalties_bottomsheet()}
           {this.render_view_staged_royalties_bottomsheet()}
-          {this.render_dialog_bottomsheet()}
           {this.render_pay_upcoming_subscriptions_bottomsheet()}
+          {this.render_send_receive_coin_bottomsheet()}
 
+
+          {this.render_dialog_bottomsheet()}
           {this.render_view_number_bottomsheet()}
           <ToastContainer limit={3} containerId="id"/>
         </div>
@@ -2282,7 +2331,7 @@ class App extends Component {
       show_view_staged_royalties_bottomsheet={this.show_view_staged_royalties_bottomsheet.bind(this)}
       load_exchanges_royalty_payout_event_data={this.load_exchanges_royalty_payout_event_data.bind(this)}
 
-      show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)}
+      show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.start_send_receive_coin_bottomsheet.bind(this)}
       />
     )
   }
@@ -2630,6 +2679,821 @@ class App extends Component {
 
 
 
+
+
+
+  render_send_receive_coin_bottomsheet(){
+    if(this.state.send_receive_coin_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
+    var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.send_receive_coin_bottomsheet} onClose={this.open_send_receive_coin_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                          <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} />
+                      </div>
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_send_receive_coin_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_coin_bottomsheet.bind(this)} open={this.state.send_receive_coin_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+              <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} />
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_send_receive_coin_bottomsheet(){
+    if(this.state.send_receive_coin_bottomsheet == true){
+      //closing
+      this.send_receive_coin_bottomsheet = this.send_receive_coin_page.current?.state;
+     
+      this.setState({send_receive_coin_bottomsheet: !this.state.send_receive_coin_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({send_receive_coin_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({send_receive_coin_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        me.setState({send_receive_coin_bottomsheet: !me.state.send_receive_coin_bottomsheet});
+        
+        if(me.send_receive_coin_bottomsheet != null){
+          me.send_receive_coin_page.current?.setState(me.send_receive_coin_bottomsheet)
+        }
+      }, (1 * 100));
+    }
+    
+  }
+
+  start_send_receive_coin_bottomsheet(item){
+    this.open_send_receive_coin_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.send_receive_coin_page.current != null){
+        me.send_receive_coin_page.current.set_object(item)
+      } 
+    }, (1 * 500));
+    
+  }
+
+  check_if_recipient_address_is_valid(address, item){
+    if(item['symbol'] == 'BTC'){
+      return this.validate_bitcoin_address(address)
+    }
+    else if(item['symbol'] == 'BCH'){
+      return this.validate_bitcion_cash_address(address)
+    }
+    else if(item['symbol'] == 'LTC'){
+      return this.validate_litecoin_address(address)
+    }
+    else if(item['symbol'] == 'DOGE'){
+      return this.validate_dogecoin_address(address)
+    }
+    else if(item['symbol'] == 'DASH'){
+      return this.validate_dash_address(address)
+    }
+    else if(item['symbol'] == 'TRX'){
+      return this.validate_tron_address(address)
+    }
+    else if(item['symbol'] == 'XRP'){
+      return this.validate_xrp_address(address)
+    }
+    else if(item['symbol'] == 'XLM'){
+      return this.validate_xlm_address(address)
+    }
+    else if(item['symbol'] == 'DOT'){
+      return this.validate_dot_address(address)
+    }
+    else if(item['symbol'] == 'KSM'){
+      return this.validate_dot_address(address)
+    }
+    else if(item['symbol'] == 'ALGO'){
+      return this.validate_algo_address(address)
+    }
+    else if(item['symbol'] == 'XTZ'){
+      return this.validate_tezos_address(address)
+    }
+    else if(item['symbol'] == 'ATOM'){
+      return this.validate_cosmos_address(address)
+    }
+    else if(item['symbol'] == 'FIL'){
+      return this.validate_filecoin_address(address)
+    }
+
+
+    return true;
+  }
+
+  validate_bitcoin_address(address) {
+    const network = bitcoin.networks.bitcoin;
+    try {
+      bitcoin.address.toOutputScript(address, network); // Tries to convert address to script
+      return true; // If it doesn't throw an error, the address is valid
+    } catch (error) {
+      return false; // If an error is thrown, the address is invalid
+    }
+  }
+
+  validate_bitcion_cash_address(address){
+    try {
+      var isValidAddress = bchaddr.isValidAddress;
+      return isValidAddress(address)// Tries to convert address to script
+    } catch (error) {
+      return false; // If an error is thrown, the address is invalid
+    }
+  }
+
+  validate_litecoin_address(address){
+    const network = bitcoin.networks.litecoin;
+    try {
+      bitcoin.address.toOutputScript(address, network); // Tries to convert address to script
+      return true; // If it doesn't throw an error, the address is valid
+    } catch (error) {
+      return false; // If an error is thrown, the address is invalid
+    }
+  }
+
+  validate_dogecoin_address(address){
+    const network = {
+      messagePrefix: '\x19Dogecoin Signed Message:\n',
+      // bech32: null,
+      bip32: {
+        public: 0x02facafd,  // Public key (xpub) prefix
+        private: 0x02fac398  // Private key (xprv) prefix
+      },
+      pubKeyHash: 0x1e,      // Starts with 'D' for mainnet
+      scriptHash: 0x16,      // Starts with '9' or 'A' for mainnet
+      wif: 0x9e,             // WIF (Wallet Import Format) prefix
+    };
+    try {
+      bitcoin.address.toOutputScript(address, network); // Tries to convert address to script
+      return true; // If it doesn't throw an error, the address is valid
+    } catch (error) {
+      return false; // If an error is thrown, the address is invalid
+    }
+  }
+
+  validate_dash_address(address){
+    const network = {
+      messagePrefix: '\x19Dash Signed Message:\n',
+      bip32: {
+        public: 0x02fe52f8, // xpub prefix for Dash
+        private: 0x02fe52cc // xprv prefix for Dash
+      },
+      pubKeyHash: 0x4c,      // P2PKH addresses start with 'X'
+      scriptHash: 0x10,      // P2SH addresses start with '7'
+      wif: 0xcc              // WIF starts with 'X' for Dash
+    };
+    try {
+      bitcoin.address.toOutputScript(address, network); // Tries to convert address to script
+      return true; // If it doesn't throw an error, the address is valid
+    } catch (error) {
+      return false; // If an error is thrown, the address is invalid
+    }
+  }
+
+  validate_tron_address(address){
+    return TronWeb.isAddress(address)
+  }
+
+  validate_xrp_address(address){
+    return isValidClassicAddress(address);
+  }
+
+  validate_xlm_address(address){
+    return StellarSdk.StrKey.isValidEd25519PublicKey(address); 
+  }
+
+  validate_dot_address(address){
+    try {
+      // Attempt to decode and re-encode the address
+      const decoded = decodeAddress(address);
+      const reencoded = encodeAddress(decoded);
+      
+      // If the re-encoded address matches the input, it's valid
+      return reencoded === address;
+    } catch (error) {
+      return false; // If an error occurs, the address is invalid
+    }
+  }
+
+  validate_algo_address(address){
+    return algosdk.isValidAddress(address);
+  }
+
+  validate_tezos_address(address){
+    return validateAddress(address) === ValidationResult.VALID;
+  }
+
+  validate_cosmos_address(address){
+    return address.startsWith('cosmos')
+  }
+
+  validate_filecoin_address(address){
+    return address.startsWith('f')
+  }
+
+  broadcast_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, memo_text) => {
+    var data = this.state.coin_data[item['symbol']]
+    if(item['symbol'] == 'BTC'){
+      this.create_and_broadcast_bitcoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'BCH'){
+      this.create_and_broadcast_bitcoin_cash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'LTC'){
+      this.create_and_broadcast_litecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'DOGE'){
+      this.create_and_broadcast_dogecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'DASH'){
+      this.create_and_broadcast_dash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'TRX'){
+      this.create_and_broadcast_tron_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'XRP'){
+      this.create_and_broadcast_xrp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'XLM'){
+      this.create_and_broadcast_xlm_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+    }
+    else if(item['symbol'] == 'DOT'){
+      this.create_and_broadcast_dot_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'KSM'){
+      this.create_and_broadcast_kusama_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'ALGO'){
+      this.create_and_broadcast_algorand_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+    }
+    else if(item['symbol'] == 'XTZ'){
+      this.create_and_broadcast_tezos_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'ATOM'){
+      this.create_and_broadcast_atom_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+    }
+    else if(item['symbol'] == 'FIL'){
+      this.create_and_broadcast_filecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+  }
+
+
+  create_and_broadcast_bitcoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const path = "m/44'/0'/0'/0/0" // bitcoin mainnet
+    const network = bitcoin.networks.bitcoin;
+    var wallet = await this.get_bitcoin_wallet(seed, network, path)
+    const utxos = data['utxos']
+
+    const txb = new bitcoin.TransactionBuilder(network);
+    var input = 0;
+    var input_count = 0
+
+    for (let utx of utxos['unspent_outputs']) {
+      txb.addInput(utx['tx_hash_big_endian'], utx['tx_output_n']);
+      input_count++;
+      input += utx['value'];
+      if (input >= transfer_amount) break;
+    }
+
+    const change = input - (transfer_amount + fee);
+    var size = this.get_tx_size(input_count, 2)
+
+    var scriptPubKey = bitcoin.address.toOutputScript(recipient_address, network)
+    txb.addOutput(scriptPubKey, transfer_amount)
+
+    if(change > 0){
+      txb.addOutput(sender_address, change);
+    }
+
+    const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
+    txb.sign(0, key)
+    const raw = txb.build().toHex();
+    const hash = await this.broadcast_block_cypher_transaction(raw, 'btc')
+
+    if(hash != null){
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }
+  }
+
+  broadcast_block_cypher_transaction = async (rawTxHex, network) => {
+    var api_key = `${process.env.REACT_APP_BLOCKCYPHER_API_KEY}`;
+    var request = `https://api.blockcypher.com/v1/${network}/main/txs/push?token=${api_key}`
+    var body_obj = {"tx":`${rawTxHex}`}
+    var header = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: JSON.stringify(body_obj)
+    }
+    try{
+      const response = await fetch(request, header);
+      if (!response.ok) {
+        console.log(response)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+      var data = await response.text();
+      data = JSON.parse(data)
+      
+      if(data['tx'] != null){
+        var hash = data['tx']['hash']
+        if(hash!= null){
+          return hash
+        }else{
+          this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        }
+      }else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }
+    catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_bitcoin_cash_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const network = bitcoin.networks.bitcoin;
+    const path = "m/44'/145'/0'/0/0" // bitcoin cash mainnet
+    const wallet = await this.get_bitcoin_wallet(seed, network, path)
+    const utxos = data['utxos']
+
+    var wif = wallet.privateKey
+    var input_utxo = []
+    var input = 0;
+    var input_count = 0
+    for (let utx of utxos['utxos']) {
+      input_utxo.push({
+        'txid': utx['tx_hash'],
+        'vout': utx['tx_pos'],
+        'scriptPubKey': '',
+        'satoshis': utx['value'],
+      })
+      input_count++;
+      input += utx['value'];
+      if (input >= transfer_amount) break;
+    }
+
+    var size = this.get_tx_size(input_count, 2)
+    const change = input - (transfer_amount + fee);
+
+    const ecPair = BITBOX.ECPair.fromWIF(wif);
+    const transactionBuilder = new BITBOX.TransactionBuilder('mainnet');
+
+    //inputs for transaction
+    input_utxo.forEach((utxo) => {
+      transactionBuilder.addInput(utxo['txid'], utxo['vout']);
+    });
+
+    transactionBuilder.addOutput(recipient_address, transfer_amount);
+    const changeAddress = BITBOX.ECPair.toCashAddress(ecPair);
+    transactionBuilder.addOutput(changeAddress, change);
+
+    input_utxo.forEach((utxo, index) => {
+      transactionBuilder.sign(index, ecPair, null, transactionBuilder.hashTypes.SIGHASH_ALL, utxo.satoshis);
+    });
+
+    const tx = transactionBuilder.build();
+    const txHex = tx.toHex();
+    const hash = await this.broadcast_bitcoin_cash_transaction(txHex)
+
+    if(hash != null && hash != ""){
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }
+  }
+
+  broadcast_bitcoin_cash_transaction = async (rawTxHex) => {
+    var request = `https://api.fullstack.cash/v5/rawtransactions/sendRawTransaction/${rawTxHex}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+      var data = await response.text();
+      return data
+    }
+    catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_litecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const network = bitcoin.networks.litecoin;
+    const path = "m/44'/2'/0'/0/0" // litecoin mainnet
+    const wallet = await this.get_bitcoin_wallet(seed, network, path)
+    const utxos = data['utxos']
+
+    const txb = new bitcoin.TransactionBuilder(network);
+    var input = 0;
+    var input_count = 0
+    for (let utx of utxos) {
+      txb.addInput(utx['txid'], utx['vout']);
+      input_count++;
+      input += utx['value'];
+      if (input >= transfer_amount) break;
+    }
+
+    const change = input - (transfer_amount + fee);
+    var size = this.get_tx_size(input_count, 2)
+
+    var scriptPubKey = bitcoin.address.toOutputScript(recipient_address, network)
+    txb.addOutput(scriptPubKey, transfer_amount)
+
+    if(change > 0){
+      txb.addOutput(wallet.address, change);
+    }
+    const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
+    txb.sign(0, key)
+    const raw = txb.build().toHex();
+
+    const hash = await this.broadcast_block_cypher_transaction(raw, 'ltc')
+    if(hash != null){
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }
+  }
+
+  create_and_broadcast_dogecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const network = {
+      messagePrefix: '\x19Dogecoin Signed Message:\n',
+      // bech32: null,
+      bip32: {
+        public: 0x02facafd,  // Public key (xpub) prefix
+        private: 0x02fac398  // Private key (xprv) prefix
+      },
+      pubKeyHash: 0x1e,      // Starts with 'D' for mainnet
+      scriptHash: 0x16,      // Starts with '9' or 'A' for mainnet
+      wif: 0x9e,             // WIF (Wallet Import Format) prefix
+    };
+    const wallet = await this.make_dogecoin_wallet(seed, network)
+    const utxos = data['utxos']
+
+    const txb = new bitcoin.TransactionBuilder(network);
+    var input = 0;
+    var input_count = 0
+
+    for (let utx of utxos['data']) {
+      txb.addInput(utx['txid'], utx['vout']);
+      input_count++;
+      input += parseInt(utx['satoshis']);
+      if (input >= transfer_amount) break;
+    }
+
+    const change = input - (transfer_amount + fee);
+    var size = this.get_tx_size(input_count, 2)
+
+    var scriptPubKey = bitcoin.address.toOutputScript(recipient_address, network)
+    txb.addOutput(scriptPubKey, transfer_amount)
+
+    if(change > 0){
+      txb.addOutput(wallet.address, change);
+    }
+
+    const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
+    txb.sign(0, key)
+    const raw = txb.build().toHex();
+    const hash = await this.broadcast_block_cypher_transaction(raw, 'doge')
+    
+    if(hash != null){
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }
+  }
+
+  create_and_broadcast_dash_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const network = {
+      messagePrefix: '\x19Dash Signed Message:\n',
+      bip32: {
+        public: 0x02fe52f8, // xpub prefix for Dash
+        private: 0x02fe52cc // xprv prefix for Dash
+      },
+      pubKeyHash: 0x4c,      // P2PKH addresses start with 'X'
+      scriptHash: 0x10,      // P2SH addresses start with '7'
+      wif: 0xcc              // WIF starts with 'X' for Dash
+    };
+    const wallet = await this.make_dash_wallet(seed, network)
+    const utxos = data['utxos']
+
+    const txb = new bitcoin.TransactionBuilder(network);
+    var input = 0;
+    var input_count = 0
+
+    for (let utx of utxos) {
+      txb.addInput(utx['txid'], utx['vout']);
+      input_count++;
+      input += parseInt(utx['satoshis']);
+      if (input >= transfer_amount) break;
+    }
+
+    const change = input - (transfer_amount + fee);
+    var size = this.get_tx_size(input_count, 2)
+
+    var scriptPubKey = bitcoin.address.toOutputScript(recipient_address, network)
+    txb.addOutput(scriptPubKey, transfer_amount)
+
+    if(change > 0){
+      txb.addOutput(wallet.address, change);
+    }
+
+    const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
+    txb.sign(0, key)
+    const raw = txb.build().toHex();
+    const hash = await this.broadcast_block_cypher_transaction(raw, 'dash')
+
+    if(hash != null){
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }
+  }
+
+  create_and_broadcast_tron_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.make_tron_wallet(seed)
+    const transaction = await wallet.tronWeb.transactionBuilder.sendTrx(
+        recipient_address, // Recipient TRON address
+        transfer_amount, // Amount to send in SUN (1 TRX = 1,000,000 SUN)
+        wallet.address // Sender's address (derived from the private key)
+    );
+
+    try{
+      const signedTransaction = await wallet.tronWeb.trx.sign(transaction);
+      const broadcast = await wallet.tronWeb.trx.sendRawTransaction(signedTransaction);
+      if(broadcast != null && broadcast['txid'] != null){
+        const hash = broadcast['txid']
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_xrp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const client = new xrpl.Client("wss://xrplcluster.com/")
+    await client.connect()
+    const wallet = await this.make_xrp_wallet(seed)
+    const address = wallet['classicAddress']
+
+    var tx_obj = {
+      "TransactionType": "Payment",
+      "Account": address,
+      "Amount": transfer_amount.toString(),
+      "Destination": recipient_address
+    }
+
+    try{
+      const prepared = await client.autofill(tx_obj)
+      const signed = wallet.sign(prepared)
+      const hash = signed.hash
+      const tx = await client.submitAndWait(signed.tx_blob)
+      
+      if(tx['result'] != null && tx['result']['validated'] == true){
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }
+    catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+
+    await client.disconnect()
+  }
+
+  create_and_broadcast_xlm_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const server = new StellarSdk.Horizon.Server("https://horizon.stellar.org/")
+    const wallet = await this.make_xlm_wallet(seed)
+    const address = wallet.publicKey()
+    const account = await this.load_xlm_account_info(address, server)
+    const receiver_account = await this.load_xlm_account_info(recipient_address, server)
+
+    var send_amount = transfer_amount
+    var transaction = new StellarSdk.TransactionBuilder(account, {
+        fee: StellarSdk.BASE_FEE,
+        networkPassphrase: StellarSdk.Networks.PUBLIC,
+    });
+
+    if(receiver_account == null){
+      transaction.addOperation(StellarSdk.Operation.createAccount({
+        destination: recipient_address,
+        startingBalance: "1",
+      }))
+      send_amount -= 10_000_000
+    }
+
+    if(send_amount <= 0){
+      this.prompt_top_notification(this.getLocale()['2952']/* 'You need to send at least 1XLM since the receiver doesnt have a XLM account.' */, 7000)
+      return;
+    }
+
+    transaction.addOperation(StellarSdk.Operation.payment({
+      destination: recipient_address,
+      asset: StellarSdk.Asset.native(),
+      amount: this.get_send_amount_in_lumens(send_amount)
+    }));
+
+    transaction.addMemo(StellarSdk.Memo.text(memo_text))
+    transaction.setTimeout(60)
+    var t = transaction.build();
+    t.sign(wallet)
+
+    try{
+      var response = await server.submitTransaction(t);
+      const paging_token = response['paging_token']
+      const hash = response['hash']
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash, 'paging_token':paging_token})
+    }
+    catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  get_send_amount_in_lumens(amount){
+    var x = (parseFloat(amount) / 10_000_000)
+    return x.toString()
+  }
+
+  create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_dot_wallet(seed)
+    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+
+    try{
+      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+
+    await api.disconnect()
+  }
+
+  create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_ksm_wallet(seed)
+    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+
+    try{
+      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+
+    await api.disconnect()
+  }
+
+  create_and_broadcast_algorand_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_algo_wallet(seed)
+    const algodServer = 'https://mainnet-api.4160.nodely.dev';
+    const algodPort = 443;
+    const algodClient = new algosdk.Algodv2('', algodServer, algodPort);
+
+    var params = await algodClient.getTransactionParams().do();
+    var note = new Uint8Array(Buffer.from(memo_text))
+
+    var ptxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      sender: wallet.addr,
+      suggestedParams: params,
+      receiver: recipient_address,
+      amount: transfer_amount,
+      note: note
+    })
+    try{
+      const signedTxn = ptxn.signTxn(wallet.sk);
+      const transaction = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = transaction['txid']
+      const result = await algosdk.waitForConfirmation(algodClient, txId, 7);
+
+      if(result != null){
+        const hash = txId
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+    
+  }
+
+  create_and_broadcast_tezos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_tezos_wallet(seed)
+    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    Tezos.setProvider({ signer: wallet });
+    const amount = this.get_amount_int_tez(transfer_amount)
+    try{
+      const tx = await Tezos.contract.transfer({ to: recipient_address, amount: amount })
+      const hash = tx.hash
+      await tx.confirmation(1)
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }
+    catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+    
+  }
+
+  get_amount_int_tez(amount){
+    return parseFloat(amount) / 1_000_000
+  }
+
+  create_and_broadcast_atom_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_atom_wallet(seed)
+    const rpc = "https://cosmos-rpc.publicnode.com:443"
+
+    var send_amount = transfer_amount
+    var gasfee = fee / 40_000
+    const signingClient = await SigningStargateClient.connectWithSigner(rpc, wallet.wall)
+    var amount_obj = [{ denom: "uatom", amount: send_amount.toString() }]
+    var fee_obj = { amount: [{ denom: "uatom", amount: gasfee.toString() }], gas: "200000", }
+
+    try{
+      const result = await signingClient.sendTokens(wallet.cosmosAddress, recipient_address, amount_obj, fee_obj, memo_text)
+      const hash = result['transactionHash']
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_filecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
+    const hdDerivationPath = `m/44'/461'/0'/0/0`;
+    const lotusClient = new LotusClient(connector);
+    const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
+    const myAddress = await walletProvider.getDefaultAddress();
+
+    const nonce = await lotusClient.mpool.getNonce(myAddress);
+    const gasprice = fee / 45_000
+    const message = await walletProvider.createMessage({
+      From: myAddress,
+      To: recipient_address,
+      Value: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
+      GasPrice: gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
+      GasLimit: 120_000,
+      gasPremium: parseInt(gasprice +(gasprice / 4)),
+      GasFeeCap:parseInt(gasprice +(gasprice / 3)),
+      Nonce: nonce,
+    });
+
+    try{
+      const signed_message = await walletProvider.signMessage(message)
+      const cid = await walletProvider.sendSignedMessage(signed_message);
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':cid})
+    }catch(e){
+      console.log('filecoin:', e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+
+
+
+
+
+
+
+
+
   render_stack_bottomsheet(){
     // if(this.state.stack_bottomsheet2 != true) return;
     if(!this.state.show_stack) return;
@@ -2953,7 +3817,7 @@ class App extends Component {
       this.open_stack_bottomsheet()
       setTimeout(function() {
         me.open_stack_bottomsheet()
-      }, (1 * 500));
+      }, (1 * 200));
     }
 
 
@@ -5400,6 +6264,9 @@ class App extends Component {
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
   }
+
+
+
 
 
 
@@ -8499,12 +9366,13 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
+    var h = 600
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.successful_send_bottomsheet} onClose={this.open_successful_send_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+                        <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
                         'overflow-y':'auto'}}>
                           <SuccessfulSend ref={this.successful_send_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
                         </div>
@@ -8517,7 +9385,7 @@ class App extends Component {
     }
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_successful_send_bottomsheet.bind(this)} open={this.state.successful_send_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+          <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
           'overflow-y':'auto'}}>
             <SuccessfulSend ref={this.successful_send_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
           </div>
@@ -8765,7 +9633,7 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
                         'overflow-y':'auto'}}>
-                          <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)}/>
+                          <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8778,7 +9646,7 @@ class App extends Component {
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialog_bottomsheet.bind(this)} open={this.state.dialog_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
           'overflow-y':'auto'}}>
-            <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)}/>
+            <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8813,7 +9681,7 @@ class App extends Component {
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430};
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600 };
     this.open_dialog_bottomsheet(obj[id])
     var me = this;
     setTimeout(function() {
@@ -8843,6 +9711,24 @@ class App extends Component {
       me.withdraw_ether_page.current.when_withdraw_ether_confirmation_received()
     }
   }
+
+  send_ether_to_target(){
+    this.open_dialog_bottomsheet()
+    var me = this;
+    if(me.send_receive_ether_page.current != null){
+      me.send_receive_ether_page.current.when_send_ether_confirmation_received()
+    }
+  }
+
+  send_coin_to_target(){
+    this.open_dialog_bottomsheet()
+    var me = this;
+    if(me.send_receive_coin_page.current != null){
+      me.send_receive_coin_page.current.when_send_coin_confirmation_received()
+    }
+  }
+
+
 
 
 
@@ -9194,7 +10080,7 @@ class App extends Component {
     .on('transactionHash', function (hash) {
       me.start_get_accounts_data(false)
       console.log('send_result: ',hash)
-      me.show_successful_send_bottomsheet({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether})
+      me.show_successful_send_bottomsheet({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether, 'type':'ether'}, )
       // me.get_transaction_receipt({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether}, hash, web3)
     })
     .on('error', function (error) {
@@ -9202,7 +10088,7 @@ class App extends Component {
       if(error == 'Error: Invalid JSON RPC response: {}'){
         me.start_get_accounts_data(false)
         // me.prompt_top_notification(me.getLocale()['2728']/* 'send complete!' */, 15600)
-        me.show_successful_send_bottomsheet({'tx':tx, 'hash':'', 'e5':e5, 'ether':ether})
+        me.show_successful_send_bottomsheet({'tx':tx, 'hash':'', 'e5':e5, 'ether':ether, 'type':'ether'})
       }else{
         me.prompt_top_notification(me.getLocale()['2729']/* 'send failed, ' */+error, 16000)
       }
@@ -9219,7 +10105,8 @@ class App extends Component {
   when_wallet_data_updated2(added_tags, set_salt, selected_item, is_synching){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
     this.generate_one_account_for_all_e5s(seed)
-    this.setState({account_balance: {}});
+    this.generate_account_data_for_each_coin(seed)
+    this.setState({account_balance: {}, account_seed: seed});
     
     var me = this
     setTimeout(function() {
@@ -9250,8 +10137,14 @@ class App extends Component {
 
   when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
-    // this.generate_account_for_each_e5(seed)
+    if(selected_item != '') {
+      this.setState({account_seed: seed});
+    }
     this.generate_one_account_for_all_e5s(seed)
+    // if(selected_item != '') {
+    //   this.generate_account_data_for_each_coin(seed)
+    // }
+    this.generate_account_data_for_each_coin(seed)
     var me = this
     setTimeout(function() {
         me.start_get_accounts_data(is_synching, false)
@@ -9284,29 +10177,6 @@ class App extends Component {
     return account;
   }
 
-  get_filecoin_wallet = async (seed) => {
-    const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
-    const hdWalletMnemonic = seed;
-    const hdDerivationPath = `m/44'/461'/0'/0/0`;
-    const lotusClient = new LotusClient(connector);
-
-    const walletProvider = new MnemonicWalletProvider( lotusClient, hdWalletMnemonic, hdDerivationPath );
-    const myAddress = await walletProvider.getDefaultAddress();
-    console.log(myAddress);
-
-    try{
-      const balance = await lotusClient.wallet.balance(myAddress);
-      console.log('Wallet balance:', balance);
-    }catch(e){
-      console.log(e)
-    }
-    
-
-    // this.send_filecoin(seed)
-    // this.initialize_storage_deal(seed)
-    this.store_data_in_web3('hello world!')
-  }
-
   send_filecoin = async (seed) => {
     const provider = new HttpJsonRpcConnector({ url: 'https://api.node.glif.io', token: '' });
     const lotusClient = new LotusClient(provider);
@@ -9337,7 +10207,6 @@ class App extends Component {
       GasFeeCap:17768082,
       Nonce: nonce,
     });
-
     try{
       const cid = await walletProvider.sendSignedMessage(
         await walletProvider.signMessage(message)
@@ -9388,6 +10257,827 @@ class App extends Component {
     // console.log('Storage Deal CID:', dealInfo.ProposalCid);
 
   }
+
+
+
+
+  
+
+  generate_account_data_for_each_coin = async (seed1) => {
+    this.setState({coin_data_status: 'pending'})
+    var seed = seed1.replace('|',' ')
+    seed = this.get_formatted_seed(seed)
+    this.setState({final_seed: seed})
+    await this.get_and_set_bitcoin_wallet_info(seed)
+    await this.get_and_set_filecoin_wallet_info(seed)
+    await this.get_and_set_bitcoin_cash_wallet_info(seed)
+    await this.get_and_set_litecoin_wallet_info(seed)
+    await this.get_and_set_dogecoin_wallet_info(seed)
+    await this.get_and_set_dash_wallet_info(seed)
+    await this.get_and_set_tron_wallet_info(seed)
+    await this.get_and_set_xrp_wallet_info(seed)
+    await this.get_and_set_xlm_wallet_info(seed)
+    await this.get_and_set_dot_wallet_info(seed)
+    await this.get_and_set_kusama_wallet_info(seed)
+    await this.get_and_set_algorand_wallet_info(seed)
+    await this.get_and_set_tezos_wallet_info(seed)
+    await this.get_and_set_cosmos_wallet_info(seed)
+    this.setState({coin_data_status: 'set'})
+  }
+
+  get_formatted_seed(seed){
+    var arr = seed.split(' ')
+    var new_arr = ''
+    arr.forEach(element => {
+      if(element.length > 32){
+        const hash = CryptoJS.SHA256(element).toString();
+        const truncatedHash = hash.substring(0, 16);
+        new_arr = new_arr+truncatedHash+' '
+      }else{
+        new_arr = new_arr+element+' '
+      }
+    });
+    new_arr = new_arr.replace(/[^\w\s]/g, '')
+    new_arr = new_arr.replace('_','')
+    return new_arr.trim()
+  }
+
+
+  get_and_set_filecoin_wallet_info = async (seed) => {
+    const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
+    const hdWalletMnemonic = seed;
+    const hdDerivationPath = `m/44'/461'/0'/0/0`;
+    const lotusClient = new LotusClient(connector);
+    const walletProvider = new MnemonicWalletProvider( lotusClient, hdWalletMnemonic, hdDerivationPath );
+
+    const myAddress = await walletProvider.getDefaultAddress();
+    const balance = await this.get_filecoin_balance(myAddress, lotusClient)
+
+    var fee_info = {'fee':await this.get_filecoin_transaction_fee(), 'type':'variable', 'per':'gas'}
+
+    var filecoin_data = {'balance':(balance.toString()), 'address':myAddress, 'min_deposit':0, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['FIL'] = filecoin_data;
+    this.setState({coin_data: clone})
+  }
+
+  get_filecoin_balance = async (address, lotusClient) => {
+    var balance = 0
+    try{
+      balance = await lotusClient.wallet.balance(address);
+      console.log('filecoin wallet balance:', balance);
+    }catch(e){
+      console.log(e)
+    }
+    return balance
+  }
+
+  get_filecoin_transaction_fee = async () => {
+    return 10_000_000_000
+  }
+
+
+
+  get_and_set_bitcoin_wallet_info = async (seed) => {
+    const path = "m/44'/0'/0'/0/0" // bitcoin mainnet
+    const network = bitcoin.networks.bitcoin;
+    var wallet = await this.get_bitcoin_wallet(seed, network, path)
+    const address = wallet.address
+    var utxos = await this.get_bitcoin_utxos(address)
+    var balance = this.get_total_bitcoin_balance_from_utxos(utxos)
+
+    var fee_info = {'fee':await this.get_bitcoin_fees(), 'type':'variable', 'per':'byte'}
+
+    var bitcoin_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+    // console.log('existential:', 'bitcoin data:', bitcoin_data)
+    var clone = structuredClone(this.state.coin_data)
+    clone['BTC'] = bitcoin_data;
+    this.setState({coin_data: clone})
+  }
+
+  get_bitcoin_wallet = async (mnemonic, network, path) => {
+    const seed = mnemonicToSeedSync(mnemonic); 
+    const master = bitcoin.HDNode.fromSeedBuffer(seed, network);
+    const derived = master.derivePath(path);
+    const address = derived.getAddress();
+    const privateKey = derived.keyPair.toWIF();
+    return {address: address, privateKey: privateKey}
+  }
+
+  get_bitcoin_utxos = async (address) => {
+    var request = `https://blockchain.info/unspent?active=${address}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('existential:',response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return []
+      }
+      var data = await response.text();
+      return JSON.parse(data);
+    }
+    catch(e){
+      console.log('existential:', e)
+      return []
+    }
+  }
+
+  get_total_bitcoin_balance_from_utxos(utxos){
+    var bal = 0
+    utxos['unspent_outputs'].forEach(utxo => {
+      bal += utxo['value'];
+    });
+    return bal;
+  }
+
+  get_bitcoin_fees = async () => {
+    var request = `https://api.blockcypher.com/v1/btc/main`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return 0
+      }
+      var data = await response.text();
+      var parsed_obj = JSON.parse(data);
+      return (parsed_obj['medium_fee_per_kb'] / 1024)
+    }
+    catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+
+
+
+  get_and_set_bitcoin_cash_wallet_info = async (seed) =>{
+    const network = bitcoin.networks.bitcoin;
+    const path = "m/44'/145'/0'/0/0" // bitcoin cash mainnet
+    var wallet = await this.get_bitcoin_wallet(seed, network, path)
+    const address = wallet.address
+    var utxos = await this.get_bitcoin_cash_utxos(address)
+    var balance = this.get_total_bitcoin_cash_balance_from_utxos(utxos)
+
+    var fee_info = {'fee':await this.get_bitcoin_cash_fees(), 'type':'variable', 'per':'byte'}
+    var bitcoin_cash_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['BCH'] = bitcoin_cash_data;
+    this.setState({coin_data: clone})
+  }
+
+  get_bitcoin_cash_utxos = async (address) => {
+    var request = `https://api.fullstack.cash/v5/electrumx/utxos/${address}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return []
+      }
+      var data = await response.text();
+      return JSON.parse(data)
+    }
+    catch(e){
+      console.log(e)
+      return []
+    }
+  }
+
+  get_total_bitcoin_cash_balance_from_utxos(utxos){
+    var bal = 0
+    if(utxos['utxos'] == null) return 0
+    utxos['utxos'].forEach(utxo => {
+      bal += utxo['value'];
+    });
+    return bal;
+  }
+
+  get_bitcoin_cash_fees = async () => {
+    return (0.0000015 * 100_000_000)
+  }
+
+
+
+
+  get_and_set_litecoin_wallet_info = async (seed) => {
+    const network = bitcoin.networks.litecoin;
+    const path = "m/44'/2'/0'/0/0" // litecoin mainnet
+    var wallet = await this.get_bitcoin_wallet(seed, network, path)
+    const address = wallet.address
+
+    var utxos = await this.get_litecoin_utxos(address)
+    var balance = this.get_total_litecoin_balance_from_utxos(utxos)
+
+    var fee_info = {'fee':await this.get_litecoin_fees(), 'type':'variable', 'per':'byte'}
+
+    var litecoin_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['LTC'] = litecoin_data;
+    this.setState({coin_data: clone})
+  }
+
+  get_litecoin_utxos = async (address) => {
+    const request = `https://litecoinspace.org/api/address/${address}/utxo`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        return []
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      return JSON.parse(data)
+    }
+    catch(e){
+      console.log(e)
+      return []
+    }
+
+  }
+
+  get_total_litecoin_balance_from_utxos(utxos){
+    var bal = 0
+    utxos.forEach(utxo => {
+      bal += utxo['value'];
+    });
+    return bal;
+  }
+
+  get_litecoin_fees = async () => {
+    var request = `https://api.blockcypher.com/v1/ltc/main`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return 0
+      }
+      var data = await response.text();
+      var parsed_obj = JSON.parse(data);
+      return parsed_obj['medium_fee_per_kb'] / 1024
+    }
+    catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+
+
+
+  get_and_set_dogecoin_wallet_info = async (seed) => {
+    const network = {
+      messagePrefix: '\x19Dogecoin Signed Message:\n',
+      // bech32: null,
+      bip32: {
+        public: 0x02facafd,  // Public key (xpub) prefix
+        private: 0x02fac398  // Private key (xprv) prefix
+      },
+      pubKeyHash: 0x1e,      // Starts with 'D' for mainnet
+      scriptHash: 0x16,      // Starts with '9' or 'A' for mainnet
+      wif: 0x9e,             // WIF (Wallet Import Format) prefix
+    };
+    const wallet = await this.make_dogecoin_wallet(seed, network)
+    const address = wallet.address
+    
+    var utxos = await this.get_dogecoin_utxos(address)
+    const balance = this.get_total_dogecoin_balance_from_utxos(utxos)
+
+    var fee_info = {'fee':await this.get_dogecoin_fees(), 'type':'variable', 'per':'byte'}
+
+    var dogecoin_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['DOGE'] = dogecoin_data;
+    this.setState({coin_data: clone})
+  }
+
+  make_dogecoin_wallet = async (mnemonic, network) => {
+    const path = "m/44'/3'/0'/0/0"
+    const seed = mnemonicToSeedSync(mnemonic);
+    const master = bitcoin.HDNode.fromSeedBuffer(seed, network)
+    const derived = master.derivePath(path);
+    const address = derived.getAddress();
+    const privateKey = derived.keyPair.toWIF();
+    return {address: address, privateKey: privateKey}
+  }
+
+  get_dogecoin_utxos = async (address) => {
+    var key = `${process.env.REACT_APP_DOGECOIN_API_KEY}`;
+    const request = `https://xdg-mainnet.gomaestro-api.org/v0/addresses/${address}/utxos?count=100`
+    var header = {
+      headers: {
+        'Accept': 'application/json',
+        'api-key': key
+      }
+    }
+    try{
+      const response = await fetch(request, header);
+      if (!response.ok) {
+        console.log(response)
+        return []
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      return JSON.parse(data)
+    }
+    catch(e){
+      console.log(e)
+      return []
+    }
+  }
+
+  get_total_dogecoin_balance_from_utxos(utxos){
+    var bal = 0
+    if(utxos['data'] == null) return 0;
+    utxos['data'].forEach(utxo => {
+      bal += parseInt(utxo['satoshis']);
+    });
+    return bal;
+  }
+
+  get_dogecoin_fees = async () => {
+    var request = `https://api.blockcypher.com/v1/doge/main`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return 0
+      }
+      var data = await response.text();
+      var parsed_obj = JSON.parse(data);
+      return parsed_obj['medium_fee_per_kb'] / 1024
+    }
+    catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+
+
+
+  get_and_set_dash_wallet_info = async (seed) => {
+    const network = {
+      messagePrefix: '\x19Dash Signed Message:\n',
+      bip32: {
+        public: 0x02fe52f8, // xpub prefix for Dash
+        private: 0x02fe52cc // xprv prefix for Dash
+      },
+      pubKeyHash: 0x4c,      // P2PKH addresses start with 'X'
+      scriptHash: 0x10,      // P2SH addresses start with '7'
+      wif: 0xcc              // WIF starts with 'X' for Dash
+    };
+    const wallet = await this.make_dash_wallet(seed, network)
+    const address = wallet.address
+
+    var utxos = await this.get_dash_utxos(address)
+    const balance = this.get_total_dash_balance_from_utxos(utxos)
+
+    var fee_info = {'fee':await this.get_dash_fees(), 'type':'variable', 'per':'byte'}
+
+    var dash_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['DASH'] = dash_data;
+    this.setState({coin_data: clone})
+  }
+
+  make_dash_wallet = async (mnemonic, network) => {
+    const path = "m/44'/5'/0'"
+    const seed = mnemonicToSeedSync(mnemonic);
+
+    const master = bitcoin.HDNode.fromSeedBuffer(seed, network)
+    const derived = master.derivePath(path);
+    const address = derived.getAddress();
+    const privateKey = derived.keyPair.toWIF();
+    return {address: address, privateKey: privateKey}
+  }
+
+  get_dash_utxos = async (address) => {
+    const request = `https://insight.dash.org/insight-api/addr/${address}/utxo`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return []
+      }
+      var data = await response.text();
+      return JSON.parse(data)
+    }
+    catch(e){
+      console.log(e)
+      return []
+    }
+  }
+
+  get_total_dash_balance_from_utxos(utxos){
+    var bal = 0
+    utxos.forEach(utxo => {
+      bal += parseInt(utxo['satoshis']);
+    });
+    return bal;
+  }
+
+  get_dash_fees = async () => {
+    var request = `https://api.blockcypher.com/v1/dash/main`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return 0
+      }
+      var data = await response.text();
+      var parsed_obj = JSON.parse(data);
+      return parsed_obj['medium_fee_per_kb'] / 1024
+    }
+    catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+
+
+
+  get_and_set_tron_wallet_info = async (seed) => {
+    var wallet = await this.make_tron_wallet(seed)
+    const address = wallet.address
+    const balance = await this.get_tron_balance(address, wallet.tronWeb);
+
+    var fee_info = {'fee':await this.get_tron_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+
+    var data = {'balance':balance, 'address':address, 'min_deposit':1_000_000, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['TRX'] = data;
+    this.setState({coin_data: clone})
+  }
+
+  make_tron_wallet = async (mnemonic) => {
+    const seed = mnemonicToSeedSync(mnemonic);
+    var key = `${process.env.REACT_APP_TRON_API_KEY}`;
+    const hdNode = ethers.utils.HDNode.fromSeed(seed);
+    const w = new ethers.Wallet(hdNode.privateKey);
+
+    var private_key = w.privateKey.toString().slice(2)
+    const tronWeb = new TronWeb({
+      fullHost: 'https://api.trongrid.io',
+      headers: { 'TRON-PRO-API-KEY': key },
+      privateKey: private_key
+    });
+
+    const wallet = tronWeb.defaultAddress.base58
+    return {address: wallet, privateKey: private_key, tronWeb:tronWeb}
+  }
+
+  get_tron_balance = async (address, tronWeb) => {
+    try{
+      const balance = await tronWeb.trx.getBalance(address);
+      return balance
+    }catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+  get_tron_transaction_fee = async () => {
+    return 1_100_000
+  }
+
+
+
+
+  get_and_set_xrp_wallet_info = async (seed) => {
+    const client = new xrpl.Client("wss://xrplcluster.com/")
+    await client.connect()
+    const wallet = await this.make_xrp_wallet(seed)
+    const address = wallet['classicAddress']
+
+    const balance = await this.get_xrp_balance(address, client)
+    await client.disconnect()
+
+    var fee_info = {'fee':await this.get_xrp_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+
+    var data = {'balance':balance, 'address':address, 'min_deposit':10_000_000, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['XRP'] = data;
+    this.setState({coin_data: clone})
+  }
+
+  make_xrp_wallet = async (mnemonic) => {
+    const seed = mnemonicToSeedSync(mnemonic);
+    const hdNode = ethers.utils.HDNode.fromSeed(seed);
+    const w = new ethers.Wallet(hdNode.privateKey);
+    var private_key = w.privateKey.toString()
+    const rs_api = require('ripple-secret-codec')
+    const secret_from_hex_seed = rs_api.encodeHex(private_key)
+    
+    const test_wallet = xrpl.Wallet.fromSeed(secret_from_hex_seed['secret_b58'])
+    console.log(test_wallet)
+
+    /* 
+    {
+        "publicKey": "ED27F84605FB92FF678F42B5E20C392BA7FFBF26FDD5F6D929753B01AD603EA507",
+        "privateKey": "ED8D2336E46F4E7B4FF341367CEE4C66D6163FA875BB06810EE9F1C35363F82EA0",
+        "classicAddress": "rfpQdN77NiBM4igPW1Rah3KogmaXMJiys3",
+        "seed": "spj8jWNZxCjQ7WndBWkkMsdHnFQem"
+    }
+    */
+    
+    return test_wallet
+  }
+
+  get_xrp_balance = async (address, client) => {
+    var balance = 0
+    try{
+      const response = await client.request({
+        "command": "account_info",
+        "account": address,
+        "ledger_index": "validated"
+      })
+      balance = parseInt(response['result']['account_data']['Balance'])
+    }catch(e){
+      console.log(e)
+    }
+    return balance
+  }
+
+  get_xrp_transaction_fee = async () => {
+    return 10
+  }
+
+
+
+
+
+  get_and_set_xlm_wallet_info = async (seed) => {
+    const server = new StellarSdk.Horizon.Server("https://horizon.stellar.org/")
+    const wallet = await this.make_xlm_wallet(seed)
+    const address = wallet.publicKey()
+    var account = await this.load_xlm_account_info(address, server)
+    const balance = this.get_xlm_balance_from_address(account)
+
+    var fee_info = {'fee':await this.get_xlm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':balance, 'address':address, 'min_deposit':10_000_000, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['XLM'] = data;
+    this.setState({coin_data: clone})
+  }
+
+  make_xlm_wallet = async (mnemonic) => {
+    const seed = mnemonicToSeedSync(mnemonic);
+    var buff = Buffer.from(seed.toString('hex').substring(0, 32))
+    const pair = StellarSdk.Keypair.fromRawEd25519Seed(buff)
+    // var pub_key = pair.publicKey()
+    return pair
+  }
+
+  load_xlm_account_info = async (address, server) => {
+    try {
+      const account = await server.loadAccount(address);
+      return account;
+    } catch (error) {
+      console.error("Error loading account:", error);
+      return null
+    }
+  }
+
+  get_xlm_balance_from_address(account){
+    var balance = 0
+    if(account != null){
+      account['balances'].forEach(b => {
+        if(b['asset_type'] == 'native'){
+          balance = (parseFloat(b['balance']) * 10000000)
+        }
+      });
+    }
+    return balance
+  }
+
+  get_xlm_transaction_fee = async () => {
+    return 100
+  }
+
+
+
+
+  get_and_set_dot_wallet_info = async (seed1) => {
+    var seed = seed1
+    const wallet = await this.generate_dot_wallet(seed)
+    const address = wallet.dot_address
+    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+    const existential_deposit = await this.get_existential_dot_deposit(api)
+    const address_balance = await this.get_dot_balance(address, api)
+    await api.disconnect()
+
+    var fee_info = {'fee':await this.get_dot_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['DOT'] = data;
+    this.setState({coin_data: clone})
+  }
+
+  generate_dot_wallet = async (mnemonic) => {
+    await waitReady();
+    const keyring = new Keyring({ type: 'sr25519' });
+    
+    const keys = keyring.addFromMnemonic(mnemonic)
+    const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
+    return {keys: keys, dot_address: public_address}
+  }
+
+  get_dot_balance = async (address, api) => {
+    try{
+      const { nonce, data: balance } = await api.query.system.account(address);
+      const address_balance = (balance.free.toString())
+      return address_balance
+    }catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+  get_existential_dot_deposit = async (api) => {
+    try{
+      return api.consts.balances.existentialDeposit.toNumber()
+    }catch(e){
+      console.log(e)
+    }
+  }
+
+  get_dot_transaction_fee = async () => {
+    return (0.015 * 10_000_000_000)
+  }
+
+
+
+
+  get_and_set_kusama_wallet_info = async (seed) => {
+    const wallet = await this.generate_ksm_wallet(seed)
+    const address = wallet.ksm_address
+    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady
+    const existential_deposit = await this.get_existential_ksm_deposit(api)
+    const balance = await this.get_ksm_balance(address, api)
+    await api.disconnect()
+
+    var fee_info = {'fee':await this.get_ksm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['KSM'] = data;
+    this.setState({coin_data: clone})
+
+  }
+
+  generate_ksm_wallet = async (mnemonic) => {
+    await waitReady();
+    const keyring = new Keyring({ type: 'sr25519' });
+    const keys = keyring.addFromMnemonic(mnemonic)
+    const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
+    return {keys: keys, ksm_address: public_address}
+  }
+
+  get_ksm_balance = async (address, api) => {
+    try{
+      const { nonce, data: balance } = await api.query.system.account(address);
+      const address_balance = (balance.free.toString())
+      return address_balance
+    }catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+  get_existential_ksm_deposit = async (api) => {
+    try{
+      return api.consts.balances.existentialDeposit.toNumber()
+    }catch(e){
+      console.log(e)
+    }
+  }
+
+  get_ksm_transaction_fee = async () => {
+    return (0.01 * 1_000_000_000_000)
+  }
+
+
+
+
+  get_and_set_algorand_wallet_info = async (seed) => {
+    const wallet = await this.generate_algo_wallet(seed)
+    const address = wallet.addr.toString()
+    
+    const algodServer = 'https://mainnet-api.4160.nodely.dev';
+    const algodPort = 443;
+    const algodClient = new algosdk.Algodv2('', algodServer, algodPort);
+
+    const acctInfo = await algodClient.accountInformation(address).do();
+    const balance = (acctInfo.amount.toString())
+
+    var fee_info = {'fee':await this.get_algo_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':balance, 'address':address, 'min_deposit':100_000, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['ALGO'] = data;
+    this.setState({coin_data: clone})
+  }
+
+  generate_algo_wallet = async (mnemonic) => {
+    const seed = mnemonicToSeedSync(mnemonic);
+    const account = algosdk.secretKeyToMnemonic(Buffer.from(seed.toString('hex')));
+    const recoveredAccount = algosdk.mnemonicToSecretKey(account);
+    const address = recoveredAccount.addr.toString()
+    return recoveredAccount
+  }
+
+  get_algo_transaction_fee = async () => {
+    return (0.001 * 1_000_000)
+  }
+
+
+
+
+  get_and_set_tezos_wallet_info = async (seed) => {
+    const wallet = await this.generate_tezos_wallet(seed)
+    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    Tezos.setProvider({ signer: wallet });
+    const address = await Tezos.signer.publicKeyHash();
+    const balance = (await Tezos.tz.getBalance(address)).toString()
+
+    var fee_info = {'fee':await this.get_tezos_transaction_fee(), 'type':'variable', 'per':'transaction'}
+    var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['XTZ'] = data;
+    this.setState({coin_data: clone})
+  }
+
+  generate_tezos_wallet = async (mnemonic) => {
+    await sodium.ready;
+    const seed = sodium.crypto_generichash(32, sodium.from_string(mnemonic));
+    const keyPair = sodium.crypto_sign_seed_keypair(seed);
+    const privateKey = b58cencode(keyPair.privateKey.slice(0, 64), prefix.edsk);
+    const signer = await InMemorySigner.fromSecretKey(privateKey);
+    return signer
+  }
+
+  get_tezos_transaction_fee = async () => {
+    return (0.064544 * 1_000_000)
+  }
+
+
+
+  get_and_set_cosmos_wallet_info = async (seed) => {
+    const wallet = await this.generate_atom_wallet(seed)
+    const address = wallet.cosmosAddress
+    const rpc = "https://cosmos-rpc.publicnode.com:443"
+    const client = await StargateClient.connect(rpc)
+    const balance = await this.get_atom_address_balance(wallet.cosmosAddress, client)
+    client.disconnect()
+
+    var fee_info = {'fee':await this.get_atom_transaction_fee(), 'type':'variable', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['ATOM'] = data;
+    this.setState({coin_data: clone})
+  }
+
+  generate_atom_wallet = async (mnemonic) => {
+    const hash = sha256(Buffer.from(mnemonic));
+    const privateKey = await Secp256k1.makeKeypair(hash)
+    const wallet = await DirectSecp256k1Wallet.fromKey(privateKey.privkey, "cosmos")
+    const address = (await wallet.getAccounts())[0].address
+
+    return {keys: privateKey, cosmosAddress:address, wall: wallet}
+  }
+
+  get_atom_address_balance = async (address, client) => {
+    const balance = await client.getAllBalances(address)
+    var bal = 0;
+    balance.forEach(item => {
+      if(item['denom'] == "uatom"){
+        bal = parseInt(item['amount'])
+      }
+    });
+    return bal
+  }
+
+  get_atom_transaction_fee = async () => {
+    return (0.00640 * 1_000_000_000)
+  }
+
+
+
+
+
+
+
+
+
 
   
 
@@ -13310,6 +15000,7 @@ class App extends Component {
 
     var gateways = [
       // `https://ipfs.io/ipfs/${cid}`,
+      //https://ipfs.algonode.xyz/ipfs/${cid}
       `https://gateway.pinata.cloud/ipfs/${cid}`
     ]
     

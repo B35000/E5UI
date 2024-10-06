@@ -78,6 +78,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'confirm_send_coin_dialog'){
+            return(
+                <div>
+                    {this.render_confirm_send_coin_dialog()}
+                </div>
+            )
+        }
     }
 
 
@@ -295,7 +302,10 @@ class DialogPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'s'})}
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('5', {'text':this.props.app_state.loc['1398']/* 'Send Ether' */, 'action':'confirm_send_ether'})}
+                
+                <div style={{'padding': '5px'}} onClick={()=>this.send_ether_to_target()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1398']/* 'Send Ether' */, 'action':''})}
+                </div>
             </div>
         )
     }
@@ -353,6 +363,10 @@ class DialogPage extends Component {
 
     replace_0x_with_xdc(address){
         return 'xdc'+address.toString().slice(2)
+    }
+
+    send_ether_to_target(){
+        this.props.send_ether_to_target()
     }
 
 
@@ -485,6 +499,156 @@ class DialogPage extends Component {
 
 
 
+
+
+
+
+    render_confirm_send_coin_dialog(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_send_coin()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_send_coin()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_send_coin()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_confirm_send_coin(){
+        var picked_transfer_amount = this.state.data['amount']
+        var recipient_address = this.state.data['recipient']
+        var sender_address = this.state.data['sender']
+        var fee = this.state.data['fee']
+        var coin = this.state.data['coin']
+        var memo_text = this.state.data['memo_text']
+        return(
+            <div>
+                <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1407f']}{/* Confirmation */}</h3>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2941']/* 'Send Coin Confirmation' */, 'details':this.props.app_state.loc['2942']/* 'Confirm that you want to send the coin to the target recipient.' */, 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['2943']/* Picked Amount. */}</p>
+                    {this.render_detail_item('2', this.get_picked_amount_in_base_units(coin, picked_transfer_amount))}
+                    {this.render_detail_item('2', this.get_picked_amount_in_decimal(coin, picked_transfer_amount))}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['2944']/* Picked Fee. */}</p>
+                    {this.render_detail_item('2', this.get_picked_fee_amount_in_base_units(coin, fee))}
+                    {this.render_detail_item('2', this.get_picked_fee_amount_in_decimal(coin, fee))}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1396']/* 'Sender Wallet Address' */, 'details':sender_address, 'size':'s'})}
+                <div style={{height: 10}}/>
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'s'})}
+
+                {this.show_memo_if_included(memo_text)}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.send_coin_to_target()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2945']/* 'Broadcast Transaction.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+
+    get_picked_amount_in_base_units(item, picked_sats_amount){
+        return{
+            'style':'s',
+            'title':'',
+            'subtitle':'',
+            'barwidth':this.calculate_bar_width(picked_sats_amount),
+            'number':this.format_account_balance_figure(picked_sats_amount),
+            'barcolor':'#606060',
+            'relativepower':item['base_unit']+'s',
+        }
+    }
+
+    get_picked_amount_in_decimal(item, picked_sats_amount){
+        var amount = parseFloat(picked_sats_amount) / item['conversion']
+        return{
+            'style':'s',
+            'title':'',
+            'subtitle':'',
+            'barwidth':this.calculate_bar_width(amount),
+            'number':(amount),
+            'barcolor':'#606060',
+            'relativepower':item['symbol'],
+        }
+    }
+
+    get_picked_fee_amount_in_base_units(item, picked_sats_fee_amount){
+        return{
+            'style':'s',
+            'title':'',
+            'subtitle':'',
+            'barwidth':this.calculate_bar_width(picked_sats_fee_amount),
+            'number':this.format_account_balance_figure(picked_sats_fee_amount),
+            'barcolor':'#606060',
+            'relativepower':item['base_unit']+'s',
+        }
+    }
+
+    get_picked_fee_amount_in_decimal(item, picked_sats_fee_amount){
+        var amount = parseFloat(picked_sats_fee_amount) / item['conversion']
+        return{
+            'style':'s',
+            'title':'',
+            'subtitle':'',
+            'barwidth':this.calculate_bar_width(amount),
+            'number':(amount),
+            'barcolor':'#606060',
+            'relativepower':item['symbol'],
+        }
+    }
+
+    show_memo_if_included(memo_text){
+        if(memo_text != null && memo_text != ''){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2953']/* 'Included Memo.' */, 'details':memo_text, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+
+    send_coin_to_target(){
+        this.props.send_coin_to_target()
+    }
 
 
 

@@ -35,9 +35,8 @@ class SuccessfulSend extends Component {
     render(){
         return(
             <div style={{'padding':'10px 15px 0px 15px'}}>
-                <img style={{width:'140px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'20px'}} src={this.props.app_state.static_assets['done_icon']} alt="E5"/>
-                <div style={{height: 25}}/>
-
+                {/* <img style={{width:'140px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'20px'}} src={this.props.app_state.static_assets['done_icon']} alt="E5"/>
+                <div style={{height: 25}}/> */}
                 {this.render_everything()}
             </div>
         )
@@ -45,8 +44,26 @@ class SuccessfulSend extends Component {
 
     render_everything(){
         if(this.state.data == null) return;
-        var size = this.props.app_state.size
+        var type = this.state.data['type']
+        if(type == 'ether'){
+            return(
+                <div>
+                    {this.render_ether_data()}
+                </div>
+            )
+        }
+        else if(type == 'coin'){
+            return(
+                <div>
+                    {this.render_coin_data()}
+                </div>
+            )
+        }
+    }
 
+
+    render_ether_data(){
+        var size = this.props.app_state.size
         if(size == 's'){
             return(
                 <div>
@@ -82,7 +99,6 @@ class SuccessfulSend extends Component {
                         {this.render_empty_views(3)}
                     </div>
                 </div>
-                
             )
         }
     }
@@ -150,7 +166,7 @@ class SuccessfulSend extends Component {
                 {this.render_detail_item('3',{'details':start_and_end(data['hash']), 'title':this.props.app_state.loc['2799']/* 'Transaction Hash.' */,'size':'l'})}
                 
                 <div style={{height: 10}}/>
-                <div style={{'padding': '5px'}} onClick={()=> this.copy_to_clipboard()}>
+                <div style={{'padding': '5px'}} onClick={()=> this.copy_to_clipboard(data['hash'])}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2801']/* 'Copy Transaction Hash.' */, 'action':''})}
                 </div>
 
@@ -161,11 +177,9 @@ class SuccessfulSend extends Component {
         )
     }
 
-    copy_to_clipboard(){
-        var data = this.state.data
-        var hash = data['hash']
+    copy_to_clipboard(hash){
         navigator.clipboard.writeText(hash)
-        this.props.notify(this.props.app_state.loc['1403']/* 'copied to clipboard!' */, 600)
+        this.props.notify(this.props.app_state.loc['1403']/* 'copied to clipboard!' */, 1000)
     }
 
     render_blockexplorer_link(){
@@ -373,6 +387,207 @@ class SuccessfulSend extends Component {
             )
         }
     }
+
+
+
+
+
+
+
+
+
+
+    render_coin_data(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_coin_content()}
+                    {this.render_coin_transaction_hash_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_coin_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_coin_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_coin_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_coin_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    render_coin_content(){
+        var data = this.state.data
+        var item = data['item']
+        var amount_sent_decimal = parseFloat(data['amount']) / item['conversion']
+        var amount_sent_base_unit = data['amount']
+        var fee_used_decimal = parseFloat(data['fee']) / item['conversion']
+        var fee_used_base_unit = data['fee']
+        var utxos_consumed = data['utxos_consumed']
+        var tx_size = data['tx_size']
+        return(
+            <div style={{'overflow-x':'hidden'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2786']/* Transaction Broadcasted.*/,'details':this.props.app_state.loc['2787']/* Your transaction was successfuly broadcasted to the rest of the network. */, 'size':'l'})}
+                
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3',{'details':''+data['sender'], 'title':this.props.app_state.loc['2788']/* 'From Your Address' */,'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3',{'details':''+data['recipient'], 'title':this.props.app_state.loc['2789']/* 'Recipient Address' */,'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['2947']/* 'Amount Sent' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount_sent_decimal), 'number':(amount_sent_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                    
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount_sent_base_unit), 'number':this.format_account_balance_figure(amount_sent_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['2948']/* 'Fee Used' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(fee_used_decimal), 'number':(fee_used_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                    
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(fee_used_base_unit), 'number':this.format_account_balance_figure(fee_used_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.show_tx_size_and_utxo_count(tx_size, utxos_consumed)}
+            </div>
+        )
+    }
+
+    show_tx_size_and_utxo_count(size, count){
+        if(size != null && count != null){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3',{'title':size+' bytes', 'details':this.props.app_state.loc['2949']/* 'Transaction Size.' */,'size':'l'})}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3',{'title':''+count, 'details':this.props.app_state.loc['2950']/* 'UTXOs consumed.' */,'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+
+    render_coin_transaction_hash_part(){
+        var data = this.state.data
+        return(
+            <div>
+                {this.render_detail_item('3',{'details':start_and_end(data['hash']), 'title':this.props.app_state.loc['2799']/* 'Transaction Hash.' */,'size':'l'})}
+                
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={()=> this.copy_to_clipboard(data['hash'])}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2801']/* 'Copy Transaction Hash.' */, 'action':''})}
+                </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_coin_blockexplorer_link()}
+            </div>
+        )
+    }
+
+    render_coin_blockexplorer_link(){
+        var link = this.get_coin_blockexplorer_link()
+        if(link != null){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2802']/* Track Your Transaction. */,'details':this.props.app_state.loc['2803']/* You can track the status of your transaction from the chain blockexplorer. */, 'size':'l'})}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4', {'text':link, 'textsize':'13px', 'font':'Sans-serif'})}
+                </div>
+            )
+        }
+    }
+
+
+    get_coin_blockexplorer_link(){
+        var data = this.state.data
+        var hash = data['hash']
+        var paging_token = data['paging_token']
+        var item = data['item']
+        if(item['symbol'] == 'BTC'){
+            return `https://www.blockchain.com/explorer/transactions/btc/${hash}`
+        }
+        else if(item['symbol'] == 'BCH'){
+            return `https://www.blockchain.com/explorer/transactions/bch/${hash}`
+        }
+        else if(item['symbol'] == 'LTC'){
+            return `https://litecoinspace.org/tx/${hash}`
+        }
+        else if(item['symbol'] == 'DOGE'){
+            return `https://blockexplorers.nownodes.io/dogecoin/tx/${hash}`
+        }
+        else if(item['symbol'] == 'DASH'){
+            return `https://blockchair.com/dash/transaction/${hash}`
+        }
+        else if(item['symbol'] == 'TRX'){
+            return `https://tronscan.org/#/transaction/${hash}`
+        }
+        else if(item['symbol'] == 'XRP'){
+            return `https://xrpscan.com/tx/${hash}`
+        }
+        else if(item['symbol'] == 'XLM'){
+            return `https://stellar.expert/explorer/public/tx/${paging_token}`
+        }
+        else if(item['symbol'] == 'DOT'){
+            return `https://polkadot.subscan.io/extrinsic/${hash}`
+        }
+        else if(item['symbol'] == 'KSM'){
+            return `https://kusama.subscan.io/extrinsic/${hash}`
+        }
+        else if(item['symbol'] == 'ALGO'){
+            return `https://allo.info/tx/${hash}`
+        }
+        else if(item['symbol'] == 'XTZ'){
+            return ``
+        }
+        else if(item['symbol'] == 'ATOM'){
+            return ``
+        }
+        else if(item['symbol'] == 'FIL'){
+            return ``
+        }
+    }
+
+
+
+
+
+
+
+
 
 
     /* renders the specific element in the post or detail object */

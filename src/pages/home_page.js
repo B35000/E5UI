@@ -81,7 +81,7 @@ class home_page extends Component {
         work_page_tags_object:this.get_main_page_tag_object('?'), 
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
-        selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null, selected_mail_item: null, selected_storefront_item: null, selected_bag_item: null,
+        selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null, selected_mail_item: null, selected_storefront_item: null, selected_bag_item: null, selected_coin_item:null,
         
         view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
@@ -319,7 +319,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
           ],
         }
       }
@@ -1405,7 +1405,12 @@ class home_page extends Component {
             var scroll_pos = this.page_scroll_data[id]
             if(scroll_pos == null) scroll_pos = 0;
 
-            if(selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_item == 'e'){
+            if(selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_coin_list(scroll_pos)
+                }
+            }
+            else if(selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
                 if(this.wallet_list_section.current != null){
                     this.wallet_list_section.current?.set_ether_list(scroll_pos)
                 }
@@ -2421,6 +2426,8 @@ class home_page extends Component {
             get_all_sorted_notifications={this.get_all_sorted_notifications.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} view_number={this.props.view_number.bind(this)}
 
             show_pay_upcoming_subscriptions_bottomsheet={this.props.show_pay_upcoming_subscriptions_bottomsheet.bind(this)}
+
+            when_coin_object_clicked={this.when_coin_object_clicked.bind(this)}
             />
         )
     }
@@ -2432,6 +2439,15 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
     }
+
+    when_coin_object_clicked(item){
+        this.setState({selected_coin_item: item})
+        this.set_detail_data()
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
 
     when_ends_object_clicked(index, id, e5){
         this.setState({selected_end_item: id+e5})
@@ -2802,7 +2818,7 @@ class home_page extends Component {
                 {this.render_page_tabs()}
                 <PostDetailSection page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} detail_page={this.state.detail_page} detail_selected_tag={this.state.detail_selected_tag}
 
-                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item}
+                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item}
 
                 height={h} screensize={this.props.screensize} width={width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.render_top_notification.bind(this)}
                 
@@ -2833,7 +2849,7 @@ class home_page extends Component {
                 view_royalty_staging={this.open_view_posted_royalty_staging.bind(this)}
 
                 load_exchanges_royalty_event_data={this.props.load_exchanges_royalty_event_data.bind(this)}
-                load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)}
+                load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)}
                 />
             </div>
         )

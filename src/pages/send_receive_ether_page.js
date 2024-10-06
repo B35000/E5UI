@@ -536,7 +536,6 @@ class SendReceiveEtherPage extends Component {
         }
     }
 
-
     get_picked_amount_in_ether(){
         return{
             'style':'s',
@@ -665,7 +664,7 @@ class SendReceiveEtherPage extends Component {
         )
     }
 
-    get_balance_power_limit(balance){        
+    get_balance_power_limit(balance){
         if(balance < 1_000_000_000){
             return 0
         }else{
@@ -765,7 +764,6 @@ class SendReceiveEtherPage extends Component {
                         value={this.get_account_address()}
                         viewBox={`0 0 100 100`}
                     />
-                    
                 </div>
                 <p style={{'margin':'5% 0% 0% 0%', 'text-align': 'center', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2800']}</p>
                 
