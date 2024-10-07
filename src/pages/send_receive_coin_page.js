@@ -180,9 +180,11 @@ class SendReceiveCoinPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['2930']/* 'Default Transaction Fee' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_decimal), 'number':(tx_fee_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_decimal), 'number':(tx_fee_decimal), 'barcolor':'#606060', 'relativepower':item['symbol']+' / '+(per == 'transaction' ? 'tx':per), })}
                     
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_base_units), 'number':this.format_account_balance_figure(tx_fee_base_units), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_base_units), 'number':this.format_account_balance_figure(tx_fee_base_units), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s / '+(per == 'transaction' ? 'tx':per), })}
+
+                    {this.render_default_fee_for_utxo_chains()}
                 </div>
                 <div style={{height: 10}}/>
 
@@ -249,7 +251,9 @@ class SendReceiveCoinPage extends Component {
             if(amount == 0){
                 return 0
             }else{
-                return parseFloat(amount) / item['conversion']
+                var x = parseFloat(amount) / item['conversion']
+                var y = parseFloat(parseInt(x * item['conversion'])) / item['conversion']
+                return y
             }
         }else{
             return 0
@@ -264,11 +268,32 @@ class SendReceiveCoinPage extends Component {
             if(deposit == 0){
                 return 0
             }else{
-                return (deposit).toString()
+                return parseInt(deposit).toString()
             }
         }else{
             return 0
         } 
+    }
+    
+    render_default_fee_for_utxo_chains(){
+        var item = this.state.coin
+        if(item['symbol'] == 'BTC' || item['symbol'] == 'BCH' || item['symbol'] == 'LTC' || item['symbol'] == 'DOGE' || item['symbol'] == 'DASH'){
+            var data = this.props.app_state.coin_data[item['symbol']]
+            var fee = data['fee']['fee']
+            var utxo_count = this.get_utxos_that_will_be_consumed(data)
+            if(utxo_count == 0) utxo_count = 1
+            var default_fee = parseInt(fee * (this.get_utxo_tx_size(utxo_count, 1)))
+            var defualt_fee_in_decimal = default_fee / item['conversion']
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(default_fee), 'number':this.format_account_balance_figure(default_fee), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s / '+'tx', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(defualt_fee_in_decimal), 'number':(defualt_fee_in_decimal), 'barcolor':'#606060', 'relativepower':item['symbol']+' / tx', })}
+                </div>
+            )
+        }
     }
 
 

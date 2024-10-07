@@ -421,6 +421,13 @@ class AddCommentPage extends Component {
         var award_amount = this.state.award_amount
         var award_receiver = this.state.focused_message_id != 0 ? this.state.focused_message_id['sender'] : 0
 
+        if(award_amount != 0){
+            if(this.props.calculate_actual_balance(object['e5'], 5) < award_amount){
+                this.props.notify(this.props.app_state.loc['2909a']/* 'You dont have enough spend to include that award.' */, 4000)
+                return;
+            }
+        }
+
         if(page == 'channel'){
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
         }

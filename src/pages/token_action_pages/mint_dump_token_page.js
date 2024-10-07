@@ -454,8 +454,9 @@ class NewMintActionPage extends Component {
 
         for(var i=0; i<buy_tokens.length; i++){
             var token_id = buy_tokens[i]
-            var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
-            token_balance = token_balance == null ? 0 : token_balance['balance']
+            // var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
+            // token_balance = token_balance == null ? 0 : token_balance['balance']
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
             var my_ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
             if(token_id == 0) token_balance = my_ether_balance
             buy_amount_balances.push(token_balance)
@@ -475,32 +476,6 @@ class NewMintActionPage extends Component {
     }
 
 
-
-
-    add_transaction() {
-        var amount = this.state.amount
-        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
-        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
-        var stack_action = 1
-        if(action == 'mint-buy') stack_action = 0
-
-        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
-        }
-        else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
-        }
-        else{
-            if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){
-                this.props.notify('you dont have enough tokens for that')
-            }
-            
-            else{
-                this.props.notify('transaction added!', 600)
-            }
-        }
-        
-    }
 
     get_typed_alias_id(alias){
         if(!isNaN(alias)){
@@ -527,8 +502,9 @@ class NewMintActionPage extends Component {
 
         for(var i=0; i<buy_tokens.length; i++){
             var token_id = buy_tokens[i]
-            var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
-            token_balance = token_balance == null ? 0 : token_balance['balance']
+            // var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
+            // token_balance = token_balance == null ? 0 : token_balance['balance']
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
             var my_ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
             if(token_id == 0) token_balance = my_ether_balance
             var required_amount = required_amounts[i]

@@ -3250,8 +3250,10 @@ class NewProposalPage extends Component {
         var minimum_spend_bounty_amount = this.state.contract_item['data'][1][10/* <10>default_minimum_spend_vote_bounty_amount */]
         var minimum_end_bounty_amount = this.state.contract_item['data'][1][4/* <4>default_minimum_end_vote_bounty_amount */]
 
-        var end_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][3]['balance']
-        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]['balance']
+        // var end_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][3]['balance']
+        var end_token_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 3)
+        // var spend_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]['balance']
+        var spend_token_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 5)
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['420']/* 'The first bounty exchange should be the End or Spend Exchange' */})}
@@ -3553,7 +3555,8 @@ class NewProposalPage extends Component {
         for(var i=0; i<bounty_values.length; i++){
             var bounty_item_exchange = bounty_values[i]['exchange']
             var bounty_item_amount = bounty_values[i]['amount']
-            var my_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][bounty_item_exchange]['balance']
+            // var my_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][bounty_item_exchange]['balance']
+            var my_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, bounty_item_exchange)
             if(my_balance < bounty_item_amount){
                 has_enough = false
             }

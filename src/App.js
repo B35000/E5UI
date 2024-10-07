@@ -438,7 +438,7 @@ class App extends Component {
 
     number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600, has_account_been_loaded_from_storage:false, show_stack:true,
 
-    coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:''
+    coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data()
   };
 
   get_static_assets(){
@@ -1205,10 +1205,10 @@ class App extends Component {
         
         '2896':'upcoming-subscriptions','2897':' upcoming subscriptions.','2898':'Total Subscription Payment Amounts.','2899':'Here\'s the total amount of money you\'ll be paying for the subscriptions.','2900':'Your set time.','2901':'Please set a valid time.','2902':'You dont have enough money to fulfil those subscription payments.','2903':' targeted subscriptions.','c':'You can\'t target no subscriptions.','2905':'Your upcoming subscriptions. Select a subscription to ignore it in the transaction.',
         
-        '2906':'You need to set your wallet first.','2907':'You can\'t delete that message.','2908':'Delete.','2909':'Message Deleted.',
+        '2906':'You need to set your wallet first.','2907':'You can\'t delete that message.','2908':'Delete.','2909':'Message Deleted.', '2909a':'You dont have enough spend to include that award.', 
         
         /* coins details section */
-        '2910':'Coin Name.','2911':'Coin Symbol.','2912':'Coin Decimal.','2913':'Base Unit Name.','2914':'Decimal Conversion Ratio.','2915':'Ledger Account Type.','2916':'Accounting','2917':'Wallet Address.','2918':'Unset','2919':'Your balance in ','2920':'Existential Deposit','2921':'Average Transaction Fee...','2922':'Per','2923':'Fee Type','2924':'Send/Receive ','2925':'Send or receive the coin from a specified account.','2926':'Pending...','2927':'Wait first, the wallet is pending.','2927a':'Ledger Consensus Mechanism.', '2927b':'Block Time',
+        '2910':'Coin Name.','2911':'Coin Symbol.','2912':'Coin Decimal.','2913':'Base Unit Name.','2914':'Decimal Conversion Ratio.','2915':'Ledger Account Type.','2916':'Accounting','2917':'Wallet Address.','2918':'Unset','2919':'Your balance in ','2920':'Existential Deposit','2921':'Average Transaction Fee...','2922':'Per','2923':'Fee Type','2924':'Send/Receive ','2925':'Send or receive the coin from a specified account.','2926':'Pending...','2927':'Wait first, the wallet is pending.','2927a':'Ledger Consensus Mechanism.', '2927b':'Block Time', '2927c':'Ledger Age.','2927d':'Ledger Throughput.','2927e':'Block Size.',
         
         /* send_receive_coin */
         '2928':'Receive the coin using the address shown below.','2929':'Send the coin using the address shown below.','2930':'Default Transaction Fee','2931':'Transaction Fee.','2932':'Set the amount you wish to pay for your transaction.','2933':'Send to Address.','2934':'Your balance is too low to make a transaction.','2935':'Please Set an amount to transfer.','2936':'You can\'t include the minimum deposit in your transaction.','2937':'You don\'t have enough coin to make that transaction.','2938':'Please set a recipient for the transfer.','2939':'That recipient address is not valid.','2940':'That transaction fee is invalid.','2941':'Send Coin Confirmation.',
@@ -1222,6 +1222,39 @@ class App extends Component {
 
     if(!accepted_languages.includes(language)) return obj['en']
     return obj[language]
+  }
+
+  get_coin_data(){
+      var list = {
+          'BTC': this.get_coin_info('BTC', 'Bitcoin', 'https://bafkreie2kzwwxljfs2vfnha5dey4m2mol7isouyozsmfervtqovv4dxwjy.ipfs.w3s.link/', 'satoshi', 8, 100_000_000),
+          'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', 'https://bafkreieqzh5ukzx7xkqbat6enbs6vvui45mzrdel72nrpvquggddnyqzge.ipfs.w3s.link/', 'satoshi', 8, 100_000_000),
+          'LTC': this.get_coin_info('LTC', 'Litecoin', 'https://bafkreibssgaxtckfjpfi3rwrhq24aapqukesjliidbuo2tefsfyvudccia.ipfs.w3s.link/', 'litoshi', 8, 100_000_000),
+          'DOGE': this.get_coin_info('DOGE', 'Dogecoin', 'https://bafkreigu2tax5e3kfiisfcx3yo4k54ly5za4p33n7cs4lvgdsrnqezkqey.ipfs.w3s.link/', 'koinu', 8, 100_000_000),
+          'DASH': this.get_coin_info('DASH', 'Dash', 'https://bafkreicc4b6lb6pz2ql3iefz2graqvm5apk44jf3tjtwomdzi7pmsr3wiu.ipfs.w3s.link/', 'duff', 8, 100_000_000),
+          'TRX': this.get_coin_info('TRX', 'Tron', 'https://bafkreibogf2z4apmef7soghheiudwel67br5nxnuq4hydtvcqppme6lsre.ipfs.w3s.link/', 'sun', 6, 1_000_000),
+          'XRP': this.get_coin_info('XRP', 'Xrp', 'https://bafkreidql7b6v2emvlcnyl7qkhbzjknyvhu33ifxogf34236mmwue6bo4y.ipfs.w3s.link/', 'drops', 6, 1_000_000),
+          'XLM': this.get_coin_info('XLM', 'Stellar', 'https://bafkreiaeipmjvsizk6sbucvudjg332iaumravdte3p6gdnotfjbxsriqre.ipfs.w3s.link/', 'stroop', 7, 10_000_000),
+          'DOT': this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000),
+          'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000),
+          'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', 'microalgorand', 6, 1_000_000),
+          'XTZ': this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000),
+          'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000_000),
+          'FIL': this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000),
+      }
+      return list
+  }
+
+  get_coin_info(symbol, name, image_url, base_unit, decimals, conversion){
+      return{
+          'name':name,
+          'id':symbol,
+          'symbol':symbol,
+          'base_unit':base_unit,
+          'decimals':decimals,
+          'conversion':conversion,
+          'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
+          'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
+      }
   }
 
 
@@ -1446,6 +1479,7 @@ class App extends Component {
       graph_type: this.state.graph_type,
       remember_account: this.state.remember_account,
       account_data: this.get_account_data_to_store(),
+      coin_data:this.get_coin_data_to_store()
     }
   }
 
@@ -1504,6 +1538,8 @@ class App extends Component {
       var cupcake_graph_type = cupcake_state.graph_type
       var cupcake_remember_account = cupcake_state.remember_account
       var cupcake_account_data = cupcake_state.account_data
+
+      var cupcake_coin_data = cupcake_state.coin_data
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -1650,6 +1686,10 @@ class App extends Component {
         }
       }
 
+      if(cupcake_coin_data != null){
+        this.setState({coin_data: cupcake_coin_data})
+      }
+
 
     }
 
@@ -1697,6 +1737,12 @@ class App extends Component {
       }
     }
     this.setState({accounts: _accounts, has_account_been_loaded_from_storage: true})
+  }
+
+  get_coin_data_to_store(){
+    var _accounts = {}
+    if(this.state.remember_account == 'e') return _accounts
+    return this.state.coin_data
   }
 
 
@@ -1932,6 +1978,8 @@ class App extends Component {
       if(this.is_allowed_in_e5()){
         this.start_get_accounts_data(false, false)
         this.load_data_from_page_in_focus(this.focused_page)
+        var seed = this.state.account_seed
+        if(seed != '')  this.update_coin_balances(seed)
       }
     }
 
@@ -2909,47 +2957,53 @@ class App extends Component {
   broadcast_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, memo_text) => {
     var data = this.state.coin_data[item['symbol']]
     if(item['symbol'] == 'BTC'){
-      this.create_and_broadcast_bitcoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_bitcoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'BCH'){
-      this.create_and_broadcast_bitcoin_cash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_bitcoin_cash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'LTC'){
-      this.create_and_broadcast_litecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_litecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'DOGE'){
-      this.create_and_broadcast_dogecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_dogecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'DASH'){
-      this.create_and_broadcast_dash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_dash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'TRX'){
-      this.create_and_broadcast_tron_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_tron_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'XRP'){
-      this.create_and_broadcast_xrp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_xrp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'XLM'){
-      this.create_and_broadcast_xlm_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+      await this.create_and_broadcast_xlm_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
     }
     else if(item['symbol'] == 'DOT'){
-      this.create_and_broadcast_dot_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_dot_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'KSM'){
-      this.create_and_broadcast_kusama_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_kusama_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'ALGO'){
-      this.create_and_broadcast_algorand_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+      await this.create_and_broadcast_algorand_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
     }
     else if(item['symbol'] == 'XTZ'){
-      this.create_and_broadcast_tezos_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_tezos_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'ATOM'){
-      this.create_and_broadcast_atom_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+      await this.create_and_broadcast_atom_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
     }
     else if(item['symbol'] == 'FIL'){
-      this.create_and_broadcast_filecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_filecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
+
+    var seed = this.state.account_seed
+    var me = this;
+    setTimeout(function() {
+      me.update_coin_balances(seed)
+    }, (1 * 30_000));
   }
 
 
@@ -3469,7 +3523,7 @@ class App extends Component {
       To: recipient_address,
       Value: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
       GasPrice: gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
-      GasLimit: 120_000,
+      GasLimit: 220_000,
       gasPremium: parseInt(gasprice +(gasprice / 4)),
       GasFeeCap:parseInt(gasprice +(gasprice / 3)),
       Nonce: nonce,
@@ -3728,6 +3782,145 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  calculate_actual_balance(e5, token_id){
+    var txs = this.state.stack_items
+    if(this.state.created_token_object_mapping[e5] == null || this.state.created_token_object_mapping[e5][token_id]) return 0
+    var exchange_balance = this.state.created_token_object_mapping[e5][token_id]['balance']
+    var total_amount = bigInt(0)
+    for(var i=0; i<txs.length; i++){
+      var t = txs[i]
+      if(txs[i].e5 == e5){
+        // if(txs[i].type == this.getLocale()['946']/* 'buy-sell' */){
+        //     var amount = bigInt(txs[i].amount)
+        //     var exchange = t.token_item['id']
+        //     var action = this.get_action(t)
+        //     if(token_id == exchange && action == 1){
+        //         total_amount = bigInt(total_amount).add(amount)
+        //     }
+        // }
+        // else 
+        if(txs[i].type == this.getLocale()['1018']/* 'transfer' */){
+            if(txs[i].token_item['id'] == token_id){
+                total_amount = bigInt(total_amount).add(txs[i].debit_balance)
+            }
+        }
+        else if(txs[i].type == this.getLocale()['1499']/* 'direct-purchase' */){
+          for(var i=0; i<t.selected_variant['price_data'].length; i++){
+              var exchange = t.selected_variant['price_data'][i]['id']
+              var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+              if(exchange == token_id){
+                  total_amount = bigInt(total_amount).add(amount)
+              }
+          }
+          for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
+              var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+              var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+              if(exchange == token_id){
+                  total_amount = bigInt(total_amount).add(amount)
+              }
+          }
+        }
+        else if(txs[i].type == this.getLocale()['1155']/* 'award' */){
+          if(token_id == 5){
+              total_amount = bigInt(total_amount).add(t.award_amount)
+          }
+          for(var i=0; i<t.price_data.length; i++){
+              var exchange = t.price_data[i]['id']
+              var amount = t.price_data[i]['amount']
+              if(exchange == token_id){
+                total_amount = bigInt(total_amount).add(amount)
+              }
+          }
+        }
+        else if(txs[i].type == this.getLocale()['1509']/* 'mail-messages' */ || this.getLocale()['1511']/* 'post-messages' */ || this.getLocale()['1512']/* 'job-response' */ || this.getLocale()['1514']/* 'job-messages' */ || this.getLocale()['1515']/* 'proposal-messages' */ || this.getLocale()['1501']/* 'bag-messages' */ || this.getLocale()['1505']/* 'job-request-messages' */){
+          for(var i=0; i<t.messages_to_deliver.length; i++){
+            if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
+              total_amount = bigInt(total_amount).add(t.messages_to_deliver[i]['award_amount'])
+            }
+          }
+        }
+        else if(txs[i].type == this.getLocale()['946']/* 'buy-sell' */){
+          var buy_tokens = t.token_item['data'][3]
+          var required_amounts = this.calculate_token_prices(t, t.token_item['data'][4])
+          var action = this.get_action(t)
+          for(var i=0; i<buy_tokens.length; i++){
+            var buy_token_id = buy_tokens[i]
+            if(buy_token_id == token_id && action == 0){
+              var required_amount = required_amounts[i]
+              total_amount = bigInt(total_amount).add(required_amount)
+            }
+          }
+        }
+        else if(txs[i].type == this.getLocale()['1']/* 'enter-contract' */){
+          var entry_tokens = t.contract_item['data'][2]
+          var entry_amounts = t.contract_item['data'][3]
+          for(var i=0; i<entry_tokens.length; i++){
+            var entry_token_id = entry_tokens[i]
+            if(entry_token_id == token_id){
+              var required_amount = entry_amounts[i]
+              total_amount = bigInt(total_amount).add(required_amount)
+            }
+          }
+        }
+        else if(txs[i].type == this.getLocale()['312']/* 'proposal' */){
+          for(var i = 0; i<t.bounty_values.length; i++){
+            if(t.bounty_values[i]['exchange'] == token_id){
+              var required_amount = t.bounty_values[i]['amount']
+              total_amount = bigInt(total_amount).add(required_amount)
+            }
+          }
+        }
+        else if(txs[i].type == this.getLocale()['862']/* 'pay-subscription' */){
+          var entry_tokens = this.state.subscription_item['data'][2]
+          var entry_fees = this.state.subscription_item['data'][3]
+          for(var i=0; i<entry_tokens.length; i++){
+            if(token_id == entry_tokens[i]){
+              var required_amount = this.calculate_final_amount(entry_fees[i], t)
+              total_amount = bigInt(total_amount).add(required_amount)
+            }
+          }
+        }
+        else if(txs[i].type == this.getLocale()['2896']/* 'upcoming-subscriptions' */){
+          var exchanges_used = t.data.exchanges_used
+          var exchange_amounts = t.data.exchange_amounts
+          for(var i=0; i<exchanges_used.length; i++){
+            if(token_id == exchanges_used[i]){
+              var required_amount = exchange_amounts[token_id]
+              total_amount = bigInt(total_amount).add(required_amount)
+            }
+          }
+        }
+      }
+    }
+    if(bigInt(exchange_balance).minus(total_amount).isNegative()) return 0
+    return bigInt(exchange_balance).minus(total_amount)
+  }
+
+  get_action(t){
+      var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
+      var stack_action = 1
+      if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
+      return stack_action
+  }
+
+  get_selected_item(object, option){
+      var selected_item = object[option][2][0]
+      var picked_item = object[option][1][selected_item];
+      return picked_item
+  }
+
+  calculate_token_prices(t, buy_amounts){
+    var amount = t.amount
+    var return_buy_amounts = buy_amounts.slice()
+    for(var i = 0; i < buy_amounts.length; i++){
+        return_buy_amounts[i] = bigInt(bigInt(buy_amounts[i]).multiply(bigInt(amount)) )
+    }
+    return return_buy_amounts
+  }
+
+  calculate_final_amount(price, t){
+    return bigInt(price).multiply(t.time_units)
+  }
 
 
 
@@ -4920,7 +5113,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)}/>
+                          <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4932,7 +5125,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_mint_token_bottomsheet.bind(this)} open={this.state.mint_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)}/>
+            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -5012,7 +5205,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)}/>
+                          <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -5024,7 +5217,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_transfer_token_bottomsheet.bind(this)} open={this.state.transfer_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)}/>
+            <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -5102,7 +5295,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EnterContractPage ref={this.enter_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)}/>
+                          <EnterContractPage ref={this.enter_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -5114,7 +5307,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_enter_contract_bottomsheet.bind(this)} open={this.state.enter_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EnterContractPage ref={this.enter_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)}/>
+            <EnterContractPage ref={this.enter_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -5280,6 +5473,9 @@ class App extends Component {
 
 
 
+
+
+
   render_exit_contract_bottomsheet(){
     if(this.state.exit_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -5357,6 +5553,8 @@ class App extends Component {
 
 
 
+
+
   //new proposal
   render_new_proposal_bottomsheet(){
     if(this.state.new_proposal_bottomsheet2 != true) return;
@@ -5369,7 +5567,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)}/>
+                          <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -5381,7 +5579,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_proposal_bottomsheet.bind(this)} open={this.state.new_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)}/>
+            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -5638,7 +5836,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)}/>
+                          <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -5650,7 +5848,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_pay_subscription_bottomsheet.bind(this)} open={this.state.pay_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)}/>
+            <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -6789,7 +6987,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)}/>
+                          <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -6801,7 +6999,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_respond_to_job_bottomsheet.bind(this)} open={this.state.respond_to_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)}/>
+            <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -6887,7 +7085,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)}/>
+                          <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -6899,7 +7097,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_application_contract_bottomsheet.bind(this)} open={this.state.view_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)}/>
+            <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -7615,7 +7813,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+                          <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -7627,7 +7825,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_to_bag_bottomsheet.bind(this)} open={this.state.add_to_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+            <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -7722,7 +7920,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px',  'overflow-y':'auto'}}>
-                          <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)}/>
+                          <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -7734,7 +7932,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_fulfil_bag_bottomsheet.bind(this)} open={this.state.fulfil_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)}/>
+            <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -7814,7 +8012,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)}/>
+                          <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -7826,7 +8024,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_bag_application_contract_bottomsheet.bind(this)} open={this.state.view_bag_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)}/>
+            <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -7911,7 +8109,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <DirectPurchasetPage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+                          <DirectPurchasetPage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -7923,7 +8121,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_direct_purchase_bottomsheet.bind(this)} open={this.state.direct_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <DirectPurchasetPage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+            <DirectPurchasetPage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8000,7 +8198,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-34, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                            {this.render_stack_item(size)}
+                            <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state}  view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8012,7 +8210,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_clear_purchase_bottomsheet.bind(this)} open={this.state.clear_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)}/>
+            <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8123,7 +8321,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+                          <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8135,7 +8333,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_job_request_bottomsheet.bind(this)} open={this.state.send_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8216,7 +8414,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}/>
+                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8228,7 +8426,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}/>
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8331,7 +8529,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)}/>
+                          <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8343,7 +8541,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_contract_bottomsheet.bind(this)} open={this.state.view_job_request_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)}/>
+            <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8430,7 +8628,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}/>
+                          <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8442,7 +8640,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_withdraw_ether_bottomsheet.bind(this)} open={this.state.withdraw_ether_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}/>
+            <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8565,7 +8763,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <GiveAwardPage ref={this.give_award_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)}/>
+                          <GiveAwardPage ref={this.give_award_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8577,7 +8775,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_give_award_bottomsheet.bind(this)} open={this.state.give_award_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <GiveAwardPage ref={this.give_award_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)}/>
+            <GiveAwardPage ref={this.give_award_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8666,7 +8864,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+                          <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8678,7 +8876,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_comment_bottomsheet.bind(this)} open={this.state.add_comment_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+            <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -9752,7 +9950,7 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
                         'overflow-y':'auto'}}>
-                          <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} />
+                          <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -9765,7 +9963,7 @@ class App extends Component {
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_pay_upcoming_subscriptions_bottomsheet.bind(this)} open={this.state.pay_upcoming_subscriptions_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
           'overflow-y':'auto'}}>
-            <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)}/>
+            <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -10033,7 +10231,7 @@ class App extends Component {
             me.start_get_accounts_data(true, false)
         }, (3 * 1000));
       }else{
-        this.when_wallet_data_updated(['(32)'], 0, '', true) 
+        this.when_wallet_data_updated(['(32)'], 0, '', true, true/* is_loading_default_wallet */) 
       }
     } 
     
@@ -10135,16 +10333,13 @@ class App extends Component {
   }
 
 
-  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
+  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching, is_loading_default_wallet){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
     if(selected_item != '') {
       this.setState({account_seed: seed});
     }
     this.generate_one_account_for_all_e5s(seed)
-    // if(selected_item != '') {
-    //   this.generate_account_data_for_each_coin(seed)
-    // }
-    this.generate_account_data_for_each_coin(seed)
+    if(this.state.coin_data['BTC'] == null && is_loading_default_wallet == true )this.generate_account_data_for_each_coin(seed)
     var me = this
     setTimeout(function() {
         me.start_get_accounts_data(is_synching, false)
@@ -10302,6 +10497,26 @@ class App extends Component {
     return new_arr.trim()
   }
 
+  update_coin_balances = async () => {
+    await this.update_filecoin_wallet_balance()
+    await this.update_bitcoin_balance()
+    await this.update_bitcoin_cash_balance()
+    await this.update_litecoin_balance()
+    await this.update_dogecoin_balance()
+    await this.update_dash_balance()
+    await this.update_tron_balance()
+    await this.update_xrp_balance()
+    await this.update_xlm_balance()
+    await this.update_dot_balance()
+    await this.update_ksm_balance()
+    await this.update_algorand_balance()
+    await this.update_tezos_balance()
+    await this.update_cosmos_balance()
+  }
+
+
+
+
 
   get_and_set_filecoin_wallet_info = async (seed) => {
     const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
@@ -10334,6 +10549,17 @@ class App extends Component {
 
   get_filecoin_transaction_fee = async () => {
     return 10_000_000_000
+  }
+
+  update_filecoin_wallet_balance = async () => {
+    const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
+    const lotusClient = new LotusClient(connector);
+
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['FIL']['address']
+    const balance = await this.get_filecoin_balance(address, lotusClient)
+    clone['FIL']['balance'] = balance
+    this.setState({coin_data: clone})
   }
 
 
@@ -10409,6 +10635,16 @@ class App extends Component {
     }
   }
 
+  update_bitcoin_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['BTC']['address']
+    var utxos = await this.get_bitcoin_utxos(address)
+    var balance = this.get_total_bitcoin_balance_from_utxos(utxos)
+    clone['BTC']['balance'] = balance
+    clone['BTC']['utxos'] = utxos
+    this.setState({coin_data: clone})
+  }
+
 
 
 
@@ -10456,6 +10692,16 @@ class App extends Component {
 
   get_bitcoin_cash_fees = async () => {
     return (0.0000015 * 100_000_000)
+  }
+
+  update_bitcoin_cash_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['BCH']['address']
+    var utxos = await this.get_bitcoin_cash_utxos(address)
+    var balance = this.get_total_bitcoin_cash_balance_from_utxos(utxos)
+    clone['BCH']['balance'] = balance
+    clone['BCH']['utxos'] = utxos
+    this.setState({coin_data: clone})
   }
 
 
@@ -10524,6 +10770,15 @@ class App extends Component {
     }
   }
 
+  update_litecoin_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['LTC']['address']
+    var utxos = await this.get_litecoin_utxos(address)
+    var balance = this.get_total_litecoin_balance_from_utxos(utxos)
+    clone['LTC']['balance'] = balance
+    clone['LTC']['utxos'] = utxos
+    this.setState({coin_data: clone})
+  }
 
 
 
@@ -10616,6 +10871,16 @@ class App extends Component {
     }
   }
 
+  update_dogecoin_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['DOGE']['address']
+    var utxos = await this.get_dogecoin_utxos(address)
+    const balance = this.get_total_dogecoin_balance_from_utxos(utxos)
+    clone['DOGE']['balance'] = balance
+    clone['DOGE']['utxos'] = utxos
+    this.setState({coin_data: clone})
+  }
+
 
 
 
@@ -10700,6 +10965,16 @@ class App extends Component {
     }
   }
 
+  update_dash_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['DASH']['address']
+    var utxos = await this.get_dash_utxos(address)
+    const balance = this.get_total_dash_balance_from_utxos(utxos)
+    clone['DASH']['balance'] = balance
+    clone['DASH']['utxos'] = utxos
+    this.setState({coin_data: clone})
+  }
+
 
 
 
@@ -10745,6 +11020,15 @@ class App extends Component {
 
   get_tron_transaction_fee = async () => {
     return 1_100_000
+  }
+
+  update_tron_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var wallet = await this.make_tron_wallet('hello world')
+    const address = clone['TRX']['address']
+    const balance = await this.get_tron_balance(address, wallet.tronWeb);
+    clone['TRX']['balance'] = balance
+    this.setState({coin_data: clone})
   }
 
 
@@ -10809,6 +11093,17 @@ class App extends Component {
     return 10
   }
 
+  update_xrp_balance = async () => {
+    const client = new xrpl.Client("wss://xrplcluster.com/")
+    await client.connect()
+    var clone = structuredClone(this.state.coin_data)
+    const address = clone['XRP']['address']
+    const balance = await this.get_xrp_balance(address, client)
+    await client.disconnect()
+    clone['XRP']['balance'] = balance
+    this.setState({coin_data: clone})
+  }
+
 
 
 
@@ -10859,6 +11154,16 @@ class App extends Component {
 
   get_xlm_transaction_fee = async () => {
     return 100
+  }
+
+  update_xlm_balance = async () => {
+    const server = new StellarSdk.Horizon.Server("https://horizon.stellar.org/")
+    var clone = structuredClone(this.state.coin_data)
+    const address = clone['XLM']['address']
+    var account = await this.load_xlm_account_info(address, server)
+    const balance = this.get_xlm_balance_from_address(account)
+    clone['XLM']['balance'] = balance
+    this.setState({coin_data: clone})
   }
 
 
@@ -10914,6 +11219,18 @@ class App extends Component {
     return (0.015 * 10_000_000_000)
   }
 
+  update_dot_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    const address = clone['DOT']['address']
+    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+    const address_balance = await this.get_dot_balance(address, api)
+    await api.disconnect()
+    clone['DOT']['balance'] = address_balance
+    this.setState({coin_data: clone})
+  }
+
 
 
 
@@ -10966,6 +11283,18 @@ class App extends Component {
     return (0.01 * 1_000_000_000_000)
   }
 
+  update_ksm_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    const address = clone['KSM']['address']
+    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+    const address_balance = await this.get_ksm_balance(address, api)
+    await api.disconnect()
+    clone['KSM']['balance'] = address_balance
+    this.setState({coin_data: clone})
+  }
+
 
 
 
@@ -10999,6 +11328,20 @@ class App extends Component {
     return (0.001 * 1_000_000)
   }
 
+  update_algorand_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['ALGO']['address']
+
+    const algodServer = 'https://mainnet-api.4160.nodely.dev';
+    const algodPort = 443;
+    const algodClient = new algosdk.Algodv2('', algodServer, algodPort);
+
+    const acctInfo = await algodClient.accountInformation(address).do();
+    const balance = (acctInfo.amount.toString())
+    clone['AlGO']['balance'] = balance
+    this.setState({coin_data: clone})
+  }
+
 
 
 
@@ -11029,6 +11372,16 @@ class App extends Component {
     return (0.064544 * 1_000_000)
   }
 
+  update_tezos_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['XTZ']['address']
+    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    const balance = (await Tezos.tz.getBalance(address)).toString()
+    clone['XTZ']['balance'] = balance
+    this.setState({coin_data: clone})
+  }
+
+
 
 
   get_and_set_cosmos_wallet_info = async (seed) => {
@@ -11036,7 +11389,7 @@ class App extends Component {
     const address = wallet.cosmosAddress
     const rpc = "https://cosmos-rpc.publicnode.com:443"
     const client = await StargateClient.connect(rpc)
-    const balance = await this.get_atom_address_balance(wallet.cosmosAddress, client)
+    const balance = await this.get_atom_address_balance(address, client)
     client.disconnect()
 
     var fee_info = {'fee':await this.get_atom_transaction_fee(), 'type':'variable', 'per':'transaction'}
@@ -11068,6 +11421,19 @@ class App extends Component {
 
   get_atom_transaction_fee = async () => {
     return (0.00640 * 1_000_000_000)
+  }
+
+  update_cosmos_balance = async () => {
+    var clone = structuredClone(this.state.coin_data)
+    var address = clone['ATOM']['address']
+
+    const rpc = "https://cosmos-rpc.publicnode.com:443"
+    const client = await StargateClient.connect(rpc)
+    const balance = await this.get_atom_address_balance(address, client)
+    client.disconnect()
+
+    clone['ATOM']['balance'] = balance;
+    this.setState({coin_data: clone})
   }
 
 
@@ -14763,6 +15129,14 @@ class App extends Component {
     if(target_type == 0) return;
 
     var searched_tags_including_prioritized_tags = (this.load_selected_tags(page)).concat(searched_tags)
+
+    if((page == this.getLocale()['1197']/* 'contracts' */ || page == this.getLocale()['1200']/* 'subscriptions' */ || page == this.getLocale()['1198']/* 'contractors' */) && searched_tags.length == 0 && this.state.user_account_id[this.state.selected_e5] != 1){
+      //prioritize my accounts data first
+      searched_tags_including_prioritized_tags = [this.state.user_account_id[this.state.selected_e5]].concat(searched_tags_including_prioritized_tags)
+    }
+
+    if(searched_tags.length != 0) searched_tags_including_prioritized_tags = searched_tags
+
     var posts_to_load = []
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -14781,7 +15155,8 @@ class App extends Component {
         all_indexed_tags_events.forEach(event_item => {
           var items_tag = event_item.returnValues.p4/* string_data */
           var items_id = event_item.returnValues.p1/* target_id */
-          if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id)){
+          var item_poster = event_item.returnValues.p2/* sender_acc_id */
+          if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id) || searched_tags_including_prioritized_tags.includes(item_poster)){
             posts_to_load.push(items_id)
           }
         });
@@ -14814,14 +15189,20 @@ class App extends Component {
 
     var should_prioritise_followed_tags = this.state.section_tags_setting == this.getLocale()['1427'] /* 'filtered' */
 
-    if(!should_prioritise_followed_tags) return []
+    var return_obj = [this.state.content_channeling]
+
+    if(!should_prioritise_followed_tags){
+      return return_obj
+    } 
 
     if(page == this.getLocale()['1196']/* 'jobs' */ || page == this.getLocale()['1197']/* 'contracts' */ || page == this.getLocale()['1198']/* 'contractors' */ || page == this.getLocale()['1200']/* 'subscriptions' */){
-      return job_section_tags
+      return_obj =  return_obj.concat(job_section_tags)
     }
     else{
-      return explore_section_tags
+      return_obj =  return_obj.concat(explore_section_tags)
     }
+
+    
   }
 
   load_prioritised_job_posts = async (e5, web3, contract_addresses) => {

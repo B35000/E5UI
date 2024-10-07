@@ -279,7 +279,8 @@ class GiveAwardPage extends Component {
 
     render_amounts_data(){
         var award_amount = this.state.award_amount
-        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
+        // var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
+        var spend_token_balance = this.props.calculate_actual_balance(this.state.e5, 5)
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1164']/* 'Award Tiers' */, 'details':this.props.app_state.loc['1165']/* 'Pick an award tier you wish to send to the post author' */, 'size':'l'})}
@@ -726,7 +727,8 @@ class GiveAwardPage extends Component {
 
     check_if_sender_has_enough_for_award(){
         var award_amount = this.state.award_amount
-        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
+        // var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
+        var spend_token_balance = this.props.calculate_actual_balance(this.state.e5, 5)
 
         if(spend_token_balance < award_amount){
             return false
@@ -740,8 +742,9 @@ class GiveAwardPage extends Component {
         for(var i=0; i<price_data.length; i++){
             var bounty_item_exchange = price_data[i]['id']
             var bounty_item_amount = price_data[i]['amount']
-            var my_balance = this.props.app_state.created_token_object_mapping[this.state.post_item['e5']][bounty_item_exchange]
-            my_balance = my_balance == null ? 0 : my_balance['balance']
+            // var my_balance = this.props.app_state.created_token_object_mapping[this.state.post_item['e5']][bounty_item_exchange]
+            // my_balance = my_balance == null ? 0 : my_balance['balance']
+            var my_balance = this.props.calculate_actual_balance(this.state.post_item['e5'], bounty_item_exchange)
             my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(bounty_item_exchange, this.state.post_item['e5']))
             if(bigInt(my_balance).lesser(bigInt(bounty_item_amount))){
                 has_enough = false
@@ -765,7 +768,8 @@ class GiveAwardPage extends Component {
                         total_amount = bigInt(total_amount).add(amount)
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                else 
+                if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
                     if(txs[i].token_item['id'] == token_id){
                         total_amount = bigInt(total_amount).add(txs[i].debit_balance)
                     }
@@ -798,11 +802,71 @@ class GiveAwardPage extends Component {
                         }
                     }
                 }
+                // else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                //     var buy_tokens = t.token_item['data'][3]
+                //     var required_amounts = this.calculate_token_prices(t, t.token_item['data'][4])
+                //     for(var i=0; i<buy_tokens.length; i++){
+                //         var buy_token_id = buy_tokens[i]
+                //         if(buy_token_id == token_id){
+                //             var required_amount = required_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
+                //     var entry_tokens = t.contract_item['data'][2]
+                //     var entry_amounts = t.contract_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         var entry_token_id = entry_tokens[i]
+                //         if(entry_token_id == token_id){
+                //             var required_amount = entry_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['312']/* 'proposal' */){
+                //     for(var i = 0; i<t.bounty_values.length; i++){
+                //         if(t.bounty_values[i]['exchange'] == token_id){
+                //             var required_amount = t.bounty_values[i]['amount']
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */){
+                //     var entry_tokens = this.state.subscription_item['data'][2]
+                //     var entry_fees = this.state.subscription_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         if(token_id == entry_tokens[i]){
+                //             var required_amount = this.calculate_final_amount(entry_fees[i], t)
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                //     var exchanges_used = t.data.exchanges_used
+                //     var exchange_amounts = t.data.exchange_amounts
+                //     for(var i=0; i<exchanges_used.length; i++){
+                //         if(token_id == exchanges_used[i]){
+                //             var required_amount = exchange_amounts[token_id]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
             }
         }
         return total_amount
     }
 
+    get_action(t){
+        var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
+        var stack_action = 1
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
+        return stack_action
+    }
+    
+    get_amounts_to_be_paid(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
+    }
 
 
 

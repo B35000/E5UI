@@ -5133,6 +5133,23 @@ class StackPage extends Component {
             string_obj[0].push(t.entered_title_text.toString())
         }
 
+
+        var main_index = this.props.app_state.device_country
+        if(this.props.app_state.content_channeling == this.props.app_state.loc['1233']/* 'international' */){
+            main_index = this.props.app_state.loc['1233']/* 'international' */
+        }
+        else if(this.props.app_state.content_channeling == this.props.app_state.loc['1232']/* 'language' */){
+            main_index = this.props.app_state.loc['1232']/* 'language' */
+        }
+        transaction_obj[1].push(target_stack_index)
+        transaction_obj[2].push(35)
+        transaction_obj[3].push(20/* 20(tag_registry) */)
+        transaction_obj[4].push(target_type)
+
+        string_obj[0].push(main_index)
+
+
+
         return {int: transaction_obj, str: string_obj}
         
     }
@@ -6753,7 +6770,8 @@ class StackPage extends Component {
 
     render_my_balances(){
         var items = this.get_my_balances()
-        if(items.length == 0){
+        var coin_items = this.get_my_coin_balances()
+        if(items.length == 0 && coin_items.length == 0){
             return(
                 <div>
                     {this.render_empty_views(3)}
@@ -6766,8 +6784,16 @@ class StackPage extends Component {
                     {items.map((item, index) => (
                         <li style={{'padding': '3px 0px 3px 0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
-                                
                                 {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.e5s[item].token, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item]), 'barcolor':'', 'relativepower':'wei', })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {coin_items.map((item, index) => (
+                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['title'], 'number':item['balance'], 'relativepower':item['base_unit']})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':item['title'], 'subtitle':this.format_power_figure(item['balance']), 'barwidth':this.calculate_bar_width(item['balance']), 'number':this.format_account_balance_figure(item['balance']), 'barcolor':'', 'relativepower':item['base_unit'], })}
                             </div>
                         </li>
                     ))}
@@ -6793,6 +6819,154 @@ class StackPage extends Component {
         return selected_e5s
     }
 
+
+    render_my_balances_if_small_screen_size(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_my_balances_horizontal()}
+                </div>
+            )
+        }
+    }
+
+    render_my_balances_horizontal(){
+        var items = this.get_my_balances()
+        var coin_items = this.get_my_coin_balances()
+        if(items.length == 0 && coin_items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            var items2 = [0, 1]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_ether_balance_item(item)}
+                            </li>
+                        ))}
+                        {coin_items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div onClick={() => this.props.view_number({'title':item['title'], 'number':item['balance'], 'relativepower':item['base_unit']})}>
+                                    {this.render_coin_item({'title':item['title'], 'image':item['image'], 'details':this.format_account_balance_figure(item['balance']) + ' '+item['base_unit']+'s', 'size':'s', 'img_size':30})}
+                                </div>
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    render_ether_balance_item(item){
+        var image = this.props.app_state.e5s[item].ether_image
+        var token_name = this.props.app_state.e5s[item].token
+        var details = this.format_account_balance_figure(this.props.app_state.account_balance[item]) + ' wei'
+        return(
+            <div onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
+                {this.render_coin_item({'title':token_name, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:127, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_coin_item(object_data){
+        var background_color = this.props.theme['view_group_card_item_background'];
+        var border_radius = '7px';
+        var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
+        var title = 'Author';
+        var details = 'e25885';
+        var size = 'l';
+        var img_size = 45
+        if(object_data != null){
+            title = object_data['title']
+            details = object_data['details']
+            size = object_data['size']
+        }
+        var font_size = ['12px', '10px', 16];
+        if(size == 'l'){
+            font_size = ['17px', '13px', 19];
+        }
+        if(title == ''){
+            title = '...'
+        }
+        if(details == ''){
+            details = '...'
+        }
+        var img = E5EmptyIcon;
+        if(object_data != null){
+            img = object_data['image'];
+        }
+        if(object_data != null && object_data['img_size'] != null){
+            img_size = object_data['img_size']
+        }
+        return (
+            <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={img} style={{height:img_size ,width:img_size}} />
+                    </div>
+                    <div style={{'margin':'0px 0px 0px 5px'}}>
+                        <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                        
+                        <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                    </div>
+                </div>
+            </div>
+        ); 
+    }
+
+    get_my_coin_balances(){
+        var selected_coins = []
+        var coins = this.props.app_state.coin_data
+        for (const coin in coins) {
+            if (coins.hasOwnProperty(coin)) {
+                var balance = coins[coin]['balance'];
+                if(balance != 0){
+                    selected_coins.push({'title':coin, 'balance':balance , 'base_unit':this.get_coin_data(coin)['base_unit'], 'image':this.get_coin_data(coin)['label']['image']})
+                }
+            }
+        }
+        return selected_coins
+    }
+
+    get_coin_data(symbol){
+        return this.props.app_state.coins[symbol]
+    }
+
+
+
+
     render_set_wallet_data(){
         return(
             <div>
@@ -6805,7 +6979,8 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
                 
                 {this.render_reload_wallet_if_wallet_is_set()}
-                
+                <div style={{height: 10}}/>
+                {this.render_my_balances_if_small_screen_size()}
             </div>
         )
     }

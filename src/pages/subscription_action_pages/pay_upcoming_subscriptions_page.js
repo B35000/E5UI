@@ -382,7 +382,7 @@ class PayUpcomingSubscriptions extends Component {
             this.props.notify(this.props.app_state.loc['2904']/* 'You can\'t target no subscriptions.' */, 4500)
         }
         else{
-            this.setState({exchanges_used: exchanges_used, exchange_amounts: exchange_amounts, time_units_to_pay: time_units_to_pay, subscriptions: subscriptions})
+            this.setState({exchanges_used: exchanges_used, exchange_amounts: exchange_amounts, time_units_to_pay: time_units_to_pay, subscriptions: subscriptions, data: data})
             
             var me = this;
             setTimeout(function() {
@@ -403,7 +403,8 @@ class PayUpcomingSubscriptions extends Component {
         var can_pay = true;
         for(var i=0; i<exchanges_used.length; i++){
             var token_id = exchanges_used[i]
-            var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]['balance'];
+            // var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]['balance'];
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
             var final_amount = exchange_amounts[token_id]
 
             if(token_balance < final_amount){

@@ -326,8 +326,9 @@ class DirectPurchasetPage extends Component {
 
             for(var i=0; i<items.length; i++){
                 var token_id = items[i]['id']
-                var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][token_id]
-                token_balance = token_balance == null ? 0 : token_balance['balance']
+                // var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][token_id]
+                // token_balance = token_balance == null ? 0 : token_balance['balance']
+                var token_balance = this.props.calculate_actual_balance(this.state.e5, token_id)
                 buy_amount_balances.push(token_balance)
             }
             return(
@@ -594,8 +595,9 @@ class DirectPurchasetPage extends Component {
         for(var i=0; i<exchanges_to_check.length; i++){
             var item = exchanges_to_check[i]
             var item_price = price_data[item]
-            var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][item]
-            token_balance = token_balance == null ? 0 : token_balance['balance']
+            // var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][item]
+            // token_balance = token_balance == null ? 0 : token_balance['balance']
+            var token_balance = this.props.calculate_actual_balance(this.state.e5, item)
             token_balance = bigInt(token_balance).minus(this.get_debit_balance_in_stack(item, this.state.e5))
 
             if(bigInt(token_balance).lesser(bigInt(item_price))){
@@ -628,14 +630,14 @@ class DirectPurchasetPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                     for(var i=0; i<t.selected_variant['price_data'].length; i++){
                         var exchange = t.selected_variant['price_data'][i]['id']
-                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                        var amount = this.get_amounts_to_be_paid2(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
                     }
                     for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
                         var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
-                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                        var amount = this.get_amounts_to_be_paid2(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
@@ -653,11 +655,79 @@ class DirectPurchasetPage extends Component {
                         }
                     }
                 }
+                else if(txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */ || this.props.app_state.loc['1511']/* 'post-messages' */ || this.props.app_state.loc['1512']/* 'job-response' */ || this.props.app_state.loc['1514']/* 'job-messages' */ || this.props.app_state.loc['1515']/* 'proposal-messages' */ || this.props.app_state.loc['1501']/* 'bag-messages' */ || this.props.app_state.loc['1505']/* 'job-request-messages' */){
+                    for(var i=0; i<t.messages_to_deliver.length; i++){
+                        if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
+                            total_amount = bigInt(total_amount).add(t.messages_to_deliver[i]['award_amount'])
+                        }
+                    } 
+                }
+                // else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                //     var buy_tokens = t.token_item['data'][3]
+                //     var required_amounts = this.calculate_token_prices(t, t.token_item['data'][4])
+                //     var action = this.get_action(t)
+                //     for(var i=0; i<buy_tokens.length; i++){
+                //         var buy_token_id = buy_tokens[i]
+                //         if(buy_token_id == token_id && action == 1){
+                //             var required_amount = required_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
+                //     var entry_tokens = t.contract_item['data'][2]
+                //     var entry_amounts = t.contract_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         var entry_token_id = entry_tokens[i]
+                //         if(entry_token_id == token_id){
+                //             var required_amount = entry_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['312']/* 'proposal' */){
+                //     for(var i = 0; i<t.bounty_values.length; i++){
+                //         if(t.bounty_values[i]['exchange'] == token_id){
+                //             var required_amount = t.bounty_values[i]['amount']
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */){
+                //     var entry_tokens = this.state.subscription_item['data'][2]
+                //     var entry_fees = this.state.subscription_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         if(token_id == entry_tokens[i]){
+                //             var required_amount = this.calculate_final_amount(entry_fees[i], t)
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                //     var exchanges_used = t.data.exchanges_used
+                //     var exchange_amounts = t.data.exchange_amounts
+                //     for(var i=0; i<exchanges_used.length; i++){
+                //         if(token_id == exchanges_used[i]){
+                //             var required_amount = exchange_amounts[token_id]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
             }
         }
         return total_amount
     }
 
+    get_action(t){
+      var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
+      var stack_action = 1
+      if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
+      return stack_action
+    }
+
+    get_amounts_to_be_paid2(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
+    }
 
 
 

@@ -82,7 +82,8 @@ class TransferTokenPage extends Component {
     }
 
     calculate_balance_after_set_transfers(){
-        return bigInt(this.state.token_item['balance']).minus(this.state.debit_balance)
+        var balance = this.props.calculate_actual_balance(this.state.token_item['e5'], this.state.token_item['id'])
+        return bigInt(balance).minus(this.state.debit_balance)
     }
 
 
@@ -191,13 +192,15 @@ class TransferTokenPage extends Component {
     }
 
     set_maximum(){
-        var max = this.state.token_item['balance']
+        // var max = this.state.token_item['balance']
+        var max = this.props.calculate_actual_balance(this.state.token_item['e5'], this.state.token_item['id'])
         this.setState({amount: max})
     }
 
     get_number_limit(){
         if(this.state.token_item['balance'] != null){
-            var balance =  this.state.token_item['balance']
+            // var balance =  this.state.token_item['balance']
+            var balance = this.props.calculate_actual_balance(this.state.token_item['e5'], this.state.token_item['id'])
             var balance_after_transfers = bigInt(balance).minus(this.state.debit_balance)
             return balance_after_transfers;
         }
@@ -218,7 +221,8 @@ class TransferTokenPage extends Component {
                         total_amount = bigInt(total_amount).add(amount)
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                else 
+                if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
                     if(txs[i].token_item['id'] == token_id){
                         total_amount = bigInt(total_amount).add(txs[i].debit_balance)
                     }
@@ -251,9 +255,79 @@ class TransferTokenPage extends Component {
                         }
                     }
                 }
+                else if(txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */ || this.props.app_state.loc['1511']/* 'post-messages' */ || this.props.app_state.loc['1512']/* 'job-response' */ || this.props.app_state.loc['1514']/* 'job-messages' */ || this.props.app_state.loc['1515']/* 'proposal-messages' */ || this.props.app_state.loc['1501']/* 'bag-messages' */ || this.props.app_state.loc['1505']/* 'job-request-messages' */){
+                    for(var i=0; i<t.messages_to_deliver.length; i++){
+                        if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
+                            total_amount = bigInt(total_amount).add(t.messages_to_deliver[i]['award_amount'])
+                        }
+                    }
+                }
+                // else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                //     var buy_tokens = t.token_item['data'][3]
+                //     var required_amounts = this.calculate_token_prices(t, t.token_item['data'][4])
+                //     for(var i=0; i<buy_tokens.length; i++){
+                //         var buy_token_id = buy_tokens[i]
+                //         if(buy_token_id == token_id){
+                //             var required_amount = required_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
+                //     var entry_tokens = t.contract_item['data'][2]
+                //     var entry_amounts = t.contract_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         var entry_token_id = entry_tokens[i]
+                //         if(entry_token_id == token_id){
+                //             var required_amount = entry_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['312']/* 'proposal' */){
+                //     for(var i = 0; i<t.bounty_values.length; i++){
+                //         if(t.bounty_values[i]['exchange'] == token_id){
+                //             var required_amount = t.bounty_values[i]['amount']
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */){
+                //     var entry_tokens = this.state.subscription_item['data'][2]
+                //     var entry_fees = this.state.subscription_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         if(token_id == entry_tokens[i]){
+                //             var required_amount = this.calculate_final_amount(entry_fees[i], t)
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                //     var exchanges_used = t.data.exchanges_used
+                //     var exchange_amounts = t.data.exchange_amounts
+                //     for(var i=0; i<exchanges_used.length; i++){
+                //         if(token_id == exchanges_used[i]){
+                //             var required_amount = exchange_amounts[token_id]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
             }
         }
         return total_amount
+    }
+
+    get_action(t){
+        var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
+        var stack_action = 1
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
+        return stack_action
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
     }
 
     get_amounts_to_be_paid(amount, count){

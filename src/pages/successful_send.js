@@ -571,13 +571,13 @@ class SuccessfulSend extends Component {
             return `https://allo.info/tx/${hash}`
         }
         else if(item['symbol'] == 'XTZ'){
-            return ``
+            return `https://tzkt.io/${hash}`
         }
         else if(item['symbol'] == 'ATOM'){
-            return ``
+            return `https://www.mintscan.io/cosmos/tx/${hash}`
         }
         else if(item['symbol'] == 'FIL'){
-            return ``
+            return `https://filfox.info/en/message/${hash}`
         }
     }
 

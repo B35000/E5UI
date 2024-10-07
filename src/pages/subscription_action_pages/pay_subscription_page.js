@@ -159,8 +159,9 @@ class PaySubscriptionPage extends Component {
         if(entry_tokens != null && entry_tokens.length != 0){
             for(var i=0; i<entry_tokens.length; i++){
                 var token_id = entry_tokens[i]
-                var token_balance = this.props.app_state.created_token_object_mapping[this.state.subscription_item['e5']][token_id]
-                token_balance = token_balance == null ? 0 : token_balance['balance']
+                // var token_balance = this.props.app_state.created_token_object_mapping[this.state.subscription_item['e5']][token_id]
+                // token_balance = token_balance == null ? 0 : token_balance['balance']
+                var token_balance = this.props.calculate_actual_balance(this.state.subscription_item['e5'], token_id)
                 buy_amount_balances.push(token_balance)
             }
             return(
@@ -306,7 +307,8 @@ class PaySubscriptionPage extends Component {
 
         for(var i=0; i<entry_tokens.length; i++){
             var token_id = entry_tokens[i]
-            var token_balance = this.props.app_state.created_token_object_mapping[this.state.subscription_item['e5']][token_id]['balance']
+            // var token_balance = this.props.app_state.created_token_object_mapping[this.state.subscription_item['e5']][token_id]['balance']
+            var token_balance = this.props.calculate_actual_balance(this.state.subscription_item['e5'], token_id)
             var final_amount = this.calculate_final_amount(entry_fees[i])
 
             if(token_balance < final_amount){

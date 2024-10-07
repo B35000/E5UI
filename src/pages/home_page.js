@@ -4047,8 +4047,8 @@ class home_page extends Component {
 
     render_my_balances(){
         var items = this.get_my_balances()
-
-        if(items.length == 0){
+        var coin_items = this.get_my_coin_balances()
+        if(items.length == 0 && coin_items.length == 0){
             items = [1, 2, 3]
             return(
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -4069,6 +4069,13 @@ class home_page extends Component {
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_ether_balance_item(item)}
+                            </li>
+                        ))}
+                        {coin_items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div onClick={() => this.props.view_number({'title':item['title'], 'number':item['balance'], 'relativepower':item['base_unit']})}>
+                                    {this.render_coin_item({'title':item['title'], 'image':item['image'], 'details':this.format_account_balance_figure(item['balance']) + ' '+item['base_unit']+'s', 'size':'s', 'img_size':30})}
+                                </div>
                             </li>
                         ))}
                         {items2.map(() => (
@@ -4151,6 +4158,24 @@ class home_page extends Component {
                 </div>
             </div>
         ); 
+    }
+
+    get_my_coin_balances(){
+        var selected_coins = []
+        var coins = this.props.app_state.coin_data
+        for (const coin in coins) {
+            if (coins.hasOwnProperty(coin)) {
+                var balance = coins[coin]['balance'];
+                if(balance != 0){
+                    selected_coins.push({'title':coin, 'balance':balance , 'base_unit':this.get_coin_data(coin)['base_unit'], 'image':this.get_coin_data(coin)['label']['image']})
+                }
+            }
+        }
+        return selected_coins
+    }
+
+    get_coin_data(symbol){
+        return this.props.app_state.coins[symbol]
     }
 
 
