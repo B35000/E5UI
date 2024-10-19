@@ -443,7 +443,7 @@ class SearchedAccountPage extends Component {
                 <div style={{height: 10}}/>
 
                 <div onClick={()=> this.copy_address_to_clipboard(address)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1714']/* 'Address' */, 'details':start_and_end(address), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1714']/* 'Address' */, 'details':(address), 'size':'l'})}
                 </div>
                 <div style={{height: 10}}/>
 
@@ -501,6 +501,9 @@ class SearchedAccountPage extends Component {
                 <div>
                     {this.render_search_account_ui()}
                     {this.render_detail_item('0')}
+
+                    {this.show_token_balance_data_chart()}
+                    
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_account_balance_history_tag_object} tag_size={'l'} when_tags_updated={this.when_get_account_balance_history_tag_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height:10}}/>
@@ -702,9 +705,9 @@ class SearchedAccountPage extends Component {
         }else{
             return(
                 <div>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                         {years_exchanges.map((item, index) => (
-                            <li style={{'padding': '3px 0px 3px 0px'}}>
+                            <li style={{'padding': '3px 0px 3px 0px', 'list-style': 'none'}}>
                                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':this.format_account_balance_figure(data[year][years_exchanges[index]]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[year][years_exchanges[index]]), 'barwidth':this.calculate_bar_width(data[year][years_exchanges[index]]), 'number':this.format_account_balance_figure(data[year][years_exchanges[index]]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
                                 </div>
@@ -760,6 +763,183 @@ class SearchedAccountPage extends Component {
             }
         }
         return exchanges
+    }
+
+
+
+
+
+
+
+
+
+    show_token_balance_data_chart(){
+        var data = this.state.searched_account['searched_accounts_exchange_interactions_data']
+        if(data == null || this.get_interacted_exchanges(data).length == 0) return;
+        var selected_exchange = this.get_selected_interacted_exchange(data)[0]
+        var event_data = this.get_selected_exchange_data(data, selected_exchange)
+        return(
+            <div>
+                {this.render_detail_item('1', {'active_tags':this.get_interacted_exchanges(data), 'index_option':'indexed', 'when_tapped': 'when_view_account_exchange_tapped', 'selected_tags':this.get_selected_interacted_exchange(data)})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
+                
+                {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(event_data), 'interval':110, 'hide_label': true})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+               
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    get_token_symbol_from_id(exchange_id){
+        var symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]
+        if(symbol == null) return exchange_id
+        return symbol
+    }
+
+    get_interacted_exchanges(data){
+        var keys = Object.keys(data)
+        var exchange_names = []
+        keys.forEach(key => {
+            var name = this.get_token_symbol_from_id(key)
+            if(this.is_exchange_valid(data[key], name)){
+                exchange_names.push(name)
+            }
+        });
+        return exchange_names
+    }
+
+    get_balance_of(exchange_id){
+        var balance = bigInt(0)
+        var searched_item_data = this.state.searched_account
+        var interacted_exchanges = searched_item_data['interacted_exchanges']
+        var interacted_exchanges_balances = searched_item_data['interacted_exchanges_balances']
+        for(var i=0; i<interacted_exchanges.length; i++){
+            var item = interacted_exchanges[i]
+            if(item == exchange_id){
+                balance = interacted_exchanges_balances[i]
+                return balance
+            }
+        }
+        return balance
+    }
+
+    is_exchange_valid(events, key){
+        for(var i=0; i<events.length; i++){
+            if(events[i]['action'] === 'DepthMint' && events[i]['event'].returnValues.p4/* depth_val */ !== 0){
+                return false
+            }
+        }
+
+        if(key == 'MAMMOTH' || key == 'GOL') return false
+        if(key != 'END' && key != 'SPEND') return false
+        return true
+    }
+
+    get_selected_interacted_exchange(data){
+        if(this.state.selected_exchange == null){
+            var name = data[3] == null ? this.get_token_symbol_from_id(5) : this.get_token_symbol_from_id(3)
+            return [name]
+        }
+        return [this.state.selected_exchange]
+    }
+
+    get_selected_exchange_data(data, selected_exchange_name){
+        var id = parseInt(this.get_token_id_from_symbol(selected_exchange_name))
+        return data[id]
+    }
+
+
+    when_view_account_exchange_tapped(tag, pos){
+        this.setState({selected_exchange: tag})
+    }
+
+    get_deposit_amount_data_points(events){
+        var data = []
+        var max_amount = bigInt(0);
+        var active_balance = bigInt(0)
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */)))
+                    }
+                    else if(events[i]['action'] == 'Update'){
+                        data.push(bigInt(events[i]['event'].returnValues.p3/* new_balance */))
+                    }
+                    else if(events[i]['action'] == 'DepthMint'){
+                        var val = bigInt(this.get_actual_number(events[i]['event'].returnValues.p5/* amount */, events[i]['event'].returnValues.p4/* depth_val */))
+                        data.push(val)
+                        active_balance = val
+                    }
+                    max_amount = bigInt(data[data.length-1])
+                }else{
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(data[data.length-1]).add(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */))))
+                    }
+                    else if(events[i]['action'] == 'Update'){
+                        var val = bigInt(events[i]['event'].returnValues.p3/* new_balance */)
+                        if(!active_balance.greater(bigInt('1e72'))){
+                            data.push(val)
+                        }
+                    }
+                    else if(events[i]['action'] == 'DepthMint'){
+                        var val = bigInt(this.get_actual_number(events[i]['event'].returnValues.p5/* amount */, events[i]['event'].returnValues.p4/* depth_val */))
+                        data.push(active_balance.plus(val))
+                        active_balance = active_balance.plus(val)
+                    }
+                    else{
+                        data.push(bigInt(data[data.length-1]).minus(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */))))
+                    }
+                    if(bigInt(max_amount).lesser(data[data.length-1])){
+                       max_amount = bigInt(data[data.length-1]) 
+                    }
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i]['event'].returnValues.p5
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1]['event'].returnValues.p5 - events[i]['event'].returnValues.p5
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+            }
+        }catch(e){
+            console.log(e)
+        }
+
+        
+        // console.log('data: ',data)
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        var largest_number = max_amount
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/4)) == 0 && i != 0 && !recorded){
+                    // recorded = true
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+        
+        return dps
     }
 
 
@@ -2377,7 +2557,7 @@ class SearchedAccountPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_view_account_exchange_tapped={this.when_view_account_exchange_tapped.bind(this)}/>
             </div>
         )
 

@@ -23,7 +23,8 @@ class FilterSection extends Component {
 
 
     set_data(typed_searched_word, added_tags){
-        this.setState({typed_searched_word: typed_searched_word, added_tags:added_tags})
+        console.log('setting_data', typed_searched_word, added_tags)
+        this.setState({typed_searched_word: typed_searched_word, added_tags: added_tags})
     }
 
 
@@ -201,6 +202,7 @@ class FilterSection extends Component {
         this.props.when_search_button_tapped('')
         this.props.when_add_tags_button_tapped([])
         this.props.notify(this.props.app_state.loc['1125a']/* 'Search filters cleared.' */, 1400)
+        this.setState({typed_searched_word:'', typed_tag:''})
         // var me = this;
         // setTimeout(function() {    
         //     me.props.reset_scroll_height()

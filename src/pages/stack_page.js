@@ -4,8 +4,8 @@ import ViewGroups from './../components/view_groups'
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 import DurationPicker from './../components/duration_picker';
+import QRCode from "react-qr-code";
 
-// import Letter from './../assets/letter.png';
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
@@ -74,7 +74,7 @@ class StackPage extends Component {
         picked_max_priority_per_gas_amount:0,
         picked_max_fee_per_gas_amount:0,
 
-        typed_watch_account_input:'',
+        typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:''
     };
 
     get_stack_page_tags_object(){
@@ -83,7 +83,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -93,6 +93,9 @@ class StackPage extends Component {
             ],
             'account-data':[
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
+            ],
+            'signatures':[
+              ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
             ],
         };
 
@@ -104,6 +107,9 @@ class StackPage extends Component {
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
+            ]
+        obj[this.props.app_state.loc['1593aj']/* 'signatures' */] = [
+              ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
             ]
 
         return obj
@@ -779,6 +785,21 @@ class StackPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['1593ak']/* 'sign' */){
+            return(
+                <div>
+                    {this.render_sign_data_ui()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593al']/* 'verify' */){
+            return(
+                <div>
+                    {this.render_verify_data_ui()}
+                </div>
+            )
+        }
+
     }
 
     get_selected_item(object, option){
@@ -864,7 +885,7 @@ class StackPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'number':this.state.run_gas_price, 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_pric/10**9), 'number':this.format_account_balance_figure(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_pric/10**9), 'number':(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -6668,7 +6689,6 @@ class StackPage extends Component {
                 </ul>
             </div>
         )
-
     }
 
     render_empty_horizontal_list_item(){
@@ -8255,10 +8275,296 @@ class StackPage extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+    render_sign_data_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_sign_data_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_sign_data_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_sign_data_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_sign_data_ui_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ab']/* 'Sign Some Data.' */, 'details':this.props.app_state.loc['1593ac']/* 'Generate a signature of some data to have your account verified externally.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {/* {this.render_signature_e5s()}
+                <div style={{height: 20}}/> */}
+
+                <TextInput font={this.props.app_state.font} height={35} placeholder={this.props.app_state.loc['1593ad']/* 'Data...' */} when_text_input_field_changed={this.when_sign_data_input_field_changed.bind(this)} text={this.state.sign_data_input} theme={this.props.theme} />
+                <div style={{height: 10}}/>
+
+                <div onClick={()=>this.sign_data()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593ae']/* 'Sign Data..' */, 'action':''})}
+                </div>
+                
+                {this.show_generated_signature_data()}
+            </div>
+        )
+    }
+
+    when_sign_data_input_field_changed(text){
+        this.setState({sign_data_input: text})
+    }
+
+    render_signature_e5s(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_signature_e5_clicked(item)}>
+                            {this.render_signature_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_signature_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        if(this.state.selected_signature_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_signature_e5_clicked(item){
+        this.setState({selected_signature_e5: item})
+    }
+
+    sign_data(){
+        var e5 = this.state.selected_signature_e5
+        var data = this.state.sign_data_input.trim()
+
+        if(data == ''){
+            this.props.notify(this.props.app_state.loc['1593af']/* 'Please type something.' */, 3000)
+        } 
+        else if(data.length > 65){
+            this.props.notify(this.props.app_state.loc['1593ao']/* 'That text is too long to sign.' */, 3000)
+        }
+        else if(e5 == null){
+            this.props.notify(this.props.app_state.loc['1593am']/* 'Please pick an E5.' */, 3000)
+        }
+        else if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
+        }
+        else{
+            this.props.sign_custom_data_using_wallet(e5, data)
+        }
+    }
+
+    show_generated_signature_data(){
+        if(this.props.app_state.generated_signature != null){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.generated_signature})}
+                    <div style={{height: 10}}/>
+
+                    <div onClick={()=>this.copy_signature_to_clipboard(this.props.app_state.generated_signature)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1593ah']/* 'Copy to Clipboard.' */, 'action':''})}
+                    </div>
+
+                    <div style={{height: 10}}/>
+                    <div style={{height: 200, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'30px 0px 0px 0px'}}>
+                        <QRCode
+                            size={150}
+                            style={{ height: "auto", maxWidth: "100%", width: "50%" }}
+                            value={this.props.app_state.generated_signature}
+                            viewBox={`0 0 100 100`}
+                        />
+                    </div>
+
+                    <p style={{'margin':'5% 0% 0% 0%', 'text-align': 'center', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593an']/* 'Scan' */}</p>
+                </div>
+            )
+        }
+    }
+
+    copy_signature_to_clipboard(signature){
+        navigator.clipboard.writeText(signature)
+        this.props.notify(this.props.app_state.loc['1593ai']/* 'Copied Signature to clipboard.' */, 1600)
+    }
+
+
+
+
+
+
+
+    render_verify_data_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_verify_data_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_verify_data_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_verify_data_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_verify_data_ui_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593aw']/* 'Verify  a Signature.' */, 'details':this.props.app_state.loc['1593ax']/* 'erive an account and address from some data and its corresponding signature.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {/* {this.render_signature_e5s()}
+                <div style={{height: 20}}/> */}
+
+                <TextInput font={this.props.app_state.font} height={35} placeholder={this.props.app_state.loc['1593ad']/* 'Data...' */} when_text_input_field_changed={this.when_verify_signed_data_input_field_changed.bind(this)} text={this.state.verify_signed_data_input} theme={this.props.theme} />
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={65} placeholder={this.props.app_state.loc['1593ap']/* 'Signature...' */} when_text_input_field_changed={this.when_signature_input_field_changed.bind(this)} text={this.state.signed_data_input} theme={this.props.theme} />
+                <div style={{height: 10}}/>
+
+                <div onClick={()=>this.verify_signature()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593aq']/* 'Verify Signature.' */, 'action':''})}
+                </div>
+
+                {this.show_verified_signature_data()}
+            </div>
+        )
+    }
+
+    when_verify_signed_data_input_field_changed(text){
+        this.setState({verify_signed_data_input: text})
+    }
+
+    when_signature_input_field_changed(text){
+        this.setState({signed_data_input: text})
+    }
+
     
+    verify_signature(){
+        var e5 = this.state.selected_signature_e5
+        var data = this.state.verify_signed_data_input.trim()
+        var signature = this.state.signed_data_input.trim()
+
+        if(data == ''){
+            this.props.notify(this.props.app_state.loc['1593af']/* 'Please type something.' */, 3000)
+        } 
+        if(signature == ''){
+            this.props.notify(this.props.app_state.loc['1593ar']/* 'Please paste a signature.' */, 3000)
+        }
+        else if(data.length > 65){
+            this.props.notify(this.props.app_state.loc['1593as']/* 'That data is too long.' */, 3000)
+        }
+        else if(e5 == null){
+            this.props.notify(this.props.app_state.loc['1593am']/* 'Please pick an E5.' */, 3000)
+        }
+        else{
+            this.props.verify_custom_data_using_wallet(data, signature, e5)
+        }
+    }
 
 
+    show_verified_signature_data(){
+        if(this.props.app_state.verified_account_data_from_signature != null){
+            var signer_address = this.props.app_state.verified_account_data_from_signature['address']
+            var signer_account = this.props.app_state.verified_account_data_from_signature['account']
+            return(
+                <div>
+                    {this.render_detail_item('0')}
 
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593au']/* 'Signer Address.' */, 'details':signer_address, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'details':this.get_senders_name2(signer_account), 'title':signer_account, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    get_senders_name2(sender){
+         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? 'Alias Unknown' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+    }
 
     
 

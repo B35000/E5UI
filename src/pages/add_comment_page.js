@@ -26,15 +26,100 @@ class AddCommentPage extends Component {
     
     state = {
         selected: 0, object: null, focused_message_id: 0, page: '', contractor_object: null,
-        entered_title_text:'', entered_image_objects:[], award_amount:0,
+        entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(),
     };
+
+    get_comment_font_size_settings_object(){
+        var obj = {
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1042b']/* font */, 'e.'+this.props.app_state.loc['1042c']/* size */], [0]
+            ],
+            'font':[
+                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
+            ],
+            'size':[
+                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
+            ],
+        };
+
+        obj[this.props.app_state.loc['1042b']/* font */] = [
+            ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
+        ]
+        obj[this.props.app_state.loc['1042c']/* size */] = [
+            ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
+        ]
+        return obj
+    }
 
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
+                {this.render_top_title()}
                 {this.render_everything()}
             </div>
         )
+    }
+
+    render_top_title(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-10" style={{'padding': '0px 0px 0px 10px'}}>
+                            {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'16px','text':this.props.app_state.loc['1038']/* 'Detailed message.' */})}
+                        </div>
+                        <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
+                            <div className="text-end" style={{'padding': '3px 10px 0px 0px'}} >
+                                <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                        {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'16px','text':this.props.app_state.loc['1038']/* 'Detailed message.' */})}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
+                            
+                        </div>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '3px 10px 0px 0px'}} >
+                            <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '0px 0px 0px 10px'}}>
+                        {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'16px','text':this.props.app_state.loc['1038']/* 'Detailed message.' */})}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '3px 10px 0px 0px'}} >
+                            <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                
+            )
+        }
     }
 
 
@@ -47,7 +132,7 @@ class AddCommentPage extends Component {
                     {this.render_content()}
                     <div style={{height:10}}/>
                     {this.render_award_ui()}
-                    {this.render_finish()}
+                    {/* {this.render_finish()} */}
                 </div>
             )
         }
@@ -56,7 +141,7 @@ class AddCommentPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
-                        {this.render_finish()}
+                        {/* {this.render_finish()} */}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_award_ui()}
@@ -71,7 +156,7 @@ class AddCommentPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
-                        {this.render_finish()}
+                        {/* {this.render_finish()} */}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_award_ui()}
@@ -109,9 +194,14 @@ class AddCommentPage extends Component {
     render_content(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'16px','text':this.props.app_state.loc['1038']/* 'Detailed message.' */})}
                 {this.render_focused_message()}
                 <TextInput font={this.props.app_state.font} height={110} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_comment_font_size_settings_object} tag_size={'l'} when_tags_updated={this.when_get_comment_font_size_settings_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',this.get_edited_text_object())}
+                <div style={{height:10}}/>
+                {this.render_kaomoji_list()}
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image and tap to remove.' */})}
@@ -120,6 +210,44 @@ class AddCommentPage extends Component {
                 {this.render_image_part()}
             </div>
         )
+    }
+
+    when_get_comment_font_size_settings_object_updated(tag_obj){
+        this.setState({get_comment_font_size_settings_object: tag_obj})
+    }
+
+    get_edited_text_object(){
+        var font = this.get_selected_item(this.state.get_comment_font_size_settings_object, this.props.app_state.loc['1042b']/* font */)
+        var size = this.get_selected_item(this.state.get_comment_font_size_settings_object, this.props.app_state.loc['1042c']/* size */)
+        return{
+            'font':font, 'textsize':size,'text':this.state.entered_title_text
+        }
+    }
+
+    render_kaomoji_list(){
+        var items = ['⸜(｡˃ ᵕ ˂ )⸝♡','( ˶ˆᗜˆ˵ )','(๑>◡<๑)','ദ്ദി ˉ͈̀꒳ˉ͈́ )✧','( ˶°ㅁ°) !!','(*ᴗ͈ˬᴗ͈)ꕤ*.ﾟ','(｡>﹏<)','(๑-﹏-๑)','ᓚ₍ ^. .^₎','(˵ •̀ ᴗ - ˵ ) ✧','ᕙ(  •̀ ᗜ •́  )ᕗ','( ｡ •̀ ᴖ •́ ｡)','৻(  •̀ ᗜ •́  ৻)','( ˶ˆ꒳ˆ˵ )','(¬`‸´¬)','≽^•⩊•^≼','(ó﹏ò｡)']
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_kamoji_clicked(item)}>
+                            {this.render_detail_item('4',this.get_kamoji_text_object(item))}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_kamoji_text_object(text){
+        return{
+            'font':'Sans-serif', 'textsize':'15px','text':text
+        }
+    }
+
+    when_kamoji_clicked(text){
+        this.setState({entered_title_text: this.state.entered_title_text+' '+text})
     }
 
     render_finish(){
@@ -132,6 +260,13 @@ class AddCommentPage extends Component {
 
     when_title_text_input_field_changed(text){
         this.setState({entered_title_text: text})
+    }
+
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
     }
 
 
@@ -238,7 +373,7 @@ class AddCommentPage extends Component {
         if(item != 0){
             return(
                 <div>
-                    {this.render_detail_item('0')}
+                    {this.render_space_if_small_screen()}
                     <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 10px 0px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}}> 
                         <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                             <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
@@ -289,6 +424,16 @@ class AddCommentPage extends Component {
     }
 
 
+    render_space_if_small_screen(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
 
 
 
@@ -300,6 +445,7 @@ class AddCommentPage extends Component {
         if(focused_message_id == 0) return;
         if(focused_message_id['e5'] != this.props.app_state.selected_e5) return;
         var award_amount = this.state.award_amount
+        var my_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 5)
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1164']/* 'Award Tiers' */, 'details':this.props.app_state.loc['1042a']/* 'Pick an award tier you wish to send to the comment\'s author.' */, 'size':'l'})}
@@ -308,6 +454,10 @@ class AddCommentPage extends Component {
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'number':award_amount, 'relativepower':'SPEND'})}>
                     {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                </div>
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1042d']/* 'Your balance in SPEND.' */, 'number':award_amount, 'relativepower':'SPEND'})}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1042d']/* 'Your balance in SPEND.' */, 'subtitle':this.format_power_figure(my_balance), 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
                 <div style={{height:10}}/>
             </div>
@@ -428,35 +578,43 @@ class AddCommentPage extends Component {
             }
         }
 
+        var font = this.get_selected_item(this.state.get_comment_font_size_settings_object, this.props.app_state.loc['1042b']/* font */)
+        var size = this.get_selected_item(this.state.get_comment_font_size_settings_object, this.props.app_state.loc['1042c']/* size */)
+
+        if((size == '25px' && message.length > 75) || (size == '40px' && message.length > 45)){
+            this.props.notify(this.props.app_state.loc['1042e']/* 'hat message is inconveniencingly long for its size.' */, 4000)
+            return;
+        }
+
         if(page == 'channel'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
         else if(page == 'job'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
         else if(page == 'mail'){
             var mail = object;
             var convo_id = mail['convo_id']
-            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
         else if(page == 'post'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
         else if(page == 'proposal'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
         else if(page == 'storefront'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
         else if(page == 'bag'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
         else if(page == 'request'){
-            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver}
+            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
 
         this.props.add_comment_to_respective_forum_page(tx, page)
-        this.setState({entered_title_text: '', entered_image_objects:[]})
+        this.setState({entered_title_text: '', entered_image_objects:[], get_comment_font_size_settings_object:this.get_comment_font_size_settings_object()})
         this.props.notify(this.props.app_state.loc['1042']/* 'Message added to stack.' */, 1600)
     }
 

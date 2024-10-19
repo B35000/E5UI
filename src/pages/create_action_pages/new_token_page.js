@@ -603,9 +603,9 @@ class NewTokenPage extends Component {
                 <div style={{height:3}}/>
 
                 
-                <div onClick={()=>this.preset_end_token()}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2769']/* '🦣 End Token.' */, 'details':this.props.app_state.loc['2770']/* 'A token with a very large supply, thats pegged to the value of End.' */, 'size':'l'})}
-                </div>
+                {/* <div onClick={()=>this.preset_end_token()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2769'], 'details':this.props.app_state.loc['2770'], 'size':'l'})}
+                </div> */}
                 <div style={{height:3}}/>
             </div>
         )

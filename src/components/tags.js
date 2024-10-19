@@ -14,7 +14,7 @@ class tags extends Component {
 
     /* returns an emoji used in displaying the tag item */
     tag_item_emoji_modifier(item){
-      var items = {'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'stack-data':'🧱', 'settings-data':'🛠️', 'account-data':'🔐', 'events':'🎊', 'moderator-events':'🧑‍⚖️'}
+      var items = {'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'stack-data':'🧱', 'settings-data':'🛠️', 'account-data':'🔐', 'events':'🎊', 'moderator-events':'🧑‍⚖️', 'signatures':'✍️'}
 
       if(this.props.app_state != null){
           items[this.props.app_state.loc['1197']/* contracts */] = '📑'
@@ -35,6 +35,7 @@ class tags extends Component {
           items[this.props.app_state.loc['1262']/* account-data */] = '🔐'
           items[this.props.app_state.loc['1263']/* events */] = '🎊'
           items[this.props.app_state.loc['1264']/* moderator-events */] = '🧑‍⚖️'
+          items[this.props.app_state.loc['1593aj']/* 'signatures' */] = '✍️'
       }
       
       if(items[item] != null) return items[item];

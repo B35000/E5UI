@@ -87,11 +87,7 @@ class NumberPicker extends Component {
     }
 
     get_number_power_data(){
-        return{
-            'active_tags':this.format_powers(this.state.create_number_data['picked_powers']),
-            'index_option':'indexed',
-            'when_tapped': 'when_number_picker_power_tapped'
-        }
+        return{ 'active_tags':this.format_powers(this.state.create_number_data['picked_powers']), 'index_option':'indexed', 'when_tapped': 'when_number_picker_power_tapped' }
     }
 
     format_powers(picked_powers){

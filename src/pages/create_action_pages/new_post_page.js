@@ -351,9 +351,6 @@ class NewPostPage extends Component {
                 <Tags page_tags_object={this.state.get_post_preview_option} tag_size={'l'} when_tags_updated={this.when_get_post_preview_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
-
-                
-
             </div>
         )
     }
@@ -879,12 +876,9 @@ class NewPostPage extends Component {
                         <SwipeableList>
                             <SwipeableListItem
                                 swipeLeft={{
-                                content: <div>Delete</div>,
+                                content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
                                 action: () => this.delete_text_item(item)
-                                }}
-                                swipeRight={{
-                                content: <div></div>,
-                                action: () => console.log() }}>
+                                }}>
                                 <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
                                     {this.render_text_or_banner_if_any(item, index)}
                                 </li></div>
@@ -908,10 +902,10 @@ class NewPostPage extends Component {
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
                             </div> */}
 
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                                 <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={(e) => this.when_banner_image_updated(e, index)} />
-                            </div>
+                            </div> */}
                         </div>
                         <div style={{width:2}}/>
                         {this.render_detail_item('11',item['data'])}

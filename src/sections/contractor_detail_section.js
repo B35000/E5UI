@@ -154,7 +154,10 @@ class ContractorDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' }, )}
                     <div style={{height: 10}}/>
-                    
+
+                    {this.render_detail_item('4', {'text':object['requests']+this.props.app_state.loc['2231a']/* ' requests received.' */, 'textsize':'14px', 'font':'Sans-serif'})} 
+                    <div style={{height: 10}}/>
+
                     {this.render_taken_down_message_if_post_is_down(object)}
                     <div style={{height: 10}}/>
 

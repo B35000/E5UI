@@ -1,168 +1,7 @@
 import React, { Component } from 'react';
 
-// /* light theme icons */
-// import AlertIcon from './assets/alert_icon.png';
-// import AddIcon from './assets/add_icon.png'
-// import Background from './assets/background.png'
-// import JobIconImg from './assets/job_icon_light.png';  
-// import ExploreIconImg from './assets/explore_icon_light.png'; 
-// import WalletIconImg from './assets/wallet_icon_light.png'; 
-// import StackIconImg from './assets/stack_icon_light.png';
-
-
-// /* dark theme icons */
-// import AlertIconDark from './assets/alert_icon_dark.png'
-// import AddIconDark from './assets/add_icon_dark.png'
-// // import BackgroundDark from './assets/background.png'
-// import JobIconImgDark from './assets/job_icon.png';  
-// import ExploreIconImgDark from './assets/explore_icon.png'; 
-// import WalletIconImgDark from './assets/wallet_icon.png'; 
-// import StackIconImgDark from './assets/stack_icon.png';
-
-
-// /* green theme icons */
-// import AlertIconGreen from './assets/alert_icon_green.png'
-// import AddIconGreen from './assets/add_icon_green.png'
-// import BackgroundGreen from './assets/background_green.png';
-// import JobIconImgGreen from './assets/job_icon_green.png';
-// import ExploreIconImgGreen from './assets/explore_icon_green.png'; 
-// import WalletIconImgGreen from './assets/wallet_icon_green.png'; 
-// import StackIconImgGreen from './assets/stack_icon_green.png';
-
-
-
-
-// /* ether images */
-// import EthereumTestnet from './assets/ethereum_testnet.png'
-// import Harmony from './assets/harmony.png'
-// import Celo from './assets/celo.png'
-// import Flare from './assets/flare.png'
-// import xDai from './assets/xdai.png'
-// import fuse from './assets/fuse.png'
-// import glmr from './assets/glmr.png'
-// import movr from './assets/movr.png'
-// import matic from './assets/matic.png'
-// import bnb from './assets/bnb.png'
-// import xdc from './assets/xdc.png'
-// import tt from './assets/tt.png'
-// import nrg from './assets/nrg.png'
-// import viction from './assets/viction.png'
-// import evmos from './assets/evmos.png'
-// import eth from './assets/ethereum.png'
-// import optimism from './assets/optimism.png'
-// import base from './assets/base.png'
-// import arbitrum from './assets/arbitrum.png'
-// import astar from './assets/astar.png'
-// import cronos from './assets/cronos.png'
-// import kava from './assets/kava.png'
-// import neon from './assets/neon.png'
-// import mAda from './assets/milkomeda.png'
-// import fantom from './assets/fantom.png'
-// import brise from './assets/brise.png'
-// import syscoin from './assets/syscoin.png'
-// import avalanche from './assets/avalanche.png'
-// import findora from './assets/findora.png'
-// import iexec from './assets/iexec.png'
-// import oasis from './assets/oasis.png'
-// import ozone from './assets/ozone.png'
-// import pixie from './assets/pixie.png'
-// import rei from './assets/rei.png'
-// import klaytn from './assets/klaytn.png'
-// import mantle from './assets/mantle.png'
-// import pulse from './assets/pulse.png'
-// import canto from './assets/canto.png'
-// import eos from './assets/eos.png'
-// import iotex from './assets/iotex.png'
-// import songbird from './assets/songbird.png'
-// import ultron from './assets/ultron.png'
-// import coinex from './assets/coinex.png'
-// import tfuel from './assets/tfuel.png'
-// import step from './assets/step.png'
-// import energyweb from './assets/energyweb.png'
-// import callisto from './assets/callisto.png'
-// import shiden from './assets/shiden.png'
-// import tenet from './assets/tenet.png'
-// import ubiq from './assets/ubiq.png'
-// import gochain from './assets/gochain.png'
-// import omax from './assets/omax.png'
-// import wemix from './assets/wemix.png'
-// import confulx from './assets/conflux.png'
-// import telos from './assets/telos.png'
-// import rsk from './assets/rsk.png'
-// import metadium from './assets/metadium.png'
-// import kardiachain from './assets/kardiachain.png'
-// import cmp from './assets/cmp.png'
-// import seele from './assets/seele.png'
-// import btt from './assets/btt.png'
-// import doublea from './assets/doublea.png'
-// import karura from './assets/karura.png'
-// import acala from './assets/acala.png'
-// import edgeware from './assets/edgeware.png'
-// import bloxberg from './assets/bloxberg.png'
-// import phoenix from './assets/phoenix.png'
-// import omchain from './assets/omchain.png'
-// import om from './assets/om.png'
-// import mintme from './assets/mintme.png'
-// import ecredits from './assets/ecredits.png'
-// import eluv from './assets/eluv.png'
-// import etho from './assets/etho.png'
-// import oneledger from './assets/oneledger.png'
-
-
-// /* e5 images */
-// import E25EndImg from './assets/E25.png';
-// import E25SpendImg from './assets/325.png';
-// import End25Img from './assets/End25.png'
-
-// import E35EndImg from './assets/e35_end_token.png';
-// import E35SpendImg from './assets/e35_spend_token.png';
-
-// import E45EndImg from './assets/E45.png';
-// import E45SpendImg from './assets/345.png';
-
-// import E55EndImg from './assets/E55.png';
-// import E55SpendImg from './assets/355.png';
-
-// import E65EndImg from './assets/E65.png';
-// import E65SpendImg from './assets/365.png';
-
-// import E75EndImg from './assets/E75.png';
-// import E75SpendImg from './assets/375.png';
-
-// import E85EndImg from './assets/E85.png';
-// import E85SpendImg from './assets/385.png';
-
-// import E95EndImg from './assets/E95.png';
-// import E95SpendImg from './assets/395.png';
-
-// import E105EndImg from './assets/E105.png';
-// import E105SpendImg from './assets/3105.png';
-
-// import E115EndImg from './assets/E115.png';
-// import E115SpendImg from './assets/3115.png';
-
-// import E125EndImg from './assets/E125.png';
-// import E125SpendImg from './assets/3125.png';
-
-// import E135EndImg from './assets/E135.png';
-// import E135SpendImg from './assets/3135.png';
-
-// import E145EndImg from './assets/E145.png';
-// import E145SpendImg from './assets/3145.png';
-
-// import E155EndImg from './assets/E155.png';
-// import E155SpendImg from './assets/3155.png';
-
-// import E165EndImg from './assets/E165.png';
-// import E165SpendImg from './assets/3165.png';
-
-// import E175EndImg from './assets/E175.png';
-// import E175SpendImg from './assets/3175.png';
-
-
-
 /* blockchain stuff */
-import { mnemonicToSeedSync } from 'bip39';
+import { mnemonicToSeedSync, mnemonicToSeed } from 'bip39';
 import { Buffer } from 'buffer';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as StellarSdk from "@stellar/stellar-sdk";
@@ -181,6 +20,10 @@ import { sha256 } from '@cosmjs/crypto';
 import { SigningStargateClient, StargateClient } from "@cosmjs/stargate"
 import bchaddr from 'bchaddrjs';
 import { isValidClassicAddress } from 'ripple-address-codec';
+import { Keypair, Connection, PublicKey, Transaction, SystemProgram, sendAndConfirmTransaction } from '@solana/web3.js';
+import { derivePath } from 'ed25519-hd-key';
+import { AptosAccount, AptosClient } from 'aptos';
+
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -388,7 +231,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, web3-storage, nft-storage */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1423']/* 'average' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
     remember_account:'e',
 
     new_object_target: '0', edit_object_target:'0',
@@ -438,7 +281,7 @@ class App extends Component {
 
     number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600, has_account_been_loaded_from_storage:false, show_stack:true,
 
-    coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data()
+    coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data(), default_addresses:this.get_default_addresses(), contract_exchange_interactions_data:{}, e5_deflation_data:{}, contracts_proposals:{}
   };
 
   get_static_assets(){
@@ -467,14 +310,14 @@ class App extends Component {
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4', spend_image:'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', 
         iteration:400_000, url:0, active:true, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
-        end_token_power_limit: 135
+        end_token_power_limit: 72
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:'0x4c124f6C90fa3F12A9b6b837B89832E2E460e731',
         first_block:19614310, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:400_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4',
-        end_token_power_limit: 135,
+        end_token_power_limit: 72,
       },
       'E45':{
         web3:['https://api.harmony.one'],
@@ -942,7 +785,7 @@ class App extends Component {
       'en':{
         '0':'en',
         /* enter contract page */
-        '1':'enter-contract','2':'enter','3':'contract','4':'finish.','5':'Max Enter Contract Duration.','6':'Your entering duration.','7':'Entry expiry time.','8':'Set the time after which you wont participate in the contract.','9':'The entry fees charged for entering the contract.','10':'Entry Fees.','11':'The amounts you have available for entering the contract.','12':'Your balances.','13':'Token ID: ','14':'You cant pick a time before now.','15':'You cant pick a time beyond the contracts limit.','16':'Youve already entered this contract.','17':'You dont have enough tokens to enter this contract.','18':'Transaction added to stack.',
+        '1':'enter-contract','2':'enter','3':'contract','4':'finish.','5':'Max Enter Contract Duration.','6':'Your entering duration.','7':'Entry expiry time.','8':'Set the time after which you wont participate in the contract.','9':'The entry fees charged for entering the contract.','10':'Entry Fees.','11':'The amounts you have available for entering the contract.','12':'Your balances.','13':'Token ID: ','14':'You cant pick a time before now.','15':'You cant pick a time beyond the contracts limit.','16':'Youve already entered this contract.','17':'You dont have enough tokens to enter this contract.','18':'Transaction added to stack.','18a':'Set Maximum Time.','18b':'','18c':'','18d':'',
         
         /* exit contract page */
         '19':'exit-contract','20':'exit','21':'contract','22':'Max Enter Contract Duration.','23':'Exit the specific contract.','24':'Exit Contract.','25':'Entry Expiry Time.','26':'Time Remaining.','27':'block','28':'You cant exit a contract you havent entered.',
@@ -950,7 +793,7 @@ class App extends Component {
         '29':' sec','30':' min','31':' hr','32':' dy','33':' wk','34':' yr',
         
         /* extend enter contract page */
-        '35':'extend-contract','36':'extend','37':'contract','38':'Extend Entry Expiry Time.','39':'Set the new time after which you will not participate in the contract.','40':'Max Enter Contract Duration.','41':'Max Extend Enter Contract Duration.','42':'Entry Expiry Time.','43':'Time Remaining.','44':'You cant set a time before the current expiry time.','45':'You cant set a time beyond the extend limit.','46':'You have to wait ','47':' to extend your stay.',
+        '35':'extend-contract','36':'extend','37':'contract','38':'Extend Entry Expiry Time.','39':'Set the new time after which you will not participate in the contract.','40':'Max Enter Contract Duration.','41':'Max Extend Enter Contract Duration.','42':'Entry Expiry Time.','43':'Time Remaining.','44':'You cant set a time before the current expiry time.','45':'You cant set a time beyond the extend limit.','46':'You have to wait ','47':' to extend your stay.','47a':'','47b':'','47c':'',
         
         /* force exit contract page */
         '48':'force-exit','49':'force','50':'exit','51':'accounts','52':'Run a force exit action for the contract ID: ','53':'Target Account.','54':'Set the account ID to remove.','55':'Target Account...','56':'Add Force Exit Action.','57':'That account isnt part of the contract.','58':'You cant force exit an account twice.','59':'Account ID: ','60':'Contract ID: ','61':'Force exit action removed.','62':'Account','63':'You cant stack no changes.',
@@ -959,7 +802,7 @@ class App extends Component {
         '64':'modify-contract','65':'modify','66':'contract','67':'auth','68':'Vote Bounty Split Proportion','69':'Maximum Extend Enter Contract Limit','70':'Minimum End Bounty Amount','71':'Proposal Expiry Duration Limit','72':'Maximum Enter Contract Duration','73':'Auto Wait','74':'Proposal Modify Expiry Duration Limit','75':'Moderator Modify Privelage','76':'Unlimited Extend Contract Time','77':'Maximum Proposal Expiry Submit Expiry time difference','78':'Bounty Limit Type','79':'Force Exit Enabled','80':'Minimum Spend Bounty Amount','81':'no','82':'yes','83':'modifiable','84':'non-modifiable','85':'enabled','86':'disabled','87':'relative','88':'absolute','89':'enabled','90':'disabled','91':'Make changes to the configuration of the contract ID: ','92':'units','93':'Add Change.','94':'Target ID...','95':'Current ','96':'Current Value.','97':'Reconfiguration action added.','98':'Please pute a valid account ID.','99':'Reconfiguration action added.','100':'Modify Target.','101':'Position.','102':'Proportion.','103':'Duration.','104':'Value: ','105':'Target ID','106':'Reconfiguration action removed.','107':'My Account','108':'Account','108a':'Edit contract prices.', '108b':'Change the entry fees of your contract.', '108c':'You cant change the first price-value of the entry fees used', '108d':'', '108e':'', '108f':'',
         
         /* new channel page */
-        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.',
+        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.', '303a':'Subscription Locked Channel Preview.','304b':'If set to visible, a preview of your new channel will be shown to outsiders if subscription locked.',
         
         /* new contract page */
         '163':'configuration','164':'entry-fees','165':'private','166':'public','167':'Set a title for your new Contract.','168':'Set tags for indexing your new Contract.','169':'Add.','170':'Enter Contract.','171':'If set to enter-contract, youll enter the contract your creating in one transaction.','172':'Preset the new contract settings based on common use cases.','173':'👥 Workgroup Contract','174':'A contract representing shared consensus within an organization or group of people.','175':'🧘 Personal Contract','176':'A contract primarily used by one person.','177':'👷🏼 Work Contract','178':'A contract used for the job and contractor markets.',
@@ -982,7 +825,7 @@ class App extends Component {
         '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ',
         '345':'Set tags for indexing your new Proposal.','346':'Consensus Type.','347':'Set the type of action you wish to perform with the contract through your new proposal.','348':'Proposal Expiry Time','349':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.','350':'Proposal Expiry Duration Limit.','351':'Time from now.','352':'Modify Target (For Reconfiguration Action)','353':'The target object thats being modified if the consensus type is reconfig.','354':'Object ID...','355':'Consensus Submit Expiry Time.','356':'The time after which you cannot submit your new proposal.','357':'Maximum Proposal Expiry Submit Expiry Time Difference.','358':'You cant use a time before now.','359':'That submit time is invalid','360':'That proposal expiry time is less than the minimum required by the contract.','361':'Contract','362':'This Contract','363':'Main Contract','364':'Contract ID 2','365':'End Exchange','366':'Account ID 3','367':'Spend Exchange','368':'Account ID 5','369':'My Account','370':'Account','371':'End Token','372':'Spend Token','373':'Exchange ID 3','374':'Exchange ID 5','375':'Burn Account','376':'Account ID 0','377':'End Balance.','378':'Spend Balance.','379':'Spend Target.','380':'Set a target for the spend action.','381':'Target ID...','382':'Exchange.','383':'Set the token your spending.','384':'Spend Amount.','385':'Set an amount for the spend action.','386':'Picked Amount.','387':'Please put a valid spend target.',
         '388':'Please put a valid exchange id.','389':'Please put a valid amount.','390':'Spend action added to proposal.','391':'Units','392':'Add Change.','393':'Current ','394':'Current Value','395':'Exchange Ratio X','396':'Exchange Ratio Y','397':'Reconfiguration action added.','398':'Please put a valid account ID.','399':'Position.','400':'Proportion.','401':'Duration.','402':'Value: ','403':'Target ID.','404':'Target Exchange.','405':'Set the exchange id you wish to run the exchange transfer from.','406':'Target Receiver','407':'Target Receiver...','408':'Token Targets','409':'Set the target token ID your transferring from the exchange.','410':'Token Target ID...','411':'Target Amount','412':'Add Transfer Action.','413':'Set the account set to receive the token amounts.','414':'Please put a valid exchange ID.','415':'Please put a valid receiver ID.','416':'Please put a valid token ID.','417':'Please put a valid amount.','418':'Transfer action added.','419':'Receiver ID: ','420':'The first bounty exchange should be the End or Spend Exchange.','421':'Minimum Spend Bounty Amount.','422':'Minimum End Bounty Amount.','423':'Spend Balance.',
-        '424':'End Balance.','425':'Target Amount.','426':'Add Bounty.','427':'You cant use the same exchange twice.','428':'Bounty amount added.','429':'Token ID: ','430':'Add some tags first.','431':'Add a title first.','432':'That title is too long.','433':'You need to add bounty for your new proposal.','434':'One of your token balances is insufficient for the bounty amount specified.','435':'The proposal submit expiry time youve set cant be before now.','436':'The proposal submit expiry time youve set is less than the time difference required by the contract.','437':'That proposal expiry time youve set is less than the minimum required by the contract.','438':'The proposal expiry time youve set cant be before now', '438a':'Target Authority', '438b':'Target Beneficiary', '438c':'Minimum Buy Amount', '438d':'Maximum Buy Amount', '438e':'Minimum Cancellable Balance Amount','438f':'Search an object by its title or id, then tap it to add it to the new Proposal','438g':'Link added to new Proposal Item.','438h':'Transaction Gas Limit','438i':'Enter your preferred text then tap add to add it to the new Proposal.', '438j':'Edit Reconfig Prices', '438k':'Change the prices of your target reconfig object.', '438l':'The modify target youve set is invalid.', '438m':'Auto-Vote Yes.', '438n':'If set to vote, e will automatically vote yes for you in this new proposal.', '438o':'vote', '438p':'', '438q':'',
+        '424':'End Balance.','425':'Target Amount.','426':'Add Bounty.','427':'You cant use the same exchange twice.','428':'Bounty amount added.','429':'Token ID: ','430':'Add some tags first.','431':'Add a title first.','432':'That title is too long.','433':'You need to add bounty for your new proposal.','434':'One of your token balances is insufficient for the bounty amount specified.','435':'The proposal submit expiry time youve set cant be before now.','436':'The proposal submit expiry time youve set is less than the time difference required by the contract.','437':'That proposal expiry time youve set is less than the minimum required by the contract.','438':'The proposal expiry time youve set cant be before now', '438a':'Target Authority', '438b':'Target Beneficiary', '438c':'Minimum Buy Amount', '438d':'Maximum Buy Amount', '438e':'Minimum Cancellable Balance Amount','438f':'Search an object by its title or id, then tap it to add it to the new Proposal','438g':'Link added to new Proposal Item.','438h':'Transaction Gas Limit','438i':'Enter your preferred text then tap add to add it to the new Proposal.', '438j':'Edit Reconfig Prices', '438k':'Change the prices of your target reconfig object.', '438l':'The modify target youve set is invalid.', '438m':'Auto-Vote Yes.', '438n':'If set to vote, e will automatically vote yes for you in this new proposal.', '438o':'vote', '438p':'Set Expiry Limit.', '438q':'Set Submit Limit.','438r':'tokens','438s':'','438t':'','438u':'',
         
         /* new storefront item page */
         '439':'storefront-item','440':'configuration','441':'variants','442':'invisible','443':'masked','444':'unmasked','445':'items','446':'grams','447':'kilograms','448':'ounces','449':'pounds','450':'centimeters','451':'meters','452':'inches','453':'feet','454':'mililiters','455':'liters','456':'gallons','457':'listed','458':'delisted','459':'in-stock','460':'out-of-stock','461':'Unit Denomination.','462':'Specify the denomination of the item below.','463':'Unit Denomination.','464':'Specify the denomination of the item from the tag picker below.','465':'Set denomination: ','466':'Target Payment Recipient.','467':'Set the account ID thats set to receive the purchase payments for your new item.','468':'Fulfilment Location.','469':'Set location of the pick up station for your item when its ordered using a bag and contractors.','470':'Location Details...','471':'Direct Purchase Option.','472':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients.','473':'Product Chatroom.',
@@ -1021,7 +864,7 @@ class App extends Component {
         '840':'modify-subscription','841':'modify','842':'subscription','843':'authority','844':'Make changes to the configuration of the subscription ID: ','845':'units','846':'Add Change','847':'Target ID...','848':'Current ','849':'Current Value','850':'Reconfiguration action added.','851':'Please put a valid account ID.','852':'position','853':'Target ID','854':'My Account','855':'Main Contract','856':'Burn Account','857':'Account','858':'Contract ID 2','859':'Account ID 0','860':'Reconfiguration action removed.','861':'Please add some reconfiguration actions first.','861a':'prices','861b':'Edit subscription prices','861c':'Change the prices of your subscription','861d':'','861e':'You cant modify a subscriptions price if its cancellable.','861f':'Modify Target','861g':'','861h':'',
         
         /* pay subscription page */
-        '862':'pay-subscription','863':'pay','864':'subscription','865':'Pay for the subscription ID: ','866':'Time Unit','867':'Time Units','868':'Total Debit Amount','869':'The amount youll pay for the subscription payment is shown below','870':'The amounts you have available for paying the subscription.','871':'Your balances.','872':'Token ID: ','873':'Minimum Buy Amount.','874':'time-units','875':'Maximum Buy Amount','876':'Set a valid time unit amount.','877':'The amount youve set is less than the minimum requirement.','878':'The amount youve set exceeds the maximum that you can pay for.','879':'Your token balance is insufficient for that time unit purchase.',
+        '862':'pay-subscription','863':'pay','864':'subscription','865':'Pay for the subscription ID: ','866':'Time Unit','867':'Time Units','868':'Total Debit Amount','869':'The amount youll pay for the subscription payment is shown below','870':'The amounts you have available for paying the subscription.','871':'Your balances.','872':'Token ID: ','873':'Minimum Buy Amount.','874':'time-units','875':'Maximum Buy Amount','876':'Set a valid time unit amount.','877':'The amount youve set is less than the minimum requirement.','878':'The amount youve set exceeds the maximum that you can pay for.','879':'Your token balance is insufficient for that time unit purchase.','879a':'','879b':'Set Minimum Amount.','879c':'','879d':'','879e':'','879f':'',
         
         /* authmint page */
         '880':'authmint','881':'authority','882':'mint','883':'token','884':'Auth-Mint your token ','885':' for a specified target.','886':'Set the recipient of the authmint action.','887':'Account ID','888':'Recipient','889':'Set the amount to authmint.','890':'Action Amount.','891':'Transfer Amount.','892':'Add Action.','893':'Please put a valid account ID.','893a':'Please put a valid amount.','894':'Auth-mint action added.','895':'Target Recipient ID: ','896':'Action removed.','897':'You cant stack no changes.',
@@ -1045,7 +888,7 @@ class App extends Component {
         '1018':'transfer','1019':'send','1020':'Transfer the specified token.','1021':'Your Balance','1022':'Your Balance after Set Transfers','1023':'Set the recipient of the transfer action.','1024':'Recipient of action.','1025':'Recipient ID','1026':'Amount to transfer to the speicified target account.','1027':'Amount for Transfer.','1028':'Set Maximum','1029':'Add Transaction','1030':'Please put a valid account ID.','1031':'Please put a valid amount.','1032':'You dont have enough tokens to add that transaction.','1033':'','1034':'Transaction added.','1035':'Recipient account: ','1036':'Transaction removed.','1037':'Transfer Amount',
         
         /* add comment page */
-        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'','1042c':'','1042d':'','1042e':'','1042f':'','1042g':'',
+        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'font','1042c':'size','1042d':'Your balance in SPEND.','1042e':'That message is inconveniencingly long for its size.','1042f':'','1042g':'',
         
         /* add to bag page */
         '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.',
@@ -1078,7 +921,7 @@ class App extends Component {
         '1301':'Subscription Locked','1302':'You need to pay those subscriptions first before you can view the full post.','1303':'Subscriptions to pay.','1304':'Pin the post to your feed','1305':'Pin Post','1306':'Pin/Unpin Post',
         
         /* respond to job page */
-        '1307':'job-response','1308':'respond','1309':'job','1310':'ad','1311':'contract','1312':'expiry-time','1313':'amount','1314':'prepaid','1315':'postpaid','1316':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1317':'block','1318':'Select an expiry time for your application','1319':'Prepaid or Postpaid','1320':'Set the payment option you prefer for the application.','1321':'Your preferred fee.','1322':'Set how much you want for the job. Select an exchange by its id, then the desired price and click add.','1323':'','1324':'Price','1325':'tokens','1326':'Add Price','1327':'Please put a valid exchange ID.','1328':'Please put a valid amount.','1329':'You cant use the same exchange twice.','1330':'Added price.','1331':'You need to pick a contract first.','1332':'You cant set an expiry time thats less than fifteen minutes from now.','1332a':'Custom Specifications.', '1332b':'You can also include extra information for the job your applying for.', '1332c':'specs', '1332d':'Exchange ID', '1332e':'', '1332f':'',
+        '1307':'job-response','1308':'respond','1309':'job','1310':'ad','1311':'contract','1312':'expiry-time','1313':'amount','1314':'prepaid','1315':'postpaid','1316':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1317':'block','1318':'Select an expiry time for your application','1319':'Prepaid or Postpaid','1320':'Set the payment option you prefer for the application.','1321':'Your preferred fee.','1322':'Set how much you want for the job. Select an exchange by its id, then the desired price and click add.','1323':'','1324':'Price','1325':'tokens','1326':'Add Price','1327':'Please put a valid exchange ID.','1328':'Please put a valid amount.','1329':'You cant use the same exchange twice.','1330':'Added price.','1331':'You need to pick a contract first.','1332':'You cant set an expiry time thats less than fifteen minutes from now.','1332a':'Custom Specifications.', '1332b':'You can also include extra information for the job your applying for.', '1332c':'specs', '1332d':'Exchange ID', '1332e':'main', '1332f':'history','1332g':'','1332h':'','1332i':'','1332j':'','1332k':'','1332l':'','1332m':'',
         
         /* rpc settings page */
         '1333':'rpc-settings','1334':'Add a RPC provider for making transactions.','1335':'Enter Node Url...','1336':'Add','1337':'Type something.','1338':'Dont use whitespaces','1339':'That url is invalid.','1340':'That provider has already been added.','1341':'RPC url added.','1342':'Speed unkown.',
@@ -1096,13 +939,13 @@ class App extends Component {
         '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID: ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count',
         '1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.',
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
-        '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Transaction Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.',
+        '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Transaction Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.','1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
         
         /* view application contract page */
-        '1599':'accept-job-application','1600':'accept','1601':'application','1602':'applications-contract','1603':'The contract the applicant applied with is shown below.','1604':'Expiry time from now: ','1605':'Contract ID: ','1606':'Sender ID: ','1607':'Accept application','1608':'Accept the job application and enter their contract(This action cant be undone)','1609':'Accept and Enter','1610':'Applicants Requested Pay','1611':'Below is the applicants requested pay in their respective token denominations.','1612':'Block ID','1613':'Vote Bounty Split Proportion','1614':'Minimum End Bounty Amount','1615':'Max Enter Contract Duration','1616':'Auto Wait For All Proposals For All Voters','1617':'Proposal Modify Expiry Duration Limit','1618':'Can Modify Contract As Moderator','1619':'Can Extend Enter Contract At Any Time','1620':'Maximum Proposal Expiry Submit Expiry Time Difference','1621':'Bounty Limit Type','1622':'Contract Force Exit','1623':'Entry Fees','1624':' tokens used','1625':'Consensus Majority Proportion','1626':'Voter Weight Exchange','1627':'Your Voter Weight','1628':'units','1629':'Enabled','1630':'Disabled','1631':'Token ID: ','1632':'The application has already expired.','1632a':'Custom Specifications.','1632b':'','1632c':'','1632d':'','1632e':'','1632f':'', '1632g':'',        
+        '1599':'accept-job-application','1600':'accept','1601':'application','1602':'applications-contract','1603':'The contract the applicant applied with is shown below.','1604':'Expiry time from now: ','1605':'Contract ID: ','1606':'Sender ID: ','1607':'Accept application','1608':'Accept the job application and enter their contract(This action cant be undone)','1609':'Accept and Enter','1610':'Applicants Requested Pay','1611':'Below is the applicants requested pay in their respective token denominations.','1612':'Block ID','1613':'Vote Bounty Split Proportion','1614':'Minimum End Bounty Amount','1615':'Max Enter Contract Duration','1616':'Auto Wait For All Proposals For All Voters','1617':'Proposal Modify Expiry Duration Limit','1618':'Can Modify Contract As Moderator','1619':'Can Extend Enter Contract At Any Time','1620':'Maximum Proposal Expiry Submit Expiry Time Difference','1621':'Bounty Limit Type','1622':'Contract Force Exit','1623':'Entry Fees','1624':' tokens used','1625':'Consensus Majority Proportion','1626':'Voter Weight Exchange','1627':'Your Voter Weight','1628':'units','1629':'Enabled','1630':'Disabled','1631':'Token ID: ','1632':'The application has already expired.','1632a':'Custom Specifications.','1632b':'contract-data','1632c':'proposals','1632d':'The proposals that have been sent to the contract are shown below.','1632e':'Submitted','1632f':'Un-submitted.', '1632g':'Status',        
         
         /* view bag application page */
         '1633':'accept-bag-application','1634':'accept','1635':'fulfilment','1636':'application','1637':'applications-contract','1638':'The contract they applied with is shown below.','1639':'Expiry time from now: ','1640':'Estimated Delivery Time','1641':'Contract ID: ','1642':'Sender ID: ','1643':'Accept application','1644':'Accept the bag fulfilment application and enter their contract(This action cant be undone)','1645':'Applicants Requested Pay','1646':'Below is the applicants requested pay in their respective token denominations.','1646a':'Accept and Enter.','1646b':'Contracts Balance.','1646c':'Below is the End and Spend balance of the contract.',
@@ -1138,14 +981,14 @@ class App extends Component {
         
         /* contract details section */
         '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay',
-        '2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account',
+        '2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account', '2214a':'Balance Changes.','2214b':'The changes in balance for the selected token.','2214c':'Y-Axis: Total in ','2214d':'','2214e':'','2214f':'','2214g':'','2214h':'','2214i':'',
         
         /* contractor detail section */
-        '2215':'details','2216':'job-requests','2217':'Fees Per Hour','2218':'The amounts they charge per hour for their work.','2219':'Send Job Request.','2220':'Send a job request to the contractor to do a job for you.','2221':'Send Request','2222':'Pin the contractor to your feed.','2223':'Pin Contractor','2224':'Pin/Unpin Contractor','2225':'Edit Contractor Post','2226':'Change the basic details for your Contractor Post','2227':'Perform Action','2228':'Job Requests','2229':'Job Description','2230':'Accepted','2231':'Expiry time from now: ',
+        '2215':'details','2216':'job-requests','2217':'Fees Per Hour','2218':'The amounts they charge per hour for their work.','2219':'Send Job Request.','2220':'Send a job request to the contractor to do a job for you.','2221':'Send Request','2222':'Pin the contractor to your feed.','2223':'Pin Contractor','2224':'Pin/Unpin Contractor','2225':'Edit Contractor Post','2226':'Change the basic details for your Contractor Post','2227':'Perform Action','2228':'Job Requests','2229':'Job Description','2230':'Accepted','2231':'Expiry time from now: ','2231a':' requests received.',
         
         /* E5 details section */
         '2232':'details','2233':'End Balance of Burn Account','2234':'E5 Ether balance in Ether and wei','2235':'E5 Ether balance in Wei','2236':'Last Transaction Block','2237':'Last Transaction age','2238':'Number of entered contracts','2239':'Number of E5 runs','2240':'Withdraw balance','2241':'Withdraw your Ether to a specified address','2242':'Withdraw Ether','2243':'Withdraw','2244':'E5','2245':'Main','2246':'E5 Address:','2247':'Vote Bounty Split Proportion','2248':'Minimum End Contract Amount','2249':'E5 block invocation Limit','2250':'E5 time invocation Limit','2251':'Minimum Entered Contracts for Consensus Participation','2252':'','2253':'Tag Indexing Limit','2254':'Minimum Transaction Count for Consensus Particiation','2255':'Gas Anchor Price','2256':'Transaction Gas Reduction Proportion','2257':'Transaction Gas Anchor Price','2258':'Transaction Gas Lower Limit','2259':'Absolute Proposal Expiry Duration Limit','2260':'Primary Transaction Account','2261':'Primary Account Transaction Period','2262':'Subscriptions Created','2263':'Chart containing the total number of subscriptions made over time.','2264':'','2265':'','2266':'','2267':'','2269e':'Y-Axis: Total Subscriptions Made','2269':'X-Axis: Time','2270':'Total Subscriptions','2271':'subscriptions','2272':'Contracts Created','2273':'Chart containing the total number of contracts made over time.','2274':'Y-Axis: Total Contracts Made','2275':'X-Axis: Time','2276':'Total Contracts','2277':'contracts','2278':'Proposals Created','2279':'Chart containing the total number of proposals made over time.','2280':'Y-Axis: Total Proposals Made','2281':'Total Proposals','2282':'proposals','2283':'Exchanges Created','2284':'Chart containing the total number of exchanges made over time.','2285':'Y-Axis: Total Exchanges Made','2286':'Total Exchanges','2287':'exchanges','2288':'Indexed Posts Created','2289':'Chart containing the total number of indexed posts made over time.','2290':'Y-Axis: Total Posts Made','2291':'Total Posts','2292':'posts','2293':'Indexed Channels Created',
-        '2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers',
+        '2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers','2336f':'Deflation.','2336g':'The amount of end that has been sent to the burn account over time.','2336h':'','2336i':'','2336j':'','2336k':'','2336l':'',
         
         /* end detail section */
         '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions',
@@ -1159,19 +1002,19 @@ class App extends Component {
         '2482':'Job Offers','2483':'The amounts they are offering for the job.','2484':'Apply for the job','2485':'Respond to the ad with a contract and apply for the job.','2486':'Apply','2487':'Pin the job to your feed.','2488':'Pin Job','2489':'Pin/Unpin Job','2490':'Edit Job Post','2491':'Change the basic details for your Job Post','2492':'Perform Action','2493':'Block Number','2494':'age','2495':'ago','2496':'In ','2497':'Job Responses','2498':'Expiry time from now: ','2499':'Contract ID: ','2500':'Sender ID: ','2501':'Accepted','2502':'The job owner picked this application','2503':'Expiry time from now: ','2504':'Contract ID: ','2505':'Sender ID: ','2506':'Copied message to clipboard','2507':'responses','2507a':'Reply',
         
         /* list section */
-        '2508':'That ID is not valid.','2509':'Searching...','2509a':'Enter Name or Symbol...',
+        '2508':'That ID is not valid.','2509':'Searching...','2509a':'Enter Name or Symbol...','2509b':' items ordered','2509c':' responses',
         
         /* mail details section */
         '2510':'data','2512':' with ','2513':'Conversation.',
         
         /* post detail section */
-        '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
+        '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒 Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
         
         /* proposal details section */
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
         
         /* spend details section */
-        '2559':'updated-proportion-ratios','2560':'Mint or Dump the token for a specified account.','2561':'Mint/Dump','2562':'Make a token transfer to a specified account.','2563':'Send/Transfer','2564':'The exchanges balance for each of the tokens used to buy ','2565':'Buy Token Liquidity','2566':'Author Moderator Privelages Disabled','2567':'Author of Object is not a Moderator by default','2568':'Author Moderator Privelages Enabled','2569':'Author of Object is a Moderator by default','2570':'The amount you get when selling one unit of the token.','2571':'Token Price','2572':'Modify Exchanage','2573':'AuthMint Tokens','2574':'Bypass the exchanges restrictions and mint your token as an authority','2575':'AuthMint','2576':'Set an accounts access rights, moderator privelages or block an account','2577':'Chart containing the block limit reduction proportion over time.','2578':'Y-Axis: Proportion','2579':'Circulating Supply','2580':'Total Supply','2581':'Y-Axis: Total Supply','2582':'Total Transactions','2583':'Chart containing the total number of buy/sell transactions over time.','2584':'Y-Axis: Total Transactions','2585':'X-Axis: Time','2586':'Exchange Mint Limit Proportion Ratio Events','2587':'Tokens Received','2588':'Updated Active Limit','2589':'Exchange Modification Events','2590':'Targeted Modify Item','2591':'Exchange Transfer Events','2592':'Update Balance Events','2593':'Receiver Account','2594':'Freeze-Unfreeze Events','2595':'Action: Freeze','2596':'Action: Unfreeze','2597':'Authority Account','2598':'Exchange Modify Moderator Events','2599':'Exchange Account Access Settings Events','2600':'Targeted Account','2601':'Moderator Account','2602':'Exchange Blocked Account Events','2602a':'Active Mint Limit.',
+        '2559':'updated-proportion-ratios','2560':'Mint or Dump the token for a specified account.','2561':'Mint/Dump','2562':'Make a token transfer to a specified account.','2563':'Send/Transfer','2564':'The exchanges balance for each of the tokens used to buy ','2565':'Buy Token Liquidity','2566':'Author Moderator Privelages Disabled','2567':'Author of Object is not a Moderator by default','2568':'Author Moderator Privelages Enabled','2569':'Author of Object is a Moderator by default','2570':'The amount you get when selling one unit of the token.','2571':'Token Price','2572':'Modify Exchanage','2573':'AuthMint Tokens','2574':'Bypass the exchanges restrictions and mint your token as an authority','2575':'AuthMint','2576':'Set an accounts access rights, moderator privelages or block an account','2577':'Chart containing the block limit reduction proportion over time.','2578':'Y-Axis: Proportion','2579':'Circulating Supply','2580':'Total Supply','2581':'Y-Axis: Total Supply','2582':'Total Transactions','2583':'Chart containing the total number of buy/sell transactions over time.','2584':'Y-Axis: Total Transactions','2585':'X-Axis: Time','2586':'Exchange Mint Limit Proportion Ratio Events','2587':'Tokens Received','2588':'Updated Active Limit','2589':'Exchange Modification Events','2590':'Targeted Modify Item','2591':'Exchange Transfer Events','2592':'Update Balance Events','2593':'Receiver Account','2594':'Freeze-Unfreeze Events','2595':'Action: Freeze','2596':'Action: Unfreeze','2597':'Authority Account','2598':'Exchange Modify Moderator Events','2599':'Exchange Account Access Settings Events','2600':'Targeted Account','2601':'Moderator Account','2602':'Exchange Blocked Account Events','2602a':'Active Mint Limit.','2602b':'Demand Pressure.','2602c':'Chart containing the demand pressure over time.','2602d':'','2602e':'','2602f':'','2602g':'',
         
         /* storefront details section */
         '2603':'direct-purchases','2604':'unfulfilled','2605':'fulfilled','2606':'Set Denomination','2607':'Author Seller','2608':'Target Payment Recipient','2609':'Fulfilment Accounts','2610':'The accounts involved with shipping and fulfilling direct purchase orders from clients.','2611':'Fulfilment Location','2612':' variants','2613':'To choose from.','2614':'Pin the storefront item to your feed.','2615':'Pin Item','2616':'Pin/Unpin Item','2617':'Activity Section Enabled','2618':'You can leave a product review message in the activity section','2619':'Activity Section Disabled','2620':'The activity section has been disabled by the storefront owner.','2621':'In Stock','2622':'The item is available for purchasing.','2623':'Out of Stock','2624':'The item is not available for purchasing.','2625':'Add the item to your shopping bag.','2626':'Add to Bag','2627':'Purchase the item directly from the seller.','2628':'Direct Purchase','2629':'Purchase','2630':'Edit Storefront Post','2631':'Change the basic details for your Storefront Post','2632':'Edit Item','2633':'Block Number','2634':'Direct Purchases','2635':', Sender Account ID: ','2636':'Fulfilent Signature: ','2637':', Client ID: ','2638':'Clear Purchase','2639':'Fulfilment Signature: ','2640':'Signature Data: ','2641':'Signature Address: ','2642':'The activity section has been disabled.',
@@ -1208,7 +1051,7 @@ class App extends Component {
         '2906':'You need to set your wallet first.','2907':'You can\'t delete that message.','2908':'Delete.','2909':'Message Deleted.', '2909a':'You dont have enough spend to include that award.', 
         
         /* coins details section */
-        '2910':'Coin Name.','2911':'Coin Symbol.','2912':'Coin Decimal.','2913':'Base Unit Name.','2914':'Decimal Conversion Ratio.','2915':'Ledger Account Type.','2916':'Accounting','2917':'Wallet Address.','2918':'Unset','2919':'Your balance in ','2920':'Existential Deposit','2921':'Average Transaction Fee...','2922':'Per','2923':'Fee Type','2924':'Send/Receive ','2925':'Send or receive the coin from a specified account.','2926':'Pending...','2927':'Wait first, the wallet is pending.','2927a':'Ledger Consensus Mechanism.', '2927b':'Block Time', '2927c':'Ledger Age.','2927d':'Ledger Throughput.','2927e':'Block Size.',
+        '2910':'Coin Name.','2911':'Coin Symbol.','2912':'Coin Decimal.','2913':'Base Unit Name.','2914':'Decimal Conversion Ratio.','2915':'Ledger Account Type.','2916':'Accounting','2917':'Wallet Address.','2918':'Unset','2919':'Your balance in ','2920':'Existential Deposit','2921':'Average Transaction Fee...','2922':'Per','2923':'Fee Type','2924':'Send/Receive ','2925':'Send or receive the coin from a specified account.','2926':'Pending...','2927':'Wait first, the wallet is pending.','2927a':'Ledger Consensus Mechanism.', '2927b':'Block Time', '2927c':'Ledger Age.','2927d':'Ledger Throughput.','2927e':'Block Size.','2927f':'Refresh Wallet.','2927g':'Refreshing Wallet...','2927h':'View Your Wallet on its Explorer.','2927i':'View your wallet on its Blockexplorer.',
         
         /* send_receive_coin */
         '2928':'Receive the coin using the address shown below.','2929':'Send the coin using the address shown below.','2930':'Default Transaction Fee','2931':'Transaction Fee.','2932':'Set the amount you wish to pay for your transaction.','2933':'Send to Address.','2934':'Your balance is too low to make a transaction.','2935':'Please Set an amount to transfer.','2936':'You can\'t include the minimum deposit in your transaction.','2937':'You don\'t have enough coin to make that transaction.','2938':'Please set a recipient for the transfer.','2939':'That recipient address is not valid.','2940':'That transaction fee is invalid.','2941':'Send Coin Confirmation.',
@@ -1238,8 +1081,10 @@ class App extends Component {
           'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000),
           'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', 'microalgorand', 6, 1_000_000),
           'XTZ': this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000),
-          'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000_000),
+          'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000),
           'FIL': this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000),
+          'SOL': this.get_coin_info('SOL', 'Solana', 'https://bafkreie4wh23gwfdj4b2otksmajb7dmfvtn376kv3jfivmwocutkq773ai.ipfs.w3s.link/', 'lamport', 9, 1_000_000_000),
+          'APT': this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000),
       }
       return list
   }
@@ -1256,6 +1101,36 @@ class App extends Component {
           'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
       }
   }
+
+  get_default_addresses(){
+    var default_addresses = [
+        '5VH6APQQOWDXWHQGYH3UJHX4MFTL6IGJHMHXS5LIZPO4DG5UVTRKE63PNQ',
+        '1GNvmBVCFhQasLkfM6BsFtgxPuUpECvUBa',
+        '1M1X8gy9n1z3n22Ddksgn1kM6JAuz65L5x',
+        'cosmos18tux8kpx82v6z0p9mgc6s6kym352486lyd7av9',
+        'XsRwNDdfTMiYM6A7HbSLMujZbSPh3xkhy2',
+        'DA88P2NRpG4rLsJ1knGVaunFGsDC92oPAe',
+        'f1jv3rl3ogw3tvb67wzvqvrott6icfhavh6uopeca',
+        'FMXGHcdqYH9NnJcPWgZAh8rHWLEu3xozJqjFypvWQDquLAE',
+        'LXeHJfiDG39XPaK8eT3WGvQetehnmg4Hfn',
+        '13nCkJXq4xXh4fVgaSvWQtbzzY3enghmcRjU2cYKah2sLn2k',
+        'GDWU7YB6CB2YO6Y6A3A7ORE67RQWNPZAZE5Q66LVNDF53QM3WSWOFXLF',
+        'tz1UF8y8MmpLbsTKwMZUaoHqvjrjaT4p4d92',
+        'TEGgcyRe4GfyRRS73adfVVtTDBpUuSPXGY',
+        'rpTTrdJSFrqhKuwv87MJj8egULabstELn9',
+        '7KjURTEzcC96eWQDcLsZxRqo1gM3SA7dkHxFsrAYsspe',
+        '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d'
+    ]
+    return default_addresses
+  }
+
+
+
+
+
+
+
+
 
 
   constructor(props) {
@@ -1386,23 +1261,27 @@ class App extends Component {
 
     if(this.interval != null)clearInterval(this.interval);
     if(this.interval2 != null) clearInterval(this.interval2)
-
+    if(this.interval3 != null) clearInterval(this.interval3)
+    
     this.set_cookies()
   }
 
   reset_background_sync(){
     if(this.interval != null)clearInterval(this.interval);
     if(this.interval2 != null) clearInterval(this.interval2)
-    var obj = {'sluggish':1000_000, 'slow':500_000, 'average':100_000, 'fast':40_000}
+    if(this.interval3 != null) clearInterval(this.interval3)
+    
+    var obj = {'sluggish':1000_000, 'slow':500_000, 'average':290_000, 'fast':90_000}
     obj[this.getLocale()['1421']/* sluggish */] = 1000_000
     obj[this.getLocale()['1422']/* slow */] = 500_000
-    obj[this.getLocale()['1423']/* average */] = 120_000
-    obj[this.getLocale()['1424']/* fast */] = 60_000
+    obj[this.getLocale()['1423']/* average */] = 290_000
+    obj[this.getLocale()['1424']/* fast */] = 90_000
 
     var me = this;
     setTimeout(function() {
       me.interval = setInterval(() => me.background_sync(), obj[me.state.refresh_speed]);
       me.interval2 = setInterval(() => me.start_get_accounts_data(false, true), 35_000)
+      me.interval3 = setInterval(() => me.background_coin_sync(), 3*60_000)
     }, (1 * 100));
     
   }
@@ -1978,12 +1857,19 @@ class App extends Component {
       if(this.is_allowed_in_e5()){
         this.start_get_accounts_data(false, false)
         this.load_data_from_page_in_focus(this.focused_page)
-        var seed = this.state.account_seed
-        if(seed != '')  this.update_coin_balances(seed)
       }
     }
 
     this.reset_theme()
+  }
+
+  background_coin_sync(){
+    if(this.state.accounts[this.state.selected_e5] != null){
+      if(this.is_allowed_in_e5()){
+        var seed = this.state.account_seed
+        if(seed != '')  this.update_coin_balances('',true)
+      }
+    }
   }
 
 
@@ -2001,8 +1887,9 @@ class App extends Component {
   }
 
   get_web3_url_from_e5(e5){
-    // var random = this.random(0,this.state.e5s[e5].web3.length-1)
+    // console.log('get_web3_url_from_e5', e5)
     var random = this.state.e5s[e5].url
+    // console.log('get_web3_url_from_e5', random)
     return this.state.e5s[e5].web3[random]
   }
 
@@ -2179,7 +2066,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f',
 
 
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
@@ -2331,56 +2218,62 @@ class App extends Component {
 
   render_page(){
     return(
-      <Home_page ref={this.homepage}
-      screensize={this.getScreenSize()} 
-      width={this.state.width} height={this.state.height} app_state={this.state} view_number={this.view_number.bind(this)} notify={this.prompt_top_notification.bind(this)} open_send_receive_ether_bottomsheet={this.start_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
-      open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
-      open_new_object={this.open_new_object.bind(this)} 
-      when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)} fetch_objects_data={this.fetch_objects_data.bind(this)}
+      <div>
+        <Home_page ref={this.homepage}
+          screensize={this.getScreenSize()} 
+          width={this.state.width} height={this.state.height} app_state={this.state} view_number={this.view_number.bind(this)} notify={this.prompt_top_notification.bind(this)} open_send_receive_ether_bottomsheet={this.start_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
+          open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
+          open_new_object={this.open_new_object.bind(this)} 
+          when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)} fetch_objects_data={this.fetch_objects_data.bind(this)}
+          
+          show_mint_token_bottomsheet={this.show_mint_token_bottomsheet.bind(this)}
+          show_transfer_bottomsheet={this.show_transfer_bottomsheet.bind(this)}
+          show_enter_contract_bottomsheet={this.show_enter_contract_bottomsheet.bind(this)}
+          show_extend_contract_bottomsheet={this.show_extend_contract_bottomsheet.bind(this)}
+          show_exit_contract_bottomsheet={this.show_exit_contract_bottomsheet.bind(this)}
+          show_new_proposal_bottomsheet={this.show_new_proposal_bottomsheet.bind(this)}
+          show_vote_proposal_bottomsheet={this.show_vote_proposal_bottomsheet.bind(this)}
+          show_submit_proposal_bottomsheet={this.show_submit_proposal_bottomsheet.bind(this)}
+          show_pay_subscription_bottomsheet={this.show_pay_subscription_bottomsheet.bind(this)}
+          show_cancel_subscription_bottomsheet={this.show_cancel_subscription_bottomsheet.bind(this)}
+          show_collect_subscription_bottomsheet={this.show_collect_subscription_bottomsheet.bind(this)}
+          show_modify_subscription_bottomsheet={this.show_modify_subscription_bottomsheet.bind(this)}
+          show_modify_contract_bottomsheet={this.show_modify_contract_bottomsheet.bind(this)}
+          show_modify_token_bottomsheet={this.show_modify_token_bottomsheet.bind(this)}
+          show_exchange_transfer_bottomsheet={this.show_exchange_transfer_bottomsheet.bind(this)}
+          show_force_exit_bottomsheet={this.show_force_exit_bottomsheet.bind(this)}
+          show_archive_proposal_bottomsheet={this.show_archive_proposal_bottomsheet.bind(this)}
+          show_freeze_unfreeze_bottomsheet={this.show_freeze_unfreeze_bottomsheet.bind(this)}
+          show_authmint_bottomsheet={this.show_authmint_bottomsheet.bind(this)}
+          show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
+          show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
+
+          add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}
+          
+          open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
+
+          get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} add_bag_message_to_stack_object={this.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.add_storefront_message_to_stack_object.bind(this)} get_contractor_applications={this.get_contractor_applications.bind(this)} open_view_job_request_ui={this.open_view_job_request_ui.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_withdraw_ether_bottomsheet={this.show_withdraw_ether_bottomsheet.bind(this)}
+
+          add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
+          show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
+
+          get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
+
+          when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} load_data_from_page_in_focus={this.load_data_from_page_in_focus.bind(this)}
+          fetch_objects_to_load_from_searched_tags={this.fetch_objects_to_load_from_searched_tags.bind(this)}
+          
+          show_stage_royalties_bottomsheet={this.show_stage_royalties_bottomsheet.bind(this)}
+          load_exchanges_royalty_event_data={this.load_exchanges_royalty_event_data.bind(this)}
+          show_view_staged_royalties_bottomsheet={this.show_view_staged_royalties_bottomsheet.bind(this)}
+          load_exchanges_royalty_payout_event_data={this.load_exchanges_royalty_payout_event_data.bind(this)}
+
+          show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.start_send_receive_coin_bottomsheet.bind(this)}
+          update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
+          load_bags_stores={this.load_bags_stores.bind(this)}
+          />
+          <ToastContainer limit={3} containerId="id2"/>
+      </div>
       
-      show_mint_token_bottomsheet={this.show_mint_token_bottomsheet.bind(this)}
-      show_transfer_bottomsheet={this.show_transfer_bottomsheet.bind(this)}
-      show_enter_contract_bottomsheet={this.show_enter_contract_bottomsheet.bind(this)}
-      show_extend_contract_bottomsheet={this.show_extend_contract_bottomsheet.bind(this)}
-      show_exit_contract_bottomsheet={this.show_exit_contract_bottomsheet.bind(this)}
-      show_new_proposal_bottomsheet={this.show_new_proposal_bottomsheet.bind(this)}
-      show_vote_proposal_bottomsheet={this.show_vote_proposal_bottomsheet.bind(this)}
-      show_submit_proposal_bottomsheet={this.show_submit_proposal_bottomsheet.bind(this)}
-      show_pay_subscription_bottomsheet={this.show_pay_subscription_bottomsheet.bind(this)}
-      show_cancel_subscription_bottomsheet={this.show_cancel_subscription_bottomsheet.bind(this)}
-      show_collect_subscription_bottomsheet={this.show_collect_subscription_bottomsheet.bind(this)}
-      show_modify_subscription_bottomsheet={this.show_modify_subscription_bottomsheet.bind(this)}
-      show_modify_contract_bottomsheet={this.show_modify_contract_bottomsheet.bind(this)}
-      show_modify_token_bottomsheet={this.show_modify_token_bottomsheet.bind(this)}
-      show_exchange_transfer_bottomsheet={this.show_exchange_transfer_bottomsheet.bind(this)}
-      show_force_exit_bottomsheet={this.show_force_exit_bottomsheet.bind(this)}
-      show_archive_proposal_bottomsheet={this.show_archive_proposal_bottomsheet.bind(this)}
-      show_freeze_unfreeze_bottomsheet={this.show_freeze_unfreeze_bottomsheet.bind(this)}
-      show_authmint_bottomsheet={this.show_authmint_bottomsheet.bind(this)}
-      show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
-      show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
-
-      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}
-      
-      open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
-
-      get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} add_bag_message_to_stack_object={this.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.add_storefront_message_to_stack_object.bind(this)} get_contractor_applications={this.get_contractor_applications.bind(this)} open_view_job_request_ui={this.open_view_job_request_ui.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_withdraw_ether_bottomsheet={this.show_withdraw_ether_bottomsheet.bind(this)}
-
-      add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
-      show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
-
-      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
-
-      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} load_data_from_page_in_focus={this.load_data_from_page_in_focus.bind(this)}
-      fetch_objects_to_load_from_searched_tags={this.fetch_objects_to_load_from_searched_tags.bind(this)}
-      
-      show_stage_royalties_bottomsheet={this.show_stage_royalties_bottomsheet.bind(this)}
-      load_exchanges_royalty_event_data={this.load_exchanges_royalty_event_data.bind(this)}
-      show_view_staged_royalties_bottomsheet={this.show_view_staged_royalties_bottomsheet.bind(this)}
-      load_exchanges_royalty_payout_event_data={this.load_exchanges_royalty_payout_event_data.bind(this)}
-
-      show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.start_send_receive_coin_bottomsheet.bind(this)}
-      />
     )
   }
 
@@ -2840,6 +2733,12 @@ class App extends Component {
     else if(item['symbol'] == 'FIL'){
       return this.validate_filecoin_address(address)
     }
+    else if(item['symbol'] == 'SOL'){
+      return this.validate_solana_address(address)
+    }
+    else if(item['symbol'] == 'APT'){
+      return this.validate_aptos_address(address)
+    }
 
 
     return true;
@@ -2954,6 +2853,27 @@ class App extends Component {
     return address.startsWith('f')
   }
 
+  validate_solana_address(address){
+    try {
+      // Attempt to create a PublicKey object from the address
+      let pubkey = new PublicKey(address);
+      return PublicKey.isOnCurve(pubkey.toBytes());
+    } catch (error) {
+      return false;
+    }
+  }
+
+  validate_aptos_address(address){
+    //starts with '0x' and is 42 characters in length
+    if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+      return false;
+    }
+    return true;
+  }
+
+
+
+
   broadcast_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, memo_text) => {
     var data = this.state.coin_data[item['symbol']]
     if(item['symbol'] == 'BTC'){
@@ -2998,11 +2918,13 @@ class App extends Component {
     else if(item['symbol'] == 'FIL'){
       await this.create_and_broadcast_filecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
+    else if(item['symbol'] == 'SOL'){
+      await this.create_and_broadcast_solana_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
 
-    var seed = this.state.account_seed
     var me = this;
     setTimeout(function() {
-      me.update_coin_balances(seed)
+      me.update_coin_balances(item['symbol'], false)
     }, (1 * 30_000));
   }
 
@@ -3517,28 +3439,79 @@ class App extends Component {
     const myAddress = await walletProvider.getDefaultAddress();
 
     const nonce = await lotusClient.mpool.getNonce(myAddress);
-    const gasprice = fee / 45_000
+    const gasprice = parseInt(fee / 5_744_209)
     const message = await walletProvider.createMessage({
       From: myAddress,
       To: recipient_address,
       Value: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
       GasPrice: gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
-      GasLimit: 220_000,
-      gasPremium: parseInt(gasprice +(gasprice / 4)),
-      GasFeeCap:parseInt(gasprice +(gasprice / 3)),
+      GasLimit: 6_000_000,
+      gasPremium: gasprice,
+      GasFeeCap:gasprice,
       Nonce: nonce,
     });
 
     try{
       const signed_message = await walletProvider.signMessage(message)
       const cid = await walletProvider.sendSignedMessage(signed_message);
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':cid})
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':cid['/']})
     }catch(e){
       console.log('filecoin:', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
+  create_and_broadcast_solana_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_sol_wallet(seed)
+    var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
+    const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+
+    const recipient = new PublicKey(recipient_address);
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: wallet.keypair.publicKey,
+        toPubkey: recipient,
+        transfer_amount,
+      })
+    );
+
+    try{
+      const signature = await sendAndConfirmTransaction(connection, transaction, [wallet.keypair]);
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':signature})
+    }catch(e){
+      console.log('solana',e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+    
+  }
+
+  create_and_broadcast_aptos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_aptos_wallet(seed)
+    const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
+    const client = new AptosClient(NODE_URL);
+
+    const payload = {
+      type: 'entry_function_payload',
+      function: '0x1::coin::transfer',
+      type_arguments: ['0x1::aptos_coin::AptosCoin'],
+      arguments: [recipient_address, transfer_amount.toString()],
+    };
+
+    try{
+      const transaction = await client.generateTransaction(wallet.account.address(), payload);
+      const signedTxn = await client.signTransaction(wallet.account, transaction);
+      const transactionHash = await client.submitTransaction(signedTxn);
+      await client.waitForTransaction(transactionHash);
+
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transactionHash})
+    }catch(e){
+      console.log('aptos', e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+    
+  }
 
 
 
@@ -3586,7 +3559,7 @@ class App extends Component {
       when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} 
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
-      show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+      show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)}
       />
     )
   }
@@ -3784,7 +3757,7 @@ class App extends Component {
 
   calculate_actual_balance(e5, token_id){
     var txs = this.state.stack_items
-    if(this.state.created_token_object_mapping[e5] == null || this.state.created_token_object_mapping[e5][token_id]) return 0
+    if(this.state.created_token_object_mapping[e5] == null || this.state.created_token_object_mapping[e5][token_id] == null) return 0
     var exchange_balance = this.state.created_token_object_mapping[e5][token_id]['balance']
     var total_amount = bigInt(0)
     for(var i=0; i<txs.length; i++){
@@ -3892,7 +3865,6 @@ class App extends Component {
         }
       }
     }
-    if(bigInt(exchange_balance).minus(total_amount).isNegative()) return 0
     return bigInt(exchange_balance).minus(total_amount)
   }
 
@@ -4208,6 +4180,37 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  sign_custom_data_using_wallet = async (e5, data) => {
+    const url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(url);
+    var address = this.state.accounts[e5].address
+    web3.eth.accounts.wallet.add(this.state.accounts[e5].privateKey);
+
+    var signature = await web3.eth.sign(data.toString(), address)
+    this.setState({generated_signature: signature})
+  }
+
+  verify_custom_data_using_wallet = async (data, signature, e5) => {
+    const url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(url);
+    try{
+      var original_address = await web3.eth.accounts.recover(data.toString(), signature)
+      const contractArtifact = require('./contract_abis/E5.json');
+      const contractAddress = this.state.addresses[e5][0]
+      const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+      var accounts = await contractInstance.methods.f167([],[original_address], 2).call((error, result) => {});
+      var address_account = accounts[0]
+
+      var obj = {'address': original_address, 'account': address_account}
+      this.setState({verified_account_data_from_signature: obj})
+    }
+    catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['1593at']/* 'That signature is invalid.' */, 5000)
+      this.setState({verified_account_data_from_signature: null})
+    }
+  }
+
 
 
 
@@ -4380,7 +4383,7 @@ class App extends Component {
     this.open_new_object_bottomsheet()
     this.setState({new_object_target: target});
     
-    if(target == '6'/* posts */){
+    if(target == '6'/* posts */ || target == '7'/* channel */){
       this.load_my_subscriptions()
     }
   }
@@ -4637,7 +4640,7 @@ class App extends Component {
       me.edit_channel_page.current?.setState({object_id: object['id']})
     }
     }, (1 * 500));
-    
+    this.load_my_subscriptions()
   }
 
 
@@ -4873,7 +4876,7 @@ class App extends Component {
       me.edit_post_page.current?.set()
     }
     }, (1 * 500));
-    
+    this.load_my_subscriptions() 
   }
 
 
@@ -5348,6 +5351,7 @@ class App extends Component {
     }
     }, (1 * 500));
     
+    this.load_contracts_proposals(contract_item['e5'], contract_item['id'])
   }
 
   enter_contract(state_obj, job_acceptance_action_state_object){
@@ -5563,7 +5567,7 @@ class App extends Component {
     var os = getOS()
     if(os == 'iOS'){
         return(
-            <Sheet isOpen={this.state.stack_bottomsheet} onClose={this.open_stack_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+            <Sheet isOpen={this.state.new_proposal_bottomsheet} onClose={this.open_new_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
@@ -5572,7 +5576,7 @@ class App extends Component {
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
                 </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_stack_bottomsheet()}/>
+                <Sheet.Backdrop onTap={()=> this.open_new_proposal_bottomsheet()}/>
             </Sheet>
         )
     }
@@ -5602,7 +5606,6 @@ class App extends Component {
       setTimeout(function() {
         if(me.state != null){
           me.setState({new_proposal_bottomsheet: !me.state.new_proposal_bottomsheet});
-
           if(me.new_proposal_bottomsheet != null){
             me.new_proposal_page.current?.setState(me.new_proposal_bottomsheet)
           }
@@ -5612,6 +5615,7 @@ class App extends Component {
   }
 
   show_new_proposal_bottomsheet(contract_item){
+    console.log('opening new proposal')
     this.open_new_proposal_bottomsheet()
     var me = this;
     setTimeout(function() {
@@ -5737,6 +5741,10 @@ class App extends Component {
 
 
 
+
+
+
+
   render_submit_proposal_bottomsheet(){
     if(this.state.submit_proposal_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -5832,7 +5840,7 @@ class App extends Component {
     var os = getOS()
     if(os == 'iOS'){
         return(
-            <Sheet isOpen={this.state.stack_bottomsheet} onClose={this.open_stack_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+            <Sheet isOpen={this.state.pay_subscription_bottomsheet} onClose={this.open_pay_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
@@ -5841,7 +5849,7 @@ class App extends Component {
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
                 </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_stack_bottomsheet()}/>
+                <Sheet.Backdrop onTap={()=> this.open_pay_subscription_bottomsheet()}/>
             </Sheet>
         )
     }
@@ -8922,22 +8930,23 @@ class App extends Component {
 
   set_comment_bottomsheet_size(focused_message_id){
     var size = this.getScreenSize();
-    if(focused_message_id != 0 && focused_message_id['e5'] != this.props.app_state.selected_e5){
+    if(focused_message_id != 0 && focused_message_id['e5'] != this.state.selected_e5){
       if(size == 's'){
-        if(this.state.height < 880){
-          this.setState({comment_size: this.state.height})
-        }else{
-          this.setState({comment_size: 880})
-        }
+        this.setState({comment_size: this.state.height})
+        // if(this.state.height < 980){
+        //   this.setState({comment_size: this.state.height})
+        // }else{
+        //   this.setState({comment_size: 980})
+        // }
       }else{
-         if(this.state.height < 630){
+         if(this.state.height < 890){
           this.setState({comment_size: this.state.height})
         }else{
-          this.setState({comment_size: 630})
+          this.setState({comment_size: 890})
         }
       }
     }else{
-      this.setState({comment_size: 550})
+      this.setState({comment_size: 670})
     }
   }
 
@@ -9831,10 +9840,10 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
                         'overflow-y':'auto'}}>
-                          <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
+                          <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
                         </div>
                     </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
+                    {/* <ToastContainer limit={3} containerId="id2"/> */}
                 </Sheet.Container>
                 <Sheet.Backdrop onTap={()=> this.open_dialog_bottomsheet()}/>
             </Sheet>
@@ -9844,7 +9853,7 @@ class App extends Component {
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialog_bottomsheet.bind(this)} open={this.state.dialog_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
           'overflow-y':'auto'}}>
-            <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
+            <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -9906,15 +9915,15 @@ class App extends Component {
     this.open_dialog_bottomsheet()
     var me = this;
     if(me.withdraw_ether_page.current != null){
-      me.withdraw_ether_page.current.when_withdraw_ether_confirmation_received()
+      me.withdraw_ether_page.current?.when_withdraw_ether_confirmation_received()
     }
   }
 
-  send_ether_to_target(){
+  send_ether_to_target_confirmation(){
     this.open_dialog_bottomsheet()
     var me = this;
     if(me.send_receive_ether_page.current != null){
-      me.send_receive_ether_page.current.when_send_ether_confirmation_received()
+      me.send_receive_ether_page.current?.when_send_ether_confirmation_received()
     }
   }
 
@@ -10231,7 +10240,7 @@ class App extends Component {
             me.start_get_accounts_data(true, false)
         }, (3 * 1000));
       }else{
-        this.when_wallet_data_updated(['(32)'], 0, '', true, true/* is_loading_default_wallet */) 
+        this.when_wallet_data_updated(['(32)'], 0, '', true,) 
       }
     } 
     
@@ -10333,13 +10342,15 @@ class App extends Component {
   }
 
 
-  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching, is_loading_default_wallet){
+  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
     if(selected_item != '') {
       this.setState({account_seed: seed});
     }
     this.generate_one_account_for_all_e5s(seed)
-    if(this.state.coin_data['BTC'] == null && is_loading_default_wallet == true )this.generate_account_data_for_each_coin(seed)
+    if(this.state.coin_data['BTC'] == null){
+      this.generate_account_data_for_each_coin(seed)
+    }
     var me = this
     setTimeout(function() {
         me.start_get_accounts_data(is_synching, false)
@@ -10348,6 +10359,8 @@ class App extends Component {
     if(selected_item != ''){
       this.setState({has_wallet_been_set: true})
     }
+
+    // this.send_filecoin(seed)
   }
 
   generate_account_for_each_e5(seed){
@@ -10378,17 +10391,20 @@ class App extends Component {
     const hdDerivationPath = `m/44'/461'/0'/0/0`;
     const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
 
-    const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
-    const amount = '1000000000000'; // Amount in FIL (1 FIL = 1e18)
+    const recipientAddress = 'f15ghx3rjnyqnt6iws4lgb7hqmswdi43k5mvovstq';
+    const amount = 75_813_340_787_595_933; // Amount in FIL (1 FIL = 1e18)
     const myAddress = await walletProvider.getDefaultAddress();
 
-    console.log('walletProvider.address:---------------',myAddress)
+    console.log('filecoin','walletProvider.address:---------------',myAddress)
     console.log(walletProvider)
 
     var privateKey = await walletProvider.getSigner().getPrivateKey(myAddress)
-    console.log('private key: ---------------',privateKey);
+    console.log('filecoin','private key: ---------------',privateKey);
 
+    var balance = await lotusClient.wallet.balance(myAddress);
+    console.log('filecoin','filecoin0 wallet balance:', balance);
 
+    // return;
     const nonce = await lotusClient.mpool.getNonce(myAddress);
 
     // Send the transaction
@@ -10396,19 +10412,19 @@ class App extends Component {
       From: myAddress,
       To: recipientAddress,
       Value: amount.toString().toLocaleString('fullwide', {useGrouping:false}),
-      GasPrice: '1000000000',
-      GasLimit: 900000,
-      gasPremium: 17768082,
-      GasFeeCap:17768082,
+      GasPrice: 2_000_000_000,
+      GasLimit: 6_000_000,
+      gasPremium: 2_000_000_000,
+      GasFeeCap:2_000_000_000,
       Nonce: nonce,
-    });
+    });//bafy2bzaceb3ql3hxzmy2rwyradnocn4iqrnesgroe23jrtjbmun6koykbf53e
     try{
       const cid = await walletProvider.sendSignedMessage(
         await walletProvider.signMessage(message)
       );
-      console.log('Transaction CID:', cid);
+      console.log('filecoin','Transaction CID:', cid['/']);
     }catch(e){
-      console.log(e)
+      console.log('filecoin', e)
     }
 
 
@@ -10463,21 +10479,57 @@ class App extends Component {
     var seed = seed1.replace('|',' ')
     seed = this.get_formatted_seed(seed)
     this.setState({final_seed: seed})
-    await this.get_and_set_bitcoin_wallet_info(seed)
-    await this.get_and_set_filecoin_wallet_info(seed)
-    await this.get_and_set_bitcoin_cash_wallet_info(seed)
-    await this.get_and_set_litecoin_wallet_info(seed)
-    await this.get_and_set_dogecoin_wallet_info(seed)
-    await this.get_and_set_dash_wallet_info(seed)
-    await this.get_and_set_tron_wallet_info(seed)
-    await this.get_and_set_xrp_wallet_info(seed)
-    await this.get_and_set_xlm_wallet_info(seed)
-    await this.get_and_set_dot_wallet_info(seed)
-    await this.get_and_set_kusama_wallet_info(seed)
-    await this.get_and_set_algorand_wallet_info(seed)
-    await this.get_and_set_tezos_wallet_info(seed)
-    await this.get_and_set_cosmos_wallet_info(seed)
-    this.setState({coin_data_status: 'set'})
+    console.log('coin', 'starting...')
+    var coin_data = this.state.coin_data
+    coin_data['BTC'] = await this.get_and_set_bitcoin_wallet_info(seed)
+    // console.log('coin', 'bitcoin...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['FIL'] = await this.get_and_set_filecoin_wallet_info(seed)
+    // console.log('coin', 'filecoin...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['BCH'] = await this.get_and_set_bitcoin_cash_wallet_info(seed)
+    // console.log('coin', 'bitcoin cash...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['LTC'] = await this.get_and_set_litecoin_wallet_info(seed)
+    // console.log('coin', 'litecoin...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['DOGE'] = await this.get_and_set_dogecoin_wallet_info(seed)
+    // console.log('coin', 'dogecoin...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['DASH'] = await this.get_and_set_dash_wallet_info(seed)
+    // console.log('coin', 'dash...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['TRX'] = await this.get_and_set_tron_wallet_info(seed)
+    // console.log('coin', 'tron...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['XRP'] = await this.get_and_set_xrp_wallet_info(seed)
+    // console.log('coin', 'xrp...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['XLM'] = await this.get_and_set_xlm_wallet_info(seed)
+    // console.log('coin', 'xlm...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['DOT'] = await this.get_and_set_dot_wallet_info(seed)
+    // console.log('coin', 'dot...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['KSM'] = await this.get_and_set_kusama_wallet_info(seed)
+    // console.log('coin', 'kusama...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['ALGO'] = await this.get_and_set_algorand_wallet_info(seed)
+    // console.log('coin', 'algorand...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['XTZ'] = await this.get_and_set_tezos_wallet_info(seed)
+    // console.log('coin', 'tezos...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['ATOM'] = await this.get_and_set_cosmos_wallet_info(seed)
+    // console.log('coin', 'cosmos...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['SOL'] = await this.get_and_set_solana_wallet_info(seed)
+    // console.log('coin', 'solana...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['APT'] = await this.get_and_set_aptos_wallet_info(seed)
+    // console.log('coin', 'aptos...')
+    console.log('coin', coin_data)
+    this.setState({coin_data_status: 'set', coin_data:coin_data})
   }
 
   get_formatted_seed(seed){
@@ -10497,21 +10549,43 @@ class App extends Component {
     return new_arr.trim()
   }
 
-  update_coin_balances = async () => {
-    await this.update_filecoin_wallet_balance()
-    await this.update_bitcoin_balance()
-    await this.update_bitcoin_cash_balance()
-    await this.update_litecoin_balance()
-    await this.update_dogecoin_balance()
-    await this.update_dash_balance()
-    await this.update_tron_balance()
-    await this.update_xrp_balance()
-    await this.update_xlm_balance()
-    await this.update_dot_balance()
-    await this.update_ksm_balance()
-    await this.update_algorand_balance()
-    await this.update_tezos_balance()
-    await this.update_cosmos_balance()
+  update_coin_balances = async (coin, should_update_all) => {
+    if(this.state.account_seed == '') return;
+    var coin_data = this.state.coin_data
+    if(!should_update_all){
+      if(this.update_time == null) this.update_time = {}
+      if(this.update_time[coin] == null) this.update_time[coin] = 0
+      if(Date.now() - this.update_time[coin] < (30*1000)){
+        return;
+      }
+      this.update_time[coin] = Date.now()
+      this.prompt_top_notification(this.getLocale()['2927g']/* Refreshing Wallet... */, 800)
+    }
+    if(coin == 'FIL' || should_update_all) coin_data = await this.update_filecoin_wallet_balance(coin_data)
+    if(coin == 'BTC' || should_update_all) coin_data = await this.update_bitcoin_balance(coin_data)
+    if(coin == 'BCH' || should_update_all) coin_data = await this.update_bitcoin_cash_balance(coin_data)
+    if(coin == 'LTC' || should_update_all) coin_data = await this.update_litecoin_balance(coin_data)
+    if(coin == 'DOGE' || should_update_all) coin_data = await this.update_dogecoin_balance(coin_data)
+    if(coin == 'DASH' || should_update_all) coin_data = await this.update_dash_balance(coin_data)
+    if(coin == 'TRX' || should_update_all) coin_data = await this.update_tron_balance(coin_data)
+    if(coin == 'XRP' || should_update_all) coin_data = await this.update_xrp_balance(coin_data)
+    if(coin == 'XLM' || should_update_all) coin_data = await this.update_xlm_balance(coin_data)
+    if(coin == 'DOT' || should_update_all) coin_data = await this.update_dot_balance(coin_data)
+    if(coin == 'KSM' || should_update_all) coin_data = await this.update_ksm_balance(coin_data)
+    if(coin == 'ALGO' || should_update_all) coin_data = await this.update_algorand_balance(coin_data)
+    if(coin == 'XTZ' || should_update_all) coin_data = await this.update_tezos_balance(coin_data)
+    if(coin == 'ATOM' || should_update_all) coin_data = await this.update_cosmos_balance(coin_data)
+    if(coin == 'SOL' || should_update_all) coin_data = await this.update_solana_balance(coin_data)
+    if(coin == 'APT' || should_update_all) coin_data = await this.update_aptos_balance(coin_data)
+    this.setState({coin_data: coin_data})
+  }
+
+  is_address_set(address){
+    var default_addresses = this.state.default_addresses
+    if(default_addresses.includes(address)){
+      return false
+    }
+    return true;
   }
 
 
@@ -10531,13 +10605,15 @@ class App extends Component {
     var fee_info = {'fee':await this.get_filecoin_transaction_fee(), 'type':'variable', 'per':'gas'}
 
     var filecoin_data = {'balance':(balance.toString()), 'address':myAddress, 'min_deposit':0, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['FIL'] = filecoin_data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['FIL'] = filecoin_data;
+    // this.setState({coin_data: clone})
+    return filecoin_data
   }
 
   get_filecoin_balance = async (address, lotusClient) => {
     var balance = 0
+    if(!this.is_address_set(address)) return 0
     try{
       balance = await lotusClient.wallet.balance(address);
       console.log('filecoin wallet balance:', balance);
@@ -10548,37 +10624,48 @@ class App extends Component {
   }
 
   get_filecoin_transaction_fee = async () => {
-    return 10_000_000_000
+    return 2_000_000_000
   }
 
-  update_filecoin_wallet_balance = async () => {
+  update_filecoin_wallet_balance = async (clone) => {
     const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
     const lotusClient = new LotusClient(connector);
 
-    var clone = structuredClone(this.state.coin_data)
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['FIL']['address']
     const balance = await this.get_filecoin_balance(address, lotusClient)
     clone['FIL']['balance'] = balance
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
+
+
 
 
 
   get_and_set_bitcoin_wallet_info = async (seed) => {
-    const path = "m/44'/0'/0'/0/0" // bitcoin mainnet
-    const network = bitcoin.networks.bitcoin;
-    var wallet = await this.get_bitcoin_wallet(seed, network, path)
-    const address = wallet.address
-    var utxos = await this.get_bitcoin_utxos(address)
-    var balance = this.get_total_bitcoin_balance_from_utxos(utxos)
+    try{  
+      const path = "m/44'/0'/0'/0/0" // bitcoin mainnet
+      const network = bitcoin.networks.bitcoin;
+      var wallet = await this.get_bitcoin_wallet(seed, network, path)
+      const address = wallet.address
+      var utxos = await this.get_bitcoin_utxos(address)
+      var balance = this.get_total_bitcoin_balance_from_utxos(utxos)
 
-    var fee_info = {'fee':await this.get_bitcoin_fees(), 'type':'variable', 'per':'byte'}
+      var fee = await this.get_bitcoin_fees()
+      var fee_info = {'fee':fee, 'type':'variable', 'per':'byte'}
 
-    var bitcoin_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
-    // console.log('existential:', 'bitcoin data:', bitcoin_data)
-    var clone = structuredClone(this.state.coin_data)
-    clone['BTC'] = bitcoin_data;
-    this.setState({coin_data: clone})
+      var bitcoin_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+      // console.log('coin', 'bitcoin data:', bitcoin_data)
+      // var clone = structuredClone(this.state.coin_data)
+      // clone['BTC'] = bitcoin_data;
+      // this.setState({coin_data: clone})
+      // await this.wait(100)
+      return bitcoin_data
+    }catch(e){
+      console.log('coin', e)
+    }
+    
   }
 
   get_bitcoin_wallet = async (mnemonic, network, path) => {
@@ -10588,28 +10675,32 @@ class App extends Component {
     const address = derived.getAddress();
     const privateKey = derived.keyPair.toWIF();
     return {address: address, privateKey: privateKey}
+
+    
   }
 
   get_bitcoin_utxos = async (address) => {
     var request = `https://blockchain.info/unspent?active=${address}`
+    // if(!this.is_address_set(address)) return {}
     try{
       const response = await fetch(request);
       if (!response.ok) {
         console.log('existential:',response)
         // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return []
+        return {}
       }
       var data = await response.text();
       return JSON.parse(data);
     }
     catch(e){
       console.log('existential:', e)
-      return []
+      return {}
     }
   }
 
   get_total_bitcoin_balance_from_utxos(utxos){
     var bal = 0
+    if(utxos['unspent_outputs'] == null) return
     utxos['unspent_outputs'].forEach(utxo => {
       bal += utxo['value'];
     });
@@ -10623,61 +10714,72 @@ class App extends Component {
       if (!response.ok) {
         console.log(response)
         // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return 0
+        return 14.37
       }
       var data = await response.text();
       var parsed_obj = JSON.parse(data);
       return (parsed_obj['medium_fee_per_kb'] / 1024)
     }
     catch(e){
-      console.log(e)
-      return 0
+      console.log('coin',e)
+      return 14.37
     }
   }
 
-  update_bitcoin_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_bitcoin_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['BTC']['address']
     var utxos = await this.get_bitcoin_utxos(address)
     var balance = this.get_total_bitcoin_balance_from_utxos(utxos)
+    var fees = await this.get_bitcoin_fees()
     clone['BTC']['balance'] = balance
     clone['BTC']['utxos'] = utxos
-    this.setState({coin_data: clone})
+    clone['BTC']['fee']['fee'] = fees
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
 
 
   get_and_set_bitcoin_cash_wallet_info = async (seed) =>{
-    const network = bitcoin.networks.bitcoin;
-    const path = "m/44'/145'/0'/0/0" // bitcoin cash mainnet
-    var wallet = await this.get_bitcoin_wallet(seed, network, path)
-    const address = wallet.address
-    var utxos = await this.get_bitcoin_cash_utxos(address)
-    var balance = this.get_total_bitcoin_cash_balance_from_utxos(utxos)
+    try{
+      const network = bitcoin.networks.bitcoin;
+      const path = "m/44'/145'/0'/0/0" // bitcoin cash mainnet
+      var wallet = await this.get_bitcoin_wallet(seed, network, path)
+      const address = wallet.address
+      var utxos = await this.get_bitcoin_cash_utxos(address)
+      var balance = this.get_total_bitcoin_cash_balance_from_utxos(utxos)
 
-    var fee_info = {'fee':await this.get_bitcoin_cash_fees(), 'type':'variable', 'per':'byte'}
-    var bitcoin_cash_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['BCH'] = bitcoin_cash_data;
-    this.setState({coin_data: clone})
+      var fee_info = {'fee':await this.get_bitcoin_cash_fees(), 'type':'variable', 'per':'byte'}
+      var bitcoin_cash_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+      // var clone = structuredClone(this.state.coin_data)
+      // clone['BCH'] = bitcoin_cash_data;
+      // this.setState({coin_data: clone})
+      // await this.wait(100)
+      return bitcoin_cash_data
+    }catch(e){
+      console.log('coin', e)
+    }
+    
   }
 
   get_bitcoin_cash_utxos = async (address) => {
     var request = `https://api.fullstack.cash/v5/electrumx/utxos/${address}`
+    // if(!this.is_address_set(address)) return {}
     try{
       const response = await fetch(request);
       if (!response.ok) {
         console.log(response)
         // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return []
+        return {}
       }
       var data = await response.text();
       return JSON.parse(data)
     }
     catch(e){
       console.log(e)
-      return []
+      return {}
     }
   }
 
@@ -10694,14 +10796,15 @@ class App extends Component {
     return (0.0000015 * 100_000_000)
   }
 
-  update_bitcoin_cash_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_bitcoin_cash_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['BCH']['address']
     var utxos = await this.get_bitcoin_cash_utxos(address)
     var balance = this.get_total_bitcoin_cash_balance_from_utxos(utxos)
     clone['BCH']['balance'] = balance
     clone['BCH']['utxos'] = utxos
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -10719,13 +10822,16 @@ class App extends Component {
     var fee_info = {'fee':await this.get_litecoin_fees(), 'type':'variable', 'per':'byte'}
 
     var litecoin_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['LTC'] = litecoin_data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['LTC'] = litecoin_data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return litecoin_data
   }
 
   get_litecoin_utxos = async (address) => {
     const request = `https://litecoinspace.org/api/address/${address}/utxo`
+    if(!this.is_address_set(address)) return []
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -10745,6 +10851,7 @@ class App extends Component {
 
   get_total_litecoin_balance_from_utxos(utxos){
     var bal = 0
+    if(utxos.length == 0) return 0
     utxos.forEach(utxo => {
       bal += utxo['value'];
     });
@@ -10758,27 +10865,31 @@ class App extends Component {
       if (!response.ok) {
         console.log(response)
         // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return 0
+        return 32.5
       }
       var data = await response.text();
       var parsed_obj = JSON.parse(data);
       return parsed_obj['medium_fee_per_kb'] / 1024
     }
     catch(e){
-      console.log(e)
-      return 0
+      console.log('coin',e)
+      return 32.5
     }
   }
 
-  update_litecoin_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_litecoin_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['LTC']['address']
     var utxos = await this.get_litecoin_utxos(address)
     var balance = this.get_total_litecoin_balance_from_utxos(utxos)
     clone['LTC']['balance'] = balance
     clone['LTC']['utxos'] = utxos
-    this.setState({coin_data: clone})
+    clone['LTC']['fee']['fee'] = await this.get_litecoin_fees()
+    // this.setState({coin_data: clone})
+    return clone
   }
+
+
 
 
 
@@ -10803,9 +10914,11 @@ class App extends Component {
     var fee_info = {'fee':await this.get_dogecoin_fees(), 'type':'variable', 'per':'byte'}
 
     var dogecoin_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['DOGE'] = dogecoin_data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['DOGE'] = dogecoin_data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return dogecoin_data
   }
 
   make_dogecoin_wallet = async (mnemonic, network) => {
@@ -10827,11 +10940,12 @@ class App extends Component {
         'api-key': key
       }
     }
+    if(!this.is_address_set(address)) return {}
     try{
       const response = await fetch(request, header);
       if (!response.ok) {
         console.log(response)
-        return []
+        return {}
         // throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
@@ -10839,7 +10953,7 @@ class App extends Component {
     }
     catch(e){
       console.log(e)
-      return []
+      return {}
     }
   }
 
@@ -10859,26 +10973,28 @@ class App extends Component {
       if (!response.ok) {
         console.log(response)
         // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return 0
+        return 1600000
       }
       var data = await response.text();
       var parsed_obj = JSON.parse(data);
       return parsed_obj['medium_fee_per_kb'] / 1024
     }
     catch(e){
-      console.log(e)
-      return 0
+      console.log('coin', e)
+      return 1600000
     }
   }
 
-  update_dogecoin_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_dogecoin_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['DOGE']['address']
     var utxos = await this.get_dogecoin_utxos(address)
     const balance = this.get_total_dogecoin_balance_from_utxos(utxos)
     clone['DOGE']['balance'] = balance
     clone['DOGE']['utxos'] = utxos
-    this.setState({coin_data: clone})
+    clone['DOGE']['fee']['fee'] = await this.get_dogecoin_fees()
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -10902,11 +11018,13 @@ class App extends Component {
     const balance = this.get_total_dash_balance_from_utxos(utxos)
 
     var fee_info = {'fee':await this.get_dash_fees(), 'type':'variable', 'per':'byte'}
-
     var dash_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['DASH'] = dash_data;
-    this.setState({coin_data: clone})
+    
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['DASH'] = dash_data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return dash_data
   }
 
   make_dash_wallet = async (mnemonic, network) => {
@@ -10922,6 +11040,7 @@ class App extends Component {
 
   get_dash_utxos = async (address) => {
     const request = `https://insight.dash.org/insight-api/addr/${address}/utxo`
+    if(!this.is_address_set(address)) return []
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -10951,28 +11070,30 @@ class App extends Component {
     try{
       const response = await fetch(request);
       if (!response.ok) {
-        console.log(response)
+        console.log('coin',response)
         // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return 0
+        return 100
       }
       var data = await response.text();
       var parsed_obj = JSON.parse(data);
       return parsed_obj['medium_fee_per_kb'] / 1024
     }
     catch(e){
-      console.log(e)
-      return 0
+      console.log('coin',e)
+      return 100
     }
   }
 
-  update_dash_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_dash_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['DASH']['address']
     var utxos = await this.get_dash_utxos(address)
     const balance = this.get_total_dash_balance_from_utxos(utxos)
     clone['DASH']['balance'] = balance
     clone['DASH']['utxos'] = utxos
-    this.setState({coin_data: clone})
+    clone['DASH']['fee']['fee'] = await this.get_dash_fees()
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -10984,11 +11105,12 @@ class App extends Component {
     const balance = await this.get_tron_balance(address, wallet.tronWeb);
 
     var fee_info = {'fee':await this.get_tron_transaction_fee(), 'type':'fixed', 'per':'transaction'}
-
     var data = {'balance':balance, 'address':address, 'min_deposit':1_000_000, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['TRX'] = data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['TRX'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   make_tron_wallet = async (mnemonic) => {
@@ -11009,6 +11131,7 @@ class App extends Component {
   }
 
   get_tron_balance = async (address, tronWeb) => {
+    if(!this.is_address_set(address)) return 0
     try{
       const balance = await tronWeb.trx.getBalance(address);
       return balance
@@ -11022,13 +11145,12 @@ class App extends Component {
     return 1_100_000
   }
 
-  update_tron_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_tron_balance = async (clone) => {
     var wallet = await this.make_tron_wallet('hello world')
     const address = clone['TRX']['address']
     const balance = await this.get_tron_balance(address, wallet.tronWeb);
     clone['TRX']['balance'] = balance
-    this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -11046,9 +11168,11 @@ class App extends Component {
     var fee_info = {'fee':await this.get_xrp_transaction_fee(), 'type':'fixed', 'per':'transaction'}
 
     var data = {'balance':balance, 'address':address, 'min_deposit':10_000_000, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['XRP'] = data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['XRP'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   make_xrp_wallet = async (mnemonic) => {
@@ -11076,6 +11200,7 @@ class App extends Component {
 
   get_xrp_balance = async (address, client) => {
     var balance = 0
+    if(!this.is_address_set(address)) return 0
     try{
       const response = await client.request({
         "command": "account_info",
@@ -11093,15 +11218,16 @@ class App extends Component {
     return 10
   }
 
-  update_xrp_balance = async () => {
+  update_xrp_balance = async (clone) => {
     const client = new xrpl.Client("wss://xrplcluster.com/")
     await client.connect()
-    var clone = structuredClone(this.state.coin_data)
+    // var clone = structuredClone(this.state.coin_data)
     const address = clone['XRP']['address']
     const balance = await this.get_xrp_balance(address, client)
     await client.disconnect()
     clone['XRP']['balance'] = balance
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -11117,9 +11243,11 @@ class App extends Component {
 
     var fee_info = {'fee':await this.get_xlm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':10_000_000, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['XLM'] = data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['XLM'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   make_xlm_wallet = async (mnemonic) => {
@@ -11135,7 +11263,6 @@ class App extends Component {
       const account = await server.loadAccount(address);
       return account;
     } catch (error) {
-      console.error("Error loading account:", error);
       return null
     }
   }
@@ -11156,14 +11283,15 @@ class App extends Component {
     return 100
   }
 
-  update_xlm_balance = async () => {
+  update_xlm_balance = async (clone) => {
     const server = new StellarSdk.Horizon.Server("https://horizon.stellar.org/")
-    var clone = structuredClone(this.state.coin_data)
+    // var clone = structuredClone(this.state.coin_data)
     const address = clone['XLM']['address']
     var account = await this.load_xlm_account_info(address, server)
     const balance = this.get_xlm_balance_from_address(account)
     clone['XLM']['balance'] = balance
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -11182,9 +11310,11 @@ class App extends Component {
 
     var fee_info = {'fee':await this.get_dot_transaction_fee(), 'type':'fixed', 'per':'transaction'}
     var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['DOT'] = data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['DOT'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   generate_dot_wallet = async (mnemonic) => {
@@ -11197,6 +11327,7 @@ class App extends Component {
   }
 
   get_dot_balance = async (address, api) => {
+    if(!this.is_address_set(address)) return 0
     try{
       const { nonce, data: balance } = await api.query.system.account(address);
       const address_balance = (balance.free.toString())
@@ -11219,8 +11350,8 @@ class App extends Component {
     return (0.015 * 10_000_000_000)
   }
 
-  update_dot_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_dot_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     const address = clone['DOT']['address']
     const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
     const api = await ApiPromise.create({ provider: wsProvider });
@@ -11228,7 +11359,8 @@ class App extends Component {
     const address_balance = await this.get_dot_balance(address, api)
     await api.disconnect()
     clone['DOT']['balance'] = address_balance
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -11246,10 +11378,11 @@ class App extends Component {
 
     var fee_info = {'fee':await this.get_ksm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['KSM'] = data;
-    this.setState({coin_data: clone})
-
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['KSM'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   generate_ksm_wallet = async (mnemonic) => {
@@ -11261,6 +11394,7 @@ class App extends Component {
   }
 
   get_ksm_balance = async (address, api) => {
+    if(!this.is_address_set(address)) return 0
     try{
       const { nonce, data: balance } = await api.query.system.account(address);
       const address_balance = (balance.free.toString())
@@ -11283,8 +11417,8 @@ class App extends Component {
     return (0.01 * 1_000_000_000_000)
   }
 
-  update_ksm_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_ksm_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     const address = clone['KSM']['address']
     const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
     const api = await ApiPromise.create({ provider: wsProvider });
@@ -11292,7 +11426,8 @@ class App extends Component {
     const address_balance = await this.get_ksm_balance(address, api)
     await api.disconnect()
     clone['KSM']['balance'] = address_balance
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -11311,9 +11446,11 @@ class App extends Component {
 
     var fee_info = {'fee':await this.get_algo_transaction_fee(), 'type':'fixed', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':100_000, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['ALGO'] = data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['ALGO'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   generate_algo_wallet = async (mnemonic) => {
@@ -11328,8 +11465,8 @@ class App extends Component {
     return (0.001 * 1_000_000)
   }
 
-  update_algorand_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_algorand_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['ALGO']['address']
 
     const algodServer = 'https://mainnet-api.4160.nodely.dev';
@@ -11339,7 +11476,8 @@ class App extends Component {
     const acctInfo = await algodClient.accountInformation(address).do();
     const balance = (acctInfo.amount.toString())
     clone['AlGO']['balance'] = balance
-    this.setState({coin_data: clone})
+    // this.setState({coin_dcloneata: clone})
+    return clone
   }
 
 
@@ -11354,9 +11492,11 @@ class App extends Component {
 
     var fee_info = {'fee':await this.get_tezos_transaction_fee(), 'type':'variable', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['XTZ'] = data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['XTZ'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   generate_tezos_wallet = async (mnemonic) => {
@@ -11372,13 +11512,14 @@ class App extends Component {
     return (0.064544 * 1_000_000)
   }
 
-  update_tezos_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_tezos_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['XTZ']['address']
     const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
     const balance = (await Tezos.tz.getBalance(address)).toString()
     clone['XTZ']['balance'] = balance
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
@@ -11394,9 +11535,11 @@ class App extends Component {
 
     var fee_info = {'fee':await this.get_atom_transaction_fee(), 'type':'variable', 'per':'transaction'}
     var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['ATOM'] = data;
-    this.setState({coin_data: clone})
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['ATOM'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   generate_atom_wallet = async (mnemonic) => {
@@ -11423,8 +11566,8 @@ class App extends Component {
     return (0.00640 * 1_000_000_000)
   }
 
-  update_cosmos_balance = async () => {
-    var clone = structuredClone(this.state.coin_data)
+  update_cosmos_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
     var address = clone['ATOM']['address']
 
     const rpc = "https://cosmos-rpc.publicnode.com:443"
@@ -11433,11 +11576,133 @@ class App extends Component {
     client.disconnect()
 
     clone['ATOM']['balance'] = balance;
-    this.setState({coin_data: clone})
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
 
+
+
+
+
+  get_and_set_solana_wallet_info = async (seed) => {
+    const wallet = await this.generate_sol_wallet(seed)
+    const address = wallet.address
+
+    var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
+    const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    const balance = await this.get_solana_address_balance(address, connection)
+    
+    var fee_info = {'fee':await this.get_sol_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['SOL'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
+  }
+
+  generate_sol_wallet = async (mnemonic) => {
+    const seed = await mnemonicToSeed(mnemonic);
+    const derivationPath = "m/44'/501'/0'";
+    const derivedSeed = derivePath(derivationPath, seed.toString('hex')).key;
+    const keypair = Keypair.fromSeed(derivedSeed);
+    return {address: keypair.publicKey.toBase58(), keypair: keypair}
+  }
+
+  get_solana_address_balance = async (address, connection) => {
+    if(!this.is_address_set(address)) return 0
+    try{
+      const publicKey = new PublicKey(address);
+      return await connection.getBalance(publicKey);
+    }
+    catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+  get_sol_transaction_fee(){
+    return 5000
+  }
+
+  update_solana_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
+    var address = clone['SOL']['address']
+    
+    var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
+    const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    const balance = await this.get_solana_address_balance(address, connection)
+
+    clone['SOL']['balance'] = balance;
+    // this.setState({coin_data: clone})
+    return clone
+  }
+
+
+
+
+
+  get_and_set_aptos_wallet_info = async (seed) => {
+    try{
+      const wallet = await this.generate_aptos_wallet(seed)
+      const address = wallet.address
+      const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
+      const client = new AptosClient(NODE_URL);
+      const balance = await this.get_aptos_wallet_balance(wallet.address, client)
+      const network_fee = await this.get_aptos_gas_prices(client)
+      
+      var fee_info = {'fee':network_fee, 'type':'fixed', 'per':'transaction'}
+      var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
+      // var clone = structuredClone(this.state.coin_data)
+      // clone['APT'] = data;
+      // this.setState({coin_data: clone})
+      // await this.wait(100)
+      return data
+    }catch(e){
+      console.log('coin',e)
+    }
+    
+  }
+
+  generate_aptos_wallet = async (mnemonic) => {
+    const seed = await mnemonicToSeed(mnemonic);
+    const path = "m/44'/637'/0'/0'/0'"
+    const { key } = derivePath(path, Buffer.from(seed).toString('hex'));
+    const account = new AptosAccount(key);
+
+    return {address: account.address().toString(), account: account}
+  }
+
+  get_aptos_wallet_balance = async (address, client) => {
+    try{
+      const resource = await client.getAccountResource(address, '0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>');
+      console.log(resource)
+      const balance = resource.data.coin.value;
+      return balance;
+    }catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+  get_aptos_gas_prices = async (client) => {
+    return 0.000009 * 100_000_000
+  }
+
+  update_aptos_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
+    var address = clone['APT']['address']
+
+    const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
+    const client = new AptosClient(NODE_URL);
+    const balance = await this.get_aptos_wallet_balance(address, client)
+
+    clone['APT']['balance'] = balance;
+    // this.setState({coin_data: clone})
+    return clone
+  }
 
 
 
@@ -12064,7 +12329,9 @@ class App extends Component {
     const H52_address = contract_addresses[6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account)
+    
+    var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
+    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, priority_ids)
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -12177,13 +12444,13 @@ class App extends Component {
     console.log('end_balance: ', end_balance_of_E5, ' spend_balance: ',spend_balance_of_E5, ' burn account balance: ', end_balance_of_burn_account)
 
 
-    var end_balance_of_E5_clone = structuredClone(this.state.end_balance_of_E5)
+    var end_balance_of_E5_clone = JSON.parse(JSON.stringify(this.state.end_balance_of_E5))
     end_balance_of_E5_clone[e5] = end_balance_of_E5
 
-    var spend_balance_of_E5_clone = structuredClone(this.state.spend_balance_of_E5)
+    var spend_balance_of_E5_clone = JSON.parse(JSON.stringify(this.state.spend_balance_of_E5))
     spend_balance_of_E5_clone[e5] = spend_balance_of_E5
 
-    var end_balance_of_burn_account_clone = structuredClone(this.state.end_balance_of_burn_account)
+    var end_balance_of_burn_account_clone = JSON.parse(JSON.stringify(this.state.end_balance_of_burn_account))
     end_balance_of_burn_account_clone[e5] = end_balance_of_burn_account
 
     this.setState({end_balance_of_E5:end_balance_of_E5_clone, spend_balance_of_E5:spend_balance_of_E5_clone, end_balance_of_burn_account: end_balance_of_burn_account_clone})
@@ -12288,6 +12555,16 @@ class App extends Component {
         this.setState({job_section_tags: job_section_tags, explore_section_tags: explore_section_tags})
       }
     }
+  }
+
+  get_my_token_ids = async (web3, contractInstance, e5, account) => {
+    var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */, p3/* sender_account_id */:account})
+    var ids = []
+    created_token_events.forEach(event => {
+      var id = event.returnValues.p1
+      ids.push(id)
+    });
+    return ids
   }
 
 
@@ -14109,7 +14386,6 @@ class App extends Component {
     // console.log('created_job_events', created_job_events)
     this.record_number_of_items(e5, 'jobs', created_job_events.length)
 
-
     var created_job = []
     var created_job_mappings = {}
     var my_jobs = []
@@ -14119,11 +14395,10 @@ class App extends Component {
       var id = created_job_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
-        console.log('fetching: ', id)
         var job_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
-        // console.log('fetching: ', job_data)
+        var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
         await this.wait(90)
-        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6, 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5}
+        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6, 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
         created_job.push(job)
         created_job_mappings[id] = job
 
@@ -14323,7 +14598,7 @@ class App extends Component {
     console.log('mail activity: ', mail_activity)
   }
 
-  get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts) => {
+  get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts, load_prioritized_accounts_exclusively) => {
     var created_store_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */})
     created_store_events = created_store_events.reverse()
 
@@ -14337,7 +14612,7 @@ class App extends Component {
         final_object_events.push(element)
       });
       created_store_events.forEach(element => {
-        if(!added_ids.includes(element.returnValues.p2)){
+        if(!added_ids.includes(element.returnValues.p2) && !load_prioritized_accounts_exclusively){
           added_ids.push(element.returnValues.p2)
           final_object_events.push(element)
         }
@@ -14426,9 +14701,10 @@ class App extends Component {
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
       var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+      var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
 
       if(data != null){
-        var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4, 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5}
+        var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4, 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length}
         created_bags.push(bag)
 
         if(bag['author'] == account){
@@ -14501,9 +14777,6 @@ class App extends Component {
     }
 
 
-
-
-
     var created_bags_clone = structuredClone(this.state.created_bags)
     created_bags_clone[e5] = created_bags
 
@@ -14552,7 +14825,9 @@ class App extends Component {
       if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()){
         var contractor_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         if(contractor_data != null){
-          var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6, 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5}
+          var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:38})
+
+          var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6, 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5, 'requests':requests.length}
           created_contractor.push(post)
 
           if(post['author'] == account){
@@ -14655,6 +14930,7 @@ class App extends Component {
       this.load_post_data(posts_to_load)
     }
     if(page == this.getLocale()['1214']/* 'channels' */){
+      this.load_subscription_data(posts_to_load)
       this.load_channel_data(posts_to_load)
     }
     if(page == this.getLocale()['1215']/* 'storefront' */){
@@ -14881,7 +15157,7 @@ class App extends Component {
         const H52_address = contract_addresses[6];
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-        this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, posts_to_load)
+        this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, posts_to_load, false)
       }
     }
   }
@@ -15046,7 +15322,7 @@ class App extends Component {
     for(var i=0; i<created_subscriptions.length; i++){
       var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses);
 
-      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i],   'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3}
+      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i],  'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3}
 
       created_subscription_object_data.push(subscription_object)
       created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
@@ -15116,6 +15392,160 @@ class App extends Component {
       created_contract_mapping_clone[e5] = created_contract_mapping
 
       this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone})
+    }
+  }
+
+  load_contract_item = async (e5, contract_id) => {
+    var e5_address = this.state.e5s[e5].e5_address;
+
+    if(e5_address != ''){
+      var web3_url = this.get_web3_url_from_e5(e5)
+      const web3 = new Web3(web3_url);
+      var account = this.state.user_account_id[e5]
+      var contract_addresses = this.state.addresses[e5]
+
+      const contractArtifact = require('./contract_abis/E5.json');
+      const contractAddress = e5_address
+      const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+      const E52contractArtifact = require('./contract_abis/E52.json');
+      const E52_address = contract_addresses[1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+      const G5contractArtifact = require('./contract_abis/G5.json');
+      const G5_address = contract_addresses[3];
+      const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+      const G52contractArtifact = require('./contract_abis/G52.json');
+      const G52_address = contract_addresses[4];
+      const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+
+      var created_contracts = [contract_id]
+      var created_contract_object_data = []
+      var created_contract_mapping = {}
+
+      var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
+
+      for(var i=0; i<created_contracts.length; i++){
+        var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
+        var event = null
+        var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
+        var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
+
+        var timestamp = event == null ? 0 : event.returnValues.p4
+        var author = event == null ? 0 : event.returnValues.p3
+        var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
+
+        created_contract_object_data.push(contract_obj)
+        created_contract_mapping[created_contracts[i]] = contract_obj
+
+      }
+
+
+
+
+
+
+      var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id})
+      contracts_proposals = contracts_proposals.reverse()
+      var proposal_ids = []
+      var proposal_ids_events = []
+      contracts_proposals.forEach(proposal_event => {
+        proposal_ids.push(parseInt(proposal_event.returnValues.p2))//<--------issue! should be p4
+        proposal_ids_events.push(proposal_event)
+      });
+
+      var created_proposal_object_data = []
+      var created_proposal_data = await G5contractInstance.methods.f78(proposal_ids, false).call((error, result) => {});
+      var consensus_data = await G52contractInstance.methods.f266(proposal_ids, [], 0).call((error, result) => {});
+      for(var i=0; i<proposal_ids.length; i++){
+        var proposals_data = await this.fetch_objects_data(proposal_ids[i], web3, e5, contract_addresses);
+        var event = proposal_ids_events[i]
+        var submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: proposal_ids_events[i] })
+
+        var obj = {'id':proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'consensus_data':consensus_data[i], 'e5':e5, 'timestamp':event.returnValues.p5, 'author':event.returnValues.p3, 'e5_id':proposal_ids[i]+e5, 'submitted': submit_proposal_event_data.length > 0}
+
+        created_proposal_object_data.push(obj)
+      }
+
+      return {'contract':created_contract_object_data[0], 'proposals':created_proposal_object_data}
+    }
+  }
+
+  load_bags_stores = async (e5, store_ids) => {
+    var web3_url = this.get_web3_url_from_e5(e5)
+    var e5_address = this.state.e5s[e5].e5_address;
+    if(e5_address != ''){
+      const web3 = new Web3(web3_url);
+
+      var account = this.state.user_account_id[e5]
+      var contract_addresses = this.state.addresses[e5]
+
+      const E52contractArtifact = require('./contract_abis/E52.json');
+      const E52_address = contract_addresses[1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+      const H52contractArtifact = require('./contract_abis/H52.json');
+      const H52_address = contract_addresses[6];
+      const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+      this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, store_ids, true)
+    }
+  }
+
+  load_contracts_proposals = async (e5, contract_id) => {
+    var e5_address = this.state.e5s[e5].e5_address;
+
+    if(e5_address != ''){
+      var web3_url = this.get_web3_url_from_e5(e5)
+      const web3 = new Web3(web3_url);
+      var account = this.state.user_account_id[e5]
+      var contract_addresses = this.state.addresses[e5]
+
+      const contractArtifact = require('./contract_abis/E5.json');
+      const contractAddress = e5_address
+      const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+      const E52contractArtifact = require('./contract_abis/E52.json');
+      const E52_address = contract_addresses[1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+      const G5contractArtifact = require('./contract_abis/G5.json');
+      const G5_address = contract_addresses[3];
+      const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+      const G52contractArtifact = require('./contract_abis/G52.json');
+      const G52_address = contract_addresses[4];
+      const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+
+
+      var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id})
+      contracts_proposals = contracts_proposals.reverse()
+      var proposal_ids = []
+      var proposal_ids_events = []
+      contracts_proposals.forEach(proposal_event => {
+        proposal_ids.push(parseInt(proposal_event.returnValues.p2))//<--------issue! should be p4
+        proposal_ids_events.push(proposal_event)
+      });
+
+      var created_proposal_object_data = []
+      var created_proposal_data = await G5contractInstance.methods.f78(proposal_ids, false).call((error, result) => {});
+      var consensus_data = await G52contractInstance.methods.f266(proposal_ids, [], 0).call((error, result) => {});
+      for(var i=0; i<proposal_ids.length; i++){
+        var proposals_data = await this.fetch_objects_data(proposal_ids[i], web3, e5, contract_addresses);
+        var submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: proposal_ids_events[i] })
+
+        var event = proposal_ids_events[i]
+
+        var obj = {'id':proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'consensus_data':consensus_data[i], 'e5':e5, 'timestamp':event.returnValues.p5, 'author':event.returnValues.p3, 'e5_id':proposal_ids[i]+e5, 'submitted': submit_proposal_event_data.length > 0}
+
+        created_proposal_object_data.push(obj)
+      }
+
+      var clone = this.structuredClone(this.state.contracts_proposals)
+      clone[contract_id] = created_proposal_object_data
+      this.setState({contracts_proposals: clone})
+
     }
   }
 
@@ -15881,33 +16311,38 @@ class App extends Component {
     var is_first_time = this.state.job_responses[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
-      if(ipfs_message != null && this.state.created_contract_mapping[e5][ipfs_message['picked_contract_id']]){
-        ipfs_message['contract'] = this.state.created_contract_mapping[e5][ipfs_message['picked_contract_id']]
-        ipfs_message['id'] = created_job_respnse_data[j].returnValues.p5
-        ipfs_message['job_id'] = id;
-        ipfs_message['e5'] = e5
+      
+      if(ipfs_message != null){
+        var data = await this.load_contract_item(e5, ipfs_message['picked_contract_id'])
+        if(data != null){
+          ipfs_message['contract'] = data['contract']
+          ipfs_message['proposals'] = data['proposals']
+          ipfs_message['id'] = created_job_respnse_data[j].returnValues.p5
+          ipfs_message['job_id'] = id;
+          ipfs_message['e5'] = e5
 
-
-        var filtered_events = []
-        for(var i=0; i<application_responses.length; i++){
-          if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
-            filtered_events.push(application_responses[i])
+          var filtered_events = []
+          for(var i=0; i<application_responses.length; i++){
+            if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
+              filtered_events.push(application_responses[i])
+            }
           }
-        }
-        if(filtered_events.length > 0){
-          var last_response = filtered_events[filtered_events.length -1]
-          var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs_using_option(last_response.returnValues.p4)
-          ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+          if(filtered_events.length > 0){
+            var last_response = filtered_events[filtered_events.length -1]
+            var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs_using_option(last_response.returnValues.p4)
+            ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+          }else{
+            ipfs_message['is_response_accepted'] = false
+          }
+          
+          messages.push(ipfs_message)
+          if(is_first_time){
+            var clone = JSON.parse(JSON.stringify(this.state.job_responses))
+            clone[id] = messages
+            this.setState({job_responses: clone})
+          }
         }else{
-          ipfs_message['is_response_accepted'] = false
-        }
-
-        
-        messages.push(ipfs_message)
-        if(is_first_time){
-          var clone = JSON.parse(JSON.stringify(this.state.job_responses))
-          clone[id] = messages
-          this.setState({job_responses: clone})
+          console.log('get_job_objects_responses', 'data is null')
         }
       }
     }
@@ -16004,7 +16439,10 @@ class App extends Component {
           var last_response = filtered_events[filtered_events.length -1]
           var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs_using_option(last_response.returnValues.p4)
           ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
-          ipfs_message['contract'] = this.get_all_sorted_objects_mappings(this.state.created_contract_mapping)[last_response_ipfs_obj['contract_id']]
+          
+          var data = await this.load_contract_item(E5, last_response_ipfs_obj['contract_id'])
+          ipfs_message['contract'] = data['contract']
+          ipfs_message['proposals'] = data['proposals']
         }else{
           ipfs_message['is_response_accepted'] = false
         }
@@ -16329,7 +16767,7 @@ class App extends Component {
 
     var submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: id })
 
-    var archive_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e6', e5, {p1/* proposal_id */: id})
+    var archive_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'archive', e5, {p1/* proposal_id */: id})
 
     var proposal_token_event_data = await this.get_token_event_data(id, e5);
 
@@ -16391,7 +16829,7 @@ class App extends Component {
 
     var freeze_unfreeze_event_data = await this.load_event_data(web3, H52contractInstance, 'e3', e5, {p1/* exchange */: id})
 
-    var depth_mint_event_data = await this.load_event_data(web3, H52contractInstance, 'e6', e5, {p1/* exchange */: id})
+    var depth_mint_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p1/* exchange */: id})
 
 
     var clone = structuredClone(this.state.exchange_events)
@@ -16561,8 +16999,9 @@ class App extends Component {
           var token_balances_and_data = await this.get_balance_from_multiple_exchanges(interacted_exchanges, id, H52contractInstance, interacted_exchanges_depths)
           var token_balances = token_balances_and_data['bal']
 
+          var searched_accounts_exchange_interactions_data = await this.load_searched_accounts_exchange_interactions_data(id, e5)
 
-          var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances}
+          var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances, 'searched_accounts_exchange_interactions_data': searched_accounts_exchange_interactions_data}
 
           data.push(obj)
 
@@ -16808,6 +17247,128 @@ class App extends Component {
     clone[id] = royalty_payout_events
     this.setState({token_royalty_payout_data: clone})
   }
+
+
+
+
+
+  load_contracts_exchange_interactions_data = async (contract_id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, { p2/* sender */: contract_id})
+
+    var received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: contract_id})
+
+    var update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p2/* receiver */: contract_id})
+
+    var depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p3/* receiver */: contract_id, p2/* action */:2 /* depth_auth_mint */})
+
+    var all_events = [];
+    for(var i=0; i<send_tokens_event_data.length; i++){
+      all_events.push({'event':send_tokens_event_data[i], 'action':'Sent', 'timestamp':send_tokens_event_data[i].returnValues.p5})
+    }
+    for(var i=0; i<update_balance_event_data.length; i++){
+      all_events.push({'event':update_balance_event_data[i], 'action':'Update', 'timestamp':update_balance_event_data[i].returnValues.p4})
+    }
+    for(var i=0; i<depth_swap_event_data.length; i++){
+      all_events.push({'event':depth_swap_event_data[i], 'action':'DepthMint', 'timestamp':depth_swap_event_data[i].returnValues.p7})
+    }
+    for(var i=0; i<received_tokens_event_data.length; i++){
+      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
+    }
+    var sorted_events = (this.sortByAttributeDescending(all_events, 'timestamp')).reverse()
+
+    var data = {}
+    sorted_events.forEach(token_event => {
+      var exchange = token_event['event'].returnValues.p1
+      if(data[exchange] == null){
+        data[exchange] = []
+      }
+      data[exchange].push(token_event)
+    });
+    
+    var clone = structuredClone(this.state.contract_exchange_interactions_data)
+    clone[e5+contract_id] = data
+    this.setState({contract_exchange_interactions_data: clone})
+  }
+
+  load_searched_accounts_exchange_interactions_data = async (account_id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, { p2/* sender */: account_id})
+
+    var received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
+
+    var update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id})
+
+    var depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2 /* depth_auth_mint */})
+
+
+    var all_events = [];
+    for(var i=0; i<send_tokens_event_data.length; i++){
+      all_events.push({'event':send_tokens_event_data[i], 'action':'Sent', 'timestamp':send_tokens_event_data[i].returnValues.p5})
+    }
+    for(var i=0; i<update_balance_event_data.length; i++){
+      all_events.push({'event':update_balance_event_data[i], 'action':'Update', 'timestamp':update_balance_event_data[i].returnValues.p4})
+    }
+    for(var i=0; i<depth_swap_event_data.length; i++){
+      all_events.push({'event':depth_swap_event_data[i], 'action':'DepthMint', 'timestamp':depth_swap_event_data[i].returnValues.p7})
+    }
+    for(var i=0; i<received_tokens_event_data.length; i++){
+      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
+    }
+    var sorted_events = (this.sortByAttributeDescending(all_events, 'timestamp')).reverse()
+
+    var data = {}
+    sorted_events.forEach(token_event => {
+      var exchange = token_event['event'].returnValues.p1
+      if(data[exchange] == null){
+        data[exchange] = []
+      }
+      data[exchange].push(token_event)
+    });
+
+    return data
+  }
+
+
+  load_burn_address_end_balance_events = async (e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p1/* exchange */:3, p3/* receiver */: 0})
+
+    var all_events = [];
+    for(var i=0; i<received_tokens_event_data.length; i++){
+      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
+    }
+    var sorted_events = (this.sortByAttributeDescending(all_events, 'timestamp')).reverse()
+
+    var data = {}
+    sorted_events.forEach(token_event => {
+      var exchange = token_event['event'].returnValues.p1
+      if(data[exchange] == null){
+        data[exchange] = []
+      }
+      data[exchange].push(token_event)
+    });
+    
+    var clone = structuredClone(this.state.e5_deflation_data)
+    clone[e5] = data
+    this.setState({e5_deflation_data: clone})
+  }
+
+
+
+
 
 
 

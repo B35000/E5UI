@@ -50,7 +50,7 @@ class ViewGroups extends Component {
         if(item_id=='0'){/* line */
             /* {this.render_detail_item('0')} */
             return(
-                <div style={{height:'1px', 'background-color':this.props.theme['line_color'], 'margin': '20px 20px 20px 20px'}}/>
+                <div style={{height:'1px', 'background-color':this.props.theme['line_color'], 'margin': '20px 20px 20px 20px', 'border-radius': '1px'}}/>
             );
         }
         else if(item_id=='1'){/* tags */
@@ -554,6 +554,12 @@ class ViewGroups extends Component {
         }
         else if(action_id == 'select_deselect_tag'){
             this.props.select_deselect_tag(tag, pos)
+        }
+        else if(action_id == 'when_contract_exchange_tapped'){
+            this.props.when_contract_exchange_tapped(tag, pos, this.props.object)
+        }
+        else if(action_id == 'when_view_account_exchange_tapped'){
+            this.props.when_view_account_exchange_tapped(tag, pos)
         }
     }
 

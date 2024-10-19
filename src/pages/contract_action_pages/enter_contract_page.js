@@ -48,7 +48,7 @@ class EnterContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1']], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1'], this.props.app_state.loc['1632c']/* 'proposals' */], [1]
             ],
         };
     }
@@ -68,7 +68,7 @@ class EnterContractPage extends Component {
                 </div>
 
                 <div style={{height:10}}/>
-                {this.render_everything()}
+                {this.render_data()}
 
             </div>
         )
@@ -78,8 +78,34 @@ class EnterContractPage extends Component {
         this.setState({enter_contract_title_tags_object:tag_obj})
     }
 
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
+
+
+    render_data(){
+        var selected_item = this.get_selected_item(this.state.enter_contract_title_tags_object, this.state.enter_contract_title_tags_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['1']){
+            return(
+                <div>
+                    {this.render_everything()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1632c']/* 'proposals' */){
+            return(
+                <div>
+                    {this.render_proposal_ui()}
+                </div>
+            )
+        }
+    }
+
     render_everything(){
-         var size = this.props.app_state.size
+        var size = this.props.app_state.size
 
         if(size == 's'){
             return(
@@ -146,6 +172,11 @@ class EnterContractPage extends Component {
                     </LocalizationProvider>
                 </ThemeProvider>
                 <div style={{height:10}}/>
+
+                <div onClick={()=>this.set_maximum_time()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['18a']/* 'Set Maximum Time.' */, 'action': ''})}
+                </div>
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -154,6 +185,13 @@ class EnterContractPage extends Component {
         const selectedDate = value instanceof Date ? value : new Date(value);
         const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
         this.setState({interactible_timestamp: timeInSeconds})
+    }
+
+    set_maximum_time(){
+        var contract_config = this.state.contract_item['data'][1]
+        var now = Math.floor(Date.now()/1000)
+        var max = bigInt(now).plus(contract_config[6])
+        this.setState({interactible_timestamp: max})
     }
 
     render_contract_entry_fees(){
@@ -208,6 +246,226 @@ class EnterContractPage extends Component {
             </div>
             
         )
+    }
+
+
+
+
+    render_proposal_ui(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1632d']/* 'The proposals that have been sent to the contract are shown below.' */})}
+                    <div style={{height:10}}/>
+                    {this.render_proposals_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1632d']/* 'The proposals that have been sent to the contract are shown below.' */})}
+                        <div style={{height:10}}/>
+                        {this.render_proposals_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_entry_fees()}
+                        {this.render_detail_item('0')}
+                        {this.render_my_balances()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1632d']/* 'The proposals that have been sent to the contract are shown below.' */})}
+                        <div style={{height:10}}/>
+                        {this.render_proposals_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_entry_fees()}
+                        {this.render_detail_item('0')}
+                        {this.render_my_balances()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_proposals_data(){
+        var background_color = this.props.theme['card_background_color']
+        var items = this.props.app_state.contracts_proposals[this.state.contract_item['id']] == null ? [] : this.props.app_state.contracts_proposals[this.state.contract_item['id']]
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-150;
+        }
+        if(items.length == 0){
+            items = ['0','1'];
+            return (
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            return (
+                <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_proposal_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    render_proposal_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_proposal_item(object)
+
+        if(this.state.selected_proposal != index){
+            return(
+                <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}} onClick={() => this.when_proposal_item_clicked(index)}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+            )
+        }
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}} onClick={() => this.when_proposal_item_clicked(index)}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['proposal_expiry_time'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['proposal_expiry_time_from_now'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['consensus_submit_expiry_time'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['proposal_submit_expiry_time_from_now'])}
+                    
+                    {this.render_detail_item('0')}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['vote_wait'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['vote_yes'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['vote_no'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['status'])}
+                    <div style={{height:10}}/>
+                </div>         
+            </div>
+        )
+    }
+
+    when_proposal_item_clicked(index){
+        if(this.state.selected_proposal == index){
+            this.setState({selected_proposal: null})
+        }else{
+            this.setState({selected_proposal: index})
+        }
+    }
+
+    format_proposal_item(object){
+        var tags = object['ipfs'] == null ? ['Proposal'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var consensus_obj = {0:this.props.app_state.loc['316']/* spend' */,1:this.props.app_state.loc['317']/* 'reconfig' */, 6:this.props.app_state.loc['318']/* 'exchange-transfer' */}
+        var proposal_config = object['data'][1]
+        var consensus_type = consensus_obj[proposal_config[0]]
+        var status = object['submitted'] == true ? this.props.app_state.loc['1632e']/* submitted */:this.props.app_state.loc['1632f']/* Un-submitted */
+        return {
+            'tags':{'active_tags':[consensus_type].concat(tags), 'index_option':'indexed', 'when_tapped':''},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+
+            'proposal_expiry_time':{'title':this.props.app_state.loc['1862']/* 'Proposal Expiry time' */, 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'},
+            'proposal_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[1]), 'details':this.props.app_state.loc['1863']/* 'Proposal expiry time from now' */, 'size':'l'},
+
+            'consensus_submit_expiry_time':{'title':this.props.app_state.loc['1864']/* 'Proposal Submit Expiry time' */, 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'},
+            'proposal_submit_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[3]), 'details':this.props.app_state.loc['1865']/* 'Proposal submit expiry time from now' */, 'size':'l'},
+
+            'vote_wait':{'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'},
+
+            'vote_yes':{'title':''+this.format_account_balance_figure(object['consensus_data'][1])+this.props.app_state.loc['788']/* ' YES votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'},
+
+            'vote_no':{'title':''+this.format_account_balance_figure(object['consensus_data'][2])+this.props.app_state.loc['789']/* ' NO votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'},
+
+            'status':{'title':status, 'details':this.props.app_state.loc['1632g']/* 'Status' */, 'size':'l'},
+        }
+    }
+
+    get_time_from_now(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = number_date - now;
+        return this.get_time_diff(diff)
+    }
+
+    get_proportion_of_total(object, vote_count){
+        var sum = bigInt(object['consensus_data'][0]) + bigInt(object['consensus_data'][1]) + bigInt(object['consensus_data'][2]);
+
+        if(sum == bigInt(0)){
+            return 0
+        }
+
+        var prop = (bigInt(vote_count).divide(sum)).multiply(100)
+
+        if(isNaN(prop)){
+            return 0
+        }
+        return prop
+    }
+
+
+
+
+
+
+
+
+
+
+    get_number_width(number){
+        if(number == null) return '0%'
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
     }
 
     get_all_sorted_objects_mappings(object){
@@ -376,6 +634,7 @@ class EnterContractPage extends Component {
             var token_balance = this.props.calculate_actual_balance(this.state.contract_item['e5'],token_id)
             if(bigInt(token_balance) < bigInt(entry_amounts[i])){
                 can_enter = false
+                // console.log('check_if_sender', 'token balance: ',token_balance, 'entry amounts', entry_amounts[i])
             }
         }
         return can_enter

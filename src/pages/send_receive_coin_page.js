@@ -45,7 +45,16 @@ class SendReceiveCoinPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_send_receive_coin_tags_obj} tag_size={'l'} when_tags_updated={this.when_get_send_receive_coin_tags_obj_updated.bind(this)} theme={this.props.theme}/>
+                <div className="row">
+                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_send_receive_coin_tags_obj} tag_size={'l'} when_tags_updated={this.when_get_send_receive_coin_tags_obj_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                            {this.render_send_button()}
+                        </div>
+                    </div>
+                </div>
                 
                 {this.render_everything()}
             </div> 
@@ -54,6 +63,17 @@ class SendReceiveCoinPage extends Component {
 
     when_get_send_receive_coin_tags_obj_updated(tag_obj){
         this.setState({get_send_receive_coin_tags_obj: tag_obj})
+    }
+
+    render_send_button(){
+        var selected_item = this.get_selected_item(this.state.get_send_receive_coin_tags_obj, this.state.get_send_receive_coin_tags_obj['i'].active)
+        if(selected_item == this.props.app_state.loc['1369']/* 'send' */ || selected_item == 'e'){
+            return(
+                <div>
+                    <img alt="" className="text-end" onClick={()=>this.open_confirm_send()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                </div>
+            )
+        }
     }
 
 
@@ -174,7 +194,7 @@ class SendReceiveCoinPage extends Component {
                 onClick={() => this.props.view_number({'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit']+'s', 'number':balance_base_unit, 'relativepower':item['base_unit']+'s'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['symbol'], 'subtitle':this.format_power_figure(balance_decimal), 'barwidth':this.calculate_bar_width(balance_decimal), 'number':(balance_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit']+'s', 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit']+'s', 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit']+'', })}
                 </div>
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -182,7 +202,7 @@ class SendReceiveCoinPage extends Component {
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_decimal), 'number':(tx_fee_decimal), 'barcolor':'#606060', 'relativepower':item['symbol']+' / '+(per == 'transaction' ? 'tx':per), })}
                     
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_base_units), 'number':this.format_account_balance_figure(tx_fee_base_units), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s / '+(per == 'transaction' ? 'tx':per), })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_base_units), 'number':this.format_account_balance_figure(tx_fee_base_units), 'barcolor':'#606060', 'relativepower':item['base_unit']+' / '+(per == 'transaction' ? 'tx':per), })}
 
                     {this.render_default_fee_for_utxo_chains()}
                 </div>
@@ -279,6 +299,7 @@ class SendReceiveCoinPage extends Component {
         var item = this.state.coin
         if(item['symbol'] == 'BTC' || item['symbol'] == 'BCH' || item['symbol'] == 'LTC' || item['symbol'] == 'DOGE' || item['symbol'] == 'DASH'){
             var data = this.props.app_state.coin_data[item['symbol']]
+            if(data == null || data['fee'] == null || data['fee']['fee'] == null) return;
             var fee = data['fee']['fee']
             var utxo_count = this.get_utxos_that_will_be_consumed(data)
             if(utxo_count == 0) utxo_count = 1
@@ -288,7 +309,7 @@ class SendReceiveCoinPage extends Component {
                 <div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(default_fee), 'number':this.format_account_balance_figure(default_fee), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s / '+'tx', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(default_fee), 'number':this.format_account_balance_figure(default_fee), 'barcolor':'#606060', 'relativepower':item['base_unit']+' / '+'tx', })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(defualt_fee_in_decimal), 'number':(defualt_fee_in_decimal), 'barcolor':'#606060', 'relativepower':item['symbol']+' / tx', })}
                 </div>
@@ -320,10 +341,7 @@ class SendReceiveCoinPage extends Component {
 
                 {this.show_gas_price_options()}
 
-                <div style={{height: 10}}/>
-                <div style={{'padding': '5px'}} onClick={()=>this.open_confirm_send()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2933']/* 'Send to Address.' */, 'action':''})}
-                </div>
+                
 
                 <div style={{height: 30}}/>
             </div>
@@ -573,6 +591,7 @@ class SendReceiveCoinPage extends Component {
             set_fee = this.state.picked_sats_fee_amount
         }
         this.props.broadcast_transaction(item, set_fee, transfer_amount, recipient, this.get_account_address(),memo_text)
+        this.setState({recipient_address:''})
     }
 
 

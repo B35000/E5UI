@@ -579,6 +579,12 @@ class SuccessfulSend extends Component {
         else if(item['symbol'] == 'FIL'){
             return `https://filfox.info/en/message/${hash}`
         }
+        else if(item['symbol'] == 'SOL'){
+            return `https://explorer.solana.com/tx/${hash}`
+        }
+        else if(item['symbol'] == 'APT'){
+            return `https://explorer.aptoslabs.com/txn/${hash}`
+        }
     }
 
 

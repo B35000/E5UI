@@ -61,7 +61,7 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['298']], [0]
             ],
             'authorities':[
               ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
@@ -155,9 +155,24 @@ class NewChannelPage extends Component {
         };
     }
 
+    get_post_preview_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['299'], this.props.app_state.loc['300']], [1]
+            ],
+        };
+    }
+
 
     set_edit_data(){
         this.setState({type: this.props.app_state.loc['753']/* 'edit-channel' */, get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_channel_locked_tag_setting_object:this.get_channel_locked_tag_setting_object(), edit_text_item_pos:-1,get_sort_links_tags_object: this.get_sort_links_tags_object()})
+
+        if(this.state.selected_subscriptions == null || this.state.get_post_preview_option == null){
+            this.setState({selected_subscriptions:[], get_post_preview_option:this.get_post_preview_option(),})
+        }
     }
 
 
@@ -187,7 +202,7 @@ class NewChannelPage extends Component {
         )
     }
 
-     when_new_job_page_tags_updated(tag_group){
+    when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
 
@@ -229,6 +244,13 @@ class NewChannelPage extends Component {
                     {this.render_authorities_part()}
                 </div>
             ) 
+        }
+        else if(selected_item == this.props.app_state.loc['298']){
+            return(
+                <div>
+                    {this.render_subscription_lock()}
+                </div>
+            )
         }
     }
 
@@ -338,7 +360,10 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['303a'], 'details':this.props.app_state.loc['304b'], 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.get_post_preview_option} tag_size={'l'} when_tags_updated={this.when_get_post_preview_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -398,6 +423,10 @@ class NewChannelPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
+    }
+
+    when_get_post_preview_option(tag_obj){
+        this.setState({get_post_preview_option: tag_obj})
     }
 
    
@@ -567,10 +596,7 @@ class NewChannelPage extends Component {
                                 swipeLeft={{
                                 content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                 action: () => this.delete_text_item(item)
-                                }}
-                                swipeRight={{
-                                content: <div></div>,
-                                action: () => console.log() }}>
+                                }}>
                                 <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
                                     {this.render_text_or_banner_if_any(item, index)}
                                 </li></div>
@@ -594,10 +620,10 @@ class NewChannelPage extends Component {
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
                             </div> */}
 
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                                 <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={(e) => this.when_banner_image_updated(e, index)} />
-                            </div>
+                            </div> */}
                         </div>
                         <div style={{width:2}}/>
                         {this.render_detail_item('11',item['data'])}
@@ -1804,30 +1830,6 @@ class NewChannelPage extends Component {
         return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
-
     get_all_sorted_objects_mappings(object){
         var all_objects = {}
         for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
@@ -1853,6 +1855,233 @@ class NewChannelPage extends Component {
 
 
 
+
+
+
+    render_subscription_lock(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_subscription_lock_content()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_subscription_lock_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_subscription_lock_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_subscription_lock_content(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['305'], 'details':this.props.app_state.loc['306'], 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_subscription_list_group()}
+            </div>
+        )
+    }
+
+    render_subscription_list_group(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-123;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = [].concat(this.get_subscription_items())
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_subscription_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    get_subscription_items(){
+        var my_subscriptions = []
+        var myid = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        if(myid == null) myid = 1;
+        var created_subs = this.get_all_sorted_objects(this.props.app_state.my_created_subscriptions)
+        console.log(created_subs)
+        for(var i = 0; i < created_subs.length; i++){
+            var post_author = created_subs[i]['event'] == null ? 0 : created_subs[i]['event'].returnValues.p3
+            console.log('psot_author', post_author, 'myid', myid)
+            if(post_author.toString() == myid.toString()){
+                my_subscriptions.push(created_subs[i])
+            }
+        }
+        return my_subscriptions
+    }
+
+ 
+
+    render_subscription_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_subscription_item(object)
+
+        if(this.state.selected_subscriptions.includes(object['id']+object['e5'])){
+            return(
+                <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '5px 0px 5px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 10px 15px 10px'}}/>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 10px 15px 10px'}}/>
+                    </div>         
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    when_subscription_item_clicked(object){
+        var state_selected_subscriptions = this.state.selected_subscriptions == null ? [] : this.state.selected_subscriptions
+        var selected_clone = state_selected_subscriptions.slice()
+        if(!selected_clone.includes(object['id']+object['e5'])){
+            selected_clone.push(object['id']+object['e5'])
+        }else{
+            const index = selected_clone.indexOf(object['id']+object['e5']);
+            if (index > -1) { // only splice array when item is found
+                selected_clone.splice(index, 1); // 2nd parameter means remove one item only
+            }
+        }
+        this.setState({selected_subscriptions:selected_clone})
+    }
+
+    format_subscription_item(object){
+        var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_number_width(number){
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ this.props.app_state.loc['29']
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['30'] 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['31'] + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['32'] + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['33'] + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['34'] + s;
+        }
+    }
     
 
 

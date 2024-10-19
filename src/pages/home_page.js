@@ -10,6 +10,7 @@ import './../main.css'
 import Dialog from "@mui/material/Dialog";
 import ViewGroups from './../components/view_groups'
 import SwipeableViews from 'react-swipeable-views';
+import TextInput from './../components/text_input';
 
 import Tags from './../components/tags';
 import PostDetailSection from '../sections/detail_section';
@@ -91,7 +92,7 @@ class home_page extends Component {
         
         page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[], 
 
-        details_container_width:0
+        details_container_width:0, typed_tag:'', search_visible:false
     };
 
     constructor(props) {
@@ -232,7 +233,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1205']/* 'applied' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ],
           'contracts':[
-              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1332e']/* 'main' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ],
           'contractors':[
               ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
@@ -241,7 +242,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ],
           'subscriptions':[
-              ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ],
           'mail':[
               ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */], [1],[1]
@@ -253,7 +254,7 @@ class home_page extends Component {
           ];
 
         obj[this.props.app_state.loc['1197']/* 'contracts' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264d']/* 'contract-notifications' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1332e']/* 'main' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264d']/* 'contract-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1198']/* 'contractors' */] = [
               ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264e']/* 'contractor-notifications' */], [1],[1]
@@ -262,7 +263,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1200']/* 'subscriptions' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
           ]
         obj[this.props.app_state.loc['1201']/* 'mail' */] = [
               ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */, this.props.app_state.loc['1264f']/* 'mail-notifications' */], [1],[1]
@@ -891,7 +892,8 @@ class home_page extends Component {
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
-            me.open_search_filter_section()
+            // me.open_search_filter_section()
+            if(this.is_page_valid()) me.setState({search_visible: !me.state.search_visible})
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {
@@ -911,17 +913,22 @@ class home_page extends Component {
 
     open_search_filter_section(){
         this.open_filter_section_bottomsheet()
-        if(this.filter_section_page.current != null){
-            var id = this.get_page_id()
-            
-            var typed_searched_word = this.state.page_search_data[id]
-            if(typed_searched_word == null) typed_searched_word = ''
-            
-            var added_tags = this.state.tags_search_data[id]
-            if(added_tags == null) added_tags = []
-            
-            this.filter_section_page.current?.set_data(typed_searched_word, added_tags)
-        }
+        var me = this;
+        setTimeout(function() {
+            me.set_filter_section_data()
+        }, (1 * 500));
+        
+    }
+
+    set_filter_section_data(){
+        var id = this.get_page_id() 
+        var typed_searched_word = this.state.page_search_data[id]
+        if(typed_searched_word == null) typed_searched_word = ''
+        
+        var added_tags = this.state.tags_search_data[id]
+        if(added_tags == null) added_tags = []
+        
+        this.filter_section_page.current?.set_data(typed_searched_word, added_tags)
     }
 
     render_filter_section_bottomsheet(){
@@ -929,6 +936,7 @@ class home_page extends Component {
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var size = this.props.size
         var os = getOS()
+        var id = this.get_page_id()
         if(os == 'iOS'){
             return(
                 <Sheet isOpen={this.state.filter_section_bottomsheet} onClose={this.open_filter_section_bottomsheet.bind(this)} detent="content-height" disableScrollLocking={true}>
@@ -939,7 +947,7 @@ class home_page extends Component {
                             </div>
                         </Sheet.Header> */}
                         <Sheet.Content>
-                            <div style={{ height: 390, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                            <div style={{ height: 410, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
                                 <FilterSection ref={this.filter_section_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)} when_add_tags_button_tapped={this.when_add_tags_button_tapped.bind(this)} reset_scroll_height={this.reset_scroll_height.bind(this)}/>
                             </div>
                         </Sheet.Content>
@@ -949,11 +957,10 @@ class home_page extends Component {
                 </Sheet>
             )
         }
-
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_filter_section_bottomsheet.bind(this)} open={this.state.filter_section_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
-            <div style={{ height: 390, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                <FilterSection ref={this.filter_section_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)} when_add_tags_button_tapped={this.when_add_tags_button_tapped.bind(this)} reset_scroll_height={this.reset_scroll_height.bind(this)}/>
+            <div style={{ height: 410, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                <FilterSection ref={this.filter_section_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)} when_add_tags_button_tapped={this.when_add_tags_button_tapped.bind(this)} reset_scroll_height={this.reset_scroll_height.bind(this)} />
             </div>
         </SwipeableBottomSheet>
         )
@@ -1088,7 +1095,7 @@ class home_page extends Component {
                         </Sheet.Header> */}
                         <Sheet.Content>
                             <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                                <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)}/>
+                                <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)} pin_channel={this.pin_channel.bind(this)}/>
                             </div>
                         </Sheet.Content>
                         <ToastContainer limit={3} containerId="id3"/>
@@ -1100,7 +1107,7 @@ class home_page extends Component {
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_post_preview_bottomsheet.bind(this)} open={this.state.post_preview_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
             <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)}/>
+                <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)} pin_channel={this.pin_channel.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
         )
@@ -1126,17 +1133,15 @@ class home_page extends Component {
         }
     }
 
-    open_post_preview_section(post){
+    open_post_preview_section(post, type){
         this.open_post_preview_bottomsheet()
 
         var me = this;
         setTimeout(function() {
             if(me.post_preview_page.current != null){
-                me.post_preview_page.current?.set_post(post) 
+                me.post_preview_page.current?.set_post(post, type) 
             }
         }, (1 * 500));
-        
-        
     }
 
 
@@ -1497,6 +1502,17 @@ class home_page extends Component {
                 }
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_entered_contracts)))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1332e']/* 'main' */){
+            var my_contracts = []
+            var all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+            for(var i = 0; i < all_contracts.length; i++){
+                var id = all_contracts[i]['id']
+                if(id == 2){
+                    my_contracts.push(all_contracts[i])
+                }
+            }
+            return my_contracts
         }
         else {
             var my_contracts = []
@@ -2101,6 +2117,17 @@ class home_page extends Component {
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))
         }
+        else if(selected_option_name == this.props.app_state.loc['1332f']/* 'history' */){
+            var my_paid_subscriptions = []
+            var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            for(var i=0; i<all_subscriptions.length; i++){
+               var object = all_subscriptions[i]
+                if(parseInt(object['last_expiration_time'].toString()) > 0){
+                    my_paid_subscriptions.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))
+        }
         else {
             var my_subscriptions = []
             var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
@@ -2198,6 +2225,7 @@ class home_page extends Component {
 
         objects.forEach(object => {
             var entered_title_text = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            if(entered_title_text == null) entered_title_text = ''
             var object_author = object['author'] == null ? '0' : object['author']
             if(object['id'].toString() == (searched_input) || entered_title_text.toLowerCase().includes(searched_input.toLowerCase()) || this.get_searched_input_account_id(searched_input) == object_author.toString()){
                 if(this.check_if_object_includes_tags(object, searched_tags)){
@@ -2390,6 +2418,10 @@ class home_page extends Component {
 
 
 
+
+
+
+
     
     handleChange = (value) => {
         var obj = {0:'?', 1:'e', 2:'w'}
@@ -2399,16 +2431,109 @@ class home_page extends Component {
     render_post_list_group(size, height){
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
+        var h = (this.state.search_visible && this.is_page_valid()) ? height-110 : height
         return(
             <div>
+                {this.render_search_tags_views()}
                 <SwipeableViews index={pos} onChangeIndex={this.handleChange} disabled>
-                    <div>{this.render_post_list_group2(size, '?', this.work_list_section, height)}</div>
-                    <div>{this.render_post_list_group2(size, 'e', this.explore_list_section, height)}</div>
-                    <div>{this.render_post_list_group2(size, 'w', this.wallet_list_section, height)}</div>
+                    <div>{this.render_post_list_group2(size, '?', this.work_list_section, h)}</div>
+                    <div>{this.render_post_list_group2(size, 'e', this.explore_list_section, h)}</div>
+                    <div>{this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}</div>
                 </SwipeableViews>
             </div>
         )
         
+    }
+
+    render_search_tags_views(){
+        if(this.state.search_visible && this.is_page_valid()){
+            var background = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <div style={{'background-color': background, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 10px 5px 10px','border-radius': '15px' }}>
+                        <div className="row" style={{width:'100%'}}>
+                            <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1120']/* 'Enter tag...' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
+                            </div>
+                            <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
+                                <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                    <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                </div>
+                            </div>
+                        </div>
+                        {this.render_detail_item('1',{'active_tags':this.get_filter_tags(), 'indexed_option':'indexed', 'when_tapped':'delete_added_tag'})}
+                    </div>
+                    <div style={{height: 5}}/>
+                </div>
+            )
+        }
+    }
+
+    is_page_valid(){
+        if(this.state.page == '?'){
+            var selected_item = this.state.work_page_tags_object['i'].active
+            if(selected_item == 'e'){
+                return false
+            }
+            else return true
+        }
+        else if(this.state.page == 'e'){
+            var selected_item = this.state.explore_page_tags_object['i'].active
+            if(selected_item == 'e' || selected_item == this.props.app_state.loc['1212']/* 'e.E5s' */ || selected_item == this.props.app_state.loc['1216']/* 'e.bags' */){
+                return false
+            }
+            else return true
+        }
+        else{
+            //wallet
+            var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+            if(selected_item == this.props.app_state.loc['1218']/* 'ends ☝️' */ || selected_item == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
+                return true
+            }
+            else return false
+        }
+    }
+
+    when_tag_input_field_changed(text){
+        this.setState({typed_tag: text})
+    }
+
+    add_tag(){
+        var typed_word = this.state.typed_tag.trim();
+
+        if(typed_word == ''){
+            this.props.notify(this.props.app_state.loc['1124']/* 'Type something.' */, 1400)
+        }
+        else if(this.hasWhiteSpace(typed_word)){
+            this.props.notify(this.props.app_state.loc['1125']/* 'Enter one word.' */, 1400)
+        }
+        else{
+            typed_word = typed_word.trim()
+            var cloned_seed_array = this.get_filter_tags().slice()
+            cloned_seed_array.push(typed_word)
+            this.setState({typed_tag:''})
+            this.when_add_tags_button_tapped(cloned_seed_array)
+        }
+    }
+
+    hasWhiteSpace(s) {
+        return s.indexOf(' ') >= 0;
+    }
+
+    get_filter_tags(){
+       var id = this.get_page_id()  
+       var added_tags = this.state.tags_search_data[id]
+        if(added_tags == null) added_tags = []
+        return added_tags
+    }
+
+    delete_added_tag(tag, pos){
+        var cloned_seed_array = this.get_filter_tags().slice()
+        const index = cloned_seed_array.indexOf(tag);
+        if (index > -1) { // only splice array when item is found
+            cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.when_add_tags_button_tapped(cloned_seed_array)
     }
 
     render_post_list_group2(size, p, list_section, h){
@@ -2477,6 +2602,7 @@ class home_page extends Component {
     when_E5_item_clicked(index, id){
         this.setState({selected_e5_item: id})
         this.set_detail_data()
+        this.props.load_burn_address_end_balance_events(id)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -2523,6 +2649,7 @@ class home_page extends Component {
 
         this.props.get_contract_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
+        this.props.load_contracts_exchange_interactions_data(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -2675,12 +2802,23 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        this.props.load_bags_stores(e5, this.get_bag_stores(id))
         this.props.get_job_objects_responses(id, e5)
         this.props.get_objects_messages(id, e5)
-
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+    }
+
+    get_bag_stores(id){
+        var object = this.get_item_in_array2(this.get_bag_items(), id);
+        var items_to_deliver = object['ipfs']['bag_orders']
+        if(items_to_deliver.length == 0) return []
+        var stores = [];
+        items_to_deliver.forEach(item => {
+            stores.push(item['storefront_item_id'])
+        });
+        return stores
     }
 
     when_contractor_post_item_clicked(index, id, e5){
@@ -2783,8 +2921,8 @@ class home_page extends Component {
         return contains
     }
 
-    show_post_item_preview_with_subscription(post){
-        this.open_post_preview_section(post)
+    show_post_item_preview_with_subscription(post, type){
+        this.open_post_preview_section(post, type)
     }
 
 
@@ -2849,7 +2987,7 @@ class home_page extends Component {
                 view_royalty_staging={this.open_view_posted_royalty_staging.bind(this)}
 
                 load_exchanges_royalty_event_data={this.props.load_exchanges_royalty_event_data.bind(this)}
-                load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)}
+                load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)} update_coin_balances={this.props.update_coin_balances.bind(this)}
                 />
             </div>
         )
@@ -3211,11 +3349,14 @@ class home_page extends Component {
         var pinned_item_clone = this.state.pinned_contract.slice()
         var pos = pinned_item_clone.indexOf(id)
         if(pos == -1){
+            // console.log('pinning contract')
             pinned_item_clone.push(id)
             this.setState({pinned_contract: pinned_item_clone})
             this.update_cookies()
+            
             this.props.notify(this.props.app_state.loc['1249']/* 'Contract Pinned' */,900)
         }else{
+            // console.log('unpinning contract')
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_contract: pinned_item_clone})
             this.update_cookies()
@@ -5191,7 +5332,7 @@ class home_page extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_added_tag={this.delete_added_tag.bind(this)}/>
             </div>
         )
 

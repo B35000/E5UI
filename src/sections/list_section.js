@@ -829,7 +829,8 @@ class PostListSection extends Component {
     }
 
     format_contract_item(object){
-        var tags = object['ipfs'] == null ? ['Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var main_contract_tags = ['Contract', 'main', object['e5'] ]
+        var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
@@ -902,13 +903,6 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_proposal_item(object)
-        // if(this.is_object_sender_blocked(object)){
-        //     return(
-        //         <div>
-        //             {this.render_empty_object()}
-        //         </div>
-        //     )
-        // }
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -1638,7 +1632,7 @@ class PostListSection extends Component {
     }
 
     is_post_preview_enabled(object){
-        if(object['ipfs'].get_post_preview_option == null) return false
+        if(object['ipfs'] == null || object['ipfs'].get_post_preview_option == null) return false
         var selected_post_preview_option = this.get_selected_item2(object['ipfs'].get_post_preview_option, 'e')
         if(selected_post_preview_option == 2) return true
         return false
@@ -1751,9 +1745,11 @@ class PostListSection extends Component {
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
             this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object))
         }else{
-            this.props.show_post_item_preview_with_subscription(object)
+            this.props.show_post_item_preview_with_subscription(object, 'post')
         }
     }
+
+
 
 
 
@@ -1807,6 +1803,7 @@ class PostListSection extends Component {
     }
 
     render_channel_object(object, index){
+        var required_subscriptions = object['ipfs'].selected_subscriptions == null ? [] : object['ipfs'].selected_subscriptions
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_channel_item(object)
@@ -1817,21 +1814,26 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '0px 0px 0px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
-                        {this.render_detail_item('3', item['id'])}
-                    </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
-                        {this.render_detail_item('2', item['age'])}
-                    </div>
-                    
-                </div>         
-            </div>
-        )
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+            return(
+                <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                        
+                    </div>         
+                </div>
+            )
+        }
     }
 
     get_channel_items(){
@@ -1851,7 +1853,17 @@ class PostListSection extends Component {
     }
 
     when_channel_item_clicked(index, object){
-        this.props.when_channel_item_clicked(index, object['id'], object['e5'])
+        var required_subscriptions = object['ipfs'].selected_subscriptions == null ? [] : object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            this.props.when_channel_item_clicked(index, object['id'], object['e5'])
+        }else{
+            this.props.show_post_item_preview_with_subscription(object, 'channel')
+        }
+        
     }
 
 
@@ -2129,7 +2141,7 @@ class PostListSection extends Component {
 
     format_bag_item(object){
         var tags = [object['event'].returnValues.p3]
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+' item(s) ordered'
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items ordered' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var item_images = this.get_bag_images(object)
@@ -2287,8 +2299,8 @@ class PostListSection extends Component {
         else{
             var filtered_list = []
             prioritized_list.forEach(token => {
-                var name = token['name']
-                var symbol = token['id']
+                var name = token['name'] == null ? '' : token['name']
+                var symbol = token['id'] == null ? '' : token['id']
                 var typed_word = this.state.typed_search_coin_id.toLowerCase()
                 if(name.toLowerCase().startsWith(typed_word) || symbol.toLowerCase().startsWith(typed_word)){
                     filtered_list.push(token)
@@ -2299,7 +2311,10 @@ class PostListSection extends Component {
     }
 
     does_coin_have_balance(symbol){
-        return false
+        if(this.props.app_state.coin_data[symbol] == null) return false
+        var coin_balance = this.props.app_state.coin_data[symbol]['balance']
+        if(coin_balance == null || coin_balance == 0) return false
+        return true
     }
 
     get_coin_info(symbol, name, image_url, base_unit, decimals, conversion){
@@ -2518,8 +2533,8 @@ class PostListSection extends Component {
         else{
             var filtered_list = []
             prioritized_list.forEach(token => {
-                var name = token['name']
-                var symbol = token['id']
+                var name = token['name'] == null ? '' : token['name']
+                var symbol = token['id'] == null ? '' : token['id']
                 var typed_word = this.state.typed_search_ether_id.toLowerCase()
                 if(name.toLowerCase().startsWith(typed_word) || symbol.toLowerCase().startsWith(typed_word)){
                     filtered_list.push(token)
@@ -2627,11 +2642,11 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
-                        <div style={{'margin':'7px 5px 7px 5px'}}>
+                        <div style={{'padding': '5px 3px 5px 3px'}}>
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}
-                    <div style={{'padding': '1px 5px 1px 5px'}}>
+                    <div style={{'padding': '5px 3px 5px 3px'}}>
                         {this.render_empty_object()}
                     </div>
                 </ul>
@@ -2775,11 +2790,11 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
-                        <div style={{'margin':'7px 5px 7px 5px'}}>
+                        <div style={{'padding': '5px 3px 5px 3px'}}>
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}
-                    <div style={{'padding': '1px 5px 1px 5px'}}>
+                    <div style={{'padding': '5px 3px 5px 3px'}}>
                         {this.render_empty_object()}
                     </div>
                 </ul>

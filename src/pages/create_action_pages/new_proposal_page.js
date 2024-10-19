@@ -688,12 +688,9 @@ class NewProposalPage extends Component {
                         <SwipeableList>
                             <SwipeableListItem
                                 swipeLeft={{
-                                content: <div>Delete</div>,
+                                content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
                                 action: () => this.delete_text_item(item)
-                                }}
-                                swipeRight={{
-                                content: <div></div>,
-                                action: () => console.log() }}>
+                                }}>
                                 <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
                                     {this.render_text_or_banner_if_any(item, index)}
                                 </li></div>
@@ -717,10 +714,10 @@ class NewProposalPage extends Component {
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
                             </div> */}
 
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                                 <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={(e) => this.when_banner_image_updated(e, index)} />
-                            </div>
+                            </div> */}
                         </div>
                         <div style={{width:2}}/>
                         {this.render_detail_item('11',item['data'])}
@@ -1648,6 +1645,11 @@ class NewProposalPage extends Component {
 
                     <div style={{height:20}}/>
                     {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.proposal_expiry_time), 'details':this.props.app_state.loc['1294']/* 'Time from now' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.set_max_expiry_time()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['438p']/* 'Set Expiry Limit.' */, 'action': ''})}
+                    </div>
+                    
                 </div>
             )
         }
@@ -1683,6 +1685,10 @@ class NewProposalPage extends Component {
 
                     <div style={{height:20}}/>
                     {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.proposal_submit_expiry_time), 'details':this.props.app_state.loc['351']/* 'Time from now' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.set_max_submit_expiry_time()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['438q']/* 'Set Submit Limit.' */, 'action': ''})}
+                    </div>
                 </div>
             )
         }
@@ -1692,6 +1698,13 @@ class NewProposalPage extends Component {
         const selectedDate = value instanceof Date ? value : new Date(value);
         const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
         this.setState({proposal_expiry_time: timeInSeconds})
+    }
+
+    set_max_expiry_time(){
+        var contract_config = this.state.contract_item['data'][1]
+        var now = Math.floor(Date.now()/1000)
+        var max = bigInt(now).plus(contract_config[5])
+        this.setState({proposal_expiry_time: max})
     }
 
     when_new_submit_time_value_set(value){
@@ -1711,6 +1724,15 @@ class NewProposalPage extends Component {
         }else{
             this.setState({proposal_submit_expiry_time: timeInSeconds})
         }
+    }
+
+    set_max_submit_expiry_time(){
+        var contract_config = this.state.contract_item['data'][1]
+        var max = bigInt(this.state.proposal_expiry_time).plus(contract_config[36])
+        if(contract_config[36] == 0){
+            max = bigInt(max).plus((60*60*24*7*3))
+        }
+        this.setState({proposal_submit_expiry_time: max})
     }
 
 
@@ -1835,30 +1857,6 @@ class NewProposalPage extends Component {
             ]
         }
         
-    }
-
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
     }
 
     get_all_sorted_objects_mappings(object){
@@ -2038,9 +2036,8 @@ class NewProposalPage extends Component {
 
                 <div style={{height:20}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['386']/* 'Picked Amount' */, 'number':this.state.spend_amount, 'relativepower':'END'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['386']/* 'Picked Amount' */, 'subtitle':this.format_power_figure(this.state.spend_amount), 'barwidth':this.calculate_bar_width(this.state.spend_amount), 'number':this.format_account_balance_figure(this.state.spend_amount), 'barcolor':'', 'relativepower':'END', })}
-
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['386']/* 'Picked Amount' */, 'number':this.state.spend_amount, 'relativepower':this.props.app_state.loc['438r']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['386']/* 'Picked Amount' */, 'subtitle':this.format_power_figure(this.state.spend_amount), 'barwidth':this.calculate_bar_width(this.state.spend_amount), 'number':this.format_account_balance_figure(this.state.spend_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['438r']/* 'tokens' */, })}
                 </div>
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -2091,6 +2088,7 @@ class NewProposalPage extends Component {
         }
     }
 
+
     does_exchange_exist(exchange_id){
         if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
             return false
@@ -2106,6 +2104,7 @@ class NewProposalPage extends Component {
 
         return id
     }
+
 
 
     render_spend_actions(){
@@ -2846,6 +2845,9 @@ class NewProposalPage extends Component {
 
 
 
+
+
+
     render_prices_picker(){
         return(
             <div>
@@ -2993,6 +2995,9 @@ class NewProposalPage extends Component {
         this.setState({reconfig_values: reconfig_vaules_clone, new_price_number:0})
         this.props.notify(this.props.app_state.loc['850']/* 'reconfig action added!' */, 1600)
     }
+
+
+
 
 
 

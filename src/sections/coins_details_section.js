@@ -172,7 +172,7 @@ class CoinsDetailsSection extends Component {
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(existential_deposit_decimal), 'number':(existential_deposit_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
                        
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(existential_deposit_base_unit), 'number':this.format_account_balance_figure(existential_deposit_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(existential_deposit_base_unit), 'number':this.format_account_balance_figure(existential_deposit_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit']+'', })}
                     </div>
                     <div style={{height:10}}/>
 
@@ -182,7 +182,7 @@ class CoinsDetailsSection extends Component {
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_decimal), 'number':(tx_fee_decimal), 'barcolor':'#606060', 'relativepower':item['symbol']+' / '+(per == 'transaction' ? 'tx':per), })}
                        
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_base_units), 'number':this.format_account_balance_figure(tx_fee_base_units), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s / '+(per == 'transaction' ? 'tx':per), })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(tx_fee_base_units), 'number':this.format_account_balance_figure(tx_fee_base_units), 'barcolor':'#606060', 'relativepower':item['base_unit']+' / '+(per == 'transaction' ? 'tx':per), })}
 
                         {this.render_default_fee_for_utxo_chains(item)}
                     </div>
@@ -199,10 +199,17 @@ class CoinsDetailsSection extends Component {
 
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} 
-                    onClick={() => this.props.view_number({'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit']+'s', 'number':balance_base_unit, 'relativepower':item['base_unit']+'s'})}>
+                    onClick={() => this.props.view_number({'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'number':balance_base_unit, 'relativepower':item['base_unit']})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['symbol'], 'subtitle':this.format_power_figure(balance_decimal), 'barwidth':this.calculate_bar_width(balance_decimal), 'number':(balance_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit']+'s', 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit'], })}
+                    </div>
+
+                    {this.render_coin_blockexplorer_link(item)}
+
+                    <div style={{height: 10}}/>
+                    <div onClick={()=>this.update_coin_balance(item)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2927f']/* 'Refresh Wallet.' */, 'action': ''})}
                     </div>
 
                     {this.render_detail_item('0')}
@@ -316,6 +323,7 @@ class CoinsDetailsSection extends Component {
     render_default_fee_for_utxo_chains(item){
         if(item['symbol'] == 'BTC' || item['symbol'] == 'BCH' || item['symbol'] == 'LTC' || item['symbol'] == 'DOGE' || item['symbol'] == 'DASH'){
             var data = this.props.app_state.coin_data[item['symbol']]
+            if(data == null || data['fee'] == null || data['fee']['fee'] == null) return;
             var fee = data['fee']['fee']
             var utxo_count = 1
             var default_fee = parseInt(fee * (this.get_utxo_tx_size(utxo_count, 1)))
@@ -324,7 +332,7 @@ class CoinsDetailsSection extends Component {
                 <div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(default_fee), 'number':this.format_account_balance_figure(default_fee), 'barcolor':'#606060', 'relativepower':item['base_unit']+'s / '+'tx', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(default_fee), 'number':this.format_account_balance_figure(default_fee), 'barcolor':'#606060', 'relativepower':item['base_unit']+' / '+'tx', })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(defualt_fee_in_decimal), 'number':(defualt_fee_in_decimal), 'barcolor':'#606060', 'relativepower':item['symbol']+' / tx', })}
                 </div>
@@ -366,9 +374,13 @@ class CoinsDetailsSection extends Component {
 
             this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
 
-            this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
+            this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
 
             this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
+
+            this.get_coin_info('SOL', 'Solana', 'https://bafkreie4wh23gwfdj4b2otksmajb7dmfvtn376kv3jfivmwocutkq773ai.ipfs.w3s.link/', 'lamport', 9, 1_000_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
+
+            this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
         ]
         return list
     }
@@ -421,22 +433,8 @@ class CoinsDetailsSection extends Component {
     }
 
     is_address_set(address){
-        var default_addresses = [
-            '5VH6APQQOWDXWHQGYH3UJHX4MFTL6IGJHMHXS5LIZPO4DG5UVTRKE63PNQ',
-            '1GNvmBVCFhQasLkfM6BsFtgxPuUpECvUBa',
-            '1M1X8gy9n1z3n22Ddksgn1kM6JAuz65L5x',
-            'cosmos18tux8kpx82v6z0p9mgc6s6kym352486lyd7av9',
-            'XsRwNDdfTMiYM6A7HbSLMujZbSPh3xkhy2',
-            'DA88P2NRpG4rLsJ1knGVaunFGsDC92oPAe',
-            'f1jv3rl3ogw3tvb67wzvqvrott6icfhavh6uopeca',
-            'FMXGHcdqYH9NnJcPWgZAh8rHWLEu3xozJqjFypvWQDquLAE',
-            'LXeHJfiDG39XPaK8eT3WGvQetehnmg4Hfn',
-            '13nCkJXq4xXh4fVgaSvWQtbzzY3enghmcRjU2cYKah2sLn2k',
-            'GDWU7YB6CB2YO6Y6A3A7ORE67RQWNPZAZE5Q66LVNDF53QM3WSWOFXLF',
-            'tz1UF8y8MmpLbsTKwMZUaoHqvjrjaT4p4d92',
-            'TEGgcyRe4GfyRRS73adfVVtTDBpUuSPXGY',
-            'rpTTrdJSFrqhKuwv87MJj8egULabstELn9',
-        ]
+        // return true
+        var default_addresses = this.props.app_state.default_addresses
         if(default_addresses.includes(address)){
             return false
         }
@@ -451,7 +449,6 @@ class CoinsDetailsSection extends Component {
     open_send_receive_coin_page(item){
         var data = this.props.app_state.coin_data[item['symbol']]
         if(!this.props.app_state.has_wallet_been_set){
-            // this.props.notify('You need to set your wallet first', 800)
             this.props.open_wallet_guide_bottomsheet('action')
         }
         else if(data['address'] == null || !this.is_address_set(data['address'])){
@@ -459,6 +456,97 @@ class CoinsDetailsSection extends Component {
         }
         else{
             this.props.start_send_receive_coin_bottomsheet(item)
+        }
+    }
+
+    update_coin_balance(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['2906']/* You need to set your wallet first.' */, 2000)
+        }
+        else if(data['address'] == null || !this.is_address_set(data['address'])){
+            this.props.notify(this.props.app_state.loc['2927']/* Wait first, the wallet is pending.' */, 2800)
+        }
+        else{
+            this.props.update_coin_balances(item['symbol'], false)
+        }
+        
+    }
+
+
+
+
+
+    render_coin_blockexplorer_link(item){
+        var link = this.get_coin_blockexplorer_link(item)
+        var data = this.props.app_state.coin_data[item['symbol']]
+        // if(!this.props.app_state.has_wallet_been_set) return;
+        if(data == null) return;
+        if(data['address'] == null || !this.is_address_set(data['address'])) return;
+
+        if(link != null){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927h']/* View Wallet on Explorer */,'details':this.props.app_state.loc['2927i']/* View your wallet on its Blockexplorer. */, 'size':'l'})}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4', {'text':link, 'textsize':'13px', 'font':'Sans-serif'})}
+                </div>
+            )
+        }
+    }
+
+    get_coin_blockexplorer_link(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        var hash = data['address']
+        if(item['symbol'] == 'BTC'){
+            return `https://www.blockchain.com/explorer/addresses/btc/${hash}`
+        }
+        else if(item['symbol'] == 'BCH'){
+            return `https://www.blockchain.com/explorer/addresses/bch/${hash}`
+        }
+        else if(item['symbol'] == 'LTC'){
+            return `https://litecoinspace.org/address/${hash}`
+        }
+        else if(item['symbol'] == 'DOGE'){
+            return `https://blockexplorers.nownodes.io/dogecoin/address/${hash}`
+        }
+        else if(item['symbol'] == 'DASH'){
+            return `https://blockchair.com/dash/address/${hash}`
+        }
+        else if(item['symbol'] == 'TRX'){
+            return `https://tronscan.org/#/address/${hash}`
+        }
+        else if(item['symbol'] == 'XRP'){
+            return `https://xrpscan.com/account/${hash}`
+        }
+        else if(item['symbol'] == 'XLM'){
+            return `https://stellar.expert/explorer/public/account/${hash}`
+        }
+        else if(item['symbol'] == 'DOT'){
+            return `https://polkadot.subscan.io/account/${hash}`
+        }
+        else if(item['symbol'] == 'KSM'){
+            return `https://kusama.subscan.io/account/${hash}`
+        }
+        else if(item['symbol'] == 'ALGO'){
+            return `https://allo.info/account/${hash}`
+        }
+        else if(item['symbol'] == 'XTZ'){
+            return `https://tzkt.io/${hash}`
+        }
+        else if(item['symbol'] == 'ATOM'){
+            return `https://www.mintscan.io/cosmos/address/${hash}`
+        }
+        else if(item['symbol'] == 'FIL'){
+            return `https://filfox.info/en/address/${hash}`
+        }
+        else if(item['symbol'] == 'SOL'){
+            return `https://explorer.solana.com/address/${hash}`
+        }
+        else if(item['symbol'] == 'APT'){
+            return `https://explorer.aptoslabs.com/account/${hash}`
         }
     }
 

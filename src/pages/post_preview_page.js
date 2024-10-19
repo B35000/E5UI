@@ -84,7 +84,7 @@ class PostPreview extends Component {
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1303']/* 'Subscriptions to pay.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
                 {this.render_subscription_objects(subscriptions)}
-                {this.render_pin_post_button(this.state.post_object)}
+                {this.render_pin_post_or_channel(this.state.post_object)}
             </div>
         )
     }
@@ -113,8 +113,8 @@ class PostPreview extends Component {
     }
 
 
-    set_post(post){
-        this.setState({post_object: post})
+    set_post(post, type){
+        this.setState({post_object: post, type: type})
     }
 
     get_post_object_subscriptions(){
@@ -289,6 +289,23 @@ class PostPreview extends Component {
 
 
 
+    render_pin_post_or_channel(object){
+        if(this.state.type == 'channel'){
+            return(
+                <div>
+                    {this.render_pin_channel_button(object)}
+                </div>
+            )
+        }
+        else if(this.state.type == 'post'){
+            return(
+                <div>
+                    {this.render_pin_post_button(object)}
+                </div>
+            )
+        }
+    }
+
     render_pin_post_button(object){
         return(
             <div>
@@ -301,8 +318,26 @@ class PostPreview extends Component {
         )
     }
 
+    render_pin_channel_button(object){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2076']/* 'Pin the channel to your feed' */, 'title':this.props.app_state.loc['2077']/* 'Pin Channel' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_post_clicked(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2078']/* 'Pin/Unpin Channel' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
     when_pin_post_clicked(object){
-        this.props.pin_post(object)
+        if(this.state.type == 'channel'){
+            this.props.pin_channel(object)
+        }
+        else if(this.state.type == 'post'){
+            this.props.pin_post(object)
+        }
+        
     }
 
 

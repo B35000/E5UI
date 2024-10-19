@@ -719,7 +719,7 @@ class BagDetailsSection extends Component {
 
     render_bag_message_activity(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-175
+        if(this.get_focused_message(object) != null) he = this.props.height-150
         var size = this.props.screensize
         var ww = '80%'
         if(size == 'l') ww = '90%'
@@ -738,6 +738,7 @@ class BagDetailsSection extends Component {
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
+                <div style={{height:5}}/>
                 {this.render_focused_message(object)}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
                     <div style={{'margin':'1px 0px 0px 0px'}}>
@@ -806,7 +807,7 @@ class BagDetailsSection extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                         </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 41)}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 37)}</p>
                 </div>
             )
         }
@@ -1076,6 +1077,8 @@ class BagDetailsSection extends Component {
                 </div>
             )
         }
+        var size = item['size'] == null ? '11px' : item['size'];
+        var font = item['font'] == null ? this.props.app_state.font : item['font']
         return(
             <div>
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
@@ -1087,7 +1090,7 @@ class BagDetailsSection extends Component {
                         <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                         </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
                     {this.render_images_if_any(item)}
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['2064']}</p>
@@ -1106,6 +1109,8 @@ class BagDetailsSection extends Component {
         if(item == null) return;
         var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
         if(selected_view_option == this.props.app_state.loc['1672']/* 'comment-structure' */) return
+        var size = item['size'] == null ? '11px' : item['size'];
+        var font = item['font'] == null ? this.props.app_state.font : item['font']
         return(
             <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
                 <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
@@ -1116,7 +1121,7 @@ class BagDetailsSection extends Component {
                         <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                     </div>
                 </div>
-                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
+                <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
 
                 {this.render_award_object_if_any(_item)}
             </div>

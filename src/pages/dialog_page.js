@@ -366,7 +366,7 @@ class DialogPage extends Component {
     }
 
     send_ether_to_target(){
-        this.props.send_ether_to_target()
+        this.props.send_ether_to_target_confirmation()
     }
 
 

@@ -86,7 +86,16 @@ class SendReceiveEtherPage extends Component {
             return(
                 <div>
                     <div style={{'margin':'10px 10px 0px 10px'}}>
-                        {this.render_top_tag_bar_group()}
+                        <div className="row">
+                            <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
+                                {this.render_top_tag_bar_group()}
+                            </div>
+                            <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                                <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                                    <img alt="" className="text-end" onClick={()=>this.when_send_ether_button_tapped()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                                </div>
+                            </div>
+                        </div>
                         {this.render_send_ether_ui()}
                     </div> 
                 </div>
@@ -269,8 +278,7 @@ class SendReceiveEtherPage extends Component {
                 
                 {this.show_gas_price_or_eip_options(e5)}
                 
-                <div style={{height: 10}}/>
-                {this.render_detail_item('5', {'text':this.props.app_state.loc['1388']/* 'Send Ether to Address' */, 'action':'send_ether'})}
+                
 
                 <div style={{height: 30}}/>
             </div>
@@ -835,11 +843,15 @@ class SendReceiveEtherPage extends Component {
         this.setState({confirmation_dialog_box: false})
     }
 
-    when_send_ether_confirmation_received = () => {
-        this.setState({confirmation_dialog_box: false})
+    when_send_ether_confirmation_received(){
+        // this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
         this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 5600)
+        
+        // console.log('when_send_ether_confirmed', e5)
         this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas(), this.state.ether);  
+
+        // this.setState({recipient_address:''})
     };
 
     set_gas_price(){

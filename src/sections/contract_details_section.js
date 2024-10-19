@@ -20,7 +20,7 @@ function number_with_commas(x) {
 class ContractDetailsSection extends Component {
 
     state = {
-        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:''
+        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:'', selected_exchange:{},
     };
 
     componentDidMount() {
@@ -225,6 +225,12 @@ class ContractDetailsSection extends Component {
         )
     }
 
+
+
+
+
+
+
     render_contracts_main_details_section(object) {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height - 50
@@ -372,6 +378,7 @@ class ContractDetailsSection extends Component {
     }
 
     when_pin_contract_clicked(object){
+        
         this.props.pin_contract(object)
     }
 
@@ -704,7 +711,7 @@ class ContractDetailsSection extends Component {
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if (time_to_expiry > 0) {
+        if (time_to_expiry > 0 || object['id'] == 2) {
             return (
                 <div>
                     {this.render_detail_item('0')}
@@ -716,6 +723,8 @@ class ContractDetailsSection extends Component {
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['spend_balance']['title'], 'number':item['spend_balance']['n'], 'relativepower':item['spend_balance']['relativepower']})}>
                         {this.render_detail_item('2', item['spend_balance'])}
                     </div>
+
+                    {this.show_contract_token_balances_data_chart(object)}
                 </div>
             )
         }
@@ -724,7 +733,8 @@ class ContractDetailsSection extends Component {
 
     get_contract_details_data(object) {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
-        var tags = object['ipfs'] == null ? ['Contract'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var main_contract_tags = ['Contract', 'main', object['e5'] ]
+        var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
@@ -768,9 +778,9 @@ class ContractDetailsSection extends Component {
 
             'entry_fees': { 'title': this.props.app_state.loc['1623']/* 'Entry Fees' */, 'details': object['data'][2].length + this.props.app_state.loc['1624']/* ' tokens used' */, 'size': 'l' },
 
-            'end_balance': { 'style': 'l', 'title': this.props.app_state.loc['377'],/* 'End Balance' */ 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${number_with_commas(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, 'n':object['end_balance'] },
+            'end_balance': { 'style': 'l', 'title': this.props.app_state.loc['377'],/* 'End Balance' */ 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number':this.format_account_balance_figure(object['end_balance']), 'barcolor': '', 'relativepower': `END`, 'n':object['end_balance'] },
 
-            'spend_balance': { 'style': 'l', 'title': this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${number_with_commas(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, 'n':object['spend_balance']},
+            'spend_balance': { 'style': 'l', 'title': this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number':this.format_account_balance_figure(object['spend_balance']), 'barcolor': '', 'relativepower': `SPEND`, 'n':object['spend_balance']},
 
 
             'default_consensus_majority_limit': { 'title': this.format_proportion(consensus_majority), 'details': this.props.app_state.loc['1625']/* 'Consensus Majority Proportion' */, 'size': 'l' },
@@ -840,6 +850,180 @@ class ContractDetailsSection extends Component {
 
         return all_objects
     }
+
+
+
+
+
+    show_contract_token_balances_data_chart(object){
+        var data = this.props.app_state.contract_exchange_interactions_data[object['e5']+object['id']]
+        if(data == null || this.get_interacted_exchanges(data, object).length == 0) return;
+        var selected_exchange = this.get_selected_interacted_exchange(object, data)[0]
+        var event_data = this.get_selected_exchange_data(data, selected_exchange)
+        return(
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('1', {'active_tags':this.get_interacted_exchanges(data, object), 'index_option':'indexed', 'when_tapped': 'when_contract_exchange_tapped', 'selected_tags':this.get_selected_interacted_exchange(object, data)}, object)}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
+                
+                {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(event_data), 'interval':110, 'hide_label': true})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+               
+            </div>
+        )
+    }
+
+    get_interacted_exchanges(data, object){
+        var keys = Object.keys(data)
+        var exchange_names = []
+        keys.forEach(key => {
+            var name = this.get_token_symbol_from_id(key, object)
+            if(this.is_exchange_valid(data[key], name)) exchange_names.push(name)
+        });
+        return exchange_names
+    }
+
+    is_exchange_valid(events, key){
+        for(var i=0; i<events.length; i++){
+            if(events[i]['action'] === 'DepthMint' && events[i]['event'].returnValues.p4/* depth_val */ !== 0){
+                return false
+            }
+        }
+        if(key == 'MAMMOTH' || key == 'GOL') return false
+        if(key != 'END' && key != 'SPEND') return false
+        return true
+    }
+
+    get_selected_interacted_exchange(object, data){
+        if(this.state.selected_exchange[object['id']] == null){
+            var name = data[3] == null ? this.get_token_symbol_from_id(5, object) : this.get_token_symbol_from_id(3, object)
+            return [name]
+        }
+        return [this.state.selected_exchange[object['id']]]
+    }
+
+    get_selected_exchange_data(data, selected_exchange_name){
+        var id = parseInt(this.get_token_id_from_symbol(selected_exchange_name))
+        return data[id]
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
+    }
+
+    get_token_symbol_from_id(exchange_id){
+        var symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]
+        if(symbol == null) return exchange_id
+        return symbol
+    }
+
+    when_contract_exchange_tapped(tag, pos, object){
+        var clone = structuredClone(this.state.selected_exchange)
+        clone[object['id']] = tag
+        this.setState({selected_exchange: clone})
+    }
+
+    get_deposit_amount_data_points(events){
+        var data = []
+        var active_balance = bigInt(0)
+        var max_amount = bigInt(0);
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */)))
+                    }
+                    else if(events[i]['action'] == 'Update'){
+                        data.push(bigInt(events[i]['event'].returnValues.p3/* new_balance */))
+                    }
+                    else if(events[i]['action'] == 'DepthMint'){
+                        var val = bigInt(this.get_actual_number(events[i]['event'].returnValues.p5/* amount */, events[i]['event'].returnValues.p4/* depth_val */))
+                        data.push(val)
+                        active_balance = val
+                    }
+                    max_amount = bigInt(data[data.length-1])
+                }else{
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(data[data.length-1]).add(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */))))
+                    }
+                    else if(events[i]['action'] == 'Update'){
+                        var val = bigInt(events[i]['event'].returnValues.p3/* new_balance */)
+                        if(!active_balance.greater(bigInt('1e72'))){
+                            data.push(val)
+                        }
+                    }
+                    else if(events[i]['action'] == 'DepthMint'){
+                        var val = bigInt(this.get_actual_number(events[i]['event'].returnValues.p5/* amount */, events[i]['event'].returnValues.p4/* depth_val */))
+                        data.push(active_balance.plus(val))
+                        active_balance = active_balance.plus(val)
+                    }
+                    else{
+                        data.push(bigInt(data[data.length-1]).minus(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */))))
+                    }
+                    if(bigInt(max_amount).lesser(data[data.length-1])){
+                       max_amount = bigInt(data[data.length-1]) 
+                    }
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i]['event'].returnValues.p5
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1]['event'].returnValues.p5 - events[i]['event'].returnValues.p5
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+            console.log(e)
+        }
+
+        
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        var largest_number = max_amount
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/4)) == 0 && i != 0 && !recorded){
+                    // recorded = true
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+        
+        return dps
+    }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -963,18 +1147,6 @@ class ContractDetailsSection extends Component {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
         }
-    }
-
-    get_all_sorted_objects_mappings(object) {
-        var all_objects = {}
-        for (var i = 0; i < this.props.app_state.e5s['data'].length; i++) {
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            var all_objects_clone = structuredClone(all_objects)
-            all_objects = { ...all_objects_clone, ...e5_objects }
-        }
-
-        return all_objects
     }
 
 
@@ -1710,7 +1882,9 @@ class ContractDetailsSection extends Component {
     }
 
 
-    render_contract_transfer_event_item(item, object, index){        var exchange_id = item['event'].returnValues.p1; var number = item['event'].returnValues.p4
+    render_contract_transfer_event_item(item, object, index){
+        var exchange_id = item['event'].returnValues.p1; 
+        var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
@@ -2211,12 +2385,12 @@ class ContractDetailsSection extends Component {
 
 
     /* renders the specific element in the post or detail object */
-    render_detail_item(item_id, object_data) {
+    render_detail_item(item_id, object_data, contract_object) {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width / 2 : this.props.app_state.width
         return (
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} when_contract_exchange_tapped={this.when_contract_exchange_tapped.bind(this)} object={contract_object} />
             </div>
         )
 

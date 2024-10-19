@@ -386,6 +386,7 @@ class E5DetailsSection extends Component {
                     {/* {this.show_deposit_amount_data_chart(e5_chart_data)} */}
                     {this.show_transfer_events_chart(e5_chart_data)}
                     {this.show_transaction_transaction_count_chart(e5_chart_data)}
+                    {this.show_deflation_events_chart(obj['id'])}
                </div>
            ) 
         }
@@ -1190,8 +1191,85 @@ class E5DetailsSection extends Component {
 
 
 
+    show_deflation_events_chart(e5){
+        var data = this.props.app_state.e5_deflation_data[e5]
+        if(data == null || data.length < 10) return;
+        return(
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2336f']/* 'Deflation.' */, 'details':this.props.app_state.loc['2336g']/* `The amount of end that has been sent to the burn account over time.` */, 'size':'l'})}
+                
+                {this.render_detail_item('6', {'dataPoints':this.get_deflation_amount_data_points(data), 'interval':110, 'hide_label': true})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+'END', 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
 
 
+    get_deflation_amount_data_points(events){
+        var data = []
+        var max_amount = bigInt(0);
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */)))
+                    }
+                    max_amount = bigInt(data[data.length-1])
+                }else{
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(data[data.length-1]).add(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */))))
+                    }
+                    if(bigInt(max_amount).lesser(data[data.length-1])){
+                       max_amount = bigInt(data[data.length-1]) 
+                    }
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i]['event'].returnValues.p5
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1]['event'].returnValues.p5 - events[i]['event'].returnValues.p5
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+            console.log(e)
+        }
+
+        
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        var largest_number = max_amount
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/4)) == 0 && i != 0 && !recorded){
+                    // recorded = true
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+        
+        return dps
+    }
 
 
 

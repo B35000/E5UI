@@ -931,7 +931,7 @@ class SpendDetailSection extends Component {
         if(proportion_ratio_events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2602b']/* 'Demand Pressure' */, 'details':this.props.app_state.loc['2602c']/* 'Chart containing the demand pressure over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(proportion_ratio_events), 'interval':this.get_interval_for_proportion_ratio_chart(proportion_ratio_events)})}
                     <div style={{height: 10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
@@ -946,7 +946,7 @@ class SpendDetailSection extends Component {
         var events = this.filter_proportion_ratio_events(event_data);
         var data = []
         for(var i=0; i<events.length; i++){
-            data.push(Math.round(events[i].returnValues.p2/10**18) * 100)
+            data.push(100 - (Math.round(events[i].returnValues.p2/10**18) * 100) + 0.001)
 
             if(i==events.length-1){
                 var diff = Date.now()/1000 - events[i].returnValues.p5
@@ -990,7 +990,7 @@ class SpendDetailSection extends Component {
     get_proportion_ratio_interval_figure(events){
         var data = []
         events.forEach(event => {
-            data.push(Math.round(event.returnValues.p2/10**18) * 100)
+            data.push(100 - (Math.round(event.returnValues.p2/10**18) * 100) + 0.001)
         });
         var largest = Math.max.apply(Math, data);
         return largest
