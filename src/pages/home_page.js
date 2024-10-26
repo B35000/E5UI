@@ -1211,21 +1211,21 @@ class home_page extends Component {
         }
     }
 
-    open_post_nsfw_section(index, id, e5){
+    open_post_nsfw_section(index, id, e5, object){
         this.open_post_nsfw_bottomsheet()
 
         var me = this;
         setTimeout(function() {
             if(me.post_nsfw_page.current != null){
-                me.post_nsfw_page.current?.set_data(index, id, e5) 
+                me.post_nsfw_page.current?.set_data(index, id, e5, object) 
             }
         }, (1 * 500));  
         
     }
 
-    when_warning_ignored(index, id, e5){
+    when_warning_ignored(index, id, e5, object){
         this.open_post_nsfw_bottomsheet()
-        this.open_post(index, id, e5)
+        this.open_post(index, id, e5, object)
     }
 
 
@@ -2615,7 +2615,7 @@ class home_page extends Component {
         }, (1 * 1000));
     }
 
-    when_job_post_item_clicked(index, id, e5){
+    when_job_post_item_clicked(index, id, e5, object){
         this.setState({selected_job_post_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2627,6 +2627,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        this.props.fetch_uploaded_files_for_object(object)
         this.props.get_job_objects_responses(id, e5)
         this.props.get_objects_messages(id, e5)
 
@@ -2676,32 +2677,19 @@ class home_page extends Component {
         }
     }
 
-    when_post_item_clicked(index, id, e5, is_post_nsfw){
-        // this.setState({selected_post_item: id+e5})
-        // this.set_detail_data()
-        // this.add_to_tab(id+e5, id)
-        // var viewed_posts_clone = this.state.viewed_posts.slice()
-        // var pos = viewed_posts_clone.indexOf(id)
-        // if(pos == -1){
-        //     viewed_posts_clone.push(id)
-        //     this.setState({viewed_posts: viewed_posts_clone})
-        //     this.update_cookies()
-        // }
-
-        // this.props.get_objects_messages(id, e5)
-        // this.props.get_post_award_data(id, e5)
+    when_post_item_clicked(index, id, e5, is_post_nsfw, object){
         if(is_post_nsfw){
             if(this.props.app_state.auto_skip_nsfw_warning == 'e'){
-                this.open_post_nsfw_section(index, id, e5)
+                this.open_post_nsfw_section(index, id, e5, object)
             }else{
-                this.open_post(index, id, e5)
+                this.open_post(index, id, e5, object)
             }
         }else{
-            this.open_post(index, id, e5)
+            this.open_post(index, id, e5, object)
         }
     }
 
-    open_post(index, id, e5,){
+    open_post(index, id, e5, object){
         this.setState({selected_post_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2713,6 +2701,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_post_award_data(id, e5)
 
@@ -2721,7 +2710,7 @@ class home_page extends Component {
         }
     }
 
-    when_channel_item_clicked(index, id, e5){
+    when_channel_item_clicked(index, id, e5, object){
         this.setState({selected_channel_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2733,6 +2722,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_channel_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
@@ -2742,7 +2732,7 @@ class home_page extends Component {
         }
     }
 
-    when_proposal_item_clicked(index, id, e5){
+    when_proposal_item_clicked(index, id, e5, object){
         this.setState({selected_proposal_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2754,6 +2744,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_proposal_event_data(id, e5)
 
@@ -2762,15 +2753,16 @@ class home_page extends Component {
         }
     }
 
-    when_mail_item_clicked(index, id){
+    when_mail_item_clicked(index, id, object){
         this.setState({selected_mail_item: id})
         this.set_detail_data()
+        this.props.fetch_uploaded_files_for_object(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
-    when_storefront_post_item_clicked(index, id, e5){
+    when_storefront_post_item_clicked(index, id, e5, object){
         this.setState({selected_storefront_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2782,6 +2774,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        this.props.fetch_uploaded_files_for_object(object)
         this.props.get_direct_purchase_events(id, e5)
         this.props.get_objects_messages(id, e5)
 
@@ -2821,7 +2814,7 @@ class home_page extends Component {
         return stores
     }
 
-    when_contractor_post_item_clicked(index, id, e5){
+    when_contractor_post_item_clicked(index, id, e5, object){
         this.setState({selected_contractor_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2833,6 +2826,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        this.props.fetch_uploaded_files_for_object(object)
         this.props.get_contractor_applications(id, e5)
 
         if(this.props.screensize == 's'){

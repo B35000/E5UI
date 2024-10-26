@@ -798,7 +798,7 @@ class SpendDetailSection extends Component {
         var image = img
         if(item['ipfs']!= null){
             if(item['ipfs'].token_image!= null){
-                image = item['ipfs'].token_image
+                image = this.get_image_from_file(item['ipfs'].token_image)
             }
         }
         var proportion_ratio_events = selected_object['proportion_ratio_data']
@@ -1042,6 +1042,35 @@ class SpendDetailSection extends Component {
 
         return data
     }
+
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+
+
+
+
 
 
 

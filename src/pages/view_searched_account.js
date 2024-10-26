@@ -1331,7 +1331,7 @@ class SearchedAccountPage extends Component {
         var name = object['ipfs'] == null ? 'Token' : object['ipfs'].entered_title_text
         var symbol = object['ipfs'] == null ? 'tokens' : object['ipfs'].entered_symbol_text
         if(object['ipfs'].token_image!= null){
-            image = object['ipfs'].token_image
+            image = this.get_image_from_file(object['ipfs'].token_image)
         }
         var object_type = object['type']
         if(object_type == 31/* token_exchange */){
@@ -1376,6 +1376,29 @@ class SearchedAccountPage extends Component {
             }
         });
         return return_items;
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
 
@@ -2555,9 +2578,11 @@ class SearchedAccountPage extends Component {
     
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_view_account_exchange_tapped={this.when_view_account_exchange_tapped.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_view_account_exchange_tapped={this.when_view_account_exchange_tapped.bind(this)}/>
             </div>
         )
 

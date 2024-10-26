@@ -730,7 +730,7 @@ class PostListSection extends Component {
     }
 
     when_job_item_clicked(index, object){
-        this.props.when_job_post_item_clicked(index, object['id'], object['e5'])
+        this.props.when_job_post_item_clicked(index, object['id'], object['e5'], object)
     }
 
     remove_duplicates(list){
@@ -844,7 +844,7 @@ class PostListSection extends Component {
     }
 
     when_contract_item_clicked(index, object){
-        this.props.when_contract_item_clicked(index, object['id'], object['e5'])
+        this.props.when_contract_item_clicked(index, object['id'], object['e5'], object)
     }
 
 
@@ -937,7 +937,7 @@ class PostListSection extends Component {
     }
 
     when_proposal_item_clicked(index, object){
-        this.props.when_proposal_item_clicked(index, object['id'], object['e5'])
+        this.props.when_proposal_item_clicked(index, object['id'], object['e5'], object)
     }
 
 
@@ -1162,7 +1162,7 @@ class PostListSection extends Component {
     }
 
     when_mail_item_clicked(item, object){
-        this.props.when_mail_item_clicked(item, object['id'])
+        this.props.when_mail_item_clicked(item, object['id'], object)
     }
 
     format_mail_item(object){
@@ -1297,7 +1297,7 @@ class PostListSection extends Component {
     }
 
     when_contractor_item_clicked(index, object){
-        this.props.when_contractor_post_item_clicked(index, object['id'], object['e5'])
+        this.props.when_contractor_post_item_clicked(index, object['id'], object['e5'], object)
     }
 
 
@@ -1743,7 +1743,7 @@ class PostListSection extends Component {
         if(me == null) me = 1
         
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
-            this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object))
+            this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'post')
         }
@@ -1859,7 +1859,7 @@ class PostListSection extends Component {
         if(me == null) me = 1
 
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
-            this.props.when_channel_item_clicked(index, object['id'], object['e5'])
+            this.props.when_channel_item_clicked(index, object['id'], object['e5'], object)
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'channel')
         }
@@ -1964,7 +1964,7 @@ class PostListSection extends Component {
     }
 
     when_storefront_item_clicked(index, object){
-        this.props.when_storefront_post_item_clicked(index, object['id'], object['e5'])
+        this.props.when_storefront_post_item_clicked(index, object['id'], object['e5'], object)
     }
 
     is_item_listed(object){
@@ -2186,7 +2186,7 @@ class PostListSection extends Component {
     }
 
     when_bag_item_clicked(index, object){
-        this.props.when_bag_post_item_clicked(index, object['id'], object['e5'])
+        this.props.when_bag_post_item_clicked(index, object['id'], object['e5'], object)
     }
 
 

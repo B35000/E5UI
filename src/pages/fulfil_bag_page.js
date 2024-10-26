@@ -79,13 +79,12 @@ class FulfilBagPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish_creating_response()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img className="text-end" alt="" onClick={()=>this.finish_creating_response()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
 
                 {this.render_everything()}
-
             </div>
         )
     }
@@ -704,9 +703,11 @@ class FulfilBagPage extends Component {
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

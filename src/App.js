@@ -23,7 +23,7 @@ import { isValidClassicAddress } from 'ripple-address-codec';
 import { Keypair, Connection, PublicKey, Transaction, SystemProgram, sendAndConfirmTransaction } from '@solana/web3.js';
 import { derivePath } from 'ed25519-hd-key';
 import { AptosAccount, AptosClient } from 'aptos';
-
+import { create as createW3UpClient } from '@web3-storage/w3up-client';
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -111,6 +111,7 @@ import SuccessfulSend from './pages/successful_send'
 import ViewNumber from './pages/view_number'
 import DialogPage from './pages/dialog_page'
 import SendReceiveCoinPage from './pages/send_receive_coin_page'
+import PickFilePage from './pages/pick_file_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -226,6 +227,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false,
+    pick_file_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -281,7 +283,9 @@ class App extends Component {
 
     number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600, has_account_been_loaded_from_storage:false, show_stack:true,
 
-    coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data(), default_addresses:this.get_default_addresses(), contract_exchange_interactions_data:{}, e5_deflation_data:{}, contracts_proposals:{}
+    coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data(), default_addresses:this.get_default_addresses(), contract_exchange_interactions_data:{}, e5_deflation_data:{}, contracts_proposals:{},
+
+    web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false
   };
 
   get_static_assets(){
@@ -289,7 +293,8 @@ class App extends Component {
       'letter':'https://nftstorage.link/ipfs/bafkreigapfe43wknpmflvp234k7fuijmv4fxbyjaybhcgc37pscsschi4u',
       'e5_empty_icon':'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e',
       'e5_empty_icon3':'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424',
-      'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74'
+      'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74',
+      'music_label':'https://bafkreigntzixxxm2yyqjv2gffpbaxf7uuxmqcwhpvrkuwswztbhkdj35mu.ipfs.w3s.link/'
     }
   }
 
@@ -939,7 +944,9 @@ class App extends Component {
         '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID: ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count',
         '1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.',
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
-        '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Transaction Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.','1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'',
+        '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Transaction Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
+        '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'','1593ca':'','1593cb':'','1593cc':'','1593cd':'','1593ce':'','1593cf':'','1593cg':'','1593ch':'','1593ci':'','1593cj':'','1593ck':'','1593cl':'','1593cm':'','1593cn':'','1593co':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1055,7 +1062,12 @@ class App extends Component {
         
         /* send_receive_coin */
         '2928':'Receive the coin using the address shown below.','2929':'Send the coin using the address shown below.','2930':'Default Transaction Fee','2931':'Transaction Fee.','2932':'Set the amount you wish to pay for your transaction.','2933':'Send to Address.','2934':'Your balance is too low to make a transaction.','2935':'Please Set an amount to transfer.','2936':'You can\'t include the minimum deposit in your transaction.','2937':'You don\'t have enough coin to make that transaction.','2938':'Please set a recipient for the transfer.','2939':'That recipient address is not valid.','2940':'That transaction fee is invalid.','2941':'Send Coin Confirmation.',
-        '2942':'Confirm that you want to send the coin to the target recipient.','2943':'Picked Amount.','2944':'Picked Fee.','2945':'Broadcast Transaction.','2946':'Something went wrong with the transaction broadcast.','2947':'Amount Sent','2948':'Fee Used','2949':'Transaction Size.','2950':'UTXOs consumed.','2951':'Broadcasting your Transaction...','2952':'You need to send at least 1XLM since the receiver doesnt have a XLM account.','2953':'Included Memo.','2954':'Memo (Optional)','2955':'','2956':'','2957':'','2958':'','2959':'','2960':'','2961':'','2962':'','2963':'','2964':'','2965':'','2966':'','2967':'','2968':'','2969':'','2970':'','2971':'','2972':'','2973':'','2974':'','2975':'','2976':'','2977':'','2978':'','2979':'','2980':'','2981':'','2982':'','2983':'','2984':'','2985':'','2986':'','2987':'','2988':'','2989':'','2990':'','2991':'','2992':'','2993':'','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
+        '2942':'Confirm that you want to send the coin to the target recipient.','2943':'Picked Amount.','2944':'Picked Fee.','2945':'Broadcast Transaction.','2946':'Something went wrong with the transaction broadcast.','2947':'Amount Sent','2948':'Fee Used','2949':'Transaction Size.','2950':'UTXOs consumed.','2951':'Broadcasting your Transaction...','2952':'You need to send at least 1XLM since the receiver doesnt have a XLM account.','2953':'Included Memo.','2954':'Memo (Optional)',
+        
+        /* pick file page */
+        '2955':'image','2956':'audio','2957':'video','2958':'Pick one or multile image files from your storage. To see an image file here, you need to upload it in the stack page.','2959':'You can\'t finish with no files selected.','2960':'You can\'t pick more than ','2961':' files.',
+        
+        '2962':'','2963':'','2964':'','2965':'','2966':'','2967':'','2968':'','2969':'','2970':'','2971':'','2972':'','2973':'','2974':'','2975':'','2976':'','2977':'','2978':'','2979':'','2980':'','2981':'','2982':'','2983':'','2984':'','2985':'','2986':'','2987':'','2988':'','2989':'','2990':'','2991':'','2992':'','2993':'','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
@@ -1205,6 +1217,7 @@ class App extends Component {
     this.dialog_page = React.createRef();
     this.pay_upcoming_subscriptions_page = React.createRef();
     this.send_receive_coin_page = React.createRef();
+    this.pick_file_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -1358,7 +1371,11 @@ class App extends Component {
       graph_type: this.state.graph_type,
       remember_account: this.state.remember_account,
       account_data: this.get_account_data_to_store(),
-      coin_data:this.get_coin_data_to_store()
+      coin_data:this.get_coin_data_to_store(),
+
+      web3_account_email: this.state.web3_account_email,
+      update_data_in_E5: this.state.update_data_in_E5,
+      uploaded_data_cids:this.state.uploaded_data_cids,
     }
   }
 
@@ -1419,6 +1436,9 @@ class App extends Component {
       var cupcake_account_data = cupcake_state.account_data
 
       var cupcake_coin_data = cupcake_state.coin_data
+      var cupcake_web3_account_email = cupcake_state.web3_account_email
+      var cupcake_update_data_in_E5 = cupcake_state.update_data_in_E5
+      var cupcake_uploaded_data_cids = cupcake_state.uploaded_data_cids
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -1569,6 +1589,21 @@ class App extends Component {
         this.setState({coin_data: cupcake_coin_data})
       }
 
+      var web3_email = ''
+      if(cupcake_web3_account_email != null){
+        this.setState({web3_account_email: cupcake_web3_account_email})
+        if(cupcake_web3_account_email != null) web3_email = cupcake_web3_account_email
+      }
+
+      if(cupcake_update_data_in_E5 != null){
+        this.setState({update_data_in_E5: cupcake_update_data_in_E5})
+      }
+
+      if(cupcake_uploaded_data_cids != null){
+        console.log('app_page', 'setting uploaded cids', cupcake_uploaded_data_cids)
+        this.setState({uploaded_data_cids: cupcake_uploaded_data_cids})
+      }
+
 
     }
 
@@ -1590,6 +1625,7 @@ class App extends Component {
         me.stack_page.current?.set_skip_nsfw_warning_tag()
         me.stack_page.current?.set_selected_graph_type_tag()
         me.stack_page.current?.set_selected_remember_account_type_tag()
+        me.stack_page.current?.set_web3_email_account(web3_email)
     }, (1 * 1000));
 
     
@@ -2207,12 +2243,24 @@ class App extends Component {
           {this.render_pay_upcoming_subscriptions_bottomsheet()}
           {this.render_send_receive_coin_bottomsheet()}
 
-
+          {this.render_pick_file_bottomsheet()}
           {this.render_dialog_bottomsheet()}
           {this.render_view_number_bottomsheet()}
-          <ToastContainer limit={3} containerId="id"/>
+          
+          {this.render_toast_container()}
         </div>
       );
+    }
+  }
+
+  render_toast_container(){
+    var os = getOS()
+    if(os != 'iOS' || this.state.syncronizing_page_bottomsheet == true){
+      return(
+        <div>
+          <ToastContainer limit={3} containerId="id"/>
+        </div>
+      )
     }
   }
 
@@ -2269,12 +2317,23 @@ class App extends Component {
 
           show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.start_send_receive_coin_bottomsheet.bind(this)}
           update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
-          load_bags_stores={this.load_bags_stores.bind(this)}
+          load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)}
           />
-          <ToastContainer limit={3} containerId="id2"/>
+          {this.render_homepage_toast()}
       </div>
       
     )
+  }
+
+  render_homepage_toast(){
+    var os = getOS()
+    if(os == 'iOS' && this.state.stack_bottomsheet == false){
+      return(
+        <div>
+          <ToastContainer limit={3} containerId="id2"/>
+        </div>
+      )
+    }
   }
 
   set_cookies_after_stack_action(stack_items, should_keep_stack_open){
@@ -3559,7 +3618,7 @@ class App extends Component {
       when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} 
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
-      show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)}
+      show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       />
     )
   }
@@ -3894,6 +3953,42 @@ class App extends Component {
     return bigInt(price).multiply(t.time_units)
   }
 
+  set_up_web3_account = async (email) => {
+    if(this.update_web3_time == null) {
+      this.update_web3_time = 0
+    }
+    if((Date.now() - this.update_web3_time) < (5*1000)){
+      return;
+    }
+    this.update_web3_time = Date.now()
+
+    this.web3_email_verification_sent = false;
+    const client = await createW3UpClient()
+    const space = await client.createSpace('E5')
+    const myAccount = await client.login(email)
+    while (true) {
+      const res = await myAccount.plan.get()
+      if (res.ok){
+        break
+      }else{
+        if(!this.web3_email_verification_sent){
+          this.web3_email_verification_sent = true
+          this.prompt_top_notification(this.getLocale()['1593bi']/* Verification email sent. */, 5000)
+        }
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+    await myAccount.provision(space.did())
+    await space.save()
+
+    this.setState({web3_account_email: email, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+      me.prompt_top_notification(me.getLocale()['1593bv']/* Email Verified */, 3000)
+    }, (1 * 1000));
+  }
+
 
 
 
@@ -3992,7 +4087,7 @@ class App extends Component {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           var clone = structuredClone(me.state.is_running)
           clone[e5] = false
-          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false})
+          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false})
           me.delete_stack_items(delete_pos_array)
           me.reset_gas_calculation_figure(me)
           me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
@@ -4292,6 +4387,10 @@ class App extends Component {
 
 
 
+
+
+
+
   render_new_object_bottomsheet(){
     if(this.state.new_object_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -4394,50 +4493,50 @@ class App extends Component {
     if(target == '0'){
       return(
         <div>
-          <NewJobPage ref={this.new_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+          <NewJobPage ref={this.new_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
         </div>
       )
     }
     else if(target == '8'){
       return(
         <div>
-          <NewTokenPage ref={this.new_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+          <NewTokenPage ref={this.new_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
         </div>
       )
     }
     else if(target == '3'){
       return(
-        <NewSubscriptionPage ref={this.new_subscription_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewSubscriptionPage ref={this.new_subscription_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
     else if(target == '1'){
       return(
-        <NewContractPage ref={this.new_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewContractPage ref={this.new_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
     else if(target == '6'){
       return(
-        <NewPostPage ref={this.new_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+        <NewPostPage ref={this.new_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
     else if(target == '7'){
       return(
-        <NewChannelPage ref={this.new_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+        <NewChannelPage ref={this.new_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
     else if(target == '4'){
       return(
-        <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+        <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
     else if(target == '5'){
       return(
-        <NewMailPage ref={this.new_mail_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+        <NewMailPage ref={this.new_mail_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       );
     }
     else if(target == '9'){
       return(
-        <NewContractorPage ref={this.new_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
+        <NewContractorPage ref={this.new_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       );
     }
     
@@ -4452,7 +4551,6 @@ class App extends Component {
     }, (1 * 500));
     
   }
-
 
   when_add_new_mail_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()
@@ -4470,7 +4568,6 @@ class App extends Component {
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
   }
-
 
   when_add_new_object_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()
@@ -4510,7 +4607,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+                          <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4522,7 +4619,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_token_bottomsheet.bind(this)} open={this.state.edit_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+            <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -4586,7 +4683,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+                          <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4598,7 +4695,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_channel_bottomsheet.bind(this)} open={this.state.edit_channel_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+            <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -4666,7 +4763,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+                          <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/> 
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4678,7 +4775,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_contractor_bottomsheet.bind(this)} open={this.state.edit_contractor_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+            <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -4744,7 +4841,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditJobPage ref={this.edit_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+                          <EditJobPage ref={this.edit_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4756,7 +4853,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_job_bottomsheet.bind(this)} open={this.state.edit_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditJobPage ref={this.edit_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+            <EditJobPage ref={this.edit_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -4822,7 +4919,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditPostPage ref={this.edit_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+                          <EditPostPage ref={this.edit_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4834,7 +4931,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_post_bottomsheet.bind(this)} open={this.state.edit_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditPostPage ref={this.edit_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+            <EditPostPage ref={this.edit_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -4899,7 +4996,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+                          <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4911,7 +5008,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_storefront_bottomsheet.bind(this)} open={this.state.edit_storefront_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+            <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -4978,7 +5075,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+                          <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -4990,7 +5087,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_proposal_bottomsheet.bind(this)} open={this.state.edit_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
+            <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -5571,7 +5668,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -5583,7 +5680,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_proposal_bottomsheet.bind(this)} open={this.state.new_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -6995,7 +7092,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8329,7 +8426,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8341,7 +8438,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_job_request_bottomsheet.bind(this)} open={this.state.send_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -8872,7 +8969,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8884,7 +8981,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_comment_bottomsheet.bind(this)} open={this.state.add_comment_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+            <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -10040,6 +10137,133 @@ class App extends Component {
 
 
 
+
+  render_pick_file_bottomsheet(){
+    if(this.state.pick_file_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.pick_file_bottomsheet} onClose={this.open_pick_file_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_pick_file_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_pick_file_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_pick_file_bottomsheet.bind(this)} open={this.state.pick_file_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_pick_file_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_pick_file_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <PickFilePage ref={this.pick_file_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} return_selected_files={this.return_selected_files.bind(this)}/>
+      </div>
+    )
+  }
+
+  open_pick_file_bottomsheet(){
+    if(this.state.pick_file_bottomsheet == true){
+      //closing
+      this.pick_file_bottomsheet = this.pick_file_page.current?.state;
+
+      this.setState({pick_file_bottomsheet: !this.state.pick_file_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({pick_file_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({pick_file_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({pick_file_bottomsheet: !me.state.pick_file_bottomsheet});
+
+          if(me.pick_file_bottomsheet != null){
+            me.pick_file_page.current?.setState(me.pick_file_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_pick_file_bottomsheet(type, function_name, max){
+    this.open_pick_file_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.pick_file_page.current != null){
+        me.pick_file_page.current.set_data(type, function_name, max)
+      }
+    }, (1 * 500));
+  }
+
+  return_selected_files(picked_files, function_name){
+    this.open_pick_file_bottomsheet()
+
+    if(function_name == 'create_image'){
+      this.new_channel_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_post_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_job_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_storefront_item_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_mail_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_contractor_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_proposal_page.current?.when_image_gif_files_picked(picked_files)
+
+      this.edit_job_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_token_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_post_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_channel_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_storefront_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_contractor_page.current?.when_image_gif_files_picked(picked_files)
+      this.add_comment_page.current?.when_image_gif_files_picked(picked_files)
+      this.send_job_request_page.current?.when_image_gif_files_picked(picked_files)
+    }
+    else if(function_name == 'create_text_banner_image'){
+      this.new_channel_page.current?.when_banner_selected(picked_files)
+      this.new_channel_page.current?.when_banner_selected(picked_files)
+      this.new_post_page.current?.when_banner_selected(picked_files)
+      this.new_job_page.current?.when_banner_selected(picked_files)
+      this.new_storefront_item_page.current?.when_banner_selected(picked_files)
+      this.new_mail_page.current?.when_banner_selected(picked_files)
+      this.new_contractor_page.current?.when_banner_selected(picked_files)
+      this.new_proposal_page.current?.when_banner_selected(picked_files)
+      this.new_token_page.current?.when_banner_selected(picked_files)
+
+      this.edit_job_page.current?.when_banner_selected(picked_files)
+      this.edit_token_page.current?.when_banner_selected(picked_files)
+      this.edit_post_page.current?.when_banner_selected(picked_files)
+      this.edit_channel_page.current?.when_banner_selected(picked_files)
+      this.edit_storefront_page.current?.when_banner_selected(picked_files)
+      this.edit_contractor_page.current?.when_banner_selected(picked_files)
+    }
+    else if(function_name == 'create_storefront_variant_image'){
+      this.new_token_page.current?.when_variant_image_gif_files_picked(picked_files)
+      this.edit_storefront_page.current?.when_variant_image_gif_files_picked(picked_files)
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
   render_view_image_bottomsheet(){
     if(this.state.view_image_bottomsheet2 != true) return;
     var background_color = 'transparent';
@@ -10092,18 +10316,43 @@ class App extends Component {
           ))}
         </SwipeableViews> */}
         <TransformWrapper>
-          <TransformComponent>
-            <img src={images[pos]} style={{height:'auto',width:'100%'}} />
-          </TransformComponent>
-        </TransformWrapper>
-      </div> 
+            <TransformComponent>
+              <img src={this.get_image_from_file(images[pos])} style={{height:'auto',width:'100%'}} />
+            </TransformComponent>
+          </TransformWrapper>
+      </div>
     );
   }
 
   when_view_image_clicked(index, images){
-      this.setState({view_images: images, view_images_pos: index})
-      this.open_view_image_bottomsheet()
+    this.setState({view_images: images, view_images_pos: index})
+    this.open_view_image_bottomsheet()
   }
+
+  get_image_from_file(ecid){
+    if(!ecid.startsWith('image')) return ecid
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+    
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    return data['data']
+  }
+
+  get_cid_split2(ecid){
+      var split_cid_array = ecid.split('_');
+      var filetype = split_cid_array[0]
+      var cid_with_storage = split_cid_array[1]
+      var cid = cid_with_storage
+      var storage = 'ch'
+      if(cid_with_storage.includes('.')){
+          var split_cid_array2 = cid_with_storage.split('.')
+          cid = split_cid_array2[0]
+          storage = split_cid_array2[1]
+      }
+
+      return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+  }
+
 
 
 
@@ -10159,6 +10408,7 @@ class App extends Component {
       var time = duration == null ? 1000: duration;
       // data = 'toast item blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah '
       // time = 1500000
+      if(toast.isActive(data)) return;
       toast(this.render_toast_item(data), {
           position: "top-center",
           autoClose: time,
@@ -12267,6 +12517,17 @@ class App extends Component {
 
 
 
+    /* ---------------------------------------- UPLOADED DATA ------------------------------------------- */
+    this.get_e5_uploaded_cid_data(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
+
+
 
     /* ---------------------------------------- ALIAS DATA------------------------------------------- */
     this.get_alias_data(E52contractInstance, e5, account, web3);
@@ -12554,7 +12815,13 @@ class App extends Component {
       if(!this.state.should_update_section_tags_onchain){
         this.setState({job_section_tags: job_section_tags, explore_section_tags: explore_section_tags})
       }
+    }else{
+      if(this.section_tags_data_user != account){
+        this.setState({job_section_tags: [], explore_section_tags: []})
+      }
     }
+
+    this.section_tags_data_user = account
   }
 
   get_my_token_ids = async (web3, contractInstance, e5, account) => {
@@ -12566,6 +12833,138 @@ class App extends Component {
     });
     return ids
   }
+
+  get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
+    var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
+
+    // console.log('get_e5_uploaded_cid_data', section_cid_data_events)
+
+    if(section_cid_data_events.length != 0){
+      var latest_event = section_cid_data_events[section_cid_data_events.length - 1];
+      var section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      var cids = section_cid_data['cids'];
+
+      var clone = this.state.uploaded_data_cids.slice();
+      cids.forEach(cid => {
+        if(!clone.includes(cid)){
+          clone.push(cid)
+        }
+      });
+      this.fetch_uploaded_data_from_ipfs(clone, true)
+    }else{
+      if(this.uploaded_data_user != account && this.uploaded_data_user != null && this.uploaded_data_user != 1){
+        this.setState({uploaded_data_cids:[]})
+      }else{
+        if(this.state.uploaded_data_cids.length != 0){
+          var clone = this.state.uploaded_data_cids.slice();
+          this.fetch_uploaded_data_from_ipfs(clone, true)
+        }
+      }
+    }
+
+    this.uploaded_data_user = account
+  }
+
+  fetch_uploaded_data_from_ipfs = async (cids, is_my_cids) => {
+    var clone = structuredClone(this.state.uploaded_data) 
+    for(var i=0; i<cids.length; i++){
+      var ecid_obj = this.get_cid_split(cids[i])
+      var id = ecid_obj['cid']
+      var filetype = ecid_obj['filetype']
+      var storage_id = ecid_obj['storage']
+      var file_name = ecid_obj['file_name']
+      var data = this.fetch_from_storage(cids[i])
+      if(data == null){
+        // console.log('stackdata','fetching:', cids[i])
+        data = await this.fetch_file_data_from_chainsafe_storage(id, storage_id, file_name, 0)
+        this.store_in_local_storage(cids[i], data)
+      }
+      if(clone[filetype] == null) clone[filetype] = {}
+      clone[filetype][cids[i]] = data
+      this.setState({uploaded_data: clone})
+      if(is_my_cids){
+        var cid_clone = this.state.uploaded_data_cids.slice()
+        cid_clone.push(cids[i])
+        this.setState({uploaded_data_cids: cids})
+      }
+    }
+  }
+
+  get_cid_split(ecid){
+    var split_cid_array = ecid.split('_');
+    var filetype = split_cid_array[0]
+    var cid_with_storage = split_cid_array[1]
+    var cid = cid_with_storage
+    var storage_with_filename = 'ch.data1'
+    var storage = 'ch'
+    var file_name = 'data1'
+    if(cid_with_storage.includes('.')){
+      var split_cid_array2 = cid_with_storage.split('.')
+      cid = split_cid_array2[0]
+      storage_with_filename = split_cid_array2[1]
+      if(storage_with_filename.includes(',')){
+        var split_cid_array3 = storage_with_filename.split(',')
+        storage = split_cid_array3[0]
+        file_name = split_cid_array3[1]
+      }
+    }
+
+    return{'filetype':filetype, 'cid':cid, 'storage':storage, 'file_name':file_name, 'full':ecid}
+  }
+
+  fetch_uploaded_files_for_object = async (object) => {
+    var ecids = [];
+    if(object['ipfs'] != null){
+      var images_to_add = object['ipfs'].entered_image_objects == null ? [] : object['ipfs'].entered_image_objects
+      if(images_to_add.length > 0){
+        images_to_add.forEach(item => {
+          if(this.is_ecid(item))ecids.push(item)
+        });
+      }
+
+      var items = object['ipfs'].entered_objects == null ? [] : object['ipfs'].entered_objects
+      items.forEach(item => {
+        if(item['type'] == '11'){
+          var image = item['data']['image']
+          if(this.is_ecid(image)) ecids.push(image)
+        }
+      });
+
+      var variants = object['ipfs'].variants == null ? [] : object['ipfs'].variants
+      if(variants.length > 0){
+        variants.forEach(variant => {
+          var variant_images = variant['image_data']['data']['images']
+          if(variant_images.length > 0){
+            variant_images.forEach(image => {
+              if(this.is_ecid(image)) ecids.push(image)
+            });
+          }
+        });
+      }
+    }
+
+    if(object['image-data'] != null){
+      var images = object['image-data']['images']
+      if(images != null && images.length > 0){
+        images.forEach(image => {
+          if(this.is_ecid(image)) ecids.push(image)
+        });
+      }
+    }
+
+    if(ecids.length > 0){
+      this.fetch_uploaded_data_from_ipfs(ecids, false)
+    }
+  }
+
+  is_ecid(ecid){
+    if(ecid.startsWith('image') || ecid.startsWith('audio') || ecid.startsWith('video')){
+      return true;
+    }else{
+      return false
+    }
+  }
+
 
 
 
@@ -14139,6 +14538,8 @@ class App extends Component {
         token_balance_data = token_balances_and_data2['bal_data'][0]
       }
 
+      if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false)
+
       var token_obj = {
         'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5, 
         'token_balances_data':token_balance_data
@@ -14526,6 +14927,10 @@ class App extends Component {
       } 
 
       mail_activity[convo_id].push({'convo_id':convo_id,'id':cid, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_created_mail_events[i].returnValues.p6, 'author':my_created_mail_events[i].returnValues.p2, 'e5_id':cid})
+
+      if(mail_activity[convo_id].length > 1){
+        this.fetch_uploaded_files_for_object(ipfs_obj)
+      }
       
       if(is_first_time){
         var created_mail_clone = structuredClone(this.state.created_mail)
@@ -14573,6 +14978,10 @@ class App extends Component {
       }
 
       mail_activity[convo_id].push(obj)
+
+      if(mail_activity[convo_id].length > 1){
+        this.fetch_uploaded_files_for_object(ipfs_obj)
+      }
 
       if(is_first_time){
         var received_mail_clone = structuredClone(this.state.received_mail)
@@ -14637,6 +15046,10 @@ class App extends Component {
 
           if(obj['author'] == account){
             my_stores.push(id)
+          }
+
+          if(load_prioritized_accounts_exclusively){
+            this.fetch_uploaded_files_for_object(obj)
           }
         }
       }
@@ -15738,6 +16151,18 @@ class App extends Component {
       }
       return data
     }
+    // else if(option == 'ch'){
+    //   var data = this.fetch_from_storage(id)
+    //   if(data == null){
+    //     data = await this.fetch_data_from_chainsafe_storage(id, 0)
+    //     this.store_in_local_storage(id, data)
+    //   }
+    //   if(included_underscore){
+    //     if(data == null) return null;
+    //     return data[internal_id]
+    //   }
+    //   return data
+    // }
   }
 
   store_image_in_ipfs = async (data) => {
@@ -15762,6 +16187,11 @@ class App extends Component {
       var cid = await this.store_data_in_nft_storage(data, unencrypt_image)
       if(unappend_identifier == true) return cid
       return 'nf.'+cid;
+    }
+    else if(set_storage_option == 'chainsafe'){
+      var cid = await this.store_data_in_chainsafe_storage(data, unencrypt_image)
+      if(unappend_identifier == true) return cid
+      return 'ch.'+cid;
     }
   }
 
@@ -15985,6 +16415,216 @@ class App extends Component {
 
 
 
+
+  store_data_in_chainsafe_storage = async(_data, unencrypt_image) => {
+    var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
+    const CHAINSAFE_STORAGE_KEY = `${process.env.REACT_APP_CHAINSAFE_API_KEY}`
+    const CHAINSAFE_STORAGE_BUCKET_ID = `${process.env.REACT_APP_CHAINSAFE_BUCKET_ID}`
+   
+    const form = new FormData();
+    const now = Date.now()
+    const file_data = this.make_file(data, (makeid(32)+now))
+    form.append('file', file_data);
+    form.append('path', '/');
+
+    var request = `https://api.chainsafe.io/api/v1/bucket/${CHAINSAFE_STORAGE_BUCKET_ID}/upload`
+    var request_data = {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${CHAINSAFE_STORAGE_KEY}`
+      },
+      body: form
+    }
+
+    try{
+      const response = await fetch(request, request_data);
+      if (!response.ok) {
+        console.log(response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return '';
+      }
+      var data = await response.text();
+      var parsed_obj = JSON.parse(data);
+      var cid = parsed_obj['files_details'][0]['cid']
+      return cid
+    }
+    catch(e){
+      console.log(e)
+      return ''
+    }
+  }
+
+  make_file(data, file_name){
+    const obj = { data: data }
+    const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' })
+    // const now = Date.now()
+    return new File([blob], `${file_name}.json`)
+  }
+
+  fetch_file_data_from_chainsafe_storage = async (cid, storage_id, file_name, depth) => {
+    // console.log('stackdata','loading cid', cid)
+    await this.wait(this.state.ipfs_delay)
+    var gateways = [
+      `https://ipfs.chainsafe.io/ipfs/${cid}`,
+      `https://${cid}.ipfs.w3s.link/${file_name}.json`
+    ]
+    await this.wait(this.state.ipfs_delay)
+    var selected_gateway = storage_id == 'ch' ? gateways[0] : gateways[1]
+    // console.log('stackdata', selected_gateway)
+    try {
+      const response = await fetch(selected_gateway);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data from IPFS`);
+      }
+      var data = await response.text();
+      var encrypted_data = (JSON.parse(data)).data
+      // console.log('stackdata','encrypted data', encrypted_data)
+      var unencrypted_data = this.decrypt_storage_data(encrypted_data)
+      // console.log('stackdata','decrypted data', unencrypted_data)
+      var json = JSON.parse(unencrypted_data);
+      // console.log('stackdata','decrypted data', json)
+      return json
+      // Do something with the retrieved data
+    } catch (error) {
+      console.log('stackdata','Error fetching web3.storage file: ', error)
+      if(depth<2){
+        return this.fetch_file_data_from_chainsafe_storage(cid, storage_id, file_name, depth+1)
+      }
+    }
+  }
+
+
+
+  // upload_file_to_web3_or_chainsafe = async (_data, type) => {
+  //   this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 5000)
+  //   if(this.state.web3_account_email != ''){
+  //     const client = await createW3UpClient()
+  //     const myAccount = await client.login(this.state.web3_account_email)
+  //     while (true) {
+  //       const res = await myAccount.plan.get()
+  //       if (res.ok) break
+  //       console.log('stackdata','Waiting for payment plan to be selected...')
+  //       await new Promise(resolve => setTimeout(resolve, 1000))
+  //     }
+  //     var file_name = 'data'
+  //     const files = [
+  //       this.make_file(this.encrypt_storage_data(JSON.stringify(_data)), file_name)
+  //     ]
+  //     const directoryCid = await client.uploadDirectory(files)
+  //     var cid = directoryCid.toString()
+  //     const ecid = _data['type']+'_'+cid+'.w3'+','+file_name
+  //     this.when_uploading_file_complete(ecid, cid, _data, type)
+  //     this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
+  //   }else{
+  //     //upload to chainsafe
+  //     var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data))
+  //     if(cid == ''){
+  //       this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
+  //     }else{
+  //       var e_cid = _data['type']+'_'+cid+'.ch'
+  //       this.when_uploading_file_complete(e_cid, cid, _data)
+  //       this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
+  //     }
+  //   }
+  // }
+
+  // when_uploading_file_complete(ecid, cid, _data){
+  //   var clone = structuredClone(this.state.uploaded_data)
+  //   if(clone[_data['type']] == null) clone[_data['type']] = {}
+  //   clone[_data['type']][cid] = _data
+    
+  //   var cid_clone = this.state.uploaded_data_cids.slice()
+  //   cid_clone.push(ecid)
+    
+  //   this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true})
+  //   var me = this;
+  //   setTimeout(function() {
+  //     me.set_cookies()
+  //   }, (1 * 1000));
+  // }
+
+
+  upload_multiple_files_to_web3_or_chainsafe = async (datas, type) => {
+    this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
+    console.log('stackpage',datas)
+    if(this.state.web3_account_email != ''){
+      //upload to web3
+      const client = await createW3UpClient()
+      const myAccount = await client.login(this.state.web3_account_email)
+      while (true) {
+        const res = await myAccount.plan.get()
+        if (res.ok) break
+        console.log('stackdata','Waiting for payment plan to be selected...')
+        await new Promise(resolve => setTimeout(resolve, 1000))
+      }
+      var files = []
+      for(var i=0; i<datas.length; i++){
+        var _data = datas[i]
+        var file_name = 'data'+i
+        files.push(this.make_file(this.encrypt_storage_data(JSON.stringify(_data)), file_name))
+      }
+      console.log('stackdata', files)
+      const directoryCid = await client.uploadDirectory(files)
+      var cid = directoryCid.toString()
+      console.log('stackdata', cid)
+      var e_cids = []
+      var cids = []
+      for(var i=0; i<datas.length; i++){
+        var file_name = 'data'+i
+        var _data = datas[i]
+        const ecid = _data['type']+'_'+cid+'.w3'+','+file_name
+        e_cids.push(ecid)
+        cids.push(cid)
+      }
+      this.when_uploading_multiple_files_complete(e_cids, cids, datas)
+      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
+    }else{
+      //upload to chainsasfe
+      var e_cids = []
+      var cids = []
+      for(var i=0; i<datas.length; i++){
+        var _data = datas[i]
+        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data))
+        if(cid == ''){
+          this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
+          return;
+        }else{
+          var e_cid = _data['type']+'_'+cid+'.ch'
+          e_cids.push(e_cid)
+          cids.push(cid)
+        }
+      }
+      this.when_uploading_multiple_files_complete(e_cids, cids, datas)
+      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
+    }
+  }
+
+
+  when_uploading_multiple_files_complete(e_cids, cids, datas){
+    var clone = structuredClone(this.state.uploaded_data)
+    var cid_clone = this.state.uploaded_data_cids.slice()
+    for(var i=0; i<datas.length; i++){
+      var _data = datas[i]
+      if(clone[_data['type']] == null) clone[_data['type']] = {}
+      clone[_data['type']][e_cids[i]] = _data
+      cid_clone.push(e_cids[i])
+    }
+
+    this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+
+
+
+
+
+
+
+
   encrypt_storage_data(data){
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
     var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
@@ -15998,6 +16638,7 @@ class App extends Component {
       var originalText = bytes.toString(CryptoJS.enc.Utf8);
       return originalText
     }catch(e){
+      console.log('stackdata', e)
       return data
     }
   }
@@ -16277,6 +16918,8 @@ class App extends Component {
             var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
             if(ipfs_message != null){
               ipfs_message['time'] = created_channel_data[j].returnValues.p6
+              this.fetch_uploaded_files_for_object(ipfs_message)
+
               if(!messages.includes(ipfs_message)){
                 messages = [ipfs_message].concat(messages)
               }
@@ -16491,9 +17134,9 @@ class App extends Component {
         for(var j=0; j<created_channel_data.length; j++){
           var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
           if(ipfs_message != null && ipfs_message['e5'] == e5){
+            this.fetch_uploaded_files_for_object(ipfs_message)
             messages.push(ipfs_message)
           }
-
           if(is_first_time){
             var clone = JSON.parse(JSON.stringify(this.state.object_messages))
             clone[request_id] = messages

@@ -1068,9 +1068,13 @@ class NewStorefrontItemPage extends Component {
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_banner_image_picked.bind(this)} />
                     </div> */}
 
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_banner_image_picked.bind(this)} />
+                    </div> */}
+
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_text_banner_image', 1)}/>
                     </div>
 
                     <div style={{'padding': '5px', width:205}}>
@@ -1233,6 +1237,10 @@ class NewStorefrontItemPage extends Component {
         }
     }
 
+    when_banner_selected(files){
+        this.add_banner_to_object(files[0])
+    }
+
     when_banner_image_updated = (e, index) => {
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){ 
@@ -1259,7 +1267,7 @@ class NewStorefrontItemPage extends Component {
     add_banner_to_object(image){
         var entered_text = this.get_edited_text_object()
         entered_text['textsize'] = '10px'
-        var obj = {'image':image, 'caption':entered_text}
+        var obj = {'image':this.get_image_from_file(image), 'caption':entered_text}
         var cloned_array = this.state.entered_objects.slice()
         cloned_array.push({'data':obj, 'type':'11' }) 
         this.setState({entered_objects: cloned_array, entered_text:''})
@@ -1818,9 +1826,13 @@ class NewStorefrontItemPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div> */}
 
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+            </div> */}
+
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_image', 10**16)}/>
             </div>
 
             {/* <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
@@ -1869,6 +1881,14 @@ class NewStorefrontItemPage extends Component {
         }
     }
 
+    when_image_gif_files_picked(files){
+        var clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_image_objects: clonedArray});
+    }
+
     render_all_images_part(){
         var items = this.get_image_objects()
 
@@ -1906,12 +1926,13 @@ class NewStorefrontItemPage extends Component {
     }
 
     render_image_part(){
+        var background_color = this.props.theme['card_background_color']
+        var size = this.props.size
         var col = Math.round(400 / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
             var items = ['1','1','1']
-            var background_color = this.props.theme['card_background_color']
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
@@ -1929,22 +1950,50 @@ class NewStorefrontItemPage extends Component {
                 </div>
             )
         }else{
-            var items = [].concat(this.state.entered_image_objects)
-            var background_color = this.props.theme['card_background_color']
+            var items = [].concat(this.state.entered_image_objects);
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
-                            <ImageListItem key={item.img}>
-                                <div onClick={() => this.when_image_clicked(index)}>
-                                    <img src={item} style={{height:100 ,width:100}} />
-                                </div> 
+                            <ImageListItem key={item}>
+                                {this.render_image_item(item, index, 100)}
                             </ImageListItem>
                         ))}
                     </ImageList>
                 </div>
             )
         }
+    }
+
+    render_image_item(ecid, index, size){
+        return(
+            <div onClick={() => this.when_image_clicked(index)}>
+                <img alt="" src={this.get_image_from_file(ecid)} style={{height:size ,width:size}} />
+            </div> 
+        )
+    }
+
+
+    get_image_from_file(ecid){
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
     when_image_clicked(index){
@@ -2218,9 +2267,13 @@ class NewStorefrontItemPage extends Component {
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_variant_gif_picked.bind(this)} multiple/>
                     </div> */}
 
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_variant_gif_picked.bind(this)} multiple/>
+                    </div> */}
+
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_storefront_variant_image', 10**16)}/>
                     </div>
                 </div>
                 
@@ -2257,6 +2310,14 @@ class NewStorefrontItemPage extends Component {
         }
     }
 
+    when_variant_image_gif_files_picked(files){
+        var clonedArray = this.state.variant_images == null ? [] : this.state.variant_images.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({variant_images: clonedArray});
+    }
+
 
     render_variant_images(){
         var col = Math.round(this.props.app_state.width / 100)
@@ -2290,7 +2351,7 @@ class NewStorefrontItemPage extends Component {
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div onClick={() => this.when_variant_image_clicked(index)}>
-                                    <img src={item} style={{height:100 ,width:100}} />
+                                    {this.render_image_item(item, index, 100)}
                                 </div> 
                             </ImageListItem>
                         ))}

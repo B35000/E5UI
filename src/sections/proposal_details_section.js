@@ -1879,7 +1879,7 @@ class ProposalDetailsSection extends Component {
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
-        var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text2(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text2(item['event'].returnValues.p2, object)
+        var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text3(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text3(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
                 <div>
@@ -1914,7 +1914,7 @@ class ProposalDetailsSection extends Component {
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
-    get_sender_title_text2(sender, object) {
+    get_sender_title_text3(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
             return this.props.app_state.loc['1694']/* 'You' */
         } else {
@@ -2058,9 +2058,11 @@ class ProposalDetailsSection extends Component {
     render_detail_item(item_id, object_data){
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

@@ -1056,8 +1056,6 @@ class ViewTransactionPage extends Component {
         var selected_object = this.format_token()
         var title = selected_object['id'];
         var img = selected_object['img']
-
-        
         
         var selected_obj_root_config = selected_object['data'][0];
         var selected_obj_config = selected_object['data'][1];
@@ -1078,7 +1076,7 @@ class ViewTransactionPage extends Component {
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
 
         var default_image = type == this.props.app_state.loc['606']/* 'capped' */ ? EndImg: SpendImg
-        var image = item['ipfs'].token_image == null ? default_image : item['ipfs'].token_image
+        var image = item['ipfs'].token_image == null ? default_image : this.get_image_from_file(item['ipfs'].token_image)
 
         // var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         
@@ -1295,6 +1293,28 @@ class ViewTransactionPage extends Component {
         ]
 
         return obj
+    }
+
+    get_image_from_file(ecid){
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
 
@@ -5221,9 +5241,11 @@ class ViewTransactionPage extends Component {
     render_detail_item(item_id, object_data){
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

@@ -163,6 +163,7 @@ class ViewGroups extends Component {
             var padding = '10px 15px 10px 15px'
             var image_border_radius = '50%'
             var text_align = 'left'
+            
             if(object_data != null){
                 title = object_data['title']
                 details = object_data['details']
@@ -170,10 +171,11 @@ class ViewGroups extends Component {
                 padding = object_data['padding'] == null ? '10px 15px 10px 15px' : object_data['padding']
                 text_align = object_data['text_align'] == null ? 'left' : object_data['text_align']
             }
-            var font_size = ['12px', '10px', 16];
+            var font_size = ['12px', '10px', 16, 40];
             if(size == 'l'){
-                font_size = ['15px', '12px', 19];
+                font_size = ['15px', '12px', 19, 50];
             }
+            var image_width = font_size[3]
             if(title == ''){
                 title = '...'
             }
@@ -185,12 +187,14 @@ class ViewGroups extends Component {
                 if(object_data != null){
                     img = object_data['image'];
                     if(object_data['border_radius'] != null) image_border_radius = object_data['border_radius']
+                    if(object_data['image_width'] != null) image_width = object_data['image_width']
                 }
+
                return (
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
-                                <img  src={img} alt={title} style={{height:50 ,width:50, 'border-radius': image_border_radius}} />
+                                <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}} />
                             </div>
                             <div style={{'margin':'0px 0px 0px 10px'}}>
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
@@ -338,7 +342,7 @@ class ViewGroups extends Component {
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
             return(
                 <div style={{height:230, width:'90%','display': 'flex', 'align-items':'center','justify-content':'center','padding':'0px 0px 0px 50px'}}>
-                    <img src={img} style={{height:'180px' ,width:'180px','border-radius':'15%'}} />
+                    <img alt="" src={this.get_image_from_file(img)} style={{height:'180px' ,width:'180px','border-radius':'15%'}} />
 
                     <div style={{'margin':'0px 0px 0px 20px'}}> 
                         <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{header}</p>
@@ -359,7 +363,7 @@ class ViewGroups extends Component {
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div style={{}} onClick={() => this.when_image_clicked(items, index)}>
-                                    <img src={item} style={{width:45, height:45, 'border-radius': '50%'}} />
+                                    <img alt="" src={this.get_image_from_file(item)} style={{width:45, height:45, 'border-radius': '50%'}} />
                                 </div> 
                             </ImageListItem>
                         ))}
@@ -396,7 +400,7 @@ class ViewGroups extends Component {
             var caption = object_data != null ? object_data['caption']:{'text':'E5', 'textsize':'10px', 'font':'Times New Roman'}
             return(
                 <div style={{width:'90%', margin:'0px 0px 0px 10px'}}>
-                    <img src={img} style={{height:'auto' ,width:'90%'}} />
+                    <img alt="" src={this.get_image_from_file(img)} style={{height:'auto' ,width:'90%'}} />
                     {this.render_detail_item('10', caption)}
                 </div>
             )
@@ -433,7 +437,7 @@ class ViewGroups extends Component {
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
                         <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img src={img} style={{height:img_size ,width:img_size}} />
+                            <img alt="" src={this.get_image_from_file(img)} style={{height:img_size ,width:img_size}} />
                         </div>
                         <div style={{'margin':'3px 0px 0px 5px'}}>
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
@@ -570,6 +574,30 @@ class ViewGroups extends Component {
 
         }
         
+    }
+
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
 }

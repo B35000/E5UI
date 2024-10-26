@@ -195,7 +195,7 @@ class NewTokenPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -415,11 +415,11 @@ class NewTokenPage extends Component {
     render_create_image_ui_buttons_part(){
         var token_type = this.get_selected_item(this.state.new_token_type_tags_object, 'e')
         var default_image = token_type == this.props.app_state.loc['606']/* 'capped' */ ? EndImg: SpendImg
-        var image = this.state.token_image == null ? default_image : this.state.token_image
+        var image = this.state.token_image == null ? default_image : this.get_image_from_file(this.state.token_image)
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
                 <div style={{'padding': '5px', width:45, 'height':45}}>
-                    <img src={image} style={{height:50 ,width:50 , 'border-radius':'15%'}} onClick={()=> this.when_icon_image_tapped()}/>
+                    <img alt="" src={image} style={{height:50 ,width:50 , 'border-radius':'15%'}} onClick={()=> this.when_icon_image_tapped()}/>
                 </div>
 
                 {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px', 'margin':'0px 0px 0px 10px'}}>
@@ -427,9 +427,12 @@ class NewTokenPage extends Component {
                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)}/>
                 </div> */}
 
-                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 10px'}}>
+                {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 10px'}}>
                     <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)}/>
+                </div> */}
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_text_banner_image', 1)}/>
                 </div>
             </div>
         )
@@ -462,6 +465,32 @@ class NewTokenPage extends Component {
         }
     }
 
+
+    when_banner_selected(files){
+        this.setState({token_image: files[0]});
+    }
+
+    get_image_from_file(ecid){
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
 
 
    
