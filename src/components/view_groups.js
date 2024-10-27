@@ -582,6 +582,9 @@ class ViewGroups extends Component {
         var ecid_obj = this.get_cid_split(ecid)
         if(this.props.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
         var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        
         return data['data']
     }
 

@@ -722,9 +722,10 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -744,6 +745,10 @@ class PostListSection extends Component {
         });
         return filtered
     }
+
+
+
+
 
 
 
@@ -836,9 +841,10 @@ class PostListSection extends Component {
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var id_text = object['e5']+' • '+object['id']
         if(object['id'] == 2) id_text = object['e5']+' • '+'Main Contract'
+        var sender = object['event'] == null ? '' : this.get_senders_name(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':id_text, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), }
         }
     }
@@ -929,9 +935,10 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p6
         var time = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var sender = this.get_senders_name(object['event'].returnValues.p4, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1049,9 +1056,10 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var sender = this.get_senders_name(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1289,9 +1297,10 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1620,6 +1629,7 @@ class PostListSection extends Component {
 
     check_if_sender_has_paid_subscriptions(required_subscriptions){
         var has_sender_paid_all_subs = true
+        if(required_subscriptions == null) return true
         required_subscriptions.forEach(subscription_id => {
             var subscription_item = this.get_all_sorted_objects_mappings(this.props.app_state.created_subscription_object_mapping)[subscription_id]
             if(subscription_item == null) return false
@@ -1717,15 +1727,28 @@ class PostListSection extends Component {
 
     format_post_item(object){
         var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var extra = ''
         if(this.is_post_nsfw(object)){
-            tags = object['ipfs'] == null ? ['Post'] : ['🔞🔞🔞'].concat(object['ipfs'].entered_indexing_tags)
+            extra = extra+'🔞'
         }
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            extra = extra+'🔏'
+        }
+        if(extra != '') extra = extra + ' '
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        if(this.is_post_anonymous(object)){
+            sender = ''
+        }
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1749,6 +1772,26 @@ class PostListSection extends Component {
         }
     }
 
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = this.get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
+    }
 
 
 
@@ -1843,11 +1886,20 @@ class PostListSection extends Component {
     format_channel_item(object){
         var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var extra = ''
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            extra = extra+'🔏 '
+        }
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1956,9 +2008,10 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -2093,6 +2146,14 @@ class PostListSection extends Component {
 
     render_bag_data(object, item, index){
         var images = this.get_bag_images(object)
+
+        return(
+            <div>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['id'])}
+                </div>
+            </div>
+        )
         if(images.length == 0){
             return(
                 <div>
@@ -2141,15 +2202,16 @@ class PostListSection extends Component {
 
     format_bag_item(object){
         var tags = [object['event'].returnValues.p3]
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items ordered' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
+        var sender = this.get_senders_name(object['event'].returnValues.p3, object);
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items ordered' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        var item_images = this.get_bag_images(object)
-        var image = item_images.length == 0 ? null : item_images[0]
+        // var item_images = this.get_bag_images(object)
+        // var image = item_images.length == 0 ? null : item_images[0]
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
+            // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
         }
     }
@@ -2176,8 +2238,7 @@ class PostListSection extends Component {
 
     }
 
-    get_variant_object_from_storefront(storefront, id){
-        
+    get_variant_object_from_storefront(storefront, id){        
         for(var i=0; i<storefront['ipfs'].variants.length; i++){
             if(storefront['ipfs'].variants[i]['variant_id'] == id){
                 return storefront['ipfs'].variants[i]

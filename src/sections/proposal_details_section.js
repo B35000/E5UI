@@ -1501,6 +1501,9 @@ class ProposalDetailsSection extends Component {
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
+            if(object['event'].returnValues.p4 == item['sender']){
+                alias = alias+' • '+this.props.app_state.loc['2064c']/* 'Creator' */
+            }
             return alias
         }
     }

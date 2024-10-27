@@ -383,7 +383,7 @@ class E5DetailsSection extends Component {
                     {this.show_data_transaction_count_chart(e5_chart_data)}
                     {/* {this.show_metadata_transaction_count_chart(e5_chart_data)} */}
                     {/* {this.show_withdraw_amount_data_chart(e5_chart_data)} */}
-                    {/* {this.show_deposit_amount_data_chart(e5_chart_data)} */}
+                    {this.show_deposit_amount_data_chart(e5_chart_data)}
                     {this.show_transfer_events_chart(e5_chart_data)}
                     {this.show_transaction_transaction_count_chart(e5_chart_data)}
                     {this.show_deflation_events_chart(obj['id'])}
@@ -939,13 +939,15 @@ class E5DetailsSection extends Component {
 
     show_deposit_amount_data_chart(e5_chart_data){
         var events = e5_chart_data['transaction']
-        if(events.length > 3){
+        var withdraw_events = e5_chart_data['withdraw']
+        var data = this.format_deposit_witdraw_ether_events(events, withdraw_events)
+        if(data.length > 3){
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2329']/* 'Deposited Ether' */, 'details':this.props.app_state.loc['2330']/* `The total amount of ether thats been deposited into the E5 over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(events), 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(data), 'interval':110, 'hide_label': true})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2331']/* 'Y-Axis: Total Deposited Ether' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     {this.render_detail_item('0')}
@@ -956,23 +958,39 @@ class E5DetailsSection extends Component {
 
     get_deposit_amount_data_points(events){
         var data = []
+        var largest_number = bigInt(0)
         try{
             for(var i=0; i<events.length; i++){
                 if(i == 0){
-                    data.push(bigInt(events[i].returnValues.p6))
+                    if(events[i]['type'] == 'deposit'){
+                        var amount = bigInt(events[i]['event'].returnValues.p6)
+                        data.push(amount)
+                        if(largest_number.lesser(amount)) largest_number = amount
+                    }else{
+                        data.push(0)
+                    }
                 }else{
-                    data.push(bigInt(data[data.length-1]).add(bigInt(events[i].returnValues.p6)))
+                    if(events[i]['type'] == 'deposit'){
+                        var amount = bigInt(data[data.length-1]).add(bigInt(events[i]['event'].returnValues.p6))
+                        data.push(amount)
+                        if(largest_number.lesser(amount)) largest_number = amount
+                    }else{
+                        var amount = bigInt(data[data.length-1]).minus(bigInt(events[i]['event'].returnValues.p5))
+                        data.push(amount)
+                        if(largest_number.lesser(amount)) largest_number = amount
+                    }
+                    
                 }
 
                 if(i==events.length-1){
-                    var diff = Date.now()/1000 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=(61*265100)){
+                    var diff = Date.now()/1000 - events[i]['timestamp']
+                    for(var t=0; t<diff; t+=(61*26510)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
-                    var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=(61*265100)){
+                    var diff = events[i+1]['timestamp'] - events[i]['timestamp']
+                    for(var t=0; t<diff; t+=(61*26510)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -982,13 +1000,15 @@ class E5DetailsSection extends Component {
 
         }
 
+        // console.log('deposit_amount_data', 'largest_number', largest_number)
+        // console.log('deposit_amount_data', 'data', data)
 
         var xVal = 1, yVal = 0;
         var dps = [];
         var noOfDps = 100;
         var factor = Math.round(data.length/noOfDps) +1;
         // var noOfDps = data.length
-        var largest_number = this.get_deposit_amount_interval_figure(events)
+        // var largest_number = this.get_deposit_amount_interval_figure(events)
         var recorded = false;
         for(var i = 0; i < noOfDps; i++) {
             if(largest_number == 0) yVal = 0
@@ -998,11 +1018,12 @@ class E5DetailsSection extends Component {
 
             
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && !recorded){
+                if(i%(Math.round(noOfDps/10)) == 0 && i != 0 && !recorded){
                     recorded = true
-                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                    var label = ""+this.format_account_balance_figure(data[factor * xVal])
+                    dps.push({x: xVal,y: yVal, indexLabel: label});
                 }else{
-                    dps.push({x: xVal, y: yVal});//
+                    dps.push({x: xVal, y: yVal});
                 }
                 xVal++;
             }
@@ -1018,6 +1039,34 @@ class E5DetailsSection extends Component {
         });
         var largest = Math.max.apply(Math, data);
         return largest
+    }
+
+    format_deposit_witdraw_ether_events(deposit_events, withdraw_events){
+        var all_events = []
+        deposit_events.forEach(event => {
+            if(!bigInt(event.returnValues.p6/* msg_value */).equals(0)){
+                all_events.push({'type':'deposit', 'event':event, 'timestamp':parseInt(event.returnValues.p8/* timestamp */)})
+            }
+        });
+
+        withdraw_events.forEach(event => {
+            all_events.push({'type':'withdraw', 'event':event, 'timestamp':parseInt(event.returnValues.p6/* timestamp */)})
+        });
+
+        var sorted_events = this.sortByAttributeDescending(all_events, 'timestamp')
+        return sorted_events.reverse()
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
     }
 
 
@@ -1193,7 +1242,7 @@ class E5DetailsSection extends Component {
 
     show_deflation_events_chart(e5){
         var data = this.props.app_state.e5_deflation_data[e5]
-        if(data == null || data.length < 10) return;
+        if(data == null || data[3] == null || data[3].length < 10) return;
         return(
             <div>
                 <div style={{height: 10}}/>
@@ -1209,6 +1258,7 @@ class E5DetailsSection extends Component {
 
 
     get_deflation_amount_data_points(events){
+        // console.log('deflation_dps','events', events)
         var data = []
         var max_amount = bigInt(0);
         try{
@@ -1242,10 +1292,10 @@ class E5DetailsSection extends Component {
                 
             }
         }catch(e){
-            console.log(e)
+            console.log('deflation_dps','error', e)
         }
 
-        
+        // console.log('deflation_dps', 'data', data)
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1267,6 +1317,8 @@ class E5DetailsSection extends Component {
                 xVal++;
             }
         }
+
+        // console.log('deflation_dps', 'dps', dps)
         
         return dps
     }

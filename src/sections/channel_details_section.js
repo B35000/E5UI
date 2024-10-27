@@ -1038,6 +1038,13 @@ class ChannelDetailsSection extends Component {
             return 'You'
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
+            if(object['event'].returnValues.p5 == item['sender']){
+                alias = alias+' • '+this.props.app_state.loc['2064c']/* 'Creator' */
+            }
+            if(object['moderators'].includes(item['sender']) && object['event'].returnValues.p5 != item['sender']){
+                //if sender is moderator and not author
+                alias = alias+' • '+this.props.app_state.loc['2064d']/* 'moderator' */
+            }
             return alias
         }
     }

@@ -164,6 +164,17 @@ class EditPostPage extends Component {
         };
     }
 
+    get_post_anonymously_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['311g']/* enabled */], [0]
+            ],
+        };
+    }
+
 
     set(){
         if(this.state.get_post_nsfw_option == null){
@@ -177,6 +188,9 @@ class EditPostPage extends Component {
         }
         if(this.state.get_post_preview_option == null){
             this.setState({get_post_preview_option:this.get_post_preview_option()})
+        }
+        if(this.state.get_post_anonymously_tags_option == null){
+            this.setState({get_post_anonymously_tags_option:this.get_post_anonymously_tags_option(),})
         }
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1,get_sort_links_tags_object:this.get_sort_links_tags_object()})
     }
@@ -378,6 +392,15 @@ class EditPostPage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['311h']/* Post Anonymously. */, 'details':this.props.app_state.loc['311i']/* If set to enabled, your alias and account id will be masked in your posts details and comment section. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_anonymously_tags_option} tag_size={'l'} when_tags_updated={this.when_get_post_anonymously_tags_option_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -409,6 +432,15 @@ class EditPostPage extends Component {
     when_index_text_input_field_changed(text){
         this.setState({entered_tag_text: text})
     }
+
+    when_get_post_anonymously_tags_option_option(tag_obj){
+        this.setState({get_post_anonymously_tags_option: tag_obj})
+    }
+
+
+
+
+
 
     add_indexing_tag_for_new_job(){
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();

@@ -307,8 +307,20 @@ class PostsDetailsSection extends Component {
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            if(this.is_post_anonymous(object)) return this.props.app_state.loc['311m']/* 'Hidden' */
             return alias
         }
+    }
+
+     is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = this.get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
     }
 
     render_pin_post_button(object){
