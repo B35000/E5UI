@@ -52,6 +52,7 @@ import NewStorefrontItemPage from './pages/create_action_pages/new_storefront_it
 import NewProposalPage from './pages/create_action_pages/new_proposal_page';
 import NewMailPage from './pages/create_action_pages/new_mail_page';
 import NewContractorPage from './pages/create_action_pages/new_contractor_page';
+import NewAudioPage from './pages/create_action_pages/new_audio_page'
 
 import EditJobPage from './pages/edit_action_pages/edit_job_page'
 import EditTokenPage from './pages/edit_action_pages/edit_token_page'
@@ -112,6 +113,7 @@ import ViewNumber from './pages/view_number'
 import DialogPage from './pages/dialog_page'
 import SendReceiveCoinPage from './pages/send_receive_coin_page'
 import PickFilePage from './pages/pick_file_page'
+import BuyAlbumPage from './pages/buy_album_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -226,8 +228,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false,
-    pick_file_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -246,12 +247,12 @@ class App extends Component {
     created_jobs:{}, created_job_mappings:{}, my_applications:{}, my_bag_applications:{},
     created_mail:{}, received_mail:{},
     created_stores:{}, created_store_mappings:{}, created_bags:{}, 
-    created_contractors:{},
+    created_contractors:{},created_audios:{}, created_audio_mappings:{},
     mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false, blocked_accounts:{}, should_update_blocked_accounts_onchain: false,
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(65), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
+    sync_steps:(68), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -276,7 +277,7 @@ class App extends Component {
 
     my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{},
     
-    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{},
+    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{},
 
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
@@ -285,7 +286,8 @@ class App extends Component {
 
     coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data(), default_addresses:this.get_default_addresses(), contract_exchange_interactions_data:{}, e5_deflation_data:{}, contracts_proposals:{},
 
-    web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false
+    web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
+    my_tracks:[], my_albums:[]
   };
 
   get_static_assets(){
@@ -825,6 +827,10 @@ class App extends Component {
         
         /* new post page */
         '297':'post','298':'subscription-lock','299':'invisible','300':'visible','301':'Set a title for your new Post.','302':'Set tags for indexing your new Post.','303':'Subscription Locked Post Preview.','304':'If set to visible, a preview of your new post will be shown to outsiders if subscription locked.','305':'Subscription Lock (Optional).','306':'Post exclusively to accounts that have paid the subscription you choose below.','307':'Enter your preferred text then tap add to add it.','308':'Search an object by its title or ID, then tap it to add it to the new Post.','309':'The link is already in the Post.','310':'Link added to Post.','311':'Please add a title for your new Post.', '311a':'nsfw', '311b':'masked', '311c':'Mark as NSFW.', '311d':'If set to nsfw, post will be marked as not safe for work.', '311e':'Masked for Outsiders.', '311f':'If set to masked, your post will not be visible to users without accounts.', '311g':'enabled','311h':'Post Anonymously.','311i':'If set to enabled, your alias and account id will be masked in your post\'s detail section.','311j':'','311k':'','311l':'','311m':'Hidden','311n':'','311o':'','311p':'','311q':'','311r':'',
+
+
+        /* new audio page */
+        'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.','a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'',
         
         /* new proposal page */
         '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ',
@@ -917,13 +923,13 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'','1264q':'','1264r':'','1264s':'','1264t':'','1264u':'','1264v':'','1264w':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
         
         /* post preview page */
-        '1301':'Subscription Locked','1302':'You need to pay those subscriptions first before you can view the full post.','1303':'Subscriptions to pay.','1304':'Pin the post to your feed','1305':'Pin Post','1306':'Pin/Unpin Post',
+        '1301':'Subscription Locked','1302':'You need to pay those subscriptions first before you can view the full post.','1303':'Subscriptions to pay.','1304':'Pin the post to your feed','1305':'Pin Post','1306':'Pin/Unpin Post', '1306a':'Pin the Audiopost to  your feed.','1306b':'Pin Audiopost','1306c':'Pin/Unpin Audiopost','1306d':'','1306e':'','1306f':'',
         
         /* respond to job page */
         '1307':'job-response','1308':'respond','1309':'job','1310':'ad','1311':'contract','1312':'expiry-time','1313':'amount','1314':'prepaid','1315':'postpaid','1316':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1317':'block','1318':'Select an expiry time for your application','1319':'Prepaid or Postpaid','1320':'Set the payment option you prefer for the application.','1321':'Your preferred fee.','1322':'Set how much you want for the job. Select an exchange by its id, then the desired price and click add.','1323':'','1324':'Price','1325':'tokens','1326':'Add Price','1327':'Please put a valid exchange ID.','1328':'Please put a valid amount.','1329':'You cant use the same exchange twice.','1330':'Added price.','1331':'You need to pick a contract first.','1332':'You cant set an expiry time thats less than fifteen minutes from now.','1332a':'Custom Specifications.', '1332b':'You can also include extra information for the job your applying for.', '1332c':'specs', '1332d':'Exchange ID', '1332e':'main', '1332f':'history','1332g':'','1332h':'','1332i':'','1332j':'','1332k':'','1332l':'','1332m':'',
@@ -946,7 +952,7 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'','1593cd':'','1593ce':'','1593cf':'','1593cg':'','1593ch':'','1593ci':'','1593cj':'','1593ck':'','1593cl':'','1593cm':'','1593cn':'','1593co':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'','1593ce':'','1593cf':'','1593cg':'','1593ch':'','1593ci':'','1593cj':'','1593ck':'','1593cl':'','1593cm':'','1593cn':'','1593co':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1016,6 +1022,9 @@ class App extends Component {
         
         /* post detail section */
         '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒 Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
+
+        /* audio details section */
+        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'', 'a2527i':'', 'a2527j':'', 'a2527k':'', 'a2527l':'', 'a2527m':'', 'a2527n':'', 'a2527o':'', 'a2527p':'', 'a2527q':'', 'a2527r':'', 'a2527s':'', 'a2527t':'', 'a2527u':'', 'a2527v':'', 'a2527w':'', 'a2527x':'', 'a2527y':'', 'a2527z':'',
         
         /* proposal details section */
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
@@ -1067,7 +1076,10 @@ class App extends Component {
         /* pick file page */
         '2955':'image','2956':'audio','2957':'video','2958':'Pick one or multile image files from your storage. To see an image file here, you need to upload it in the stack page.','2959':'You can\'t finish with no files selected.','2960':'You can\'t pick more than ','2961':' files.',
         
-        '2962':'','2963':'','2964':'','2965':'','2966':'','2967':'','2968':'','2969':'','2970':'','2971':'','2972':'','2973':'','2974':'','2975':'','2976':'','2977':'','2978':'','2979':'','2980':'','2981':'','2982':'','2983':'','2984':'','2985':'','2986':'','2987':'','2988':'','2989':'','2990':'','2991':'','2992':'','2993':'','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
+        /* buy album page */
+        '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.',
+        
+        '2973':'Album Sales','2974':'Song Sales','2975':'','2976':'','2977':'','2978':'','2979':'','2980':'','2981':'','2982':'','2983':'','2984':'','2985':'','2986':'','2987':'','2988':'','2989':'','2990':'','2991':'','2992':'','2993':'','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
@@ -1080,38 +1092,60 @@ class App extends Component {
   }
 
   get_coin_data(){
-      var list = {
-          'BTC': this.get_coin_info('BTC', 'Bitcoin', 'https://bafkreie2kzwwxljfs2vfnha5dey4m2mol7isouyozsmfervtqovv4dxwjy.ipfs.w3s.link/', 'satoshi', 8, 100_000_000),
-          'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', 'https://bafkreieqzh5ukzx7xkqbat6enbs6vvui45mzrdel72nrpvquggddnyqzge.ipfs.w3s.link/', 'satoshi', 8, 100_000_000),
-          'LTC': this.get_coin_info('LTC', 'Litecoin', 'https://bafkreibssgaxtckfjpfi3rwrhq24aapqukesjliidbuo2tefsfyvudccia.ipfs.w3s.link/', 'litoshi', 8, 100_000_000),
-          'DOGE': this.get_coin_info('DOGE', 'Dogecoin', 'https://bafkreigu2tax5e3kfiisfcx3yo4k54ly5za4p33n7cs4lvgdsrnqezkqey.ipfs.w3s.link/', 'koinu', 8, 100_000_000),
-          'DASH': this.get_coin_info('DASH', 'Dash', 'https://bafkreicc4b6lb6pz2ql3iefz2graqvm5apk44jf3tjtwomdzi7pmsr3wiu.ipfs.w3s.link/', 'duff', 8, 100_000_000),
-          'TRX': this.get_coin_info('TRX', 'Tron', 'https://bafkreibogf2z4apmef7soghheiudwel67br5nxnuq4hydtvcqppme6lsre.ipfs.w3s.link/', 'sun', 6, 1_000_000),
-          'XRP': this.get_coin_info('XRP', 'Xrp', 'https://bafkreidql7b6v2emvlcnyl7qkhbzjknyvhu33ifxogf34236mmwue6bo4y.ipfs.w3s.link/', 'drops', 6, 1_000_000),
-          'XLM': this.get_coin_info('XLM', 'Stellar', 'https://bafkreiaeipmjvsizk6sbucvudjg332iaumravdte3p6gdnotfjbxsriqre.ipfs.w3s.link/', 'stroop', 7, 10_000_000),
-          'DOT': this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000),
-          'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000),
-          'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', 'microalgorand', 6, 1_000_000),
-          'XTZ': this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000),
-          'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000),
-          'FIL': this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000),
-          'SOL': this.get_coin_info('SOL', 'Solana', 'https://bafkreie4wh23gwfdj4b2otksmajb7dmfvtn376kv3jfivmwocutkq773ai.ipfs.w3s.link/', 'lamport', 9, 1_000_000_000),
-          'APT': this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000),
-      }
-      return list
+    var list = {
+        'BTC': this.get_coin_info('BTC', 'Bitcoin', 'https://bafkreie2kzwwxljfs2vfnha5dey4m2mol7isouyozsmfervtqovv4dxwjy.ipfs.w3s.link/', 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1),
+
+        'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', 'https://bafkreieqzh5ukzx7xkqbat6enbs6vvui45mzrdel72nrpvquggddnyqzge.ipfs.w3s.link/', 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32),
+
+        'LTC': this.get_coin_info('LTC', 'Litecoin', 'https://bafkreibssgaxtckfjpfi3rwrhq24aapqukesjliidbuo2tefsfyvudccia.ipfs.w3s.link/', 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1),
+
+        'DOGE': this.get_coin_info('DOGE', 'Dogecoin', 'https://bafkreigu2tax5e3kfiisfcx3yo4k54ly5za4p33n7cs4lvgdsrnqezkqey.ipfs.w3s.link/', 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1),
+
+        'DASH': this.get_coin_info('DASH', 'Dash', 'https://bafkreicc4b6lb6pz2ql3iefz2graqvm5apk44jf3tjtwomdzi7pmsr3wiu.ipfs.w3s.link/', 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2),
+
+        'TRX': this.get_coin_info('TRX', 'Tron', 'https://bafkreibogf2z4apmef7soghheiudwel67br5nxnuq4hydtvcqppme6lsre.ipfs.w3s.link/', 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
+        
+        'XRP': this.get_coin_info('XRP', 'Xrp', 'https://bafkreidql7b6v2emvlcnyl7qkhbzjknyvhu33ifxogf34236mmwue6bo4y.ipfs.w3s.link/', 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
+
+        'XLM': this.get_coin_info('XLM', 'Stellar', 'https://bafkreiaeipmjvsizk6sbucvudjg332iaumravdte3p6gdnotfjbxsriqre.ipfs.w3s.link/', 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
+
+        'DOT': this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
+
+        'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
+
+        'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', 'microalgorand', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
+
+        'XTZ': this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
+
+        'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
+
+        'FIL': this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
+
+        'SOL': this.get_coin_info('SOL', 'Solana', 'https://bafkreie4wh23gwfdj4b2otksmajb7dmfvtn376kv3jfivmwocutkq773ai.ipfs.w3s.link/', 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
+
+        'APT': this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
+    }
+    return list
   }
 
-  get_coin_info(symbol, name, image_url, base_unit, decimals, conversion){
-      return{
-          'name':name,
-          'id':symbol,
-          'symbol':symbol,
-          'base_unit':base_unit,
-          'decimals':decimals,
-          'conversion':conversion,
-          'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
-          'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
-      }
+  get_coin_info(symbol, name, image_url, base_unit, decimals, conversion, account_type, consensus_mechanism, block_time, ledger_age, throughput, block_size){
+    return{
+      'name':name,
+      'id':symbol,
+      'symbol':symbol,
+      'base_unit':base_unit,
+      'decimals':decimals,
+      'conversion':conversion,
+      'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
+      'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
+      'tags':{'active_tags':[name, 'Coin', symbol], 'index_option':'indexed'},
+      'account_type':account_type,
+      'consensus_mechanism':consensus_mechanism,
+      'block_time':block_time,
+      'ledger_age':ledger_age,
+      'throughput':throughput,
+      'block_size':block_size
+    }
   }
 
   get_default_addresses(){
@@ -1134,6 +1168,48 @@ class App extends Component {
         '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d'
     ]
     return default_addresses
+  }
+
+  /* gets a formatted time diffrence from now to a given time */
+  get_time_difference(time){
+      var number_date = Math.round(parseInt(time));
+      var now = Math.round(new Date().getTime()/1000);
+
+      var diff = now - number_date;
+      return this.get_time_diff(diff)
+  }
+
+  get_time_diff(diff){
+    if(diff < 60){//less than 1 min
+        var num = diff
+        var s = num > 1 ? 's': '';
+        return num+ this.getLocale()['29']
+    }
+    else if(diff < 60*60){//less than 1 hour
+        var num = Math.floor(diff/(60));
+        var s = num > 1 ? 's': '';
+        return num + this.getLocale()['30'] 
+    }
+    else if(diff < 60*60*24){//less than 24 hours
+        var num = Math.floor(diff/(60*60));
+        var s = num > 1 ? 's': '';
+        return num + this.getLocale()['31'] + s;
+    }
+    else if(diff < 60*60*24*7){//less than 7 days
+        var num = Math.floor(diff/(60*60*24));
+        var s = num > 1 ? 's': '';
+        return num + this.getLocale()['32'] + s;
+    }
+    else if(diff < 60*60*24*7*53){//less than 1 year
+        var num = Math.floor(diff/(60*60*24*7));
+        var s = num > 1 ? 's': '';
+        return num + this.getLocale()['33'] + s;
+    }
+    else {//more than a year
+        var num = Math.floor(diff/(60*60*24*7*53));
+        var s = num > 1 ? 's': '';
+        return num + this.getLocale()['34'] + s;
+    }
   }
 
 
@@ -1218,6 +1294,8 @@ class App extends Component {
     this.pay_upcoming_subscriptions_page = React.createRef();
     this.send_receive_coin_page = React.createRef();
     this.pick_file_page = React.createRef();
+    this.new_audio_page = React.createRef();
+    this.buy_album_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -2242,6 +2320,7 @@ class App extends Component {
           {this.render_view_staged_royalties_bottomsheet()}
           {this.render_pay_upcoming_subscriptions_bottomsheet()}
           {this.render_send_receive_coin_bottomsheet()}
+          {this.render_buy_album_bottomsheet()}
 
           {this.render_pick_file_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -2296,7 +2375,7 @@ class App extends Component {
           show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
           show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
 
-          add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)}
+          add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} add_audio_reply_to_stack={this.add_audio_reply_to_stack.bind(this)}
           
           open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
 
@@ -2318,6 +2397,7 @@ class App extends Component {
           show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.start_send_receive_coin_bottomsheet.bind(this)}
           update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
           load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)}
+          show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)}
           />
           {this.render_homepage_toast()}
       </div>
@@ -2492,6 +2572,30 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack)
   }
 
+  add_audio_reply_to_stack(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == this.getLocale()['1593cc']/* 'audio-messages' */ && stack[i].e5 == this.state.selected_e5){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593cc']/* 'audio-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['a311a']/* 'audio' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+    this.set_cookies_after_stack_action(stack)
+  }
+
+
+
+
+
   delete_message_from_stack(message, type){
     var stack = this.state.stack_items.slice()
     var pos = -1
@@ -2512,6 +2616,9 @@ class App extends Component {
       }
       if(message_pos != -1){
         stack[pos].messages_to_deliver.splice(message_pos, 1);
+        if(stack[pos].messages_to_deliver.length == 0){
+          stack.splice(pos, 1)
+        }
         this.setState({stack_items: stack})
         this.set_cookies_after_stack_action(stack)
         this.prompt_top_notification(this.getLocale()['2909']/* 'Message Deleted.' */, 1000)
@@ -4482,7 +4589,7 @@ class App extends Component {
     this.open_new_object_bottomsheet()
     this.setState({new_object_target: target});
     
-    if(target == '6'/* posts */ || target == '7'/* channel */){
+    if(target == '6'/* posts */ || target == '7'/* channel */ || target == '10'/* audioport */ ){
       this.load_my_subscriptions()
     }
   }
@@ -4490,54 +4597,59 @@ class App extends Component {
   render_create_object_ui(){
     var target = this.state.new_object_target;
     var size = this.getScreenSize();
-    if(target == '0'){
+    if(target == '0'/* jobs */){
       return(
         <div>
           <NewJobPage ref={this.new_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
         </div>
       )
     }
-    else if(target == '8'){
+    else if(target == '8'/* ends ☝️/spends 🫰 */){
       return(
         <div>
           <NewTokenPage ref={this.new_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
         </div>
       )
     }
-    else if(target == '3'){
+    else if(target == '3'/* subscriptions */){
       return(
         <NewSubscriptionPage ref={this.new_subscription_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
-    else if(target == '1'){
+    else if(target == '1'/* contracts */){
       return(
         <NewContractPage ref={this.new_contract_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
-    else if(target == '6'){
+    else if(target == '6'/* posts */){
       return(
         <NewPostPage ref={this.new_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
-    else if(target == '7'){
+    else if(target == '7'/* channels */){
       return(
         <NewChannelPage ref={this.new_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
-    else if(target == '4'){
+    else if(target == '4'/* storefront */){
       return(
         <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
-    else if(target == '5'){
+    else if(target == '5'/* mail */){
       return(
         <NewMailPage ref={this.new_mail_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       );
     }
-    else if(target == '9'){
+    else if(target == '9'/* contractors */){
       return(
         <NewContractorPage ref={this.new_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       );
+    }
+    else if(target == '10'/* audioport */){
+      return(
+        <NewAudioPage ref={this.new_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+      )
     }
     
   }
@@ -5170,6 +5282,9 @@ class App extends Component {
     }
     else if(target == '2'){
       this.open_edit_proposal_object(target, object)
+    }
+    else if(target == '10'){
+      this.open_edit_auiopost_object(target, object)
     }
   }
 
@@ -7748,7 +7863,26 @@ class App extends Component {
             me.pay_upcoming_subscriptions_page.current?.setState(tx)
           }
         }, (1 * 500));  
-    }      
+    }
+    else if(tx.type == this.getLocale()['a311a']/* 'audio' */){
+        this.open_new_object('10')
+        var me = this;
+        setTimeout(function() {
+          if(me.new_audio_page.current){
+            me.new_audio_page.current?.setState(tx)
+          }
+        }, (1 * 500));
+        
+    }
+    else if(tx.type == this.getLocale()['2962']/* 'buy-album' */){
+      this.open_buy_album_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.buy_album_page.current){
+            me.buy_album_page.current?.setState(tx)
+          }
+        }, (1 * 500));
+    }
   }
 
   delete_message_item(item, transaction_item){
@@ -9072,6 +9206,9 @@ class App extends Component {
     else if(page == 'request'){
       this.add_job_request_message_to_stack_object(tx)
     }
+    else if(page == 'audio'){
+      this.add_audio_reply_to_stack(tx)
+    }
     this.open_add_comment_bottomsheet()
   }
 
@@ -9354,9 +9491,29 @@ class App extends Component {
     }else{
       stack_clone.push(state_obj)
     }
+
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
   }
+
+  // update_stack_songs_and_albums(state_obj){
+  //   var stack_songs_and_albums_clone = structuredClone(this.state.stack_songs_and_albums)
+  //   if(stack_songs_and_albums_clone['albums'] == null) stack_songs_and_albums_clone['albums'] = []
+  //   if(stack_songs_and_albums_clone['songs'] == null) stack_songs_and_albums_clone['songs'] = []
+    
+  //   if(!stack_songs_and_albums_clone['albums'].includes(state_obj.album['id'])){
+  //     stack_songs_and_albums_clone['albums'].push(state_obj.album['id'])
+  //   }
+
+  //   var selected_tracks = state_obj.selected_tracks
+  //   selected_tracks.forEach(track => {
+  //     if(!stack_songs_and_albums_clone['songs'].includes(track['song_id'])){
+  //       stack_songs_and_albums_clone['songs'].push(track['song_id'])
+  //     }
+  //   });
+
+  //   this.setState({stack_songs_and_albums: stack_songs_and_albums_clone})
+  // }
 
 
 
@@ -10250,7 +10407,112 @@ class App extends Component {
       this.new_token_page.current?.when_variant_image_gif_files_picked(picked_files)
       this.edit_storefront_page.current?.when_variant_image_gif_files_picked(picked_files)
     }
+    else if(function_name == 'create_audio_pick_audio_file'){
+      this.new_audio_page.current?.when_audio_file_picked(picked_files)
+    }
+    else if(function_name == 'create_audio_album_art'){
+      this.new_audio_page.current?.when_album_art_selected(picked_files)
+    }
   }
+
+
+
+
+
+
+
+
+
+
+
+  render_buy_album_bottomsheet(){
+    if(this.state.buy_album_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.buy_album_bottomsheet} onClose={this.open_buy_album_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_buy_album_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_buy_album_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_album_bottomsheet.bind(this)} open={this.state.buy_album_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_buy_album_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_buy_album_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <BuyAlbumPage ref={this.buy_album_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_buy_album_transaction_to_stack={this.add_buy_album_transaction_to_stack.bind(this)}/>
+      </div>
+    )
+  }
+
+  open_buy_album_bottomsheet(){
+    if(this.state.buy_album_bottomsheet == true){
+      //closing
+      this.buy_album_bottomsheet = this.buy_album_page.current?.state;
+
+      this.setState({buy_album_bottomsheet: !this.state.buy_album_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({buy_album_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({buy_album_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({buy_album_bottomsheet: !me.state.buy_album_bottomsheet});
+
+          if(me.buy_album_bottomsheet != null){
+            me.buy_album_page.current?.setState(me.buy_album_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_buy_album_bottomsheet(object){
+    this.open_buy_album_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.buy_album_page.current != null){
+        me.buy_album_page.current.set_data(object)
+      }
+    }, (1 * 500));
+  }
+
+  add_buy_album_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
 
 
 
@@ -10317,7 +10579,7 @@ class App extends Component {
         </SwipeableViews> */}
         <TransformWrapper>
             <TransformComponent>
-              <img src={this.get_image_from_file(images[pos])} style={{height:'auto',width:'100%'}} />
+              <img src={this.get_image_from_file(images[pos])} style={{height:'auto',width:this.state.width}} />
             </TransformComponent>
           </TransformWrapper>
       </div>
@@ -10461,17 +10723,6 @@ class App extends Component {
 
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
-    // contractInstance.events['e4']({
-    //   filter: { p1/* sender_account_id */: 1002 }
-    // })
-    // .on('data', event => {
-    //   console.log('Event:', event);
-      
-    // })
-    // .on('error', error => {
-    //   console.error('Error-----------:', error);
-    // });
-
     // var obj = {name:'hello world'}
     // var cid = await this.store_data_in_web3(JSON.stringify(obj))
     // console.log('---------------------load_e5_data-------------------------------')
@@ -10483,7 +10734,12 @@ class App extends Component {
     // console.log(data)
 
     if(this.is_allowed_in_e5()){
-      // this.get_browser_cache_size_limit()
+      // await this.load_static_assets()
+      // this.inc_synch_progress()
+      // await this.load_coin_static_assets()
+      // this.inc_synch_progress()
+      // await this.load_all_wallets_icons()
+      // this.inc_synch_progress()
       if(this.state.accounts[this.state.selected_e5] != null){
         var me = this
         setTimeout(function() {
@@ -10493,7 +10749,6 @@ class App extends Component {
         this.when_wallet_data_updated(['(32)'], 0, '', true,) 
       }
     } 
-    
   }
 
   inc_synch_progress(){
@@ -12405,7 +12660,111 @@ class App extends Component {
     wallet_status_clone[e5] = 'done'
     this.setState({wallet_status: wallet_status_clone})
 
+
+    // this.load_e5_wallet_icons(e5)
+
   } 
+
+
+
+
+
+
+  load_all_wallets_icons = async () => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      await this.load_e5_wallet_icons(e5)
+    }
+  }
+
+  load_e5_wallet_icons = async (e5) => {
+    var end_request = this.state.e5s[e5].end_image
+    var spend_request = this.state.e5s[e5].spend_image
+    var ether_request = this.state.e5s[e5].ether_image
+    var e5_image_request = this.state.e5s[e5].e5_img
+    try{
+      var clone = structuredClone(this.state.e5s)
+      if(end_request != null){
+        var response = await fetch(end_request);
+        var blob = await response.blob()
+        var data = await this.convertBlobToBase64(blob);
+        clone[e5].end_image = data
+      }
+
+      if(spend_request != null){
+        var response = await fetch(spend_request);
+        var blob = await response.blob()
+        var data = await this.convertBlobToBase64(blob);
+        clone[e5].spend_image = data
+      }
+
+      if(ether_request != null){
+        var response = await fetch(ether_request);
+        var blob = await response.blob()
+        var data = await this.convertBlobToBase64(blob);
+        clone[e5].ether_image = data
+      }
+
+      if(e5_image_request != null){
+        var response = await fetch(e5_image_request);
+        var blob = await response.blob()
+        var data = await this.convertBlobToBase64(blob);
+        clone[e5].e5_img = data
+      }
+      this.setState({e5s: clone});
+    }
+    catch(e){
+       console.log(e)
+    }
+  }
+
+  convertBlobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // Remove the "data:image/..." prefix if desired
+      reader.onerror = reject;
+      reader.readAsDataURL(blob); // Reads the blob as a data URL
+    });
+  }
+
+  load_static_assets = async () => {
+    var clone = structuredClone(this.state.static_assets)
+    for (const asset in clone) {
+      if (clone.hasOwnProperty(asset)) {
+        var url = clone[asset]
+        try{
+          var response = await fetch(url);
+          var blob = await response.blob()
+          var data = await this.convertBlobToBase64(blob);
+          clone[asset] = data
+        }
+        catch(e){
+          console.log(e)
+        }
+      }
+    }
+    this.setState({static_assets: clone})
+  }
+
+  load_coin_static_assets = async () => {
+    var clone = structuredClone(this.state.coins)
+    for (const asset in clone) {
+      if (clone.hasOwnProperty(asset)) {
+        var url = clone[asset]['label']['image']
+        try{
+          var response = await fetch(url);
+          var blob = await response.blob()
+          var data = await this.convertBlobToBase64(blob);
+          clone[asset]['label']['image'] = data
+          clone[asset]['banner-icon']['image'] = data
+        }
+        catch(e){
+          console.log(e)
+        }
+      }
+    }
+    this.setState({coins: clone})
+  }
 
 
 
@@ -12498,6 +12857,18 @@ class App extends Component {
     //   this.inc_synch_progress()
     // }
 
+
+
+
+
+
+
+
+    /* ---------------------------------------- ALBUM COLLECTION DATA ------------------------------------------- */
+    await this.get_my_collection_data(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
 
 
 
@@ -12923,12 +13294,14 @@ class App extends Component {
       }
 
       var items = object['ipfs'].entered_objects == null ? [] : object['ipfs'].entered_objects
-      items.forEach(item => {
-        if(item['type'] == '11'){
-          var image = item['data']['image']
-          if(this.is_ecid(image)) ecids.push(image)
-        }
-      });
+      if(items.length > 0){
+        items.forEach(item => {
+          if(item['type'] == '11'){
+            var image = item['data']['image']
+            if(this.is_ecid(image)) ecids.push(image)
+          }
+        });
+      }
 
       var variants = object['ipfs'].variants == null ? [] : object['ipfs'].variants
       if(variants.length > 0){
@@ -12962,6 +13335,19 @@ class App extends Component {
       return true;
     }else{
       return false
+    }
+  }
+
+  get_my_collection_data = async (web3, E52contractInstance, e5, account) => {
+    var my_acquired_album_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5})
+
+    if(my_acquired_album_data_events.length > 0){
+      var latest_event = my_acquired_album_data_events[my_acquired_album_data_events.length - 1];
+      var my_acquired_album_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var my_albums = my_acquired_album_data['my_albums']
+      var my_tracks = my_acquired_album_data['my_tracks']
+
+      this.setState({my_albums: my_albums, my_tracks: my_tracks})
     }
   }
 
@@ -13907,7 +14293,7 @@ class App extends Component {
   }
 
   record_number_of_items(e5, object_type, count){
-    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics}
+    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics}
 
     var load_metrics_clone = structuredClone(obj[object_type])
     if(load_metrics_clone[e5] == null){
@@ -13950,6 +14336,9 @@ class App extends Component {
     }
     else if(object_type == 'contractor'){
       this.setState({load_contractors_metrics: load_metrics_clone})
+    }
+    else if(object_type == 'audio'){
+      this.setState({load_audio_metrics: load_metrics_clone})
     }
   }
 
@@ -15274,6 +15663,78 @@ class App extends Component {
     console.log('contractor count: '+created_contractor.length)
   }
 
+  get_audio_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts) => {
+    var created_audio_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */})
+    created_audio_events = created_audio_events.reverse()
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:19/* 19(audio_object) */ , p2/* item */: prioritized_accounts})
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_audio_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_audio_events = final_object_events
+    }
+
+    
+    this.record_number_of_items(e5, 'audio', created_audio_events.length)
+    var created_audios = []
+    var created_audio_mappings = {}
+    var is_first_time = this.state.created_audios[e5] == null
+    for(var i=0; i<created_audio_events.length; i++){
+      var id = created_audio_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_audio_events[i].returnValues.p1.toString() == hash.toString()){
+        var audio_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        
+        if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false)
+
+        var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21, p3/* context */:id})
+        var album_sales = 0
+        var song_sales = 0
+        requests.forEach(event => {
+          if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+            album_sales++
+          }else{
+            song_sales++
+          }
+        });
+
+        const data = {'id':id, 'ipfs':audio_data, 'event': created_audio_events[i], 'e5':e5, 'timestamp':created_audio_events[i].returnValues.p6, 
+        'author':created_audio_events[i].returnValues.p5, 'e5_id':id+e5, 'album_sales':album_sales, 'song_sales':song_sales
+        }
+
+        created_audios.push(data)
+        created_audio_mappings[id] = data
+      }
+
+      if(is_first_time){
+        var created_audios_clone = structuredClone(this.state.created_audios)
+        var created_audio_mappings_clone = structuredClone(this.state.created_audio_mappings)
+        created_audios_clone[e5] = created_audios
+        created_audio_mappings_clone[e5] = created_audio_mappings
+        this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone})        
+      }
+    }
+
+    var created_audios_clone = structuredClone(this.state.created_audios)
+    var created_audio_mappings_clone = structuredClone(this.state.created_audio_mappings)
+    created_audios_clone[e5] = created_audios
+    created_audio_mappings_clone[e5] = created_audio_mappings
+    this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone})
+
+    console.log('audio count: '+created_audios.length)
+  }
+
   load_run_data = async (contractInstance, E52contractInstance, e5, web3, H52contractInstance) => {
     var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
 
@@ -15295,6 +15756,8 @@ class App extends Component {
 
     var created_contractor_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */})
 
+    var created_audio_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */})
+
     var data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {})
 
     var metadata_events = await this.load_event_data(web3, E52contractInstance, 'e5', e5, {})
@@ -15305,7 +15768,7 @@ class App extends Component {
 
     var transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {})
 
-    var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events}
+    var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events}
 
     var all_data_clone = structuredClone(this.state.all_data)
     all_data_clone[e5] = obj
@@ -15355,6 +15818,11 @@ class App extends Component {
       this.load_bag_data(posts_to_load)
       this.load_contract_data(posts_to_load)
     }
+    if(page == this.getLocale()['1264k']/* 'audioport' */){
+      this.load_subscription_data(posts_to_load)
+      this.load_audio_data(posts_to_load)
+    }
+
     if(page == 'w'){
       this.load_token_data(posts_to_load)
     }
@@ -15962,6 +16430,26 @@ class App extends Component {
     }
   }
 
+  load_audio_data = async (posts_to_load) => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.get_web3_url_from_e5(e5)
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != ''){
+        const web3 = new Web3(web3_url);
+
+        var account = this.state.user_account_id[e5]
+        var contract_addresses = this.state.addresses[e5]
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        this.get_audio_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load)
+      }
+    }
+  }
+
 
   
 
@@ -16021,6 +16509,7 @@ class App extends Component {
     obj[this.getLocale()['1214']/* 'channels' */] = 36
     obj[this.getLocale()['1215']/* 'storefront' */] = 28
     obj[this.getLocale()['1216']/* 'bags' */] = 25
+    obj[this.getLocale()['1264k']/* 'audioport' */] = 19
     obj['w'] = 31
 
     return obj[page]

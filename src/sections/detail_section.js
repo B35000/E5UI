@@ -2,13 +2,6 @@ import React, { Component } from 'react';
 import ViewGroups from '../components/view_groups'
 import Tags from '../components/tags';
 
-// import Letter from './../assets/letter.png'; 
-import EndImg from './../assets/end_token_icon.png';
-import SpendImg from './../assets/spend_token_icon.png';
-import E35EndImg from './../assets/e35_end_token.png';
-import E35SpendImg from './../assets/e35_spend_token.png';
-
-
 import JobDetailsSection from './job_details_section'
 import ContractsDetailsSection from './contract_details_section'
 import ProposalDetailsSection from './proposal_details_section'
@@ -24,6 +17,7 @@ import StorefrontDetailsSection from './storefront_details_section'
 import BagDetailsSection from './bag_details_section'
 import ContractorDetailsSection from './contractor_detail_section'
 import CoinsDetailsSection from './coins_details_section'
+import AudioDetailSection from './audio_details_section'
 
 var bigInt = require("big-integer");
 
@@ -121,6 +115,11 @@ class PostDetailSection extends Component {
             else if(selected_tag == this.props.app_state.loc['1216']/* 'bags' */){
                 return(
                     <BagDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bag_item={this.props.selected_bag_item} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} viewed_bags={this.props.viewed_bags} open_fulfil_bag_request={this.props.open_fulfil_bag_request.bind(this)} view_bag_application_contract={this.props.view_bag_application_contract.bind(this)} add_bag_message_to_stack_object={this.props.add_bag_message_to_stack_object.bind(this)} get_bag_items={this.props.get_bag_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_bag={this.props.pin_bag.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)}/>
+                )
+            }
+            else if(selected_tag == this.props.app_state.loc['1264k']/* 'audioport' */ ){
+                return(
+                    <AudioDetailSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_audio_item={this.props.selected_audio_item} viewed_posts={this.props.viewed_posts} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} add_audio_reply_to_stack={this.props.add_audio_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_audio_items={this.props.get_audio_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.props.open_award_ui.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_audio={this.props.pin_audio.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} open_purchase_album_ui={this.props.open_purchase_album_ui.bind(this)}/>
                 )
             }
         }

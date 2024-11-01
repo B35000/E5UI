@@ -349,39 +349,13 @@ class CoinsDetailsSection extends Component {
 
 
     get_coins_data(){
-        var list = [
-            this.get_coin_info('BTC', 'Bitcoin', 'https://bafkreie2kzwwxljfs2vfnha5dey4m2mol7isouyozsmfervtqovv4dxwjy.ipfs.w3s.link/', 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1),
-
-            this.get_coin_info('BCH', 'Bitcoin Cash', 'https://bafkreieqzh5ukzx7xkqbat6enbs6vvui45mzrdel72nrpvquggddnyqzge.ipfs.w3s.link/', 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32),
-
-            this.get_coin_info('LTC', 'Litecoin', 'https://bafkreibssgaxtckfjpfi3rwrhq24aapqukesjliidbuo2tefsfyvudccia.ipfs.w3s.link/', 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1),
-
-            this.get_coin_info('DOGE', 'Dogecoin', 'https://bafkreigu2tax5e3kfiisfcx3yo4k54ly5za4p33n7cs4lvgdsrnqezkqey.ipfs.w3s.link/', 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1),
-
-            this.get_coin_info('DASH', 'Dash', 'https://bafkreicc4b6lb6pz2ql3iefz2graqvm5apk44jf3tjtwomdzi7pmsr3wiu.ipfs.w3s.link/', 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2),
-
-            this.get_coin_info('TRX', 'Tron', 'https://bafkreibogf2z4apmef7soghheiudwel67br5nxnuq4hydtvcqppme6lsre.ipfs.w3s.link/', 'sun', 6, 1_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
-
-            this.get_coin_info('XRP', 'Xrp', 'https://bafkreidql7b6v2emvlcnyl7qkhbzjknyvhu33ifxogf34236mmwue6bo4y.ipfs.w3s.link/', 'drops', 6, 1_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
-
-            this.get_coin_info('XLM', 'Stellar', 'https://bafkreiaeipmjvsizk6sbucvudjg332iaumravdte3p6gdnotfjbxsriqre.ipfs.w3s.link/', 'stroop', 7, 10_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
-
-            this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
-
-            this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
-
-            this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', 'microalgorand', 6, 1_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
-
-            this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
-
-            this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
-
-            this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
-
-            this.get_coin_info('SOL', 'Solana', 'https://bafkreie4wh23gwfdj4b2otksmajb7dmfvtn376kv3jfivmwocutkq773ai.ipfs.w3s.link/', 'lamport', 9, 1_000_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
-
-            this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000, this.props.app_state.loc['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
-        ]
+        var list = []
+        var coins = this.props.app_state.coins
+        for (const coin in coins) {
+            if (coins.hasOwnProperty(coin)) {
+                list.push(coins[coin])
+            }
+        }
         return list
     }
 

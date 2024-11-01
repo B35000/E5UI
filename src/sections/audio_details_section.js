@@ -52,7 +52,7 @@ function toTree(data) {
   return nodeById[0].sortRecursive();
 }
 
-class PostsDetailsSection extends Component {
+class AudioDetailSection extends Component {
     
     state = {
         selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
@@ -78,8 +78,8 @@ class PostsDetailsSection extends Component {
     }
 
     check_for_new_responses_and_messages() {
-        if(this.props.selected_post_item != null){
-            var object = this.get_item_in_array(this.get_post_items(), this.props.selected_post_item);
+        if(this.props.selected_audio_item != null){
+            var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
             if(object == null) return;
             this.props.get_objects_messages(object['id'],  object['e5'])
             this.props.get_post_award_data(object['id'], object['e5'])
@@ -92,7 +92,7 @@ class PostsDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2514']/* 'awards' */,this.props.app_state.loc['1693']/* 'responses' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['a2527d']/* 'media' */,this.props.app_state.loc['2514']/* awards */,this.props.app_state.loc['a2527a']/* 'comments' */],[1]
           ],
         }
     }
@@ -105,9 +105,8 @@ class PostsDetailsSection extends Component {
         )
     }
 
-
     render_posts_list_detail(){
-        if(this.props.selected_post_item == null){
+        if(this.props.selected_audio_item == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}
@@ -137,7 +136,6 @@ class PostsDetailsSection extends Component {
         )
     }
 
-
     when_navigate_view_post_list_detail_tags_object_updated(tag_obj){
         this.setState({navigate_view_post_list_detail_tags_object: tag_obj})
     }
@@ -149,7 +147,7 @@ class PostsDetailsSection extends Component {
 
     render_post_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_post_list_detail_tags_object, this.state.navigate_view_post_list_detail_tags_object['i'].active)
-        var object = this.get_item_in_array(this.get_post_items(), this.props.selected_post_item);
+        var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
         
         if(object == null){
             return(
@@ -165,7 +163,8 @@ class PostsDetailsSection extends Component {
                     {this.render_post_main_details_section(object)}
                 </div>
             )
-        }else if(selected_item == this.props.app_state.loc['1693']/* 'responses' */){
+        }
+        else if(selected_item == this.props.app_state.loc['a2527a']/* 'comments' */){
             return(
                 <div>
                     {this.render_post_responses(object)}
@@ -179,23 +178,45 @@ class PostsDetailsSection extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['a2527d']/* 'media' */){
+            return(
+                <div>
+                    {this.render_audio_songs(object)}
+                </div>
+            )
+        }
     }
 
     render_post_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
         var size = this.props.screensize
-        // var object = this.get_post_items()[this.props.selected_post_item];
         var item = this.get_post_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    {this.render_detail_item('3', item['genre'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['year'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['author'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['copyright'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['comment'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['listing_type'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['purchase_recipient'])}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     {this.render_taken_down_message_if_post_is_down(object)}
@@ -207,21 +228,27 @@ class PostsDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
                     {this.render_item_images(object)}
-                    {this.render_selected_links(object)}
+                    {/* {this.render_selected_links(object)} */}
                     
                     {this.render_edit_object_button(object)}
-
-
                     <div style={{height: 10}}/>
+
+
                     {this.render_detail_item('3', item['reply_count'])}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', item['award_count'])}
                     <div style={{height: 10}}/>
 
+                    {this.render_album_sales_data(object, item)}
+
+
+
                     {this.render_award_button(object)}
 
                     {this.render_pin_post_button(object)}
+
+                    {this.render_buy_album_button(object)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -229,7 +256,6 @@ class PostsDetailsSection extends Component {
             </div>
         )
     }
-
 
     render_taken_down_message_if_post_is_down(object){
         if(this.is_post_taken_down_for_sender(object)){
@@ -252,7 +278,6 @@ class PostsDetailsSection extends Component {
         return object[option][2][0]
     }
 
-
     render_comment_section_disabled(object){
         if(object['ipfs'].get_disabled_comments_section == null) return;
         var comments_disabled_option = this.get_selected_item2(object['ipfs'].get_disabled_comments_section, 'e')
@@ -266,37 +291,6 @@ class PostsDetailsSection extends Component {
         }
     }
 
-    render_selected_links(object){
-        if(object['ipfs'].added_links == null) return;
-        var items = [].concat(object['ipfs'].added_links).reverse()
-
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item, object)}>
-                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-    truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
-    }
-
-    get_title(item){
-        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
-        return `${obj[item['type']]} ${item_id}`
-    }
-
-
-    when_link_item_clicked(item, object){
-        this.props.open_e5_link(item, object)
-    }
 
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
@@ -324,18 +318,19 @@ class PostsDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2515']/* Pin the post to your feed' */, 'title':this.props.app_state.loc['2516']/* 'Pin Post' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1306a']/* 'Pin the Audiopost to  your feed.' */, 'title':this.props.app_state.loc['1306b']/* 'Pin Audiopost' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_post_clicked(object)}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2517']/* 'Pin/Unpin Post' */, 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1306c']/* 'Pin/Unpin Audiopost' */, 'action':''},)}
                 </div>
             </div>
         )
     }
 
     when_pin_post_clicked(object){
-        this.props.pin_post(object)
+        this.props.pin_audio(object)
     }
+
 
     render_item_data(items, object){
         var middle = this.props.height-200;
@@ -353,7 +348,7 @@ class PostsDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -386,20 +381,30 @@ class PostsDetailsSection extends Component {
         )
     }
 
-    get_post_items(){
-        return this.props.get_post_items()
+    get_audio_items(){
+        return this.props.get_audio_items()
     }
 
     get_post_details_data(object){
-        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Audiopost'] : [].concat(object['ipfs'].entered_indexing_tags)
         if(this.is_post_nsfw(object)){
-            tags = object['ipfs'] == null ? ['Post'] : ['🔞🔞🔞'].concat(object['ipfs'].entered_indexing_tags)
+            tags = object['ipfs'] == null ? ['Audiopost'] : ['🔞🔞🔞'].concat(object['ipfs'].entered_indexing_tags)
         }
-        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         var number_of_replies = this.get_convo_messages(object).length
         var number_of_awards = this.get_post_awards(object).length
+        
+        var genre = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_genre_text
+        var year = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_year_recorded_text
+        var author = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_author_text
+        var copyright = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_copyright_text
+        var comment = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_comment_text
+        var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var purchase_recipient = object['ipfs'] == null ? '000' :object['ipfs'].purchase_recipient
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
@@ -407,6 +412,35 @@ class PostsDetailsSection extends Component {
             
             'reply_count':{'title':`${number_with_commas(number_of_replies)}`, 'details': this.props.app_state.loc['2815']/* 'Number of Replies.' */, 'size':'l'},
             'award_count':{'title':`${number_with_commas(number_of_awards)}`, 'details': this.props.app_state.loc['2816']/* 'Number of Awards.' */, 'size':'l'},
+
+            'genre':{'title':genre, 'details':this.props.app_state.loc['a311y']/* 'Album Genre.' */, 'size':'l'},
+            'year':{'title':year, 'details':this.props.app_state.loc['a311aa']/* 'Year Recorded.' */, 'size':'l'},
+            'author':{'title':author, 'details':this.props.app_state.loc['a311ac']/* 'Author' */, 'size':'l'},
+            'copyright':{'title':copyright, 'details':this.props.app_state.loc['a311ae']/* 'Copyright' */, 'size':'l'},
+            'comment':{'title':comment, 'details':this.props.app_state.loc['a311ag']/* 'Comment' */, 'size':'l'},
+            'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
+            'banner-icon':{'header':author, 'subtitle':this.truncate(title, 15), 'image':image},
+
+            'id2':{'title':listing_type+' • '+object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+
+            'purchase_recipient':{'title':purchase_recipient, 'details':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'size':'l'},
+            'album_sales':{'title':number_with_commas(object['album_sales']), 'details':this.props.app_state.loc['2973']/* 'Album Sales' */, 'size':'l'},
+            'song_sales':{'title':number_with_commas(object['song_sales']), 'details':this.props.app_state.loc['2974']/* 'Song Sales' */, 'size':'l'},
+        }
+    }
+
+    render_album_sales_data(object, item){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+
+        if(object['event'].returnValues.p5 == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('3', item['album_sales'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['song_sales'])}
+                    <div style={{height: 10}}/>
+                </div>
+            )
         }
     }
 
@@ -418,7 +452,7 @@ class PostsDetailsSection extends Component {
 
 
     render_edit_object_button(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 == my_account){
@@ -426,7 +460,7 @@ class PostsDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2518']/* Edit Indexed Post' */, 'details':this.props.app_state.loc['2519']/* 'Change the basic details for your Indexed Post' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527b']/* Edit Indexed Audiopost' */, 'details':this.props.app_state.loc['a2527c']/* 'Change the basic details for your Indexed Audiopost' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
@@ -436,14 +470,13 @@ class PostsDetailsSection extends Component {
         }
     }
 
-
     open_basic_edit_object_ui(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
-        this.props.open_edit_object('6', object)
+        // var object = this.get_post_items()[this.props.selected_audio_item];
+        this.props.open_edit_object('10', object)
     }
 
     render_award_button(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 != my_account){
@@ -461,11 +494,93 @@ class PostsDetailsSection extends Component {
         }
     }
 
-
     open_award_ui(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         this.props.open_award_ui(object)
     }
+
+
+
+
+    render_buy_album_button(object){
+        var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var title = this.props.app_state.loc['a2527e']/* 'Buy' */+ ' '+listing_type
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['a2527f']/* `Purchase unlimited access to add it to your collection and playlists.` */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.open_purchase_album_ui(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527e']/* 'Buy' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    open_purchase_album_ui(object){
+        this.props.open_purchase_album_ui(object)
+    }
+
+
+
+
+
+    render_audio_songs(object){
+        var he = this.props.height-45
+        var items = object['ipfs'].songs
+        var object_item = this.get_post_details_data(object)
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
+                    {this.render_detail_item('8', object_item['id2'])}
+                    {this.render_detail_item('0')}
+                    <div>
+                        {items.map((item, index) => (
+                            <div key={index}>
+                                {this.render_song(item, object, index)} 
+                                <div style={{height:2}}/>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+
+    render_song(item, object, index){
+        var song_title = (index+1)+'. '+item['song_title']
+        var song_details = item['song_composer']
+        return(
+            <div onClick={() => this.when_song_item_clicked(item, object)}>
+                {this.render_detail_item('3', {'details':song_details,'title':song_title, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_song_item_clicked(item, object){
+        let me = this;
+        if(Date.now() - this.last_all_click_time3 < 200){
+            clearTimeout(this.all_timeout3);
+            //double tap
+            
+        }else{
+            this.all_timeout3 = setTimeout(function() {
+                clearTimeout(this.all_timeout3);
+                // single tap
+                me.play_song(item, object)
+            }, 200);
+        }
+        this.last_all_click_time3 = Date.now();
+    }
+
+    play_song(item, object){
+
+    }
+
+
+
 
 
 
@@ -475,8 +590,6 @@ class PostsDetailsSection extends Component {
 
     render_post_awards(object){
         var he = this.props.height-47
-        var size = this.props.screensize
-
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
@@ -491,7 +604,7 @@ class PostsDetailsSection extends Component {
     }
 
     render_award_top_title(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2525']/* 'Awards.' */, 'size':'l'})} 
@@ -545,10 +658,12 @@ class PostsDetailsSection extends Component {
 
 
     get_post_awards(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         if(this.props.app_state.award_data[object['id']] == null) return []
         return this.props.app_state.award_data[object['id']]
     }
+
+
 
 
 
@@ -583,7 +698,6 @@ class PostsDetailsSection extends Component {
                 {this.render_focused_message(object)}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
                     <div style={{'margin':'1px 0px 0px 0px'}}>
-                        {/* {this.render_image_picker()} */}
                         <div>
                             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked(object)}>
                                 <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
@@ -667,11 +781,12 @@ class PostsDetailsSection extends Component {
             return
         }
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'post')
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'audio')
     }
 
+
     render_top_title(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2526']/* 'Comments.' */, 'size':'l'})} 
@@ -686,12 +801,11 @@ class PostsDetailsSection extends Component {
     }
 
     componentDidUpdate(){
-        // var has_scrolled = this.has_user_scrolled[this.props.selected_post_item]
+        // var has_scrolled = this.has_user_scrolled[this.props.selected_audio_item]
         // if(has_scrolled == null){
         //     this.scroll_to_bottom()
         // }
     }
-
 
     render_sent_received_messages(object){
         var middle = this.props.height-250;
@@ -709,7 +823,7 @@ class PostsDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -719,24 +833,6 @@ class PostsDetailsSection extends Component {
                 </div>
             )
         }
-        // else if(this.get_focused_message(object) != null){
-        //     var focused_message_replies = this.get_focused_message_replies(object)
-        //     return(
-        //         <div>
-        //             <div style={{'padding': '2px 5px 2px 5px'}}>
-        //                 {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
-        //             </div>
-        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-        //                         {this.render_messages(focused_message_replies, object)}
-        //                         <div ref={this.messagesEnd}/>
-        //                     </ul>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     )
-        // }
         else{
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
@@ -801,7 +897,6 @@ class PostsDetailsSection extends Component {
 
     focus_message(item, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        // var object = this.get_post_items()[this.props.selected_post_item];
 
         if(this.state.focused_message[object['id']] != item){
             clone[object['id']] = item
@@ -815,20 +910,8 @@ class PostsDetailsSection extends Component {
         this.setState({focused_message: clone})
     }
 
-    // includes_function(array, item){
-    //     var return_value = false;
-    //     array.forEach(element => {
-    //         if(element['id'] == item['id']){
-    //             console.log('found clone: '+item['id'])
-    //             return_value = true
-    //         }
-    //     });
-    //     return return_value
-    // }
-
     unfocus_message(object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        // var object = this.get_post_items()[this.props.selected_post_item];
         if(clone['tree'][object['id']] != null){
             var index = this.get_index_of_item(object)
             if(index != -1){
@@ -842,7 +925,7 @@ class PostsDetailsSection extends Component {
     }
 
     get_index_of_item(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         var focused_item = this.state.focused_message[object['id']]
         var focused_items = this.state.focused_message['tree'][object['id']]
         var pos = -1
@@ -866,7 +949,7 @@ class PostsDetailsSection extends Component {
                             }}
                             swipeRight={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
-                            action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1511']/* 'post-messages' */)
+                            action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1593cc']/* 'audio-messages' */)
                             }}
                             >
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
@@ -874,54 +957,6 @@ class PostsDetailsSection extends Component {
                     </SwipeableList>
             </div>
         )
-
-        var focused_message = this.get_focused_message(object)
-
-        if(item == focused_message){
-            return(
-                <div>
-                    <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>Focus</div>,
-                            action: () => console.log()
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message(object)
-                            }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>Focus</div>,
-                            action: () => this.focus_message(item, object)
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message(object)
-                            }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
-
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                </div>
-            )
-        }
     }
 
     when_message_clicked = (event, item, focused_message) => {
@@ -939,7 +974,6 @@ class PostsDetailsSection extends Component {
         }
         this.last_all_click_time = Date.now();
     }
-
 
     when_message_double_tapped(item){
         var message = item['message'];
@@ -1014,6 +1048,10 @@ class PostsDetailsSection extends Component {
         )
     }
 
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
     render_award_object_if_any(item){
         if(item['award_tier'] != null && item['award_tier'] != ''){
             return(
@@ -1055,7 +1093,7 @@ class PostsDetailsSection extends Component {
     }
 
     get_sender_title_text(item, object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
@@ -1087,7 +1125,7 @@ class PostsDetailsSection extends Component {
     }
 
     get_convo_messages(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         if(this.props.app_state.object_messages[object['id']] == null) return [];
         return this.filter_messages_for_blocked_accounts(this.props.app_state.object_messages[object['id']])
     }
@@ -1139,13 +1177,13 @@ class PostsDetailsSection extends Component {
     }
 
     get_stacked_items(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         var convo_id = object['id']
 
         var stack = this.props.app_state.stack_items
         var stacked_items = []
         for(var i=0; i<stack.length; i++){
-            if(stack[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
+            if(stack[i].type == this.props.app_state.loc['1593cc']/* 'audio-messages' */){
                 for(var e=0; e<stack[i].messages_to_deliver.length; e++){
                     var message_obj = stack[i].messages_to_deliver[e]
                     if(message_obj['id'] == convo_id){
@@ -1181,33 +1219,8 @@ class PostsDetailsSection extends Component {
     }
 
     get_focused_message(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         return this.state.focused_message[object['id']]
-    }
-
-    render_image_picker(){
-        return(
-            <div>
-                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                    <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)}/>
-                </div>
-            </div>
-        )
-    }
-
-    /* called when images have been picked from picker */
-    when_image_gif_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    var image = ev.target.result
-                    this.add_image_to_stack(image)
-                }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
-            }
-        }
     }
 
     when_entered_text_input_field_changed(text){
@@ -1216,7 +1229,6 @@ class PostsDetailsSection extends Component {
 
     add_message_to_stack(object){
         var message = this.state.entered_text.trim()
-        // var object = this.get_post_items()[this.props.selected_post_item];
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
 
@@ -1237,7 +1249,7 @@ class PostsDetailsSection extends Component {
         else{
             var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
-            this.props.add_post_reply_to_stack(tx)
+            this.props.add_audio_reply_to_stack(tx)
 
             this.setState({entered_text:''})
             this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
@@ -1248,31 +1260,8 @@ class PostsDetailsSection extends Component {
         }
     }
 
-    add_image_to_stack(image){
-        var object = this.get_post_items()[this.props.selected_post_item];
-        if(this.props.app_state.user_account_id[object['e5']] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
-            return
-        }
-        var message = this.state.entered_text.trim()
-        var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
-        var object = this.get_post_items()[this.props.selected_post_item];
-        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0, 'message_id':message_id, 'focused_message_id':focused_message_id}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5']}
-
-        this.props.add_post_reply_to_stack(tx)
-
-        this.setState({entered_text:''})
-        this.props.notify('message added to stack', 600)
-
-        if (this.messagesEnd.current){
-            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        }
-    }
-
-
     render_focus_list(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
         var items = this.state.focused_message['tree'][object['id']]
 
         if(items != null && items.length > 0){
@@ -1290,7 +1279,6 @@ class PostsDetailsSection extends Component {
         }
     }
 
-
     shorten_message_item(message){
         var return_val = message
         if(message.length > 10){
@@ -1299,10 +1287,9 @@ class PostsDetailsSection extends Component {
         return return_val
     }
 
-
     when_focus_chain_item_clicked(item, pos, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        // var object = this.get_post_items()[this.props.selected_audio_item];
 
         var new_array = []
         for(var i=0; i<=pos; i++){
@@ -1313,9 +1300,6 @@ class PostsDetailsSection extends Component {
         
         this.setState({focused_message: clone})
     }
-
-
-
 
     render_all_comments(object){
         var sorted_messages_in_tree = this.get_message_replies_in_sorted_object(object)
@@ -1398,7 +1382,11 @@ class PostsDetailsSection extends Component {
 
 
 
-    
+
+
+
+
+
 
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
@@ -1419,7 +1407,6 @@ class PostsDetailsSection extends Component {
         )
 
     }
-
 
     get_number_width(number){
         var last_two_digits = number.toString().slice(0, 1)+'0';
@@ -1473,9 +1460,11 @@ class PostsDetailsSection extends Component {
     }
 
 
+
+
 }
 
 
 
 
-export default PostsDetailsSection;
+export default AudioDetailSection;

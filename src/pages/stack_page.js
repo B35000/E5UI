@@ -1791,13 +1791,17 @@ class StackPage extends Component {
         var should_optimize_run = true;
         var now = Date.now()
         var ipfs_index = await this.get_ipfs_index_object(txs, now, calculate_gas)
+        var new_transaction_index_obj={}
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
+                var new_tx_index = -1
                 if(txs[i].type == this.props.app_state.loc['1311']/* 'contract' */){
                     var contract_obj = this.format_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(contract_obj)
+
+                    new_tx_index = ints.length -1
                     
                     var contract_type = this.get_selected_item(txs[i].new_contract_type_tags_object, txs[i].new_contract_type_tags_object['i'].active)
 
@@ -1896,6 +1900,8 @@ class StackPage extends Component {
                         adds.push([])
                         ints.push(token_obj)
 
+                        new_tx_index = ints.length -1
+
                         var obj = {}
                         obj[this.props.app_state.loc['2773']/* 'low' */] = '10000'
                         obj[this.props.app_state.loc['2774']/* 'medium' */] = '100000'
@@ -1944,6 +1950,8 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(token_obj)
+
+                        new_tx_index = ints.length -1
 
                         var token_stack_id = ints.length-1
 
@@ -2029,6 +2037,8 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(subscription_obj)
 
+                    new_tx_index = ints.length -1
+
                     var subscription_stack_id = ints.length-1
 
                     var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
@@ -2099,6 +2109,8 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(post_obj)
 
+                    new_tx_index = ints.length -1
+
                     var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
                     strs.push(index_data.str)
                     adds.push([])
@@ -2110,6 +2122,8 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(job_obj)
 
+                    new_tx_index = ints.length -1
+
                     var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
                     strs.push(index_data.str)
                     adds.push([])
@@ -2120,6 +2134,8 @@ class StackPage extends Component {
                     strs.push([['']])
                     adds.push([])
                     ints.push(channel_obj)
+
+                    new_tx_index = ints.length -1
 
                     var channel_stack_id = ints.length-1
 
@@ -2189,7 +2205,9 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(storefront_data)
 
-                    var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    new_tx_index = ints.length -1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
                     strs.push(index_data.str)
                     adds.push([])
                     ints.push(index_data.int)
@@ -2246,6 +2264,8 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(proposal_obj)
+
+                    new_tx_index = ints.length -1
 
                     var include_yes_vote = this.get_selected_item(txs[i].get_auto_vote_yes_object, txs[i].get_auto_vote_yes_object['i'].active)
 
@@ -2467,7 +2487,9 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(storefront_bag_obj)
 
-                     var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    new_tx_index = ints.length -1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
                     strs.push(index_data.str)
                     adds.push([])
                     ints.push(index_data.int)
@@ -2565,6 +2587,8 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(contractor_obj)
+
+                    new_tx_index = ints.length -1
 
                     var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
                     strs.push(index_data.str)
@@ -2674,9 +2698,54 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(pay_subscription)
                 }
+                else if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+                    var contractor_obj = this.format_audio_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(contractor_obj)
+
+                    new_tx_index = ints.length -1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['1593cc']/* 'audio-messages' */){
+                    var message_obj = await this.format_audiopost_comment_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
+                    var buy_album_obj = await this.format_buy_album_songs(txs[i], calculate_gas, ints, ipfs_index)
+                    
+                    if(buy_album_obj.depth_swap_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.depth_swap_obj)
+                    }
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(buy_album_obj.transfers_obj)
+                    
+                    strs.push(buy_album_obj.string_obj)
+                    adds.push([])
+                    ints.push(buy_album_obj.obj)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
+                if(new_tx_index != -1) new_transaction_index_obj[txs[i].id] = new_tx_index
             }
             
         }
@@ -2692,8 +2761,8 @@ class StackPage extends Component {
 
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */){
-                metadata_action[1].push(i)
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+                metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
                 metadata_action[4].push(0)
@@ -2717,9 +2786,9 @@ class StackPage extends Component {
         var index_data_strings = [ [], [] ]
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */){
-                var tx_tags = pushed_txs[i].entered_indexing_tags
-                index_data_in_tags[1].push(i)
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+                // var tx_tags = pushed_txs[i].entered_indexing_tags
+                index_data_in_tags[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 index_data_in_tags[2].push(35)
                 index_data_strings[0].push('en')
                 index_data_strings[1].push('')
@@ -2829,6 +2898,36 @@ class StackPage extends Component {
             var uploaded_data = this.props.app_state.uploaded_data_cids
             var data = {'cids': uploaded_data, 'time':Date.now()}
             var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'ciddata');
+            string_obj[0].push(string_data)
+
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+
+        var added_song_album_data = this.get_songs_and_albums_to_add(pushed_txs);
+        if(added_song_album_data.tracks.length != 0){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [5], /* contexts */
+                [0] /* int_data */
+            ]
+            
+            var string_obj = [[]]
+            var my_albums = this.props.app_state.my_albums.slice()
+            var my_tracks = this.props.app_state.my_tracks.slice()
+
+            added_song_album_data.albums.forEach(album => {
+                my_albums.push(album)
+            });
+            added_song_album_data.tracks.forEach(track => {
+                my_tracks.push(track)
+            });
+
+            var data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myaudio');
             string_obj[0].push(string_data)
 
             strs.push(string_obj)
@@ -3042,11 +3141,23 @@ class StackPage extends Component {
                     var payout_record_info = {'payout_id':t.staging_data['payout_id'], 'id':Date.now(), 'transacted_batches':transacted_batches}
                     obj[t.id] = payout_record_info
                 }
+                else if(txs[i].type == this.props.app_state.loc['1593cc']/* 'audio-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }   
+                }
+                else if(txs[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
+                    var t = txs[i]
+                    var sale_type = this.get_album_sale_type(t)
+                    var award_object = {'sale_type':sale_type, 'songs_included':this.get_selected_song_ids(t)}
+                    obj[t.id] = award_object
+                }
             }
         }
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */){
                 obj[pushed_txs[i].id] = pushed_txs[i]
             }
         }
@@ -3074,6 +3185,22 @@ class StackPage extends Component {
             var uploaded_data = this.props.app_state.uploaded_data_cids
             var data = {'cids': uploaded_data, 'time':Date.now()}
             obj['ciddata'] = data
+        }
+
+        var added_song_album_data = this.get_songs_and_albums_to_add(pushed_txs)
+        if(added_song_album_data.tracks.length != 0){
+            var my_albums = this.props.app_state.my_albums.slice()
+            var my_tracks = this.props.app_state.my_tracks.slice()
+
+            added_song_album_data.albums.forEach(album => {
+                my_albums.push(album)
+            });
+            added_song_album_data.tracks.forEach(track => {
+                my_tracks.push(track)
+            });
+
+            var data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
+            obj['myaudio'] = data
         }
 
         return await this.get_object_ipfs_index(obj, calculate_gas);
@@ -3640,7 +3767,6 @@ class StackPage extends Component {
             }
         }
 
-
         for(var i=0; i<ints.length; i++){
             //all the transactions
             if(ints[i][0][0] == 30000 && ints[i][0][1] == 1){
@@ -3679,6 +3805,7 @@ class StackPage extends Component {
     }
 
     get_exchange_swap_down_actions(amount, exchange, ints){
+        if(exchange['balance'] == 0) return []
         var active_exchange_depth_data = this.get_active_exchange_depth_balance(exchange, ints)
         //get the depth balances
         var swap_down_actions = []
@@ -5234,6 +5361,165 @@ class StackPage extends Component {
         return {int: transaction_obj, str: string_obj}
         
     }
+
+    format_audio_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 19/* 19(audio_object) */, 0]
+        ]
+        return obj
+    }
+
+    format_audiopost_comment_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_buy_album_songs = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var purchase_recipient = t.album['ipfs'].purchase_recipient
+        var post_id = t.album['id'];
+        var sale_type = this.get_album_sale_type(t)
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [21], [23],/* 21(album_sale) */
+            [post_id], /* contexts */
+            [sale_type] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var exchanges_used = t.exchanges_used
+        var exchange_amounts = t.exchange_amounts
+
+        for(var i=0; i<exchanges_used.length; i++){
+            var exchange = exchanges_used[i]
+            var amount = (exchange_amounts[exchange]).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, transfers_obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var u=0; u<transfer_actions.length; u++){
+                transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(transfer_actions[u]['amount'])
+                transfers_obj[6].push(transfer_actions[u]['depth'])
+            }
+        }
+
+
+        var award_object = {'sale_type':sale_type, 'songs_included':this.get_selected_song_ids(t)}
+        
+        var string_data = await this.get_object_ipfs_index(award_object, calculate_gas, ipfs_index, t.id);
+        string_obj[0].push(string_data)
+
+
+        return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj, obj:obj, string_obj:string_obj}
+    }
+
+    get_album_sale_type(t){
+        var selected_tracks = t.selected_tracks
+
+        var object = t.album
+        var all_tracks = object['ipfs'].songs
+        if(selected_tracks.length == all_tracks.length && object['ipfs'].price_data.length > 0){
+            //buying entire album
+            return 0
+        }else{
+            //buying individual tracks
+            return 1
+        }
+    }
+
+    get_selected_song_ids(t){
+        var selected_tracks = t.selected_tracks
+        var ids = []
+        selected_tracks.forEach(track => {
+            ids.push(track['song_id'])
+        });
+        return ids
+    }
+
+    get_songs_and_albums_to_add(pushed_txs){
+        var albums = []
+        var tracks = []
+        pushed_txs.forEach(transaction => {
+            if(transaction.type == this.props.app_state.loc['2962']/* 'buy-album' */){
+                albums.push(transaction.album['id'])
+                
+                var selected_tracks = transaction.selected_tracks
+                selected_tracks.forEach(track => {
+                    tracks.push(track['song_id'])
+                });
+            }
+        });
+
+        return {albums:albums, tracks:tracks}
+    }
+
+
+
+
+
+
+
+
+
 
     optimize_run_if_enabled(ints, strs, adds, should_optimize_run){
         var selected_item = this.get_selected_item(this.state.get_stack_optimizer_tags_object, 'e')
@@ -6944,11 +7230,11 @@ class StackPage extends Component {
                                 </div>
                             </li>
                         ))}
-                        {items2.map(() => (
+                        {/* {items2.map(() => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_empty_horizontal_list_item2()}
                             </li>
-                        ))}
+                        ))} */}
                     </ul>
                 </div>
             )
@@ -9116,7 +9402,6 @@ class StackPage extends Component {
 
     render_uploaded_file(ecid_obj, index){
         var background_color = this.props.theme['view_group_card_item_background'];
-        // console.log('stackpage', this.props.app_state.uploaded_data)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data != null){

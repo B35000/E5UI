@@ -304,6 +304,13 @@ class PostPreview extends Component {
                 </div>
             )
         }
+        else if(this.state.type == 'audio'){
+            return(
+                <div>
+                    {this.render_pin_audio_button(object)}
+                </div>
+            )
+        }
     }
 
     render_pin_post_button(object){
@@ -330,12 +337,27 @@ class PostPreview extends Component {
         )
     }
 
+    render_pin_audio_button(object){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1306a']/* 'Pin the Audiopost to  your feed.' */, 'title':this.props.app_state.loc['1306b']/* 'Pin Audiopost' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_post_clicked(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1306c']/* 'Pin/Unpin Audiopost' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
     when_pin_post_clicked(object){
         if(this.state.type == 'channel'){
             this.props.pin_channel(object)
         }
         else if(this.state.type == 'post'){
             this.props.pin_post(object)
+        }
+        else if(this.state.type == 'audio'){
+            this.props.pin_audio(object)
         }
         
     }

@@ -452,7 +452,6 @@ class NewTokenPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['626']/* 'Set an image for your new Token. Black picks gif, grey picks image.' */})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part()}
 
@@ -527,19 +526,19 @@ class NewTokenPage extends Component {
         var image = this.state.token_image == null ? default_image : this.get_image_from_file(this.state.token_image)
         return(
             <div>
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
-                    <div style={{'padding': '5px', width:45, 'height':45}}>
-                        <img alt="" src={image} style={{height:50 ,width:50, 'border-radius':'15%'}} onClick={()=> this.when_icon_image_tapped()}/>
+                <div style={{'margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_text_banner_image', 1)}/>
+                    </div>
+
+                    <div style={{'margin': '10px 0px 0px 0px'}}>
+                        <img alt="" src={image} style={{height:100 ,width:100, 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
                     </div>
 
                     {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px', 'margin':'0px 0px 0px 10px'}}>
                         <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)}/>
                     </div> */}
-
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_text_banner_image', 1)}/>
-                    </div>
 
                     {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 10px'}}>
                         <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />

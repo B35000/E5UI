@@ -3,10 +3,6 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 
-// import Letter from './../assets/letter.png';
-// import E5EmptyIcon from './../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
-
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import imageCompression from 'browser-image-compression';
@@ -274,16 +270,6 @@ class AddCommentPage extends Component {
     render_create_image_ui_buttons_part(){
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-                {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                    <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-                </div> */}
-
-                {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                    <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-                </div> */}
-
                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                     <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_image', 10**16)}/>
                 </div>
@@ -338,7 +324,7 @@ class AddCommentPage extends Component {
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                     
                                 </div>
@@ -652,6 +638,9 @@ class AddCommentPage extends Component {
         }
         else if(page == 'request'){
             tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+        }
+        else if(page == 'audio'){
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
         }
 
         this.props.add_comment_to_respective_forum_page(tx, page)

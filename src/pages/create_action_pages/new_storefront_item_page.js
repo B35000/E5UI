@@ -2011,10 +2011,52 @@ class NewStorefrontItemPage extends Component {
 
 
 
-    render_enter_item_price_part(){
-        var size = this.props.size
-        var height = this.props.height-150
 
+
+
+
+    render_variants_picker_part(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div style={{'overflow-x':'hidden'}}>
+                    {this.render_variant_details_picker_part()}
+                    {this.render_enter_item_price_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_variant_details_picker_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_item_price_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_variant_details_picker_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_item_price_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_enter_item_price_part(){
         return(
             <div style={{}}>
                 {this.render_set_token_and_amount_part()}
@@ -2113,6 +2155,8 @@ class NewStorefrontItemPage extends Component {
         return object
     }
 
+
+
     render_set_prices_list_part(){
         var middle = this.props.height-100;
         var size = this.props.size;
@@ -2180,51 +2224,13 @@ class NewStorefrontItemPage extends Component {
 
 
 
-    render_variants_picker_part(){
-        var size = this.props.app_state.size
-        if(size == 's'){
-            return(
-                <div style={{'overflow-x':'hidden'}}>
-                    {this.render_variant_details_picker_part()}
-                    {this.render_enter_item_price_part()}
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_variant_details_picker_part()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_enter_item_price_part()}
-                    </div>
-                </div>
-                
-            )
-        }
-        else if(size == 'l'){
-            return(
-                <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_variant_details_picker_part()}
-                    </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_enter_item_price_part()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
+    
 
     render_variant_details_picker_part(){
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['535c']/* Set the details for a variant of your new storefront item, then tap the black circle to add it. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['535c']/* Set the details for a variant of your new storefront item. */, 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 {this.render_variant_tabs()}
                 
@@ -2238,8 +2244,6 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['514']/* 'Variant Images' */, 'details':this.props.app_state.loc['515']/* 'You can set some images for your variant' */, 'size':'l'})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
-                <div style={{height:10}}/>
                 {this.render_variant_image_picker_ui()}
                 <div style={{height:10}}/>
                 {this.render_variant_images()}
@@ -2520,9 +2524,9 @@ class NewStorefrontItemPage extends Component {
         )
     }
 
-    truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
-    }
+    // truncate(source, size) {
+    //     return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    // }
 
 
     render_tab_item(item, index){
@@ -2658,29 +2662,29 @@ class NewStorefrontItemPage extends Component {
         }
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
+    // get_all_sorted_objects(object){
+    //     var all_objects = []
+    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+    //         var e5 = this.props.app_state.e5s['data'][i]
+    //         var e5_objects = object[e5]
+    //         if(e5_objects != null){
+    //             all_objects = all_objects.concat(e5_objects)
+    //         }
+    //     }
+    //     return this.sortByAttributeDescending(all_objects, 'timestamp')
+    // }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
+    // sortByAttributeDescending(array, attribute) {
+    //   return array.sort((a, b) => {
+    //       if (a[attribute] < b[attribute]) {
+    //       return 1;
+    //       }
+    //       if (a[attribute] > b[attribute]) {
+    //       return -1;
+    //       }
+    //       return 0;
+    //   });
+    // }
 
 
 

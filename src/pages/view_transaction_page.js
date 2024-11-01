@@ -192,7 +192,7 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */){
+        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */ && item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1788']/* 'Make some changes to the transaction' */, 'title':this.props.app_state.loc['1789']/* 'Edit' */})}
@@ -283,6 +283,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_post_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['a311a']/* audio */){
+                return(
+                    <div>
+                        {this.render_audio_data()}
                     </div>
                 )
             }
@@ -683,6 +690,20 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_upcoming_subscription_payment_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['1593cc']/* 'audio-messages' */){
+                return(
+                    <div>
+                        {this.render_mail_message_data('Audiopost Messages')}
+                    </div>
+                )   
+            }
+            else if(tx.type == this.props.app_state.loc['2962']/* 'buy-album' */){
+                return(
+                    <div>
+                        {this.render_buy_album_transaction_data()}
                     </div>
                 )
             }
@@ -1587,6 +1608,178 @@ class ViewTransactionPage extends Component {
         var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
         return `${obj[item['type']]} ${item_id}`
     }
+
+
+
+
+
+
+
+
+    render_audio_data(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_audio_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['genre'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['year'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['author'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['copyright'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['comment'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['listing_type'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['purchase_recipient'])}
+                    {this.render_detail_item('0')}
+
+
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_song_tabs()}
+                    {this.render_contractor_price_amounts()}
+
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_contractor_price_amounts(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var object = this.format_post();
+        var items = [].concat(object['ipfs'].price_data)
+        if(items.length == 0){
+            items = [0, 1, 2]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div> 
+            )
+        }
+        return(
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px 0px 2px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_song_tabs(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var object = this.format_post();
+        var items = [].concat(object['ipfs'].songs)
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_tab_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_tab_item(item, index){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':item['song_id'], 'details':this.truncate(item['song_title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+            </div>
+        )
+    }
+
+    get_audio_details_data(object){
+        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var genre = object['ipfs'].entered_genre_text
+        var year = object['ipfs'].entered_year_recorded_text
+        var author = object['ipfs'].entered_author_text
+        var copyright = object['ipfs'].entered_copyright_text
+        var comment = object['ipfs'].entered_comment_text
+        var listing_type = this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var image = object['ipfs'].album_art
+        var purchase_recipient = object['ipfs'].purchase_recipient
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'genre':{'title':genre, 'details':this.props.app_state.loc['a311y']/* 'Album Genre.' */, 'size':'l'},
+            'year':{'title':year, 'details':this.props.app_state.loc['a311aa']/* 'Year Recorded.' */, 'size':'l'},
+            'author':{'title':author, 'details':this.props.app_state.loc['a311ac']/* 'Author' */, 'size':'l'},
+            'copyright':{'title':copyright, 'details':this.props.app_state.loc['a311ae']/* 'Copyright' */, 'size':'l'},
+            'comment':{'title':comment, 'details':this.props.app_state.loc['a311ag']/* 'Comment' */, 'size':'l'},
+            'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
+            'banner-icon':{'header':author, 'subtitle':this.truncate(title, 15), 'image':image},
+            'purchase_recipient':{'title':purchase_recipient, 'details':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'size':'l'},
+        }
+    }
+
+
 
 
 
@@ -5217,6 +5410,121 @@ class ViewTransactionPage extends Component {
             }
         }
         return selected_subs
+    }
+
+
+
+
+
+
+
+    render_buy_album_transaction_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var object = transaction_item.album
+        var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+        var author = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_author_text
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'14px', 'text': this.props.app_state.loc['2971']/* 'The following songs will be added to your collection after the purchase.' */})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('8', {'title':listing_type+' • '+object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'})}
+                {this.render_selected_song_tabs()}
+                <div style={{height: 10}}/>
+                {this.render_total_to_be_paid()}
+            </div>
+        )
+    }
+
+    render_selected_song_tabs(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = [].concat(transaction_item.selected_tracks)
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_tab_item2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_tab_item2(item, index){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':item['song_id'], 'details':this.truncate(item['song_title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+            </div>
+        )
+    }
+
+    render_total_to_be_paid(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2967']/* 'Total Purchase amounts.' */, 'details':this.props.app_state.loc['2968']/* 'Here\'s the toal amount of money you\'ll be paying for the tracks.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_total_payments2()}
+            </div>
+        )
+    }
+
+    render_total_payments2(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var data = transaction_item.data
+        var exchanges_used = [].concat(data.exchanges_used)
+        var exchange_amounts = data.exchange_amounts
+        var e5 = transaction_item.e5
+
+        if(exchanges_used.length == 0){
+            return(
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                </div>
+            )
+        }
+
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {exchanges_used.map((item, index) => (
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':exchange_amounts[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(exchange_amounts[item]), 'barwidth':this.calculate_bar_width((exchange_amounts[item])), 'number':this.format_account_balance_figure((exchange_amounts[item])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>  
+        )
     }
 
 

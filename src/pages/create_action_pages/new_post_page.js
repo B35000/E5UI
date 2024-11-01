@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
-// import Letter from '../../assets/letter.png';
-// import E5EmptyIcon from '../../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
-
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
@@ -36,7 +32,6 @@ class NewPostPage extends Component {
     state = {
         id: makeid(8), type:this.props.app_state.loc['297'], e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
-        // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], selected_subscriptions:[],
@@ -190,7 +185,7 @@ class NewPostPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -264,6 +259,10 @@ class NewPostPage extends Component {
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
+
+
+
+
 
 
     render_enter_tags_part(){
@@ -366,10 +365,6 @@ class NewPostPage extends Component {
 
             </div>
         )
-    }
-
-    when_get_take_down_option(tag_obj){
-        this.setState({get_take_down_option: tag_obj})
     }
 
     render_title_tags_part2(){
@@ -486,34 +481,6 @@ class NewPostPage extends Component {
 
    
 
-
-
-    
-    render_new_job_object(){
-        return;
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        var items = [].concat(this.state.entered_objects);
-        return ( 
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                <div style={{'padding': '5px 0px 5px 0px'}}>
-                    {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
-                    {this.render_detail_item('0')}
-
-                    <Draggable>
-                        {items.map((item, index) => (
-                            <div key={index}>
-                                {this.render_detail_item(item['type'], item['data'])} 
-                                <div style={{height:10}}/>
-                            </div>
-                        ))}
-                    </Draggable>
-                </div>         
-            </div>
-        );
-    }
 
 
 
@@ -1297,30 +1264,30 @@ class NewPostPage extends Component {
         return return_objects
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
+    // get_all_sorted_objects(object){
+    //     var all_objects = []
+    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+    //         var e5 = this.props.app_state.e5s['data'][i]
+    //         var e5_objects = object[e5]
+    //         if(e5_objects != null){
+    //             all_objects = all_objects.concat(e5_objects)
+    //         }
+    //     }
 
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
+    //     return this.sortByAttributeDescending(all_objects, 'timestamp')
+    // }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
+    // sortByAttributeDescending(array, attribute) {
+    //   return array.sort((a, b) => {
+    //       if (a[attribute] < b[attribute]) {
+    //       return 1;
+    //       }
+    //       if (a[attribute] > b[attribute]) {
+    //       return -1;
+    //       }
+    //       return 0;
+    //   });
+    // }
 
 
     render_selected_links(){

@@ -36,6 +36,7 @@ class tags extends Component {
           items[this.props.app_state.loc['1263']/* events */] = '🎊'
           items[this.props.app_state.loc['1264']/* moderator-events */] = '🧑‍⚖️'
           items[this.props.app_state.loc['1593aj']/* 'signatures' */] = '✍️'
+          items[this.props.app_state.loc['1264k']/* audioport */] = '🎧'
       }
       
       if(items[item] != null) return items[item];
