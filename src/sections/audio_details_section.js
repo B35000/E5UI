@@ -106,7 +106,8 @@ class AudioDetailSection extends Component {
     }
 
     render_posts_list_detail(){
-        if(this.props.selected_audio_item == null){
+        var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
+        if(object == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}
@@ -115,7 +116,7 @@ class AudioDetailSection extends Component {
         }else{
             return(
                 <div>
-                    {this.render_post_details_section()}
+                    {this.render_post_details_section(object)}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_post_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_post_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -145,9 +146,9 @@ class AudioDetailSection extends Component {
         return object
     }
 
-    render_post_details_section(){
+    render_post_details_section(object){
         var selected_item = this.get_selected_item(this.state.navigate_view_post_list_detail_tags_object, this.state.navigate_view_post_list_detail_tags_object['i'].active)
-        var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
+        // var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
         
         if(object == null){
             return(
@@ -421,7 +422,7 @@ class AudioDetailSection extends Component {
             'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
             'banner-icon':{'header':author, 'subtitle':this.truncate(title, 15), 'image':image},
 
-            'id2':{'title':listing_type+' • '+object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
 
             'purchase_recipient':{'title':purchase_recipient, 'details':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'size':'l'},
             'album_sales':{'title':number_with_commas(object['album_sales']), 'details':this.props.app_state.loc['2973']/* 'Album Sales' */, 'size':'l'},
@@ -550,13 +551,59 @@ class AudioDetailSection extends Component {
 
 
     render_song(item, object, index){
-        var song_title = (index+1)+'. '+item['song_title']
+        var border_radius = '7px';
+        var text_align = 'left'
+        var padding = '10px 15px 10px 15px'
+        var font_size = ['15px', '12px', 19, 50];
+        var song_title = item['song_title']
         var song_details = item['song_composer']
+        var song_length = this.get_song_duration(item['basic_data'])
+        var text_color = this.props.theme['secondary_text_color']
+        if(this.is_song_playing(item)){
+            song_length = '▶ '+song_length
+            text_color = 'green'
+        }
+        // console.log('song', item)
         return(
             <div onClick={() => this.when_song_item_clicked(item, object)}>
-                {this.render_detail_item('3', {'details':song_details,'title':song_title, 'size':'l'})}
+                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
+                        <div style={{height:'100%', width:'100%'}}>
+                            <div>
+                                <div className="row">
+                                    <div className="col-10" style={{'padding': '0px 0px 0px 13px' }}> 
+                                        <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}}>{song_title}</p>
+                                    </div>
+                                    <div className="col-2" style={{'padding': '5px 15px 0px 0px' }}>
+                                        <p style={{'color': text_color, 'font-size': '10px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{song_length}</p>
+                                    </div>
+                                </div>
+
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
+                            </div>
+                        </div>
+                    </div>
             </div>
         )
+    }
+
+    get_song_duration(item){
+        var duration = '0:00'
+        if(item['metadata'] != null && item['metadata']['format'] != null){
+            var format = item['metadata']['format']
+            if(format['duration'] != null){
+               var min = Math.floor(parseInt(format['duration']) / 60)
+               var sec = parseInt(format['duration']) % 60
+               duration = min+':'+sec
+            }
+        }
+        return duration
+    }
+
+    is_song_playing(item){
+        if(this.props.app_state.current_playing_song != null && this.props.app_state.current_playing_song['song_id'] == item['song_id']){
+            return true
+        }
+        return false
     }
 
     when_song_item_clicked(item, object){
@@ -576,7 +623,7 @@ class AudioDetailSection extends Component {
     }
 
     play_song(item, object){
-
+        this.props.play_song(item, object, this.get_audio_items())
     }
 
 
@@ -627,7 +674,7 @@ class AudioDetailSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>

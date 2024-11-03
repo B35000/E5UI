@@ -2197,10 +2197,11 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
             var my_added_album_ids = this.props.app_state.my_albums
-            var all_album_objects = this.get_all_sorted_objects_mappings(this.props.app_state.created_audio_mappings)
+            var all_audios = this.get_all_sorted_objects(this.props.app_state.created_audios)
             var my_acquired_albums = []
             for(var i=0; i<my_added_album_ids.length; i++){
-                my_acquired_albums.push(all_album_objects[my_added_album_ids[i]])
+                var obj = this.get_item_in_array(my_added_album_ids[i], all_audios)
+                if(obj != null) my_acquired_albums.push(obj)
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums))))
         }
@@ -3094,7 +3095,7 @@ class home_page extends Component {
                 load_exchanges_royalty_event_data={this.props.load_exchanges_royalty_event_data.bind(this)}
                 load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)} update_coin_balances={this.props.update_coin_balances.bind(this)}
 
-                open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)}
+                open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)} play_song={this.props.play_song.bind(this)}
                 />
             </div>
         )

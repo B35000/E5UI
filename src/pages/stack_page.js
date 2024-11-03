@@ -2649,7 +2649,7 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
@@ -2734,9 +2734,11 @@ class StackPage extends Component {
                         ints.push(buy_album_obj.depth_swap_obj)
                     }
 
-                    strs.push([])
-                    adds.push([])
-                    ints.push(buy_album_obj.transfers_obj)
+                    if(buy_album_obj.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.transfers_obj)
+                    }
                     
                     strs.push(buy_album_obj.string_obj)
                     adds.push([])
@@ -2914,7 +2916,7 @@ class StackPage extends Component {
                 [5], /* contexts */
                 [0] /* int_data */
             ]
-            
+
             var string_obj = [[]]
             var my_albums = this.props.app_state.my_albums.slice()
             var my_tracks = this.props.app_state.my_tracks.slice()
@@ -3118,7 +3120,7 @@ class StackPage extends Component {
                         obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
                     var t = txs[i]
                     obj[t.id] = t
                 }
@@ -9120,7 +9122,7 @@ class StackPage extends Component {
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="audio/*" onChange ={this.when_audio_picked.bind(this)} multiple/>
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)} multiple/>
                     </div>
                 </div>
             )

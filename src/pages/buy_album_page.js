@@ -218,6 +218,8 @@ class BuyAlbumPage extends Component {
                 <div style={{height: 10}}/>
                 {this.render_available_tracks(available_songs, true)}
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2972c']/* 'Unavailable Tracks.' */, 'details':this.props.app_state.loc['2972d']/* 'Below are the tracks you\'ve already purchased.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
                 {this.render_available_tracks(unavailable_tracks, false)}
                 <div style={{height: 20}}/>
             </div>

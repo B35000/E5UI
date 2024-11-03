@@ -1323,30 +1323,30 @@ class EditPostPage extends Component {
         return return_objects
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
+    // get_all_sorted_objects(object){
+    //     var all_objects = []
+    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+    //         var e5 = this.props.app_state.e5s['data'][i]
+    //         var e5_objects = object[e5]
+    //         if(e5_objects != null){
+    //             all_objects = all_objects.concat(e5_objects)
+    //         }
+    //     }
 
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
+    //     return this.sortByAttributeDescending(all_objects, 'timestamp')
+    // }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
+    // sortByAttributeDescending(array, attribute) {
+    //   return array.sort((a, b) => {
+    //       if (a[attribute] < b[attribute]) {
+    //       return 1;
+    //       }
+    //       if (a[attribute] > b[attribute]) {
+    //       return -1;
+    //       }
+    //       return 0;
+    //   });
+    // }
 
 
     render_selected_links(){

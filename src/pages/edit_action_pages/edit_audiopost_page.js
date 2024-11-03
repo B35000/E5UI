@@ -34,7 +34,7 @@ function makeid(length) {
     return result;
 }
 
-class NewAudioPage extends Component {
+class EditAudioPage extends Component {
     
     state = {
         selected: 0,
@@ -53,8 +53,7 @@ class NewAudioPage extends Component {
 
         edit_text_item_pos:-1,
 
-        // get_sort_links_tags_object:this.get_sort_links_tags_object(), 
-        // get_post_nsfw_option:this.get_post_nsfw_option(),
+        get_take_down_option: this.get_take_down_option(),
         get_masked_from_outsiders_option:this.get_masked_from_outsiders_option(),
         get_disabled_comments_section:this.get_disabled_comments_section(),
         get_post_anonymously_tags_option:this.get_post_anonymously_tags_option(),
@@ -198,8 +197,37 @@ class NewAudioPage extends Component {
         };
     }
 
+    get_take_down_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['767c']], [0]
+            ],
+        };
+    }
 
 
+
+    set(){
+        if(this.state.get_masked_from_outsiders_option == null){
+            this.setState({get_masked_from_outsiders_option:this.get_masked_from_outsiders_option()})
+        }
+        if(this.state.get_disabled_comments_section == null){
+            this.setState({get_disabled_comments_section:this.get_disabled_comments_section()})
+        }
+        if(this.state.get_post_preview_option == null){
+            this.setState({get_post_preview_option:this.get_post_preview_option()})
+        }
+        if(this.state.get_post_anonymously_tags_option == null){
+            this.setState({get_post_anonymously_tags_option:this.get_post_anonymously_tags_option(),})
+        }
+        if(this.state.get_take_down_option == null){
+            this.setState({get_take_down_option: this.get_take_down_option()})
+        }
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
+    }
 
 
 
@@ -468,6 +496,15 @@ class NewAudioPage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_listing_type_tags_option} tag_size={'l'} when_tags_updated={this.when_get_listing_type_tags_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -536,6 +573,10 @@ class NewAudioPage extends Component {
 
     when_get_listing_type_tags_option_updated(tag_obj){
         this.setState({get_listing_type_tags_option: tag_obj})
+    }
+
+    when_get_take_down_option(tag_group){
+        this.setState({get_take_down_option: tag_group})
     }
     
 
@@ -2024,15 +2065,12 @@ class NewAudioPage extends Component {
 
 
 
-
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bh']/* 'Audio Lyrics.' */, 'details':this.props.app_state.loc['a311bi']/* 'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_audio_lyric_picker_ui()}
                 <div style={{height:10}}/>
                 {this.render_song_lyrics()}
                 {this.render_detail_item('0')}
-
-
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ba']/* 'Track Free Plays.' */, 'details':this.props.app_state.loc['a311bb']/* 'Set the number of free plays for your track before a purchase is required.' */, 'size':'l'})}
@@ -2125,8 +2163,6 @@ class NewAudioPage extends Component {
     }
 
 
-
-
     render_audio_lyric_picker_ui(){
         return(
             <div>
@@ -2201,6 +2237,7 @@ class NewAudioPage extends Component {
     }
 
 
+
     when_add_song_tapped(){
         var song_title = this.state.song_title.trim()
         var song_composer = this.state.song_composer.trim()
@@ -2229,7 +2266,7 @@ class NewAudioPage extends Component {
                 clone.push(song)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null})
+            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null })
             
         }
     }
@@ -2405,20 +2442,7 @@ class NewAudioPage extends Component {
             this.props.notify(this.props.app_state.loc['a311bf']/* You need to set a purchase recipient for your new audiopost. */, 4700)
         }
         else{
-            var me = this;
-            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
-                device_language_setting :me.props.app_state.device_language,
-                device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
-
-            var me = this;
-            setTimeout(function() {
-                me.props.when_add_new_object_to_stack(me.state)
-        
-                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null})
-            }, (1 * 1000));
-
-            
+            this.props.when_add_edit_object_to_stack(this.state)
             this.props.notify(this.props.app_state.loc['18'], 1700);
         }
     }
@@ -2541,4 +2565,4 @@ class NewAudioPage extends Component {
 
 
 
-export default NewAudioPage;
+export default EditAudioPage;

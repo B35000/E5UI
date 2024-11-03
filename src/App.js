@@ -61,6 +61,7 @@ import EditChannelPage from './pages/edit_action_pages/edit_channel_page'
 import EditStorefrontItemPage from './pages/edit_action_pages/edit_storefront_item_page';
 import EditContractorPage from './pages/edit_action_pages/edit_contractor_page';
 import EditProposalPage from './pages/edit_action_pages/edit_proposal_page';
+import EditAudioPage from './pages/edit_action_pages/edit_audiopost_page';
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -114,13 +115,16 @@ import DialogPage from './pages/dialog_page'
 import SendReceiveCoinPage from './pages/send_receive_coin_page'
 import PickFilePage from './pages/pick_file_page'
 import BuyAlbumPage from './pages/buy_album_page'
+import AudioPip from './pages/audio_pip'
+import FullAudioPage from './pages/full_audio_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
 import { create } from 'ipfs-http-client'
-// import { Web3Storage } from 'web3.storage'
 import { NFTStorage, Blob } from 'nft.storage'
-// import { Helmet } from "react-helmet";
+
+import Draggable from "react-draggable";
+import classes2 from "./PIP.module.css";
 
 import Dexie from 'dexie';
 import { locale } from 'dayjs';
@@ -228,7 +232,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -296,7 +300,9 @@ class App extends Component {
       'e5_empty_icon':'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e',
       'e5_empty_icon3':'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424',
       'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74',
-      'music_label':'https://bafkreigntzixxxm2yyqjv2gffpbaxf7uuxmqcwhpvrkuwswztbhkdj35mu.ipfs.w3s.link/'
+      'music_label':'https://bafkreigntzixxxm2yyqjv2gffpbaxf7uuxmqcwhpvrkuwswztbhkdj35mu.ipfs.w3s.link/',
+      'expand_icon':'https://bafkreihfwjiuc3nucu6dbhtlojc7ovhuakkfknrrnhb2wfe723whj3f4qe.ipfs.w3s.link/',
+      'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/'
     }
   }
 
@@ -830,7 +836,8 @@ class App extends Component {
 
 
         /* new audio page */
-        'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.','a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'',
+        'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.',
+        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'','a311bm':'','a311bn':'','a311bo':'','a311bp':'','a311bq':'','a311br':'','a311bs':'',
         
         /* new proposal page */
         '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ',
@@ -1077,9 +1084,9 @@ class App extends Component {
         '2955':'image','2956':'audio','2957':'video','2958':'Pick one or multile image files from your storage. To see an image file here, you need to upload it in the stack page.','2959':'You can\'t finish with no files selected.','2960':'You can\'t pick more than ','2961':' files.',
         
         /* buy album page */
-        '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.',
+        '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.','2972c':'Unavailable Tracks.','2972d':'Below are the tracks you\'ve already purchased.',
         
-        '2973':'Album Sales','2974':'Song Sales','2975':'','2976':'','2977':'','2978':'','2979':'','2980':'','2981':'','2982':'','2983':'','2984':'','2985':'','2986':'','2987':'','2988':'','2989':'','2990':'','2991':'','2992':'','2993':'','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
+        '2973':'Album Sales','2974':'Song Sales','2975':'edit-audio','2976':'Playing ','2977':'Taken from','2978':'File size','2979':'Composers','2980':'Bitrate','2981':'Codec','2982':'Codec Profile','2983':'Container','2984':'Lossless','2985':'Number of Channels','2986':'Number of Samples','2987':'Sample Rate','2988':'data','2989':'lyrics','2990':'queue','2991':'Play Queue','2992':'Below are the tracks that are up next.','2993':'synchronize','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
@@ -1296,6 +1303,10 @@ class App extends Component {
     this.pick_file_page = React.createRef();
     this.new_audio_page = React.createRef();
     this.buy_album_page = React.createRef();
+    this.edit_audiopost_page = React.createRef();
+
+    this.audio_pip_page = React.createRef();
+    this.full_audio_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -2131,6 +2142,11 @@ class App extends Component {
         'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24',
         'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu',
         'add_text':'https://bafybeih7uo6hedtxgdge4digebt6o5gocacajgcbq2lc4nlfyb2uu55zma.ipfs.w3s.link/add_text_input_item.png',
+        
+        'play':'https://bafkreid5yges52pk6hbs6tlfjtnxebbqffc6cwjoxoxrc4ebqyguj3tufq.ipfs.w3s.link/',
+        'pause':'https://bafkreiee5y4hq4xnhf44ubuhbycokfczhaxghlexzb7pg6ld3a3cwwhyia.ipfs.w3s.link/',
+        'previous':'https://bafkreicjrx4etkijgxfvtmopoex5uxijbic5nsu44k2ogfg7wnmcyqd7yi.ipfs.w3s.link/',
+        'next':'https://bafkreiblnp7g25ngh3mjot4ejjr7n34l2zm6wzwrhjrdfk3lgj3pjcihzy.ipfs.w3s.link/',
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
@@ -2158,7 +2174,12 @@ class App extends Component {
         
         'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
         'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
-        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link'
+        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+
+        'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
+        'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
+        'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
+        'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -2187,7 +2208,12 @@ class App extends Component {
 
         'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
         'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
-        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link'
+        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+
+        'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
+        'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
+        'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
+        'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
@@ -2260,6 +2286,7 @@ class App extends Component {
     }else{
       return (
         <div className="App">
+          {this.render_audio_pip()}
           {this.render_page()}
           {this.render_synchronizing_bottomsheet()}
           {this.render_send_receive_ether_bottomsheet()}
@@ -2320,6 +2347,8 @@ class App extends Component {
           {this.render_view_staged_royalties_bottomsheet()}
           {this.render_pay_upcoming_subscriptions_bottomsheet()}
           {this.render_send_receive_coin_bottomsheet()}
+          {this.render_edit_audiopost_object_bottomsheet()}
+          {this.render_full_audio_bottomsheet()}
           {this.render_buy_album_bottomsheet()}
 
           {this.render_pick_file_bottomsheet()}
@@ -2397,9 +2426,9 @@ class App extends Component {
           show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.start_send_receive_coin_bottomsheet.bind(this)}
           update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
           load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)}
-          show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)}
-          />
-          {this.render_homepage_toast()}
+        show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)} play_song={this.play_song.bind(this)}
+        />
+        {this.render_homepage_toast()}
       </div>
       
     )
@@ -5251,6 +5280,89 @@ class App extends Component {
 
 
 
+  render_edit_audiopost_object_bottomsheet(){
+    if(this.state.edit_audiopost_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.edit_audiopost_bottomsheet} onClose={this.open_edit_audiopost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_edit_audio_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_edit_audiopost_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_audiopost_bottomsheet.bind(this)} open={this.state.edit_audiopost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_edit_audio_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+
+  render_edit_audio_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    
+    return(
+      <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+          <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} />
+        </div>
+    )
+  }
+
+  open_edit_audiopost_bottomsheet(){
+    if(this.state.edit_audiopost_bottomsheet == true){
+      //closing
+      this.edit_audiopost_bottomsheet = this.edit_audiopost_page.current?.state;
+
+      this.setState({edit_audiopost_bottomsheet: !this.state.edit_audiopost_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_audiopost_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_audiopost_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_audiopost_bottomsheet: !me.state.edit_audiopost_bottomsheet});
+          if(me.edit_audiopost_bottomsheet != null){
+            me.edit_audiopost_page.current?.setState(me.edit_audiopost_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_edit_audiopost_object(target, object){
+    this.open_edit_audiopost_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_audiopost_page.current){
+      me.edit_audiopost_page.current?.setState(object['ipfs'])
+      me.edit_audiopost_page.current?.setState({type:me.getLocale()['2975']/* 'edit-audio' */})
+      me.edit_audiopost_page.current?.setState({object_id: object['id']})
+      me.edit_audiopost_page.current?.set()
+    }
+    }, (1 * 500));
+    this.load_my_subscriptions() 
+  }
+
+
+
+
+
+
+
+
 
 
 
@@ -5284,7 +5396,7 @@ class App extends Component {
       this.open_edit_proposal_object(target, object)
     }
     else if(target == '10'){
-      this.open_edit_auiopost_object(target, object)
+      this.open_edit_audiopost_object(target, object)
     }
   }
 
@@ -7882,6 +7994,16 @@ class App extends Component {
             me.buy_album_page.current?.setState(tx)
           }
         }, (1 * 500));
+    }
+    else if(tx.type == this.getLocale()['2975']/* 'edit-audio' */){
+        this.open_edit_audiopost_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.edit_audiopost_page.current){
+          me.edit_audiopost_page.current?.setState(tx)
+        }
+        }, (1 * 500));
+        
     }
   }
 
@@ -10627,6 +10749,245 @@ class App extends Component {
 
 
 
+  render_audio_pip(){
+    if(!this.state.is_audio_pip_showing) return;
+    var size = this.getScreenSize();
+    var h = 240
+    if(size == 's' || size == 'm') h = 310
+    var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : 1.0
+    return(
+      <div style={{'opacity':opacity}}>
+        <Draggable handle="strong" bounds="body" defaultPosition={{x: this.state.width - 220, y: this.state.height - h}}>
+          <div className={classes2.pipWindow}>
+            <div className="box no-cursor" style={{'position': 'relative'}}>
+              <div style={{width:200, height:200,'z-index':'210', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
+                {this.get_audio_pip_ui()}
+              </div>
+            </div>
+          </div>
+        </Draggable>
+      </div>
+    )
+  }
+
+  get_audio_pip_ui(){
+    var size = this.getScreenSize();
+    return(
+      <div style={{width:200, height:200}}>
+        <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} />
+      </div>
+    )
+  }
+
+  play_song(item, object, audio_items){
+    var title = item['song_title']
+    this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */+title, 800)
+    this.setState({is_audio_pip_showing: true})
+    var queue = this.get_queue(item, object, audio_items)
+    
+    var me = this;
+    setTimeout(function() {
+      me.audio_pip_page.current?.set_data(queue, 0)
+      me.load_queue(queue, 0)
+    }, (1 * 500));
+  }
+
+  close_audio_pip(){
+    this.setState({is_audio_pip_showing: false})
+    this.when_playing(null, null)
+  }
+
+  get_queue(item, object, audio_items){
+    var songs = []
+    var song_ids = []
+    item['album_art'] = object['ipfs'].album_art
+    item['object'] = object
+    songs.push(item)
+    song_ids.push(item['song_id'])
+
+    var objects_songs = object['ipfs'].songs
+    var should_start_adding = false
+    objects_songs.forEach(song => {
+      if(should_start_adding && !song_ids.includes(song['song_id'])){
+        song['album_art'] = object['ipfs'].album_art
+        song['object'] = object
+        songs.push(song)
+        song_ids.push(song['song_id'])
+      }
+      if(!should_start_adding && song['song_id'] == item['song_id']){
+        should_start_adding = true;
+      }
+    });
+
+    var index_of_obj = audio_items.indexOf(object)
+
+    for(var i=(index_of_obj+1); i<audio_items.length; i++){
+      var extra_objects_songs = audio_items[i]['ipfs'].songs
+      extra_objects_songs.forEach(song => {
+        if(!song_ids.includes(song['song_id'])){
+          song['album_art'] = object['ipfs'].album_art
+          song['object'] = object
+          songs.push(song)
+          song_ids.push(song['song_id'])
+        }
+      });
+    }
+
+    return songs
+  }
+
+  load_queue = async (queue, pos) => {
+    var songs_to_load = []
+    
+    for(var i=pos; i<queue.length; i++){
+      var song = queue[i]
+      if(songs_to_load.length < 3){
+        songs_to_load.push(song['track'])
+      }
+    }
+
+    for(var i=0; i<songs_to_load.length; i++){
+      var song = songs_to_load[i]
+      await this.fetch_uploaded_data_from_ipfs([song], false)
+      if(i == 0){
+        //if its the song thats to be played
+        this.audio_pip_page.current?.start_playing()
+      }
+    }
+  }
+
+  open_full_player(queue, pos, play_pause_state, value){
+    this.show_full_audio_bottomsheet(queue, pos, play_pause_state, value)
+  }
+
+  when_time_updated(time, current_song){
+    var me = this;
+    if(me.full_audio_page.current != null){
+      me.full_audio_page.current.when_time_updated(time)
+    }
+    this.when_playing(current_song, time)
+  }
+
+  when_next_track_reached(){
+    if(this.full_audio_page.current != null){
+      this.full_audio_page.current?.when_next_track_reached()
+    } 
+  }
+
+  when_playing(song, time){
+    this.setState({current_playing_song: song, current_playing_time: time})
+  }
+
+
+
+
+
+
+
+
+
+
+
+  render_full_audio_bottomsheet(){
+    if(this.state.full_audio_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.full_audio_bottomsheet} onClose={this.open_full_audio_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_full_audio_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_full_audio_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_full_audio_bottomsheet.bind(this)} open={this.state.full_audio_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_full_audio_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_full_audio_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <FullAudioPage ref={this.full_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)}/>
+      </div>
+    )
+  }
+
+  open_full_audio_bottomsheet(){
+    if(this.state.full_audio_bottomsheet == true){
+      //closing
+      this.full_audio_bottomsheet = this.full_audio_page.current?.state;
+
+      this.setState({full_audio_bottomsheet: !this.state.full_audio_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({full_audio_bottomsheet2: false});
+        me.audio_pip_page.current?.when_expanded_player_closed()
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({full_audio_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({full_audio_bottomsheet: !me.state.full_audio_bottomsheet});
+
+          if(me.full_audio_bottomsheet != null){
+            me.full_audio_page.current?.setState(me.full_audio_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_full_audio_bottomsheet(queue, pos, play_pause_state, value){
+    this.open_full_audio_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.full_audio_page.current != null){
+        me.full_audio_page.current.set_data(queue, pos, play_pause_state, value)
+      }
+    }, (1 * 500));
+  }
+
+  play_pause(){
+    this.audio_pip_page.current?.play_pause()
+  }
+
+  play_previous(){
+    this.audio_pip_page.current?.play_previous()
+  }
+
+  play_next(){
+    this.audio_pip_page.current?.play_next()
+  }
+
+  skip_to(index){
+    this.audio_pip_page.current?.skip_to(index)
+  }
+
+  update_time(number){
+    this.audio_pip_page.current?.handleNumber(number)
+  }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -13246,7 +13607,6 @@ class App extends Component {
       var file_name = ecid_obj['file_name']
       var data = this.fetch_from_storage(cids[i])
       if(data == null){
-        // console.log('stackdata','fetching:', cids[i])
         data = await this.fetch_file_data_from_chainsafe_storage(id, storage_id, file_name, 0)
         this.store_in_local_storage(cids[i], data)
       }

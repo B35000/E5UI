@@ -2269,7 +2269,7 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_audio_items()
-        console.log('render_audio_list_group', selected_item)
+
         if(selected_item == this.props.app_state.loc['1264l']/* 'acquired' */){
             return(
                 <div style={{ 'padding': '7px 0px 0px 0px'}}>
@@ -2471,7 +2471,7 @@ class PostListSection extends Component {
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+listing_type+' • '+object['id']+' • '+author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }

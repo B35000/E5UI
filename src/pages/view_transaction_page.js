@@ -707,6 +707,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['2975']/* 'edit-audio' */){
+                return(
+                    <div>
+                        {this.render_edit_audiopost()}
+                    </div>
+                )
+            }
 
         }
     }
@@ -4853,6 +4860,51 @@ class ViewTransactionPage extends Component {
                     {this.render_item_data(items)}
                     {this.render_item_images()}
                     {this.render_selected_links()}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_edit_audiopost(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_audio_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['genre'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['year'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['author'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['copyright'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['comment'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['listing_type'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['purchase_recipient'])}
+                    {this.render_detail_item('0')}
+
+
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_song_tabs()}
+                    {this.render_contractor_price_amounts()}
+
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
