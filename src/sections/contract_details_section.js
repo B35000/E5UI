@@ -819,8 +819,8 @@ class ContractDetailsSection extends Component {
     }
 
 
-    get_contract_items() {
-        return this.props.get_contract_items()
+    get_contract_items(){
+        return this.props.get_contract_items('')
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths, object) {

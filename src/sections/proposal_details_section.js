@@ -614,7 +614,7 @@ class ProposalDetailsSection extends Component {
     }
 
     get_proposal_items(){
-        return this.props.get_proposal_items()
+        return this.props.get_proposal_items('')
     }
 
     get_proposal_details_data(object){

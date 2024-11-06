@@ -1540,19 +1540,6 @@ class PostListSection extends Component {
 
 
 
-    render_small_empty_object(){
-        return(
-            <div>
-                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
-                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                        <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-
 
 
 
@@ -2278,6 +2265,14 @@ class PostListSection extends Component {
             )
         }
 
+        if(selected_item == this.props.app_state.loc['1264m']/* 'playlists' */){
+            return(
+                <div style={{ 'padding': '7px 0px 0px 0px'}}>
+                    {this.render_my_playlists(items)}
+                </div>
+            )
+        }
+
         if(items.length == 0){
             items = ['0','1'];
             return ( 
@@ -2373,6 +2368,136 @@ class PostListSection extends Component {
             </div>
         )
     }
+
+
+    render_my_playlists(items){
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_small_empty_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_playlist_item(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_playlist_item(item, index){
+        var title = item['title']
+        var details = item['details']
+        return(
+            <div>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_playlist_selected(item, index)}>
+                    {this.render_detail_item('8', {'title':title, 'details':details, 'size':'l', 'image':this.get_playlist_images(item)[0], 'border_radius':'9px'})}
+                </div>
+                {/* <div style={{padding:'0px 0px 0px 0px'}}>
+                    {this.render_playlist_images(item)}
+                </div> */}
+            </div>
+        )
+    }
+
+    render_playlist_images(item){
+        var items = this.get_playlist_images(item)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:50, width:50, 'background-color': background_color, 'border-radius': '10px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                            <img alt="" src={this.get_image_from_file(item)} style={{height:25 ,width:25, 'border-radius': '50%'}}/>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_playlist_images(item){
+        var images = []
+        var item_songs = item['songs']
+        item_songs.forEach(element => {
+            images.push(element['album_art'])
+        });
+
+        if(images.length == 0){
+            images.push(this.props.app_state.static_assets['music_label'])
+        }
+
+        return images
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+    when_playlist_selected(item, index){
+        this.props.when_playlist_selected(item, index)
+    }
+
 
     get_audio_items(){
         return this.remove_duplicates(this.props.get_audio_items())
@@ -2618,19 +2743,6 @@ class PostListSection extends Component {
         var coin_balance = this.props.app_state.coin_data[symbol]['balance']
         if(coin_balance == null || coin_balance == 0) return false
         return true
-    }
-
-    get_coin_info(symbol, name, image_url, base_unit, decimals, conversion){
-        return{
-            'name':name,
-            'id':symbol,
-            'symbol':symbol,
-            'base_unit':base_unit,
-            'decimals':decimals,
-            'conversion':conversion,
-            'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
-            'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
-        }
     }
 
     when_coin_object_clicked(index, item){
@@ -3154,6 +3266,17 @@ class PostListSection extends Component {
 
 
 
+    render_small_empty_object(){
+        return(
+            <div>
+                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
@@ -3166,8 +3289,6 @@ class PostListSection extends Component {
                 </div>
             );
     }
-
-
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

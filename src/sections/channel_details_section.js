@@ -442,7 +442,7 @@ class ChannelDetailsSection extends Component {
     }
 
     get_channel_items(){
-        return this.props.get_channel_items()
+        return this.props.get_channel_items('')
     }
 
     get_channel_details_data(object){

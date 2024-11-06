@@ -553,7 +553,7 @@ class JobDetailsSection extends Component {
     }
 
     get_job_items(){
-        return this.props.get_job_items()
+        return this.props.get_job_items('')
     }
 
 

@@ -2907,7 +2907,6 @@ class StackPage extends Component {
             ints.push(transaction_obj)
         }
 
-
         var added_song_album_data = this.get_songs_and_albums_to_add(pushed_txs);
         if(added_song_album_data.tracks.length != 0){
             var transaction_obj = [ /* set data */
@@ -2930,6 +2929,44 @@ class StackPage extends Component {
 
             var data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
             var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myaudio');
+            string_obj[0].push(string_data)
+
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+        if(this.props.app_state.should_update_playlists_in_E5 == true){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [6], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var my_playlists = this.props.app_state.my_playlists
+            var data = {'playlists': my_playlists, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplaylists');
+            string_obj[0].push(string_data)
+
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+        if(this.props.app_state.should_update_song_plays == true){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [7], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var song_plays = this.props.app_state.song_plays
+            var data = {'plays': song_plays, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplays');
             string_obj[0].push(string_data)
 
             strs.push(string_obj)
@@ -3195,14 +3232,34 @@ class StackPage extends Component {
             var my_tracks = this.props.app_state.my_tracks.slice()
 
             added_song_album_data.albums.forEach(album => {
+                if(my_albums.includes(album)){
+                    var index = my_albums.indexOf(album)
+                    my_albums.splice(index, 1)
+                }
                 my_albums.push(album)
             });
             added_song_album_data.tracks.forEach(track => {
+                if(my_tracks.includes(track)){
+                    var index = my_tracks.indexOf(track)
+                    my_tracks.splice(index, 1)
+                }
                 my_tracks.push(track)
             });
 
             var data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
             obj['myaudio'] = data
+        }
+
+        if(this.props.app_state.should_update_playlists_in_E5 == true){
+            var my_playlists = this.props.app_state.my_playlists
+            var data = {'playlists': my_playlists, 'time':Date.now()}
+            obj['myplaylists'] = data
+        }
+
+        if(this.props.app_state.should_update_song_plays == true){
+            var song_plays = this.props.app_state.song_plays
+            var data = {'plays': song_plays, 'time':Date.now()}
+            obj['myplays'] = data
         }
 
         return await this.get_object_ipfs_index(obj, calculate_gas);
@@ -5092,6 +5149,10 @@ class StackPage extends Component {
         var ints_clone = ints.slice()
         var author = t.post_item['event'].returnValues.p5
         var post_id = t.post_item['id'];
+
+        if(t.post_item['ipfs'].purchase_recipient != null){
+            author = t.post_item['ipfs'].purchase_recipient
+        }
 
         var depth_swap_obj = [
             [30000,16,0],

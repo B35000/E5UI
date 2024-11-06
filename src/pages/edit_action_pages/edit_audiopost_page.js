@@ -2260,6 +2260,7 @@ class EditAudioPage extends Component {
 
             var clone = this.state.songs.slice()
             if(this.state.edit_song_item_pos != -1){
+                song['song_id'] = clone[this.state.edit_song_item_pos]['song_id']
                 clone[this.state.edit_song_item_pos] = song
                 this.props.notify(this.props.app_state.loc['a311s']/* 'Edited the track item.' */, 2600)
             }else{

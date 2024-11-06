@@ -512,7 +512,7 @@ class StorefrontDetailsSection extends Component {
     }
 
     get_storefront_items(){
-       return this.props.get_storefront_items()
+       return this.props.get_storefront_items('')
     }
 
     render_item_data(items){

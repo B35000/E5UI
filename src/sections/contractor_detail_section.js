@@ -353,7 +353,7 @@ class ContractorDetailsSection extends Component {
     }
 
     get_contractor_items(){
-        return this.props.get_contractor_items()
+        return this.props.get_contractor_items('')
     }
 
 

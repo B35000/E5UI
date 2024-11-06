@@ -1246,7 +1246,7 @@ class E5DetailsSection extends Component {
         return(
             <div>
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2336f']/* 'Deflation.' */, 'details':this.props.app_state.loc['2336g']/* `The amount of end that has been sent to the burn account over time.` */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2336f']/* 'Account Zero Credit.' */, 'details':this.props.app_state.loc['2336g']/* `The amount of end that has been sent to the burn account over time.` */, 'size':'l'})}
                 
                 {this.render_detail_item('6', {'dataPoints':this.get_deflation_amount_data_points(data), 'interval':110, 'hide_label': true})}
                 <div style={{height: 10}}/>

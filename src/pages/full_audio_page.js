@@ -13,6 +13,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function shuffle(array) {
+  let currentIndex = array.length;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    let randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+}
+
 class FullAudioPage extends Component {
     
     state = {
@@ -20,7 +36,9 @@ class FullAudioPage extends Component {
         value:0, play_pause_state:0,
 
         get_full_audio_tags_object:this.get_full_audio_tags_object(), active_lyric: -1,
-        has_scrolled:false
+        has_scrolled:false, is_shuffling:false, is_repeating:false, original_song_list:[],
+
+        get_next_or_previous_songs_tags_object:this.get_next_or_previous_songs_tags_object()
     };
 
     get_full_audio_tags_object(){
@@ -34,8 +52,19 @@ class FullAudioPage extends Component {
         };
     }
 
-    set_data(queue, pos, play_pause_state, value){
-        this.setState({songs: queue, pos:pos, play_pause_state:play_pause_state, value:value})
+    get_next_or_previous_songs_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['2996']/* 'up-next' */, this.props.app_state.loc['2997']/* 'previous' */], [1]
+            ],
+        };
+    }
+
+    set_data(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list){
+        this.setState({songs: queue, original_song_list: original_song_list, pos:pos, play_pause_state: play_pause_state, value: value, is_repeating: is_repeating, is_shuffling: is_shuffling})
     }
 
     constructor(props) {
@@ -57,10 +86,10 @@ class FullAudioPage extends Component {
     when_get_full_audio_tags_object_updated(tag_obj){
         this.setState({get_full_audio_tags_object: tag_obj})
 
-        var selected = this.get_selected_item(tag_obj, tag_obj['i'].active)
-        if (selected == this.props.app_state.loc['2990']/* 'queue' */ &&this.messagesEnd.current){
-            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        }
+        // var selected = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        // if (selected == this.props.app_state.loc['2990']/* 'queue' */ &&this.messagesEnd.current){
+        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        // }
     }
 
 
@@ -191,15 +220,27 @@ class FullAudioPage extends Component {
                 </div>
 
 
-                <div className="row" style={{'margin':'0px 0px 0px 0px', 'padding':'0% 20% 0% 20%'}}>
-                    <div className="col-4" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
+                <div className="row" style={{'margin':'0px 0px 0px 0px', 'padding':'0% 10% 0% 10%'}}>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
+                        
+                    </div>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
+                        {this.render_shuffle_button()}
+                    </div>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
                         {this.render_previous_button()}
                     </div>
-                    <div className="col-4" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
                         {this.render_pause_button()}
                     </div>
-                    <div className="col-4" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
                         {this.render_next_button()}
+                    </div>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
+                        {this.render_repeat_button()}
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px', 'text-align':'center'}}>
+                       
                     </div>
                 </div>
 
@@ -322,6 +363,20 @@ class FullAudioPage extends Component {
         )
     }
 
+    render_shuffle_button(){
+        var alpha = this.state.is_shuffling == true ? 1.0 : 0.3
+        return(
+            <img onClick={()=>this.shuffle_songs()} alt="" src={this.props.theme['shuffle']} style={{height:23,width:'auto', 'text-align':'center', 'opacity':alpha, 'margin':'9px 0px 0px 0px'}}/>
+        )
+    }
+
+    render_repeat_button(){
+        var alpha = this.state.is_repeating == true ? 1.0 : 0.3
+        return(
+            <img onClick={()=>this.repeat_song()} alt="" src={this.props.theme['repeat']} style={{height:23,width:'auto', 'text-align':'center', 'opacity':alpha, 'margin':'9px 0px 0px 0px'}}/>
+        )
+    }
+
 
 
 
@@ -367,6 +422,36 @@ class FullAudioPage extends Component {
         }
     }
 
+    shuffle_songs(){
+        if(this.state.is_shuffling == false){
+            var next_songs = this.get_next_songs()
+            var previous_songs = this.get_previous_songs()
+            var current_song = this.state.songs[this.state.pos]
+            var shuffled_list = [].concat(previous_songs)
+            shuffled_list.push(current_song)
+            if(next_songs.length > 0) {
+                shuffled_list.push(shuffle(next_songs))
+            }
+            var its_pos = this.get_pos_of_item(current_song, shuffled_list)
+            this.props.shuffle_songs_in_pip(shuffled_list, its_pos)
+            this.setState({songs: shuffled_list, is_shuffling: !this.state.is_shuffling, pos:its_pos})
+            this.props.notify(this.props.app_state.loc['2995']/* 'Your queue has been shuffled.' */, 1200)
+        }else{
+            var current_song = this.state.songs[this.state.pos]
+            var its_pos = this.get_pos_of_item(current_song, this.state.original_song_list)
+            this.props.shuffle_songs_in_pip(this.state.original_song_list, its_pos)
+            this.setState({songs: this.state.original_song_list, is_shuffling: !this.state.is_shuffling, pos:its_pos})
+        }
+    }
+
+    repeat_song(){
+        if(this.state.is_repeating == false){
+            this.props.notify(this.props.app_state.loc['2994']/* 'Repeating current song.' */, 1200)
+        }
+        this.props.repeat_current_song()
+        this.setState({is_repeating: !this.state.is_repeating})
+    }
+
 
 
 
@@ -378,7 +463,15 @@ class FullAudioPage extends Component {
         var metadata = song['basic_data']['metadata']
         var formatted_size = this.format_data_size(song['basic_data']['size'])
         var fs = formatted_size['size']+' '+formatted_size['unit']
-
+        if(metadata == null){
+            metadata = {common:{}, format:{}}
+        }
+        if(metadata['common'] == null){
+           metadata['common'] = {} 
+        }
+        if(metadata['format'] == null){
+           metadata['format'] = {} 
+        }
         return(
             <div>
                 {this.render_detail_item('3', {'title':object['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2977']/* Taken from */, 'size':'l'})}
@@ -498,7 +591,7 @@ class FullAudioPage extends Component {
     }
 
     when_lyric_clicked(item){
-        var time = parseInt(item['time'])
+        var time = parseInt(item['time'])+1
         var current_song = this.state.songs[this.state.pos]
         var current_song_length = parseInt(current_song['basic_data']['metadata']['format']['duration'])
         var number = parseInt((time * 100) / current_song_length)
@@ -517,12 +610,18 @@ class FullAudioPage extends Component {
     render_queue(){
         return(
             <div>
-                
                 {this.render_song_thats_currently_playing()}
                 {this.render_detail_item('0')}
+                
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_next_or_previous_songs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_next_or_previous_songs_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
                 {this.render_upcoming_songs()}
             </div>
         )
+    }
+
+    when_get_next_or_previous_songs_tags_object_updated(tag_obj){
+        this.setState({get_next_or_previous_songs_tags_object:tag_obj})
     }
 
 
@@ -559,10 +658,51 @@ class FullAudioPage extends Component {
     }
 
     render_upcoming_songs(){
+        var selected = this.get_selected_item(this.state.get_next_or_previous_songs_tags_object, this.state.get_next_or_previous_songs_tags_object['i'].active)
+        
+        if(selected == this.props.app_state.loc['2996']/* 'up-next' */){
+            return(
+                <div>
+                    {this.render_next_songs()}
+                </div>
+            )
+        }
+        else if(selected == this.props.app_state.loc['2997']/* 'previous' */){
+            return(
+                <div>
+                    {this.render_previous_songs()}
+                </div>
+            )
+        }
+    }
+
+    render_next_songs(){
         var items = this.get_next_songs()
+        var middle = this.props.height-270;
+        if(items.length == 0){
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    {this.render_empty_views(4)}
+                </div>
+            )
+        }
+        return(
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                {items.map((item, index) => (
+                    <div key={index}>
+                        {this.render_song(item, index)} 
+                        <div style={{height:2}}/>
+                    </div>
+                ))}
+                {this.render_empty_views(2)}
+            </div>
+        )
+    }
+
+    render_previous_songs(){
         var items2 = this.get_previous_songs()
         var middle = this.props.height-270;
-        if(items.length == 0 && items2.length == 0){
+        if(items2.length == 0){
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_empty_views(4)}
@@ -573,13 +713,6 @@ class FullAudioPage extends Component {
         return(
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 {items2.map((item, index) => (
-                    <div key={index}>
-                        {this.render_song(item, index)} 
-                        <div style={{height:2}}/>
-                    </div>
-                ))}
-                <div ref={this.messagesEnd}/>
-                {items.map((item, index) => (
                     <div key={index}>
                         {this.render_song(item, index)} 
                         <div style={{height:2}}/>
@@ -631,15 +764,31 @@ class FullAudioPage extends Component {
     }
 
     when_song_item_clicked(item){
-        var its_pos = this.get_pos_of_item(item)
+        var object = item['object']
+        let me = this;
+        if(Date.now() - this.last_all_click_time3 < 200){
+            clearTimeout(this.all_timeout3);
+            //double tap
+            me.props.show_dialog_bottomsheet({'item':item, 'object':object, 'from':'full_audio_page'}, 'song_options')
+        }else{
+            this.all_timeout3 = setTimeout(function() {
+                clearTimeout(this.all_timeout3);
+                // single tap
+                me.when_song_clicked(item)
+            }, 200);
+        }
+        this.last_all_click_time3 = Date.now();
+    }
+
+    when_song_clicked(item){
+        var its_pos = this.get_pos_of_item(item, this.state.songs)
         if(its_pos != null){
             this.setState({pos: its_pos})
             this.props.skip_to(its_pos)
         }
     }
 
-    get_pos_of_item(item){
-        var songs = this.state.songs
+    get_pos_of_item(item, songs){
         for(var i=0; i<songs.length; i++){
             var song = songs[i]
             if(song['song_id'] == item['song_id']){
@@ -648,6 +797,36 @@ class FullAudioPage extends Component {
         }
     }
 
+
+
+    add_song_to_queue_as_next(song){
+        var clone = this.state.songs.slice()
+        var original_clone = this.state.original_song_list.slice()
+        clone.splice(this.state.pos+1, 0, song);
+        original_clone.push(song)
+        this.setState({songs: clone, original_song_list: original_clone})
+    }
+
+    add_song_to_queue_as_last(song){
+        var clone = this.state.songs.slice()
+        var original_clone = this.state.original_song_list.slice()
+        clone.push(song)
+        original_clone.push(song)
+        this.setState({songs: clone, original_song_list: original_clone})
+    }
+
+    remove_song_from_queue(song){
+        var clone = this.state.songs.slice()
+        var original_clone = this.state.original_song_list.slice()
+
+        var clone_index = this.get_pos_of_item(song, clone)
+        var original_clone_index = this.get_pos_of_item(song, original_clone)
+
+        clone.splice(clone_index, 1);
+        original_clone.splice(original_clone_index, 1);
+
+        this.setState({songs: clone, original_song_list: original_clone})
+    }
 
 
 

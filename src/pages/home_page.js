@@ -1481,10 +1481,10 @@ class home_page extends Component {
         return data
     }
 
-    get_contract_items(){
+    get_contract_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
-        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1197']/* 'contracts' */){
+        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1197']/* 'contracts' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_contracts))))
         }
 
@@ -1549,10 +1549,10 @@ class home_page extends Component {
         }
     }
 
-    get_bag_items(){
+    get_bag_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
-        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1216']/* 'bags' */){
+        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1216']/* 'bags' */|| all != null){
             return this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bags))))
         }
 
@@ -1593,10 +1593,10 @@ class home_page extends Component {
         }
     }
 
-    get_channel_items(){
+    get_channel_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
-        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1214']/* 'channels' */){
+        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1214']/* 'channels' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_channels)))))
         }
 
@@ -1637,10 +1637,10 @@ class home_page extends Component {
         }
     }
 
-    get_contractor_items(){
+    get_contractor_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
-        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1198']/* 'contractors' */){
+        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1198']/* 'contractors' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_contractors)))))
         }
 
@@ -1739,10 +1739,10 @@ class home_page extends Component {
         return this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
     }
 
-    get_job_items(){
+    get_job_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
-        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1196']/* 'jobs' */){
+        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1196']/* 'jobs' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_jobs)))))
         }
 
@@ -1800,10 +1800,10 @@ class home_page extends Component {
         }
     }
 
-    get_mail_items(){
+    get_mail_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
-        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1201']/* 'mail' */){
+        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1201']/* 'mail' */|| all != null){
             var all_mail = this.get_all_mail()
             return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
         }
@@ -1946,10 +1946,10 @@ class home_page extends Component {
     }
     
 
-    get_post_items(){
+    get_post_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
-        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1213']/* 'posts' */){
+        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1213']/* 'posts' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_posts)))))
         }
 
@@ -1990,10 +1990,10 @@ class home_page extends Component {
         }
     }
 
-    get_proposal_items(){
+    get_proposal_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
-        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1199']/* 'proposals' */){
+        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1199']/* 'proposals' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.get_all_sorted_objects(this.props.app_state.my_proposals)))
         }
 
@@ -2036,10 +2036,10 @@ class home_page extends Component {
         }
     }
 
-    get_storefront_items(){
+    get_storefront_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
-        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1215']/* 'storefront' */){
+        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1215']/* 'storefront' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_stores)))))
         }
 
@@ -2081,10 +2081,10 @@ class home_page extends Component {
         }
     }
 
-    get_subscription_items(){
+    get_subscription_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
-        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1200']/* 'subscriptions' */){
+        if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1200']/* 'subscriptions' */|| all != null){
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_subscriptions))))
         }
 
@@ -2165,13 +2165,13 @@ class home_page extends Component {
 
 
 
-    get_audio_items(){
+    get_audio_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
         //[this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */]
 
-        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264k']/* 'audioport' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios)))))
+        if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264k']/* 'audioport' */ || all != null){
+            return (this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios)))))).concat(this.props.app_state.my_playlists)
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -2206,7 +2206,7 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264m']/* 'playlists' */){
-            return []
+            return this.props.app_state.my_playlists
         }
         else {
             var my_audios = []
@@ -2637,7 +2637,7 @@ class home_page extends Component {
 
             show_pay_upcoming_subscriptions_bottomsheet={this.props.show_pay_upcoming_subscriptions_bottomsheet.bind(this)}
 
-            when_coin_object_clicked={this.when_coin_object_clicked.bind(this)}
+            when_coin_object_clicked={this.when_coin_object_clicked.bind(this)} when_playlist_selected={this.when_playlist_selected.bind(this)}
             />
         )
     }
@@ -2941,6 +2941,15 @@ class home_page extends Component {
         }
     }
 
+    when_playlist_selected(song, index){
+        this.setState({selected_audio_item: song['song_id']})
+        this.set_detail_data()
+
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
 
 
 
@@ -3095,7 +3104,8 @@ class home_page extends Component {
                 load_exchanges_royalty_event_data={this.props.load_exchanges_royalty_event_data.bind(this)}
                 load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)} update_coin_balances={this.props.update_coin_balances.bind(this)}
 
-                open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)} play_song={this.props.play_song.bind(this)}
+                open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)}
+                update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)}
                 />
             </div>
         )

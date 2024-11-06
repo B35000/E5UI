@@ -117,6 +117,7 @@ import PickFilePage from './pages/pick_file_page'
 import BuyAlbumPage from './pages/buy_album_page'
 import AudioPip from './pages/audio_pip'
 import FullAudioPage from './pages/full_audio_page'
+import AddToPlaylist from './pages/add_to_playlist'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -232,7 +233,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -291,7 +292,7 @@ class App extends Component {
     coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data(), default_addresses:this.get_default_addresses(), contract_exchange_interactions_data:{}, e5_deflation_data:{}, contracts_proposals:{},
 
     web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
-    my_tracks:[], my_albums:[]
+    my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false
   };
 
   get_static_assets(){
@@ -1008,7 +1009,7 @@ class App extends Component {
         
         /* E5 details section */
         '2232':'details','2233':'End Balance of Burn Account','2234':'E5 Ether balance in Ether and wei','2235':'E5 Ether balance in Wei','2236':'Last Transaction Block','2237':'Last Transaction age','2238':'Number of entered contracts','2239':'Number of E5 runs','2240':'Withdraw balance','2241':'Withdraw your Ether to a specified address','2242':'Withdraw Ether','2243':'Withdraw','2244':'E5','2245':'Main','2246':'E5 Address:','2247':'Vote Bounty Split Proportion','2248':'Minimum End Contract Amount','2249':'E5 block invocation Limit','2250':'E5 time invocation Limit','2251':'Minimum Entered Contracts for Consensus Participation','2252':'','2253':'Tag Indexing Limit','2254':'Minimum Transaction Count for Consensus Particiation','2255':'Gas Anchor Price','2256':'Transaction Gas Reduction Proportion','2257':'Transaction Gas Anchor Price','2258':'Transaction Gas Lower Limit','2259':'Absolute Proposal Expiry Duration Limit','2260':'Primary Transaction Account','2261':'Primary Account Transaction Period','2262':'Subscriptions Created','2263':'Chart containing the total number of subscriptions made over time.','2264':'','2265':'','2266':'','2267':'','2269e':'Y-Axis: Total Subscriptions Made','2269':'X-Axis: Time','2270':'Total Subscriptions','2271':'subscriptions','2272':'Contracts Created','2273':'Chart containing the total number of contracts made over time.','2274':'Y-Axis: Total Contracts Made','2275':'X-Axis: Time','2276':'Total Contracts','2277':'contracts','2278':'Proposals Created','2279':'Chart containing the total number of proposals made over time.','2280':'Y-Axis: Total Proposals Made','2281':'Total Proposals','2282':'proposals','2283':'Exchanges Created','2284':'Chart containing the total number of exchanges made over time.','2285':'Y-Axis: Total Exchanges Made','2286':'Total Exchanges','2287':'exchanges','2288':'Indexed Posts Created','2289':'Chart containing the total number of indexed posts made over time.','2290':'Y-Axis: Total Posts Made','2291':'Total Posts','2292':'posts','2293':'Indexed Channels Created',
-        '2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers','2336f':'Deflation.','2336g':'The amount of end that has been sent to the burn account over time.','2336h':'','2336i':'','2336j':'','2336k':'','2336l':'',
+        '2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers','2336f':'Account Zero Credit.','2336g':'The amount of end that has been sent to the burn account over time.','2336h':'','2336i':'','2336j':'','2336k':'','2336l':'',
         
         /* end detail section */
         '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions',
@@ -1031,7 +1032,7 @@ class App extends Component {
         '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒 Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
 
         /* audio details section */
-        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'', 'a2527i':'', 'a2527j':'', 'a2527k':'', 'a2527l':'', 'a2527m':'', 'a2527n':'', 'a2527o':'', 'a2527p':'', 'a2527q':'', 'a2527r':'', 'a2527s':'', 'a2527t':'', 'a2527u':'', 'a2527v':'', 'a2527w':'', 'a2527x':'', 'a2527y':'', 'a2527z':'',
+        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'', 'a2527q':'', 'a2527r':'', 'a2527s':'', 'a2527t':'', 'a2527u':'', 'a2527v':'', 'a2527w':'', 'a2527x':'', 'a2527y':'', 'a2527z':'',
         
         /* proposal details section */
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
@@ -1086,8 +1087,14 @@ class App extends Component {
         /* buy album page */
         '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.','2972c':'Unavailable Tracks.','2972d':'Below are the tracks you\'ve already purchased.',
         
-        '2973':'Album Sales','2974':'Song Sales','2975':'edit-audio','2976':'Playing ','2977':'Taken from','2978':'File size','2979':'Composers','2980':'Bitrate','2981':'Codec','2982':'Codec Profile','2983':'Container','2984':'Lossless','2985':'Number of Channels','2986':'Number of Samples','2987':'Sample Rate','2988':'data','2989':'lyrics','2990':'queue','2991':'Play Queue','2992':'Below are the tracks that are up next.','2993':'synchronize','2994':'','2995':'','2996':'','2997':'','2998':'','2999':'','3000':'',
-        '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2973':'Album Sales','2974':'Song Sales','2975':'edit-audio','2976':'Playing ','2977':'Taken from','2978':'File size','2979':'Composers','2980':'Bitrate','2981':'Codec','2982':'Codec Profile','2983':'Container','2984':'Lossless','2985':'Number of Channels','2986':'Number of Samples','2987':'Sample Rate','2988':'data','2989':'lyrics','2990':'queue','2991':'Play Queue','2992':'Below are the tracks that are up next.','2993':'synchronize','2994':'Repeating current song.','2995':'Your queue has been shuffled.','2996':'up-next','2997':'previous',
+        
+        '2998':'Add to Playlist.','2999':'Play Next.','3000':'Play Last.','3001':'Remove from queue.','3002':'Song will be played next.','3003':'Song will be played last.','3004':'Removed song from queue.','3005':'You need to be playing something first.','3006':'You cant remove that song.','3006a':'Add the track to one of your playlists.','3006b':'Play the track next.','3006c':'Play the track last.','3006d':'Remove track from queue.','3006e':'Remove from Playlist.','3006f':'Remove the track from your playlist.','3006g':'Track removed from your playlist.','3006h':'Confirm Deletion.','3006i':'Are you sure you want to delete the playlist?','3006j':'Playlist Deleted.','3006k':'',
+        
+        /* add to playlist page */
+        '3007':'Add to playlist.','3008':'You can add to an existing playlist or a new playlist.','3009':'existing','3010':'new','3011':'Youre creating a new Playlist.','3012':'Playlist Title','3013':'Playlist Description (optional)','3014':'Create and Add.','3015':'You need a title for your new playlist.','3016':'That title is too long.','3017':'Added your song to the new playlist.','3018':'A playlist with a similar title exists in your library.','3019':'You\'re adding the song to an existing playlist.','3020':'Added your song to the playlist.','3021':'You need to buy the track to add it to your playlists','3022':'Please purchase the song to play it.',
+        
+        '3023':'','3024':'','3025':'','3026':'','3027':'','3028':'','3029':'','3030':'','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -1307,6 +1314,7 @@ class App extends Component {
 
     this.audio_pip_page = React.createRef();
     this.full_audio_page = React.createRef();
+    this.add_to_playlist_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -1465,6 +1473,12 @@ class App extends Component {
       web3_account_email: this.state.web3_account_email,
       update_data_in_E5: this.state.update_data_in_E5,
       uploaded_data_cids:this.state.uploaded_data_cids,
+      audio_timestamp_data: this.state.audio_timestamp_data,
+
+      my_playlists: this.state.my_playlists,
+      should_update_playlists_in_E5: this.state.should_update_playlists_in_E5,
+      song_plays: this.state.song_plays,
+      should_update_song_plays: this.state.should_update_song_plays
     }
   }
 
@@ -1528,6 +1542,12 @@ class App extends Component {
       var cupcake_web3_account_email = cupcake_state.web3_account_email
       var cupcake_update_data_in_E5 = cupcake_state.update_data_in_E5
       var cupcake_uploaded_data_cids = cupcake_state.uploaded_data_cids
+      var cupcake_audio_timestamp_data = cupcake_state.audio_timestamp_data
+      var cupcake_my_playlists = cupcake_state.my_playlists
+      var cupcake_should_update_playlists_in_E5 = cupcake_state.should_update_playlists_in_E5
+
+      var cupcake_song_plays = cupcake_state.song_plays
+      var cupcake_should_update_song_plays = cupcake_state.should_update_song_plays
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -1689,8 +1709,28 @@ class App extends Component {
       }
 
       if(cupcake_uploaded_data_cids != null){
-        console.log('app_page', 'setting uploaded cids', cupcake_uploaded_data_cids)
+        // console.log('app_page', 'setting uploaded cids', cupcake_uploaded_data_cids)
         this.setState({uploaded_data_cids: cupcake_uploaded_data_cids})
+      }
+
+      if(cupcake_audio_timestamp_data != null){
+        this.setState({audio_timestamp_data: cupcake_audio_timestamp_data})
+      }
+
+      if(cupcake_my_playlists != null){
+        this.setState({my_playlists: cupcake_my_playlists})
+      }
+
+      if(cupcake_should_update_playlists_in_E5 != null){
+        this.setState({should_update_playlists_in_E5: cupcake_should_update_playlists_in_E5})
+      }
+
+      if(cupcake_song_plays != null){
+        this.setState({song_plays: cupcake_song_plays})
+      }
+
+      if(cupcake_should_update_song_plays != null){
+        this.setState({should_update_song_plays: cupcake_should_update_song_plays})
       }
 
 
@@ -1748,6 +1788,8 @@ class App extends Component {
     if(this.state.remember_account == 'e') return _accounts
     return this.state.coin_data
   }
+
+
 
 
 
@@ -2147,6 +2189,8 @@ class App extends Component {
         'pause':'https://bafkreiee5y4hq4xnhf44ubuhbycokfczhaxghlexzb7pg6ld3a3cwwhyia.ipfs.w3s.link/',
         'previous':'https://bafkreicjrx4etkijgxfvtmopoex5uxijbic5nsu44k2ogfg7wnmcyqd7yi.ipfs.w3s.link/',
         'next':'https://bafkreiblnp7g25ngh3mjot4ejjr7n34l2zm6wzwrhjrdfk3lgj3pjcihzy.ipfs.w3s.link/',
+        'shuffle':'https://bafkreiclbvrwjghnqjh3pkqyj5dr2zjkh336db64ex2dtc55v6c3b2n7xy.ipfs.w3s.link/',
+        'repeat':'https://bafkreia6gpgcsv742esoa2g3mfadgumxogwpzbcslx3espbe2h5ohn2h7u.ipfs.w3s.link/',
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
@@ -2180,6 +2224,8 @@ class App extends Component {
         'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
         'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
         'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
+        'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
+        'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -2214,6 +2260,8 @@ class App extends Component {
         'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
         'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
         'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
+        'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
+        'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
@@ -2350,6 +2398,7 @@ class App extends Component {
           {this.render_edit_audiopost_object_bottomsheet()}
           {this.render_full_audio_bottomsheet()}
           {this.render_buy_album_bottomsheet()}
+          {this.render_add_to_playlist_bottomsheet()}
 
           {this.render_pick_file_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -2425,8 +2474,11 @@ class App extends Component {
 
           show_pay_upcoming_subscriptions_bottomsheet={this.show_pay_upcoming_subscriptions_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.start_send_receive_coin_bottomsheet.bind(this)}
           update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
-          load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)}
-        show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)} play_song={this.play_song.bind(this)}
+          load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)} show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)} play_song={this.play_song.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+        
+          play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)}
+        
+        
         />
         {this.render_homepage_toast()}
       </div>
@@ -4213,7 +4265,7 @@ class App extends Component {
       this.open_stack_bottomsheet()
       setTimeout(function() {
         me.open_stack_bottomsheet()
-      }, (1 * 200));
+      }, (1 * 300));
     }
 
 
@@ -4223,7 +4275,7 @@ class App extends Component {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           var clone = structuredClone(me.state.is_running)
           clone[e5] = false
-          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false})
+          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false, should_update_playlists_in_E5:false})
           me.delete_stack_items(delete_pos_array)
           me.reset_gas_calculation_figure(me)
           me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
@@ -10206,18 +10258,14 @@ class App extends Component {
 
   render_dialog_bottomsheet(){
     if(this.state.dialog_bottomsheet2 != true) return;
-    var background_color = this.state.theme['send_receive_ether_background_color'];
-    var size = this.getScreenSize();
+    
     var os = getOS()
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.dialog_bottomsheet} onClose={this.open_dialog_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-                        'overflow-y':'auto'}}>
-                          <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
-                        </div>
+                        {this.render_dialog_element()}
                     </Sheet.Content>
                     {/* <ToastContainer limit={3} containerId="id2"/> */}
                 </Sheet.Container>
@@ -10227,11 +10275,20 @@ class App extends Component {
     }
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialog_bottomsheet.bind(this)} open={this.state.dialog_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-          'overflow-y':'auto'}}>
-            <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)}/>
-          </div>
+          {this.render_dialog_element()}
       </SwipeableBottomSheet>
+    )
+  }
+
+  render_dialog_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)}
+        
+        />
+      </div>
     )
   }
 
@@ -10264,8 +10321,13 @@ class App extends Component {
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600 };
-    this.open_dialog_bottomsheet(obj[id])
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700 };
+    var size = obj[id]
+    if(id == 'song_options'){
+      if(data['from'] == 'audio_details_section') size = 550
+      if(data['from'] == 'audio_details_section3') size = 350
+    }
+    this.open_dialog_bottomsheet(size)
     var me = this;
     setTimeout(function() {
       if(me.dialog_page.current != null){
@@ -10308,6 +10370,126 @@ class App extends Component {
     var me = this;
     if(me.send_receive_coin_page.current != null){
       me.send_receive_coin_page.current.when_send_coin_confirmation_received()
+    }
+  }
+
+  play_next_clicked(song){
+    this.open_dialog_bottomsheet()
+    if(this.audio_pip_page.current != null){
+      this.audio_pip_page.current?.add_song_to_queue_as_next(song)
+      this.full_audio_page.current?.add_song_to_queue_as_next(song)
+      this.prompt_top_notification(this.getLocale()['3002']/* Song will be played next. */, 1000)
+    }else{
+      this.prompt_top_notification(this.getLocale()['3005']/* You need to be playing something first. */, 4000)
+    }
+  }
+
+  play_last_clicked(song){
+    this.open_dialog_bottomsheet()
+    if(this.audio_pip_page.current != null){
+      this.audio_pip_page.current?.add_song_to_queue_as_last(song)
+      this.full_audio_page.current?.add_song_to_queue_as_last(song)
+      this.prompt_top_notification(this.getLocale()['3003']/* Song will be played last. */, 1000)
+    }else{
+      this.prompt_top_notification(this.getLocale()['3005']/* You need to be playing something first. */, 4000)
+    }
+  }
+
+  when_remove_from_queue(song){
+    this.open_dialog_bottomsheet()
+    if(this.audio_pip_page.current != null){
+      if(this.audio_pip_page.current?.state.songs.length > 1){
+        this.audio_pip_page.current?.remove_song_from_queue(song)
+        this.full_audio_page.current?.remove_song_from_queue(song)
+        this.prompt_top_notification(this.getLocale()['3004']/* Removed song from queue. */, 1000)
+      }else{
+        this.prompt_top_notification(this.getLocale()['3006']/* You cant remove that song. */, 4000)
+      }
+    }else{
+      this.prompt_top_notification(this.getLocale()['3005']/* You need to be playing something first. */, 4000)
+    }
+  }
+
+  add_to_playlist(song){
+    this.open_dialog_bottomsheet()
+    this.show_add_to_playlist_bottomsheet(song)
+  }
+
+  when_remove_from_playlist(song, playlist){
+    var me = this;
+    setTimeout(function() {
+      me.open_dialog_bottomsheet()
+    }, (1 * 500));
+    var playlists_clone = this.state.my_playlists.slice()
+    var pos = -1
+    for(var i=0; i<playlists_clone.length; i++){
+      if(playlists_clone[i]['id'] == playlist['id']){
+        pos = i
+        break;
+      }
+    }
+    if(pos != -1){
+      var pos2 = -1
+      for(var i=0; i<playlists_clone[pos]['songs'].length; i++){
+        if(playlists_clone[pos]['songs'][i]['song_id'] == song['song_id']){
+          pos2 = i
+          break
+        }
+      }
+      if(pos2 != -1){
+        playlists_clone[pos]['songs'].splice(pos2, 1)
+        this.setState({my_playlists: playlists_clone, should_update_playlists_in_E5: true})
+        var me = this;
+        setTimeout(function() {
+          me.set_cookies_after_stack_action(me.state.stack_items)
+        }, (1 * 500));
+        this.prompt_top_notification(this.getLocale()['3006g']/* Track removed from your playlist. */, 1200)
+      }
+    }
+  }
+
+  delete_playlist(playlist){
+    var me = this;
+    setTimeout(function() {
+      me.open_dialog_bottomsheet()
+    }, (1 * 500));
+    var playlists_clone = this.state.my_playlists.slice()
+    var pos = -1
+    for(var i=0; i<playlists_clone.length; i++){
+      if(playlists_clone[i]['id'] == playlist['id']){
+        pos = i
+        break;
+      }
+    }
+    if(pos != -1){
+      playlists_clone.splice(pos, 1)
+      this.setState({my_playlists: playlists_clone, should_update_playlists_in_E5: true})
+      var me = this;
+      setTimeout(function() {
+        me.set_cookies_after_stack_action(me.state.stack_items)
+      }, (1 * 500));
+      this.prompt_top_notification(this.getLocale()['3006j']/* Playlist Deleted. */, 1200)
+    }
+  }
+
+  update_order_of_songs_in_playlist(playlist, reorderedItems){
+    var playlists_clone = this.state.my_playlists.slice()
+    var pos = -1
+    for(var i=0; i<playlists_clone.length; i++){
+      if(playlists_clone[i]['id'] == playlist['id']){
+        pos = i
+        break;
+      }
+    }
+    if(pos != -1){
+      playlists_clone[pos]['songs'] = reorderedItems
+      this.setState({my_playlists: playlists_clone, should_update_playlists_in_E5: true})
+
+      var me = this;
+      setTimeout(function() {
+        me.set_cookies_after_stack_action(me.state.stack_items)
+      }, (1 * 500));
+      
     }
   }
 
@@ -10774,16 +10956,29 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{width:200, height:200}}>
-        <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} />
+        <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
+        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)}
+        />
       </div>
     )
   }
 
-  play_song(item, object, audio_items){
-    var title = item['song_title']
-    this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */+title, 800)
+  play_song(item, object, audio_items, is_page_my_collection_page){
+    this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */, 800)
     this.setState({is_audio_pip_showing: true})
-    var queue = this.get_queue(item, object, audio_items)
+    var queue = this.get_queue(item, object, audio_items, is_page_my_collection_page)
+    
+    var me = this;
+    setTimeout(function() {
+      me.audio_pip_page.current?.set_data(queue, 0)
+      me.load_queue(queue, 0)
+    }, (1 * 500));
+  }
+
+  play_song_in_playlist(item, playlist){
+    this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */, 800)
+    this.setState({is_audio_pip_showing: true})
+    var queue = this.get_playlist_queue(item, playlist)
     
     var me = this;
     setTimeout(function() {
@@ -10797,7 +10992,29 @@ class App extends Component {
     this.when_playing(null, null)
   }
 
-  get_queue(item, object, audio_items){
+  get_playlist_queue(item, object){
+    var songs = []
+    var song_ids = []
+
+    songs.push(item)
+    song_ids.push(item['song_id'])
+
+    var objects_songs = object['songs']
+    var should_start_adding = false
+    objects_songs.forEach(song => {
+      if(should_start_adding && !song_ids.includes(song['song_id'])){
+        songs.push(song)
+        song_ids.push(song['song_id'])
+      }
+      if(!should_start_adding && song['song_id'] == item['song_id']){
+        should_start_adding = true;
+      }
+    });
+
+    return songs
+  }
+
+  get_queue(item, object, audio_items, is_page_my_collection_page){
     var songs = []
     var song_ids = []
     item['album_art'] = object['ipfs'].album_art
@@ -10811,8 +11028,16 @@ class App extends Component {
       if(should_start_adding && !song_ids.includes(song['song_id'])){
         song['album_art'] = object['ipfs'].album_art
         song['object'] = object
-        songs.push(song)
-        song_ids.push(song['song_id'])
+        if(is_page_my_collection_page == true){
+          if(this.is_song_available_for_adding_to_playlist(song)){
+            //if im playing from my collection, only play the songs ive bought
+            songs.push(song)
+            song_ids.push(song['song_id'])
+          }
+        }else{
+          songs.push(song)
+          song_ids.push(song['song_id'])
+        }
       }
       if(!should_start_adding && song['song_id'] == item['song_id']){
         should_start_adding = true;
@@ -10827,8 +11052,17 @@ class App extends Component {
         if(!song_ids.includes(song['song_id'])){
           song['album_art'] = object['ipfs'].album_art
           song['object'] = object
-          songs.push(song)
-          song_ids.push(song['song_id'])
+
+          if(is_page_my_collection_page == true){
+            if(this.is_song_available_for_adding_to_playlist(song)){
+              //if im playing from my collection, only play the songs ive bought
+              songs.push(song)
+              song_ids.push(song['song_id'])
+            }
+          }else{
+            songs.push(song)
+            song_ids.push(song['song_id'])
+          }
         }
       });
     }
@@ -10851,13 +11085,14 @@ class App extends Component {
       await this.fetch_uploaded_data_from_ipfs([song], false)
       if(i == 0){
         //if its the song thats to be played
+        await this.wait(150)
         this.audio_pip_page.current?.start_playing()
       }
     }
   }
 
-  open_full_player(queue, pos, play_pause_state, value){
-    this.show_full_audio_bottomsheet(queue, pos, play_pause_state, value)
+  open_full_player(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list){
+    this.show_full_audio_bottomsheet(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list)
   }
 
   when_time_updated(time, current_song){
@@ -10865,6 +11100,7 @@ class App extends Component {
     if(me.full_audio_page.current != null){
       me.full_audio_page.current.when_time_updated(time)
     }
+    this.update_time_for_future_reference(time, current_song)
     this.when_playing(current_song, time)
   }
 
@@ -10876,6 +11112,39 @@ class App extends Component {
 
   when_playing(song, time){
     this.setState({current_playing_song: song, current_playing_time: time})
+  }
+
+  update_time_for_future_reference(time, current_song){
+    var clone = structuredClone(this.state.audio_timestamp_data)
+    clone[current_song['song_id']] = time
+    this.setState({audio_timestamp_data: clone})
+  }
+
+  update_song_plays(song){
+    var song_plays_clone = structuredClone(this.state.song_plays)
+    if(song_plays_clone[song['song_id']] == null) song_plays_clone[song['song_id']] = []
+    song_plays_clone[song['song_id']].push(new Date().getTime())
+    
+    if(!this.is_song_available_for_adding_to_playlist(song)){
+      this.setState({should_update_song_plays:true})
+    }
+    this.setState({song_plays: song_plays_clone, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 500));
+  }
+
+  notify_account_to_make_purchase(){
+    this.prompt_top_notification(this.getLocale()['3022']/* 'Please purchase the song to play it.' */, 11000)
+  }
+
+  is_song_available_for_adding_to_playlist(song){
+    var my_songs = this.state.my_tracks
+    if(my_songs.includes(song['song_id'])){
+      return true
+    }
+    return false
   }
 
 
@@ -10916,7 +11185,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <FullAudioPage ref={this.full_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)}/>
+            <FullAudioPage ref={this.full_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)} repeat_current_song={this.repeat_current_song.bind(this)} shuffle_songs_in_pip={this.shuffle_songs_in_pip.bind(this)}/>
       </div>
     )
   }
@@ -10948,12 +11217,12 @@ class App extends Component {
     }
   }
 
-  show_full_audio_bottomsheet(queue, pos, play_pause_state, value){
+  show_full_audio_bottomsheet(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list){
     this.open_full_audio_bottomsheet()
     var me = this;
     setTimeout(function() {
       if(me.full_audio_page.current != null){
-        me.full_audio_page.current.set_data(queue, pos, play_pause_state, value)
+        me.full_audio_page.current.set_data(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list)
       }
     }, (1 * 500));
   }
@@ -10976,6 +11245,126 @@ class App extends Component {
 
   update_time(number){
     this.audio_pip_page.current?.handleNumber(number)
+  }
+
+  repeat_current_song(){
+    this.audio_pip_page.current?.repeat_current_song()
+  }
+
+  shuffle_songs_in_pip(shuffle_list, its_pos){
+    this.audio_pip_page.current?.shuffle_songs_in_pip(shuffle_list, its_pos)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_add_to_playlist_bottomsheet(){
+    if(this.state.add_to_playlist_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.add_to_playlist_bottomsheet} onClose={this.open_add_to_playlist_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_add_to_playlist_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_add_to_playlist_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_add_to_playlist_bottomsheet.bind(this)} open={this.state.add_to_playlist_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_add_to_playlist_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_add_to_playlist_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <AddToPlaylist ref={this.add_to_playlist_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+            create_new_playlist_with_song={this.create_new_playlist_with_song.bind(this)} add_song_to_existing_playlist={this.add_song_to_existing_playlist.bind(this)}
+            />
+      </div>
+    )
+  }
+
+  open_add_to_playlist_bottomsheet(){
+    if(this.state.add_to_playlist_bottomsheet == true){
+      //closing
+      this.add_to_playlist_bottomsheet = this.add_to_playlist_page.current?.state;
+
+      this.setState({add_to_playlist_bottomsheet: !this.state.add_to_playlist_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({add_to_playlist_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({add_to_playlist_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({add_to_playlist_bottomsheet: !me.state.add_to_playlist_bottomsheet});
+
+          if(me.add_to_playlist_bottomsheet != null){
+            me.add_to_playlist_page.current?.setState(me.add_to_playlist_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_add_to_playlist_bottomsheet(song){
+    this.open_add_to_playlist_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.add_to_playlist_page.current != null){
+        me.add_to_playlist_page.current.set_data(song)
+      }
+    }, (1 * 500));
+  }
+
+  create_new_playlist_with_song(playlist_with_song){
+    var me = this;
+    setTimeout(function() {
+      me.open_add_to_playlist_bottomsheet()
+    }, (1 * 500));
+    var clone = this.state.my_playlists.slice()
+    clone.push(playlist_with_song)
+    this.setState({my_playlists: clone, should_update_playlists_in_E5: true})
+
+    setTimeout(function() {
+      me.set_cookies_after_stack_action(me.state.stack_items)
+    }, (1 * 500));
+  }
+
+  add_song_to_existing_playlist(playlist, song, index){
+    var me = this;
+    setTimeout(function() {
+      me.open_add_to_playlist_bottomsheet()
+    }, (1 * 500));
+    var clone = this.state.my_playlists.slice()
+    clone[index]['songs'].push(song)
+    this.setState({my_playlists: clone, should_update_playlists_in_E5: true})
+    
+    setTimeout(function() {
+      me.set_cookies_after_stack_action(me.state.stack_items)
+    }, (1 * 500));
   }
 
 
@@ -12658,6 +13047,7 @@ class App extends Component {
     var account_for_e5 = this.state.accounts[e5]
     if(web3_url != ''){
       this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+      await this.wait(300)
       if(this.get_contract_from_e5(e5) != ''){
         this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data)
       }
@@ -13236,6 +13626,16 @@ class App extends Component {
 
 
 
+    /* ---------------------------------------- PLAYLIST COLLECTION DATA ------------------------------------------- */
+    await this.get_my_playlists_data(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
+
 
     /* ---------------------------------------- SECTION TAGS DATA ------------------------------------------- */
     await this.get_section_tags_data(web3, E52contractInstance, e5, account)
@@ -13243,6 +13643,16 @@ class App extends Component {
     //   this.inc_synch_progress()
     // }
 
+
+
+
+
+
+    /* ---------------------------------------- MY PLAYS DATA ------------------------------------------- */
+    await this.get_my_plays_data(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
 
 
 
@@ -13706,9 +14116,89 @@ class App extends Component {
       var my_acquired_album_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var my_albums = my_acquired_album_data['my_albums']
       var my_tracks = my_acquired_album_data['my_tracks']
+      var timestamp = my_acquired_album_data['time']
 
-      this.setState({my_albums: my_albums, my_tracks: my_tracks})
+      if(this.my_collection_timestamp == null){
+        this.my_collection_timestamp = 0
+      }
+
+      if(this.my_collection_account != account && this.my_collection_account != 1 && this.my_collection_account != null){
+        this.my_collection_timestamp = 0
+      }
+
+      if(parseInt(this.my_collection_timestamp) < parseInt(timestamp)){
+        console.log('my_collection_data', my_albums, my_tracks)
+        this.setState({my_albums: my_albums, my_tracks: my_tracks})
+        this.my_collection_timestamp = timestamp
+      }
     }
+
+    this.my_collection_account = account
+  }
+
+  get_my_playlists_data = async (web3, E52contractInstance, e5, account) => {
+    var playlists_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6})
+
+    if(playlists_event_data.length > 0){
+      var latest_event = playlists_event_data[playlists_event_data.length - 1];
+      var playlists_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var loaded_playlists = playlists_data['playlists']
+      
+      var clone = structuredClone(this.state.my_playlists)
+      if(this.my_playlist_account != account && this.my_playlist_account != 1 && this.my_playlist_account != null){
+        clone = []
+      }
+      var new_playlist = this.combine_playlists(loaded_playlists, clone)
+      this.setState({my_playlists: new_playlist})
+    }
+
+    this.my_playlist_account = account
+  }
+
+  combine_playlists(loaded_playlists, clone){
+    var new_playlist = [].concat(loaded_playlists)
+    clone.forEach(playlist => {
+      if(this.get_item_in_array(new_playlist, playlist['id']) == null){
+        new_playlist.push(playlist)
+      }
+    });
+    return new_playlist
+  }
+
+  get_item_in_array(object_array, id){
+    var object = object_array.find(x => x['id'] === id);
+    return object
+  }
+
+  get_my_plays_data = async (web3, E52contractInstance, e5, account) => {
+    var plays_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:7})
+
+    if(plays_event_data.length > 0){
+      var latest_event = plays_event_data[plays_event_data.length - 1];
+      var plays_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var loaded_plays = plays_data['plays']
+
+      var clone = structuredClone(this.state.song_plays)
+      if(this.my_plays_account != account && this.my_plays_account != 1 && this.my_plays_account != null){
+        clone = {}
+      }
+      for (const song_id in loaded_plays) {
+        if (loaded_plays.hasOwnProperty(song_id)) {
+          var count_array = loaded_plays[song_id]
+          if(clone[song_id] == null){
+            clone[song_id] = []
+          }
+          count_array.forEach(time_element => {
+            if(!clone[song_id].includes(time_element)){
+              clone[song_id].push(time_element)
+            }
+          });
+        }
+      }
+      this.setState({song_plays: clone})
+    }
+
+    this.my_plays_account = account
   }
 
 

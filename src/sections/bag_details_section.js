@@ -271,7 +271,7 @@ class BagDetailsSection extends Component {
     }
 
     get_bag_items(){
-        return this.props.get_bag_items()
+        return this.props.get_bag_items('')
     }
 
 

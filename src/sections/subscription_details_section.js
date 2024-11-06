@@ -511,7 +511,7 @@ class SubscriptionDetailsSection extends Component {
     }
 
     get_subscription_items(){
-        return this.props.get_subscription_items()
+        return this.props.get_subscription_items('')
     }
 
 

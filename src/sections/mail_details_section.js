@@ -246,7 +246,7 @@ class MailDetailsSection extends Component {
 
 
     get_mail_items(){
-        return this.props.get_mail_items()
+        return this.props.get_mail_items('')
     }
 
 

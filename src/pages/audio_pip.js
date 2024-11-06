@@ -18,12 +18,13 @@ class AudioPip extends Component {
     
     state = {
         selected: 0, songs:[], pos:0, value:0,
-        play_pause_state:0, is_full_screen_open:false,
+        play_pause_state:0, is_full_screen_open:false, is_repeating:false, is_shuffling:false,
+        original_song_list:[],
     };
 
     set_data(songs, pos){
         // console.log('set_data', songs, pos)
-        this.setState({songs:songs, pos:pos})
+        this.setState({songs:songs, pos:pos, original_song_list:songs})
     }
 
     constructor(props) {
@@ -58,7 +59,7 @@ class AudioPip extends Component {
                 <div style={{width:200, height:200,'z-index':'15', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
                     <div className="row" style={{'padding':'0px 31px 0px 20px'}}>
                         <div className="col-11" style={{'padding': '0px 0px 0px 0px'}}>
-                            <img alt=""  onClick={()=>this.expand_player()} src={this.props.app_state.static_assets['expand_icon']} style={{height:25, width:'auto', 'margin': '-3px 0px 0px 0px'}} />
+                            {this.render_expand_player_icon()}
                         </div>
                         <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                             <img alt="" className="text-end" onClick={()=>this.close_and_stop_playing()} src={this.props.app_state.static_assets['close_pip']} style={{height:21, width:'auto'}} />
@@ -154,6 +155,13 @@ class AudioPip extends Component {
         )
     }
 
+    render_expand_player_icon(){
+        var opacity = !this.has_file_loaded() ? 0.0 : 1.0
+        return(
+            <img alt=""  onClick={()=>this.expand_player()} src={this.props.app_state.static_assets['expand_icon']} style={{height:25, width:'auto', 'margin': '-3px 0px 0px 0px', 'opacity':opacity}} />
+        )
+    }
+
     has_file_loaded(){
         var current_song = this.state.songs[this.state.pos]
         var audio_file = current_song['track']
@@ -166,8 +174,9 @@ class AudioPip extends Component {
 
 
     expand_player(){
+        if(!this.has_file_loaded()) return;
         this.setState({is_full_screen_open: true})
-        this.props.open_full_player(this.state.songs, this.state.pos, this.state.play_pause_state, this.state.value)
+        this.props.open_full_player(this.state.songs, this.state.pos, this.state.play_pause_state, this.state.value, this.state.is_repeating, this.state.is_shuffling, this.state.original_song_list)
     }
 
     when_expanded_player_closed(){
@@ -216,6 +225,10 @@ class AudioPip extends Component {
     }
 
     play_pause(){
+        if(!this.has_file_loaded() || this.is_song_available_for_playing()){
+            this.setState({play_pause_state: 0})
+            this.audio.current?.pause()
+        }
         if(this.state.play_pause_state == 0/* paused */){
             console.log('playing')
             this.setState({play_pause_state: 1})
@@ -242,29 +255,71 @@ class AudioPip extends Component {
 
     start_playing(){
         this.setState({play_pause_state: 1})
-        // this.audio = new Audio(this.get_audio_file())
+        console.log(this.state.songs)
+        var song = this.state.songs[this.state.pos]
+        var song_object = song['object'];
+        if(this.should_start_from_last_timestamp(song_object)){
+            var last_timestamp = this.props.app_state.audio_timestamp_data[song['song_id']]
+            if(last_timestamp != null){
+                this.audio.current.currentTime = last_timestamp
+                this.setState({value: last_timestamp})
+            }
+        }
         var me = this;
         setTimeout(function() {
             me.audio.current?.play()
+            me.check_if_plays_are_available_and_pause_otherwise()
         }, (1 * 300));
         
     }
 
+    should_start_from_last_timestamp(object){
+        var listing_type = object['ipfs'] == null ? this.props.app_state.loc['a311ar']/* 'Album' */ :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        if(listing_type == this.props.app_state.loc['a311at']/* 'Audiobook' */ || listing_type == this.props.app_state.loc['a311au']/* 'Podcast' */){
+            return true
+        }
+        return false
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
+
 
     handleTimeUpdate = () => {
+        if(!this.is_song_available_for_playing()){
+            this.audio.current.currentTime = 0
+            this.setState({value: 0, play_pause_state: 0/* paused */})
+            this.audio.current?.pause()
+            this.props.notify_account_to_make_purchase()
+        }
         var current_time = this.audio.current?.currentTime
         this.setState({value: current_time})
         this.props.when_time_updated(current_time, this.state.songs[this.state.pos])
     }
 
     handleAudioEnd = () => {
-        if(this.state.pos == this.state.songs.length - 1){
-            //it was the last song
-            this.setState({play_pause_state: 0})
-            this.audio.current?.pause()
+        if(this.state.is_repeating){
+            this.audio.current.currentTime = 0
+            this.setState({value: 0})
+            
+            var me = this;
+            setTimeout(function() {
+                me.audio.current?.play()
+                me.props.load_queue(me.state.songs, me.state.pos)
+                me.check_if_plays_are_available_and_pause_otherwise()
+            }, (1 * 300));
         }else{
-            this.play_next()
-            this.props.when_next_track_reached()
+            if(this.state.pos == this.state.songs.length - 1){
+                //it was the last song
+                this.setState({play_pause_state: 0})
+                this.audio.current?.pause()
+            }else{
+                this.play_next()
+                this.props.when_next_track_reached()
+            }
         }
     };
 
@@ -284,6 +339,7 @@ class AudioPip extends Component {
             setTimeout(function() {
                 me.audio.current?.play()
                 me.props.load_queue(me.state.songs, me.state.pos)
+                me.check_if_plays_are_available_and_pause_otherwise()
             }, (1 * 300));
         }
     }
@@ -297,6 +353,7 @@ class AudioPip extends Component {
             setTimeout(function() {
                 me.audio.current?.play()
                 me.props.load_queue(me.state.songs, me.state.pos)
+                me.check_if_plays_are_available_and_pause_otherwise()
             }, (1 * 300));
         }
     }
@@ -308,9 +365,91 @@ class AudioPip extends Component {
         var me = this;
         setTimeout(function() {
             me.props.load_queue(me.state.songs, me.state.pos)
+            me.check_if_plays_are_available_and_pause_otherwise()
         }, (1 * 300));
     }
+
+    repeat_current_song(){
+        this.setState({is_repeating: !this.state.is_repeating})
+    }
+
+    shuffle_songs_in_pip(shuffle_list, its_pos){
+        if(this.state.is_shuffling == true){
+            this.setState({is_shuffling: !this.state.is_shuffling, songs: shuffle_list, pos:its_pos})
+        }else{
+            this.setState({is_shuffling: !this.state.is_shuffling, songs: shuffle_list})
+        }
+    }
+
+    add_song_to_queue_as_next(song){
+        var clone = this.state.songs.slice()
+        var original_clone = this.state.original_song_list.slice()
+        clone.splice(this.state.pos+1, 0, song);
+        original_clone.push(song)
+        this.setState({songs: clone, original_song_list: original_clone})
+    }
+
+    add_song_to_queue_as_last(song){
+        var clone = this.state.songs.slice()
+        var original_clone = this.state.original_song_list.slice()
+        clone.push(song)
+        original_clone.push(song)
+        this.setState({songs: clone, original_song_list: original_clone})
+    }
+
+    remove_song_from_queue(song){
+        var clone = this.state.songs.slice()
+        var original_clone = this.state.original_song_list.slice()
+
+        var clone_index = this.get_pos_of_item(song, clone)
+        var original_clone_index = this.get_pos_of_item(song, original_clone)
+
+        clone.splice(clone_index, 1);
+        original_clone.splice(original_clone_index, 1);
+
+        this.setState({songs: clone, original_song_list: original_clone})
+    }
+
+    get_pos_of_item(item, songs){
+        for(var i=0; i<songs.length; i++){
+            var song = songs[i]
+            if(song['song_id'] == item['song_id']){
+                return i
+            }
+        }
+    }
+
+
+
+    check_if_plays_are_available_and_pause_otherwise(){
+        var song = this.state.songs[this.state.pos]
+        if(!this.is_song_available_for_playing()){
+            this.audio.current.currentTime = 0
+            this.setState({value: 0, play_pause_state: 0/* paused */})
+            this.audio.current?.pause()
+            this.props.notify_account_to_make_purchase()
+        }else{
+            this.props.update_song_plays(song)
+        }
+    }
+
+    is_song_available_for_playing(){
+        var song = this.state.songs[this.state.pos]
+        var plays = this.props.app_state.song_plays[song['song_id']] == null ? 0 : this.props.app_state.song_plays[song['song_id']].length
+        if(!this.is_song_available_for_adding_to_playlist(song) && plays >= song['songs_free_plays_count']){
+            return false
+        }
+        return true
+    }
     
+
+    is_song_available_for_adding_to_playlist(song){
+        var my_songs = this.props.app_state.my_tracks
+        if(my_songs.includes(song['song_id'])){
+            return true
+        }
+        return false
+    }
 
 
 

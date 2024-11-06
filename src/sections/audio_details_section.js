@@ -55,7 +55,7 @@ function toTree(data) {
 class AudioDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
+        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], get_navigate_playlist_details_tags_object_tags: this.get_navigate_playlist_details_tags_object_tags()
     };
 
     get_comment_structure_tags(){
@@ -79,8 +79,9 @@ class AudioDetailSection extends Component {
 
     check_for_new_responses_and_messages() {
         if(this.props.selected_audio_item != null){
-            var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
-            if(object == null) return;
+            var object = this.is_object_playlist() ? this.get_item_in_playlists(this.get_audio_items(), this.props.selected_audio_item) : this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
+
+            if(object == null || object['ipfs'] == null) return;
             this.props.get_objects_messages(object['id'],  object['e5'])
             this.props.get_post_award_data(object['id'], object['e5'])
         }
@@ -97,6 +98,17 @@ class AudioDetailSection extends Component {
         }
     }
 
+    get_navigate_playlist_details_tags_object_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['a2527d']/* 'media' */],[1]
+          ],
+        }
+    }
+
     render(){
         return(
             <div>
@@ -105,15 +117,31 @@ class AudioDetailSection extends Component {
         )
     }
 
+    is_object_playlist(object){
+        if(object == null) return false
+        return object['ipfs'] == null
+    }
+
     render_posts_list_detail(){
-        var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
+        var object = this.is_object_playlist() ? this.get_item_in_playlists(this.get_audio_items(), this.props.selected_audio_item) : this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
         if(object == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}
                 </div>
             )
-        }else{
+        }
+        else if(this.is_object_playlist(object)){
+            return(
+                <div>
+                    {this.render_playlist_details_section(object)}
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_navigate_playlist_details_tags_object_tags} tag_size={'l'} when_tags_updated={this.when_get_navigate_playlist_details_tags_object_tags_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                </div>
+            )
+        }
+        else{
             return(
                 <div>
                     {this.render_post_details_section(object)}
@@ -141,8 +169,17 @@ class AudioDetailSection extends Component {
         this.setState({navigate_view_post_list_detail_tags_object: tag_obj})
     }
 
+    when_get_navigate_playlist_details_tags_object_tags_updated(tag_obj){
+        this.setState({get_navigate_playlist_details_tags_object_tags: tag_obj})
+    }
+
     get_item_in_array(object_array, id){
         var object = object_array.find(x => x['e5_id'] === id);
+        return object
+    }
+
+    get_item_in_playlists(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
         return object
     }
 
@@ -183,6 +220,33 @@ class AudioDetailSection extends Component {
             return(
                 <div>
                     {this.render_audio_songs(object)}
+                </div>
+            )
+        }
+    }
+
+    render_playlist_details_section(object){
+        var selected_item = this.get_selected_item(this.state.get_navigate_playlist_details_tags_object_tags, this.state.get_navigate_playlist_details_tags_object_tags['i'].active)
+        
+        if(object == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }
+
+        if(selected_item ==this.props.app_state.loc['2028']/*  'metadata' */){
+            return(
+                <div>
+                    {this.render_playlist_main_details_section(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a2527d']/* 'media' */){
+            return(
+                <div>
+                    {this.render_playlist_songs(object)}
                 </div>
             )
         }
@@ -244,7 +308,6 @@ class AudioDetailSection extends Component {
                     {this.render_album_sales_data(object, item)}
 
 
-
                     {this.render_award_button(object)}
 
                     {this.render_pin_post_button(object)}
@@ -257,6 +320,149 @@ class AudioDetailSection extends Component {
             </div>
         )
     }
+
+
+    render_playlist_main_details_section(object){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-50
+        var image = this.get_playlist_images(object)[0]
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':image})}
+                    {this.render_playlist_images(object)}
+
+                    {this.render_detail_item('3', {'title':object['title'], 'details':object['details'], 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':object['id'], 'details':this.props.app_state.loc['a2527h']/* 'Playlist id' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'details':''+(new Date(object['time'])), 'title':this.get_time_difference(Math.floor(object['time']/1000)), 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':number_with_commas(object['songs'].length), 'details':this.props.app_state.loc['a2527j']/* 'Songs.' */, 'size':'l'})}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527k']/* 'Delete Playlist.' */, 'title':this.props.app_state.loc['a2527l']/* 'Delete the Playlist from your feed.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.delete_playlist(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527k']/* 'Delete Playlist' */, 'action':''},)}
+                    </div>
+
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527m']/* 'Play Playlist.' */, 'title':this.props.app_state.loc['a2527n']/* 'Play all the tracks in this playlist.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.play_playlist(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527m']/* 'Play Playlist.' */, 'action':''},)}
+                    </div>
+
+
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_playlist_images(item){
+        var items = this.get_playlist_images(item)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:50, width:50, 'background-color': background_color, 'border-radius': '10px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                            <img alt="" src={this.get_image_from_file(item)} style={{height:45 ,width:45, 'border-radius': '50%'}}/>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_playlist_images(item){
+        var images = []
+        var item_songs = item['songs']
+        item_songs.forEach(element => {
+            images.push(element['album_art'])
+        });
+
+        if(images.length == 0){
+            images.push(this.props.app_state.static_assets['music_label'])
+        }
+        return images
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+
+    delete_playlist(object){
+        this.props.show_dialog_bottomsheet({'object':object, 'from':'audio_details_section3'}, 'song_options')
+    }
+
+    play_playlist(object){
+        var items = object['songs']
+        if(items.length == 0){
+            this.props.notify(this.props.app_state.loc['a2527o']/* 'Nothing to play' */, 1200)
+            return;
+        }
+        var item = items[0]
+        this.props.play_song_in_playlist(item, object)
+    }
+
+
+
+
+
+
+
+
+
 
     render_taken_down_message_if_post_is_down(object){
         if(this.is_post_taken_down_for_sender(object)){
@@ -383,7 +589,7 @@ class AudioDetailSection extends Component {
     }
 
     get_audio_items(){
-        return this.props.get_audio_items()
+        return this.props.get_audio_items('')
     }
 
     get_post_details_data(object){
@@ -526,9 +732,12 @@ class AudioDetailSection extends Component {
 
 
 
+
+
+
     render_audio_songs(object){
         var he = this.props.height-45
-        var items = object['ipfs'].songs
+        var items = this.get_songs_to_display(object)
         var object_item = this.get_post_details_data(object)
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
@@ -538,7 +747,7 @@ class AudioDetailSection extends Component {
                     <div>
                         {items.map((item, index) => (
                             <div key={index}>
-                                {this.render_song(item, object, index)} 
+                                {this.render_song(item, object, index, 'album')} 
                                 <div style={{height:2}}/>
                             </div>
                         ))}
@@ -548,9 +757,7 @@ class AudioDetailSection extends Component {
         )
     }
 
-
-
-    render_song(item, object, index){
+    render_song(item, object, index, type){
         var border_radius = '7px';
         var text_align = 'left'
         var padding = '10px 15px 10px 15px'
@@ -563,27 +770,47 @@ class AudioDetailSection extends Component {
             song_length = '▶ '+song_length
             text_color = 'green'
         }
-        // console.log('song', item)
         return(
-            <div onClick={() => this.when_song_item_clicked(item, object)}>
+            <div onClick={() => this.when_song_item_clicked_selector(item, object, type)}>
                 <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
-                        <div style={{height:'100%', width:'100%'}}>
-                            <div>
-                                <div className="row">
-                                    <div className="col-10" style={{'padding': '0px 0px 0px 13px' }}> 
-                                        <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}}>{song_title}</p>
-                                    </div>
-                                    <div className="col-2" style={{'padding': '5px 15px 0px 0px' }}>
-                                        <p style={{'color': text_color, 'font-size': '10px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{song_length}</p>
-                                    </div>
+                    {this.render_image_if_playlist_item(item, type)}
+                    {this.render_space_if_playlist_item(type)}
+                    <div style={{height:'100%', width:'100%'}}>
+                        <div>
+                            <div className="row">
+                                <div className="col-10" style={{'padding': '0px 0px 0px 13px' }}> 
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}}>{song_title}</p>
                                 </div>
-
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
+                                <div className="col-2" style={{'padding': '5px 15px 0px 0px' }}>
+                                    <p style={{'color': text_color, 'font-size': '10px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{song_length}</p>
+                                </div>
                             </div>
+
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
                         </div>
                     </div>
+                </div>
             </div>
         )
+    }
+
+    render_image_if_playlist_item(item, type){
+        var img = item['album_art']
+        if(type == 'playlist'){
+            return(
+                <div>
+                    <img src={this.get_image_from_file(img)} alt="" style={{height:43 ,width:43, 'border-radius': '10px'}}/>
+                </div>
+            )
+        }
+    }
+
+    render_space_if_playlist_item(type){
+        if(type == 'playlist'){
+            return(
+                <div style={{width:10}}></div>
+            )
+        }
     }
 
     get_song_duration(item){
@@ -606,12 +833,23 @@ class AudioDetailSection extends Component {
         return false
     }
 
+
+    when_song_item_clicked_selector(item, object, type){
+        if(type == 'album'){
+            this.when_song_item_clicked(item, object)
+        }else{
+            this.when_song_item_clicked2(item, object)
+        }
+    }
+
     when_song_item_clicked(item, object){
         let me = this;
         if(Date.now() - this.last_all_click_time3 < 200){
             clearTimeout(this.all_timeout3);
             //double tap
-            
+            item['object'] = object
+            item['album_art'] = object['ipfs'].album_art
+            me.props.show_dialog_bottomsheet({'item':item, 'object':object, 'from':'audio_details_section'}, 'song_options')
         }else{
             this.all_timeout3 = setTimeout(function() {
                 clearTimeout(this.all_timeout3);
@@ -623,12 +861,120 @@ class AudioDetailSection extends Component {
     }
 
     play_song(item, object){
-        this.props.play_song(item, object, this.get_audio_items())
+        this.props.play_song(item, object, this.get_audio_items(), this.is_page_my_collection_page())
+    }
+
+    get_songs_to_display(object){
+        if(this.is_page_my_collection_page()){
+            var songs_to_display = []
+            var items = object['ipfs'].songs
+            items.forEach(song => {
+                if(this.is_song_available_for_adding_to_playlist(song)){
+                    songs_to_display.push(song)
+                }
+            });
+            return songs_to_display
+        }else{
+            return object['ipfs'].songs
+        }
+    }
+
+    is_song_available_for_adding_to_playlist(song){
+        var my_songs = this.props.app_state.my_tracks
+        if(my_songs.includes(song['song_id'])){
+        return true
+        }
+        return false
+    }
+
+    is_page_my_collection_page(){
+        var page_id = this.props.get_page_id()
+        var my_collection_page_id = this.props.app_state.loc['1264k']/* 'audioport' */ + this.props.app_state.loc['1264l']/* 'acquired' */
+        if(page_id == my_collection_page_id){
+            return true
+        }
+        return false
     }
 
 
 
 
+
+
+
+
+
+    render_playlist_songs(object){
+        var he = this.props.height-45
+        var items = object['songs']
+        if(items.length == 0){
+            items = ['0','1','2'];
+            return ( 
+                <div>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_small_empty_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
+                    {this.render_detail_item('3', {'title':object['title'], 'details':object['details'], 'size':'l'})}
+                    {this.render_detail_item('0')}
+                    <div>
+                        {items.map((item, index) => (
+                            <div key={index}>
+                                {this.render_song(item, object, index, 'playlist')} 
+                                <div style={{height:2}}/>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    handleDragEnd = (result) => {
+        // this.props.update_order_of_songs_in_playlist(object, reorderedItems)
+    };
+
+    when_song_item_clicked2(item, object){
+        let me = this;
+        if(Date.now() - this.last_all_click_time3 < 200){
+            clearTimeout(this.all_timeout3);
+            //double tap
+            me.props.show_dialog_bottomsheet({'item':item, 'object':object, 'from':'audio_details_section2'}, 'song_options')
+        }else{
+            this.all_timeout3 = setTimeout(function() {
+                clearTimeout(this.all_timeout3);
+                // single tap
+                me.play_song_in_playlist(item, object)
+            }, 200);
+        }
+        this.last_all_click_time3 = Date.now();
+    }
+
+    play_song_in_playlist(item, object){
+        this.props.play_song_in_playlist(item, object)
+    }
+
+
+    render_small_empty_object(){
+        return(
+            <div>
+                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
 
 

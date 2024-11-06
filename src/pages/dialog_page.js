@@ -85,6 +85,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'song_options'){
+            return(
+                <div>
+                    {this.render_song_options()}
+                </div>
+            )
+        }
     }
 
 
@@ -657,6 +664,357 @@ class DialogPage extends Component {
 
 
 
+
+
+
+    render_song_options(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_song_options_items()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_song_options_items()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_song_options_items()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_song_options_items(){
+        var data = this.state.data
+        var from = data['from']
+        
+        if(from == 'audio_details_section'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items()}
+                </div>
+            )
+        }
+        else if(from == 'full_audio_page'){
+            return(
+                <div>
+                    {this.render_full_audio_page_song_option_items()}
+                </div>
+            )
+        }
+        else if(from == 'audio_details_section2'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items2()}
+                </div>
+            )
+        }
+        else if(from == 'audio_details_section3'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items3()}
+                </div>
+            )
+        }
+    }
+
+    render_audio_details_section_song_option_items(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'details':this.props.app_state.loc['3006a']/* 'Add the track to one of your playlists.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_add_to_playlist_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2999']/* 'Play Next.' */, 'details':this.props.app_state.loc['3006b']/* 'Play the track next.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_play_next_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2999']/* 'Play Next.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3000']/* 'Play Last.' */, 'details':this.props.app_state.loc['3006c']/* 'Play the track last. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_play_last_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3000']/* 'Play Last.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    
+
+    when_add_to_playlist_clicked(){
+        if(this.is_song_available_for_adding_to_playlist()){
+            var song = this.state.data['item']
+            this.props.add_to_playlist(song)
+        }else{
+            this.props.notify(this.props.app_state.loc['3021']/* 'You need to buy the track to add it to your playlists' */, 6000)
+        }
+        
+    }
+
+    when_play_next_clicked(){
+        var song = this.state.data['item']
+        this.props.play_next_clicked(song)
+    }
+
+
+    when_play_last_clicked(){
+        var song = this.state.data['item']
+        this.props.play_last_clicked(song)
+    }
+
+
+    render_full_audio_page_song_option_items(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'details':this.props.app_state.loc['3006a']/* 'Add the track to one of your playlists.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_add_to_playlist_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2999']/* 'Play Next.' */, 'details':this.props.app_state.loc['3006b']/* 'Play the track next.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_play_next_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2999']/* 'Play Next.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3000']/* 'Play Last.' */, 'details':this.props.app_state.loc['3006c']/* 'Play the track last. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_play_last_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3000']/* 'Play Last.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3001']/* 'Remove from queue.' */, 'details':this.props.app_state.loc['3006d']/* 'Remove track from queue.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_remove_from_queue_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3001']/* 'Remove from queue.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_remove_from_queue_clicked(){
+        var song = this.state.data['item']
+        this.props.when_remove_from_queue(song)
+    }
+
+
+    is_song_available_for_adding_to_playlist(){
+        var my_songs = this.props.app_state.my_tracks
+        var song = this.state.data['item']
+        console.log('my_collection_data', my_songs, song['song_id'])
+        if(my_songs.includes(song['song_id'])){
+            return true
+        }
+        return false
+    }
+
+
+
+
+    render_audio_details_section_song_option_items2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'details':this.props.app_state.loc['3006a']/* 'Add the track to one of your playlists.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_add_to_playlist_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006e']/* 'Remove from Playlist.' */, 'details':this.props.app_state.loc['3006f']/* 'Remove the track from your playlist.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_remove_from_playlist_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006e']/* 'Remove from Playlist.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2999']/* 'Play Next.' */, 'details':this.props.app_state.loc['3006b']/* 'Play the track next.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_play_next_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2999']/* 'Play Next.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3000']/* 'Play Last.' */, 'details':this.props.app_state.loc['3006c']/* 'Play the track last. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_play_last_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3000']/* 'Play Last.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+    when_remove_from_playlist_clicked(){
+        var item = this.state.data['item']
+        var object = this.state.data['object']
+        this.props.when_remove_from_playlist(item, object)
+    }
+
+
+    
+
+    render_audio_details_section_song_option_items3(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006h']/* 'Confirm Deletion.' */, 'details':this.props.app_state.loc['3006i']/* 'Are you sure you want to delete the playlist?' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_delete_playlist_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006h']/* 'Confirm Deletion.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                <div style={{height:15}}/>
+                {this.render_playlist_item(this.state.data['object'])}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_playlist_item(item){
+        var title = item['title']
+        var details = item['details']
+        return(
+            <div>
+                <div style={{'padding': '0px 0px 0px 0px'}}>
+                    {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                </div>
+                <div style={{padding:'0px 0px 0px 0px'}}>
+                    {this.render_playlist_images(item)}
+                </div>
+            </div>
+        )
+    }
+
+    render_playlist_images(item){
+        var items = this.get_playlist_images(item)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:50, width:50, 'background-color': background_color, 'border-radius': '10px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                            <img alt="" src={this.get_image_from_file(item)} style={{height:25 ,width:25, 'border-radius': '50%'}}/>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_playlist_images(item){
+        var images = []
+        var item_songs = item['songs']
+        item_songs.forEach(element => {
+            images.push(element['album_art'])
+        });
+        return images
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+
+        return data['data']
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+    when_delete_playlist_clicked(){
+        var playlist = this.state.data['object']
+        this.props.delete_playlist(playlist)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     render_empty_views(size){
         var items = []
         for(var i=0; i<size; i++){
@@ -682,12 +1040,13 @@ class DialogPage extends Component {
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
-
     }
 
     format_account_balance_figure(amount){

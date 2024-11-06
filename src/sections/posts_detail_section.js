@@ -387,7 +387,7 @@ class PostsDetailsSection extends Component {
     }
 
     get_post_items(){
-        return this.props.get_post_items()
+        return this.props.get_post_items('')
     }
 
     get_post_details_data(object){
