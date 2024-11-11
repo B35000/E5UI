@@ -28,6 +28,13 @@ function start_and_end(str) {
   return str;
 }
 
+function start_and_end2(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 function TreeNode(data) {
   this.data     = data;
   this.parent   = null;
@@ -190,9 +197,12 @@ class StorefrontDetailsSection extends Component {
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
         var variants = object['ipfs'].variants == null ? [] : object['ipfs'].variants
+
+        
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    {this.render_storefront_item_art_if_any(object)}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
@@ -209,6 +219,8 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2607']/* 'Author Seller' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
+                    {this.render_direct_purchases_if_any()}
+
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['ipfs'].target_receiver, object), 'details':this.props.app_state.loc['2608']/* Target Payment Recipient' */, 'size':'l'})}
 
                     {this.render_fulfilment_accounts_if_any(object)}
@@ -221,6 +233,7 @@ class StorefrontDetailsSection extends Component {
                     {this.render_item_data(items)} 
                     {this.render_item_images(object)}
                     {this.render_selected_links(object)}
+                    {this.render_pdf_files_if_any(object)}
                     
                     {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']/* ' variants' */, 'details':this.props.app_state.loc['2613']/* 'To choose from.' */, 'size':'l'})} 
                     <div style={{height: 5}}/>
@@ -243,6 +256,108 @@ class StorefrontDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_pdf_files_if_any(object){
+        var state = object['ipfs']
+        if(state.entered_pdf_objects != null && state.entered_pdf_objects.length > 0){
+            return(
+                <div>
+                    {this.render_pdfs_part(state.entered_pdf_objects)}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_part(entered_pdf_objects){
+        var items = [].concat(entered_pdf_objects)
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_pdf_item_clicked(item)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_pdf_item_clicked(item){
+        this.props.when_pdf_file_opened(item)
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end2(data['name'])
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%',})}
+            </div>
+        )
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+
+    render_direct_purchases_if_any(object){
+        var purchases = this.props.app_state.direct_purchases[object['id']] == null ? [] : this.props.app_state.direct_purchases[object['id']]
+        if(purchases.length == 0) return
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':''+number_with_commas(purchases.length), 'details':this.props.app_state.loc['2642a']/* 'Direct Purchases.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+    render_storefront_item_art_if_any(object){
+        if(object['ipfs'].storefront_item_art != null){
+            return(
+                <div>
+                    {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':object['ipfs'].storefront_item_art})}
+                </div>
+            )
+        }
     }
 
     render_item_variants(object, composition_type){
@@ -1257,9 +1372,12 @@ class StorefrontDetailsSection extends Component {
                     </div>
                     <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
+                    {this.render_pdfs_if_any(item)}
+
                     {this.render_images_if_any(item)}
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p>
                 </div>
+                {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item, object)}
             </div>
         )
@@ -1328,6 +1446,18 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_if_any(item){
+        if(item.type == 'image' && item['pdf-data'] != null && item['pdf-data'].length > 0){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_pdfs_part(item['pdf-data'])}
+                    <div style={{height:5}}/>
                 </div>
             )
         }

@@ -55,7 +55,7 @@ class NewMailPage extends Component {
         typed_link_text:'', link_search_results:[], added_links:[], 
         edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(),
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), entered_pdf_objects:[],
     };
 
     get_new_job_page_tags_object(){
@@ -64,7 +64,7 @@ class NewMailPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -177,6 +177,13 @@ class NewMailPage extends Component {
                     {this.render_enter_image_part()}
                 </div>
             ) 
+        }
+        else if(selected_item == this.props.app_state.loc['162r']/* 'pdfs' */){
+            return(
+                <div>
+                    {this.render_enter_pdf_part()}
+                </div>
+            )
         }
         // else if(selected_item == 'recipients'){
         //     return(
@@ -1393,6 +1400,152 @@ class NewMailPage extends Component {
 
 
 
+
+
+    render_enter_pdf_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_pdf_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_pdf_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['162o']/* 'The gray circle stages a pdf file. Then swipe it to remove.' */})}
+                {this.render_create_pdf_ui_buttons_part()}
+                {this.render_pdfs_part()}
+            </div>
+        )
+    }
+
+    render_create_pdf_ui_buttons_part(){
+        return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
+            </div>
+        </div>
+      )
+    }
+
+    when_pdf_files_picked(files){
+        var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_pdf_objects: clonedArray});
+    }
+
+    render_pdfs_part(){
+        var items = [].concat(this.state.entered_pdf_objects)
+
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_pdf_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <div style={{'margin':'3px 0px 3px 0px'}}>
+                                            {this.render_uploaded_file(item, index)}
+                                        </div>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        var details = data['name']
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    when_pdf_clicked(item, index){
+        var cloned_array = this.state.entered_pdf_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_pdf_objects: cloned_array})
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+
+
+
+
     render_recipients_part(){
         return(
             <div>
@@ -1521,29 +1674,29 @@ class NewMailPage extends Component {
         return return_array
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
+    // get_all_sorted_objects(object){
+    //     var all_objects = []
+    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+    //         var e5 = this.props.app_state.e5s['data'][i]
+    //         var e5_objects = object[e5]
+    //         if(e5_objects != null){
+    //             all_objects = all_objects.concat(e5_objects)
+    //         }
+    //     }
+    //     return this.sortByAttributeDescending(all_objects, 'timestamp')
+    // }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
+    // sortByAttributeDescending(array, attribute) {
+    //   return array.sort((a, b) => {
+    //       if (a[attribute] < b[attribute]) {
+    //       return 1;
+    //       }
+    //       if (a[attribute] > b[attribute]) {
+    //       return -1;
+    //       }
+    //       return 0;
+    //   });
+    // }
 
     get_contact_alias(contact){
         return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
@@ -1634,7 +1787,7 @@ class NewMailPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_mail_to_stack(me.state)
         
-                me.setState({ selected: 0, id: makeid(8), type:me.props.app_state.loc['285'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[], typed_link_text:'', link_search_results:[], added_links:[],})
+                me.setState({ selected: 0, id: makeid(8), type:me.props.app_state.loc['285'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[], typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[],})
             }, (1 * 1000));
 
             this.props.notify(this.props.app_state.loc['18'], 1700);

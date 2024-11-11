@@ -46,7 +46,7 @@ class ContractDetailsSection extends Component {
                 active: 'e',
             },
             'e': [
-                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */], [1]
+                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */], [1]
             ],
             'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
@@ -210,6 +210,13 @@ class ContractDetailsSection extends Component {
                     </div>
                 )
             }
+            else if(selected_item == this.props.app_state.loc['2214d']/* 'participants' */){
+                return(
+                    <div>
+                        {this.render_participant_accounts_and_their_expiry_times(object)}
+                    </div>
+                )
+            }
         }
     }
 
@@ -334,21 +341,23 @@ class ContractDetailsSection extends Component {
     }
 
     render_participants(object){
-        if(object['id'] != 2){
+        var participans_data = this.get_active_participants(object)
+        var active_participants = participans_data.active_participants
+        if(object['id'] != 2 && active_participants.length > 0){
             return(
                 <div>
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2129']/* Participant Accounts' */, 'details':this.props.app_state.loc['2130']/* 'The accounts that have entered the contract.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    {this.render_participant_accounts(object)}
+                    {this.render_participant_accounts(object, active_participants)}
                 </div>
             )
         }
     }
 
-    render_participant_accounts(object){
-        var items = [].concat(object['participants'])
+    render_participant_accounts(object, active_participants){
+        var items = [].concat(active_participants)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -362,6 +371,19 @@ class ContractDetailsSection extends Component {
                 </ul>
             </div>
         )
+    }
+
+    get_active_participants(object){
+        var active_participants = []
+        var inactive_participants = []
+        object['participants'].forEach(participant => {
+            if(object['participant_times'][participant] > (Date.now()/1000)){
+                active_participants.push(participant)
+            }else{
+                inactive_participants.push(participant)
+            }
+        });
+        return {active_participants: active_participants, inactive_participants: inactive_participants}
     }
 
     render_pin_contract_button(object){
@@ -1014,6 +1036,118 @@ class ContractDetailsSection extends Component {
         }
         
         return dps
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_participant_accounts_and_their_expiry_times(object){
+        var he = this.props.height-45
+        var object_item = this.get_contract_details_data(object)
+        var participans_data = this.get_active_participants(object)
+        var active_participants = participans_data.active_participants
+        var inactive_participants = participans_data.inactive_participants
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
+                    {this.render_detail_item('8', object_item['id'])}
+                    {this.render_detail_item('0')}
+                    {this.render_active_participants(object, active_participants, inactive_participants)}
+                    {this.render_inactive_participants(object, inactive_participants)}
+                    {this.render_empty_views_if_no_participants(active_participants, inactive_participants)}
+                </div>
+            </div>
+        )
+    }
+
+    render_empty_views_if_no_participants(active_participants, inactive_participants){
+        if(inactive_participants.length == 0 && active_participants.lenght == 0){
+            var items = ['0','1','2'];
+            return ( 
+                <div>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_small_empty_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    render_small_empty_object(){
+        return(
+            <div>
+                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_active_participants(object, active_participants, inactive_participants){
+        if(active_participants.length == 0) return;
+        return(
+            <div>
+                {active_participants.map((item, index) => (
+                    <div key={index}>
+                        {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.get_account_time(item, object), 'size':'l'})}
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+                {this.render_line_if_inactive_participants_present(inactive_participants)}
+            </div>
+        )
+    }
+
+    render_line_if_inactive_participants_present(inactive_participants){
+        if(inactive_participants.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    render_inactive_participants(object, inactive_participants){
+        if(inactive_participants.length == 0) return;
+        return(
+            <div>
+                {inactive_participants.map((item, index) => (
+                    <div key={index}>
+                        {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.get_account_time(item, object), 'size':'l'})}
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    get_account_time(participant, object){
+        var expiry_time = object['participant_times'][participant]
+        var now = (Date.now()/1000)
+        if(expiry_time > now){
+            //account can still vote in contract
+            return this.props.app_state.loc['2214e']/* 'Until ' */+this.get_time_diff(expiry_time - now)
+        }else{
+            //account can no longer vote
+            return '-'+this.get_time_difference(expiry_time)
+        }
     }
 
 

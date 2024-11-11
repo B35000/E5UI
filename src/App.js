@@ -130,6 +130,9 @@ import classes2 from "./PIP.module.css";
 import Dexie from 'dexie';
 import { locale } from 'dayjs';
 
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const Web3 = require('web3');
@@ -226,6 +229,22 @@ function iOS() {
   || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 }
 
+function shuffle(array) {
+  let currentIndex = array.length;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    let randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+}
+
 class App extends Component {
 
   state = {
@@ -233,13 +252,13 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, web3-storage, nft-storage */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1427']/* 'filtered' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
     remember_account:'e',
 
     new_object_target: '0', edit_object_target:'0',
@@ -271,7 +290,7 @@ class App extends Component {
     selected_e5:'E25', default_e5:'E25',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
-    device_country:this.get_country(), static_assets: this.get_static_assets(), os:getOS(),
+    device_country:this.get_location_info().userCountry, device_city: this.get_location_info().userCity, device_region: this.get_location_info().userRegion, device_country_code: this.get_country_code(this.get_location_info().userCountry), static_assets: this.get_static_assets(), os:getOS(),
     
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
@@ -292,7 +311,9 @@ class App extends Component {
     coin_data:{}, account_seed:'', coin_data_status: 'set', final_seed:'', coins:this.get_coin_data(), default_addresses:this.get_default_addresses(), contract_exchange_interactions_data:{}, e5_deflation_data:{}, contracts_proposals:{},
 
     web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
-    my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false
+    my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false,
+
+    run_gas_price:0, all_cities:[], cached_tracks:[],
   };
 
   get_static_assets(){
@@ -303,7 +324,9 @@ class App extends Component {
       'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74',
       'music_label':'https://bafkreigntzixxxm2yyqjv2gffpbaxf7uuxmqcwhpvrkuwswztbhkdj35mu.ipfs.w3s.link/',
       'expand_icon':'https://bafkreihfwjiuc3nucu6dbhtlojc7ovhuakkfknrrnhb2wfe723whj3f4qe.ipfs.w3s.link/',
-      'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/'
+      'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/',
+      'empty_image':'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/',
+      'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
     }
   }
 
@@ -816,7 +839,7 @@ class App extends Component {
         '64':'modify-contract','65':'modify','66':'contract','67':'auth','68':'Vote Bounty Split Proportion','69':'Maximum Extend Enter Contract Limit','70':'Minimum End Bounty Amount','71':'Proposal Expiry Duration Limit','72':'Maximum Enter Contract Duration','73':'Auto Wait','74':'Proposal Modify Expiry Duration Limit','75':'Moderator Modify Privelage','76':'Unlimited Extend Contract Time','77':'Maximum Proposal Expiry Submit Expiry time difference','78':'Bounty Limit Type','79':'Force Exit Enabled','80':'Minimum Spend Bounty Amount','81':'no','82':'yes','83':'modifiable','84':'non-modifiable','85':'enabled','86':'disabled','87':'relative','88':'absolute','89':'enabled','90':'disabled','91':'Make changes to the configuration of the contract ID: ','92':'units','93':'Add Change.','94':'Target ID...','95':'Current ','96':'Current Value.','97':'Reconfiguration action added.','98':'Please pute a valid account ID.','99':'Reconfiguration action added.','100':'Modify Target.','101':'Position.','102':'Proportion.','103':'Duration.','104':'Value: ','105':'Target ID','106':'Reconfiguration action removed.','107':'My Account','108':'Account','108a':'Edit contract prices.', '108b':'Change the entry fees of your contract.', '108c':'You cant change the first price-value of the entry fees used', '108d':'', '108e':'', '108f':'',
         
         /* new channel page */
-        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.', '303a':'Subscription Locked Channel Preview.','304b':'If set to visible, a preview of your new channel will be shown to outsiders if subscription locked.',
+        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.', '303a':'Subscription Locked Channel Preview.','304b':'If set to visible, a preview of your new channel will be shown to outsiders if subscription locked.','162o':'The gray circle stages a pdf file. Then swipe it to remove.','162p':'','162q':'','162r':'pdfs','162s':'','162t':'','162u':'',
         
         /* new contract page */
         '163':'configuration','164':'entry-fees','165':'private','166':'public','167':'Set a title for your new Contract.','168':'Set tags for indexing your new Contract.','169':'Add.','170':'Enter Contract.','171':'If set to enter-contract, youll enter the contract your creating in one transaction.','172':'Preset the new contract settings based on common use cases.','173':'👥 Workgroup Contract','174':'A contract representing shared consensus within an organization or group of people.','175':'🧘 Personal Contract','176':'A contract primarily used by one person.','177':'👷🏼 Work Contract','178':'A contract used for the job and contractor markets.',
@@ -838,7 +861,7 @@ class App extends Component {
 
         /* new audio page */
         'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.',
-        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'','a311bm':'','a311bn':'','a311bo':'','a311bp':'','a311bq':'','a311br':'','a311bs':'',
+        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'','a311br':'','a311bs':'',
         
         /* new proposal page */
         '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ',
@@ -849,7 +872,7 @@ class App extends Component {
         /* new storefront item page */
         '439':'storefront-item','440':'configuration','441':'variants','442':'invisible','443':'masked','444':'unmasked','445':'items','446':'grams','447':'kilograms','448':'ounces','449':'pounds','450':'centimeters','451':'meters','452':'inches','453':'feet','454':'mililiters','455':'liters','456':'gallons','457':'listed','458':'delisted','459':'in-stock','460':'out-of-stock','461':'Unit Denomination.','462':'Specify the denomination of the item below.','463':'Unit Denomination.','464':'Specify the denomination of the item from the tag picker below.','465':'Set denomination: ','466':'Target Payment Recipient.','467':'Set the account ID thats set to receive the purchase payments for your new item.','468':'Fulfilment Location.','469':'Set location of the pick up station for your item when its ordered using a bag and contractors.','470':'Location Details...','471':'Direct Purchase Option.','472':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients.','473':'Product Chatroom.',
         '474':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section.','475':'Product Listing.','476':'If set to delisted, the item will not be visible for purchasing.','477':'Product Stock.','478':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.','479':'Fulfilment Accounts.','480':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients.','481':'Direct Purchase Shipping Fee.','482':'The shipping fee you charge for shipping your item when directly purchased by your clients.','483':'tokens','484':'Price','485':'Add Price.','486':'Please put a valid exchange ID.','487':'Please put a valid amount.','488':'You cant use the same exchange twice.','489':'Added shipping price.','490':'Please put a valid account ID.','491':'Added the account.','492':'Account.','493':'My Account.','494':'Set a title for your new Storefront Item.','495':'Enter Title...','496':'Set tags for indexing your new Storefront Item.','497':'Enter your preferred text then tap add to add it to the new Storefront Item.','498':'Search an object by its title or ID, then tap it to add it to the new Storefront Item.','499':'Search.','500':'The link is already in the Storefront Item.','501':'Link added to new Storefront Item.','502':'Price per unit.','503':'Specify the price for one unit of your new items variant.','504':'Exchange ID',
-        '505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'Enter Account ID','535c':'Set the details for a variant of your new storefront item.','535d':'Editing that variant.','535e':'Add Variant.','535f':'Add a new variant of the item with the details set above.',
+        '505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'Enter Account ID','535c':'Set the details for a variant of your new storefront item.','535d':'Editing that variant.','535e':'Add Variant.','535f':'Add a new variant of the item with the details set above.','535g':'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.','535h':'','535i':'','535j':'','535k':'','535l':'',
         
         /* new subscription page */
         '536':'subscription','537':'configuration','538':'authorities','539':'prices','540':'false','541':'true','542':'moderators','543':'interactable','544':'enabled','545':'disabled','546':'Set a name for your new Subscription.','547':'Enter Title...','548':'Set some tags for indexing your new Subscription.','549':'Enter Tag...','550':'Add.','551':'Create a basic E5 Subscription.','552':'Next','553':'Previous','554':'Cancellable.','555':'If set to true, subscription payers can refund their subscription payments.','556':'Recommended: false.','557':'Time Unit','558':'The amount of time thats used as a unit when paying for your new subscription.','559':'Recommended: 1 min.','560':'Minimum Buy Amount.','561':'Minimum amount of time units that can be paid for your new subscription.','562':'units','563':'Recommended: at least 1','564':'Maximum Buy Amount','565':'Maximum amount of time units that can be paid for your new subscription.','566':'Minimum Cancellable Amount(For Cancellable Subscriptions)','567':'The minimum amount of time units that can be left when cancelling your new subscriptions payments.','568':'Minimum Cancellable Amount','569':'Recommended: at least 1','570':'Access Rights','571':'If enabled, access to the subscription will be restricted to moderators and specified accounts.','572':'Set the authority ID for your new subscription.','573':'Set the subscription beneficiary ID for your new subscription.','574':'moderators','575':'interactable','576':'Moderator ID','577':'Set the account id for your targeted moderator','578':'Add Moderator','579':'Account ID','580':'Interactable ID','581':'Set the account id for your targeted account, and expiry time for their interactability','582':'Add Interactable Account.','583':'Please put a valid account ID.','584':'Added interactable account.','585':'Interactable Account ID: ','586':'Until: ','587':'Exchange ID','588':'Type an exchange by its id, then the desired price and click add.','589':'Price','590':'tokens','591':'Add Price','592':'Please put a valid exchange ID.','593':'Please put a valid amount.','594':'You cant use the same exchange twice.','595':'Added price.','596':'My Account','597':'Account','598':'Add some tags first.','599':'Add a name first.','600':'That name is too long.', '600a':'Enter Authority', '600b':'Enter Beneficiary ID...',
@@ -907,10 +930,10 @@ class App extends Component {
         '1018':'transfer','1019':'send','1020':'Transfer the specified token.','1021':'Your Balance','1022':'Your Balance after Set Transfers','1023':'Set the recipient of the transfer action.','1024':'Recipient of action.','1025':'Recipient ID','1026':'Amount to transfer to the speicified target account.','1027':'Amount for Transfer.','1028':'Set Maximum','1029':'Add Transaction','1030':'Please put a valid account ID.','1031':'Please put a valid amount.','1032':'You dont have enough tokens to add that transaction.','1033':'','1034':'Transaction added.','1035':'Recipient account: ','1036':'Transaction removed.','1037':'Transfer Amount',
         
         /* add comment page */
-        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'font','1042c':'size','1042d':'Your balance in SPEND.','1042e':'That message is inconveniencingly long for its size.','1042f':'','1042g':'',
+        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'font','1042c':'size','1042d':'Your balance in SPEND.','1042e':'That message is inconveniencingly long for its size.','1042f':'Gray stages images and black stages a pdf. Then tap to remove.','1042g':'',
         
         /* add to bag page */
-        '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.',
+        '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.','1058a':'Bag City','1058b':'You may specify your location city for contractors.','1058c':'You need to set your city for contractors.','1058d':'','1058e':'','1058f':'',
         
         /* clear purchase page */
         '1059':'verify-signature','1060':'generate-signature','1061':'Generate Fulfilment Signature','1062':'Create a signature to finalize the fulfilment transaction.','1063':'Quantity: ','1064':'Sender Account ID: ','1065':'Signature','1066':'Copy to Clipboard','1067':'Copied signature to clipboard.','1068':'Receive Fulfilment Signature','1069':'Receive a fulfilment signature to verify the items delivery.','1070':'Variant ID: ','1071':'Quantity: ','1072':'Sender Account ID: ','1073':'Paste Signature','1074':'Paste the signature in the input field below.','1075':'Open Scanner','1076':'Scan for the signature using a built in scanner.','1077':'Please paste a signature to finish here.','1078':'The signature you received is invalid.','1078a':'Qr Code',
@@ -960,7 +983,7 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'','1593ce':'','1593cf':'','1593cg':'','1593ch':'','1593ci':'','1593cj':'','1593ck':'','1593cl':'','1593cm':'','1593cn':'','1593co':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'Uploaded PDFs','1593cf':'','1593cg':'','1593ch':'','1593ci':'','1593cj':'','1593ck':'','1593cl':'','1593cm':'','1593cn':'','1593co':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1002,7 +1025,7 @@ class App extends Component {
         
         /* contract details section */
         '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay',
-        '2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account', '2214a':'Balance Changes.','2214b':'The changes in balance for the selected token.','2214c':'Y-Axis: Total in ','2214d':'','2214e':'','2214f':'','2214g':'','2214h':'','2214i':'',
+        '2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account', '2214a':'Balance Changes.','2214b':'The changes in balance for the selected token.','2214c':'Y-Axis: Total in ','2214d':'participants','2214e':'Until ','2214f':'','2214g':'','2214h':'','2214i':'',
         
         /* contractor detail section */
         '2215':'details','2216':'job-requests','2217':'Fees Per Hour','2218':'The amounts they charge per hour for their work.','2219':'Send Job Request.','2220':'Send a job request to the contractor to do a job for you.','2221':'Send Request','2222':'Pin the contractor to your feed.','2223':'Pin Contractor','2224':'Pin/Unpin Contractor','2225':'Edit Contractor Post','2226':'Change the basic details for your Contractor Post','2227':'Perform Action','2228':'Job Requests','2229':'Job Description','2230':'Accepted','2231':'Expiry time from now: ','2231a':' requests received.',
@@ -1032,7 +1055,7 @@ class App extends Component {
         '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒 Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
 
         /* audio details section */
-        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'', 'a2527q':'', 'a2527r':'', 'a2527s':'', 'a2527t':'', 'a2527u':'', 'a2527v':'', 'a2527w':'', 'a2527x':'', 'a2527y':'', 'a2527z':'',
+        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'▶️ Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'▶️ Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'🔀 Shuffle Album', 'a2527t':'🔀 Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times. Cookies will be enabled.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times. Cookies will be enabled.', 'a2527z':'Downloading...','a2527ba':'Done.',
         
         /* proposal details section */
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
@@ -1041,7 +1064,7 @@ class App extends Component {
         '2559':'updated-proportion-ratios','2560':'Mint or Dump the token for a specified account.','2561':'Mint/Dump','2562':'Make a token transfer to a specified account.','2563':'Send/Transfer','2564':'The exchanges balance for each of the tokens used to buy ','2565':'Buy Token Liquidity','2566':'Author Moderator Privelages Disabled','2567':'Author of Object is not a Moderator by default','2568':'Author Moderator Privelages Enabled','2569':'Author of Object is a Moderator by default','2570':'The amount you get when selling one unit of the token.','2571':'Token Price','2572':'Modify Exchanage','2573':'AuthMint Tokens','2574':'Bypass the exchanges restrictions and mint your token as an authority','2575':'AuthMint','2576':'Set an accounts access rights, moderator privelages or block an account','2577':'Chart containing the block limit reduction proportion over time.','2578':'Y-Axis: Proportion','2579':'Circulating Supply','2580':'Total Supply','2581':'Y-Axis: Total Supply','2582':'Total Transactions','2583':'Chart containing the total number of buy/sell transactions over time.','2584':'Y-Axis: Total Transactions','2585':'X-Axis: Time','2586':'Exchange Mint Limit Proportion Ratio Events','2587':'Tokens Received','2588':'Updated Active Limit','2589':'Exchange Modification Events','2590':'Targeted Modify Item','2591':'Exchange Transfer Events','2592':'Update Balance Events','2593':'Receiver Account','2594':'Freeze-Unfreeze Events','2595':'Action: Freeze','2596':'Action: Unfreeze','2597':'Authority Account','2598':'Exchange Modify Moderator Events','2599':'Exchange Account Access Settings Events','2600':'Targeted Account','2601':'Moderator Account','2602':'Exchange Blocked Account Events','2602a':'Active Mint Limit.','2602b':'Demand Pressure.','2602c':'Chart containing the demand pressure over time.','2602d':'','2602e':'','2602f':'','2602g':'',
         
         /* storefront details section */
-        '2603':'direct-purchases','2604':'unfulfilled','2605':'fulfilled','2606':'Set Denomination','2607':'Author Seller','2608':'Target Payment Recipient','2609':'Fulfilment Accounts','2610':'The accounts involved with shipping and fulfilling direct purchase orders from clients.','2611':'Fulfilment Location','2612':' variants','2613':'To choose from.','2614':'Pin the storefront item to your feed.','2615':'Pin Item','2616':'Pin/Unpin Item','2617':'Activity Section Enabled','2618':'You can leave a product review message in the activity section','2619':'Activity Section Disabled','2620':'The activity section has been disabled by the storefront owner.','2621':'In Stock','2622':'The item is available for purchasing.','2623':'Out of Stock','2624':'The item is not available for purchasing.','2625':'Add the item to your shopping bag.','2626':'Add to Bag','2627':'Purchase the item directly from the seller.','2628':'Direct Purchase','2629':'Purchase','2630':'Edit Storefront Post','2631':'Change the basic details for your Storefront Post','2632':'Edit Item','2633':'Block Number','2634':'Direct Purchases','2635':', Sender Account ID: ','2636':'Fulfilent Signature: ','2637':', Client ID: ','2638':'Clear Purchase','2639':'Fulfilment Signature: ','2640':'Signature Data: ','2641':'Signature Address: ','2642':'The activity section has been disabled.',
+        '2603':'direct-purchases','2604':'unfulfilled','2605':'fulfilled','2606':'Set Denomination','2607':'Author Seller','2608':'Target Payment Recipient','2609':'Fulfilment Accounts','2610':'The accounts involved with shipping and fulfilling direct purchase orders from clients.','2611':'Fulfilment Location','2612':' variants','2613':'To choose from.','2614':'Pin the storefront item to your feed.','2615':'Pin Item','2616':'Pin/Unpin Item','2617':'Activity Section Enabled','2618':'You can leave a product review message in the activity section','2619':'Activity Section Disabled','2620':'The activity section has been disabled by the storefront owner.','2621':'In Stock','2622':'The item is available for purchasing.','2623':'Out of Stock','2624':'The item is not available for purchasing.','2625':'Add the item to your shopping bag.','2626':'Add to Bag','2627':'Purchase the item directly from the seller.','2628':'Direct Purchase','2629':'Purchase','2630':'Edit Storefront Post','2631':'Change the basic details for your Storefront Post','2632':'Edit Item','2633':'Block Number','2634':'Direct Purchases','2635':', Sender Account ID: ','2636':'Fulfilent Signature: ','2637':', Client ID: ','2638':'Clear Purchase','2639':'Fulfilment Signature: ','2640':'Signature Data: ','2641':'Signature Address: ','2642':'The activity section has been disabled.', '2642a':'Direct Purchases.','2642b':'','2642c':'','2642d':'','2642e':'',
         
         /* subscription details section */
         '2643':'search','2644':'payments','2645':'cancellations','2646':'collections','2647':'modifications','2648':'Pay Subscription','2649':'Pay for the subscription for your account','2650':'Pin the subscription to your feed','2651':'Pin Subscription','2652':'Pin/Unpin Subscription','2653':'Author Moderator Privelages Disabled','2654':'Author of Object is not a Moderator by default','2655':'Author Moderator Privelages Enabled','2656':'Author of Object is a Moderator by default','2657':'Cancel Subscription','2658':'Cancel your subscription payment and receive your tokens back','2659':'Collect Subscription','2660':'Collect the subscription payments from the subscription account','2661':'Modify Subscription','2662':'Modify the configuration of the subscription.','2663':'Perform Moderator Actions','2664':'Set an accounts access rights, moderator privelages or block an account','2665':'Perform Action','2666':'In Subscription ','2667':'Subscription Transfer Events','2668':'Pay Subscription Events','2669':'Search account ID...','2670':'Paying Account','2671':'Cancel Subscription Events','2672':'Cancelling Account','2673':'Collect Subscription Events','2674':'Collecting Account','2675':'Total Time Units Collected','2676':'units','2677':'Modify Subscription Events','2678':'Subscription Modify Moderator Events','2679':'Subscription Access Rights Settings Events','2680':'Subscription Account Access Settings Events','2681':'Subscription Blocked Account Events','2682':'Search Subscription Payment','2683':'Remaining Subscription Time','2684':'Remaining Time Units (As of Now)','2685':'time-units','2686':'Latest Payment Time','2687':'Latest Payment Block','2688':'First Payment Time','2689':'First Payment Block','2690':'Highest Time Units Paid For ','2691':'Lowest Time Units Paid For ','2692':'Time Units Paid For','2693':'Chart containing the amount in time units that have been accumulated.','2694':'Y-Axis: Time Units','2695':'X-Axis: Time',
@@ -1085,11 +1108,11 @@ class App extends Component {
         '2955':'image','2956':'audio','2957':'video','2958':'Pick one or multile image files from your storage. To see an image file here, you need to upload it in the stack page.','2959':'You can\'t finish with no files selected.','2960':'You can\'t pick more than ','2961':' files.',
         
         /* buy album page */
-        '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.','2972c':'Unavailable Tracks.','2972d':'Below are the tracks you\'ve already purchased.',
+        '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.','2972c':'Unavailable Tracks.','2972d':'Below are the tracks you\'ve already purchased.','2972e':'Buy All.',
         
         '2973':'Album Sales','2974':'Song Sales','2975':'edit-audio','2976':'Playing ','2977':'Taken from','2978':'File size','2979':'Composers','2980':'Bitrate','2981':'Codec','2982':'Codec Profile','2983':'Container','2984':'Lossless','2985':'Number of Channels','2986':'Number of Samples','2987':'Sample Rate','2988':'data','2989':'lyrics','2990':'queue','2991':'Play Queue','2992':'Below are the tracks that are up next.','2993':'synchronize','2994':'Repeating current song.','2995':'Your queue has been shuffled.','2996':'up-next','2997':'previous',
         
-        '2998':'Add to Playlist.','2999':'Play Next.','3000':'Play Last.','3001':'Remove from queue.','3002':'Song will be played next.','3003':'Song will be played last.','3004':'Removed song from queue.','3005':'You need to be playing something first.','3006':'You cant remove that song.','3006a':'Add the track to one of your playlists.','3006b':'Play the track next.','3006c':'Play the track last.','3006d':'Remove track from queue.','3006e':'Remove from Playlist.','3006f':'Remove the track from your playlist.','3006g':'Track removed from your playlist.','3006h':'Confirm Deletion.','3006i':'Are you sure you want to delete the playlist?','3006j':'Playlist Deleted.','3006k':'',
+        '2998':'Add to Playlist.','2999':'Play Next.','3000':'Play Last.','3001':'Remove from queue.','3002':'Song will be played next.','3003':'Song will be played last.','3004':'Removed song from queue.','3005':'You need to be playing something first.','3006':'You cant remove that song.','3006a':'Add the track to one of your playlists.','3006b':'Play the track next.','3006c':'Play the track last.','3006d':'Remove track from queue.','3006e':'Remove from Playlist.','3006f':'Remove the track from your playlist.','3006g':'Track removed from your playlist.','3006h':'Confirm Deletion.','3006i':'Are you sure you want to delete the playlist?','3006j':'Playlist Deleted.','3006k':'Download Track.', '3006l':'Cache the track in your cookies to load it faster in the future. Cookies will be enabled.', '3006m':'The track will be cached in a few moments.', '3006n':'', '3006o':'',
         
         /* add to playlist page */
         '3007':'Add to playlist.','3008':'You can add to an existing playlist or a new playlist.','3009':'existing','3010':'new','3011':'Youre creating a new Playlist.','3012':'Playlist Title','3013':'Playlist Description (optional)','3014':'Create and Add.','3015':'You need a title for your new playlist.','3016':'That title is too long.','3017':'Added your song to the new playlist.','3018':'A playlist with a similar title exists in your library.','3019':'You\'re adding the song to an existing playlist.','3020':'Added your song to the playlist.','3021':'You need to buy the track to add it to your playlists','3022':'Please purchase the song to play it.',
@@ -1131,7 +1154,7 @@ class App extends Component {
 
         'XTZ': this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
 
-        'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'nanocoin', 9, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
+        'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
 
         'FIL': this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
 
@@ -1335,10 +1358,15 @@ class App extends Component {
 
     var me = this;
     setTimeout(function() {
-      me.load_cookies();
+      me.start_everything();
     }, (1 * 500));
-    
 
+    // this.test_nft_storage()
+  }
+
+  start_everything = async () => {
+    await this.load_cookies();
+    this.load_cookies2()
     var me = this;
     setTimeout(function() {
       me.load_e5_data();
@@ -1346,10 +1374,7 @@ class App extends Component {
 
       me.get_key()
       me.init_db()
-    }, (1 * 2000));
-    
-
-    // this.test_nft_storage()
+    }, (1 * 1000));
   }
 
   test_nft_storage = async () => {
@@ -1404,30 +1429,45 @@ class App extends Component {
   }
 
   set_cookies(){
-    // localStorage.setItem("state", JSON.stringify(this.get_persistent_data(), (key, value) =>
-    //         typeof value === 'bigint'
-    //             ? value.toString()
-    //             : value // return everything else unchanged));
-    // ))
-
     var x = JSON.stringify(this.get_persistent_data(), (key, value) =>
             typeof value === 'bigint'
                 ? value.toString()
                 : value // return everything else unchanged));
     )
 
+    var size = 0;
     if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
-      this.update_data_in_db(x)
-      this.setState({index_db_size: this.lengthInUtf8Bytes(x)})
+      this.update_data_in_db(x, '123')
+      size = this.lengthInUtf8Bytes(x);
     }else{
-      this.update_data_in_db('')
-      this.setState({index_db_size: this.lengthInUtf8Bytes('')})
+      this.update_data_in_db('', '123')
+      size = this.lengthInUtf8Bytes('')
       
       if(this.homepage.current){
         this.homepage.current?.set_cookies()
       }
     }
+
+    this.set_cookies2(size);
   }
+
+  set_cookies2(size){
+    var x = JSON.stringify(this.get_persistent_data2(), (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value // return everything else unchanged));
+    )
+
+    if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
+      this.update_data_in_db(x, '5000')
+      this.setState({index_db_size: size + this.lengthInUtf8Bytes(x)})
+    }else{
+      this.update_data_in_db('', '5000')
+      this.setState({index_db_size: size + this.lengthInUtf8Bytes('')})
+    }
+  }
+
+
 
   get_persistent_data(){
     return {
@@ -1478,7 +1518,15 @@ class App extends Component {
       my_playlists: this.state.my_playlists,
       should_update_playlists_in_E5: this.state.should_update_playlists_in_E5,
       song_plays: this.state.song_plays,
-      should_update_song_plays: this.state.should_update_song_plays
+      should_update_song_plays: this.state.should_update_song_plays,
+      albums_to_stash: this.get_albums_to_stash(),
+    }
+  }
+
+  get_persistent_data2(){
+    return {
+      cached_tracks: this.get_cached_tracks_to_store(),
+      cached_files: this.get_uploaded_data_to_stash()
     }
   }
 
@@ -1491,12 +1539,34 @@ class App extends Component {
     return selected_array
   }
 
-  load_cookies = async () =>{
-    // var cupcake_state = localStorage.getItem("state");
-    var cupcake_state = await this.load_data_from_indexdb()
+  load_cookies2 = async () => {
+    var cupcake_state = await this.load_data_from_indexdb('5000')
+    
+    if(cupcake_state != null){
+      this.setState({index_db_size: this.state.index_db_size + this.lengthInUtf8Bytes(cupcake_state)})
+      cupcake_state = this.fetch_data(cupcake_state)
+    }
 
     if(cupcake_state != null){
-      this.setState({index_db_size: this.lengthInUtf8Bytes(cupcake_state)})
+      var cupcake_cached_tracks = cupcake_state.cached_tracks
+      var cupcake_cached_files = cupcake_state.cached_files
+
+      if(cupcake_cached_tracks != null){
+        this.set_cached_tracks_data(cupcake_cached_tracks)
+      }
+
+      if(cupcake_cached_files != null){
+        this.load_cached_files_into_memory(cupcake_cached_files)
+      }
+    }
+  }
+
+  load_cookies = async () => {
+    // var cupcake_state = localStorage.getItem("state");
+    var cupcake_state = await this.load_data_from_indexdb('123')
+
+    if(cupcake_state != null){
+      this.setState({index_db_size: this.state.index_db_size + this.lengthInUtf8Bytes(cupcake_state)})
       cupcake_state = this.fetch_data(cupcake_state)
     }
     if(cupcake_state != null){
@@ -1548,6 +1618,7 @@ class App extends Component {
 
       var cupcake_song_plays = cupcake_state.song_plays
       var cupcake_should_update_song_plays = cupcake_state.should_update_song_plays
+      var cupcake_albums_to_stash = cupcake_state.albums_to_stash
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -1733,6 +1804,9 @@ class App extends Component {
         this.setState({should_update_song_plays: cupcake_should_update_song_plays})
       }
 
+      if(cupcake_albums_to_stash != null){
+        this.load_albums_to_stash_to_state(cupcake_albums_to_stash)
+      }
 
     }
 
@@ -1789,6 +1863,105 @@ class App extends Component {
     return this.state.coin_data
   }
 
+  get_cached_tracks_to_store(){
+    var cached_tracks = this.state.cached_tracks
+    var obj = {}
+    obj['e'] = cached_tracks
+    cached_tracks.forEach(track_id => {
+      var data = this.fetch_from_storage(track_id)
+      if(data != null){
+        obj[track_id] = data
+      }
+    });
+
+    return obj
+  }
+
+  set_cached_tracks_data(obj){
+    var cached_tracks = obj['e']
+    cached_tracks.forEach(track_id => {
+      var data = obj[track_id]
+      this.store_in_local_storage(track_id, data)
+    });
+    this.setState({cached_tracks: cached_tracks})
+  }
+
+  get_albums_to_stash(){
+    var my_added_album_ids = this.state.my_albums
+    var all_audios = this.get_all_sorted_objects(this.state.created_audios)
+    var my_acquired_albums = []
+    for(var i=0; i<my_added_album_ids.length; i++){
+      var obj = this.get_item_in_array(my_added_album_ids[i], all_audios)
+      if(obj != null) my_acquired_albums.push(obj)
+    }
+    return my_acquired_albums
+  }
+
+  get_all_sorted_objects(object){
+    var all_objects = []
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+        var e5 = this.state.e5s['data'][i]
+        var e5_objects = object[e5]
+        if(e5_objects != null){
+            all_objects = all_objects.concat(e5_objects)
+        }
+    }
+
+    return this.sortByAttributeDescending(all_objects, 'timestamp')
+  }
+
+  load_albums_to_stash_to_state(my_acquired_albums){
+    var created_audios = {}
+    var created_audio_mappings = {}
+
+    my_acquired_albums.forEach(album => {
+      var e5 = album['e5']
+      var id = album['id']
+      if(created_audios[e5] == null){
+        created_audios[e5] = []
+      }
+      if(created_audio_mappings[e5] == null){
+        created_audio_mappings[e5] = {}
+      }
+      created_audios[e5].push(album)
+      created_audio_mappings[e5][id] = album
+    });
+    this.setState({created_audios: created_audios, created_audio_mappings: created_audio_mappings})
+  }
+
+  get_uploaded_data_to_stash(){
+    var cid_clone = this.state.uploaded_data_cids
+    var obj = {}
+    obj['e'] = cid_clone
+    cid_clone.forEach(cid => {
+      var data = this.fetch_from_storage(cid)
+      if(data != null){
+        obj[cid] = data
+      }
+    });
+
+    return obj
+  }
+
+  load_cached_files_into_memory(obj){
+    var cid_clone = obj['e']
+    if(cid_clone != null && cid_clone.length > 0){
+      var data_clone = {}
+      cid_clone.forEach(ecid => {
+        var data = obj[ecid]
+        if(data != null){
+          var ecid_obj = this.get_cid_split(ecid)
+          var filetype = ecid_obj['filetype']
+          
+          if(data_clone[filetype] == null) data_clone[filetype] = {}
+          data_clone[filetype][ecid] = data
+          this.store_in_local_storage(ecid, data)
+        }
+      });
+      this.setState({uploaded_data_cids: cid_clone, uploaded_data: data_clone})
+    }
+  }
+
 
 
 
@@ -1808,7 +1981,7 @@ class App extends Component {
   }
 
   fetch_data(cupcake_state){
-    try{  
+    try{
       var ce = JSON.parse(cupcake_state)
       return ce
     }catch(e){
@@ -1817,7 +1990,7 @@ class App extends Component {
     }
   }
 
-  get_country(){
+  get_location_info(){
     const timeZoneCityToCountry = {};
     Object.keys(zones).forEach(z => {
       const cityArr = z.split("/");
@@ -1845,8 +2018,264 @@ class App extends Component {
     console.log("City:", userCity);
     console.log("Country:", userCountry);
 
-    return userCountry
+    return { userCountry: userCountry, userRegion: userRegion, userCity: userCity }
 
+  }
+  
+
+  get_country_code(country){
+    var obj = [ 
+      {name: 'Afghanistan', code: 'AF'}, 
+      {name: 'Åland Islands', code: 'AX'}, 
+      {name: 'Albania', code: 'AL'}, 
+      {name: 'Algeria', code: 'DZ'}, 
+      {name: 'American Samoa', code: 'AS'}, 
+      {name: 'AndorrA', code: 'AD'}, 
+      {name: 'Angola', code: 'AO'}, 
+      {name: 'Anguilla', code: 'AI'}, 
+      {name: 'Antarctica', code: 'AQ'}, 
+      {name: 'Antigua and Barbuda', code: 'AG'}, 
+      {name: 'Argentina', code: 'AR'}, 
+      {name: 'Armenia', code: 'AM'}, 
+      {name: 'Aruba', code: 'AW'}, 
+      {name: 'Australia', code: 'AU'}, 
+      {name: 'Austria', code: 'AT'}, 
+      {name: 'Azerbaijan', code: 'AZ'}, 
+      {name: 'Bahamas', code: 'BS'}, 
+      {name: 'Bahrain', code: 'BH'}, 
+      {name: 'Bangladesh', code: 'BD'}, 
+      {name: 'Barbados', code: 'BB'}, 
+      {name: 'Belarus', code: 'BY'}, 
+      {name: 'Belgium', code: 'BE'}, 
+      {name: 'Belize', code: 'BZ'}, 
+      {name: 'Benin', code: 'BJ'}, 
+      {name: 'Bermuda', code: 'BM'}, 
+      {name: 'Bhutan', code: 'BT'}, 
+      {name: 'Bolivia', code: 'BO'}, 
+      {name: 'Bosnia and Herzegovina', code: 'BA'}, 
+      {name: 'Botswana', code: 'BW'}, 
+      {name: 'Bouvet Island', code: 'BV'}, 
+      {name: 'Brazil', code: 'BR'}, 
+      {name: 'British Indian Ocean Territory', code: 'IO'}, 
+      {name: 'Brunei Darussalam', code: 'BN'}, 
+      {name: 'Bulgaria', code: 'BG'}, 
+      {name: 'Burkina Faso', code: 'BF'}, 
+      {name: 'Burundi', code: 'BI'}, 
+      {name: 'Cambodia', code: 'KH'}, 
+      {name: 'Cameroon', code: 'CM'}, 
+      {name: 'Canada', code: 'CA'}, 
+      {name: 'Cape Verde', code: 'CV'}, 
+      {name: 'Cayman Islands', code: 'KY'}, 
+      {name: 'Central African Republic', code: 'CF'}, 
+      {name: 'Chad', code: 'TD'}, 
+      {name: 'Chile', code: 'CL'}, 
+      {name: 'China', code: 'CN'}, 
+      {name: 'Christmas Island', code: 'CX'}, 
+      {name: 'Cocos (Keeling) Islands', code: 'CC'}, 
+      {name: 'Colombia', code: 'CO'}, 
+      {name: 'Comoros', code: 'KM'}, 
+      {name: 'Congo', code: 'CG'}, 
+      {name: 'Congo, The Democratic Republic of the', code: 'CD'}, 
+      {name: 'Cook Islands', code: 'CK'}, 
+      {name: 'Costa Rica', code: 'CR'}, 
+      {name: 'Cote D\'Ivoire', code: 'CI'}, 
+      {name: 'Croatia', code: 'HR'}, 
+      {name: 'Cuba', code: 'CU'}, 
+      {name: 'Cyprus', code: 'CY'}, 
+      {name: 'Czech Republic', code: 'CZ'}, 
+      {name: 'Denmark', code: 'DK'}, 
+      {name: 'Djibouti', code: 'DJ'}, 
+      {name: 'Dominica', code: 'DM'}, 
+      {name: 'Dominican Republic', code: 'DO'}, 
+      {name: 'Ecuador', code: 'EC'}, 
+      {name: 'Egypt', code: 'EG'}, 
+      {name: 'El Salvador', code: 'SV'}, 
+      {name: 'Equatorial Guinea', code: 'GQ'}, 
+      {name: 'Eritrea', code: 'ER'}, 
+      {name: 'Estonia', code: 'EE'}, 
+      {name: 'Ethiopia', code: 'ET'}, 
+      {name: 'Falkland Islands (Malvinas)', code: 'FK'}, 
+      {name: 'Faroe Islands', code: 'FO'}, 
+      {name: 'Fiji', code: 'FJ'}, 
+      {name: 'Finland', code: 'FI'}, 
+      {name: 'France', code: 'FR'}, 
+      {name: 'French Guiana', code: 'GF'}, 
+      {name: 'French Polynesia', code: 'PF'}, 
+      {name: 'French Southern Territories', code: 'TF'}, 
+      {name: 'Gabon', code: 'GA'}, 
+      {name: 'Gambia', code: 'GM'}, 
+      {name: 'Georgia', code: 'GE'}, 
+      {name: 'Germany', code: 'DE'}, 
+      {name: 'Ghana', code: 'GH'}, 
+      {name: 'Gibraltar', code: 'GI'}, 
+      {name: 'Greece', code: 'GR'}, 
+      {name: 'Greenland', code: 'GL'}, 
+      {name: 'Grenada', code: 'GD'}, 
+      {name: 'Guadeloupe', code: 'GP'}, 
+      {name: 'Guam', code: 'GU'}, 
+      {name: 'Guatemala', code: 'GT'}, 
+      {name: 'Guernsey', code: 'GG'}, 
+      {name: 'Guinea', code: 'GN'}, 
+      {name: 'Guinea-Bissau', code: 'GW'}, 
+      {name: 'Guyana', code: 'GY'}, 
+      {name: 'Haiti', code: 'HT'}, 
+      {name: 'Heard Island and Mcdonald Islands', code: 'HM'}, 
+      {name: 'Holy See (Vatican City State)', code: 'VA'}, 
+      {name: 'Honduras', code: 'HN'}, 
+      {name: 'Hong Kong', code: 'HK'}, 
+      {name: 'Hungary', code: 'HU'}, 
+      {name: 'Iceland', code: 'IS'}, 
+      {name: 'India', code: 'IN'}, 
+      {name: 'Indonesia', code: 'ID'}, 
+      {name: 'Iran, Islamic Republic Of', code: 'IR'}, 
+      {name: 'Iraq', code: 'IQ'}, 
+      {name: 'Ireland', code: 'IE'}, 
+      {name: 'Isle of Man', code: 'IM'}, 
+      {name: 'Israel', code: 'IL'}, 
+      {name: 'Italy', code: 'IT'}, 
+      {name: 'Jamaica', code: 'JM'}, 
+      {name: 'Japan', code: 'JP'}, 
+      {name: 'Jersey', code: 'JE'}, 
+      {name: 'Jordan', code: 'JO'}, 
+      {name: 'Kazakhstan', code: 'KZ'}, 
+      {name: 'Kenya', code: 'KE'}, 
+      {name: 'Kiribati', code: 'KI'}, 
+      {name: 'Korea, Democratic People\'S Republic of', code: 'KP'}, 
+      {name: 'Korea, Republic of', code: 'KR'}, 
+      {name: 'Kuwait', code: 'KW'}, 
+      {name: 'Kyrgyzstan', code: 'KG'}, 
+      {name: 'Lao People\'S Democratic Republic', code: 'LA'}, 
+      {name: 'Latvia', code: 'LV'}, 
+      {name: 'Lebanon', code: 'LB'}, 
+      {name: 'Lesotho', code: 'LS'}, 
+      {name: 'Liberia', code: 'LR'}, 
+      {name: 'Libyan Arab Jamahiriya', code: 'LY'}, 
+      {name: 'Liechtenstein', code: 'LI'}, 
+      {name: 'Lithuania', code: 'LT'}, 
+      {name: 'Luxembourg', code: 'LU'}, 
+      {name: 'Macao', code: 'MO'}, 
+      {name: 'Macedonia, The Former Yugoslav Republic of', code: 'MK'}, 
+      {name: 'Madagascar', code: 'MG'}, 
+      {name: 'Malawi', code: 'MW'}, 
+      {name: 'Malaysia', code: 'MY'}, 
+      {name: 'Maldives', code: 'MV'}, 
+      {name: 'Mali', code: 'ML'}, 
+      {name: 'Malta', code: 'MT'}, 
+      {name: 'Marshall Islands', code: 'MH'}, 
+      {name: 'Martinique', code: 'MQ'}, 
+      {name: 'Mauritania', code: 'MR'}, 
+      {name: 'Mauritius', code: 'MU'}, 
+      {name: 'Mayotte', code: 'YT'}, 
+      {name: 'Mexico', code: 'MX'}, 
+      {name: 'Micronesia, Federated States of', code: 'FM'}, 
+      {name: 'Moldova, Republic of', code: 'MD'}, 
+      {name: 'Monaco', code: 'MC'}, 
+      {name: 'Mongolia', code: 'MN'}, 
+      {name: 'Montserrat', code: 'MS'}, 
+      {name: 'Morocco', code: 'MA'}, 
+      {name: 'Mozambique', code: 'MZ'}, 
+      {name: 'Myanmar', code: 'MM'}, 
+      {name: 'Namibia', code: 'NA'}, 
+      {name: 'Nauru', code: 'NR'}, 
+      {name: 'Nepal', code: 'NP'}, 
+      {name: 'Netherlands', code: 'NL'}, 
+      {name: 'Netherlands Antilles', code: 'AN'}, 
+      {name: 'New Caledonia', code: 'NC'}, 
+      {name: 'New Zealand', code: 'NZ'}, 
+      {name: 'Nicaragua', code: 'NI'}, 
+      {name: 'Niger', code: 'NE'}, 
+      {name: 'Nigeria', code: 'NG'}, 
+      {name: 'Niue', code: 'NU'}, 
+      {name: 'Norfolk Island', code: 'NF'}, 
+      {name: 'Northern Mariana Islands', code: 'MP'}, 
+      {name: 'Norway', code: 'NO'}, 
+      {name: 'Oman', code: 'OM'}, 
+      {name: 'Pakistan', code: 'PK'}, 
+      {name: 'Palau', code: 'PW'}, 
+      {name: 'Palestinian Territory, Occupied', code: 'PS'}, 
+      {name: 'Panama', code: 'PA'}, 
+      {name: 'Papua New Guinea', code: 'PG'}, 
+      {name: 'Paraguay', code: 'PY'}, 
+      {name: 'Peru', code: 'PE'}, 
+      {name: 'Philippines', code: 'PH'}, 
+      {name: 'Pitcairn', code: 'PN'}, 
+      {name: 'Poland', code: 'PL'}, 
+      {name: 'Portugal', code: 'PT'}, 
+      {name: 'Puerto Rico', code: 'PR'}, 
+      {name: 'Qatar', code: 'QA'}, 
+      {name: 'Reunion', code: 'RE'}, 
+      {name: 'Romania', code: 'RO'}, 
+      {name: 'Russian Federation', code: 'RU'}, 
+      {name: 'RWANDA', code: 'RW'}, 
+      {name: 'Saint Helena', code: 'SH'}, 
+      {name: 'Saint Kitts and Nevis', code: 'KN'}, 
+      {name: 'Saint Lucia', code: 'LC'}, 
+      {name: 'Saint Pierre and Miquelon', code: 'PM'}, 
+      {name: 'Saint Vincent and the Grenadines', code: 'VC'}, 
+      {name: 'Samoa', code: 'WS'}, 
+      {name: 'San Marino', code: 'SM'}, 
+      {name: 'Sao Tome and Principe', code: 'ST'}, 
+      {name: 'Saudi Arabia', code: 'SA'}, 
+      {name: 'Senegal', code: 'SN'}, 
+      {name: 'Serbia and Montenegro', code: 'CS'}, 
+      {name: 'Seychelles', code: 'SC'}, 
+      {name: 'Sierra Leone', code: 'SL'}, 
+      {name: 'Singapore', code: 'SG'}, 
+      {name: 'Slovakia', code: 'SK'}, 
+      {name: 'Slovenia', code: 'SI'}, 
+      {name: 'Solomon Islands', code: 'SB'}, 
+      {name: 'Somalia', code: 'SO'}, 
+      {name: 'South Africa', code: 'ZA'}, 
+      {name: 'South Georgia and the South Sandwich Islands', code: 'GS'}, 
+      {name: 'Spain', code: 'ES'}, 
+      {name: 'Sri Lanka', code: 'LK'}, 
+      {name: 'Sudan', code: 'SD'}, 
+      {name: 'Suriname', code: 'SR'}, 
+      {name: 'Svalbard and Jan Mayen', code: 'SJ'}, 
+      {name: 'Swaziland', code: 'SZ'}, 
+      {name: 'Sweden', code: 'SE'}, 
+      {name: 'Switzerland', code: 'CH'}, 
+      {name: 'Syrian Arab Republic', code: 'SY'}, 
+      {name: 'Taiwan, Province of China', code: 'TW'}, 
+      {name: 'Tajikistan', code: 'TJ'}, 
+      {name: 'Tanzania, United Republic of', code: 'TZ'}, 
+      {name: 'Thailand', code: 'TH'}, 
+      {name: 'Timor-Leste', code: 'TL'}, 
+      {name: 'Togo', code: 'TG'}, 
+      {name: 'Tokelau', code: 'TK'}, 
+      {name: 'Tonga', code: 'TO'}, 
+      {name: 'Trinidad and Tobago', code: 'TT'}, 
+      {name: 'Tunisia', code: 'TN'}, 
+      {name: 'Turkey', code: 'TR'}, 
+      {name: 'Turkmenistan', code: 'TM'}, 
+      {name: 'Turks and Caicos Islands', code: 'TC'}, 
+      {name: 'Tuvalu', code: 'TV'}, 
+      {name: 'Uganda', code: 'UG'}, 
+      {name: 'Ukraine', code: 'UA'}, 
+      {name: 'United Arab Emirates', code: 'AE'}, 
+      {name: 'United Kingdom', code: 'GB'}, 
+      {name: 'United States', code: 'US'}, 
+      {name: 'United States Minor Outlying Islands', code: 'UM'}, 
+      {name: 'Uruguay', code: 'UY'}, 
+      {name: 'Uzbekistan', code: 'UZ'}, 
+      {name: 'Vanuatu', code: 'VU'}, 
+      {name: 'Venezuela', code: 'VE'}, 
+      {name: 'Viet Nam', code: 'VN'}, 
+      {name: 'Virgin Islands, British', code: 'VG'}, 
+      {name: 'Virgin Islands, U.S.', code: 'VI'}, 
+      {name: 'Wallis and Futuna', code: 'WF'}, 
+      {name: 'Western Sahara', code: 'EH'}, 
+      {name: 'Yemen', code: 'YE'}, 
+      {name: 'Zambia', code: 'ZM'}, 
+      {name: 'Zimbabwe', code: 'ZW'} 
+    ]
+
+    var data = {}
+    obj.forEach(element => {
+      data[element.name] = element.code
+    });
+
+    return data[country]
   }
 
   get_language(){
@@ -1961,14 +2390,13 @@ class App extends Component {
     
   }
 
-  update_data_in_db = async (data) => {
+  update_data_in_db = async (data, id) => {
     try {
       const db = new Dexie('twentythreeinreverse');
       db.version(2).stores({
         data: 'id, data', // Primary key and indexed props
       });
 
-      var id = '123'
       try{
         await db.data.delete(id)
       }catch(e){
@@ -1981,13 +2409,13 @@ class App extends Component {
     }
   }
 
-  load_data_from_indexdb = async () => {
+  load_data_from_indexdb = async (id) => {
     try{
       const db = new Dexie('twentythreeinreverse');
       db.version(2).stores({
         data: 'id, data', // Primary key and indexed props
       });
-      var data = await db.data.get({id: '123'})
+      var data = await db.data.get({id: id})
       return data['data']
     }catch(e){
       console.log(`Failed : ${e}`);
@@ -1998,7 +2426,7 @@ class App extends Component {
   is_allowed_in_e5(){
     // return true
     var obj = ['United States', 'Kenya']
-    var user_country = this.get_country()
+    var user_country = this.get_location_info().userCountry
 
     if(!obj.includes(user_country)){
       var me = this;
@@ -2342,7 +2770,7 @@ class App extends Component {
           {this.render_view_transaction_bottomsheet()}
           {this.render_wiki_bottomsheet()}
           {this.render_new_object_bottomsheet()}
-          {this.render_view_image_bottomsheet()}
+          
           {this.render_mint_token_bottomsheet()}
           {this.render_transfer_token_bottomsheet()}
           {this.render_extend_contract_bottomsheet()}
@@ -2400,6 +2828,8 @@ class App extends Component {
           {this.render_buy_album_bottomsheet()}
           {this.render_add_to_playlist_bottomsheet()}
 
+          {this.render_view_image_bottomsheet()}
+          {this.render_view_pdf_bottomsheet()}
           {this.render_pick_file_bottomsheet()}
           {this.render_dialog_bottomsheet()}
           {this.render_view_number_bottomsheet()}
@@ -2476,8 +2906,8 @@ class App extends Component {
           update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
           load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)} show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)} play_song={this.play_song.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         
-          play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)}
-        
+          play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)}
+          when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}
         
         />
         {this.render_homepage_toast()}
@@ -3807,6 +4237,7 @@ class App extends Component {
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
+      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)}
       />
     )
   }
@@ -4175,6 +4606,10 @@ class App extends Component {
       me.set_cookies()
       me.prompt_top_notification(me.getLocale()['1593bv']/* Email Verified */, 3000)
     }, (1 * 1000));
+  }
+
+  when_run_gas_price_set(number){
+    this.setState({run_gas_price: number})
   }
 
 
@@ -7561,7 +7996,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}/>
+                          <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -7573,7 +8008,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}/>
+            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -8292,7 +8727,7 @@ class App extends Component {
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1516']/* 'storefront-bag' */, entered_indexing_tags:[this.getLocale()['1215']/* 'storefront' */, this.getLocale()['1045']/* 'bag' */, this.getLocale()['2716']/* 'cart' */], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1516']/* 'storefront-bag' */, entered_indexing_tags:[this.getLocale()['1215']/* 'storefront' */, this.getLocale()['1045']/* 'bag' */, this.getLocale()['2716']/* 'cart' */], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country, selected_device_city: state_obj.selected_device_city}
       
       tx.items_to_deliver.push(state_obj)
       stack.push(tx)
@@ -8827,7 +9262,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8839,7 +9274,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -8882,7 +9317,6 @@ class App extends Component {
     }, (1 * 500));
     
   }
-
 
   add_response_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
@@ -8930,7 +9364,7 @@ class App extends Component {
 
 
 
-
+  /* view job request */
   render_view_job_request_contract_bottomsheet(){
     if(this.state.view_job_request_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -10285,7 +10719,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)}
         
         />
       </div>
@@ -10493,6 +10927,40 @@ class App extends Component {
     }
   }
 
+  add_song_to_cache = async (song) => {
+    this.prompt_top_notification(this.getLocale()['3006m']/* The track will be cached in a few moments. */, 5000)
+    var audio_file = song['track']
+    await this.fetch_uploaded_data_from_ipfs([audio_file], false)
+    var clone = this.state.cached_tracks.slice()
+    clone.push(audio_file)
+
+    this.setState({cached_tracks: clone, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  download_playlist = async (songs) => {
+    this.prompt_top_notification(this.getLocale()['a2527z']/* Downloading... */, 5000)
+    var ids = []
+    var clone = this.state.cached_tracks.slice()
+    songs.forEach(song => {
+      var audio_file = song['track']
+      ids.push(audio_file)
+      if(!clone.contains(audio_file)){
+        clone.push(audio_file)
+      }
+    });
+    await this.fetch_uploaded_data_from_ipfs(ids, false)
+    
+    this.setState({cached_tracks: clone, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+      me.prompt_top_notification(me.getLocale()['a2527ba']/* Done. */, 1300)
+    }, (1 * 1000));
+  }
 
 
 
@@ -10713,9 +11181,35 @@ class App extends Component {
     }
     else if(function_name == 'create_audio_pick_audio_file'){
       this.new_audio_page.current?.when_audio_file_picked(picked_files)
+      this.edit_audiopost_page.current?.when_audio_file_picked(picked_files)
     }
     else if(function_name == 'create_audio_album_art'){
       this.new_audio_page.current?.when_album_art_selected(picked_files)
+      this.edit_audiopost_page.current?.when_album_art_selected(picked_files)
+    }
+    else if(function_name == 'create_storefront_image_album_art'){
+      this.new_storefront_item_page.current?.when_storefront_image_selected(picked_files)
+      this.edit_storefront_page.current?.when_storefront_image_selected(picked_files)
+    }
+    else if(function_name == 'create_pdf'){
+      this.new_channel_page.current?.when_pdf_files_picked(picked_files)
+      this.new_post_page.current?.when_pdf_files_picked(picked_files)
+      this.new_job_page.current?.when_pdf_files_picked(picked_files)
+      this.new_storefront_item_page.current?.when_pdf_files_picked(picked_files)
+      this.new_mail_page.current?.when_pdf_files_picked(picked_files)
+      this.new_contractor_page.current?.when_pdf_files_picked(picked_files)
+      this.new_proposal_page.current?.when_pdf_files_picked(picked_files)
+
+      this.edit_job_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_token_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_post_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_channel_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_storefront_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_contractor_page.current?.when_pdf_files_picked(picked_files)
+      this.add_comment_page.current?.when_pdf_files_picked(picked_files)
+      
+      this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
+      
     }
   }
 
@@ -10843,7 +11337,7 @@ class App extends Component {
   }
 
   open_view_image_bottomsheet(){
-      if(this.state.view_image_bottomsheet == true){
+    if(this.state.view_image_bottomsheet == true){
       //closing
       this.setState({view_image_bottomsheet: !this.state.view_image_bottomsheet});
       var me = this;
@@ -10931,6 +11425,95 @@ class App extends Component {
 
 
 
+
+
+
+
+  render_view_pdf_bottomsheet(){
+    if(this.state.view_pdf_bottomsheet2 != true) return;
+    var background_color = 'transparent';
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_pdf_bottomsheet} onClose={this.open_view_pdf_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_view_pdf()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_pdf_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_pdf_bottomsheet.bind(this)} open={this.state.view_pdf_bottomsheet} style={{'z-index':'6'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'transparent','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+          <div style={{ height: this.state.height, width: this.state.width, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'black', 'border-radius': '0px 0px 0px 0px', 'border-width': '0px','margin': '0px 0px 0px 0px'}}>
+              {this.render_view_pdf()}
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_pdf_bottomsheet(){
+    if(this.state.view_pdf_bottomsheet == true){
+      //closing
+      this.setState({view_pdf_bottomsheet: !this.state.view_pdf_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_pdf_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_pdf_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_pdf_bottomsheet: !me.state.view_pdf_bottomsheet});
+        }
+      }, (1 * 200));
+    }
+  }
+
+  when_pdf_file_opened(pdf){
+    // this.prompt_top_notification('opening...', 1000)
+    this.setState({view_pdf: pdf})
+    this.open_view_pdf_bottomsheet()
+  }
+
+  /* fullscreen pdf rendered in bottomsheet when image item is tapped */
+  render_view_pdf(){
+    var pdf = this.state.view_pdf
+    return(
+      <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px', 'text-align':'center'}}>
+        {pdf && (
+          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
+            <Viewer fileUrl={this.get_pdf_from_file(pdf)} />
+          </Worker>
+        )}
+      </div>
+    );
+  }
+
+  get_pdf_from_file(ecid){
+    if(!ecid.startsWith('pdf')) return ecid
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bitcoin.org/bitcoin.pdf'
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    return data['data']
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   render_audio_pip(){
     if(!this.state.is_audio_pip_showing) return;
     var size = this.getScreenSize();
@@ -10963,26 +11546,28 @@ class App extends Component {
     )
   }
 
-  play_song(item, object, audio_items, is_page_my_collection_page){
+  play_song(item, object, audio_items, is_page_my_collection_page, should_shuffle){
     this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */, 800)
     this.setState({is_audio_pip_showing: true})
-    var queue = this.get_queue(item, object, audio_items, is_page_my_collection_page)
+    var queue = this.get_queue(item, object, audio_items, is_page_my_collection_page, should_shuffle)
+    var unshuffled_queue = this.get_queue(item, object, audio_items, is_page_my_collection_page, false)
     
     var me = this;
     setTimeout(function() {
-      me.audio_pip_page.current?.set_data(queue, 0)
+      me.audio_pip_page.current?.set_data(queue, 0, unshuffled_queue, should_shuffle)
       me.load_queue(queue, 0)
     }, (1 * 500));
   }
 
-  play_song_in_playlist(item, playlist){
+  play_song_in_playlist(item, playlist, should_shuffle){
     this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */, 800)
     this.setState({is_audio_pip_showing: true})
-    var queue = this.get_playlist_queue(item, playlist)
-    
+    var queue = this.get_playlist_queue(item, playlist, should_shuffle)
+    var unshuffled_queue = this.get_playlist_queue(item, playlist, false)
+
     var me = this;
     setTimeout(function() {
-      me.audio_pip_page.current?.set_data(queue, 0)
+      me.audio_pip_page.current?.set_data(queue, 0, unshuffled_queue, should_shuffle)
       me.load_queue(queue, 0)
     }, (1 * 500));
   }
@@ -10992,7 +11577,7 @@ class App extends Component {
     this.when_playing(null, null)
   }
 
-  get_playlist_queue(item, object){
+  get_playlist_queue(item, object, should_shuffle){
     var songs = []
     var song_ids = []
 
@@ -11011,10 +11596,12 @@ class App extends Component {
       }
     });
 
+    if(should_shuffle) shuffle(songs)
+
     return songs
   }
 
-  get_queue(item, object, audio_items, is_page_my_collection_page){
+  get_queue(item, object, audio_items, is_page_my_collection_page, should_shuffle){
     var songs = []
     var song_ids = []
     item['album_art'] = object['ipfs'].album_art
@@ -11044,6 +11631,10 @@ class App extends Component {
       }
     });
 
+    if(should_shuffle){
+      shuffle(songs)
+    }
+
     var index_of_obj = audio_items.indexOf(object)
 
     for(var i=(index_of_obj+1); i<audio_items.length; i++){
@@ -11066,6 +11657,7 @@ class App extends Component {
         }
       });
     }
+
 
     return songs
   }
@@ -11484,6 +12076,7 @@ class App extends Component {
     // console.log(data)
 
     if(this.is_allowed_in_e5()){
+      await this.load_cities_data()
       // await this.load_static_assets()
       // this.inc_synch_progress()
       // await this.load_coin_static_assets()
@@ -12818,7 +13411,7 @@ class App extends Component {
   }
 
   get_atom_transaction_fee = async () => {
-    return (0.00640 * 1_000_000_000)
+    return (0.00640 * 1_000_000)
   }
 
   update_cosmos_balance = async (clone) => {
@@ -13517,6 +14110,33 @@ class App extends Component {
     this.setState({coins: clone})
   }
 
+  load_cities_data = async () => {
+    var request = this.state.static_assets['all_cities']
+    // if(!this.is_address_set(address)) return {}
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('something went wrong:',response)
+        // throw new Error(`Failed to retrieve data. Status: ${response}`);
+        return
+      }
+      var data = await response.text();
+      var json_obj = JSON.parse(data);
+      var storage_obj = []
+      for(var i=0; i<json_obj.length; i++){
+        var city = json_obj[i]['name'].toLowerCase()
+        var country = json_obj[i]['country']
+        var id = parseInt(json_obj[i]['id'])
+        storage_obj.push({'city':city, 'country':country, 'id':id})
+      }
+      this.setState({all_cities: storage_obj})
+    }
+    catch(e){
+      console.log('something went wrong:', e)
+      
+    }
+  }
+
 
 
 
@@ -13947,18 +14567,36 @@ class App extends Component {
   get_section_tags_data = async (web3, E52contractInstance, e5, account) => {
     var section_tags_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:3})
 
-
     if(section_tags_data_events.length != 0){
       var latest_event = section_tags_data_events[section_tags_data_events.length - 1];
       var section_tag_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var job_section_tags = section_tag_data['job_section_tags']
       var explore_section_tags = section_tag_data['explore_section_tags']
+
+      // console.log('get_section_tags_data', section_tag_data)
       
       if(!this.state.should_update_section_tags_onchain){
         this.setState({job_section_tags: job_section_tags, explore_section_tags: explore_section_tags})
+      }else{
+        var job_section_tags_clone = this.state.job_section_tags.slice()
+        var explore_section_tags_clone = this.state.explore_section_tags.slice()
+        
+        job_section_tags.forEach(tag => {
+          if(!job_section_tags_clone.includes(tag)){
+            job_section_tags_clone.push(tag)
+          }
+        });
+
+        explore_section_tags.forEach(tag => {
+          if(!explore_section_tags_clone.includes(tag)){
+            explore_section_tags_clone.push(tag)
+          }
+        });
+
+        this.setState({job_section_tags: job_section_tags_clone, explore_section_tags: explore_section_tags_clone})
       }
     }else{
-      if(this.section_tags_data_user != account){
+      if(this.section_tags_data_user != account && this.section_tags_data_user != null && this.section_tags_data_user != 1){
         this.setState({job_section_tags: [], explore_section_tags: []})
       }
     }
@@ -14022,11 +14660,12 @@ class App extends Component {
       }
       if(clone[filetype] == null) clone[filetype] = {}
       clone[filetype][cids[i]] = data
-      this.setState({uploaded_data: clone})
       if(is_my_cids){
         var cid_clone = this.state.uploaded_data_cids.slice()
         cid_clone.push(cids[i])
-        this.setState({uploaded_data_cids: cids})
+        this.setState({uploaded_data_cids: cids, uploaded_data: clone})
+      }else{
+        this.setState({uploaded_data: clone})
       }
     }
   }
@@ -14050,7 +14689,7 @@ class App extends Component {
       }
     }
 
-    return{'filetype':filetype, 'cid':cid, 'storage':storage, 'file_name':file_name, 'full':ecid}
+    return {'filetype':filetype, 'cid':cid, 'storage':storage, 'file_name':file_name, 'full':ecid}
   }
 
   fetch_uploaded_files_for_object = async (object) => {
@@ -14059,7 +14698,14 @@ class App extends Component {
       var images_to_add = object['ipfs'].entered_image_objects == null ? [] : object['ipfs'].entered_image_objects
       if(images_to_add.length > 0){
         images_to_add.forEach(item => {
-          if(this.is_ecid(item))ecids.push(item)
+          if(this.is_ecid(item)) ecids.push(item)
+        });
+      }
+
+      var pdfs_to_add = object['ipfs'].entered_pdf_objects == null ? [] : object['ipfs'].entered_pdf_objects
+      if(pdfs_to_add.length > 0){
+        pdfs_to_add.forEach(item => {
+          if(this.is_ecid(item)) ecids.push(item)
         });
       }
 
@@ -14095,13 +14741,22 @@ class App extends Component {
       }
     }
 
+    if(object['pdf-data'] != null){
+      var pdfs = object['pdf-data']
+      if(pdfs.length > 0){
+        pdfs.forEach(pdf => {
+          if(this.is_ecid(pdf)) ecids.push(pdf)
+        });
+      }
+    }
+
     if(ecids.length > 0){
       this.fetch_uploaded_data_from_ipfs(ecids, false)
     }
   }
 
   is_ecid(ecid){
-    if(ecid.startsWith('image') || ecid.startsWith('audio') || ecid.startsWith('video')){
+    if(ecid.startsWith('image') || ecid.startsWith('audio') || ecid.startsWith('video') || ecid.startsWith('pdf')){
       return true;
     }else{
       return false
@@ -15446,6 +16101,14 @@ class App extends Component {
         }
       }
 
+      var entered_account_times = await G52contractInstance.methods.f266([created_contracts[i]], [contract_entered_accounts], 3).call((error, result) => {});
+      var entered_account_times_data = {}
+      for(var e=0; e<contract_entered_accounts.length; e++){
+        var time = entered_account_times[0][e]
+        var account = contract_entered_accounts[e]
+        entered_account_times_data[account] = time
+      }
+
 
       var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
       var old_moderators = []
@@ -15473,7 +16136,7 @@ class App extends Component {
 
       var timestamp = event == null ? 0 : event.returnValues.p4
       var author = event == null ? 0 : event.returnValues.p3
-      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':archive_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i], 'my_interactable_time_value':my_interactable_time_value[i][0], 'my_blocked_time_value':my_blocked_time_value[i][0], 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
+      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'participant_times':entered_account_times_data, 'archive_accounts':archive_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i], 'my_interactable_time_value':my_interactable_time_value[i][0], 'my_blocked_time_value':my_blocked_time_value[i][0], 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
       }
@@ -16279,6 +16942,8 @@ class App extends Component {
       if(created_store_events[i].returnValues.p1.toString() == hash.toString()){
         var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         if(data != null){
+          if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false)
+
           var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':created_store_events[i].returnValues.p6, 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5}
           created_stores.push(obj)
           created_store_mappings[id] = obj
@@ -16534,12 +17199,12 @@ class App extends Component {
       });
       created_audio_events = final_object_events
     }
-
     
     this.record_number_of_items(e5, 'audio', created_audio_events.length)
-    var created_audios = []
-    var created_audio_mappings = {}
+    var created_audios = this.state.created_audios[e5] == null ? [] : this.state.created_audios[e5].slice()
+    var created_audio_mappings = this.state.created_audio_mappings[e5] == null ? {} : structuredClone(this.state.created_audio_mappings[e5])
     var is_first_time = this.state.created_audios[e5] == null
+    is_first_time = true
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -16563,7 +17228,15 @@ class App extends Component {
         'author':created_audio_events[i].returnValues.p5, 'e5_id':id+e5, 'album_sales':album_sales, 'song_sales':song_sales
         }
 
-        created_audios.push(data)
+        var obj = this.get_item_in_array(created_audios, id)
+        if(obj == null){
+          created_audios.push(data)
+        }else{
+          var pos = created_audios.indexOf(obj)
+          if(pos != -1){
+            created_audios[pos] = obj
+          }
+        }
         created_audio_mappings[id] = data
       }
 
@@ -17384,7 +18057,7 @@ class App extends Component {
       return_obj =  return_obj.concat(explore_section_tags)
     }
 
-    
+    return return_obj
   }
 
   load_prioritised_job_posts = async (e5, web3, contract_addresses) => {

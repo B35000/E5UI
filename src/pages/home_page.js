@@ -907,8 +907,8 @@ class home_page extends Component {
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
-            // me.open_search_filter_section()
-            if(this.is_page_valid()) me.setState({search_visible: !me.state.search_visible})
+            me.open_search_filter_section()
+            // if(this.is_page_valid()) me.setState({search_visible: !me.state.search_visible})
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {
@@ -2380,7 +2380,14 @@ class home_page extends Component {
         }
 
         objects.forEach(object => {
+            //first add the objects with the tags i follow
             var object_tags = object['ipfs'].entered_indexing_tags
+            if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+                object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
+            }
+            if(object['ipfs'].audio_type != null){
+                object_tags = [object['ipfs'].audio_type].concat(object_tags)
+            }
             var includes = section_tags.some(r=> object_tags.includes(r))
             if(includes && !feed_objs.includes(object)){
                 feed_objs.push(object)
@@ -2389,7 +2396,14 @@ class home_page extends Component {
         });
 
         objects.forEach(object => {
+            //then add the objects with the tags closely associated to the tags i follow
             var object_tags = object['ipfs'].entered_indexing_tags
+            if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+                object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
+            }
+            if(object['ipfs'].audio_type != null){
+                object_tags = [object['ipfs'].audio_type].concat(object_tags)
+            }
             var includes = like_tags.some(r=> object_tags.includes(r))
             if(includes && !feed_objs.includes(object)){
                 feed_objs.push(object)
@@ -2397,6 +2411,7 @@ class home_page extends Component {
         });
 
         objects.forEach(object => {
+            //then load everything else
             if(!feed_objs.includes(object)){
                 feed_objs.push(object)
             }
@@ -3105,7 +3120,9 @@ class home_page extends Component {
                 load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)} update_coin_balances={this.props.update_coin_balances.bind(this)}
 
                 open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)}
-                update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)}
+                update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.props.download_playlist.bind(this)}
+
+                when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)}
                 />
             </div>
         )
@@ -4501,6 +4518,9 @@ class home_page extends Component {
         var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
         if(gas_price == null){
             gas_price = this.get_gas_price_from_runs()
+        }
+        if(this.props.app_state.run_gas_price != 0){
+            gas_price = this.props.app_state.run_gas_price
         }
         var total_ether_to_be_spent = estimated_gas_to_be_consumed * gas_price
         var my_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]

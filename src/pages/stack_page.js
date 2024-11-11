@@ -15,10 +15,12 @@ import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 import { from } from "@iotexproject/iotex-address-ts";
 import imageCompression from 'browser-image-compression';
+import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
-
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 
 
@@ -588,12 +590,10 @@ class StackPage extends Component {
         };
     }
 
-
     get_selected_font_option(){
         var obj = {'Sans-serif':1,'Courier New':2,'Times New Roman':3,'ComicSans':4,'papyrus':5}
         return obj[this.props.app_state.font]
     }
-
 
     set_preferred_font_tag(){
         this.setState({get_preferred_font_tags_object: this.get_preferred_font_tags_object(),})
@@ -710,7 +710,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1593bk']/* all */, this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1593bk']/* all */, this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */, this.props.app_state.loc['1593cd']/* 'documents' */], [1]
             ],
         };
     }
@@ -941,6 +941,7 @@ class StackPage extends Component {
 
     when_run_gas_price(number){
         this.setState({run_gas_price: number})
+        this.props.when_run_gas_price_set(number)
     }
 
     when_max_priority_amount(number){
@@ -1350,6 +1351,9 @@ class StackPage extends Component {
         var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
         if(gas_price == null){
             gas_price = this.get_gas_price_from_runs()
+        }
+        if(this.state.run_gas_price != 0){
+            gas_price = this.state.run_gas_price
         }
         var total_ether_to_be_spent = estimated_gas_to_be_consumed * gas_price
         var my_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
@@ -3142,7 +3146,7 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
                     var t = txs[i]
                     var now = parseInt(now.toString() + i)
-                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now}
+                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects}
 
                     obj[t.id] = application_obj
                 }
@@ -4977,7 +4981,7 @@ class StackPage extends Component {
         var context = 38
         var int_data = now
 
-        var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':int_data}
+        var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':int_data, 'entered_pdfs':t.entered_pdf_objects}
 
         var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
 
@@ -5405,11 +5409,11 @@ class StackPage extends Component {
         }
 
 
-        var main_index = this.props.app_state.device_country
-        if(this.props.app_state.content_channeling == this.props.app_state.loc['1233']/* 'international' */){
+        var main_index = t.device_country
+        if(t.content_channeling_setting == this.props.app_state.loc['1233']/* 'international' */){
             main_index = this.props.app_state.loc['1233']/* 'international' */
         }
-        else if(this.props.app_state.content_channeling == this.props.app_state.loc['1232']/* 'language' */){
+        else if(t.content_channeling_setting == this.props.app_state.loc['1232']/* 'language' */){
             main_index = this.props.app_state.loc['1232']/* 'language' */
         }
         transaction_obj[1].push(target_stack_index)
@@ -5418,6 +5422,30 @@ class StackPage extends Component {
         transaction_obj[4].push(target_type)
 
         string_obj[0].push(main_index)
+
+
+
+        //index city if set
+        var city = t.selected_device_city
+        if(city != ''){
+            transaction_obj[1].push(target_stack_index)
+            transaction_obj[2].push(35)
+            transaction_obj[3].push(20/* 20(tag_registry) */)
+            transaction_obj[4].push(target_type)
+
+            string_obj[0].push(city)
+        }
+
+
+        var audio_type = t.audio_type
+        if(audio_type != null){
+            transaction_obj[1].push(target_stack_index)
+            transaction_obj[2].push(35)
+            transaction_obj[3].push(20/* 20(tag_registry) */)
+            transaction_obj[4].push(target_type)
+
+            string_obj[0].push(audio_type)
+        }
 
 
 
@@ -5600,6 +5628,7 @@ class StackPage extends Component {
             for(var i=0; i<ints.length; i++){
                 var global_action = ints[i][0][0]
                 if(global_action == 10000){
+                    return {'ints':ints, 'strs':strs, 'adds':adds}
                     new_ints.push(ints[i])
                     new_strs.push(strs[i])
                     new_adds.push(adds[i])
@@ -9030,6 +9059,7 @@ class StackPage extends Component {
         var image_count = upload_metrics['image_count'] +''
         var audio_count = upload_metrics['audio_count']+''
         var video_count = upload_metrics['video_count']+''
+        var pdf_count = upload_metrics['pdf_count']+''
         var total_size = this.format_data_size(upload_metrics['total_size'])
         var ts = total_size['size']+' '+total_size['unit']
         return(
@@ -9044,6 +9074,9 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bt']/* 'Uploaded Videos.' */, 'title':video_count, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['1593ce']/* 'Uploaded PDFs.' */, 'title':pdf_count, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bu']/* 'Total Storage Space Utilized.' */, 'title':ts, 'size':'l'})}
@@ -9089,21 +9122,24 @@ class StackPage extends Component {
     get_uploaded_data_details(){
         var images = 0;
         var audios = 0;
-        var videos = 0
+        var videos = 0;
+        var pdfs = 0;
         var total_size = 0;
 
         var items = this.props.app_state.uploaded_data_cids
-        items.forEach(cid => {
-            var data = this.props.app_state.uploaded_data[cid]
+        items.forEach(ecid => {
+            var ecid_obj = this.get_cid_split(ecid)
+            var data = this.props.app_state.uploaded_data[ecid_obj['filetype']] == null ? null : this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
             if(data != null){
                 total_size += data['size']
-                if(data['type'] = 'image') images++
-                else if(data['type'] = 'audio') audios++
-                else if(data['type'] = 'video') videos++
+                if(data['type'] == 'image') images++
+                else if(data['type'] == 'audio') audios++
+                else if(data['type'] == 'video') videos++
+                else if(data['type'] == 'pdf') pdfs++
             }
         });
 
-        return {'image_count':images, 'audio_count':audios, 'video_count':videos, 'total_size':total_size}
+        return {'image_count':images, 'audio_count':audios, 'video_count':videos, 'total_size':total_size, 'pdf_count':pdfs}
     }
 
     get_upload_file_size_limit(){
@@ -9195,6 +9231,17 @@ class StackPage extends Component {
                         <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="video/*" onChange ={this.when_video_picked.bind(this)} multiple/>
+                    </div>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
+            return(
+                <div>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)} multiple/>
                     </div>
                 </div>
             )
@@ -9298,6 +9345,13 @@ class StackPage extends Component {
         }
     }
 
+    when_pdf_picked = (e) => {
+        this.when_file_picked(e, 'pdf')
+        return;
+    }
+
+
+
 
     when_file_picked = async (e, type) => {
         if(e.target.files && e.target.files[0]){
@@ -9371,6 +9425,10 @@ class StackPage extends Component {
                     var videoFile = e.target.files[i];
                     reader.readAsDataURL(videoFile);
                 }
+                else if(type == 'pdf'){
+                    var pdfFile = e.target.files[i];
+                    reader.readAsDataURL(pdfFile)
+                }
 
                 while (this.is_loading_file == true) {
                     if (this.is_loading_file == false) break
@@ -9381,22 +9439,45 @@ class StackPage extends Component {
         }
     }
 
+    get_pdf_image = async (pdfDataUrl) => {
+        const pdf = await pdfjsLib.getDocument(pdfDataUrl).promise;
+        const firstPage = await pdf.getPage(1);
+        const scale = 1.5;
+        const viewport = firstPage.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = viewport.width;
+        canvas.height = viewport.width;
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport,
+        };
+        await firstPage.render(renderContext).promise;
+        const thumbnailDataUrl = canvas.toDataURL('image/png');
+        return thumbnailDataUrl
+    }
+
     upload_file(file, size, id, type, name, thumbnail, metadata){
         var obj = {'data':file, 'size': size, 'id':id, 'type':type, 'name':name, 'thumbnail':thumbnail, 'data_type':type, 'metadata':metadata}
         // this.props.upload_file_to_web3_or_chainsafe(obj, type)
     }
 
-    upload_files(){
+    upload_files = async () => {
         for(var i = 0; i<this.file_names.length; i++){
             this.files[i]['name'] = this.file_names[i]
             if(this.selected_files_type == 'audio'){
                 this.files[i]['thumbnail'] = this.audio_file_images[i];
                 this.files[i]['metadata'] = this.audio_file_metadatas[i];
             }
+            else if(this.selected_files_type == 'pdf'){
+                this.files[i]['thumbnail'] = await this.get_pdf_image(this.files[i]['data'])
+            }
         }
         this.props.upload_multiple_files_to_web3_or_chainsafe(this.files, this.selected_files_type)
     }
 
+
+    
 
     render_uploaded_files(){
         var items = this.get_all_uploaded_file_item_cids()
@@ -9434,6 +9515,9 @@ class StackPage extends Component {
         }
         else if(selected_item == this.props.app_state.loc['1593bn']/* 'video' */){
             file_type = 'video'
+        }
+        else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
+            file_type = 'pdf'
         }
 
         var items = this.props.app_state.uploaded_data_cids
@@ -9515,6 +9599,18 @@ class StackPage extends Component {
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
                             </div>
                         </div>
+                    </div>
+                )
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = data['thumbnail']
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
             }

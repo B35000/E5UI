@@ -35,7 +35,7 @@ class AddToBagPage extends Component {
     state = {
         selected: 0, storefront_item:{},  type:this.props.app_state.loc['1043']/* 'add-to-bag' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1044']/* 'add' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1046']/* 'storefront-item' */], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
-        purchase_unit_count:1, selected_variant:null
+        purchase_unit_count:1, selected_variant:null, device_city: '', selected_device_city:'',
     };
 
     get_add_to_bag_tags_object(){
@@ -159,17 +159,90 @@ class AddToBagPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_item_variants()}
                     {this.render_selected_variant()}
-                    {this.render_detail_item('0')}
 
+                    
+                    {this.render_city_settings()}
+
+
+                    {this.render_detail_item('0')}
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1050']/* 'Amount in ' */+composition_type, 'number':this.state.purchase_unit_count, 'relativepower':composition_type})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1050']/* 'Amount in ' */+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/>
                     <div style={{height:10}}/>
+
                 </div>
             )
         }
+    }
+
+    render_city_settings(){
+        if(!this.should_render_city_settings()) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058a']/* 'Bag City (Optional).' */, 'details':this.props.app_state.loc['1058b']/* 'You may specify your location city for contractors.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={this.props.app_state.loc['a311bp']/* 'Enter City...' */} when_text_input_field_changed={this.when_device_city_input_field_changed.bind(this)} text={this.state.device_city} theme={this.props.theme}/>
+                
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_cities_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_city_selected'})}
+                
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_device_city})}
+            </div>
+        )
+    }
+
+    should_render_city_settings(){
+        var stack = this.props.app_state.stack_items.slice() 
+        var pos = -1
+        var storefront_item_content_channeling = this.state.storefront_item['ipfs'].content_channeling_setting
+        for(var i=0; i<stack.length; i++){
+            if(stack[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */ && stack[i].e5 == this.state.e5 && stack[i].content_channeling_setting == storefront_item_content_channeling){
+                pos = i
+                break;
+            }
+        }
+        if(pos == -1){
+            return true
+        }
+
+        return false
+    }
+
+    when_device_city_input_field_changed(text){
+        this.setState({device_city: text.toLowerCase()})
+    }
+
+    get_cities_from_typed_text(){
+        var selected_cities = []
+        var typed_text = this.state.device_city
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities = []
+        var device_country = this.props.app_state.device_country_code
+
+        if(typed_text != ''){
+            specific_cities = all_cities.filter(function (el) {
+                return (el['city'].startsWith(typed_text) || el['city'] == typed_text) && el['country'].startsWith(device_country)
+            });
+        }else{
+            specific_cities = all_cities.filter(function (el) {
+                return el['country'].startsWith(device_country)
+            });
+        }
+
+        var l = specific_cities.length > 7 ? 7 : specific_cities.length
+        for(var i=0; i<l; i++){
+            selected_cities.push(specific_cities[i]['city'])
+        }
+        return selected_cities;
+    }
+
+    when_city_selected(tag, pos){
+        if(tag != 'e') this.setState({selected_device_city: tag, device_city:''})
     }
 
     when_purchase_unit_count(amount){
@@ -350,13 +423,16 @@ class AddToBagPage extends Component {
 
     finish_creating_bag_item(){
         if(this.state.selected_variant == null){
-            this.props.notify(this.props.app_state.loc['1056']/* 'Pick one variant first.' */, 1500)
+            this.props.notify(this.props.app_state.loc['1056']/* 'Pick one variant first.' */, 5500)
         }
         else if(this.state.purchase_unit_count == 0){
-            this.props.notify(this.props.app_state.loc['1057']/* 'Please specify an amount of the item your adding.' */, 2400)
+            this.props.notify(this.props.app_state.loc['1057']/* 'Please specify an amount of the item your adding.' */, 5400)
         }
         else if(this.state.purchase_unit_count > this.get_variant_supply()){
             this.props.notify(this.props.app_state.loc['1055']/* 'The most you can add is ' */+this.format_account_balance_figure(this.get_variant_supply())+' '+this.get_composition_type())
+        }
+        else if(this.state.selected_device_city == '' && this.should_render_city_settings()){
+            this.props.notify(this.props.app_state.loc['1058c']/* 'You need to set your city for contractors.' */, 4400)
         }
         else{
             this.props.add_bag_item_to_bag_in_stack(this.state)
@@ -382,7 +458,7 @@ class AddToBagPage extends Component {
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)} />
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)} when_city_selected={this.when_city_selected.bind(this)} />
             </div>
         )
 

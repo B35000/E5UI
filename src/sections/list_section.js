@@ -730,6 +730,9 @@ class PostListSection extends Component {
 
     format_job_item(object){
         var tags = object['ipfs'] == null ? ['Job'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
         var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -1305,6 +1308,9 @@ class PostListSection extends Component {
 
     format_contractor_item(object){
         var tags = object['ipfs'] == null ? ['Contractor'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
         var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -1725,6 +1731,9 @@ class PostListSection extends Component {
 
     format_post_item(object){
         var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
         var extra = ''
         if(this.is_post_nsfw(object)){
             extra = extra+'🔞'
@@ -1883,6 +1892,9 @@ class PostListSection extends Component {
 
     format_channel_item(object){
         var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var extra = ''
         var required_subscriptions = object['ipfs'].selected_subscriptions
@@ -2003,6 +2015,9 @@ class PostListSection extends Component {
 
     format_storefront_item(object){
         var tags = object['ipfs'] == null ? ['Storefront'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
         var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -2194,6 +2209,9 @@ class PostListSection extends Component {
 
     format_bag_item(object){
         var tags = [object['event'].returnValues.p3]
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items ordered' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
@@ -2230,7 +2248,7 @@ class PostListSection extends Component {
 
     }
 
-    get_variant_object_from_storefront(storefront, id){        
+    get_variant_object_from_storefront(storefront, id){
         for(var i=0; i<storefront['ipfs'].variants.length; i++){
             if(storefront['ipfs'].variants[i]['variant_id'] == id){
                 return storefront['ipfs'].variants[i]
@@ -2574,6 +2592,9 @@ class PostListSection extends Component {
 
     format_audio_item(object){
         var tags = object['ipfs'] == null ? ['Audiopost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].audio_type != null){
+            tags = [object['ipfs'].audio_type].concat(tags)
+        }
         var extra = ''
         var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5

@@ -49,12 +49,17 @@ class NewContractorPage extends Component {
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
 
-        content_channeling_setting: this.props.app_state.content_channeling, device_language_setting: this.props.app_state.device_language, device_country: this.props.app_state.device_country,
+        content_channeling_setting: this.props.app_state.content_channeling, 
+        device_language_setting: this.props.app_state.device_language, 
+        device_country: this.props.app_state.device_country,
+        device_region: this.props.app_state.device_region,
+        device_city: '', selected_device_city:'',
 
         typed_link_text:'', link_search_results:[], added_links:[],
         edit_text_item_pos:-1,
 
         get_sort_links_tags_object:this.get_sort_links_tags_object(),
+        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[],
     };
 
     get_new_contractor_page_tags_object(){
@@ -63,7 +68,7 @@ class NewContractorPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['254']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['254']], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -128,6 +133,27 @@ class NewContractorPage extends Component {
         };
     }
 
+
+    get_content_channeling_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1233']/* 'international' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1231']/* 'local' */], [1]
+            ],
+        };
+    }
+
+
+
+
+
+
+
+
+
+
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
@@ -190,6 +216,13 @@ class NewContractorPage extends Component {
             return(
                 <div>
                     {this.render_rates_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162r']/* 'pdfs' */){
+            return(
+                <div>
+                    {this.render_enter_pdf_part()}
                 </div>
             )
         }
@@ -301,6 +334,28 @@ class NewContractorPage extends Component {
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bn']/* 'Channeling City (Optional)' */, 'details':this.props.app_state.loc['a311bo']/* 'If you\'ve set local channeling, you can restrict your post to a specific city.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={this.props.app_state.loc['a311bp']/* 'Enter City...' */} when_text_input_field_changed={this.when_device_city_input_field_changed.bind(this)} text={this.state.device_city} theme={this.props.theme}/>
+                
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_cities_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_city_selected'})}
+                
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_device_city})}
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -359,6 +414,45 @@ class NewContractorPage extends Component {
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
         // this.props.notify('tag removed', 200)
+    }
+
+
+
+    when_get_content_channeling_object_updated(tag_obj){
+        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
+    }
+
+    when_device_city_input_field_changed(text){
+        this.setState({device_city: text.toLowerCase()})
+    }
+
+    get_cities_from_typed_text(){
+        var selected_cities = []
+        var typed_text = this.state.device_city
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities = []
+        var device_country = this.props.app_state.device_country_code
+
+        if(typed_text != ''){
+            specific_cities = all_cities.filter(function (el) {
+                return (el['city'].startsWith(typed_text) || el['city'] == typed_text) && el['country'].startsWith(device_country)
+            });
+        }else{
+            specific_cities = all_cities.filter(function (el) {
+                return el['country'].startsWith(device_country)
+            });
+        }
+
+        var l = specific_cities.length > 7 ? 7 : specific_cities.length
+        for(var i=0; i<l; i++){
+            selected_cities.push(specific_cities[i]['city'])
+        }
+        return selected_cities;
+    }
+
+    when_city_selected(tag, pos){
+        if(tag != 'e') this.setState({selected_device_city: tag, device_city:''})
     }
 
 
@@ -1374,6 +1468,151 @@ class NewContractorPage extends Component {
 
 
 
+    render_enter_pdf_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_pdf_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_pdf_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['162o']/* 'The gray circle stages a pdf file. Then swipe it to remove.' */})}
+                {this.render_create_pdf_ui_buttons_part()}
+                {this.render_pdfs_part()}
+            </div>
+        )
+    }
+
+    render_create_pdf_ui_buttons_part(){
+        return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
+            </div>
+        </div>
+      )
+    }
+
+    when_pdf_files_picked(files){
+        var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_pdf_objects: clonedArray});
+    }
+
+    render_pdfs_part(){
+        var items = [].concat(this.state.entered_pdf_objects)
+
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_pdf_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <div style={{'margin':'3px 0px 3px 0px'}}>
+                                            {this.render_uploaded_file(item, index)}
+                                        </div>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        var details = data['name']
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    when_pdf_clicked(item, index){
+        var cloned_array = this.state.entered_pdf_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_pdf_objects: cloned_array})
+    }
+
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+
+
+
+
 
 
     render_rates_part(){
@@ -1751,14 +1990,15 @@ class NewContractorPage extends Component {
             // }
             
             var me = this;
-            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
-                device_language_setting :me.props.app_state.device_language,
-                device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
+            // this.setState({content_channeling_setting: me.props.app_state.content_channeling,
+            //     device_language_setting :me.props.app_state.device_language,
+            //     device_country :me.props.app_state.device_country,
+            //     e5 :me.props.app_state.selected_e5,})
+            
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({ id: makeid(8), type:me.props.app_state.loc['253'], get_new_contractor_page_tags_object: me.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: me.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], exchange_id:'', price_amount:0, price_data:[],typed_link_text:'', link_search_results:[], added_links:[], })
+                me.setState({ id: makeid(8), type:me.props.app_state.loc['253'], get_new_contractor_page_tags_object: me.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: me.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], exchange_id:'', price_amount:0, price_data:[],typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], })
             }, (1 * 1000));
 
             
@@ -1780,7 +2020,7 @@ class NewContractorPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} />
             </div>
         )
 

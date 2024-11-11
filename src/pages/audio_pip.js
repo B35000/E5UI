@@ -19,12 +19,21 @@ class AudioPip extends Component {
     state = {
         selected: 0, songs:[], pos:0, value:0,
         play_pause_state:0, is_full_screen_open:false, is_repeating:false, is_shuffling:false,
-        original_song_list:[],
+        original_song_list:[], isloading:false
     };
 
-    set_data(songs, pos){
+    set_data(songs, pos, unshuffled_songs, is_shuffling){
         // console.log('set_data', songs, pos)
-        this.setState({songs:songs, pos:pos, original_song_list:songs})
+        this.setState({songs: songs, pos: pos, original_song_list: unshuffled_songs, is_shuffling: is_shuffling})
+       
+        if(this.state.play_pause_state == 1){
+            this.setState({value: 0, play_pause_state: 0/* paused */, isloading:true})
+
+            var me = this;
+            setTimeout(function() {
+            me.setState({isloading:false})
+            }, (1 * 200));
+        }
     }
 
     constructor(props) {
@@ -163,6 +172,7 @@ class AudioPip extends Component {
     }
 
     has_file_loaded(){
+        if(this.state.isloading) return false
         var current_song = this.state.songs[this.state.pos]
         var audio_file = current_song['track']
         var ecid_obj = this.get_cid_split(audio_file)

@@ -47,6 +47,8 @@ class NewAudioPage extends Component {
         content_channeling_setting: this.props.app_state.content_channeling, 
         device_language_setting: this.props.app_state.device_language, 
         device_country: this.props.app_state.device_country,
+        device_region: this.props.app_state.device_region,
+        device_city: '', selected_device_city:'',
         
         typed_link_text:'', link_search_results:[], added_links:[],
         get_post_preview_option:this.get_post_preview_option(),
@@ -61,6 +63,7 @@ class NewAudioPage extends Component {
         chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(),
         get_album_item_listing_option:this.get_album_item_listing_option(),
         get_listing_type_tags_option:this.get_listing_type_tags_option(),
+        get_content_channeling_object:this.get_content_channeling_object(),
 
         exchange_id:'', price_amount:0, price_data:[], 
         exchange_id2:'', price_amount2:0, price_data2:[], 
@@ -70,7 +73,7 @@ class NewAudioPage extends Component {
 
         entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:'',
 
-        album_art:null,
+        album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
     };
 
     get_new_job_page_tags_object(){
@@ -79,7 +82,7 @@ class NewAudioPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['a311bg']/* 'metadata' */,this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['298'], this.props.app_state.loc['a311b']/* 'album-fee' */, this.props.app_state.loc['a311c']/* 'track-list' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['a311bg']/* 'metadata' */,this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['298'], this.props.app_state.loc['a311b']/* 'album-fee' */, this.props.app_state.loc['a311c']/* 'track-list' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -199,6 +202,18 @@ class NewAudioPage extends Component {
     }
 
 
+    get_content_channeling_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1233']/* 'international' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1231']/* 'local' */], [1]
+            ],
+        };
+    }
+
+
 
 
 
@@ -284,6 +299,13 @@ class NewAudioPage extends Component {
             return(
                 <div>
                     {this.render_metadata_ui()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162r']/* 'pdfs' */){
+            return(
+                <div>
+                    {this.render_enter_pdf_part()}
                 </div>
             )
         }
@@ -391,7 +413,7 @@ class NewAudioPage extends Component {
 
                 <div className="row" style={{width:'99%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         {/* {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})} */}
@@ -417,6 +439,14 @@ class NewAudioPage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_from_outsiders_option} tag_size={'l'} when_tags_updated={this.when_get_masked_from_outsiders_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
+
 
 
                 {this.render_detail_item('0')}
@@ -535,9 +565,19 @@ class NewAudioPage extends Component {
     }
 
     when_get_listing_type_tags_option_updated(tag_obj){
-        this.setState({get_listing_type_tags_option: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        this.setState({get_listing_type_tags_option: tag_obj, audio_type: selected_item})
     }
+
+    when_get_content_channeling_object_updated(tag_obj){
+        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
+    }
+
     
+    
+
+
 
 
     add_indexing_tag_for_new_job(){
@@ -1307,7 +1347,6 @@ class NewAudioPage extends Component {
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
             </div>
@@ -1500,6 +1539,142 @@ class NewAudioPage extends Component {
         }
         this.setState({entered_image_objects: cloned_array})
     }
+
+
+
+
+
+
+
+
+
+    render_enter_pdf_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_pdf_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_pdf_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['162o']/* 'The gray circle stages a pdf file. Then swipe it to remove.' */})}
+                {this.render_create_pdf_ui_buttons_part()}
+                {this.render_pdfs_part()}
+            </div>
+        )
+    }
+
+    render_create_pdf_ui_buttons_part(){
+        return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
+            </div>
+        </div>
+      )
+    }
+
+    when_pdf_files_picked(files){
+        var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_pdf_objects: clonedArray});
+    }
+
+    render_pdfs_part(){
+        var items = [].concat(this.state.entered_pdf_objects)
+
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_pdf_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <div style={{'margin':'3px 0px 3px 0px'}}>
+                                            {this.render_uploaded_file(item, index)}
+                                        </div>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        var details = data['name']
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    when_pdf_clicked(item, index){
+        var cloned_array = this.state.entered_pdf_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_pdf_objects: cloned_array})
+    }
+
+
+
 
     
 
@@ -1708,7 +1883,6 @@ class NewAudioPage extends Component {
                                     </div>
                                 </SwipeableListItem>
                             </SwipeableList>
-                            
                         ))}
                     </ul>
                 </div>
@@ -2403,19 +2577,19 @@ class NewAudioPage extends Component {
         }
         else if(purchase_recipient == ''){
             this.props.notify(this.props.app_state.loc['a311bf']/* You need to set a purchase recipient for your new audiopost. */, 4700)
-        }
+        } 
         else{
-            var me = this;
-            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
-                device_language_setting :me.props.app_state.device_language,
-                device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
+            // var me = this;
+            // this.setState({content_channeling_setting: me.props.app_state.content_channeling,
+            //     device_language_setting :me.props.app_state.device_language,
+            //     device_country :me.props.app_state.device_country,
+            //     e5 :me.props.app_state.selected_e5,})
 
             var me = this;
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null})
+                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null, entered_pdf_objects:[]})
             }, (1 * 1000));
 
             

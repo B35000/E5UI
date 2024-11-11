@@ -58,6 +58,9 @@ class PickFilePage extends Component {
         else if(type == 'audio'){
             return ['e',this.props.app_state.loc['2956']/* 'audio' */]
         }
+        else if(type == 'pdf'){
+            return ['e',this.props.app_state.loc['1593cd']/* 'pdf' */]
+        }
         else{
             return ['e', this.props.app_state.loc['2957']/* 'video' */]
         }
@@ -154,6 +157,12 @@ class PickFilePage extends Component {
         else if(type == 'audio'){
             var text = this.props.app_state.loc['2958']/* 'Pick one or multile audio files from your storage.To see an audio file here, you need to upload it in the stack page.' */
             var t = text.replace('image','audio')
+            return t
+        }
+        else if(type == 'pdf'){
+            var text = this.props.app_state.loc['2958']/* 'Pick one or multile audio files from your storage.To see an audio file here, you need to upload it in the stack page.' */
+            var t = text.replace('image','pdf')
+            t = t.replace('an pdf','a pdf')
             return t
         }
         else{
@@ -302,6 +311,24 @@ class PickFilePage extends Component {
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
                             </div>
                         </div>
+                    </div>
+                )
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
             }

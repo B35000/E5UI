@@ -42,11 +42,11 @@ class synchronizing_page extends Component {
     render_synchronizing_page(){
         return(
             <div style={{}}>
-                <p style={{margin:'15% 0% 3% 0%', 'text-align': 'center', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font}}>{this.get_sync_text()}</p>
-                <div style={{width:'60%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
+                <p style={{margin:'15% 0% 2% 0%', 'text-align': 'center', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font, 'font-size':'11px'}}>{this.get_sync_text()}</p>
+                <div style={{width:'40%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_synch_bar()}
                 </div>
-                <img style={{width:'70%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiaszixz3iclvzxocneibrmppoazemylhb5ynki5sownn7n2bub4m4'} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
+                <img style={{width:'46%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiaszixz3iclvzxocneibrmppoazemylhb5ynki5sownn7n2bub4m4'} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
                 
                 {/* <div style={{width:'60%', 'margin-top':'20px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_bottom_text()}
@@ -79,7 +79,7 @@ class synchronizing_page extends Component {
         var bar_shadow = this.props.theme['bar_shadow'];
         var bar_color = this.props.theme['bar_color']
         var bar_background = this.props.theme['bar_background_color']
-        var height = 7;
+        var height = 5;
         var progress = this.props.sync_progress+'%'
         if(this.props.sync_progress >100){
             progress = '100%'

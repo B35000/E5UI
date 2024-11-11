@@ -749,6 +749,14 @@ class DialogPage extends Component {
                 {this.render_detail_item('0')}
 
 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k']/* 'Download Track.' */, 'details':this.props.app_state.loc['3006l']/* 'Cache the track in your cookies to load it faster in the future.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_add_to_cache_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k']/* 'Download Track.'' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2999']/* 'Play Next.' */, 'details':this.props.app_state.loc['3006b']/* 'Play the track next.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_play_next_clicked()}>
@@ -762,6 +770,8 @@ class DialogPage extends Component {
                 <div onClick={() => this.when_play_last_clicked()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3000']/* 'Play Last.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
+
+                
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -792,6 +802,12 @@ class DialogPage extends Component {
     }
 
 
+    when_add_to_cache_clicked(){
+        var song = this.state.data['item']
+        this.props.add_song_to_cache(song)
+    }
+
+
     render_full_audio_page_song_option_items(){
         return(
             <div>
@@ -799,6 +815,14 @@ class DialogPage extends Component {
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_add_to_playlist_clicked()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k']/* 'Download Track.' */, 'details':this.props.app_state.loc['3006l']/* 'Cache the track in your cookies to load it faster in the future.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_add_to_cache_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k']/* 'Download Track.'' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 {this.render_detail_item('0')}
 
@@ -856,6 +880,14 @@ class DialogPage extends Component {
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_add_to_playlist_clicked()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2998']/* 'Add to Playlist' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k']/* 'Download Track.' */, 'details':this.props.app_state.loc['3006l']/* 'Cache the track in your cookies to load it faster in the future.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_add_to_cache_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k']/* 'Download Track.'' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 {this.render_detail_item('0')}
 

@@ -53,7 +53,7 @@ class EditPostPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'],/*  this.props.app_state.loc['298'] */], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */,/*  this.props.app_state.loc['298'] */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -265,6 +265,13 @@ class EditPostPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['162r']/* 'pdfs' */){
+            return(
+                <div>
+                    {this.render_enter_pdf_part()}
+                </div>
+            )
+        }
     }
 
     is_text_selected_item(selected_item){
@@ -337,7 +344,7 @@ class EditPostPage extends Component {
 
                 <div className="row" style={{width:'99%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         {/* {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})} */}
@@ -1802,6 +1809,139 @@ class EditPostPage extends Component {
         }
         this.setState({entered_image_objects: cloned_array})
     }
+
+
+
+
+
+    render_enter_pdf_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_pdf_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_pdf_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_pdf_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['162o']/* 'The gray circle stages a pdf file. Then swipe it to remove.' */})}
+                {this.render_create_pdf_ui_buttons_part()}
+                {this.render_pdfs_part()}
+            </div>
+        )
+    }
+
+    render_create_pdf_ui_buttons_part(){
+        return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
+            </div>
+        </div>
+      )
+    }
+
+    when_pdf_files_picked(files){
+        var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_pdf_objects: clonedArray});
+    }
+
+    render_pdfs_part(){
+        var items = [].concat(this.state.entered_pdf_objects)
+
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_pdf_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <div style={{'margin':'3px 0px 3px 0px'}}>
+                                            {this.render_uploaded_file(item, index)}
+                                        </div>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        var details = data['name']
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    when_pdf_clicked(item, index){
+        var cloned_array = this.state.entered_pdf_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_pdf_objects: cloned_array})
+    }
+
+
+
+
 
 
 

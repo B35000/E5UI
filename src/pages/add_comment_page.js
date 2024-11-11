@@ -18,11 +18,18 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class AddCommentPage extends Component {
     
     state = {
         selected: 0, object: null, focused_message_id: 0, page: '', contractor_object: null,
-        entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(),
+        entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), entered_pdf_objects:[],
     };
 
     get_comment_font_size_settings_object(){
@@ -200,9 +207,11 @@ class AddCommentPage extends Component {
                 {this.render_kaomoji_list()}
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image and tap to remove.' */})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1042f']/* 'Gray stages images and black stages a pdf. Then tap to remove.' */})}
+                
                 {this.render_create_image_ui_buttons_part()}
+                {this.render_pdfs_part()}
+                 <div style={{height:10}}/>
                 {this.render_image_part()}
             </div>
         )
@@ -270,8 +279,12 @@ class AddCommentPage extends Component {
     render_create_image_ui_buttons_part(){
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
                     <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_image', 10**16)}/>
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
                 </div>
 
             </div>
@@ -309,6 +322,77 @@ class AddCommentPage extends Component {
         clonedArray = clonedArray.concat(files)
         this.setState({entered_image_objects: clonedArray});
     }
+
+    when_pdf_files_picked(files){
+        var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_pdf_objects: clonedArray});
+    }
+
+    render_pdfs_part(){
+        var items = [].concat(this.state.entered_pdf_objects)
+
+        if(items.length == 0) return;
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_pdf_item_clicked(item, index)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_pdf_item_clicked(item, index){
+        var cloned_array = this.state.entered_pdf_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_pdf_objects: cloned_array})
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end(data['name'])
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+
+
 
     render_image_part(){
         var col = Math.round(400 / 100)
@@ -614,33 +698,33 @@ class AddCommentPage extends Component {
         }
 
         if(page == 'channel'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'job'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'mail'){
             var mail = object;
             var convo_id = mail['convo_id']
-            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'post'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'proposal'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'storefront'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'bag'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'request'){
-            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
         else if(page == 'audio'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects}
         }
 
         this.props.add_comment_to_respective_forum_page(tx, page)

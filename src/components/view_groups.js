@@ -171,9 +171,9 @@ class ViewGroups extends Component {
                 padding = object_data['padding'] == null ? '10px 15px 10px 15px' : object_data['padding']
                 text_align = object_data['text_align'] == null ? 'left' : object_data['text_align']
             }
-            var font_size = ['12px', '10px', 16, 40];
+            var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px'];
             if(size == 'l'){
-                font_size = ['15px', '12px', 19, 50];
+                font_size = ['15px', '12px', 19, 50, '5px 0px 0px 0px'];
             }
             var image_width = font_size[3]
             if(title == ''){
@@ -197,7 +197,7 @@ class ViewGroups extends Component {
                                 <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}}/>
                             </div>
                             <div style={{'margin':'0px 0px 0px 10px'}}>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
                                 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
@@ -568,6 +568,9 @@ class ViewGroups extends Component {
         }
         else if(action_id == 'when_view_account_exchange_tapped'){
             this.props.when_view_account_exchange_tapped(tag, pos)
+        }
+        else if(action_id == 'when_city_selected'){
+            this.props.when_city_selected(tag, pos)
         }
     }
 

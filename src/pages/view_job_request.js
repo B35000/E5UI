@@ -37,6 +37,13 @@ function makeid(length) {
     return result;
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 function TreeNode(data) {
   this.data     = data;
   this.parent   = null;
@@ -275,7 +282,8 @@ class ViewJobRequestPage extends Component {
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['1681']/* 'Sender ID' */, 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:10}}/>
-
+                    {this.render_pdf_files_if_any(item)}
+                    <div style={{height:10}}/>
                     {this.render_image_part([].concat(item['entered_images']))}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1682']/* 'Accepted' */, 'details':this.props.app_state.loc['1698']/* 'The contractor Accepted the job request.' */, 'size':'l'})}
@@ -302,7 +310,10 @@ class ViewJobRequestPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1688']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_image_part(item['entered_images'])}
+                    {this.render_pdf_files_if_any(item)}
+                    <div style={{height:10}}/>
+                    {this.render_image_part([].concat(item['entered_images']))}
+
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1689']/* 'Set Pay' */, 'details':this.props.app_state.loc['1690']/* 'The amounts youll be receiving for the job.' */, 'size':'l'})}
@@ -312,6 +323,85 @@ class ViewJobRequestPage extends Component {
             )
         }
         
+    }
+
+    render_pdf_files_if_any(item){
+        if(item['entered_pdfs'] != null && item['entered_pdfs'].length > 0){
+            return(
+                <div>
+                    {this.render_pdfs_part(item['entered_pdfs'])}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_part(entered_pdf_objects){
+        var items = [].concat(entered_pdf_objects)
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_pdf_item_clicked(item)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_pdf_item_clicked(item){
+        this.props.when_pdf_file_opened(item)
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end(data['name'])
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%',})}
+            </div>
+        )
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
     get_expiry_time(item){
@@ -330,7 +420,8 @@ class ViewJobRequestPage extends Component {
         this.props.open_view_contract_ui(contract)
     }
 
-    render_image_part(items){
+    render_image_part(item_images){
+        var items = [].concat(item_images)
         var col = Math.round(this.props.app_state.width / 100)
         var rowHeight = 100;
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
@@ -1086,8 +1177,10 @@ class ViewJobRequestPage extends Component {
                     <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'])}</Linkify></p>
 
                     {this.render_images_if_any(item)}
+
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} {this.props.app_state.loc['1693']} </p>
                 </div>
+                {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item)}
             </div>
         )
@@ -1159,6 +1252,18 @@ class ViewJobRequestPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_if_any(item){
+        if(item.type == 'image' && item['pdf-data'] != null && item['pdf-data'].length > 0){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_pdfs_part(item['pdf-data'])}
+                    <div style={{height:5}}/>
                 </div>
             )
         }

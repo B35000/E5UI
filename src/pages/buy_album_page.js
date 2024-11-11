@@ -216,6 +216,7 @@ class BuyAlbumPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2972a']/* 'Available Tracks.' */, 'details':this.props.app_state.loc['2972b']/* 'Below are the available tracks for purchase.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
+                {this.render_buy_all_if_tracks_available(available_songs)}
                 {this.render_available_tracks(available_songs, true)}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2972c']/* 'Unavailable Tracks.' */, 'details':this.props.app_state.loc['2972d']/* 'Below are the tracks you\'ve already purchased.' */, 'size':'l'})}
@@ -224,6 +225,22 @@ class BuyAlbumPage extends Component {
                 <div style={{height: 20}}/>
             </div>
         )
+    }
+
+    render_buy_all_if_tracks_available(available_songs){
+        if(available_songs.length == 0) return;
+        return(
+            <div>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_buy_all_clicked(available_songs)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2972e']/* Buy All. */, 'action':''})}
+                </div>
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+    when_buy_all_clicked(available_songs){
+        this.setState({selected_tracks: available_songs})
     }
 
     render_available_tracks(items, is_available){

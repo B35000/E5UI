@@ -7,10 +7,19 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
 
+import Reorder, { reorder, reorderImmutable, reorderFromTo, reorderFromToImmutable } from 'react-reorder';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
+}
+
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
 }
 
 function number_with_commas(x) {
@@ -293,7 +302,7 @@ class AudioDetailSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
                     {this.render_item_images(object)}
-                    {/* {this.render_selected_links(object)} */}
+                    {this.render_pdf_files_if_any(object)}
                     
                     {this.render_edit_object_button(object)}
                     <div style={{height: 10}}/>
@@ -308,6 +317,30 @@ class AudioDetailSection extends Component {
                     {this.render_album_sales_data(object, item)}
 
 
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527x']/* 'Download Audiopost.' */, 'title':this.props.app_state.loc['a2527y']/* 'Download all the tracks in the audiopost for faster load times.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.download_album(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527x']/* 'Download Audiopost.' */, 'action':''},)}
+                    </div>
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'title':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
+                    <div style={{height:10}}/>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.play_album(object)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527q']/* 'Play Album.' */, 'action':''},)}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.shuffle_album(object)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527s']/* 'Shuffle Album' */, 'action':''},)}
+                            </div>
+                        </div>
+                    </div>
+
+
                     {this.render_award_button(object)}
 
                     {this.render_pin_post_button(object)}
@@ -320,6 +353,39 @@ class AudioDetailSection extends Component {
             </div>
         )
     }
+
+
+    play_album(object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else{
+            var items = this.get_songs_to_display(object)
+            var item = items[0]
+            this.props.play_song(item, object, this.get_audio_items(), this.is_page_my_collection_page(), false)
+        }
+    }
+
+    shuffle_album(object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else{
+            var items = this.get_songs_to_display(object)
+            var item = items[0]
+            this.props.play_song(item, object, this.get_audio_items(), this.is_page_my_collection_page(), true)
+        }
+    }
+
+    download_album(object){
+        var items = this.get_songs_to_display(object)
+        this.props.download_playlist(items)
+    }
+
+
+
+
+
+
+
 
 
     render_playlist_main_details_section(object){
@@ -351,12 +417,32 @@ class AudioDetailSection extends Component {
                     </div>
 
 
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527u']/* 'Download Playlist.' */, 'title':this.props.app_state.loc['a2527v']/* 'DDownload all the tracks in this playlist for faster load times.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.download_playlist(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527u']/* 'Download Playlist.' */, 'action':''},)}
+                    </div>
+
+
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527m']/* 'Play Playlist.' */, 'title':this.props.app_state.loc['a2527n']/* 'Play all the tracks in this playlist.' */})}
                     <div style={{height:10}}/>
-                    <div onClick={()=> this.play_playlist(object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527m']/* 'Play Playlist.' */, 'action':''},)}
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.play_playlist(object)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527m']/* 'Play Playlist.' */, 'action':''},)}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.shuffle_playlist(object)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527t']/* 'Shuffle Playlist.' */, 'action':''},)}
+                            </div>
+                        </div>
                     </div>
+                    
 
 
 
@@ -446,13 +532,40 @@ class AudioDetailSection extends Component {
     }
 
     play_playlist(object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return
+        }
         var items = object['songs']
         if(items.length == 0){
             this.props.notify(this.props.app_state.loc['a2527o']/* 'Nothing to play' */, 1200)
             return;
         }
         var item = items[0]
-        this.props.play_song_in_playlist(item, object)
+        this.props.play_song_in_playlist(item, object, false)
+    }
+
+    shuffle_playlist(object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return
+        }
+        var items = object['songs']
+        if(items.length == 0){
+            this.props.notify(this.props.app_state.loc['a2527o']/* 'Nothing to play' */, 1200)
+            return;
+        }
+        var item = items[0]
+        this.props.play_song_in_playlist(item, object, true)
+    }
+
+    download_playlist(object){
+        var items = object['songs']
+        if(items.length == 0){
+            this.props.notify(this.props.app_state.loc['a2527w']/* 'Nothing to download' */, 1200)
+            return;
+        }
+        this.props.download_playlist(items)
     }
 
 
@@ -461,6 +574,71 @@ class AudioDetailSection extends Component {
 
 
 
+
+    render_pdf_files_if_any(object){
+        var state = object['ipfs']
+        if(state.entered_pdf_objects != null && state.entered_pdf_objects.length > 0){
+            return(
+                <div>
+                    {this.render_pdfs_part(state.entered_pdf_objects)}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_part(entered_pdf_objects){
+        var items = [].concat(entered_pdf_objects)
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_pdf_item_clicked(item)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_pdf_item_clicked(item){
+        this.props.when_pdf_file_opened(item)
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end(data['name'])
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
 
 
 
@@ -748,7 +926,7 @@ class AudioDetailSection extends Component {
                         {items.map((item, index) => (
                             <div key={index}>
                                 {this.render_song(item, object, index, 'album')} 
-                                <div style={{height:2}}/>
+                                <div style={{height:5}}/>
                             </div>
                         ))}
                     </div>
@@ -861,7 +1039,11 @@ class AudioDetailSection extends Component {
     }
 
     play_song(item, object){
-        this.props.play_song(item, object, this.get_audio_items(), this.is_page_my_collection_page())
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else{
+            this.props.play_song(item, object, this.get_audio_items(), this.is_page_my_collection_page(), false)
+        }
     }
 
     get_songs_to_display(object){
@@ -926,21 +1108,46 @@ class AudioDetailSection extends Component {
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
                     {this.render_detail_item('3', {'title':object['title'], 'details':object['details'], 'size':'l'})}
                     {this.render_detail_item('0')}
-                    <div>
+                    {/* <div>
                         {items.map((item, index) => (
                             <div key={index}>
                                 {this.render_song(item, object, index, 'playlist')} 
                                 <div style={{height:2}}/>
                             </div>
                         ))}
-                    </div>
+                    </div> */}
+                    <Reorder
+                        reorderId="my-list" // Unique ID that is used internally to track this list (required)
+                        holdTime={250} // Default hold time before dragging begins (mouse & touch) (optional), defaults to 0
+                        touchHoldTime={250} // Hold time before dragging begins on touch devices (optional), defaults to holdTime
+                        mouseHoldTime={250} // Hold time before dragging begins with mouse (optional), defaults to holdTime
+                        onReorder={(event, previousIndex, nextIndex, fromId, toId) => this.handleDragEnd(event, previousIndex, nextIndex, fromId, toId, object)} // Callback when an item is dropped (you will need this to update your state)
+                        >
+                        {items.map((item, index) => (
+                            <div key={index}>
+                                {this.render_song(item, object, index, 'playlist')} 
+                                <div style={{height:2}}/>
+                            </div>
+                        ))
+                            /*
+                            Note this example is an ImmutableJS List so we must convert it to an array.
+                            I've left this up to you to covert to an array, as react-reorder updates a lot,
+                            and if I called this internally it could get rather slow,
+                            whereas you have greater control over your component updates.
+                            */
+                        }
+                    </Reorder>
                 </div>
             </div>
         )
     }
 
-    handleDragEnd = (result) => {
-        // this.props.update_order_of_songs_in_playlist(object, reorderedItems)
+    handleDragEnd = (event, previousIndex, nextIndex, fromId, toId, object) => {
+        console.log('handleDragEnd',event)
+        // var object = this.get_item_in_playlists(this.get_audio_items(), this.props.selected_audio_item)
+        var list = object['songs'].slice()
+
+        this.props.update_order_of_songs_in_playlist(object, reorder(list, previousIndex, nextIndex))
     };
 
     when_song_item_clicked2(item, object){
@@ -960,7 +1167,12 @@ class AudioDetailSection extends Component {
     }
 
     play_song_in_playlist(item, object){
-        this.props.play_song_in_playlist(item, object)
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else{
+            this.props.play_song_in_playlist(item, object, false)
+        }
+        
     }
 
 
@@ -1404,10 +1616,12 @@ class AudioDetailSection extends Component {
                         </div>
                     </div>
                     <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
-
+                    {this.render_pdfs_if_any(item)}
                     {this.render_images_if_any(item)}
+                    
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p>
                 </div>
+                {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item, object)}
             </div>
         )
@@ -1480,6 +1694,18 @@ class AudioDetailSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_if_any(item){
+        if(item.type == 'image' && item['pdf-data'] != null && item['pdf-data'].length > 0){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_pdfs_part(item['pdf-data'])}
+                    <div style={{height:5}}/>
                 </div>
             )
         }
