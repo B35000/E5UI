@@ -376,13 +376,15 @@ class ContractDetailsSection extends Component {
     get_active_participants(object){
         var active_participants = []
         var inactive_participants = []
-        object['participants'].forEach(participant => {
-            if(object['participant_times'][participant] > (Date.now()/1000)){
-                active_participants.push(participant)
-            }else{
-                inactive_participants.push(participant)
-            }
-        });
+        if(object['id'] != 2){
+            object['participants'].forEach(participant => {
+                if(object['participant_times'][participant] > (Date.now()/1000)){
+                    active_participants.push(participant)
+                }else{
+                    inactive_participants.push(participant)
+                }
+            });
+        }
         return {active_participants: active_participants, inactive_participants: inactive_participants}
     }
 
@@ -1060,7 +1062,7 @@ class ContractDetailsSection extends Component {
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
-                    {this.render_detail_item('8', object_item['id'])}
+                    {this.render_detail_item('3', object_item['id'])}
                     {this.render_detail_item('0')}
                     {this.render_active_participants(object, active_participants, inactive_participants)}
                     {this.render_inactive_participants(object, inactive_participants)}
@@ -1071,7 +1073,7 @@ class ContractDetailsSection extends Component {
     }
 
     render_empty_views_if_no_participants(active_participants, inactive_participants){
-        if(inactive_participants.length == 0 && active_participants.lenght == 0){
+        if(inactive_participants.length == 0 && active_participants.length == 0){
             var items = ['0','1','2'];
             return ( 
                 <div>
@@ -1103,6 +1105,8 @@ class ContractDetailsSection extends Component {
         if(active_participants.length == 0) return;
         return(
             <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['2214e']/* 'Accounts that can participate in the contracts consensus and the times to their participation expiry.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:5}}/>
                 {active_participants.map((item, index) => (
                     <div key={index}>
                         {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.get_account_time(item, object), 'size':'l'})}
@@ -1128,6 +1132,8 @@ class ContractDetailsSection extends Component {
         if(inactive_participants.length == 0) return;
         return(
             <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['2214f']/* 'Accounts that can no longer participate in the contracts consensus and the times past thier participation expiry' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:5}}/>
                 {inactive_participants.map((item, index) => (
                     <div key={index}>
                         {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.get_account_time(item, object), 'size':'l'})}
@@ -1143,7 +1149,7 @@ class ContractDetailsSection extends Component {
         var now = (Date.now()/1000)
         if(expiry_time > now){
             //account can still vote in contract
-            return this.props.app_state.loc['2214e']/* 'Until ' */+this.get_time_diff(expiry_time - now)
+            return '+'+this.get_time_diff(expiry_time - now)
         }else{
             //account can no longer vote
             return '-'+this.get_time_difference(expiry_time)

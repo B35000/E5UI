@@ -739,7 +739,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -853,12 +853,12 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        var id_text = object['e5']+' • '+object['id']
-        if(object['id'] == 2) id_text = object['e5']+' • '+'Main Contract'
+        var id_text = ' • '+object['id']
+        if(object['id'] == 2) id_text = ' • '+'Main Contract'
         var sender = object['event'] == null ? '' : this.get_senders_name(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), }
         }
     }
@@ -952,7 +952,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p4, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1073,7 +1073,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1317,7 +1317,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1755,7 +1755,7 @@ class PostListSection extends Component {
         }
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1909,7 +1909,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -2024,7 +2024,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id']+sender, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -2090,7 +2090,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'bags')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
-                                {this.render_small_empty_object()}
+                                {this.render_empty_object()}
                             </li>
                         ))}
                     </ul>
@@ -2137,7 +2137,7 @@ class PostListSection extends Component {
         return(
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
+                    {this.render_tags_or_images(item, object)}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
@@ -2151,55 +2151,91 @@ class PostListSection extends Component {
         )
     }
 
-    render_bag_data(object, item, index){
+    
+    render_tags_or_images(item, object){
         var images = this.get_bag_images(object)
-
-        return(
-            <div>
-                <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-                    {this.render_detail_item('3', item['id'])}
-                </div>
-            </div>
-        )
         if(images.length == 0){
             return(
                 <div>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-                        {this.render_detail_item('3', item['id'])}
-                    </div>
-                </div>
-            )
-        }
-        else if(images.length == 1){
-            return(
-                <div>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-                        {this.render_detail_item('8', item['id_with_image'])}
-                    </div>
+                    {this.render_detail_item('1', item['tags'])}
                 </div>
             )
         }else{
             return(
                 <div>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-                        {this.render_detail_item('3', item['id'])}
-                    </div>
-                    <div style={{padding:'0px 0px 0px 0px'}}>
-                        {this.render_images(object)}
-                    </div>
+                    {this.render_bag_images(images)}
                 </div>
             )
         }
     }
 
-    render_images(object){
-        var items = this.get_bag_images(object)
+    // render_bag_data(object, item, index){
+    //     var images = this.get_bag_images(object)
+
+    //     return(
+    //         <div>
+    //             <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+    //                 {this.render_detail_item('3', item['id'])}
+    //             </div>
+    //         </div>
+    //     )
+    //     if(images.length == 0){
+    //         return(
+    //             <div>
+    //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+    //                     {this.render_detail_item('3', item['id'])}
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(images.length == 1){
+    //         return(
+    //             <div>
+    //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+    //                     {this.render_detail_item('8', item['id_with_image'])}
+    //                 </div>
+    //             </div>
+    //         )
+    //     }else{
+    //         return(
+    //             <div>
+    //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+    //                     {this.render_detail_item('3', item['id'])}
+    //                 </div>
+    //                 <div style={{padding:'0px 0px 0px 0px'}}>
+    //                     {this.render_images(object)}
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    // }
+
+    render_bag_images(items){
+        if(items.length == 0){
+            items = [1, 2, 3]
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div style={{'margin':'0px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:40}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:40, width:40, 'background-color': background_color, 'border-radius': '10px','padding':'7px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:15 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
         return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+            <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
-                            <img src={item} style={{height:45 ,width:45, 'border-radius': '50%'}} onClick={() => this.when_image_tapped(items, index)}/>
+                            <img alt="" src={this.get_image_from_file(item)} style={{height:37 ,width:37, 'border-radius': '50%'}}/>
                         </li>
                     ))}
                 </ul>
@@ -2216,11 +2252,10 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items ordered' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        // var item_images = this.get_bag_images(object)
-        // var image = item_images.length == 0 ? null : item_images[0]
+        var item_images = this.get_bag_images(object)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
             // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
         }
@@ -2228,20 +2263,13 @@ class PostListSection extends Component {
 
     get_bag_images(object){
         var images = []
-        if(this.props.app_state.created_store_mappings[object['e5']] == null) return images;
 
         for(var i=0; i<object['ipfs']['bag_orders'].length; i++){
-            var variant_id = object['ipfs']['bag_orders'][i]['storefront_variant_id']
-            var bag_storefront_id = object['ipfs']['bag_orders'][i]['storefront_item_id']
-            var storefront = this.props.app_state.created_store_mappings[object['e5']][bag_storefront_id]
-            
-            if(storefront != null){
-                var variant_in_store = this.get_variant_object_from_storefront(storefront, variant_id)
-                var variant_images = variant_in_store['image_data']['data']
-                if(variant_images['images'].length != 0){
-                    images.push(variant_images['images'][0])
-                }
-            } 
+            var bag_order = object['ipfs']['bag_orders'][i]
+            var variant_images = bag_order['variant_images']
+            if(variant_images != null && variant_images.length > 0){
+                images = images.concat(variant_images)
+            }
         }
 
         return images

@@ -59,14 +59,14 @@ class AudioPip extends Component {
             <div style={{'position': 'relative'}}>
                 {this.render_backgorund_image(image)}
 
-                <div style={{width:200, height:40, 'z-index':'8', 'position': 'absolute','background-image': 'linear-gradient(rgb(0, 0, 0,.9), rgb(0, 0, 0,.0))', 'border-radius': '15px 15px 0px 0px',}}/>
+                <div style={{width:this.props.player_size, height:(this.props.size == 's' ? 40 : 40), 'z-index':'8', 'position': 'absolute','background-image': 'linear-gradient(rgb(0, 0, 0,.9), rgb(0, 0, 0,.0))', 'border-radius': '15px 15px 0px 0px',}}/>
 
-                <div style={{width:200, height:40, 'margin':'160px 0px 0px 0px', 'z-index':'10', 'position': 'absolute','background-image': 'linear-gradient(rgb(0, 0, 0,.0), rgb(0, 0, 0,.9))', 'border-radius': '0px 0px 15px 15px',}}/>
+                <div style={{width:this.props.player_size, height:(this.props.size == 's' ? 40 : 40), 'margin':(this.props.size == 's' ? '110px 0px 0px 0px' : '160px 0px 0px 0px'), 'z-index':'10', 'position': 'absolute','background-image': 'linear-gradient(rgb(0, 0, 0,.0), rgb(0, 0, 0,.9))', 'border-radius': '0px 0px 15px 15px',}}/>
 
-                <strong className="cursor" style={{width:120, height:50, 'opacity':0.0,'z-index':'20', 'position': 'absolute', 'margin':'10px 60px 0px 40px', 'background-color':'red'}}><div></div></strong>
+                <strong className="cursor" style={{width:(this.props.size == 's' ? 58 : 120), height:(this.props.size == 's' ? 24 : 50), 'opacity':0.0,'z-index':'20', 'position': 'absolute', 'margin':'10px 60px 0px 40px', 'background-color':'red'}}><div></div></strong>
 
-                <div style={{width:200, height:200,'z-index':'15', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
-                    <div className="row" style={{'padding':'0px 31px 0px 20px'}}>
+                <div style={{width:this.props.player_size, height:this.props.player_size,'z-index':'15', 'position': 'absolute', 'padding':(this.props.size == 's' ? '3px 0px 5px 0px' : '6px 0px 10px 0px')}}>
+                    <div className="row" style={{'padding':(this.props.size == 's' ? '0px 25px 0px 15px' : '0px 31px 0px 20px')}}>
                         <div className="col-11" style={{'padding': '0px 0px 0px 0px'}}>
                             {this.render_expand_player_icon()}
                         </div>
@@ -75,15 +75,18 @@ class AudioPip extends Component {
                         </div>
                     </div>
 
-                    <div style={{'margin': '50px 0px 0px 0px','display': 'flex', 'align-items':'center','justify-content':'center', 'height':50}} >
+                    <div style={{height:(this.props.size == 's' ? 25 : 50)}}/>
+                    <div style={{'margin': '0px 0px 0px 0px','display': 'flex', 'align-items':'center','justify-content':'center', 'height':50}}>
                         {this.pause_button()}
                     </div>
 
-                    <div style={{'padding':'0px 15px 0px 15px', 'margin':'41px 0px 0px 0px'}}>
+                    <div style={{height:(this.props.size == 's' ? 19 : 41)}}/>
+                    <div style={{'padding':'0px 15px 0px 15px', 'margin':'0px 0px 0px 0px'}}>
                         {this.render_seek_bar()}
                     </div>
 
-                    <div className="row" style={{'margin':'3px 0px 0px 0px', 'padding':'0px 15px 0px 15px', 'width':'100%'}}>
+                    <div style={{height:(this.props.size == 's' ? 2 : 3)}}/>
+                    <div className="row" style={{'margin':'0px 0px 0px 0px', 'padding':'0px 15px 0px 15px', 'width':'100%'}}>
                         <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                             <p style={{'font-size': '11px','color': 'white','font-family': this.props.font,'text-decoration': 'none'}}>{this.get_current_time()}</p>
                         </div>
@@ -103,11 +106,11 @@ class AudioPip extends Component {
     render_backgorund_image(image){
         if(this.state.play_pause_state == 0/* paused */){
             return(
-                <img alt="" src={image} style={{height:200 ,width:200, 'border-radius': '15px', 'position': 'absolute', 'z-index':'1', 'filter': 'blur(8px)', '-webkit-filter': 'blur(8px)'}}/>
+                <img alt="" src={image} style={{height:this.props.player_size ,width:this.props.player_size, 'border-radius': '15px', 'position': 'absolute', 'z-index':'1', 'filter': 'blur(8px)', '-webkit-filter': 'blur(8px)'}}/>
             )
         }else{
             return(
-                <img alt="" src={image} style={{height:200 ,width:200, 'border-radius': '15px', 'position': 'absolute', 'z-index':'1'}}/>
+                <img alt="" src={image} style={{height:this.props.player_size ,width:this.props.player_size, 'border-radius': '15px', 'position': 'absolute', 'z-index':'1'}}/>
             )
         }
     }
@@ -213,7 +216,7 @@ class AudioPip extends Component {
         return(
             <div style={{width:2, height:2,'z-index':'2', 'opacity':0.0, 'position': 'absolute', 'margin':'100px 0px 0px 0px'}}>
                 <div style={{'position': 'relative'}}>
-                    <div style={{width:200, height:40, 'margin':'0px 0px 0px 0px', 'z-index':'3', 'position': 'absolute'}}/>
+                    <div style={{width:this.props.player_size, height:40, 'margin':'0px 0px 0px 0px', 'z-index':'3', 'position': 'absolute'}}/>
                     <div style={{width:2, height:2, 'margin':'px 0px 0px 0px', 'z-index':'2', 'position': 'absolute'}}>
                         <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} controls ref={this.audio}>
                             <source src={this.get_audio_file()} type="audio/ogg"></source>
@@ -337,19 +340,22 @@ class AudioPip extends Component {
     render_blocker(){
         if(!this.state.is_full_screen_open) return
         return(
-            <div style={{width:200, height:200, 'margin':'0px 0px 0px 0px', 'z-index':'100', 'position': 'absolute'}}/>
+            <div style={{width:this.props.player_size, height:this.props.player_size, 'margin':'0px 0px 0px 0px', 'z-index':'100', 'position': 'absolute'}}/>
         )
     }
 
     play_previous(){
         if(this.state.pos > 0){
             this.audio.current.currentTime = 0
-            this.setState({value: 0, pos: this.state.pos -1})
+            this.setState({value: 0, pos: this.state.pos -1, isloading:true})
             var me = this;
             setTimeout(function() {
-                me.audio.current?.play()
-                me.props.load_queue(me.state.songs, me.state.pos)
-                me.check_if_plays_are_available_and_pause_otherwise()
+                me.setState({isloading:false})
+                setTimeout(function() {
+                    me.audio.current?.play()
+                    me.props.load_queue(me.state.songs, me.state.pos)
+                    me.check_if_plays_are_available_and_pause_otherwise()
+                }, (1 * 300));
             }, (1 * 300));
         }
     }
@@ -357,18 +363,32 @@ class AudioPip extends Component {
     play_next(){
         if(this.state.pos != this.state.songs.length - 1){
             this.audio.current.currentTime = 0
-            this.setState({value: 0, pos: this.state.pos + 1})
+            this.setState({value: 0, pos: this.state.pos + 1, isloading:true})
             
             var me = this;
             setTimeout(function() {
-                me.audio.current?.play()
-                me.props.load_queue(me.state.songs, me.state.pos)
-                me.check_if_plays_are_available_and_pause_otherwise()
+                me.setState({isloading:false})
+                setTimeout(function() {
+                    me.audio.current?.play()
+                    me.props.load_queue(me.state.songs, me.state.pos)
+                    me.check_if_plays_are_available_and_pause_otherwise()
+                }, (1 * 300));
             }, (1 * 300));
         }
     }
 
     skip_to(index){
+        if(this.state.play_pause_state == 1){
+            this.setState({value: 0, isloading:true})
+
+            var me = this;
+            setTimeout(function() {
+                me.setState({isloading:false})
+                setTimeout(function() {
+                    me.audio.current?.play()
+                }, (1 * 200));
+            }, (1 * 200));
+        }
         this.audio.current.currentTime = 0
         this.setState({value: 0, pos: index})
         

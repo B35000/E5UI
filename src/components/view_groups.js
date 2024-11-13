@@ -163,6 +163,7 @@ class ViewGroups extends Component {
             var padding = '10px 15px 10px 15px'
             var image_border_radius = '50%'
             var text_align = 'left'
+            var title_image = ''
             
             if(object_data != null){
                 title = object_data['title']
@@ -170,13 +171,14 @@ class ViewGroups extends Component {
                 size = object_data['size']
                 padding = object_data['padding'] == null ? '10px 15px 10px 15px' : object_data['padding']
                 text_align = object_data['text_align'] == null ? 'left' : object_data['text_align']
+                title_image = object_data['title_image'] == null ? '' : object_data['title_image']
             }
-            var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px'];
+            var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px', 17];
             if(size == 'l'){
-                font_size = ['15px', '12px', 19, 50, '5px 0px 0px 0px'];
+                font_size = ['15px', '12px', 19, 50, '5px 0px 0px 0px', 21];
             }
             var image_width = font_size[3]
-            if(title == ''){
+            if(title == '' || title == null){
                 title = '...'
             }
             if(details == ''){
@@ -205,13 +207,16 @@ class ViewGroups extends Component {
                     </div>
                 ); 
             }else{
-                return (
+                return(
                     <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                <div style={{'display': 'flex','flex-direction': 'row'}}>
+                                    {this.render_text_image(title_image, font_size)}
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all','text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                </div>
 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', /* 'overflow-wrap':'break-word', */ 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>
@@ -453,6 +458,17 @@ class ViewGroups extends Component {
             ); 
         }
 
+    }
+
+    render_text_image(title_image, font_size){
+        if(title_image != null && title_image != ''){
+            return(
+                <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1px 0px 0px 0px'}}>
+                    <img src={this.get_image_from_file(title_image)} alt={title_image} style={{height:font_size[5],width:font_size[5]}}/>
+                    <div style={{width:2}}/>
+                </div>
+            )
+        }
     }
 
     when_any_button_tapped(e, prevent_default){

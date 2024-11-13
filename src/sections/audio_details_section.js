@@ -318,14 +318,14 @@ class AudioDetailSection extends Component {
 
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527x']/* 'Download Audiopost.' */, 'title':this.props.app_state.loc['a2527y']/* 'Download all the tracks in the audiopost for faster load times.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527x']/* 'Download Audiopost.' */, 'details':this.props.app_state.loc['a2527y']/* 'Download all the tracks in the audiopost for faster load times.' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.download_album(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527x']/* 'Download Audiopost.' */, 'action':''},)}
                     </div>
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'title':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'details':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
                     <div style={{height:10}}/>
                     <div className="row">
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
@@ -410,7 +410,7 @@ class AudioDetailSection extends Component {
                     {this.render_detail_item('3', {'title':number_with_commas(object['songs'].length), 'details':this.props.app_state.loc['a2527j']/* 'Songs.' */, 'size':'l'})}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527k']/* 'Delete Playlist.' */, 'title':this.props.app_state.loc['a2527l']/* 'Delete the Playlist from your feed.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527k']/* 'Delete Playlist.' */, 'details':this.props.app_state.loc['a2527l']/* 'Delete the Playlist from your feed.' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.delete_playlist(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527k']/* 'Delete Playlist' */, 'action':''},)}
@@ -419,7 +419,7 @@ class AudioDetailSection extends Component {
 
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['a2527u']/* 'Download Playlist.' */, 'title':this.props.app_state.loc['a2527v']/* 'DDownload all the tracks in this playlist for faster load times.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527u']/* 'Download Playlist.' */, 'details':this.props.app_state.loc['a2527v']/* 'DDownload all the tracks in this playlist for faster load times.' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.download_playlist(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527u']/* 'Download Playlist.' */, 'action':''},)}

@@ -1273,13 +1273,28 @@ class SearchedAccountPage extends Component {
         )
     }
 
+    is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = this.get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
     render_object(object){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_item(object)
         var object_type = object['type']
         
-         if(this.get_object_type(object_type) == this.props.app_state.loc['1732']/* 'storefront bag object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1741']/* 'custom object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1731']/* 'shadow object' */) {
+         if(this.get_object_type(object_type) == this.props.app_state.loc['1732']/* 'storefront bag object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1741']/* 'custom object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1731']/* 'shadow object' */ || this.is_post_anonymous(object)) {
                 return(
                     <div>
                         {this.render_empty_object()}

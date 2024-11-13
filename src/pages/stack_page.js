@@ -735,7 +735,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.state.os=='iOS' ? 34 : 120)}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -2500,7 +2500,7 @@ class StackPage extends Component {
 
                     var bag_variants = []
                     txs[i].items_to_deliver.forEach(item => {
-                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count})
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':[item.selected_variant['image_data']['data']['images'].length == 0 ? [] : item.selected_variant['image_data']['data']['images'][0]] })
                     });
 
                     var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country }
@@ -2512,7 +2512,7 @@ class StackPage extends Component {
                         []/* int_data */
                     ]
                     var metadata_strings = [ [] ]
-                    metadata_action[1].push(i)
+                    metadata_action[1].push(new_tx_index)
                     metadata_action[2].push(35)
                     metadata_action[3].push(0)
                     metadata_action[4].push(0)
@@ -3092,7 +3092,7 @@ class StackPage extends Component {
                     var t = txs[i]
                     var bag_variants = []
                     txs[i].items_to_deliver.forEach(item => {
-                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count})
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':[item.selected_variant['image_data']['data']['images'].length == 0 ? [] : item.selected_variant['image_data']['data']['images'][0]]})
                     });
 
                     var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country }

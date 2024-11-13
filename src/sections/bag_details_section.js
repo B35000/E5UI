@@ -67,7 +67,7 @@ function toTree(data) {
 class BagDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[],
+        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], selected_variant:{}
     };
 
     get_comment_structure_tags(){
@@ -371,7 +371,7 @@ class BagDetailsSection extends Component {
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items_to_deliver.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_variant_item_clicked(item)}>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_variant_item_clicked(item, object)}>
                             {this.render_variant_item_if_selected(item, object)}
                         </li>
                     ))}
@@ -402,7 +402,7 @@ class BagDetailsSection extends Component {
                 <div>
                     <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -411,7 +411,7 @@ class BagDetailsSection extends Component {
         // var items = variant_in_store['price_data']
         // var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
 
-        if(this.state.selected_variant == item){
+        if(this.state.selected_variant[object['id']] == item){
             return(
                 <div>
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
@@ -428,18 +428,21 @@ class BagDetailsSection extends Component {
     }
 
 
-    when_variant_item_clicked(item){
-        if(this.selected_variant == item){
-            this.setState({selected_variant: null})
+    when_variant_item_clicked(item, object){
+        var clone = structuredClone(this.state.selected_variant)
+        if(clone[object['id']] == item){
+            clone[object['id']] = null
+            this.setState({selected_variant: clone})
         }else{
-            this.setState({selected_variant: item})
+            clone[object['id']] = item
+            this.setState({selected_variant: clone})
         }
         
     }
 
 
     render_variant_details(object){
-        var item = this.state.selected_variant
+        var item = this.state.selected_variant[object['id']]
         if(item != null){
             var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])

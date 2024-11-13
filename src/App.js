@@ -192,7 +192,7 @@ function clone(obj) {
 }
 
 function getOS() {
-  // return 'iOS'
+  return 'iOS'
   if(iOS()) return 'iOS'
   const userAgent = window.navigator.userAgent,
       platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
@@ -327,6 +327,7 @@ class App extends Component {
       'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/',
       'empty_image':'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/',
       'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
+      'download_icon':'https://bafkreie6m6aird6xkug5mzgqxccks65u4lsi5pghbvmb64uhvitikadnii.ipfs.w3s.link/'
     }
   }
 
@@ -1025,7 +1026,7 @@ class App extends Component {
         
         /* contract details section */
         '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay',
-        '2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account', '2214a':'Balance Changes.','2214b':'The changes in balance for the selected token.','2214c':'Y-Axis: Total in ','2214d':'participants','2214e':'Until ','2214f':'','2214g':'','2214h':'','2214i':'',
+        '2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account', '2214a':'Balance Changes.','2214b':'The changes in balance for the selected token.','2214c':'Y-Axis: Total in ','2214d':'participants','2214e':'Accounts that can participate in the contracts consensus.','2214f':'Accounts that can no longer participate in the contracts consensus.','2214g':'','2214h':'','2214i':'',
         
         /* contractor detail section */
         '2215':'details','2216':'job-requests','2217':'Fees Per Hour','2218':'The amounts they charge per hour for their work.','2219':'Send Job Request.','2220':'Send a job request to the contractor to do a job for you.','2221':'Send Request','2222':'Pin the contractor to your feed.','2223':'Pin Contractor','2224':'Pin/Unpin Contractor','2225':'Edit Contractor Post','2226':'Change the basic details for your Contractor Post','2227':'Perform Action','2228':'Job Requests','2229':'Job Description','2230':'Accepted','2231':'Expiry time from now: ','2231a':' requests received.',
@@ -1055,7 +1056,7 @@ class App extends Component {
         '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒 Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
 
         /* audio details section */
-        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'▶️ Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'▶️ Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'🔀 Shuffle Album', 'a2527t':'🔀 Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times. Cookies will be enabled.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times. Cookies will be enabled.', 'a2527z':'Downloading...','a2527ba':'Done.',
+        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'Shuffle Album', 'a2527t':'Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times.', 'a2527z':'Downloading...','a2527ba':'Done.',
         
         /* proposal details section */
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
@@ -1070,7 +1071,7 @@ class App extends Component {
         '2643':'search','2644':'payments','2645':'cancellations','2646':'collections','2647':'modifications','2648':'Pay Subscription','2649':'Pay for the subscription for your account','2650':'Pin the subscription to your feed','2651':'Pin Subscription','2652':'Pin/Unpin Subscription','2653':'Author Moderator Privelages Disabled','2654':'Author of Object is not a Moderator by default','2655':'Author Moderator Privelages Enabled','2656':'Author of Object is a Moderator by default','2657':'Cancel Subscription','2658':'Cancel your subscription payment and receive your tokens back','2659':'Collect Subscription','2660':'Collect the subscription payments from the subscription account','2661':'Modify Subscription','2662':'Modify the configuration of the subscription.','2663':'Perform Moderator Actions','2664':'Set an accounts access rights, moderator privelages or block an account','2665':'Perform Action','2666':'In Subscription ','2667':'Subscription Transfer Events','2668':'Pay Subscription Events','2669':'Search account ID...','2670':'Paying Account','2671':'Cancel Subscription Events','2672':'Cancelling Account','2673':'Collect Subscription Events','2674':'Collecting Account','2675':'Total Time Units Collected','2676':'units','2677':'Modify Subscription Events','2678':'Subscription Modify Moderator Events','2679':'Subscription Access Rights Settings Events','2680':'Subscription Account Access Settings Events','2681':'Subscription Blocked Account Events','2682':'Search Subscription Payment','2683':'Remaining Subscription Time','2684':'Remaining Time Units (As of Now)','2685':'time-units','2686':'Latest Payment Time','2687':'Latest Payment Block','2688':'First Payment Time','2689':'First Payment Block','2690':'Highest Time Units Paid For ','2691':'Lowest Time Units Paid For ','2692':'Time Units Paid For','2693':'Chart containing the amount in time units that have been accumulated.','2694':'Y-Axis: Time Units','2695':'X-Axis: Time',
         
         /* App page */
-        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', 
+        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'', '2738e':'', '2738f':'', 
         
 
         '2739':'edit-proposal','2740':'midnight','2741':'green-ish','2742':'Not Safe For Work Warning.','2743':'Warning. This content contains material that may not be suitable for all audiences. Viewer discretion is advised. The content may include explicit language, sexual themes, nudity, or other adult-oriented material. It is intended for mature audiences only.','2744':'Proceed.','2745':'Years','2746':'Days','2747':'Hours','2748':'Minutes','2749':'Set Alias','2750':'Release','2751':'Delete',
@@ -1360,6 +1361,13 @@ class App extends Component {
     setTimeout(function() {
       me.start_everything();
     }, (1 * 500));
+
+    var me = this;
+    setTimeout(function() {
+      if(me.state.syncronizing_progress < 5){
+        me.prompt_top_notification(me.getLocale()['2738c']/* 'Bad Connection.' */, 15000)
+      }
+    }, (40 * 1000));
 
     // this.test_nft_storage()
   }
@@ -1891,7 +1899,7 @@ class App extends Component {
     var all_audios = this.get_all_sorted_objects(this.state.created_audios)
     var my_acquired_albums = []
     for(var i=0; i<my_added_album_ids.length; i++){
-      var obj = this.get_item_in_array(my_added_album_ids[i], all_audios)
+      var obj = this.get_item_in_array(all_audios, my_added_album_ids[i])
       if(obj != null) my_acquired_albums.push(obj)
     }
     return my_acquired_albums
@@ -4231,7 +4239,7 @@ class App extends Component {
   render_stack_item(size){
     if(!this.state.show_stack) return;
     return(
-      <StackPage ref={this.stack_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
+      <StackPage os={getOS()} ref={this.stack_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
       encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} 
       when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} 
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
@@ -4483,7 +4491,7 @@ class App extends Component {
               }
           }
         }
-        else if(txs[i].type == this.getLocale()['1509']/* 'mail-messages' */ || this.getLocale()['1511']/* 'post-messages' */ || this.getLocale()['1512']/* 'job-response' */ || this.getLocale()['1514']/* 'job-messages' */ || this.getLocale()['1515']/* 'proposal-messages' */ || this.getLocale()['1501']/* 'bag-messages' */ || this.getLocale()['1505']/* 'job-request-messages' */){
+        else if(txs[i].type == this.getLocale()['1509']/* 'mail-messages' */ || txs[i].type == this.getLocale()['1511']/* 'post-messages' */ || txs[i].type == this.getLocale()['1512']/* 'job-response' */ || txs[i].type == this.getLocale()['1514']/* 'job-messages' */ || txs[i].type == this.getLocale()['1515']/* 'proposal-messages' */ || txs[i].type == this.getLocale()['1501']/* 'bag-messages' */ || txs[i].type == this.getLocale()['1505']/* 'job-request-messages' */){
           for(var i=0; i<t.messages_to_deliver.length; i++){
             if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
               total_amount = bigInt(total_amount).add(t.messages_to_deliver[i]['award_amount'])
@@ -4549,7 +4557,7 @@ class App extends Component {
   get_action(t){
       var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
       var stack_action = 1
-      if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
+      if(action == this.getLocale()['949']/* 'mint-buy' */) stack_action = 0
       return stack_action
   }
 
@@ -11327,12 +11335,52 @@ class App extends Component {
   render_view_image_bottomsheet(){
     if(this.state.view_image_bottomsheet2 != true) return;
     var background_color = 'transparent';
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_image_bottomsheet} onClose={this.open_view_image_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        <div style={{ height: this.state.height, width: this.state.width, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'black', 'border-radius': '0px 0px 0px 0px', 'border-width': '0px','margin': '0px 0px 0px 0px'}}>
+                          {this.render_view_image_element()}
+                        </div>
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_image_bottomsheet()}/>
+            </Sheet>
+        )
+    }
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_image_bottomsheet.bind(this)} open={this.state.view_image_bottomsheet} style={{'z-index':'6'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'transparent','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
           <div style={{ height: this.state.height, width: this.state.width, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'black', 'border-radius': '0px 0px 0px 0px', 'border-width': '0px','margin': '0px 0px 0px 0px'}}>
-              {this.render_view_image()}
+            {this.render_view_image_element()}
           </div>
       </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_image_element(){
+    var images = this.state.view_images == null ? [] : this.state.view_images;
+    var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
+    var img = this.get_image_from_file(images[pos])
+    var w = this.state.width
+    return(
+      <div style={{'position': 'relative'}}>
+        <div style={{height: this.state.height, width: this.state.width, 'z-index':'1', 'position': 'absolute'}}>
+          {this.render_view_image()}
+        </div>
+
+        <div style={{height: 80, width: w, 'z-index':'5', 'position': 'absolute','background-image': 'linear-gradient(rgb(0, 0, 0,.9), rgb(0, 0, 0,.0))'}}/>
+
+        <div style={{height: 32, width: w, 'z-index':'10', 'position': 'absolute'}}>
+          <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
+            <img alt="" onClick={()=>this.download_image(img)} src={this.state.static_assets['download_icon']} style={{height:36, width:'auto'}}/>
+            <div style={{width: w - 60}}/>
+            <img alt="" onClick={()=>this.open_view_image_bottomsheet()} src={this.state.static_assets['close_pip']} style={{height:28, width:'auto'}} />
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -11358,16 +11406,54 @@ class App extends Component {
 
   show_images(images, pos){
     this.setState({view_images:images, view_images_pos: pos })
-    this.open_view_image_bottomsheet()
+    this.getBase64ImageDimensions(images[pos])
+    .then(({ width, height }) => {
+      console.log(`Image Width: ${width}px, Image Height: ${height}px`);
+      if(width > height){
+        /* 
+          if images width is less than height:
+          width: 100px, height: 200px
+
+          if 100px = state.width
+          then 200px = (200 * state.width) / 100
+        */
+        var h = (height * this.state.width) / width
+        this.rendering_image_width = this.state.width - 70
+        this.rendering_image_height = h - 70
+
+        this.rendering_image_width = 'auto'
+        this.rendering_image_height = this.state.height
+      }else{
+        /* 
+          if images height is less than width:
+          width: 200px, height: 100px
+
+          if 100px = state.height
+          then 200px = (200px * state.height) / 100px
+        */
+        var w = (width * this.state.height) / height
+        this.rendering_image_width = w - 70
+        this.rendering_image_height = this.state.height - 70
+
+        this.rendering_image_width = this.state.width
+        this.rendering_image_height = 'auto'
+      }
+      this.open_view_image_bottomsheet()
+    })
+    .catch((error) => {
+      console.error('Failed to get image dimensions:', error);
+      this.rendering_image_height = 'auto'
+      this.rendering_image_width = this.state.width
+      this.open_view_image_bottomsheet()
+    });
+    
   }
 
   /* fullscreen image rendered in bottomsheet when image item is tapped */
   render_view_image(){
     var images = this.state.view_images == null ? [] : this.state.view_images;
     var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
-    var screen = this.getScreenSize()
-    var w = '100%'
-    if(screen == 'm' || screen == 'l') w = '60%'
+    var img = this.get_image_from_file(images[pos])
     return(
       <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px', 'text-align':'center'}}>
         {/* <SwipeableViews index={pos}>
@@ -11375,13 +11461,36 @@ class App extends Component {
             <img src={item} style={{height:'auto',width:w}} />
           ))}
         </SwipeableViews> */}
-        <TransformWrapper>
+        <TransformWrapper doubleClick={{ disabled: false }}>
             <TransformComponent>
-              <img src={this.get_image_from_file(images[pos])} style={{height:'auto',width:this.state.width}} />
+              <div>
+                <img src={img} style={{height: this.rendering_image_height, width: this.rendering_image_width}}/>
+              </div>
             </TransformComponent>
           </TransformWrapper>
       </div>
     );
+  }
+
+  getBase64ImageDimensions(base64Image) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+
+      // Set the src of the image to the base64 data
+      img.src = base64Image;
+
+      // Wait for the image to load to get its dimensions
+      img.onload = () => {
+        const width = img.width;
+        const height = img.height;
+        resolve({ width, height });
+      };
+
+      // Handle any errors
+      img.onerror = (error) => {
+        reject(error);
+      };
+    });
   }
 
   when_view_image_clicked(index, images){
@@ -11413,6 +11522,16 @@ class App extends Component {
       return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
   }
 
+  download_image(img){
+    this.prompt_top_notification(this.getLocale()['2738b']/* 'Downloading image.' */, 1500)
+    const a = document.createElement('a');
+    a.href = img;
+    a.download = `${new Date()+''}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
 
 
 
@@ -11433,7 +11552,7 @@ class App extends Component {
     if(this.state.view_pdf_bottomsheet2 != true) return;
     var background_color = 'transparent';
     var os = getOS()
-    if(os == 'iOS'){
+    if(os == 'iOS' || true){
         return(
             <Sheet isOpen={this.state.view_pdf_bottomsheet} onClose={this.open_view_pdf_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
@@ -11485,7 +11604,7 @@ class App extends Component {
   render_view_pdf(){
     var pdf = this.state.view_pdf
     return(
-      <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px', 'text-align':'center'}}>
+      <div style={{height:this.state.height, width:'100%', 'background-color':'rgb(0, 0, 0,.9)', overflow: 'auto'}}>
         {pdf && (
           <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
             <Viewer fileUrl={this.get_pdf_from_file(pdf)} />
@@ -11520,13 +11639,14 @@ class App extends Component {
     var h = 240
     if(size == 's' || size == 'm') h = 310
     var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : 1.0
+    var player_size = size == 's' ? 150 : 200
     return(
       <div style={{'opacity':opacity}}>
         <Draggable handle="strong" bounds="body" defaultPosition={{x: this.state.width - 220, y: this.state.height - h}}>
           <div className={classes2.pipWindow}>
             <div className="box no-cursor" style={{'position': 'relative'}}>
-              <div style={{width:200, height:200,'z-index':'210', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
-                {this.get_audio_pip_ui()}
+              <div style={{ width:player_size, height:player_size,'z-index':'210', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
+                {this.get_audio_pip_ui(player_size)}
               </div>
             </div>
           </div>
@@ -11535,11 +11655,11 @@ class App extends Component {
     )
   }
 
-  get_audio_pip_ui(){
+  get_audio_pip_ui(player_size){
     var size = this.getScreenSize();
     return(
-      <div style={{width:200, height:200}}>
-        <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
+      <div style={{width:player_size, height:player_size}}>
+        <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} player_size={player_size} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
         update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)}
         />
       </div>
@@ -17024,6 +17144,11 @@ class App extends Component {
         var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4, 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length}
         created_bags.push(bag)
 
+        var images = this.get_bag_images(bag)
+        if(images.length > 0){
+          this.fetch_uploaded_data_from_ipfs(images, false)
+        }
+
         if(bag['author'] == account){
           my_created_bag_ids.push(id)
         }
@@ -17109,6 +17234,22 @@ class App extends Component {
     this.setState({created_bags: created_bags_clone, my_bag_responses_notifications: my_received_applications_clone, my_bag_applications: my_applications_clone, my_bag_application_responses_notifications: my_job_application_responses_clone})
 
     console.log(e5, ' bag count: '+created_bags.length)
+  }
+
+  get_bag_images(object){
+    var images = []
+    for(var i=0; i<object['ipfs']['bag_orders'].length; i++){
+        var bag_order = object['ipfs']['bag_orders'][i]
+        var variant_images = bag_order['variant_images']
+        if(variant_images != null && variant_images.length > 0){
+            variant_images.forEach(image => {
+              if(image.startsWith('image')){
+                images.push(image)
+              }
+            });
+        }
+    }
+    return images
   }
 
   get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3, account, prioritized_accounts) => {

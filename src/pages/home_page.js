@@ -37,7 +37,7 @@ function number_with_commas(x) {
 }
 
 function getOS() {
-    // return 'iOS'
+    return 'iOS'
     if(iOS()) return 'iOS'
     const userAgent = window.navigator.userAgent,
         platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
@@ -605,7 +605,7 @@ class home_page extends Component {
                     <Sheet.Container>
                         <Sheet.Content>
                             <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '0px 0px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
-                                {this.render_post_detail_object(size, this.props.height-30, this.props.width)}
+                                {this.render_post_detail_object(size, this.props.height-40, this.props.width)}
                             </div>
                         </Sheet.Content>
                         <ToastContainer limit={3} containerId="id3"/>
@@ -2381,32 +2381,36 @@ class home_page extends Component {
 
         objects.forEach(object => {
             //first add the objects with the tags i follow
-            var object_tags = object['ipfs'].entered_indexing_tags
-            if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
-                object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
-            }
-            if(object['ipfs'].audio_type != null){
-                object_tags = [object['ipfs'].audio_type].concat(object_tags)
-            }
-            var includes = section_tags.some(r=> object_tags.includes(r))
-            if(includes && !feed_objs.includes(object)){
-                feed_objs.push(object)
-                like_tags.concat(object_tags)
+            if(object['ipfs'] != null){
+                var object_tags = object['ipfs'].entered_indexing_tags
+                if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+                    object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
+                }
+                if(object['ipfs'].audio_type != null){
+                    object_tags = [object['ipfs'].audio_type].concat(object_tags)
+                }
+                var includes = section_tags.some(r=> object_tags.includes(r))
+                if(includes && !feed_objs.includes(object)){
+                    feed_objs.push(object)
+                    like_tags.concat(object_tags)
+                }
             }
         });
 
         objects.forEach(object => {
             //then add the objects with the tags closely associated to the tags i follow
-            var object_tags = object['ipfs'].entered_indexing_tags
-            if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
-                object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
-            }
-            if(object['ipfs'].audio_type != null){
-                object_tags = [object['ipfs'].audio_type].concat(object_tags)
-            }
-            var includes = like_tags.some(r=> object_tags.includes(r))
-            if(includes && !feed_objs.includes(object)){
-                feed_objs.push(object)
+            if(object['ipfs'] != null){
+                var object_tags = object['ipfs'].entered_indexing_tags
+                if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+                    object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
+                }
+                if(object['ipfs'].audio_type != null){
+                    object_tags = [object['ipfs'].audio_type].concat(object_tags)
+                }
+                var includes = like_tags.some(r=> object_tags.includes(r))
+                if(includes && !feed_objs.includes(object)){
+                    feed_objs.push(object)
+                }
             }
         });
 
@@ -2883,7 +2887,7 @@ class home_page extends Component {
         }
     }
 
-    when_bag_post_item_clicked(index, id, e5){
+    when_bag_post_item_clicked(index, id, e5, object){
         this.setState({selected_bag_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2895,7 +2899,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.load_bags_stores(e5, this.get_bag_stores(id))
+        this.props.load_bags_stores(e5, this.get_bag_stores(object))
         this.props.get_job_objects_responses(id, e5)
         this.props.get_objects_messages(id, e5)
         if(this.props.screensize == 's'){
@@ -2903,8 +2907,7 @@ class home_page extends Component {
         }
     }
 
-    get_bag_stores(id){
-        var object = this.get_item_in_array2(this.get_bag_items(), id);
+    get_bag_stores( object){
         var items_to_deliver = object['ipfs']['bag_orders']
         if(items_to_deliver.length == 0) return []
         var stores = [];
