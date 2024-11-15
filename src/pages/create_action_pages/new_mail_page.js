@@ -13,6 +13,7 @@ import { Draggable } from "react-drag-reorder";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
+import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -56,6 +57,7 @@ class NewMailPage extends Component {
         edit_text_item_pos:-1,
 
         get_sort_links_tags_object:this.get_sort_links_tags_object(), entered_pdf_objects:[],
+        markdown:''
     };
 
     get_new_job_page_tags_object(){
@@ -64,7 +66,7 @@ class NewMailPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -182,6 +184,13 @@ class NewMailPage extends Component {
             return(
                 <div>
                     {this.render_enter_pdf_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bq']/* 'markdown' */){
+            return(
+                <div>
+                    {this.render_enter_markdown_part()}
                 </div>
             )
         }
@@ -1546,6 +1555,53 @@ class NewMailPage extends Component {
 
 
 
+
+
+
+    render_enter_markdown_part(){
+        var size = this.props.size
+        if(size == 's' || size == 'm'){
+            return(
+                <div>
+                    {this.render_edit_markdown_parts()}
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_edit_markdown_parts()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_edit_markdown_parts(){
+        var theme = this.props.app_state.theme['markdown_theme']
+        return(
+            <div data-color-mode={theme}>
+                <MDEditor
+                    value={this.state.markdown}
+                    height={this.props.height-200}
+                    onChange={(val) => {
+                        this.setState({markdown: val})
+                    }}
+                />
+            </div>
+        )
+    }
+
+
+
+
+
+
     render_recipients_part(){
         return(
             <div>
@@ -1787,7 +1843,7 @@ class NewMailPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_mail_to_stack(me.state)
         
-                me.setState({ selected: 0, id: makeid(8), type:me.props.app_state.loc['285'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[], typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[],})
+                me.setState({ selected: 0, id: makeid(8), type:me.props.app_state.loc['285'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[], typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:''})
             }, (1 * 1000));
 
             this.props.notify(this.props.app_state.loc['18'], 1700);

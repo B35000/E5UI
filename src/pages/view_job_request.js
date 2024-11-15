@@ -1175,7 +1175,7 @@ class ViewJobRequestPage extends Component {
                         </div>
                     </div>
                     <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'])}</Linkify></p>
-
+                    {this.render_markdown_in_message_if_any(item)}
                     {this.render_images_if_any(item)}
 
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} {this.props.app_state.loc['1693']} </p>
@@ -1264,6 +1264,17 @@ class ViewJobRequestPage extends Component {
                     <div style={{height:5}}/>
                     {this.render_pdfs_part(item['pdf-data'])}
                     <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+    render_markdown_in_message_if_any(item){
+        if(item['markdown'] != null && item['markdown'] != ''){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('13', {'source':item['markdown']})}
                 </div>
             )
         }

@@ -4,9 +4,6 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
-// import Letter from '../../assets/letter.png';
-// import E5EmptyIcon from '../../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -15,6 +12,7 @@ import { Draggable } from "react-drag-reorder";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
+import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -48,7 +46,7 @@ class NewJobPage extends Component {
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[], e5: this.props.app_state.selected_e5, edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(),
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:''
     };
     
 
@@ -58,7 +56,7 @@ class NewJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['274']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['274']], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -200,6 +198,13 @@ class NewJobPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['a311bq']/* 'markdown' */){
+            return(
+                <div>
+                    {this.render_enter_markdown_part()}
+                </div>
+            )
+        }
     }
 
     is_text_selected_item(selected_item){
@@ -220,6 +225,9 @@ class NewJobPage extends Component {
     set(){
         if(this.state.get_take_down_option == null){
             this.setState({get_take_down_option: this.get_take_down_option()})
+        }
+        if(this.state.markdown == null){
+            this.setState({markdown:''})
         }
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, get_sort_links_tags_object:this.get_sort_links_tags_object(), })
     }
@@ -1563,6 +1571,50 @@ class NewJobPage extends Component {
 
 
 
+
+
+
+
+
+
+   render_enter_markdown_part(){
+        var size = this.props.size
+        if(size == 's' || size == 'm'){
+            return(
+                <div>
+                    {this.render_edit_markdown_parts()}
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_edit_markdown_parts()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_edit_markdown_parts(){
+        var theme = this.props.app_state.theme['markdown_theme']
+        return(
+            <div data-color-mode={theme}>
+                <MDEditor
+                    value={this.state.markdown}
+                    height={this.props.height-200}
+                    onChange={(val) => {
+                        this.setState({markdown: val})
+                    }}
+                />
+            </div>
+        )
+    }
 
 
 

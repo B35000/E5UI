@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useImperativeHandle, forwardRef } from 'react';
 
 /* blockchain stuff */
 import { mnemonicToSeedSync, mnemonicToSeed } from 'bip39';
@@ -132,6 +132,10 @@ import { locale } from 'dayjs';
 
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
+import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import { zoomPlugin } from '@react-pdf-viewer/zoom';
+import '@react-pdf-viewer/zoom/lib/styles/index.css';
 
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -147,8 +151,13 @@ const BITBOX = new BITBOXSDK();
 
 
 var TextDecoder = textEncoding.TextDecoder;
-
 window.Buffer = window.Buffer || Buffer;
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+
+
+
+
 
 function makeid(length) {
     let result = '';
@@ -245,6 +254,43 @@ function shuffle(array) {
   }
 }
 
+const PDFViewerWrapper  = forwardRef(({ fileUrl }, ref) => {
+  const zoomPluginInstance = zoomPlugin();
+  const { ZoomInButton, ZoomOutButton, ZoomPopover } = zoomPluginInstance;
+  const zoomLevels = [0.5, 1.0, 1.5, 2.0, 3.0];
+  const [currentZoom, setCurrentZoom] = useState(0.5);
+
+  const zoomIn = () => {
+    console.log('zooming in')
+    const newZoom = Math.min(currentZoom + 0.5, 3.0);
+    zoomPluginInstance.zoomTo(newZoom);
+    setCurrentZoom(newZoom);
+  }
+
+  const zoomOut = () => {
+    console.log('zooming out')
+    const newZoom = Math.max(currentZoom - 0.5, 0.5);
+    zoomPluginInstance.zoomTo(newZoom);
+    setCurrentZoom(newZoom);
+  }
+
+  useImperativeHandle(ref, () => ({
+    zoomIn,
+    zoomOut,
+  }));
+
+  return (
+      <div>
+        {/* <div style={{ marginBottom: '10px', display: 'flex', gap: '10px', 'align-items':'center','justify-content':'center', }}>
+          <ZoomOutButton/>
+          <ZoomInButton/>
+          <ZoomPopover/>
+        </div> */}
+        <Viewer fileUrl={fileUrl} plugins={[zoomPluginInstance]} />
+      </div>
+  );
+});
+
 class App extends Component {
 
   state = {
@@ -327,7 +373,9 @@ class App extends Component {
       'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/',
       'empty_image':'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/',
       'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
-      'download_icon':'https://bafkreie6m6aird6xkug5mzgqxccks65u4lsi5pghbvmb64uhvitikadnii.ipfs.w3s.link/'
+      'download_icon':'https://bafkreie6m6aird6xkug5mzgqxccks65u4lsi5pghbvmb64uhvitikadnii.ipfs.w3s.link/',
+      'zoom_in_icon':'https://bafkreiaqdlkxszb7tnhm7bql5psp4m4ofyh3a7k7rdotgvpwnvgakm4uw4.ipfs.w3s.link/',
+      'zoom_out_icon':'https://bafkreidm4kb7zlaaqluepfllptvejmu3r3qvw35wt5d2z63jjlhwzin3qa.ipfs.w3s.link/'
     }
   }
 
@@ -862,7 +910,7 @@ class App extends Component {
 
         /* new audio page */
         'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.',
-        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'','a311br':'','a311bs':'',
+        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'','a311bs':'',
         
         /* new proposal page */
         '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ',
@@ -931,7 +979,7 @@ class App extends Component {
         '1018':'transfer','1019':'send','1020':'Transfer the specified token.','1021':'Your Balance','1022':'Your Balance after Set Transfers','1023':'Set the recipient of the transfer action.','1024':'Recipient of action.','1025':'Recipient ID','1026':'Amount to transfer to the speicified target account.','1027':'Amount for Transfer.','1028':'Set Maximum','1029':'Add Transaction','1030':'Please put a valid account ID.','1031':'Please put a valid amount.','1032':'You dont have enough tokens to add that transaction.','1033':'','1034':'Transaction added.','1035':'Recipient account: ','1036':'Transaction removed.','1037':'Transfer Amount',
         
         /* add comment page */
-        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'font','1042c':'size','1042d':'Your balance in SPEND.','1042e':'That message is inconveniencingly long for its size.','1042f':'Gray stages images and black stages a pdf. Then tap to remove.','1042g':'',
+        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'font','1042c':'size','1042d':'Your balance in SPEND.','1042e':'That message is inconveniencingly long for its size.','1042f':'Gray stages images and black stages a pdf. Then tap to remove.','1042g':'text','1042h':'markdown','1042i':'','1042j':'','1042k':'','1042l':'','1042m':'',
         
         /* add to bag page */
         '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.','1058a':'Bag City','1058b':'You may specify your location city for contractors.','1058c':'You need to set your city for contractors.','1058d':'','1058e':'','1058f':'',
@@ -1071,7 +1119,7 @@ class App extends Component {
         '2643':'search','2644':'payments','2645':'cancellations','2646':'collections','2647':'modifications','2648':'Pay Subscription','2649':'Pay for the subscription for your account','2650':'Pin the subscription to your feed','2651':'Pin Subscription','2652':'Pin/Unpin Subscription','2653':'Author Moderator Privelages Disabled','2654':'Author of Object is not a Moderator by default','2655':'Author Moderator Privelages Enabled','2656':'Author of Object is a Moderator by default','2657':'Cancel Subscription','2658':'Cancel your subscription payment and receive your tokens back','2659':'Collect Subscription','2660':'Collect the subscription payments from the subscription account','2661':'Modify Subscription','2662':'Modify the configuration of the subscription.','2663':'Perform Moderator Actions','2664':'Set an accounts access rights, moderator privelages or block an account','2665':'Perform Action','2666':'In Subscription ','2667':'Subscription Transfer Events','2668':'Pay Subscription Events','2669':'Search account ID...','2670':'Paying Account','2671':'Cancel Subscription Events','2672':'Cancelling Account','2673':'Collect Subscription Events','2674':'Collecting Account','2675':'Total Time Units Collected','2676':'units','2677':'Modify Subscription Events','2678':'Subscription Modify Moderator Events','2679':'Subscription Access Rights Settings Events','2680':'Subscription Account Access Settings Events','2681':'Subscription Blocked Account Events','2682':'Search Subscription Payment','2683':'Remaining Subscription Time','2684':'Remaining Time Units (As of Now)','2685':'time-units','2686':'Latest Payment Time','2687':'Latest Payment Block','2688':'First Payment Time','2689':'First Payment Block','2690':'Highest Time Units Paid For ','2691':'Lowest Time Units Paid For ','2692':'Time Units Paid For','2693':'Chart containing the amount in time units that have been accumulated.','2694':'Y-Axis: Time Units','2695':'X-Axis: Time',
         
         /* App page */
-        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'', '2738e':'', '2738f':'', 
+        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'Downloading pdf.', '2738e':'', '2738f':'', 
         
 
         '2739':'edit-proposal','2740':'midnight','2741':'green-ish','2742':'Not Safe For Work Warning.','2743':'Warning. This content contains material that may not be suitable for all audiences. Viewer discretion is advised. The content may include explicit language, sexual themes, nudity, or other adult-oriented material. It is intended for mature audiences only.','2744':'Proceed.','2745':'Years','2746':'Days','2747':'Hours','2748':'Minutes','2749':'Set Alias','2750':'Release','2751':'Delete',
@@ -1335,6 +1383,7 @@ class App extends Component {
     this.new_audio_page = React.createRef();
     this.buy_album_page = React.createRef();
     this.edit_audiopost_page = React.createRef();
+    this.pdf_viewer_wrapper = React.createRef();
 
     this.audio_pip_page = React.createRef();
     this.full_audio_page = React.createRef();
@@ -2613,7 +2662,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light',
 
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
 
@@ -2648,7 +2697,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart',
 
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
         
@@ -2683,7 +2732,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart',
 
 
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
@@ -2720,13 +2769,21 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#5bc15b', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
+        'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart',
 
 
         'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli',
 
         'close':'https://nftstorage.link/ipfs/bafkreidjlt2fejd5t2urmawpfg5xgtm55zlctx2zek3bqxwikehoyq6whe',
-        'clear':'https://nftstorage.link/ipfs/bafkreicdhnkw75k4k7m4hwiwaebgsiv2mf6zix5d6ctr2shpa7jtuy5bke'
+        'clear':'https://nftstorage.link/ipfs/bafkreicdhnkw75k4k7m4hwiwaebgsiv2mf6zix5d6ctr2shpa7jtuy5bke',
+        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+
+        'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
+        'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
+        'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
+        'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
+        'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
+        'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
       }
     }
 
@@ -11375,7 +11432,7 @@ class App extends Component {
 
         <div style={{height: 32, width: w, 'z-index':'10', 'position': 'absolute'}}>
           <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
-            <img alt="" onClick={()=>this.download_image(img)} src={this.state.static_assets['download_icon']} style={{height:36, width:'auto'}}/>
+            <img alt="" onClick={()=>this.download_image(img, this.get_name_of_file(images[pos]))} src={this.state.static_assets['download_icon']} style={{height:36, width:'auto'}}/>
             <div style={{width: w - 60}}/>
             <img alt="" onClick={()=>this.open_view_image_bottomsheet()} src={this.state.static_assets['close_pip']} style={{height:28, width:'auto'}} />
           </div>
@@ -11522,11 +11579,11 @@ class App extends Component {
       return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
   }
 
-  download_image(img){
+  download_image(img,  name){
     this.prompt_top_notification(this.getLocale()['2738b']/* 'Downloading image.' */, 1500)
     const a = document.createElement('a');
     a.href = img;
-    a.download = `${new Date()+''}.png`;
+    a.download = `${name}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -11557,7 +11614,7 @@ class App extends Component {
             <Sheet isOpen={this.state.view_pdf_bottomsheet} onClose={this.open_view_pdf_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        {this.render_view_pdf()}
+                        {this.render_view_pdf_element()}
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
                 </Sheet.Container>
@@ -11568,7 +11625,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_pdf_bottomsheet.bind(this)} open={this.state.view_pdf_bottomsheet} style={{'z-index':'6'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'transparent','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
           <div style={{ height: this.state.height, width: this.state.width, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'black', 'border-radius': '0px 0px 0px 0px', 'border-width': '0px','margin': '0px 0px 0px 0px'}}>
-              {this.render_view_pdf()}
+              {this.render_view_pdf_element()}
           </div>
       </SwipeableBottomSheet>
     )
@@ -11600,14 +11657,43 @@ class App extends Component {
     this.open_view_pdf_bottomsheet()
   }
 
+
+  render_view_pdf_element(){
+    var pdf = this.state.view_pdf
+    var w = this.state.width
+    return(
+      <div style={{'position': 'relative', height: this.state.height, width: this.state.width}}>
+        <div style={{height: this.state.height, width: this.state.width, 'z-index':'4', 'position': 'absolute'}}>
+          {this.render_view_pdf()}
+        </div>
+
+        <div style={{height: 70, width: w, 'z-index':'8', 'position': 'absolute','background-image': 'linear-gradient(rgb(0, 0, 0,.7), rgb(0, 0, 0,.0))'}}/>
+
+        <div style={{height: 32, width: w, 'z-index':'10', 'position': 'absolute'}}>
+          <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
+            <img alt="" onClick={()=>this.download_pdf(this.get_pdf_from_file(pdf), this.get_name_of_file(pdf))} src={this.state.static_assets['download_icon']} style={{height:36, width:'auto'}}/>
+
+            <div style={{width: w-60, display: 'flex', gap: '20px', 'align-items':'center','justify-content':'center',}}>
+              <img alt="" onClick={()=>this.zoom_in()} src={this.state.static_assets['zoom_in_icon']} style={{height:36, width:'auto'}}/>
+
+              <img alt="" onClick={()=>this.zoom_out()} src={this.state.static_assets['zoom_out_icon']} style={{height:36, width:'auto'}}/>
+            </div>
+
+            <img alt="" onClick={()=>this.open_view_pdf_bottomsheet()} src={this.state.static_assets['close_pip']} style={{height:28, width:'auto'}} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   /* fullscreen pdf rendered in bottomsheet when image item is tapped */
   render_view_pdf(){
     var pdf = this.state.view_pdf
     return(
-      <div style={{height:this.state.height, width:'100%', 'background-color':'rgb(0, 0, 0,.9)', overflow: 'auto'}}>
+      <div style={{height:this.state.height, width:'100%', 'background-color':'white', overflow: 'auto'}}>
         {pdf && (
           <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
-            <Viewer fileUrl={this.get_pdf_from_file(pdf)} />
+            <PDFViewerWrapper ref={this.pdf_viewer_wrapper} fileUrl={this.get_pdf_from_file(pdf)} />
           </Worker>
         )}
       </div>
@@ -11620,6 +11706,49 @@ class App extends Component {
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bitcoin.org/bitcoin.pdf'
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     return data['data']
+  }
+
+  get_name_of_file(ecid){
+    if(!ecid.startsWith('pdf')) return ecid
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'unknown'
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    return data['name']
+  }
+
+  download_pdf(base64Data, name){
+    this.prompt_top_notification(this.getLocale()['2738d']/* 'Downloading pdf.' */, 1500)
+    // Remove the `data:application/pdf;base64,` prefix if it exists
+    const base64Prefix = "data:application/pdf;base64,";
+    const pdfData = base64Data.startsWith(base64Prefix) ? base64Data.replace(base64Prefix, "") : base64Data;
+    
+    // console.log(name)
+
+    // Convert Base64 to a Blob
+    const byteCharacters = atob(pdfData);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = `${name}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+  }
+
+  zoom_in(){
+    this.pdf_viewer_wrapper.current?.zoomIn()
+  }
+
+  zoom_out(){
+    this.pdf_viewer_wrapper.current?.zoomOut()
   }
 
 

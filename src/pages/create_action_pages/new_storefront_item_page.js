@@ -4,10 +4,6 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
-// import Letter from '../../assets/letter.png';
-// import E5EmptyIcon from '../../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
-
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
@@ -15,6 +11,7 @@ import { Draggable } from "react-drag-reorder";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
+import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -62,7 +59,7 @@ class NewStorefrontItemPage extends Component {
         get_sort_links_tags_object:this.get_sort_links_tags_object(),
         get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[],
 
-        storefront_item_art:null,
+        storefront_item_art:null, markdown:''
     };
 
     get_new_job_page_tags_object(){
@@ -71,7 +68,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['441']/* 'variants' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['441']/* 'variants' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -297,6 +294,13 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_enter_pdf_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bq']/* 'markdown' */){
+            return(
+                <div>
+                    {this.render_enter_markdown_part()}
                 </div>
             )
         }
@@ -2263,6 +2267,53 @@ class NewStorefrontItemPage extends Component {
 
 
 
+
+
+    render_enter_markdown_part(){
+        var size = this.props.size
+        if(size == 's' || size == 'm'){
+            return(
+                <div>
+                    {this.render_edit_markdown_parts()}
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_edit_markdown_parts()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_edit_markdown_parts(){
+        var theme = this.props.app_state.theme['markdown_theme']
+        return(
+            <div data-color-mode={theme}>
+                <MDEditor
+                    value={this.state.markdown}
+                    height={this.props.height-200}
+                    onChange={(val) => {
+                        this.setState({markdown: val})
+                    }}
+                />
+            </div>
+        )
+    }
+
+
+
+
+
+
+
     render_variants_picker_part(){
         var size = this.props.app_state.size
         if(size == 's'){
@@ -3093,7 +3144,7 @@ class NewStorefrontItemPage extends Component {
                     entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
                     entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
                     entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-                    purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:'', typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[],
+                    purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:'', typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:''
                 })
                 
             }, (1 * 1000));

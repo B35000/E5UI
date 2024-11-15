@@ -10,7 +10,7 @@ import NumberPicker from '../../components/number_picker';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
-
+import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -74,6 +74,7 @@ class NewAudioPage extends Component {
         entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:'',
 
         album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
+        markdown:''
     };
 
     get_new_job_page_tags_object(){
@@ -82,7 +83,7 @@ class NewAudioPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['a311bg']/* 'metadata' */,this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['298'], this.props.app_state.loc['a311b']/* 'album-fee' */, this.props.app_state.loc['a311c']/* 'track-list' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['a311bg']/* 'metadata' */,this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298'], this.props.app_state.loc['a311b']/* 'album-fee' */, this.props.app_state.loc['a311c']/* 'track-list' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -306,6 +307,13 @@ class NewAudioPage extends Component {
             return(
                 <div>
                     {this.render_enter_pdf_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bq']/* 'markdown' */){
+            return(
+                <div>
+                    {this.render_enter_markdown_part()}
                 </div>
             )
         }
@@ -1676,6 +1684,50 @@ class NewAudioPage extends Component {
 
 
 
+
+
+
+    render_enter_markdown_part(){
+        var size = this.props.size
+        if(size == 's' || size == 'm'){
+            return(
+                <div>
+                    {this.render_edit_markdown_parts()}
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_edit_markdown_parts()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_edit_markdown_parts(){
+        var theme = this.props.app_state.theme['markdown_theme']
+        return(
+            <div data-color-mode={theme}>
+                <MDEditor
+                    value={this.state.markdown}
+                    height={this.props.height-200}
+                    onChange={(val) => {
+                        this.setState({markdown: val})
+                    }}
+                />
+            </div>
+        )
+    }
+
+
+
     
 
 
@@ -2589,7 +2641,7 @@ class NewAudioPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null, entered_pdf_objects:[]})
+                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null, entered_pdf_objects:[], markdown:''})
             }, (1 * 1000));
 
             

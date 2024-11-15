@@ -177,6 +177,9 @@ class ContractorDetailsSection extends Component {
                     {this.render_item_images(object)}
                     {this.render_pdf_files_if_any(object)}
 
+                    <div style={{height: 10}}/>
+                    {this.render_markdown_if_any(object)}
+
                     {this.render_detail_item('0')}
                     {this.fee_per_hour_or_per_job(object)}
                     <div style={{height:10}}/>
@@ -200,6 +203,17 @@ class ContractorDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_markdown_if_any(object){
+        var state = object['ipfs']
+        if(state.markdown != null && state.markdown != ''){
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':state.markdown})}
+                </div>
+            )
+        }
     }
 
     render_pdf_files_if_any(object){

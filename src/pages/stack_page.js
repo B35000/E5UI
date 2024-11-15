@@ -2211,7 +2211,7 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
                     strs.push(index_data.str)
                     adds.push([])
                     ints.push(index_data.int)

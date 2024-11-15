@@ -11,16 +11,13 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-// import Letter from '../../assets/letter.png';
-// import E5EmptyIcon from '../../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
-
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
+import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -89,6 +86,7 @@ class NewProposalPage extends Component {
         edit_text_item_pos:-1, new_price_number:0, get_auto_vote_yes_object:this.get_auto_vote_yes_object(),
 
         get_sort_links_tags_object:this.get_sort_links_tags_object(), entered_pdf_objects:[],
+        markdown:''
     };
 
     
@@ -100,7 +98,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['313'],this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */,this.props.app_state.loc['314'],this.props.app_state.loc['315']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['313'],this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */,this.props.app_state.loc['314'],this.props.app_state.loc['315']], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -363,6 +361,13 @@ class NewProposalPage extends Component {
             return(
                 <div>
                     {this.render_enter_pdf_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bq']/* 'markdown' */){
+            return(
+                <div>
+                    {this.render_enter_markdown_part()}
                 </div>
             )
         }
@@ -1704,6 +1709,50 @@ class NewProposalPage extends Component {
     }
 
 
+
+
+
+
+
+
+    render_enter_markdown_part(){
+        var size = this.props.size
+        if(size == 's' || size == 'm'){
+            return(
+                <div>
+                    {this.render_edit_markdown_parts()}
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_edit_markdown_parts()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_edit_markdown_parts(){
+        var theme = this.props.app_state.theme['markdown_theme']
+        return(
+            <div data-color-mode={theme}>
+                <MDEditor
+                    value={this.state.markdown}
+                    height={this.props.height-200}
+                    onChange={(val) => {
+                        this.setState({markdown: val})
+                    }}
+                />
+            </div>
+        )
+    }
 
 
 
@@ -3736,7 +3785,7 @@ class NewProposalPage extends Component {
                 typed_link_text:'', link_search_results:[], added_links:[], 
                 edit_text_item_pos:-1,
 
-                bounty_exchange_target:'', bounty_amount:0, bounty_values:[], entered_pdf_objects:[]})
+                bounty_exchange_target:'', bounty_amount:0, bounty_values:[], entered_pdf_objects:[], markdown:''})
 
                 me.props.notify(me.props.app_state.loc['18']/* 'transaction added to stack' */, 700);
             }, (1 * 1000));

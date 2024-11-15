@@ -4,10 +4,6 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
-// import Letter from '../../assets/letter.png';
-// import E5EmptyIcon from '../../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
-
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
@@ -15,6 +11,7 @@ import { Draggable } from "react-drag-reorder";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
+import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -51,7 +48,7 @@ class NewStorefrontItemPage extends Component {
         typed_link_text:'', link_search_results:[], added_links:[],
         edit_text_item_pos:-1, edit_variant_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(),
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:''
     };
 
     get_new_job_page_tags_object(){
@@ -60,7 +57,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['441']/* 'variants' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['441']/* 'variants' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -191,6 +188,10 @@ class NewStorefrontItemPage extends Component {
     
     set(){
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(), edit_text_item_pos:-1,get_sort_links_tags_object:this.get_sort_links_tags_object()})
+
+        if(this.state.markdown == null){
+            this.setState({markdown:''})
+        }
     }
 
 
@@ -272,6 +273,13 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_enter_pdf_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bq']/* 'markdown' */){
+            return(
+                <div>
+                    {this.render_enter_markdown_part()}
                 </div>
             )
         }
@@ -2170,6 +2178,51 @@ class NewStorefrontItemPage extends Component {
 
 
 
+
+
+
+
+
+
+    render_enter_markdown_part(){
+        var size = this.props.size
+        if(size == 's' || size == 'm'){
+            return(
+                <div>
+                    {this.render_edit_markdown_parts()}
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_edit_markdown_parts()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_edit_markdown_parts(){
+        var theme = this.props.app_state.theme['markdown_theme']
+        return(
+            <div data-color-mode={theme}>
+                <MDEditor
+                    value={this.state.markdown}
+                    height={this.props.height-200}
+                    onChange={(val) => {
+                        this.setState({markdown: val})
+                    }}
+                />
+            </div>
+        )
+    }
+    
 
 
 

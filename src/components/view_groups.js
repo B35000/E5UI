@@ -6,6 +6,7 @@ import CanvasJSReact from './../externals/canvasjs.react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import Linkify from "linkify-react";
+import MarkdownPreview from '@uiw/react-markdown-preview';
 
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -456,6 +457,17 @@ class ViewGroups extends Component {
                     </div>
                 </div>
             ); 
+        }
+        else if(item_id=='13'){/* markdown preview */
+            /* {this.render_detail_item('13', {'source':''})}  */
+            var source = object_data == null ? '' : object_data['source']
+            var theme = this.props.theme['markdown_theme']
+            var padding = '10px 15px 10px 15px'
+            return(
+                <div data-color-mode={theme}>{/* dart */}
+                    <MarkdownPreview source={source} style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius}} />
+                </div>
+            )
         }
 
     }

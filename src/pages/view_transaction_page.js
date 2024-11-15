@@ -1518,6 +1518,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_images()}
                     {this.render_selected_links()}
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -1685,6 +1686,19 @@ class ViewTransactionPage extends Component {
         }
     }
 
+    render_markdown_if_any(){
+        var state = this.props.app_state.stack_items[this.state.transaction_index]
+        if(state.markdown != null && state.markdown != ''){
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':state.markdown})}
+                </div>
+            )
+        }
+    }
+
+    
+
 
 
 
@@ -1730,6 +1744,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_images()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.render_song_tabs()}
                     {this.render_contractor_price_amounts()}
@@ -1884,6 +1899,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1842']/* 'Price Amounts' */, 'details':this.props.app_state.loc['1843']/* 'The amounts you are offering for the job.' */, 'size':'l'})}
@@ -1983,6 +1999,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.load_moderator_accounts()}
                     {this.load_interactable_accounts()}
@@ -2036,6 +2053,7 @@ class ViewTransactionPage extends Component {
                         {this.render_selected_links()}
 
                         {this.render_pdf_files_if_any()}
+                        {this.render_markdown_if_any()}
 
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -2349,6 +2367,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['consensus_type'])}
@@ -3926,19 +3945,22 @@ class ViewTransactionPage extends Component {
             )
         }else{
             return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
-                          </div>
-                    </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                <div>
+                    <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                        <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                            <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                            </div>
+                            <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            </div>
+                        </div>
+                        <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
 
-                    {this.render_detail_item('9',item['image-data'])}
+                        {this.render_markdown_in_message_if_any(item)}
+                        {this.render_detail_item('9',item['image-data'])}
+                    </div>
+                    {this.render_pdfs_if_any(item)}
                 </div>
             )
         }
@@ -3955,6 +3977,35 @@ class ViewTransactionPage extends Component {
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         return transaction_item.messages_to_deliver
     }
+
+
+    render_markdown_in_message_if_any(item){
+        if(item['markdown'] != null && item['markdown'] != ''){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('13', {'source':item['markdown']})}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_if_any(item){
+        if(item.type == 'image' && item['pdf-data'] != null && item['pdf-data'].length > 0){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_pdfs_part(item['pdf-data'])}
+                    <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
 
 
 
@@ -4580,6 +4631,7 @@ class ViewTransactionPage extends Component {
                 {this.render_image_part()}
                 <div style={{height:10}}/>
                 {this.render_pdf_files_if_any()}
+                {this.render_markdown_if_any()}
 
                 {this.render_detail_item('0')}
 
@@ -4782,6 +4834,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4808,6 +4861,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4834,6 +4888,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1970']/* 'Price Amounts' */, 'details':this.props.app_state.loc['1971']/* 'The amounts you are offering for the job.' */, 'size':'l'})}
@@ -4866,6 +4921,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4894,6 +4950,7 @@ class ViewTransactionPage extends Component {
                         {this.render_selected_links()}
 
                         {this.render_pdf_files_if_any()}
+                        {this.render_markdown_if_any()}
 
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -4955,6 +5012,7 @@ class ViewTransactionPage extends Component {
                     {this.render_selected_links()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4998,6 +5056,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_images()}
 
                     {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
 
                     {this.render_song_tabs()}
                     {this.render_contractor_price_amounts()}

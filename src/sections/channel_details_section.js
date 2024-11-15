@@ -251,6 +251,9 @@ class ChannelDetailsSection extends Component {
                     {this.render_pdf_files_if_any(object)}
 
                     <div style={{height: 10}}/>
+                    {this.render_markdown_if_any(object)}
+
+                    <div style={{height: 10}}/>
                     {this.render_chatroom_enabled_message(object)}
                     <div style={{height: 10}}/>
                     {this.show_channel_transaction_count_chart(object)}
@@ -267,6 +270,17 @@ class ChannelDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_markdown_if_any(object){
+        var state = object['ipfs']
+        if(state.markdown != null && state.markdown != ''){
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':state.markdown})}
+                </div>
+            )
+        }
     }
 
 
@@ -1045,8 +1059,7 @@ class ChannelDetailsSection extends Component {
                             </div>
                     </div>
                     <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
-                    {this.render_pdfs_if_any(item)}
-
+                    {this.render_markdown_in_message_if_any(item)}
                     {this.render_images_if_any(item)}
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['2064']}</p>
                 </div>
@@ -1131,6 +1144,17 @@ class ChannelDetailsSection extends Component {
                     <div style={{height:5}}/>
                     {this.render_pdfs_part(item['pdf-data'])}
                     <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+    render_markdown_in_message_if_any(item){
+        if(item['markdown'] != null && item['markdown'] != ''){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('13', {'source':item['markdown']})}
                 </div>
             )
         }
