@@ -79,7 +79,7 @@ class AudioDetailSection extends Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
     }
 
     componentWillUnmount() {
@@ -117,6 +117,11 @@ class AudioDetailSection extends Component {
           ],
         }
     }
+
+
+
+
+    
 
     render(){
         return(
@@ -870,12 +875,10 @@ class AudioDetailSection extends Component {
     }
 
     open_basic_edit_object_ui(object){
-        // var object = this.get_post_items()[this.props.selected_audio_item];
         this.props.open_edit_object('10', object)
     }
 
     render_award_button(object){
-        // var object = this.get_post_items()[this.props.selected_audio_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 != my_account){

@@ -4,15 +4,22 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import { Draggable } from "react-drag-reorder";
+import NumberPicker from '../../components/number_picker';
+
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
 import MDEditor from '@uiw/react-md-editor';
 
+var bigInt = require("big-integer");
+
+function bgN(number, power) {
+  return bigInt((number+"e"+power)).toString();
+}
 
 function number_with_commas(x) {
+    if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -28,10 +35,11 @@ function makeid(length) {
     return result;
 }
 
-class NewPostPage extends Component {
+class NewVideoPage extends Component {
     
     state = {
-        id: makeid(8), type:this.props.app_state.loc['297'], e5:this.props.app_state.selected_e5,
+        selected: 0,
+        id: makeid(8), type:this.props.app_state.loc['b311a']/* video */, e5:this.props.app_state.selected_e5, 
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
@@ -42,21 +50,30 @@ class NewPostPage extends Component {
         device_country: this.props.app_state.device_country,
         device_region: this.props.app_state.device_region,
         device_city: '', selected_device_city:'',
-        
+
         typed_link_text:'', link_search_results:[], added_links:[],
         get_post_preview_option:this.get_post_preview_option(),
-
         edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(), 
         get_post_nsfw_option:this.get_post_nsfw_option(),
         get_masked_from_outsiders_option:this.get_masked_from_outsiders_option(),
         get_disabled_comments_section:this.get_disabled_comments_section(),
         get_post_anonymously_tags_option:this.get_post_anonymously_tags_option(),
-        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[],
+        chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(),
+        get_album_item_listing_option:this.get_album_item_listing_option(),
+        get_listing_type_tags_option:this.get_listing_type_tags_option(),
+        get_content_channeling_object:this.get_content_channeling_object(),
 
+        exchange_id:'', price_amount:0, price_data:[], 
+        exchange_id2:'', price_amount2:0, price_data2:[],
+        video_title:'', video_composer:'',
+
+        videos:[], edit_video_item_pos:-1,
+
+        album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
         markdown:''
     };
+
 
     get_new_job_page_tags_object(){
         var obj = {
@@ -64,7 +81,7 @@ class NewPostPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298'], this.props.app_state.loc['b311b']/* 'video-fee' */, this.props.app_state.loc['b311c']/* 'video-list' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -89,35 +106,6 @@ class NewPostPage extends Component {
         return obj;
     }
 
-    get_new_job_text_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e','e.font', 'e.size'], [0]
-            ],
-            'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
-            ],
-            'size':[
-                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
-            ],
-        };
-    }
-
-    get_sort_links_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e',this.props.app_state.loc['162a']/* '📑 contract' */, this.props.app_state.loc['162b']/* '💼 job' */, this.props.app_state.loc['162c']/* '👷🏻‍♀️ contractor' */, this.props.app_state.loc['162d']/* '🏪 storefront' */, this.props.app_state.loc['162e']/* '🎫 subscription' */,this.props.app_state.loc['162f']/* '📰 post' */,this.props.app_state.loc['162g'] /* '📡 channel' */, this.props.app_state.loc['162h']/* '🪙 token' */, this.props.app_state.loc['162i']/* '🧎 proposal' */], [0]
-            ],
-        };
-    }
-
-
     get_post_preview_option(){
         return{
             'i':{
@@ -128,7 +116,6 @@ class NewPostPage extends Component {
             ],
         };
     }
-
 
     get_post_nsfw_option(){
         return{
@@ -141,7 +128,6 @@ class NewPostPage extends Component {
         };
     }
 
-
     get_masked_from_outsiders_option(){
         return{
             'i':{
@@ -152,8 +138,7 @@ class NewPostPage extends Component {
             ],
         };
     }
-
-
+    
     get_disabled_comments_section(){
         return{
             'i':{
@@ -177,6 +162,39 @@ class NewPostPage extends Component {
         };
     }
 
+    get_chatroom_enabled_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['89']/* 'enabled' */, this.props.app_state.loc['90']/* 'disabled' */], [1]
+            ],
+        };
+    }
+
+    get_album_item_listing_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['457']/* 'listed' */, this.props.app_state.loc['458'] /* 'delisted' */], [1]
+            ],
+        };
+    }
+
+    get_listing_type_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['b311d']/* 'Video' */, this.props.app_state.loc['b311e']/* 'Film' */, this.props.app_state.loc['b311f'] /* 'Series' */], [1]
+            ],
+        };
+    }
+
 
     get_content_channeling_object(){
         return{
@@ -193,10 +211,11 @@ class NewPostPage extends Component {
 
 
 
+
+
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-
                 <div className="row" style={{'width':'102%'}}>
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
@@ -208,20 +227,17 @@ class NewPostPage extends Component {
                     </div>
                 </div>
                 
-                
                 <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
-                
             </div>
         )
     }
 
+
     when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
-
-    
 
 
     render_everything(){
@@ -241,13 +257,6 @@ class NewPostPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == this.props.app_state.loc['111']){
-            return(
-                <div>
-                    {this.render_enter_links_part()}
-                </div>
-            )
-        }
         else if(selected_item == this.props.app_state.loc['112']){
             return(
                 <div>
@@ -259,6 +268,20 @@ class NewPostPage extends Component {
             return(
                 <div>
                     {this.render_subscription_lock()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['b311b']/* 'video-fee' */){
+            return(
+                <div>
+                    {this.render_album_fee()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['b311c']/* 'video-list' */){
+            return(
+                <div>
+                    {this.render_track_list_ui()}
                 </div>
             )
         }
@@ -297,6 +320,8 @@ class NewPostPage extends Component {
 
 
 
+
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -304,6 +329,7 @@ class NewPostPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
                 </div>
             )
@@ -336,33 +362,12 @@ class NewPostPage extends Component {
         }
     }
 
-    render_empty_views(size){
-        var items = []
-        for(var i=0; i<size; i++){
-            items.push(i)
-        }
-        
-        return(
-            <div>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px'}}>
-                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
-                                </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
 
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 0px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['301']})}
+                
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
@@ -393,41 +398,6 @@ class NewPostPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['303'], 'details':this.props.app_state.loc['304'], 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.get_post_preview_option} tag_size={'l'} when_tags_updated={this.when_get_post_preview_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
-
-
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bn']/* 'Channeling City (Optional)' */, 'details':this.props.app_state.loc['a311bo']/* 'If you\'ve set local channeling, you can restrict your post to a specific city.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <TextInput height={30} placeholder={this.props.app_state.loc['a311bp']/* 'Enter City...' */} when_text_input_field_changed={this.when_device_city_input_field_changed.bind(this)} text={this.state.device_city} theme={this.props.theme}/>
-                
-                <div style={{height:5}}/>
-                {this.render_detail_item('1',{'active_tags':this.get_cities_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_city_selected'})}
-                
-                <div style={{height:10}}/>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_device_city})}
-
-            </div>
-        )
-    }
-
-    render_title_tags_part2(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['311c']/* Mark as NSFW. */, 'details':this.props.app_state.loc['311d']/* If set to nsfw, post will be marked as not safe for work. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_nsfw_option} tag_size={'l'} when_tags_updated={this.when_get_post_nsfw_option.bind(this)} theme={this.props.theme}/>
 
 
 
@@ -439,13 +409,36 @@ class NewPostPage extends Component {
 
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
+
+
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['b311g']/* 'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.' */})}
+                <div style={{height:10}}/>
+                {this.render_create_image_ui_buttons_part2()}
+
+            </div>
+        )
+    }
+
+    render_title_tags_part2(){
+        return(
+            <div>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['311c']/* Mark as NSFW. */, 'details':this.props.app_state.loc['311d']/* If set to nsfw, post will be marked as not safe for work. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_nsfw_option} tag_size={'l'} when_tags_updated={this.when_get_post_nsfw_option.bind(this)} theme={this.props.theme}/>
+
+
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
-
 
 
                 
@@ -453,6 +446,31 @@ class NewPostPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['311h']/* Post Anonymously. */, 'details':this.props.app_state.loc['311i']/* If set to enabled, your alias and account id will be masked in your posts details and comment section. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_anonymously_tags_option} tag_size={'l'} when_tags_updated={this.when_get_post_anonymously_tags_option_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ai']/* 'Post Comment Section.' */, 'details':this.props.app_state.loc['a311aj']/* 'If set to disabled, senders cannot add comments in the post.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ak']/* 'Post Listing.' */, 'details':this.props.app_state.loc['476']/* 'If set to delisted, the item will not be visible for purchasing' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_album_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_album_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'details':this.props.app_state.loc['b311h']/* 'Set the type of post your'e uploading to the audioport section.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_listing_type_tags_option} tag_size={'l'} when_tags_updated={this.when_get_listing_type_tags_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
             </div>
         )
@@ -486,43 +504,23 @@ class NewPostPage extends Component {
         this.setState({get_post_anonymously_tags_option: tag_obj})
     }
 
+    when_chatroom_enabled_tags_object_updated(tag_obj){
+        this.setState({chatroom_enabled_tags_object: tag_obj})
+    }
+
+    when_get_album_item_listing_option_updated(tag_obj){
+        this.setState({get_album_item_listing_option: tag_obj})
+    }
+
+    when_get_listing_type_tags_option_updated(tag_obj){
+        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        this.setState({get_listing_type_tags_option: tag_obj, audio_type: selected_item})
+    }
+
     when_get_content_channeling_object_updated(tag_obj){
         var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
         this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
     }
-
-    when_device_city_input_field_changed(text){
-        this.setState({device_city: text.toLowerCase()})
-    }
-
-    get_cities_from_typed_text(){
-        var selected_cities = []
-        var typed_text = this.state.device_city
-        var all_cities = this.props.app_state.all_cities
-        var specific_cities = []
-        var device_country = this.props.app_state.device_country_code
-
-        if(typed_text != ''){
-            specific_cities = all_cities.filter(function (el) {
-                return (el['city'].startsWith(typed_text) || el['city'] == typed_text) && el['country'].startsWith(device_country)
-            });
-        }else{
-            specific_cities = all_cities.filter(function (el) {
-                return el['country'].startsWith(device_country)
-            });
-        }
-
-        var l = specific_cities.length > 7 ? 7 : specific_cities.length
-        for(var i=0; i<l; i++){
-            selected_cities.push(specific_cities[i]['city'])
-        }
-        return selected_cities;
-    }
-
-    when_city_selected(tag, pos){
-        if(tag != 'e') this.setState({selected_device_city: tag, device_city:''})
-    }
-
 
     add_indexing_tag_for_new_job(){
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();
@@ -545,7 +543,7 @@ class NewPostPage extends Component {
         else if(this.state.entered_indexing_tags.length == this.props.app_state.max_tags_count){
             this.props.notify(this.props.app_state.loc['162l']/* The maximum number of tags you can use is 7. */, 5400)
         }
-        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word)){
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word) /* || /\p{Emoji}/u.test(typed_word) */){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
         else{
@@ -570,7 +568,38 @@ class NewPostPage extends Component {
         // this.props.notify('tag removed', 200)
     }
 
-   
+
+    
+
+    render_create_image_ui_buttons_part2(){
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = this.state.album_art == null ? default_image : this.get_image_from_file(this.state.album_art)
+        return(
+            <div>
+                <div style={{'margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
+                    <div style={{'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_video_album_art', 1)}/>
+                    </div>
+
+                    <div style={{'margin': '10px 0px 0px 0px'}}>
+                        <img alt="" src={image} style={{height:100 ,width:100, 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    when_icon_image_tapped(){
+        this.setState({album_art: null})
+    }
+
+    when_album_art_selected(files){
+        this.setState({album_art: files[0]});
+    }
+
+
+
+
 
 
 
@@ -645,7 +674,7 @@ class NewPostPage extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -770,56 +799,6 @@ class NewPostPage extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
-        }
-    }
-
-    get_number_width(number){
-        var last_two_digits = number.toString().slice(0, 1)+'0';
-        if(number > 10){
-            last_two_digits = number.toString().slice(0, 2);
-        }
-        return last_two_digits+'%'
-    }
-
-    /* gets a formatted time diffrence from now to a given time */
-    get_time_difference(time){
-        var number_date = Math.round(parseInt(time));
-        var now = Math.round(new Date().getTime()/1000);
-
-        var diff = now - number_date;
-        return this.get_time_diff(diff)
-    }
-
-    get_time_diff(diff){
-        if(diff < 60){//less than 1 min
-            var num = diff
-            var s = num > 1 ? 's': '';
-            return num+ this.props.app_state.loc['29']
-        }
-        else if(diff < 60*60){//less than 1 hour
-            var num = Math.floor(diff/(60));
-            var s = num > 1 ? 's': '';
-            return num + this.props.app_state.loc['30'] 
-        }
-        else if(diff < 60*60*24){//less than 24 hours
-            var num = Math.floor(diff/(60*60));
-            var s = num > 1 ? 's': '';
-            return num + this.props.app_state.loc['31'] + s;
-        }
-        else if(diff < 60*60*24*7){//less than 7 days
-            var num = Math.floor(diff/(60*60*24));
-            var s = num > 1 ? 's': '';
-            return num + this.props.app_state.loc['32'] + s;
-        }
-        else if(diff < 60*60*24*7*53){//less than 1 year
-            var num = Math.floor(diff/(60*60*24*7));
-            var s = num > 1 ? 's': '';
-            return num + this.props.app_state.loc['33'] + s;
-        }
-        else {//more than a year
-            var num = Math.floor(diff/(60*60*24*7*53));
-            var s = num > 1 ? 's': '';
-            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -1107,7 +1086,6 @@ class NewPostPage extends Component {
         this.setState({entered_objects: cloned_array, entered_text:''})
     }
 
-
     edit_text_item(item){
         var entered_objects_pos = -1;
         for(var i=0; i<this.state.entered_objects.length; i++){
@@ -1123,7 +1101,6 @@ class NewPostPage extends Component {
         }
         // this.props.notify('editing item', 600)
     }
-
 
     finish_editing_text_item(item){
         var cloned_array = this.state.entered_objects.slice()
@@ -1159,437 +1136,6 @@ class NewPostPage extends Component {
     when_kamoji_clicked(text){
         this.setState({entered_text: this.state.entered_text+' '+text})
     }
-
-
-
-
-
-
-
-
-
-    render_enter_links_part(){
-        return(
-            <div style={{'margin':'10px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['308']})}
-                <div style={{height:10}}/>
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['140'],'action':'', 'prevent_default':true})}
-                    </div>
-                </div>
-                <div style={{height:10}}/>
-                {this.render_selected_links()}
-
-                {this.render_detail_item('0')}
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
-                <div style={{height:10}}/>
-                {this.render_searched_link_results()}
-
-            </div>
-        )
-    }
-
-    when_get_sort_links_tags_object_updated(tag_obj){
-        this.setState({get_sort_links_tags_object: tag_obj})
-    }
-
-    when_typed_link_text_changed(text){
-        this.setState({typed_link_text: text})
-    }
-
-
-    search_object(){
-        var typed_text = this.state.typed_link_text
-
-        if(typed_text == ''){
-            this.props.notify(this.props.app_state.loc['128'], 1800)
-        }else{
-            this.props.notify(this.props.app_state.loc['141'], 600)
-            var return_data = this.search_for_object(typed_text)
-            this.setState({link_search_results: return_data})
-        }
-    }
-
-
-    search_for_object(typed_text){
-        var contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
-        var channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
-        var contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
-        var jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
-        var posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
-        var proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
-        var storefronts = this.get_all_sorted_objects(this.props.app_state.created_stores)
-        var subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
-        var tokens = this.get_all_sorted_objects(this.props.app_state.created_tokens)
-    
-
-        var return_objects = []
-        var my_objects = []
-        contracts.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            console.log(object['id'])
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contract'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contract'})
-            }
-        });
-
-        channels.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'channel'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'channel'})
-            }
-        });
-
-        contractors.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contractor'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contractor'})
-            }
-        });
-
-        jobs.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'job'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'job'})
-            }
-        });
-
-
-        posts.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'post'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'post'})
-            }
-        });
-
-
-        proposals.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'proposal'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'proposal'})
-            }
-        });
-
-        storefronts.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'storefront'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'storefront'})
-            }
-        });
-
-
-        subscriptions.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'subscription'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'subscription'})
-            }
-        });
-
-        tokens.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'token'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'token'})
-            }
-        });
-
-        if(return_objects.length == 0 || typed_text == '') return my_objects;
-        return return_objects
-    }
-
-    // get_all_sorted_objects(object){
-    //     var all_objects = []
-    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-    //         var e5 = this.props.app_state.e5s['data'][i]
-    //         var e5_objects = object[e5]
-    //         if(e5_objects != null){
-    //             all_objects = all_objects.concat(e5_objects)
-    //         }
-    //     }
-
-    //     return this.sortByAttributeDescending(all_objects, 'timestamp')
-    // }
-
-    // sortByAttributeDescending(array, attribute) {
-    //   return array.sort((a, b) => {
-    //       if (a[attribute] < b[attribute]) {
-    //       return 1;
-    //       }
-    //       if (a[attribute] > b[attribute]) {
-    //       return -1;
-    //       }
-    //       return 0;
-    //   });
-    // }
-
-
-    render_selected_links(){
-        var items = [].concat(this.state.added_links).reverse()
-        var background_color = this.props.theme['card_background_color']
-
-        if(items.length == 0){
-            items = [1, 2, 3]
-            return(
-                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item)}>
-                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-    truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
-    }
-
-    get_title(item){
-        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
-        return `${obj[item['type']]} ${item_id}`
-    }
-
-
-    when_link_item_clicked(item){
-        var clone = this.state.added_links.slice()
-        var pos = clone.indexOf(item)
-        if(pos > -1){
-            clone.splice(pos, 1)
-        }
-        this.setState({added_links: clone})
-        // this.props.notify('Link removed from object', 700)
-    }
-
-
-    render_searched_link_results(){
-        var middle = this.props.height-400;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = [].concat(this.state.link_search_results)
-
-        if(items.length == 0){
-            items = this.search_for_object('')
-        }
-
-        items = this.sort_searched_link_results(items)
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>this.when_searched_link_tapped(item)}>
-                                {this.render_detail_item('3', {'title':''+this.get_title(item), 'details':item['title'], 'size':'s'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    sort_searched_link_results(items){
-        var selected_item = this.get_selected_item2(this.state.get_sort_links_tags_object, 'e')
-        var results = []
-        if(selected_item == 0/* e */){
-            return items
-        }
-        else if(selected_item == 1/* 📑 contract */){
-            items.forEach(item => {
-                if(item['type'] == 'contract'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 2/* 💼 job */){
-            items.forEach(item => {
-                if(item['type'] == 'job'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 3/* 👷🏻‍♀️ contractor */){
-            items.forEach(item => {
-                if(item['type'] == 'contractor'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 4/* 🏪 storefront */){
-            items.forEach(item => {
-                if(item['type'] == 'storefront'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 5/* 🎫 subscription */){
-            items.forEach(item => {
-                if(item['type'] == 'subscription'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 6/* 📰 post */){
-            items.forEach(item => {
-                if(item['type'] == 'post'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 7/* 📡 channel */){
-            items.forEach(item => {
-                if(item['type'] == 'channel'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 8/* 🪙 token */){
-            items.forEach(item => {
-                if(item['type'] == 'token'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 9/* 🧎 proposal */){
-            items.forEach(item => {
-                if(item['type'] == 'proposal'){
-                    results.push(item)
-                }
-            });
-        }
-
-        return results;
-    }
-
-    get_selected_item2(object, option){
-        return object[option][2][0]
-    }
-
-    when_searched_link_tapped(item){
-        var clone = this.state.added_links.slice()
-        var pos = this.position_of(item, clone)
-
-        if(pos > -1){
-            this.props.notify(this.props.app_state.loc['143'], 1700)
-        }else{
-            clone.push(item)
-            this.setState({added_links: clone})
-            this.props.notify(this.props.app_state.loc['144'], 1400)
-        }
-    }
-
-    position_of(item, added_links){
-        var pos = -1
-        added_links.forEach(element => {
-            if(element['id'] == item['id'] && element['e5'] == item['e5']){
-                pos = added_links.indexOf(element)
-            }
-        });
-        return pos
-    }
-
-
-
-
-
-
-
 
 
 
@@ -1640,7 +1186,6 @@ class NewPostPage extends Component {
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
             </div>
@@ -1770,7 +1315,7 @@ class NewPostPage extends Component {
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                     
                                 </div>
@@ -1803,8 +1348,8 @@ class NewPostPage extends Component {
         )
     }
 
-
     get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
         var ecid_obj = this.get_cid_split(ecid)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
@@ -1833,6 +1378,11 @@ class NewPostPage extends Component {
         }
         this.setState({entered_image_objects: cloned_array})
     }
+
+
+
+
+
 
 
 
@@ -1963,20 +1513,9 @@ class NewPostPage extends Component {
     }
 
 
-    format_data_size(size){
-        if(size > 1_000_000_000){
-            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
-        }
-        else if(size > 1_000_000){
-            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
-        }
-        else if(size > 1_000){
-            return {'size':Math.round(size/1_000), 'unit':'KBs'}
-        }
-        else{
-            return {'size':size, 'unit':'bytes'}
-        }
-    }
+
+
+
 
 
 
@@ -2028,67 +1567,959 @@ class NewPostPage extends Component {
 
 
 
-    /* renders the specific element in the post or detail object */
-    render_detail_item(item_id, object_data){
+
+
+
+    render_album_fee(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_token_and_amount_part()}
+                    <div style={{height: 20}}/>
+                    {this.render_set_prices_list_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_token_and_amount_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_token_and_amount_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_token_and_amount_part(){
         return(
-            <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} />
+            <div style={{'overflow-x':'hidden'}}>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['a311d']/* 'Set an fee for buying the entire audio catalog.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['237']/* 'Exchange ID.' */, 'details':this.props.app_state.loc['260']/* 'Select an exchange by its ID.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['237']/* 'Exchange ID.' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['261'], 'number':this.state.price_amount, 'relativepower':this.props.app_state.loc['483']/* tokens */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['261'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['483']/* tokens */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['263'], 'action':''})}
+                </div>
             </div>
         )
-
     }
+
+    constructor(props) {
+        super(props);
+        this.amount_picker = React.createRef();
+        this.amount_picker2 = React.createRef();
+    }
+
+    get_power_limit_for_exchange(exchange){
+        var exchange_id = this.get_token_id_from_symbol(exchange.trim())
+
+        if(!isNaN(exchange_id) && parseInt(exchange_id) > 0 && exchange_id != '' && this.does_exchange_exist(exchange_id)){
+            var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+            var default_depth = 0;
+            if(target_exchange_data != null){
+                target_exchange_data = target_exchange_data['ipfs']
+                if(target_exchange_data != null){
+                    default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+                }
+            }
+
+            return (default_depth*72)+63
+        }
+        else{
+            return 63
+        }
+    }
+
+    when_exchange_id_input_field_changed(text){
+        this.setState({exchange_id: text})
+        this.reset_the_number_picker()
+    }
+
+    reset_the_number_picker(){
+        var me = this;
+        setTimeout(function() {
+            if(me.amount_picker.current != null){
+                me.amount_picker.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
+    }
+
+    when_price_amount(amount){
+        this.setState({price_amount: amount})
+    }
+
+    when_add_price_set(){
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
+        var amount = this.state.price_amount
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['264'], 2600)
+        }
+        else if(amount == 0){
+            this.props.notify(this.props.app_state.loc['265'], 2600)
+        }
+        else if(this.is_exchange_already_added(exchange_id, this.state.price_data)){
+            this.props.notify(this.props.app_state.loc['266'], 3600)
+        }
+        else{
+            var price_data_clone = this.state.price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data: price_data_clone, exchange_id:'', price_amount:0});
+            this.props.notify(this.props.app_state.loc['267'], 1000)
+        }
+    }
+
+    is_exchange_already_added(exchange_id, array){
+        if(this.get_item_in_array(exchange_id, array) == null){
+            return false
+        }
+        return true
+    }
+
+    get_item_in_array(exchange_id, object_array){
+        var object = object_array.find(x => x['id'] === exchange_id);
+        return object
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
+    }
+
+    render_set_prices_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.price_data)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_amount_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                            </div>
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        } 
+    }
+
+
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+    when_amount_clicked(item){
+        var cloned_array = this.state.price_data.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({price_data: cloned_array})
+    }
+
+    load_token_suggestions(target_type){
+        var items = [].concat(this.get_suggested_tokens())
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_tokens(){
+        var items = [
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['268'], 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['269'], 'size':'s'}},
+        ];
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        if(exchanges_from_sync == null) exchanges_from_sync = []
+        var sorted_token_exchange_data = []
+        // var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+        }
+
+        return items;
+    }
+
+    when_price_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'exchange_id') {
+            this.setState({exchange_id: item['id']})
+            this.reset_the_number_picker()
+        }else if(target_type == 'exchange_id2'){
+            this.setState({exchange_id2: item['id']})
+            this.reset_the_number_picker2()
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    render_track_list_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div style={{'overflow-x':'hidden'}}>
+                    {this.render_video_details_picker_part()}
+                    {this.render_enter_item_price_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_video_details_picker_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_item_price_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_video_details_picker_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_item_price_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_enter_item_price_part(){
+        return(
+            <div style={{}}>
+                {this.render_set_token_and_amount_part2()}
+                <div style={{height: 20}}/>
+                {this.render_set_prices_list_part2()}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311i']/* 'Add Video.' */, 'details':this.props.app_state.loc['b311j']/* 'Add a new video item with the specified details set.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_add_video_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['a311g']/* 'Add Audio.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_set_token_and_amount_part2(){
+        return(
+            <div style={{'overflow-x':'hidden'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311k']/* 'Video Price' */, 'details':this.props.app_state.loc['b311l']/* 'Specify the price for accessing this video if added individually.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['504']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed2.bind(this)} text={this.state.exchange_id2} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id2')}
+ 
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['505']/* 'Price' */, 'number':this.state.price_amount2, 'relativepower':this.props.app_state.loc['506']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['505']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount2), 'barwidth':this.calculate_bar_width(this.state.price_amount2), 'number':this.format_account_balance_figure(this.state.price_amount2), 'barcolor':'', 'relativepower':this.props.app_state.loc['506']/* 'tokens' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker2} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount2.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set2()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['507']/* 'Add Price' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_exchange_id_input_field_changed2(text){
+        this.setState({exchange_id: text})
+        this.reset_the_number_picker2()
+    }
+
+    reset_the_number_picker2(){
+        var me = this;
+        setTimeout(function() {
+            if(me.amount_picker.current != null){
+                me.amount_picker.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
+    }
+
+    when_price_amount2(amount){
+        this.setState({price_amount2: amount})
+    }
+
+    when_add_price_set2(){
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id2.trim())
+        var amount = this.state.price_amount2
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['508']/* 'please put a valid exchange id' */, 1600)
+        }
+        else if(amount == 0){
+            this.props.notify(this.props.app_state.loc['509']/* 'please put a valid amount' */, 1600)
+        }
+        else if(this.is_exchange_already_added(exchange_id, this.state.price_data2)){
+            this.props.notify(this.props.app_state.loc['510']/* 'You cant use the same exchange twice' */, 3600)
+        }
+        else{
+            var price_data_clone = this.state.price_data2.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data2: price_data_clone, price_amount:0, exchange_id:''});
+            this.props.notify(this.props.app_state.loc['511']/* 'added price!' */, 1000)
+        }
+    }
+
+    render_set_prices_list_part2(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.price_data2)
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_amount_clicked2(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                            </div>
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    when_amount_clicked2(item){
+        var cloned_array = this.state.price_data2.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({price_data2: cloned_array})
+    }
+
+
+
+
+    render_video_details_picker_part(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['b311m']/* Set the details for a new video item in your show or film. */, 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                {this.render_video_tabs()}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311n']/* 'Video Title.' */, 'details':this.props.app_state.loc['b311o']/* 'Set the title for the new video item in your show.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311m']/* 'Title...' */} when_text_input_field_changed={this.when_video_title_input_field_changed.bind(this)} text={this.state.video_title} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311p']/* 'Video Creator.' */, 'details':this.props.app_state.loc['b311q']/* 'Set the creators of the video file.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311p']/* 'Composer...' */} when_text_input_field_changed={this.when_video_composer_input_field_changed.bind(this)} text={this.state.video_composer} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311r']/* 'Video File.' */, 'details':this.props.app_state.loc['b311s']/* 'Pick the video track from your uploaded files.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_video_picker_ui()}
+                <div style={{height:10}}/>
+                {this.render_video_file()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_video_title_input_field_changed(text){
+        this.setState({video_title: text})
+    }
+
+    when_video_composer_input_field_changed(text){
+        this.setState({video_composer: text})
+    }
+
+    render_video_picker_ui(){
+        return(
+            <div>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('video', 'create_video_pick_video_file', 1)}/>
+                    </div>
+                </div>
+                
+            </div>
+        )
+    }
+
+    when_video_file_picked(files){
+        this.setState({video_file: files[0]});
+    }
+
+    render_video_file(){
+        var background_color = this.props.theme['view_group_card_item_background'];
+        var video_file = this.state.video_file
+        if(video_file == null){
+            return(
+                <div>
+                    {this.render_empty_views(1)}
+                </div>
+            )
+        }else{
+            var ecid_obj = this.get_cid_split(video_file)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+            var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+            
+            var font_size = ['15px', '12px', 19];
+            var formatted_size = this.format_data_size(data['size'])
+            var fs = formatted_size['size']+' '+formatted_size['unit']
+            var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+            var title = data['name']
+            var video = data['data']
+            return(
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                        <div>
+                            <video height="50" style={{'border-radius':'7px'}}>
+                                <source src={video} type="video/mp4"/>
+                                <source src={video} type="video/ogg"/>
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div style={{'margin':'0px 0px 0px 10px'}}>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                            
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+
+
+
+
+    when_add_video_tapped(){
+        var video_title = this.state.video_title.trim()
+        var video_composer = this.state.video_composer.trim()
+        var price_data2 = this.state.price_data2
+        var video_file = this.state.video_file
+
+        if(video_title == ''){
+            this.props.notify(this.props.app_state.loc['b311t']/* 'You need to set a title for the video track.' */, 3800)
+        }
+        else if(video_composer == ''){
+            this.props.notify(this.props.app_state.loc['b311u']/* 'You need to set a composer of the video track.' */, 3800)
+        }
+        else if(video_file == null){
+            this.props.notify(this.props.app_state.loc['b311v']/* 'You need to add a video track.' */, 3800)
+        }
+        else{
+            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file}
+
+            var clone = this.state.videos.slice()
+            if(this.state.edit_video_item_pos != -1){
+                clone[this.state.edit_video_item_pos] = video
+                this.props.notify(this.props.app_state.loc['a311s']/* 'Edited the track item.' */, 2600)
+            }else{
+                clone.push(video)
+                this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
+            }
+            this.setState({videos: clone, video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null})
+            
+        }
+    }
+
+
+
+    render_video_tabs(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.videos)
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_tab_clicked(item, index)}>
+                            {this.render_tab_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_tab_item(item, index){
+        if(this.is_tab_active(index)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':item['video_id'], 'details':'', 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':item['video_id'], 'details':this.truncate(item['video_title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                </div>
+            )
+        }
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    is_tab_active(index){
+        return this.state.edit_video_item_pos == index
+    }
+
+    when_tab_clicked(item, index){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            me.remove_tab_item(index)
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.focus_tab(index)
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
+    }
+
+    remove_tab_item(index){
+        var cloned_array = this.state.videos.slice()
+        // const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+
+            var prev_index = index -1;
+            if(this.is_tab_active(index) && prev_index > -1){
+                this.focus_tab(prev_index)
+            }
+            this.setState({videos: cloned_array})
+        }
+    }
+
+
+    focus_tab(item_pos){
+        if(this.is_tab_active(item_pos)){
+            this.setState({video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null})
+        }else{
+            this.props.notify(this.props.app_state.loc['b311w']/* 'Editing that Video Track.' */, 2000)
+            this.set_focused_video_data(item_pos)
+        }
+    }
+
+    set_focused_video_data(item_pos){
+        var video = this.state.videos[item_pos]
+        this.setState({video_title: video['video_title'], video_composer: video['video_composer'], price_data2: video['price_data'], video_file: video['video'], edit_video_item_pos: item_pos});
+    }
+
+
+
+
 
 
 
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
-        var texts = this.state.entered_text_objects
-        var images = this.state.entered_image_objects
+        var tracks = this.state.videos
+        var album_art = this.state.album_art
 
         if(index_tags.length < 3){
-            this.props.notify(this.props.app_state.loc['270'], 2700)
+            this.props.notify(this.props.app_state.loc['270'], 4700)
         }
         else if(title == ''){
-            this.props.notify(this.props.app_state.loc['311'], 2700)
+            this.props.notify(this.props.app_state.loc['311'], 4700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify(this.props.app_state.loc['272'], 2700)
+            this.props.notify(this.props.app_state.loc['272'], 4700)
+        }
+        else if(tracks.length == 0){
+            this.props.notify(this.props.app_state.loc['b311x']/* You need to add some videos to the new videopost. */, 4700)
+        }
+        else if(album_art == null){
+            this.props.notify(this.props.app_state.loc['a311az']/* You need to set the album art for your new post. */, 4700)
         }
         else{
-
-            // var images_to_add = this.state.entered_image_objects
-            // var id = Math.round(new Date().getTime()/1000);
-            // if(images_to_add.length != 0){
-            //     var cloned_array = this.state.entered_objects.slice()
-            //     cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
-            //     this.setState({entered_objects: cloned_array, entered_image_objects:[]})
-            // }
-            
             var me = this;
-            // this.setState({content_channeling_setting: me.props.app_state.content_channeling,
-            //     device_language_setting :me.props.app_state.device_language,
-            //     device_country :me.props.app_state.device_country,
-            //     e5 :me.props.app_state.selected_e5,})
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
-        
-                me.setState({ id: makeid(8), type:me.props.app_state.loc['297'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[],typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:''})
+
+                me.setState({
+                    selected: 0,
+                    id: makeid(8), type:me.props.app_state.loc['b311a']/* video */, e5:me.props.app_state.selected_e5, 
+                    get_new_job_page_tags_object: me.get_new_job_page_tags_object(),
+                    entered_tag_text: '', entered_title_text:'', entered_text:'',
+                    entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
+                    entered_objects:[], selected_subscriptions:[],
+
+                    content_channeling_setting: me.props.app_state.content_channeling, 
+                    device_language_setting: me.props.app_state.device_language, 
+                    device_country: me.props.app_state.device_country,
+                    device_region: me.props.app_state.device_region,
+                    device_city: '', selected_device_city:'',
+
+                    typed_link_text:'', link_search_results:[], added_links:[],
+                    get_post_preview_option:me.get_post_preview_option(),
+                    edit_text_item_pos:-1,
+
+                    get_post_nsfw_option:me.get_post_nsfw_option(),
+                    get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(),
+                    get_disabled_comments_section:me.get_disabled_comments_section(),
+                    get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(),
+                    chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(),
+                    get_album_item_listing_option:me.get_album_item_listing_option(),
+                    get_listing_type_tags_option:me.get_listing_type_tags_option(),
+                    get_content_channeling_object:me.get_content_channeling_object(),
+
+                    exchange_id:'', price_amount:0, price_data:[], 
+                    exchange_id2:'', price_amount2:0, price_data2:[],
+                    video_title:'', video_composer:'',
+
+                    videos:[], edit_video_item_pos:-1,
+
+                    album_art:null, video_type: me.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
+                    markdown:''
+                })
             }, (1 * 1000));
 
             
             this.props.notify(this.props.app_state.loc['18'], 1700);
-            
         }
     }
 
 
-    set_fileds_for_edit_action(obj){
-        this.setState({entered_indexing_tags: obj['tags'], entered_title_text: obj['title'], entered_text_objects: obj['texts'], entered_image_objects: obj['images']})
+
+
+
+
+
+
+
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
-    set_action(action){
-        this.setState({action: action})
+
+    /* renders the specific element in the post or detail object */
+    render_detail_item(item_id, object_data){
+        return(
+            <div>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
+            </div>
+        )
+    }
+
+    show_images(){
+
+    }
+
+    get_number_width(number){
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return 'e0'
+        }
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
+        }
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ this.props.app_state.loc['29']
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['30'] 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['31'] + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['32'] + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['33'] + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['34'] + s;
+        }
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
     }
 
 
@@ -2097,4 +2528,4 @@ class NewPostPage extends Component {
 
 
 
-export default NewPostPage;
+export default NewVideoPage;

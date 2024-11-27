@@ -84,7 +84,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0.7*1024*1024)
+        default_upload_limit:(0.7*1024*1024), custom_gateway_text:'',
     };
 
     get_stack_page_tags_object(){
@@ -99,7 +99,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
             ],
             'settings-data':[
-              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, ], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593cr']/* 'gateway 🚧' */ ], [1],[1]
             ],
             'account-data':[
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
@@ -113,7 +113,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1261']/* 'settings-data' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593cr']/* 'gateway 🚧' */, ], [1],[1]
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
@@ -735,8 +735,8 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.state.os=='iOS' ? 34 : 120)}}>
-                    {this.render_everything()}   
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.props.os == 'iOS' ? 85 : 120)}}>
+                    {this.render_everything()}
                 </div>
                 
             </div>
@@ -835,6 +835,13 @@ class StackPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['1593cr']/* 'gateway 🚧' */){
+            return(
+                <div>
+                    {this.render_set_custom_ipfs_gateway()}
+                </div>
+            )
+        }
 
     }
 
@@ -891,7 +898,7 @@ class StackPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* ' Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593cb']/* ' Max Priority Fee Per Gas in Gwei.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount /10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount /10**9), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593cb']/* ' Max Priority Fee Per Gas in Gwei.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount /10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount /10**9), 'number':(this.state.picked_max_priority_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_priority_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -905,10 +912,13 @@ class StackPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ca']/* 'Max Fee per Gas in Gwei.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount/10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ca']/* 'Max Fee per Gas in Gwei.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount/10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_fee_per_gas_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                    <div style={{height:10}}/>
+                    {this.render_gas_price_options()}
 
                 </div>
             )
@@ -925,8 +935,64 @@ class StackPage extends Component {
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    
+                    <div style={{height:10}}/>
+                    {this.render_gas_price_options()}
                 </div>
             )
+        }
+    }
+
+    render_gas_price_options(){
+        var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+
+        if(gas_price == null || isNaN(gas_price)) return;
+        
+        var items = [
+            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price)},
+            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.7 * gas_price)},
+            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.6 * gas_price)},
+            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.1 * gas_price)},
+        ]
+
+        var e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            items = [
+                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price), 'max_priority_fee':2_000_000_000 },
+                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.8 * gas_price), 'max_priority_fee':3_000_000_000},
+                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.9 * gas_price), 'max_priority_fee':4_000_000_000},
+                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.6 * gas_price), 'max_priority_fee':5_000_000_000},
+            ]
+        }
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_custom_price_picked(item)}>
+                            {this.render_detail_item('3', {'title':item['title'], 'details':this.round_off(item['price']/10**9)+' gwei', 'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
+    }
+
+    when_custom_price_picked(item){
+        this.props.notify(item['title']+this.props.app_state.loc['1593cf']/* ' price set.' */, 1200)
+        var e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            this.when_max_fee_per_gas_amount(item['price'] + item['max_priority_fee'])
+            this.when_max_priority_amount(item['max_priority_fee'])
+        }else{
+            this.when_run_gas_price(item['price'])
         }
     }
 
@@ -1299,6 +1365,10 @@ class StackPage extends Component {
         
         var gas_transactions = this.props.app_state.account_balance[this.props.app_state.selected_e5] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[this.props.app_state.selected_e5]/gas_price)/2_300_000)
 
+        var is_running = this.props.app_state.is_running[this.props.app_state.selected_e5]
+        if(is_running == null) is_running = false
+        var button_opacity = is_running == true ? 0.4 : 1.0
+        var button_text = is_running == true ? this.props.app_state.loc['1593cs']/* 'Running...' */ : (this.props.app_state.loc['1456']/* 'Run ' */+this.props.app_state.selected_e5+this.props.app_state.loc['1457']/* ' Transactions' */)
         return(
             <div>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[this.props.app_state.selected_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':'wei'})}>
@@ -1338,8 +1408,8 @@ class StackPage extends Component {
                 
 
                 <div style={{height:10}}/>
-                <div style={{'padding': '5px'}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1456']/* 'Run ' */+this.props.app_state.selected_e5+this.props.app_state.loc['1457']/* ' Transactions' */, 'action':''})}
+                <div style={{'padding': '5px', 'opacity':button_opacity}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
+                    {this.render_detail_item('5', {'text':button_text, 'action':''})}
                 </div>
                 <div style={{height:7}}/>
             </div>
@@ -2748,6 +2818,33 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(buy_album_obj.obj)
                 }
+                else if(txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                    var contractor_obj = this.format_video_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(contractor_obj)
+
+                    new_tx_index = ints.length -1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['1593ct']/* 'video-messages' */){
+                    var message_obj = await this.format_videopost_comment_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -2767,7 +2864,7 @@ class StackPage extends Component {
 
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */){
                 metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
@@ -2792,7 +2889,7 @@ class StackPage extends Component {
         var index_data_strings = [ [], [] ]
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */){
                 // var tx_tags = pushed_txs[i].entered_indexing_tags
                 index_data_in_tags[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 index_data_in_tags[2].push(35)
@@ -3196,11 +3293,17 @@ class StackPage extends Component {
                     var award_object = {'sale_type':sale_type, 'songs_included':this.get_selected_song_ids(t)}
                     obj[t.id] = award_object
                 }
+                else if(txs[i].type == this.props.app_state.loc['1593ct']/* 'video-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }   
+                }
             }
         }
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */){
                 obj[pushed_txs[i].id] = pushed_txs[i]
             }
         }
@@ -5601,6 +5704,45 @@ class StackPage extends Component {
         });
 
         return {albums:albums, tracks:tracks}
+    }
+
+    format_video_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 20/* 20(video_object) */, 0]
+        ]
+        return obj
+    }
+
+    format_videopost_comment_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
     }
 
 
@@ -9618,6 +9760,103 @@ class StackPage extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+    render_set_custom_ipfs_gateway(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_custom_gateway_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_custom_gateway_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_custom_gateway_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_set_custom_gateway_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ck']/* 'Set Custom Ipfs Gateway' */, 'details':this.props.app_state.loc['1593cl']/* 'You can specify a custom gateway for serving all your content.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593cm']/* 'https://ipfs.io/cid' */} when_text_input_field_changed={this.when_custom_gateway_text_changed.bind(this)} text={this.state.custom_gateway_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.set_custom_ipfs_gateway()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['1593cn']/* 'paste \'cid\' whenre the content cid would be used.' */})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('4', {'text':this.props.app_state.custom_gateway, 'textsize':'13px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    when_custom_gateway_text_changed(text){
+        this.setState({custom_gateway_text:text})
+    }
+
+    set_custom_ipfs_gateway(){
+        var custom_gateway_text = this.state.custom_gateway_text.trim()
+
+        if(custom_gateway_text == ''){
+            this.props.notify(this.props.app_state.loc['1593bh']/* 'Type something.' */, 4000)
+        }
+        else if(!this.isValidURL(custom_gateway_text)){
+            this.props.notify(this.props.app_state.loc['1593co']/* 'That gateway link is not valid.' */, 4000)
+        }
+        else if(!custom_gateway_text.includes('cid')){
+            this.props.notify(this.props.app_state.loc['1593cq']/* 'The url needs to include the keyword \'cid\'' */, 4000)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['1593cp']/* 'gateway set. */, 1400)
+            this.props.set_custom_gateway(custom_gateway_text)
+        }
+    }
+
+    isValidURL(url) {
+        const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
+        return pattern.test(url);
+    }
 
 
 

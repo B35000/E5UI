@@ -2130,7 +2130,6 @@ class NewAudioPage extends Component {
         this.setState({price_amount2: amount})
     }
 
-
     when_add_price_set2(){
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id2.trim())
         var amount = this.state.price_amount2
@@ -2665,7 +2664,6 @@ class NewAudioPage extends Component {
                 <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
             </div>
         )
-
     }
 
     show_images(){

@@ -200,6 +200,11 @@ class PostListSection extends Component {
                     <div>{this.render_audio_list_group(selected_item)}</div>
                 )
             }
+            else if(selected_tag == this.props.app_state.loc['1264p']/* 'videoport' */ ){
+                return(
+                    <div>{this.render_video_list_group(selected_item)}</div>
+                )
+            }
         }
         else if(selected_page == 'w'){
             var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
@@ -288,6 +293,7 @@ class PostListSection extends Component {
         this.storefront_list = React.createRef();
         this.bag_list = React.createRef();
         this.audio_list = React.createRef();
+        this.video_list = React.createRef();
 
         this.coin_list = React.createRef();
         this.ether_list = React.createRef();
@@ -535,6 +541,10 @@ class PostListSection extends Component {
         this.audio_list.current?.scrollTo(0, pos)
     }
 
+    set_video_list(pos){
+        this.video_list.current?.scrollTo(0, pos)
+    }
+
 
 
     set_coin_list(pos){
@@ -598,7 +608,7 @@ class PostListSection extends Component {
         var p = ((loaded_objects*100)/total_count)
         var per = Math.round(p * 1000) / 1000
         var percentage = per + '%'
-        var obj = {'subscriptions':'Subscriptions Indexed.', 'contracts':'Contracts Indexed.', 'proposals':'Proposals Indexed.', 'tokens':'Tokens Indexed.', 'posts':'Posts Indexed.', 'channels':'Channels Indexed.', 'jobs':'Jobs Indexed.', 'sent_mail':'Sent Mail Indexed.', 'received_mail':'Received Mail Indexed.', 'storefront':'Storefront Items Indexed.', 'bags':'Bags Indexed.', 'contractor':'Contractors Indexed.',  'audioport':'Audioposts Indexed.'}
+        var obj = {'subscriptions':'Subscriptions Indexed.', 'contracts':'Contracts Indexed.', 'proposals':'Proposals Indexed.', 'tokens':'Tokens Indexed.', 'posts':'Posts Indexed.', 'channels':'Channels Indexed.', 'jobs':'Jobs Indexed.', 'sent_mail':'Sent Mail Indexed.', 'received_mail':'Received Mail Indexed.', 'storefront':'Storefront Items Indexed.', 'bags':'Bags Indexed.', 'contractor':'Contractors Indexed.',  'audioport':'Audioposts Indexed.', 'videoport':'Videoposts Indexed'}
         var title = obj[object_type]
         var number = this.format_account_balance_figure(loaded_objects) +' out of '+ this.format_account_balance_figure(total_count)
         return(
@@ -612,7 +622,7 @@ class PostListSection extends Component {
     }
 
     get_total_count_for_object_type(object_type){
-        var obj = {'subscriptions':this.props.app_state.load_subscription_metrics, 'contracts':this.props.app_state.load_contracts_metrics, 'proposals':this.props.app_state.load_proposal_metrics, 'tokens':this.props.app_state.load_tokens_metrics, 'posts':this.props.app_state.load_posts_metrics, 'channels':this.props.app_state.load_channels_metrics, 'jobs':this.props.app_state.load_jobs_metrics, 'sent_mail':this.props.app_state.load_sent_mail_metrics, 'received_mail':this.props.app_state.load_received_mail_metrics, 'storefront':this.props.app_state.load_storefront_metrics, 'bags':this.props.app_state.load_bags_metrics, 'contractor':this.props.app_state.load_contractors_metrics, 'audioport':this.props.app_state.load_audio_metrics}
+        var obj = {'subscriptions':this.props.app_state.load_subscription_metrics, 'contracts':this.props.app_state.load_contracts_metrics, 'proposals':this.props.app_state.load_proposal_metrics, 'tokens':this.props.app_state.load_tokens_metrics, 'posts':this.props.app_state.load_posts_metrics, 'channels':this.props.app_state.load_channels_metrics, 'jobs':this.props.app_state.load_jobs_metrics, 'sent_mail':this.props.app_state.load_sent_mail_metrics, 'received_mail':this.props.app_state.load_received_mail_metrics, 'storefront':this.props.app_state.load_storefront_metrics, 'bags':this.props.app_state.load_bags_metrics, 'contractor':this.props.app_state.load_contractors_metrics, 'audioport':this.props.app_state.load_audio_metrics, 'videoport':this.props.app_state.load_video_metrics}
         
         var load_metrics = obj[object_type]
         var total_count = 0        
@@ -2660,6 +2670,246 @@ class PostListSection extends Component {
             this.props.when_audio_item_clicked(index, object['id'], object['e5'], object)
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'audio')
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    render_video_list_group(selected_item){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_video_items()
+
+        if(selected_item == this.props.app_state.loc['1264l']/* 'acquired' */){
+            return(
+                <div style={{ 'padding': '7px 0px 0px 0px'}}>
+                    {this.render_my_bought_videos(items)}
+                </div>
+            )
+        }
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'videoport')}
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div ref={this.video_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'videoport')}
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 3px 5px 3px'}}>
+                                {this.render_video_object_if_locked(item, index)}
+                            </li>
+                        ))}
+                        {this.render_loading_screen_card()}
+                    </ul>
+                    
+                </div>
+            );
+        }
+    }
+
+    render_my_bought_videos(items){
+        var background_color = this.props.theme['card_background_color']
+        var col = Math.round(400 / 200)
+        var w = (this.state.screen_width / 2) - 5
+        var rowHeight = w+40;
+        if(items.length == 0){
+            var items = ['1','1']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={index}>
+                                <div style={{height:w, width:w, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:50 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.reverse().map((item, index) => (
+                            <ImageListItem key={index}>
+                                <div onClick={() => this.when_video_item_clicked(index, item)}>
+                                    {this.render_my_bought_video_item(item, index, w)}
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+    render_my_bought_video_item(object, index, w){
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        return(
+            <div style={{width:w, height:'auto'}}>
+                <img src={image} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
+                <div style={{height:5}}/>
+                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
+                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>
+            </div>
+        )
+    }
+
+    get_video_items(){
+        return this.remove_duplicates(this.props.get_video_items())
+    }
+
+    render_video_object_if_locked(item, index){
+        var required_subscriptions = item['ipfs'].selected_subscriptions
+        var post_author = item['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[item['e5']]
+        if(me == null) me = 1
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author == me){
+            return this.render_video_object(item, index)
+        }
+        else{
+            return(
+                <div>
+                    <div style={{height:160, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 0px 0px'}}>
+                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
+                            <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}></p>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_video_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_video_item(object)
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        // var default_image = this.props.app_state.static_assets['music_label']
+        // var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        // return(
+        //     <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+        //         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 5px', 'padding':'0px 0px 5px 0px'}}>
+        //             <div onClick={() => this.when_audio_item_clicked(index, object)}>
+        //                 <img src={image} alt="" style={{height:105 ,width:105,'border-radius': '10px'}}/>
+        //             </div>
+        //             <div style={{width:15}}/>
+        //             <div style={{width:'50%'}}>
+        //                 {this.render_detail_item('1', item['tags'])}
+        //                 <div style={{height: 10}}/>
+        //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
+        //                     {this.render_detail_item('3', item['id'])}
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     </div>
+        // )
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
+                        {this.render_detail_item('8', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_video_item(object){
+        var tags = object['ipfs'] == null ? ['Videopost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].video_type != null){
+            tags = [object['ipfs'].video_type].concat(tags)
+        }
+        var extra = ''
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            extra = extra+'🔏'
+        }
+        if(extra != '') extra = extra + ' '
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        if(this.is_post_anonymous(object)){
+            author = ''
+        }
+        var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    when_video_item_clicked(index, object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
+        }else{
+            this.props.show_post_item_preview_with_subscription(object, 'video')
         }
     }
 

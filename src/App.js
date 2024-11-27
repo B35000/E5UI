@@ -1,4 +1,4 @@
-import React, { Component, useState, useImperativeHandle, forwardRef } from 'react';
+import React, { Component, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 
 /* blockchain stuff */
 import { mnemonicToSeedSync, mnemonicToSeed } from 'bip39';
@@ -53,6 +53,7 @@ import NewProposalPage from './pages/create_action_pages/new_proposal_page';
 import NewMailPage from './pages/create_action_pages/new_mail_page';
 import NewContractorPage from './pages/create_action_pages/new_contractor_page';
 import NewAudioPage from './pages/create_action_pages/new_audio_page'
+import NewVideoPage from './pages/create_action_pages/new_video_page';
 
 import EditJobPage from './pages/edit_action_pages/edit_job_page'
 import EditTokenPage from './pages/edit_action_pages/edit_token_page'
@@ -136,6 +137,8 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { zoomPlugin } from '@react-pdf-viewer/zoom';
 import '@react-pdf-viewer/zoom/lib/styles/index.css';
+// import { currentPagePlugin } from '@react-pdf-viewer/current-page';
+// import '@react-pdf-viewer/current-page/lib/styles/index.css';
 
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -201,7 +204,7 @@ function clone(obj) {
 }
 
 function getOS() {
-  return 'iOS'
+  // return 'iOS'
   if(iOS()) return 'iOS'
   const userAgent = window.navigator.userAgent,
       platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
@@ -254,11 +257,26 @@ function shuffle(array) {
   }
 }
 
-const PDFViewerWrapper  = forwardRef(({ fileUrl }, ref) => {
+const PDFViewerWrapper  = forwardRef(({ fileUrl, theme /* , record_page, current_page */ }, ref) => {
   const zoomPluginInstance = zoomPlugin();
-  const { ZoomInButton, ZoomOutButton, ZoomPopover } = zoomPluginInstance;
+  // const { ZoomInButton, ZoomOutButton, ZoomPopover } = zoomPluginInstance;
+  
+  // const currentPagePluginInstance = currentPagePlugin();
+  // const { jumpToPage } = currentPagePluginInstance;
+  
   const zoomLevels = [0.5, 1.0, 1.5, 2.0, 3.0];
   const [currentZoom, setCurrentZoom] = useState(0.5);
+
+  // const [currentPage, setCurrentPage] = useState(() => {
+  //   const savedPage = current_page;
+  //   return savedPage ? parseInt(savedPage, 10) : 1;
+  // });
+
+  // useEffect(() => {
+  //   jumpToPage(currentPage - 1);
+  // }, [currentPage, jumpToPage]);
+
+
 
   const zoomIn = () => {
     console.log('zooming in')
@@ -274,9 +292,26 @@ const PDFViewerWrapper  = forwardRef(({ fileUrl }, ref) => {
     setCurrentZoom(newZoom);
   }
 
+  const set_default_zoom = () => {
+    const newZoom = 1.0
+    zoomPluginInstance.zoomTo(newZoom);
+    setCurrentZoom(newZoom);
+  }
+
+  // const onPageChange = (e) => {
+  //   const newPage = e.currentPage + 1;
+  //   setCurrentPage(newPage);
+  //   record_page(newPage);
+  //   console.log('new_page', newPage)
+  // };
+
+
+
+
   useImperativeHandle(ref, () => ({
     zoomIn,
     zoomOut,
+    set_default_zoom,
   }));
 
   return (
@@ -286,7 +321,7 @@ const PDFViewerWrapper  = forwardRef(({ fileUrl }, ref) => {
           <ZoomInButton/>
           <ZoomPopover/>
         </div> */}
-        <Viewer fileUrl={fileUrl} plugins={[zoomPluginInstance]} />
+        <Viewer fileUrl={fileUrl} /* onPageChange={onPageChange} */ plugins={[zoomPluginInstance]} theme={{theme: theme,}} />
       </div>
   );
 });
@@ -347,7 +382,7 @@ class App extends Component {
 
     my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{},
     
-    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{},
+    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{},load_video_metrics:{},
 
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
@@ -359,7 +394,7 @@ class App extends Component {
     web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
     my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false,
 
-    run_gas_price:0, all_cities:[], cached_tracks:[],
+    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[],
   };
 
   get_static_assets(){
@@ -375,7 +410,8 @@ class App extends Component {
       'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
       'download_icon':'https://bafkreie6m6aird6xkug5mzgqxccks65u4lsi5pghbvmb64uhvitikadnii.ipfs.w3s.link/',
       'zoom_in_icon':'https://bafkreiaqdlkxszb7tnhm7bql5psp4m4ofyh3a7k7rdotgvpwnvgakm4uw4.ipfs.w3s.link/',
-      'zoom_out_icon':'https://bafkreidm4kb7zlaaqluepfllptvejmu3r3qvw35wt5d2z63jjlhwzin3qa.ipfs.w3s.link/'
+      'zoom_out_icon':'https://bafkreidm4kb7zlaaqluepfllptvejmu3r3qvw35wt5d2z63jjlhwzin3qa.ipfs.w3s.link/',
+      'video_label':'https://bafkreid5u7arxovxweciekc6ddys4szsibdgnma5yddtcxlk3iq32dvx2e.ipfs.w3s.link/'
     }
   }
 
@@ -912,6 +948,11 @@ class App extends Component {
         'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.',
         'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'','a311bs':'',
         
+
+        /* new video page */
+        'b311a':'video','b311b':'video-fee','b311c':'video-list','b311d':'Video','b311e':'Film','b311f':'Series','b311g':'Set the video art for your new post. The art will be rendered in a 1:1 aspect ratio.','b311h':'Set the type of post your\'e uploading to the videoport section.','b311i':'Add Video','b311j':'Add a new video item with the specified details set.','b311k':'Video Price','b311l':'Specify the price for accessing this video if added individually.','b311m':'Set the details for a new video item in your show or film.','b311n':'Video Title.','b311o':'Set the title for the new video item in your show.','b311p':'Video Creator.','b311q':'Set the creators of the video file.','b311r':'Video File','b311s':'Pick the video track from your uploaded files.','b311t':'You need to set a title for the video track.','b311u':'You need to set a composer of the video track.','b311v':'You need to add a video track.','b311w':'Editing that Video Track.','b311x':'You need to add some videos to the new videopost.','b311y':'','b311z':'','b311aa':'','b311ab':'','b311ac':'','b311ad':'','b311ae':'','b311af':'','b311ag':'','b311ah':'','b311ai':'','b311aj':'','b311ak':'','b311al':'','b311am':'','b311an':'','b311ao':'','b311ap':'','b311aq':'','b311ar':'','b311as':'','b311at':'','b311au':'','b311av':'','b311aw':'','b311ax':'','b311ay':'','b311az':'',
+
+
         /* new proposal page */
         '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ',
         '345':'Set tags for indexing your new Proposal.','346':'Consensus Type.','347':'Set the type of action you wish to perform with the contract through your new proposal.','348':'Proposal Expiry Time','349':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.','350':'Proposal Expiry Duration Limit.','351':'Time from now.','352':'Modify Target (For Reconfiguration Action)','353':'The target object thats being modified if the consensus type is reconfig.','354':'Object ID...','355':'Consensus Submit Expiry Time.','356':'The time after which you cannot submit your new proposal.','357':'Maximum Proposal Expiry Submit Expiry Time Difference.','358':'You cant use a time before now.','359':'That submit time is invalid','360':'That proposal expiry time is less than the minimum required by the contract.','361':'Contract','362':'This Contract','363':'Main Contract','364':'Contract ID 2','365':'End Exchange','366':'Account ID 3','367':'Spend Exchange','368':'Account ID 5','369':'My Account','370':'Account','371':'End Token','372':'Spend Token','373':'Exchange ID 3','374':'Exchange ID 5','375':'Burn Account','376':'Account ID 0','377':'End Balance.','378':'Spend Balance.','379':'Spend Target.','380':'Set a target for the spend action.','381':'Target ID...','382':'Exchange.','383':'Set the token your spending.','384':'Spend Amount.','385':'Set an amount for the spend action.','386':'Picked Amount.','387':'Please put a valid spend target.',
@@ -1003,13 +1044,13 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'','1264q':'','1264r':'','1264s':'','1264t':'','1264u':'','1264v':'','1264w':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'','1264t':'','1264u':'','1264v':'','1264w':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
         
         /* post preview page */
-        '1301':'Subscription Locked','1302':'You need to pay those subscriptions first before you can view the full post.','1303':'Subscriptions to pay.','1304':'Pin the post to your feed','1305':'Pin Post','1306':'Pin/Unpin Post', '1306a':'Pin the Audiopost to  your feed.','1306b':'Pin Audiopost','1306c':'Pin/Unpin Audiopost','1306d':'','1306e':'','1306f':'',
+        '1301':'Subscription Locked','1302':'You need to pay those subscriptions first before you can view the full post.','1303':'Subscriptions to pay.','1304':'Pin the post to your feed','1305':'Pin Post','1306':'Pin/Unpin Post', '1306a':'Pin the Audiopost to  your feed.','1306b':'Pin Audiopost','1306c':'Pin/Unpin Audiopost','1306d':'Pin Videopost','1306e':'Pin the Videopost to  your feed.','1306f':'Pin/Unpin Videopost','1306g':'','1306h':'','1306i':'','1306j':'','1306k':'','1306l':'','1306m':'',
         
         /* respond to job page */
         '1307':'job-response','1308':'respond','1309':'job','1310':'ad','1311':'contract','1312':'expiry-time','1313':'amount','1314':'prepaid','1315':'postpaid','1316':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1317':'block','1318':'Select an expiry time for your application','1319':'Prepaid or Postpaid','1320':'Set the payment option you prefer for the application.','1321':'Your preferred fee.','1322':'Set how much you want for the job. Select an exchange by its id, then the desired price and click add.','1323':'','1324':'Price','1325':'tokens','1326':'Add Price','1327':'Please put a valid exchange ID.','1328':'Please put a valid amount.','1329':'You cant use the same exchange twice.','1330':'Added price.','1331':'You need to pick a contract first.','1332':'You cant set an expiry time thats less than fifteen minutes from now.','1332a':'Custom Specifications.', '1332b':'You can also include extra information for the job your applying for.', '1332c':'specs', '1332d':'Exchange ID', '1332e':'main', '1332f':'history','1332g':'','1332h':'','1332i':'','1332j':'','1332k':'','1332l':'','1332m':'',
@@ -1032,7 +1073,7 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'Uploaded PDFs','1593cf':'','1593cg':'','1593ch':'','1593ci':'','1593cj':'','1593ck':'','1593cl':'','1593cm':'','1593cn':'','1593co':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'Uploaded PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'','1593cv':'','1593cw':'','1593cx':'','1593cy':'','1593coz':'','1593da':'','1593db':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1105,6 +1146,10 @@ class App extends Component {
 
         /* audio details section */
         'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'Shuffle Album', 'a2527t':'Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times.', 'a2527z':'Downloading...','a2527ba':'Done.',
+
+
+        /* video details section */
+        'b2527a':'Play Videopost.','b2527b':'Play all the videos in this videopost.','b2527c':'Edit Indexed Videopost','b2527d':'Change the basic details for your Indexed Videopost.','b2527e':'Purchase access to this videopost and its content.','b2527f':'You need to purchase access to the video first.','b2527g':'','b2527h':'','b2527i':'','b2527j':'','b2527k':'','b2527l':'','b2527m':'','b2527n':'','b2527o':'','b2527p':'','b2527q':'','b2527r':'','b2527s':'','b2527t':'','b2527u':'','b2527v':'','b2527w':'','b2527x':'','b2527y':'','b2527z':'','b2527ba':'','b2527bb':'','b2527bc':'','b2527bd':'','b2527be':'','b2527bf':'','b2527bg':'','b2527bh':'','b2527bi':'','b2527bj':'',
         
         /* proposal details section */
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
@@ -1320,6 +1365,7 @@ class App extends Component {
     this.new_job_page = React.createRef();
     this.new_storefront_page = React.createRef();
     this.new_storefront_item_page = React.createRef();
+
     this.new_mint_dump_token_page = React.createRef();
     this.new_transfer_token_page = React.createRef();
     this.enter_contract_page = React.createRef();
@@ -1388,6 +1434,7 @@ class App extends Component {
     this.audio_pip_page = React.createRef();
     this.full_audio_page = React.createRef();
     this.add_to_playlist_page = React.createRef();
+    this.new_video_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -1577,6 +1624,8 @@ class App extends Component {
       song_plays: this.state.song_plays,
       should_update_song_plays: this.state.should_update_song_plays,
       albums_to_stash: this.get_albums_to_stash(),
+      custom_gateway: this.state.custom_gateway,
+      pdf_bookmarks: this.state.pdf_bookmarks,
     }
   }
 
@@ -1676,6 +1725,8 @@ class App extends Component {
       var cupcake_song_plays = cupcake_state.song_plays
       var cupcake_should_update_song_plays = cupcake_state.should_update_song_plays
       var cupcake_albums_to_stash = cupcake_state.albums_to_stash
+      var cupcake_custom_gateway = cupcake_state.custom_gateway
+      var cupcake_pdf_bookmarks = cupcake_state.pdf_bookmarks
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -1863,6 +1914,14 @@ class App extends Component {
 
       if(cupcake_albums_to_stash != null){
         this.load_albums_to_stash_to_state(cupcake_albums_to_stash)
+      }
+
+      if(cupcake_custom_gateway != null){
+        this.setState({custom_gateway: cupcake_custom_gateway})
+      }
+
+      if(cupcake_pdf_bookmarks != null){
+        this.setState({pdf_bookmarks: cupcake_pdf_bookmarks})
       }
 
     }
@@ -2662,7 +2721,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
 
@@ -2697,7 +2756,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
 
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
         
@@ -2732,7 +2791,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
@@ -2769,7 +2828,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#5bc15b', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart',
+        'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli',
@@ -3159,6 +3218,26 @@ class App extends Component {
     }
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593cc']/* 'audio-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['a311a']/* 'audio' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+    this.set_cookies_after_stack_action(stack)
+  }
+
+  add_video_reply_to_stack(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == this.getLocale()['1593ct']/* 'video-messages' */ && stack[i].e5 == this.state.selected_e5){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593ct']/* 'video-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['b311a']/* 'video' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -4302,7 +4381,7 @@ class App extends Component {
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
-      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)}
+      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)}
       />
     )
   }
@@ -4587,8 +4666,8 @@ class App extends Component {
           }
         }
         else if(txs[i].type == this.getLocale()['862']/* 'pay-subscription' */){
-          var entry_tokens = this.state.subscription_item['data'][2]
-          var entry_fees = this.state.subscription_item['data'][3]
+          var entry_tokens = t.subscription_item['data'][2]
+          var entry_fees = t.subscription_item['data'][3]
           for(var i=0; i<entry_tokens.length; i++){
             if(token_id == entry_tokens[i]){
               var required_amount = this.calculate_final_amount(entry_fees[i], t)
@@ -4677,6 +4756,14 @@ class App extends Component {
     this.setState({run_gas_price: number})
   }
 
+  set_custom_gateway(url){
+    this.setState({custom_gateway: url})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
 
 
 
@@ -4691,7 +4778,7 @@ class App extends Component {
       var clone = structuredClone(me.state.is_running)
       clone[me.state.selected_e5] = false
       me.setState({is_running: clone})
-    }, (60 * 1000));
+    }, (5 * 60 * 1000));
   }
 
   calculate_gas_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
@@ -4762,10 +4849,12 @@ class App extends Component {
 
     var os = getOS()
     if(os == 'iOS'){
-      this.open_stack_bottomsheet()
       setTimeout(function() {
         me.open_stack_bottomsheet()
-      }, (1 * 300));
+        setTimeout(function() {
+          me.open_stack_bottomsheet()
+        }, (1 * 500));
+      }, (1 * 1000));
     }
 
 
@@ -5170,7 +5259,7 @@ class App extends Component {
     this.open_new_object_bottomsheet()
     this.setState({new_object_target: target});
     
-    if(target == '6'/* posts */ || target == '7'/* channel */ || target == '10'/* audioport */ ){
+    if(target == '6'/* posts */ || target == '7'/* channel */ || target == '10'/* audioport */ || target == '11'/* videoport */){
       this.load_my_subscriptions()
     }
   }
@@ -5230,6 +5319,11 @@ class App extends Component {
     else if(target == '10'/* audioport */){
       return(
         <NewAudioPage ref={this.new_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+      )
+    }
+    else if(target == '11'/* videoport */){
+      return(
+        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
     
@@ -9882,6 +9976,9 @@ class App extends Component {
     else if(page == 'audio'){
       this.add_audio_reply_to_stack(tx)
     }
+    else if(page == 'video'){
+      this.add_video_reply_to_stack(tx)
+    }
     this.open_add_comment_bottomsheet()
   }
 
@@ -10474,7 +10571,7 @@ class App extends Component {
       if(me.confirm_run_page.current != null){
         me.confirm_run_page.current.set_data(data)
       }
-    }, (1 * 500));
+    }, (1 * 1000));
     
 
   }
@@ -11655,6 +11752,12 @@ class App extends Component {
     // this.prompt_top_notification('opening...', 1000)
     this.setState({view_pdf: pdf})
     this.open_view_pdf_bottomsheet()
+
+    var me = this;
+    setTimeout(function() {
+      me.pdf_viewer_wrapper.current?.set_default_zoom()
+    }, (1 * 4500));
+    
   }
 
 
@@ -11689,11 +11792,13 @@ class App extends Component {
   /* fullscreen pdf rendered in bottomsheet when image item is tapped */
   render_view_pdf(){
     var pdf = this.state.view_pdf
+    // var current_page = this.state.pdf_bookmarks[pdf] == null ? 1 : this.state.pdf_bookmarks[pdf]
+    var theme = this.state.theme['pdf_theme']
     return(
       <div style={{height:this.state.height, width:'100%', 'background-color':'white', overflow: 'auto'}}>
         {pdf && (
           <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
-            <PDFViewerWrapper ref={this.pdf_viewer_wrapper} fileUrl={this.get_pdf_from_file(pdf)} />
+            <PDFViewerWrapper ref={this.pdf_viewer_wrapper} theme={theme} /* current_page={current_page} */ /* record_page={this.record_page.bind(this)} */ fileUrl={this.get_pdf_from_file(pdf)} />
           </Worker>
         )}
       </div>
@@ -11750,6 +11855,18 @@ class App extends Component {
   zoom_out(){
     this.pdf_viewer_wrapper.current?.zoomOut()
   }
+
+  // record_page(page){
+  //   var pdf_bookmarks_clone = structuredClone(this.state.pdf_bookmarks)
+  //   var pdf = this.state.view_pdf
+  //   pdf_bookmarks_clone[pdf] = page
+  //   this.setState({pdf_bookmarks: pdf_bookmarks_clone})
+
+  //   var me = this;
+  //   setTimeout(function() {
+  //     me.set_cookies()
+  //   }, (1 * 500));
+  // }
 
 
 
@@ -12325,7 +12442,7 @@ class App extends Component {
     // console.log(data)
 
     if(this.is_allowed_in_e5()){
-      await this.load_cities_data()
+      this.load_cities_data()
       // await this.load_static_assets()
       // this.inc_synch_progress()
       // await this.load_coin_static_assets()
@@ -13998,7 +14115,6 @@ class App extends Component {
             
           }
         }
-
         return accepted
     }
 
@@ -14405,6 +14521,7 @@ class App extends Component {
     var addresses_clone = structuredClone(this.state.addresses)
     addresses_clone[e5] = contract_addresses
     this.setState({addresses: addresses_clone})
+    console.log('contract_addresses', addresses_clone)
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -16047,7 +16164,7 @@ class App extends Component {
   }
 
   record_number_of_items(e5, object_type, count){
-    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics}
+    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics}
 
     var load_metrics_clone = structuredClone(obj[object_type])
     if(load_metrics_clone[e5] == null){
@@ -16093,6 +16210,9 @@ class App extends Component {
     }
     else if(object_type == 'audio'){
       this.setState({load_audio_metrics: load_metrics_clone})
+    }
+    else if(object_type == 'video'){
+      this.setState({load_video_metrics: load_metrics_clone})
     }
   }
 
@@ -16277,8 +16397,12 @@ class App extends Component {
   get_contract_data = async (contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts) => {
     var created_contract_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ })
 
+    created_contract_events = created_contract_events.reverse()
+
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ , p1/* object_id */: prioritized_accounts})
+
+      prioritized_object_events = prioritized_object_events.reverse()
 
       var final_object_events = []
       var added_ids = []
@@ -16383,7 +16507,7 @@ class App extends Component {
 
       var my_blocked_time_value =/*  await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_contracts
 
-      var timestamp = event == null ? 0 : event.returnValues.p4
+      var timestamp = event == null ? 0 : parseInt(event.returnValues.p4)
       var author = event == null ? 0 : event.returnValues.p3
       var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'participant_times':entered_account_times_data, 'archive_accounts':archive_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i], 'my_interactable_time_value':my_interactable_time_value[i][0], 'my_blocked_time_value':my_blocked_time_value[i][0], 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
 
@@ -16532,7 +16656,7 @@ class App extends Component {
         }
       }
 
-      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal/* [0] */[0], 'archive_accounts':archive_participants, 'e5':e5, 'timestamp':event.returnValues.p5, 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5 }
+      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal/* [0] */[0], 'archive_accounts':archive_participants, 'e5':e5, 'timestamp':parseInt(event.returnValues.p5), 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5 }
 
       created_proposal_object_data.push(obj)
 
@@ -16672,7 +16796,7 @@ class App extends Component {
 
       var update_proportion_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i]})
 
-      var timestamp = event == null ? 0 : event.returnValues.p4
+      var timestamp = event == null ? 0 : parseInt(event.returnValues.p4)
       var author = event == null ? 0 : event.returnValues.p3
 
       var balance = token_balances[i]
@@ -16793,6 +16917,8 @@ class App extends Component {
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:18/* post_object */ , p2/* item */: prioritized_accounts})
 
+      prioritized_object_events = prioritized_object_events.reverse()
+
       var final_object_events = []
       var added_ids = []
       prioritized_object_events.forEach(element => {
@@ -16817,7 +16943,7 @@ class App extends Component {
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
         var post_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
-        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':created_post_events[i].returnValues.p6, 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
+        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
       }
 
       if(is_first_time){
@@ -16840,6 +16966,8 @@ class App extends Component {
 
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:36/* channel_object */ , p2/* item */: prioritized_accounts})
+
+      prioritized_object_events = prioritized_object_events.reverse()
 
       var final_object_events = []
       var added_ids = []
@@ -16896,7 +17024,7 @@ class App extends Component {
 
         }
         else{
-          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0],'e5':e5, 'timestamp':created_channel_events[i].returnValues.p6, 'author':created_channel_events[i].returnValues.p5, 'e5_id':id+e5 });
+          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0],'e5':e5, 'timestamp':parseInt(created_channel_events[i].returnValues.p6), 'author':created_channel_events[i].returnValues.p5, 'e5_id':id+e5 });
         }
       }
 
@@ -16919,6 +17047,8 @@ class App extends Component {
     created_job_events = created_job_events.reverse()
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:17/* job_object */ , p2/* item */: prioritized_accounts})
+
+      prioritized_object_events = prioritized_object_events.reverse()
 
       var final_object_events = []
       var added_ids = []
@@ -16950,7 +17080,7 @@ class App extends Component {
         var job_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
         await this.wait(90)
-        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6, 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
+        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
         created_job.push(job)
         created_job_mappings[id] = job
 
@@ -17077,7 +17207,7 @@ class App extends Component {
         console.log('ipfs data thats null: ', ipfs)
       } 
 
-      mail_activity[convo_id].push({'convo_id':convo_id,'id':cid, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_created_mail_events[i].returnValues.p6, 'author':my_created_mail_events[i].returnValues.p2, 'e5_id':cid})
+      mail_activity[convo_id].push({'convo_id':convo_id,'id':cid, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':parseInt(my_created_mail_events[i].returnValues.p6), 'author':my_created_mail_events[i].returnValues.p2, 'e5_id':cid})
 
       if(mail_activity[convo_id].length > 1){
         this.fetch_uploaded_files_for_object(ipfs_obj)
@@ -17122,7 +17252,7 @@ class App extends Component {
       var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
       ipfs_obj['time'] = my_received_mail_events[i].returnValues.p6
       
-      var obj = {'convo_id':convo_id,'id':cid, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6, 'author':my_received_mail_events[i].returnValues.p2, 'e5_id':cid}
+      var obj = {'convo_id':convo_id,'id':cid, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':parseInt(my_received_mail_events[i].returnValues.p6), 'author':my_received_mail_events[i].returnValues.p2, 'e5_id':cid}
       
       if(ipfs_obj['message'] != null){
         received_mail_notifications.push({'type':'mail_message_notification', 'event':my_received_mail_events[i], 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6, 'ipfs':ipfs_obj, 'convo_id':convo_id,'id':cid})
@@ -17165,6 +17295,8 @@ class App extends Component {
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:27/* storefront_object */ , p2/* item */: prioritized_accounts})
 
+      prioritized_object_events = prioritized_object_events.reverse()
+
       var final_object_events = []
       var added_ids = []
       prioritized_object_events.forEach(element => {
@@ -17193,7 +17325,7 @@ class App extends Component {
         if(data != null){
           if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false)
 
-          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':created_store_events[i].returnValues.p6, 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5}
+          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':parseInt(created_store_events[i].returnValues.p6), 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5}
           created_stores.push(obj)
           created_store_mappings[id] = obj
 
@@ -17245,6 +17377,8 @@ class App extends Component {
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:25/* bag_object */ , p2/* item */: prioritized_accounts})
 
+      prioritized_object_events = prioritized_object_events.reverse()
+
       var final_object_events = []
       var added_ids = []
       prioritized_object_events.forEach(element => {
@@ -17270,7 +17404,7 @@ class App extends Component {
       var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
 
       if(data != null){
-        var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4, 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length}
+        var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':parseInt(created_bag_events[i].returnValues.p4), 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length}
         created_bags.push(bag)
 
         var images = this.get_bag_images(bag)
@@ -17387,6 +17521,8 @@ class App extends Component {
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:26/* contractor_object */ , p2/* item */: prioritized_accounts})
 
+      prioritized_object_events = prioritized_object_events.reverse()
+
       var final_object_events = []
       var added_ids = []
       prioritized_object_events.forEach(element => {
@@ -17414,7 +17550,7 @@ class App extends Component {
         if(contractor_data != null){
           var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:38})
 
-          var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6, 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5, 'requests':requests.length}
+          var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':parseInt(created_contractor_events[i].returnValues.p6), 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5, 'requests':requests.length}
           created_contractor.push(post)
 
           if(post['author'] == account){
@@ -17455,6 +17591,8 @@ class App extends Component {
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:19/* 19(audio_object) */ , p2/* item */: prioritized_accounts})
 
+      prioritized_object_events = prioritized_object_events.reverse()
+
       var final_object_events = []
       var added_ids = []
       prioritized_object_events.forEach(element => {
@@ -17494,7 +17632,7 @@ class App extends Component {
           }
         });
 
-        const data = {'id':id, 'ipfs':audio_data, 'event': created_audio_events[i], 'e5':e5, 'timestamp':created_audio_events[i].returnValues.p6, 
+        const data = {'id':id, 'ipfs':audio_data, 'event': created_audio_events[i], 'e5':e5, 'timestamp':parseInt(created_audio_events[i].returnValues.p6), 
         'author':created_audio_events[i].returnValues.p5, 'e5_id':id+e5, 'album_sales':album_sales, 'song_sales':song_sales
         }
 
@@ -17528,6 +17666,80 @@ class App extends Component {
     console.log('audio count: '+created_audios.length)
   }
 
+  get_video_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts) => {
+    var created_video_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */})
+
+    created_video_events = created_video_events.reverse()
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:20/* 20(video_object) */ , p2/* item */: prioritized_accounts})
+
+      prioritized_object_events = prioritized_object_events.reverse()
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_video_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_video_events = final_object_events
+    }
+    
+    this.record_number_of_items(e5, 'video', created_video_events.length)
+    var created_videos = this.state.created_videos[e5] == null ? [] : this.state.created_videos[e5].slice()
+    var created_video_mappings = this.state.created_video_mappings[e5] == null ? {} : structuredClone(this.state.created_video_mappings[e5])
+    var is_first_time = this.state.created_videos[e5] == null
+    is_first_time = true
+    for(var i=0; i<created_video_events.length; i++){
+      var id = created_video_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_video_events[i].returnValues.p1.toString() == hash.toString()){
+        var video_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        
+        if(video_data != null){
+          if(video_data.album_art != null && video_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
+
+          const data = {'id':id, 'ipfs':video_data, 'event': created_video_events[i], 'e5':e5, 'timestamp':parseInt(created_video_events[i].returnValues.p6), 
+          'author':created_video_events[i].returnValues.p5, 'e5_id':id+e5
+          }
+
+          var obj = this.get_item_in_array(created_videos, id)
+          if(obj == null){
+            created_videos.push(data)
+          }else{
+            var pos = created_videos.indexOf(obj)
+            if(pos != -1){
+              created_videos[pos] = obj
+            }
+          }
+          created_video_mappings[id] = data
+        }
+      }
+
+      if(is_first_time){
+        var created_videos_clone = structuredClone(this.state.created_videos)
+        var created_video_mappings_clone = structuredClone(this.state.created_video_mappings)
+        created_videos_clone[e5] = created_videos
+        created_video_mappings_clone[e5] = created_video_mappings
+        this.setState({created_videos: created_videos_clone, created_video_mappings:created_video_mappings_clone})        
+      }
+    }
+
+    var created_videos_clone = structuredClone(this.state.created_videos)
+    var created_video_mappings_clone = structuredClone(this.state.created_video_mappings)
+    created_videos_clone[e5] = created_videos
+    created_video_mappings_clone[e5] = created_video_mappings
+    this.setState({created_videos: created_videos_clone, created_video_mappings:created_video_mappings_clone})
+
+    console.log('video count: '+created_videos.length)
+    
+  }
+
   load_run_data = async (contractInstance, E52contractInstance, e5, web3, H52contractInstance) => {
     var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
 
@@ -17551,6 +17763,8 @@ class App extends Component {
 
     var created_audio_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */})
 
+    var created_video_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */})
+
     var data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {})
 
     var metadata_events = await this.load_event_data(web3, E52contractInstance, 'e5', e5, {})
@@ -17567,6 +17781,9 @@ class App extends Component {
     all_data_clone[e5] = obj
     this.setState({all_data: all_data_clone})
   }
+
+
+
 
 
 
@@ -18312,7 +18529,7 @@ class App extends Component {
     var job_section_tags = this.state.job_section_tags;
     var explore_section_tags = this.state.explore_section_tags;
 
-    var should_prioritise_followed_tags = this.state.section_tags_setting == this.getLocale()['1427'] /* 'filtered' */
+    var should_prioritise_followed_tags = this.state.section_tags_setting === this.getLocale()['1427'] /* 'filtered' */
 
     var return_obj = [this.state.content_channeling]
 
@@ -18387,13 +18604,10 @@ class App extends Component {
     var id = cid;
     var internal_id = ''
     if(cid.includes('_')){
-      // console.log('found_underscore', cid)
       included_underscore = true;
       var split_cid_array2 = cid.split('_');
       id = split_cid_array2[0]
       internal_id = split_cid_array2[1]
-      // console.log('found_underscore', 'id', id)
-      // console.log('found_underscore', 'internal_id', internal_id)
     }
     
     if(option == 'in'){
@@ -18530,8 +18744,8 @@ class App extends Component {
     await this.wait(this.state.ipfs_delay)
     // var selected_gateway = gateways[Math.round(Math.random() * 12)]
     var selected_gateway = gateways[0]
+    selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
     try {
-      
       const response = await fetch(selected_gateway);
       if (!response.ok) {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
@@ -18546,6 +18760,15 @@ class App extends Component {
       if(depth<5){
         return this.fetch_object_data_from_infura(cid, depth+1)
       }
+    }
+  }
+
+  get_selected_gateway_if_custom_set(cid, default_gateway){
+    if(this.state.custom_gateway != ''){
+      var my_gateway = `${this.state.custom_gateway}`
+      return my_gateway.replace('cid', cid)
+    }else{
+      return default_gateway
     }
   }
 
@@ -18614,6 +18837,7 @@ class App extends Component {
     await this.wait(this.state.ipfs_delay)
     // var selected_gateway = gateways[Math.round(Math.random() * 11)]
     var selected_gateway = gateways[0]
+    selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
     try {
       const response = await fetch(selected_gateway);
       if (!response.ok) {
@@ -18675,7 +18899,7 @@ class App extends Component {
     await this.wait(this.state.ipfs_delay)
     // var selected_gateway = gateways[Math.round(Math.random() * 12)]
     var selected_gateway = gateways[0]
-    // console.log('selected_gateway', selected_gateway)
+    selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
     try {
       const response = await fetch(selected_gateway);
       if (!response.ok) {
@@ -18753,6 +18977,11 @@ class App extends Component {
     await this.wait(this.state.ipfs_delay)
     var selected_gateway = storage_id == 'ch' ? gateways[0] : gateways[1]
     // console.log('stackdata', selected_gateway)
+    if(storage_id == 'ch'){
+      selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
+    }else{
+      selected_gateway = this.get_selected_gateway_if_custom_set2(cid, selected_gateway, file_name)
+    }
     try {
       const response = await fetch(selected_gateway);
       if (!response.ok) {
@@ -18772,6 +19001,20 @@ class App extends Component {
       if(depth<2){
         return this.fetch_file_data_from_chainsafe_storage(cid, storage_id, file_name, depth+1)
       }
+    }
+  }
+
+  get_selected_gateway_if_custom_set2(cid, default_gateway, file_name){
+    if(this.state.custom_gateway != ''){
+      var my_gateway = `${this.state.custom_gateway}`
+      var new_gateway = my_gateway.replace('cid', cid)
+      if(new_gateway.endsWith('/')){
+        return `${new_gateway}${file_name}.json`
+      }else{
+        return `${new_gateway}/${file_name}.json`
+      }
+    }else{
+      return default_gateway
     }
   }
 

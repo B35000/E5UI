@@ -293,6 +293,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['b311a']/* video */){
+                return(
+                    <div>
+                        {this.render_video_data()}
+                    </div>
+                )
+            }
             else if(tx.type == this.props.app_state.loc['760']/* 'job' */){
                 return(
                     <div>
@@ -713,6 +720,13 @@ class ViewTransactionPage extends Component {
                         {this.render_edit_audiopost()}
                     </div>
                 )
+            }
+            else if(tx.type == this.props.app_state.loc['1593ct']/* 'video-messages' */){
+                return(
+                    <div>
+                        {this.render_mail_message_data('Videopost Messages')}
+                    </div>
+                )   
             }
 
         }
@@ -1697,6 +1711,110 @@ class ViewTransactionPage extends Component {
         }
     }
 
+
+
+
+
+
+
+
+
+    render_video_data(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_video_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    {this.render_detail_item('0')}
+
+
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
+
+                    {this.render_video_tabs()}
+                    {this.render_contractor_price_amounts()}
+
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_video_tabs(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var object = this.format_post();
+        var items = [].concat(object['ipfs'].videos)
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_video_tab_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_video_tab_item(item, index){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':item['video_id'], 'details':this.truncate(item['video_title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+            </div>
+        )
+    }
+
+    get_video_details_data(object){
+        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var listing_type = this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var image = object['ipfs'].album_art
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
+            'banner-icon':{'header':'me', 'subtitle':this.truncate(title, 15), 'image':image},
+        }
+    }
     
 
 
@@ -1873,6 +1991,8 @@ class ViewTransactionPage extends Component {
             'purchase_recipient':{'title':purchase_recipient, 'details':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'size':'l'},
         }
     }
+
+
 
 
 

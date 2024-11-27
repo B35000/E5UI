@@ -29,7 +29,7 @@ class ContractorDetailsSection extends Component {
     };
 
     componentDidMount() {
-        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
     }
 
     componentWillUnmount() {

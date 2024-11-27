@@ -314,6 +314,9 @@ class SendReceiveEtherPage extends Component {
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_fee_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
+
+                    <div style={{height: 10}}/>
+                    {this.render_gas_price_options()}
                 </div>
             )
         }else{
@@ -332,8 +335,64 @@ class SendReceiveEtherPage extends Component {
                     </div>
 
                     {this.render_gas_price_number_picker()}
+
+                    <div style={{height: 10}}/>
+                    {this.render_gas_price_options()}
                 </div>
             )
+        }
+    }
+
+    render_gas_price_options(){
+        var gas_price = this.props.app_state.gas_price[this.state.ether['e5']]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+
+        if(gas_price == null || isNaN(gas_price)) return;
+        
+        var items = [
+            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price)},
+            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.7 * gas_price)},
+            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.6 * gas_price)},
+            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.1 * gas_price)},
+        ]
+
+        var e5 = this.state.ether['e5']
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            items = [
+                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price), 'max_priority_fee':2_000_000_000 },
+                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.8 * gas_price), 'max_priority_fee':3_000_000_000},
+                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.9 * gas_price), 'max_priority_fee':4_000_000_000},
+                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.6 * gas_price), 'max_priority_fee':5_000_000_000},
+            ]
+        }
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_custom_price_picked(item)}>
+                            {this.render_detail_item('3', {'title':item['title'], 'details':this.round_off(item['price']/10**9)+' gwei', 'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
+    }
+
+    when_custom_price_picked(item){
+        this.props.notify(item['title']+this.props.app_state.loc['1593cf']/* ' price set.' */, 1200)
+        var e5 = this.state.ether['e5']
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            this.when_new_max_fee_per_gas_figure_set(item['price'] + item['max_priority_fee'])
+            this.when_new_max_priority_per_gas_figure_set(item['max_priority_fee'])
+        }else{
+            this.when_new_gas_price_figure_set(item['price'])
         }
     }
 

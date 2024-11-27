@@ -162,7 +162,6 @@ class PostPreview extends Component {
         )
     }
 
-
     format_post_item(object){
         var tags = object['ipfs'] == null ? ['Post'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
@@ -311,6 +310,13 @@ class PostPreview extends Component {
                 </div>
             )
         }
+        else if(this.state.type == 'video'){
+            return(
+                <div>
+                    {this.render_pin_video_button(object)}
+                </div>
+            )
+        }
     }
 
     render_pin_post_button(object){
@@ -349,6 +355,18 @@ class PostPreview extends Component {
         )
     }
 
+    render_pin_video_button(object){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1306e']/* 'Pin the Audiopost to  your feed.' */, 'title':this.props.app_state.loc['1306d']/* 'Pin Videopost' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_post_clicked(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1306f']/* 'Pin/Unpin Videopost' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
     when_pin_post_clicked(object){
         if(this.state.type == 'channel'){
             this.props.pin_channel(object)
@@ -358,6 +376,9 @@ class PostPreview extends Component {
         }
         else if(this.state.type == 'audio'){
             this.props.pin_audio(object)
+        }
+        else if(this.state.type == 'video'){
+            this.props.pin_video(object)
         }
         
     }
