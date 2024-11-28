@@ -2723,7 +2723,7 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
@@ -2844,6 +2844,25 @@ class StackPage extends Component {
                         adds.push([])
                         ints.push(message_transfers);
                     }
+                }
+                else if(txs[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+                    var buy_album_obj = await this.format_buy_videopost_videos(txs[i], calculate_gas, ints, ipfs_index)
+                    
+                    if(buy_album_obj.depth_swap_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.depth_swap_obj)
+                    }
+
+                    if(buy_album_obj.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.transfers_obj)
+                    }
+                    
+                    strs.push(buy_album_obj.string_obj)
+                    adds.push([])
+                    ints.push(buy_album_obj.obj)
                 }
                 
                 delete_pos_array.push(i)
@@ -3075,6 +3094,35 @@ class StackPage extends Component {
             ints.push(transaction_obj)
         }
 
+        var added_video_data = this.get_videos_to_add(pushed_txs);
+        if(added_video_data.videos.length != 0){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [8], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var my_videoposts = this.props.app_state.my_videoposts.slice()
+            var my_videos = this.props.app_state.my_videos.slice()
+
+            added_video_data.videoposts.forEach(videopost => {
+                my_videoposts.push(videopost)
+            });
+            added_video_data.videos.forEach(video => {
+                my_videos.push(video)
+            });
+
+            var data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myvideo');
+            string_obj[0].push(string_data)
+
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
 
         var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
         console.log('rundata',optimized_run)
@@ -3299,6 +3347,12 @@ class StackPage extends Component {
                         obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                     }   
                 }
+                else if(txs[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+                    var t = txs[i]
+                    var sale_type = this.get_video_sale_type(t)
+                    var award_object = {'sale_type':sale_type, 'videos_included':this.get_selected_video_ids(t)}
+                    obj[t.id] = award_object
+                }
             }
         }
 
@@ -3368,6 +3422,33 @@ class StackPage extends Component {
             var data = {'plays': song_plays, 'time':Date.now()}
             obj['myplays'] = data
         }
+
+        var added_video_data = this.get_videos_to_add(pushed_txs);
+        if(added_video_data.videos.length != 0){
+            var my_videoposts = this.props.app_state.my_videoposts.slice()
+            var my_videos = this.props.app_state.my_videos.slice()
+
+            added_video_data.videoposts.forEach(videoposts => {
+                if(my_videoposts.includes(videoposts)){
+                    var index = my_videoposts.indexOf(videoposts)
+                    my_videoposts.splice(index, 1)
+                }
+                my_videoposts.push(videoposts)
+            });
+            added_video_data.videos.forEach(video => {
+                if(my_videos.includes(video)){
+                    var index = my_videos.indexOf(video)
+                    my_videos.splice(index, 1)
+                }
+                my_videos.push(video)
+            });
+
+            var data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
+            obj['myvideo'] = data
+        }
+
+
+
 
         return await this.get_object_ipfs_index(obj, calculate_gas);
     }
@@ -5744,6 +5825,118 @@ class StackPage extends Component {
 
         return {int: obj, str: string_obj}
     }
+
+    format_buy_videopost_videos = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var purchase_recipient = t.videopost['event'].returnValues.p5
+        var post_id = t.videopost['id'];
+        var sale_type = this.get_video_sale_type(t)
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [21], [23],/* 21(album_sale) */
+            [post_id], /* contexts */
+            [sale_type] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var exchanges_used = t.exchanges_used
+        var exchange_amounts = t.exchange_amounts
+
+        for(var i=0; i<exchanges_used.length; i++){
+            var exchange = exchanges_used[i]
+            var amount = (exchange_amounts[exchange]).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, transfers_obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var u=0; u<transfer_actions.length; u++){
+                transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(transfer_actions[u]['amount'])
+                transfers_obj[6].push(transfer_actions[u]['depth'])
+            }
+        }
+
+
+        var award_object = {'sale_type':sale_type, 'videos_included':this.get_selected_video_ids(t)}
+        
+        var string_data = await this.get_object_ipfs_index(award_object, calculate_gas, ipfs_index, t.id);
+        string_obj[0].push(string_data)
+
+
+        return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj, obj:obj, string_obj:string_obj}
+    }
+
+    get_video_sale_type(t){
+        var selected_videos = t.selected_videos
+
+        var object = t.videopost
+        var all_videos = object['ipfs'].videos
+        if(selected_videos.length == all_videos.length && object['ipfs'].price_data.length > 0){
+            //buying entire videopost
+            return 0
+        }else{
+            //buying individual video
+            return 1
+        }
+    }
+
+    get_selected_video_ids(t){
+        var selected_videos = t.selected_videos
+        var ids = []
+        selected_videos.forEach(video => {
+            ids.push(video['video_id'])
+        });
+        return ids
+    }
+
+    get_videos_to_add(pushed_txs){
+        var videoposts = []
+        var videos = []
+        pushed_txs.forEach(transaction => {
+            if(transaction.type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+                videoposts.push(transaction.videopost['id'])
+                
+                var selected_videos = transaction.selected_videos
+                selected_videos.forEach(video => {
+                    videos.push(video['video_id'])
+                });
+            }
+        });
+
+        return {videoposts:videoposts, videos:videos}
+    }
+
 
 
 

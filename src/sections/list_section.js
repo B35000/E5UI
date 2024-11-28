@@ -2780,9 +2780,9 @@ class PostListSection extends Component {
     }
 
     render_my_bought_video_item(object, index, w){
-        var default_image = this.props.app_state.static_assets['music_label']
+        var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
-        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
         return(
@@ -2885,18 +2885,28 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
-        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
-        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
+        var author = sender
         if(this.is_post_anonymous(object)){
             author = ''
         }
         var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
         var default_image = this.props.app_state.static_assets['video_label']
-        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
         }
     }
 
@@ -3591,9 +3601,11 @@ class PostListSection extends Component {
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
             </div>
         )
 

@@ -238,9 +238,6 @@ class VideoDetailsSection extends Component {
                     
                     <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
-                    
-                    {this.render_edit_object_button(object)}
-                    <div style={{height: 10}}/>
 
 
                     {this.render_detail_item('3', item['reply_count'])}
@@ -250,6 +247,8 @@ class VideoDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
 
+                    {this.render_edit_object_button(object)}
+                    <div style={{height: 10}}/>
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['b2527a']/* 'Play Videopost' */, 'details':this.props.app_state.loc['b2527b']/* 'Play all the videos in this videopost.' */})}
@@ -284,11 +283,14 @@ class VideoDetailsSection extends Component {
     }
 
     play_album(object){
+        var items = this.get_videos_to_display(object)
+        var item = items[0]
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
-        }else{
-            var items = this.get_videos_to_display(object)
-            var item = items[0]
+        }else if(!this.is_video_available_for_viewing(item)){
+            this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+        }
+        else{
             this.props.play_video(item, object, this.get_video_items(), this.is_page_my_collection_page())
         }
     }
@@ -536,7 +538,7 @@ class VideoDetailsSection extends Component {
             'award_count':{'title':`${number_with_commas(number_of_awards)}`, 'details': this.props.app_state.loc['2816']/* 'Number of Awards.' */, 'size':'l'},
 
             'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
-
+            'banner-icon':{'header':'', 'subtitle':'', 'image':image},
             'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
         }
     }
@@ -602,15 +604,15 @@ class VideoDetailsSection extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['b2527e']/* `Purchase access to this videopost and its content.` */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <div onClick={()=>this.open_purchase_album_ui(object)}>
+                <div onClick={()=>this.open_purchase_video_ui(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527e']/* 'Buy' */, 'action':''})}
                 </div>
             </div>
         )
     }
 
-    open_purchase_album_ui(object){
-        this.props.open_purchase_album_ui(object)
+    open_purchase_video_ui(object){
+        this.props.open_purchase_video_ui(object)
     }
 
 
@@ -647,9 +649,8 @@ class VideoDetailsSection extends Component {
     }
 
     render_video(item, object, index){
-        var opacity = this.is_video_available_for_viewing(item) ? 1.0 : 0.4
         return(
-            <div style={{opacity: opacity}} onClick={() => this.when_video_item_clicked(item, object)}>
+            <div onClick={() => this.when_video_item_clicked(item, object)}>
                 {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title'], 'size':'l'})}
             </div>
         )
@@ -657,14 +658,14 @@ class VideoDetailsSection extends Component {
 
     get_videos_to_display(object){
         if(this.is_page_my_collection_page()){
-            var songs_to_display = []
-            var items = object['ipfs'].songs
-            items.forEach(song => {
-                songs_to_display.push(song)
+            var videos_to_display = []
+            var items = object['ipfs'].videos
+            items.forEach(video => {
+                videos_to_display.push(video)
             });
-            return songs_to_display
+            return videos_to_display
         }else{
-            return object['ipfs'].songs
+            return object['ipfs'].videos
         }
     }
 
@@ -690,7 +691,7 @@ class VideoDetailsSection extends Component {
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
-        else if(this.is_video_available_for_viewing(item)){
+        else if(!this.is_video_available_for_viewing(item)){
             this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{

@@ -63,6 +63,7 @@ import EditStorefrontItemPage from './pages/edit_action_pages/edit_storefront_it
 import EditContractorPage from './pages/edit_action_pages/edit_contractor_page';
 import EditProposalPage from './pages/edit_action_pages/edit_proposal_page';
 import EditAudioPage from './pages/edit_action_pages/edit_audiopost_page';
+import EditVideoPage from './pages/edit_action_pages/edit_videopost_page'
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -119,6 +120,7 @@ import BuyAlbumPage from './pages/buy_album_page'
 import AudioPip from './pages/audio_pip'
 import FullAudioPage from './pages/full_audio_page'
 import AddToPlaylist from './pages/add_to_playlist'
+import BuyVideoPage from './pages/buy_video_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -333,7 +335,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -394,7 +396,7 @@ class App extends Component {
     web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
     my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false,
 
-    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[],
+    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[],
   };
 
   get_static_assets(){
@@ -946,7 +948,7 @@ class App extends Component {
 
         /* new audio page */
         'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.',
-        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'','a311bs':'',
+        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'Fee for Everything','a311bs':'',
         
 
         /* new video page */
@@ -1203,6 +1205,10 @@ class App extends Component {
         
         /* buy album page */
         '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.','2972c':'Unavailable Tracks.','2972d':'Below are the tracks you\'ve already purchased.','2972e':'Buy All.',
+
+        /* buy video page */
+        'a2962a':'buy-video','a2962b':'video','a2962c':'videopost','a2962d':'Purchase access to one video or the entire catalogue.','a2962e':'Available Videos.','a2962f':'Below are the available videos for purchase.','a2962g':'Unavailable Videos.','a2962h':'Below are the videos you\'ve already purchased.','a2962i':'You can\'t re-buy that video','a2962j':'Here\'s the toal amount of money you\'ll be paying for the videos.','a2962k':'Please pick a video to purchase.','a2962l':'','a2962m':'','a2962n':'','a2962o':'','a2962p':'','a2962q':'','a2962r':'','a2962s':'','a2962t':'','a2962u':'','a2962v':'','a2962w':'','a2962x':'','a2962y':'','a2962z':'','a2962ba':'','a2962bb':'','a2962bc':'',
+
         
         '2973':'Album Sales','2974':'Song Sales','2975':'edit-audio','2976':'Playing ','2977':'Taken from','2978':'File size','2979':'Composers','2980':'Bitrate','2981':'Codec','2982':'Codec Profile','2983':'Container','2984':'Lossless','2985':'Number of Channels','2986':'Number of Samples','2987':'Sample Rate','2988':'data','2989':'lyrics','2990':'queue','2991':'Play Queue','2992':'Below are the tracks that are up next.','2993':'synchronize','2994':'Repeating current song.','2995':'Your queue has been shuffled.','2996':'up-next','2997':'previous',
         
@@ -1211,7 +1217,7 @@ class App extends Component {
         /* add to playlist page */
         '3007':'Add to playlist.','3008':'You can add to an existing playlist or a new playlist.','3009':'existing','3010':'new','3011':'Youre creating a new Playlist.','3012':'Playlist Title','3013':'Playlist Description (optional)','3014':'Create and Add.','3015':'You need a title for your new playlist.','3016':'That title is too long.','3017':'Added your song to the new playlist.','3018':'A playlist with a similar title exists in your library.','3019':'You\'re adding the song to an existing playlist.','3020':'Added your song to the playlist.','3021':'You need to buy the track to add it to your playlists','3022':'Please purchase the song to play it.',
         
-        '3023':'','3024':'','3025':'','3026':'','3027':'','3028':'','3029':'','3030':'','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '3023':'edit-video','3024':'','3025':'','3026':'','3027':'','3028':'','3029':'','3030':'','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -1435,6 +1441,8 @@ class App extends Component {
     this.full_audio_page = React.createRef();
     this.add_to_playlist_page = React.createRef();
     this.new_video_page = React.createRef();
+    this.buy_video_page = React.createRef();
+    this.edit_videopost_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -2951,12 +2959,14 @@ class App extends Component {
           {this.render_full_audio_bottomsheet()}
           {this.render_buy_album_bottomsheet()}
           {this.render_add_to_playlist_bottomsheet()}
+          {this.render_buy_video_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
           {this.render_pick_file_bottomsheet()}
           {this.render_dialog_bottomsheet()}
           {this.render_view_number_bottomsheet()}
+          {this.render_edit_videopost_object_bottomsheet()}
           
           {this.render_toast_container()}
         </div>
@@ -3007,7 +3017,7 @@ class App extends Component {
           show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
           show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
 
-          add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} add_audio_reply_to_stack={this.add_audio_reply_to_stack.bind(this)}
+          add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} add_audio_reply_to_stack={this.add_audio_reply_to_stack.bind(this)} add_video_reply_to_stack={this.add_video_reply_to_stack.bind(this)}
           
           open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
 
@@ -3030,8 +3040,7 @@ class App extends Component {
           update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
           load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)} show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)} play_song={this.play_song.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         
-          play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)}
-          when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}
+          play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)}
         
         />
         {this.render_homepage_toast()}
@@ -5951,7 +5960,6 @@ class App extends Component {
     )
   }
 
-
   render_edit_audio_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
@@ -6012,6 +6020,91 @@ class App extends Component {
 
 
 
+  render_edit_videopost_object_bottomsheet(){
+    if(this.state.edit_videopost_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.edit_videopost_bottomsheet} onClose={this.open_edit_videopost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_edit_audio_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_edit_videopost_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_videopost_bottomsheet.bind(this)} open={this.state.edit_videopost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_edit_audio_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_edit_audio_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    
+    return(
+      <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+          <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} />
+        </div>
+    )
+  }
+
+  open_edit_videopost_bottomsheet(){
+    if(this.state.edit_videopost_bottomsheet == true){
+      //closing
+      this.edit_videopost_bottomsheet = this.edit_videopost_page.current?.state;
+
+      this.setState({edit_videopost_bottomsheet: !this.state.edit_videopost_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_videopost_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_videopost_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_videopost_bottomsheet: !me.state.edit_videopost_bottomsheet});
+          if(me.edit_videopost_bottomsheet != null){
+            me.edit_videopost_page.current?.setState(me.edit_videopost_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_edit_videopost_object(target, object){
+    this.open_edit_videopost_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_videopost_page.current){
+      me.edit_videopost_page.current?.setState(object['ipfs'])
+      me.edit_videopost_page.current?.setState({type:me.getLocale()['3023']/* 'edit-video' */})
+      me.edit_videopost_page.current?.setState({object_id: object['id']})
+      me.edit_videopost_page.current?.set()
+    }
+    }, (1 * 500));
+    this.load_my_subscriptions() 
+  }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6043,6 +6136,9 @@ class App extends Component {
     }
     else if(target == '10'){
       this.open_edit_audiopost_object(target, object)
+    }
+    else if(target == '11'){
+      this.open_edit_videopost_object(target, object)
     }
   }
 
@@ -8648,9 +8744,36 @@ class App extends Component {
           if(me.edit_audiopost_page.current){
           me.edit_audiopost_page.current?.setState(tx)
         }
-        }, (1 * 500));
-        
+        }, (1 * 500));  
     }
+    else if(tx.type == this.getLocale()['b311a']/* video */){
+        this.open_new_object('11')
+        var me = this;
+        setTimeout(function() {
+          if(me.new_video_page.current){
+          me.new_video_page.current?.setState(tx)
+        }
+        }, (1 * 500));  
+    }
+    else if(tx.type == this.getLocale()['a2962a']/* 'buy-video' */){
+      this.open_buy_video_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.buy_video_page.current){
+            me.buy_video_page.current?.setState(tx)
+          }
+        }, (1 * 500));
+    }
+    else if(tx.type == this.getLocale()['3023']/* 'edit-video' */){
+        this.open_edit_videopost_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.edit_videopost_page.current){
+          me.edit_videopost_page.current?.setState(tx)
+        }
+        }, (1 * 500));  
+    }
+    
   }
 
   delete_message_item(item, transaction_item){
@@ -11309,6 +11432,8 @@ class App extends Component {
       this.new_mail_page.current?.when_image_gif_files_picked(picked_files)
       this.new_contractor_page.current?.when_image_gif_files_picked(picked_files)
       this.new_proposal_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_audio_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_video_page.current?.when_image_gif_files_picked(picked_files)
 
       this.edit_job_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_token_page.current?.when_image_gif_files_picked(picked_files)
@@ -11321,7 +11446,6 @@ class App extends Component {
     }
     else if(function_name == 'create_text_banner_image'){
       this.new_channel_page.current?.when_banner_selected(picked_files)
-      this.new_channel_page.current?.when_banner_selected(picked_files)
       this.new_post_page.current?.when_banner_selected(picked_files)
       this.new_job_page.current?.when_banner_selected(picked_files)
       this.new_storefront_item_page.current?.when_banner_selected(picked_files)
@@ -11329,6 +11453,8 @@ class App extends Component {
       this.new_contractor_page.current?.when_banner_selected(picked_files)
       this.new_proposal_page.current?.when_banner_selected(picked_files)
       this.new_token_page.current?.when_banner_selected(picked_files)
+      this.new_audio_page.current?.when_banner_selected(picked_files)
+      this.new_video_page.current?.when_banner_selected(picked_files)
 
       this.edit_job_page.current?.when_banner_selected(picked_files)
       this.edit_token_page.current?.when_banner_selected(picked_files)
@@ -11348,6 +11474,8 @@ class App extends Component {
     else if(function_name == 'create_audio_album_art'){
       this.new_audio_page.current?.when_album_art_selected(picked_files)
       this.edit_audiopost_page.current?.when_album_art_selected(picked_files)
+
+      this.new_video_page.current?.when_album_art_selected(picked_files)
     }
     else if(function_name == 'create_storefront_image_album_art'){
       this.new_storefront_item_page.current?.when_storefront_image_selected(picked_files)
@@ -11361,6 +11489,8 @@ class App extends Component {
       this.new_mail_page.current?.when_pdf_files_picked(picked_files)
       this.new_contractor_page.current?.when_pdf_files_picked(picked_files)
       this.new_proposal_page.current?.when_pdf_files_picked(picked_files)
+      this.new_audio_page.current?.when_pdf_files_picked(picked_files)
+      this.new_video_page.current?.when_pdf_files_picked(picked_files)
 
       this.edit_job_page.current?.when_pdf_files_picked(picked_files)
       this.edit_token_page.current?.when_pdf_files_picked(picked_files)
@@ -11373,6 +11503,10 @@ class App extends Component {
       this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
       
     }
+    else if(function_name == 'create_video_pick_video_file'){
+      this.new_video_page.current?.when_video_file_picked(picked_files)
+    }
+    
   }
 
 
@@ -11455,6 +11589,99 @@ class App extends Component {
   }
 
   add_buy_album_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+  render_buy_video_bottomsheet(){
+    if(this.state.buy_video_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.buy_video_bottomsheet} onClose={this.open_buy_video_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_buy_video_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_buy_video_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_video_bottomsheet.bind(this)} open={this.state.buy_video_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_buy_video_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_buy_video_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <BuyVideoPage ref={this.buy_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_buy_video_transaction_to_stack={this.add_buy_video_transaction_to_stack.bind(this)}/>
+      </div>
+    )
+  }
+
+  open_buy_video_bottomsheet(){
+    if(this.state.buy_video_bottomsheet == true){
+      //closing
+      this.buy_video_bottomsheet = this.buy_video_page.current?.state;
+
+      this.setState({buy_video_bottomsheet: !this.state.buy_video_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({buy_video_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({buy_video_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({buy_video_bottomsheet: !me.state.buy_video_bottomsheet});
+
+          if(me.buy_video_bottomsheet != null){
+            me.buy_video_page.current?.setState(me.buy_video_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_buy_video_bottomsheet(object){
+    this.open_buy_video_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.buy_video_page.current != null){
+        me.buy_video_page.current.set_data(object)
+      }
+    }, (1 * 500));
+  }
+
+  add_buy_video_transaction_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
     var edit_id = -1
     for(var i=0; i<stack_clone.length; i++){
@@ -14645,6 +14872,16 @@ class App extends Component {
 
 
 
+    /* ---------------------------------------- MY VIDEOS DATA ------------------------------------------- */
+    await this.get_my_videos_data(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
+
     /* ---------------------------------------- UPLOADED DATA ------------------------------------------- */
     this.get_e5_uploaded_cid_data(web3, E52contractInstance, e5, account)
     // if(is_syncing){
@@ -14662,6 +14899,9 @@ class App extends Component {
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
+
+
+
 
 
 
@@ -15220,6 +15460,33 @@ class App extends Component {
     }
 
     this.my_plays_account = account
+  }
+
+  get_my_videos_data = async (web3, E52contractInstance, e5, account) => {
+    var my_acquired_videos_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:8})
+
+    if(my_acquired_videos_data_events.length > 0){
+      var latest_event = my_acquired_videos_data_events[my_acquired_videos_data_events.length - 1];
+      var my_acquired_video_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var my_videoposts = my_acquired_video_data['my_videoposts']
+      var my_videos = my_acquired_video_data['my_videos']
+      var timestamp = my_acquired_video_data['time']
+
+      if(this.my_video_collection_timestamp == null){
+        this.my_video_collection_timestamp = 0
+      }
+
+      if(this.my_video_collection_account != account && this.my_video_collection_account != 1 && this.my_video_collection_account != null){
+        this.my_video_collection_timestamp = 0
+      }
+
+      if(parseInt(this.my_video_collection_timestamp) < parseInt(timestamp)){
+        this.setState({my_videoposts: my_videoposts, my_videos: my_videos})
+        this.my_video_collection_timestamp = timestamp
+      }
+    }
+
+    this.my_video_collection_account = account
   }
 
 
@@ -17700,7 +17967,7 @@ class App extends Component {
       var hash = web3.utils.keccak256('en')
       if(created_video_events[i].returnValues.p1.toString() == hash.toString()){
         var video_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
-        
+        console.log('video_data', video_data)
         if(video_data != null){
           if(video_data.album_art != null && video_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
 
@@ -17831,6 +18098,10 @@ class App extends Component {
     if(page == this.getLocale()['1264k']/* 'audioport' */){
       this.load_subscription_data(posts_to_load)
       this.load_audio_data(posts_to_load)
+    }
+    if(page == this.getLocale()['1264p']/* videoport */){
+      this.load_subscription_data(posts_to_load)
+      this.load_video_data(posts_to_load)
     }
 
     if(page == 'w'){
@@ -18460,6 +18731,26 @@ class App extends Component {
     }
   }
 
+  load_video_data = async (posts_to_load) => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.get_web3_url_from_e5(e5)
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != ''){
+        const web3 = new Web3(web3_url);
+
+        var account = this.state.user_account_id[e5]
+        var contract_addresses = this.state.addresses[e5]
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        this.get_video_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load)
+      }
+    }
+  }
+
 
   
 
@@ -18520,6 +18811,7 @@ class App extends Component {
     obj[this.getLocale()['1215']/* 'storefront' */] = 28
     obj[this.getLocale()['1216']/* 'bags' */] = 25
     obj[this.getLocale()['1264k']/* 'audioport' */] = 19
+    obj[this.getLocale()['1264p']/* 'videoport' */] = 20
     obj['w'] = 31
 
     return obj[page]

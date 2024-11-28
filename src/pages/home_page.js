@@ -86,7 +86,9 @@ class home_page extends Component {
         
         view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
-        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[],confirmation_dialog_box: false, contact_to_add:0, 
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], 
+        
+        confirmation_dialog_box: false, contact_to_add:0, 
         
         pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[],
         
@@ -3246,7 +3248,7 @@ class home_page extends Component {
                 open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)}
                 update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.props.download_playlist.bind(this)}
 
-                when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)}
+                when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)}
                 />
             </div>
         )

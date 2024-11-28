@@ -432,9 +432,10 @@ class NewVideoPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['311c']/* Mark as NSFW. */, 'details':this.props.app_state.loc['311d']/* If set to nsfw, post will be marked as not safe for work. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_nsfw_option} tag_size={'l'} when_tags_updated={this.when_get_post_nsfw_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
 
 
-
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
@@ -569,7 +570,7 @@ class NewVideoPage extends Component {
     }
 
 
-    
+
 
     render_create_image_ui_buttons_part2(){
         var default_image = this.props.app_state.static_assets['video_label']
@@ -578,7 +579,7 @@ class NewVideoPage extends Component {
             <div>
                 <div style={{'margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
                     <div style={{'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_video_album_art', 1)}/>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_audio_album_art', 1)}/>
                     </div>
 
                     <div style={{'margin': '10px 0px 0px 0px'}}>
@@ -1622,8 +1623,8 @@ class NewVideoPage extends Component {
 
                 {this.load_token_suggestions('exchange_id')}
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['261'], 'number':this.state.price_amount, 'relativepower':this.props.app_state.loc['483']/* tokens */})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['261'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['483']/* tokens */, })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['a311br'], 'number':this.state.price_amount, 'relativepower':this.props.app_state.loc['483']/* tokens */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['a311br'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['483']/* tokens */, })}
                 </div>
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>

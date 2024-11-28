@@ -19,6 +19,7 @@ function bgN(number, power) {
 }
 
 function number_with_commas(x) {
+    if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -34,11 +35,11 @@ function makeid(length) {
     return result;
 }
 
-class NewAudioPage extends Component {
+class EditVideoPage extends Component {
     
     state = {
         selected: 0,
-        id: makeid(8), type:this.props.app_state.loc['a311a']/* audio */, e5:this.props.app_state.selected_e5,
+        id: makeid(8), type:this.props.app_state.loc['b311a']/* video */, e5:this.props.app_state.selected_e5, 
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
@@ -49,14 +50,12 @@ class NewAudioPage extends Component {
         device_country: this.props.app_state.device_country,
         device_region: this.props.app_state.device_region,
         device_city: '', selected_device_city:'',
-        
+
         typed_link_text:'', link_search_results:[], added_links:[],
         get_post_preview_option:this.get_post_preview_option(),
-
         edit_text_item_pos:-1,
 
-        // get_sort_links_tags_object:this.get_sort_links_tags_object(), 
-        // get_post_nsfw_option:this.get_post_nsfw_option(),
+        get_post_nsfw_option:this.get_post_nsfw_option(),
         get_masked_from_outsiders_option:this.get_masked_from_outsiders_option(),
         get_disabled_comments_section:this.get_disabled_comments_section(),
         get_post_anonymously_tags_option:this.get_post_anonymously_tags_option(),
@@ -66,16 +65,16 @@ class NewAudioPage extends Component {
         get_content_channeling_object:this.get_content_channeling_object(),
 
         exchange_id:'', price_amount:0, price_data:[], 
-        exchange_id2:'', price_amount2:0, price_data2:[], 
-        song_title:'', song_composer:'', songs_free_plays_count:0,
-        
-        songs:[], edit_song_item_pos:-1,
+        exchange_id2:'', price_amount2:0, price_data2:[],
+        video_title:'', video_composer:'',
 
-        entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:'',
+        videos:[], edit_video_item_pos:-1,
 
-        album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
+        album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
         markdown:''
     };
+
+
 
     get_new_job_page_tags_object(){
         var obj = {
@@ -83,7 +82,7 @@ class NewAudioPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['a311bg']/* 'metadata' */,this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298'], this.props.app_state.loc['a311b']/* 'album-fee' */, this.props.app_state.loc['a311c']/* 'track-list' */], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298'], this.props.app_state.loc['b311b']/* 'video-fee' */, this.props.app_state.loc['b311c']/* 'video-list' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -108,7 +107,6 @@ class NewAudioPage extends Component {
         return obj;
     }
 
-
     get_post_preview_option(){
         return{
             'i':{
@@ -119,7 +117,6 @@ class NewAudioPage extends Component {
             ],
         };
     }
-
 
     get_post_nsfw_option(){
         return{
@@ -132,7 +129,6 @@ class NewAudioPage extends Component {
         };
     }
 
-
     get_masked_from_outsiders_option(){
         return{
             'i':{
@@ -143,8 +139,7 @@ class NewAudioPage extends Component {
             ],
         };
     }
-
-
+    
     get_disabled_comments_section(){
         return{
             'i':{
@@ -190,14 +185,13 @@ class NewAudioPage extends Component {
         };
     }
 
-
     get_listing_type_tags_option(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['a311ar']/* 'Album' */, this.props.app_state.loc['a311av']/* 'Single' */, this.props.app_state.loc['a311as'] /* 'EP' */, this.props.app_state.loc['a311at']/* 'Audiobook' */, this.props.app_state.loc['a311au']/* 'Podcast' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['b311d']/* 'Video' */, this.props.app_state.loc['b311e']/* 'Film' */, this.props.app_state.loc['b311f'] /* 'Series' */], [1]
             ],
         };
     }
@@ -214,12 +208,45 @@ class NewAudioPage extends Component {
         };
     }
 
+    get_take_down_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['767c']], [0]
+            ],
+        };
+    }
 
 
 
 
 
 
+
+
+    set(){
+        if(this.state.get_masked_from_outsiders_option == null){
+            this.setState({get_masked_from_outsiders_option:this.get_masked_from_outsiders_option()})
+        }
+        if(this.state.get_disabled_comments_section == null){
+            this.setState({get_disabled_comments_section:this.get_disabled_comments_section()})
+        }
+        if(this.state.get_post_preview_option == null){
+            this.setState({get_post_preview_option:this.get_post_preview_option()})
+        }
+        if(this.state.get_post_anonymously_tags_option == null){
+            this.setState({get_post_anonymously_tags_option:this.get_post_anonymously_tags_option(),})
+        }
+        if(this.state.get_take_down_option == null){
+            this.setState({get_take_down_option: this.get_take_down_option()})
+        }
+        if(this.state.markdown == null){
+            this.setState({markdown:''})
+        }
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, edit_video_item_pos:-1})
+    }
 
 
 
@@ -241,10 +268,10 @@ class NewAudioPage extends Component {
                 <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
-                
             </div>
         )
     }
+
 
     when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
@@ -282,24 +309,17 @@ class NewAudioPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['a311b']/* 'album-fee' */){
+        else if(selected_item == this.props.app_state.loc['b311b']/* 'video-fee' */){
             return(
                 <div>
                     {this.render_album_fee()}
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['a311c']/* 'track-list' */){
+        else if(selected_item == this.props.app_state.loc['b311c']/* 'video-list' */){
             return(
                 <div>
                     {this.render_track_list_ui()}
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['a311bg']/* 'metadata' */){
-            return(
-                <div>
-                    {this.render_metadata_ui()}
                 </div>
             )
         }
@@ -332,6 +352,7 @@ class NewAudioPage extends Component {
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
+
 
 
 
@@ -381,28 +402,6 @@ class NewAudioPage extends Component {
         }
     }
 
-    render_empty_views(size){
-        var items = []
-        for(var i=0; i<size; i++){
-            items.push(i)
-        }
-        
-        return(
-            <div>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px'}}>
-                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
-                                </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
 
     render_title_tags_part(){
         return(
@@ -458,7 +457,7 @@ class NewAudioPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['a311ay']/* 'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['b311g']/* 'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part2()}
 
@@ -469,6 +468,14 @@ class NewAudioPage extends Component {
     render_title_tags_part2(){
         return(
             <div>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['311c']/* Mark as NSFW. */, 'details':this.props.app_state.loc['311d']/* If set to nsfw, post will be marked as not safe for work. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_nsfw_option} tag_size={'l'} when_tags_updated={this.when_get_post_nsfw_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
@@ -502,9 +509,17 @@ class NewAudioPage extends Component {
 
                 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'details':this.props.app_state.loc['476']/* 'Set the type of post your'e uploading to the audioport section.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'details':this.props.app_state.loc['b311h']/* 'Set the type of post your'e uploading to the audioport section.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_listing_type_tags_option} tag_size={'l'} when_tags_updated={this.when_get_listing_type_tags_option_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
             </div>
         )
@@ -538,32 +553,6 @@ class NewAudioPage extends Component {
         this.setState({get_post_anonymously_tags_option: tag_obj})
     }
 
-    when_entered_genre_text_input_field_changed(text){
-        this.setState({entered_genre_text: text})
-    }
-
-    when_entered_year_recorded_text_input_field_changed(text){
-        if(isNaN(text)) return;
-        this.setState({entered_year_recorded_text: text})
-    }
-
-    when_purchase_recipient_input_field_changed(text){
-        if(isNaN(text)) return;
-        this.setState({purchase_recipient: text})
-    }
-
-    when_entered_author_text_input_field_changed(text){
-        this.setState({entered_author_text: text})
-    }
-
-    when_entered_copyright_text_input_field_changed(text){
-        this.setState({entered_copyright_text: text})
-    }
-
-    when_entered_comment_text_input_field_changed(text){
-        this.setState({entered_comment_text: text})
-    }
-
     when_chatroom_enabled_tags_object_updated(tag_obj){
         this.setState({chatroom_enabled_tags_object: tag_obj})
     }
@@ -582,11 +571,9 @@ class NewAudioPage extends Component {
         this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
     }
 
-    
-    
-
-
-
+    when_get_take_down_option(tag_group){
+        this.setState({get_take_down_option: tag_group})
+    }
 
     add_indexing_tag_for_new_job(){
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();
@@ -635,9 +622,12 @@ class NewAudioPage extends Component {
     }
 
 
-    /* renders the buttons for pick images, set images and clear images */
+
+
+
+
     render_create_image_ui_buttons_part2(){
-        var default_image = this.props.app_state.static_assets['music_label']
+        var default_image = this.props.app_state.static_assets['video_label']
         var image = this.state.album_art == null ? default_image : this.get_image_from_file(this.state.album_art)
         return(
             <div>
@@ -664,105 +654,6 @@ class NewAudioPage extends Component {
 
 
 
-
-
-
-
-
-    render_metadata_ui(){
-        var size = this.props.size
-
-        if(size == 's'){
-            return(
-                <div>
-                    {this.render_metadata_section()}
-                    {this.render_detail_item('0')}
-                    {this.render_metadata_section2()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section2()}
-                    </div>
-                </div>
-                
-            )
-        }
-        else if(size == 'l'){
-            return(
-                <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section()}
-                    </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section2()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
-
-    render_metadata_section(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'details':this.props.app_state.loc['a311be']/* 'Set the recipient account ID for all the purchases of this object.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */} when_text_input_field_changed={this.when_purchase_recipient_input_field_changed.bind(this)} text={this.state.purchase_recipient} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311y']/* 'Album Genre.' */, 'details':this.props.app_state.loc['a311z']/* 'Set the genre for your new album.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['a311y']/* 'Album Genre.' */} when_text_input_field_changed={this.when_entered_genre_text_input_field_changed.bind(this)} text={this.state.entered_genre_text} theme={this.props.theme}/>
-
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311aa']/* 'Year Recorded.' */, 'details':this.props.app_state.loc['a311ab']/* 'Set the year the album was recorded or released.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['a311aa']/* 'Year Recorded.' */} when_text_input_field_changed={this.when_entered_year_recorded_text_input_field_changed.bind(this)} text={this.state.entered_year_recorded_text} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-
-            </div>
-        )
-    }
-
-    render_metadata_section2(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ac']/* 'Author' */, 'details':this.props.app_state.loc['a311ad']/* 'Set the author of the Album.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['a311ac']/* 'Author' */} when_text_input_field_changed={this.when_entered_author_text_input_field_changed.bind(this)} text={this.state.entered_author_text} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ae']/* 'Copyright' */, 'details':this.props.app_state.loc['a311af']/* 'Set the copyright holder for the album.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['a311ae']/* 'Copyright' */} when_text_input_field_changed={this.when_entered_copyright_text_input_field_changed.bind(this)} text={this.state.entered_copyright_text} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ag']/* 'Comment' */, 'details':this.props.app_state.loc['a311ah']/* 'Add a comment for the album from its author.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <TextInput height={60} placeholder={this.props.app_state.loc['a311ag']/* 'Comment' */} when_text_input_field_changed={this.when_entered_comment_text_input_field_changed.bind(this)} text={this.state.entered_comment_text} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-            </div>
-        )
-    }
 
 
 
@@ -965,10 +856,6 @@ class NewAudioPage extends Component {
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
-
-
-
-
 
 
 
@@ -1254,7 +1141,6 @@ class NewAudioPage extends Component {
         this.setState({entered_objects: cloned_array, entered_text:''})
     }
 
-
     edit_text_item(item){
         var entered_objects_pos = -1;
         for(var i=0; i<this.state.entered_objects.length; i++){
@@ -1270,7 +1156,6 @@ class NewAudioPage extends Component {
         }
         // this.props.notify('editing item', 600)
     }
-
 
     finish_editing_text_item(item){
         var cloned_array = this.state.entered_objects.slice()
@@ -1306,6 +1191,7 @@ class NewAudioPage extends Component {
     when_kamoji_clicked(text){
         this.setState({entered_text: this.state.entered_text+' '+text})
     }
+
 
 
 
@@ -1687,6 +1573,11 @@ class NewAudioPage extends Component {
 
 
 
+
+
+
+
+
     render_enter_markdown_part(){
         var size = this.props.size
         if(size == 's' || size == 'm'){
@@ -1728,7 +1619,8 @@ class NewAudioPage extends Component {
 
 
 
-    
+
+
 
 
 
@@ -2028,12 +1920,14 @@ class NewAudioPage extends Component {
 
 
 
+
+
     render_track_list_ui(){
         var size = this.props.app_state.size
         if(size == 's'){
             return(
                 <div style={{'overflow-x':'hidden'}}>
-                    {this.render_song_details_picker_part()}
+                    {this.render_video_details_picker_part()}
                     {this.render_enter_item_price_part()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -2044,7 +1938,7 @@ class NewAudioPage extends Component {
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_song_details_picker_part()}
+                        {this.render_video_details_picker_part()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_enter_item_price_part()}
@@ -2057,7 +1951,7 @@ class NewAudioPage extends Component {
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_song_details_picker_part()}
+                        {this.render_video_details_picker_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_enter_item_price_part()}
@@ -2076,21 +1970,19 @@ class NewAudioPage extends Component {
                 {this.render_set_prices_list_part2()}
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311e']/* 'Add Audio.' */, 'details':this.props.app_state.loc['a311f']/* 'Add a new audio item with the specified details set.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311i']/* 'Add Video.' */, 'details':this.props.app_state.loc['b311j']/* 'Add a new video item with the specified details set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_add_song_tapped()}>
-                    {/* <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto'}} /> */}
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_add_video_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['a311g']/* 'Add Audio.' */, 'action':''})}
                 </div>
             </div>
         )
     }
 
-
     render_set_token_and_amount_part2(){
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311h']/* 'Audio Price' */, 'details':this.props.app_state.loc['a311i']/* 'Specify the price for accessing this audio if added individually.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311k']/* 'Video Price' */, 'details':this.props.app_state.loc['b311l']/* 'Specify the price for accessing this video if added individually.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{height:10}}/>
@@ -2149,7 +2041,6 @@ class NewAudioPage extends Component {
             this.props.notify(this.props.app_state.loc['511']/* 'added price!' */, 1000)
         }
     }
-
 
     render_set_prices_list_part2(){
         var middle = this.props.height-100;
@@ -2217,77 +2108,51 @@ class NewAudioPage extends Component {
 
 
 
-
-
-    render_song_details_picker_part(){
+    render_video_details_picker_part(){
         return(
             <div>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['a311j']/* Set the details for a new audio item in your collection or album. */, 'textsize':'14px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['b311m']/* Set the details for a new video item in your show or film. */, 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
-                {this.render_song_tabs()}
+                {this.render_video_tabs()}
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311k']/* 'Audio Title.' */, 'details':this.props.app_state.loc['513']/* 'Set the details for a new audio item in your album.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311n']/* 'Video Title.' */, 'details':this.props.app_state.loc['b311o']/* 'Set the title for the new video item in your show.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311m']/* 'Title...' */} when_text_input_field_changed={this.when_song_title_input_field_changed.bind(this)} text={this.state.song_title} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311m']/* 'Title...' */} when_text_input_field_changed={this.when_video_title_input_field_changed.bind(this)} text={this.state.video_title} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311n']/* 'Audio Composer.' */, 'details':this.props.app_state.loc['a311o']/* 'Set the composers of the auido file.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311p']/* 'Video Creator.' */, 'details':this.props.app_state.loc['b311q']/* 'Set the creators of the video file.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311p']/* 'Composer...' */} when_text_input_field_changed={this.when_song_composer_input_field_changed.bind(this)} text={this.state.song_composer} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311p']/* 'Composer...' */} when_text_input_field_changed={this.when_video_composer_input_field_changed.bind(this)} text={this.state.video_composer} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311u']/* 'Audio Track.' */, 'details':this.props.app_state.loc['a311v']/* 'Pick the track from your uploaded files.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311r']/* 'Video File.' */, 'details':this.props.app_state.loc['b311s']/* 'Pick the video track from your uploaded files.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                {this.render_audio_picker_ui()}
+                {this.render_video_picker_ui()}
                 <div style={{height:10}}/>
-                {this.render_song_audio()}
+                {this.render_video_file()}
                 {this.render_detail_item('0')}
-
-
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bh']/* 'Audio Lyrics.' */, 'details':this.props.app_state.loc['a311bi']/* 'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                {this.render_audio_lyric_picker_ui()}
-                <div style={{height:10}}/>
-                {this.render_song_lyrics()}
-                {this.render_detail_item('0')}
-
-
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ba']/* 'Track Free Plays.' */, 'details':this.props.app_state.loc['a311bb']/* 'Set the number of free plays for your track before a purchase is required.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['261'], 'number':this.state.songs_free_plays_count, 'relativepower':this.props.app_state.loc['a311bc']/* plays */})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['a311ba']/* 'Track Free Plays.' */, 'subtitle':this.format_power_figure(this.state.songs_free_plays_count), 'barwidth':this.calculate_bar_width(this.state.songs_free_plays_count), 'number':this.format_account_balance_figure(this.state.songs_free_plays_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['a311bc']/* plays */, })}
-                </div>
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_free_plays_amount_picked.bind(this)} theme={this.props.theme} power_limit={0}/>
             </div>
         )
     }
 
-    when_song_title_input_field_changed(text){
-        this.setState({song_title: text})
+    when_video_title_input_field_changed(text){
+        this.setState({video_title: text})
     }
 
-    when_song_composer_input_field_changed(text){
-        this.setState({song_composer: text})
+    when_video_composer_input_field_changed(text){
+        this.setState({video_composer: text})
     }
 
-    when_free_plays_amount_picked(number){
-        this.setState({songs_free_plays_count: number})
-    }
-
-    render_audio_picker_ui(){
+    render_video_picker_ui(){
         return(
             <div>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('audio', 'create_audio_pick_audio_file', 1)}/>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('video', 'create_video_pick_video_file', 1)}/>
                     </div>
                 </div>
                 
@@ -2295,40 +2160,46 @@ class NewAudioPage extends Component {
         )
     }
 
-    when_audio_file_picked(files){
-        this.setState({audio_file: files[0]});
-
-        if(this.state.album_art == null){
-            var ecid_obj = this.get_cid_split(files[0])
-            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
-            var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-            var thumbnail = data['thumbnail']
-            if(thumbnail != null){
-                this.setState({album_art: thumbnail})
-            }
-        }
+    when_video_file_picked(files){
+        this.setState({video_file: files[0]});
     }
 
-    render_song_audio(){
-        var audio_file = this.state.audio_file
-        if(audio_file == null){
+    render_video_file(){
+        var background_color = this.props.theme['view_group_card_item_background'];
+        var video_file = this.state.video_file
+        if(video_file == null){
             return(
                 <div>
                     {this.render_empty_views(1)}
                 </div>
             )
         }else{
-            var ecid_obj = this.get_cid_split(audio_file)
+            var ecid_obj = this.get_cid_split(video_file)
             if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
             var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+            
+            var font_size = ['15px', '12px', 19];
             var formatted_size = this.format_data_size(data['size'])
             var fs = formatted_size['size']+' '+formatted_size['unit']
-            var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
-            var details = data['name']
-            var thumbnail = data['thumbnail']
+            var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+            var title = data['name']
+            var video = data['data']
             return(
-                <div>
-                    {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                        <div>
+                            <video height="50" style={{'border-radius':'7px'}}>
+                                <source src={video} type="video/mp4"/>
+                                <source src={video} type="video/ogg"/>
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div style={{'margin':'0px 0px 0px 10px'}}>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                            
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                        </div>
+                    </div>
                 </div>
             )
         }
@@ -2352,131 +2223,49 @@ class NewAudioPage extends Component {
 
 
 
-    render_audio_lyric_picker_ui(){
-        return(
-            <div>
-                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 10px'}}>
-                    <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                    
-                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".lrc" onChange ={this.when_lyric_file_picked.bind(this)}/>
-                </div>
-            </div>
-        )
-    }
 
-    when_lyric_file_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    var data = ev.target.result
-                    var lyrics_data = this.parseLyric(data)
-                    this.setState({song_lyrics: lyrics_data})
-                }.bind(this);
-                var audioFile = e.target.files[i];
-                reader.readAsText(audioFile);
-            }
-        }
-    }
-
-    parseLyric(lrc) {
-        const regex = /^\[(?<time>\d{2}:\d{2}(.\d{2})?)\](?<text>.*)/;
-        // split lrc string to individual lines
-        const lines = lrc.split("\n");
-        const output = [];
-
-        lines.forEach(line => {
-            const match = line.match(regex);
-            if (match == null) return;
-            const { time, text } = match.groups;
-            output.push({
-                time: this.parseTime(time),
-                text: text.trim()
-            });
-        });
-        return output
-    }
-
-    parseTime(time) {
-        const minsec = time.split(":");
-
-        const min = parseInt(minsec[0]) * 60;
-        const sec = parseFloat(minsec[1]);
-
-        return min + sec;
-    }
-
-    render_song_lyrics(){
-        var song_lyrics = this.state.song_lyrics
-        if(song_lyrics == null){
-            return(
-                <div>
-                    {this.render_empty_views(1)}
-                </div>
-            )
-        }else{
-            var title = this.props.app_state.loc['a311bk']/* 'Lyrics Added' */
-            var details = song_lyrics.length + this.props.app_state.loc['a311bj']/* ' lines.' */
-            return(
-                <div>
-                    {this.render_detail_item('3', {'details':details,'title':title, 'size':'l'})}
-                </div>
-            )
-        }
-    }
-
-
-    when_add_song_tapped(){
-        var song_title = this.state.song_title.trim()
-        var song_composer = this.state.song_composer.trim()
+    when_add_video_tapped(){
+        var video_title = this.state.video_title.trim()
+        var video_composer = this.state.video_composer.trim()
         var price_data2 = this.state.price_data2
-        var audio_file = this.state.audio_file
-        var songs_free_plays_count = this.state.songs_free_plays_count
-        var song_lyrics = this.state.song_lyrics
+        var video_file = this.state.video_file
 
-        if(song_title == ''){
-            this.props.notify(this.props.app_state.loc['a311q']/* 'You need to set a title for the track.' */, 3800)
+        if(video_title == ''){
+            this.props.notify(this.props.app_state.loc['b311t']/* 'You need to set a title for the video track.' */, 3800)
         }
-        else if(song_composer == ''){
-            this.props.notify(this.props.app_state.loc['a311r']/* 'You need to set a composer of the track.' */, 3800)
+        else if(video_composer == ''){
+            this.props.notify(this.props.app_state.loc['b311u']/* 'You need to set a composer of the video track.' */, 3800)
         }
-        else if(audio_file == null){
-            this.props.notify(this.props.app_state.loc['a311w']/* 'You need to add an audio track.' */, 3800)
+        else if(video_file == null){
+            this.props.notify(this.props.app_state.loc['b311v']/* 'You need to add a video track.' */, 3800)
         }
         else{
-            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics}
+            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file}
 
-            var clone = this.state.songs.slice()
-            if(this.state.edit_song_item_pos != -1){
-                clone[this.state.edit_song_item_pos] = song
+            var clone = this.state.videos.slice()
+            if(this.state.edit_video_item_pos != -1){
+                video['video_id'] = clone[this.state.edit_video_item_pos]['video_id']
+                clone[this.state.edit_video_item_pos] = video
                 this.props.notify(this.props.app_state.loc['a311s']/* 'Edited the track item.' */, 2600)
             }else{
-                clone.push(song)
+                clone.push(video)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null})
+            this.setState({videos: clone, video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null})
             
         }
     }
 
-    get_song_basic_data(audio_file){
-        var ecid_obj = this.get_cid_split(audio_file)
-        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        var clone = structuredClone(data)
-        clone['thumbnail'] = null
-        clone['data'] = null
-        return clone
-    }
 
 
-    render_song_tabs(){
+    render_video_tabs(){
         var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.state.songs)
+        var items = [].concat(this.state.videos)
 
         if(items.length == 0){
             items = [1, 2, 3]
@@ -2513,14 +2302,14 @@ class NewAudioPage extends Component {
         if(this.is_tab_active(index)){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':item['song_id'], 'details':'', 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                    {this.render_detail_item('3', {'title':item['video_id'], 'details':'', 'size':'s', 'padding':'5px 12px 5px 12px'})}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':item['song_id'], 'details':this.truncate(item['song_title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                    {this.render_detail_item('3', {'title':item['video_id'], 'details':this.truncate(item['video_title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
                 </div>
             )
         }
@@ -2531,7 +2320,7 @@ class NewAudioPage extends Component {
     }
 
     is_tab_active(index){
-        return this.state.edit_song_item_pos == index
+        return this.state.edit_video_item_pos == index
     }
 
     when_tab_clicked(item, index){
@@ -2551,7 +2340,7 @@ class NewAudioPage extends Component {
     }
 
     remove_tab_item(index){
-        var cloned_array = this.state.songs.slice()
+        var cloned_array = this.state.videos.slice()
         // const index = cloned_array.indexOf(item);
         if (index > -1) { // only splice array when item is found
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
@@ -2560,23 +2349,27 @@ class NewAudioPage extends Component {
             if(this.is_tab_active(index) && prev_index > -1){
                 this.focus_tab(prev_index)
             }
-            this.setState({songs: cloned_array})
+            this.setState({videos: cloned_array})
         }
     }
+
 
     focus_tab(item_pos){
         if(this.is_tab_active(item_pos)){
-            this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0})
+            this.setState({video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null})
         }else{
-            this.props.notify(this.props.app_state.loc['a311x']/* 'Editing that Track.' */, 2000)
-            this.set_focused_song_data(item_pos)
+            this.props.notify(this.props.app_state.loc['b311w']/* 'Editing that Video Track.' */, 2000)
+            this.set_focused_video_data(item_pos)
         }
     }
 
-    set_focused_song_data(item_pos){
-        var song = this.state.songs[item_pos]
-        this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics']});
+    set_focused_video_data(item_pos){
+        var video = this.state.videos[item_pos]
+        this.setState({video_title: video['video_title'], video_composer: video['video_composer'], price_data2: video['price_data'], video_file: video['video'], edit_video_item_pos: item_pos});
     }
+
+
+
 
 
 
@@ -2586,15 +2379,8 @@ class NewAudioPage extends Component {
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
-        var genre = this.state.entered_genre_text
-        var year = this.state.entered_year_recorded_text
-        var author = this.state.entered_author_text
-        var copyright = this.state.entered_copyright_text
-        var comment = this.state.entered_comment_text
-        var album_price_data = this.state.price_data
-        var tracks = this.state.songs
+        var tracks = this.state.videos
         var album_art = this.state.album_art
-        var purchase_recipient = this.state.purchase_recipient
 
         if(index_tags.length < 3){
             this.props.notify(this.props.app_state.loc['270'], 4700)
@@ -2605,45 +2391,14 @@ class NewAudioPage extends Component {
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['272'], 4700)
         }
-        else if(genre == ''){
-            this.props.notify(this.props.app_state.loc['a311al']/* 'You need to specify the albums genre.' */, 4700)
-        }
-        else if(year == ''){
-            this.props.notify(this.props.app_state.loc['a311am']/* You need to speicfy the albums year. */, 4700)
-        }
-        else if(author == ''){
-            this.props.notify(this.props.app_state.loc['a311an']/* You need to specify the albums author. */, 4700)
-        }
-        else if(copyright == ''){
-            this.props.notify(this.props.app_state.loc['a311ao']/* You need to specify the albums copyright holder. */, 4700)
-        }
-        else if(comment == ''){
-            this.props.notify(this.props.app_state.loc['a311ap']/* You need to add the authors comment for the album. */, 4700)
-        }
         else if(tracks.length == 0){
-            this.props.notify(this.props.app_state.loc['a311aq']/* You need to add some tracks to the new album. */, 4700)
+            this.props.notify(this.props.app_state.loc['b311x']/* You need to add some videos to the new videopost. */, 4700)
         }
         else if(album_art == null){
             this.props.notify(this.props.app_state.loc['a311az']/* You need to set the album art for your new post. */, 4700)
         }
-        else if(purchase_recipient == ''){
-            this.props.notify(this.props.app_state.loc['a311bf']/* You need to set a purchase recipient for your new audiopost. */, 4700)
-        } 
         else{
-            // var me = this;
-            // this.setState({content_channeling_setting: me.props.app_state.content_channeling,
-            //     device_language_setting :me.props.app_state.device_language,
-            //     device_country :me.props.app_state.device_country,
-            //     e5 :me.props.app_state.selected_e5,})
-
-            var me = this;
-            setTimeout(function() {
-                me.props.when_add_new_object_to_stack(me.state)
-        
-                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null, entered_pdf_objects:[], markdown:''})
-            }, (1 * 1000));
-
-            
+            this.props.when_add_edit_object_to_stack(this.state)
             this.props.notify(this.props.app_state.loc['18'], 1700);
         }
     }
@@ -2656,6 +2411,31 @@ class NewAudioPage extends Component {
 
 
 
+
+
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
@@ -2765,4 +2545,4 @@ class NewAudioPage extends Component {
 
 
 
-export default NewAudioPage;
+export default EditVideoPage;

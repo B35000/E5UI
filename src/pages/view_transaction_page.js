@@ -192,7 +192,7 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */ && item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */){
+        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */ && item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */ && item.type != this.props.app_state.loc['1593ct']/* 'video-messages' */){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1788']/* 'Make some changes to the transaction' */, 'title':this.props.app_state.loc['1789']/* 'Edit' */})}
@@ -727,6 +727,20 @@ class ViewTransactionPage extends Component {
                         {this.render_mail_message_data('Videopost Messages')}
                     </div>
                 )   
+            }
+            else if(tx.type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+                return(
+                    <div>
+                        {this.render_buy_video_transaction_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3023']/* 'edit-video' */){
+                return(
+                    <div>
+                        {this.render_edit_videopost()}
+                    </div>
+                )
             }
 
         }
@@ -5189,6 +5203,39 @@ class ViewTransactionPage extends Component {
         )
     }
 
+    render_edit_videopost(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_video_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
+
+                    {this.render_video_tabs()}
+                    {this.render_contractor_price_amounts()}
+
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
 
     format_proposal2(){
         return{'ipfs':this.props.app_state.stack_items[this.state.transaction_index]}
@@ -5828,6 +5875,155 @@ class ViewTransactionPage extends Component {
     }
 
     render_total_payments2(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var data = transaction_item.data
+        var exchanges_used = [].concat(data.exchanges_used)
+        var exchange_amounts = data.exchange_amounts
+        var e5 = transaction_item.e5
+
+        if(exchanges_used.length == 0){
+            return(
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                </div>
+            )
+        }
+
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {exchanges_used.map((item, index) => (
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':exchange_amounts[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(exchange_amounts[item]), 'barwidth':this.calculate_bar_width((exchange_amounts[item])), 'number':this.format_account_balance_figure((exchange_amounts[item])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>  
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_buy_video_transaction_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var object = transaction_item.videopost
+        var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        var author = object['ipfs'] == null ? 'Videopost' : this.get_senders_name(object['event'].returnValues.p5, object)
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'14px', 'text': this.props.app_state.loc['2971']/* 'The following songs will be added to your collection after the purchase.' */})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('8', {'title':listing_type+' • '+object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'})}
+                {this.render_selected_video_tabs()}
+                <div style={{height: 10}}/>
+                {this.render_total_to_be_paid2()}
+            </div>
+        )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            if(this.is_post_anonymous(object)) return this.props.app_state.loc['311m']/* 'Hidden' */
+            return alias
+        }
+    }
+
+    is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = this.get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
+
+
+
+    render_selected_video_tabs(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = [].concat(transaction_item.selected_videos)
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_tab_item3(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_tab_item3(item, index){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':item['video_id'], 'details':this.truncate(item['video_title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+            </div>
+        )
+    }
+
+    render_total_to_be_paid2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2967']/* 'Total Purchase amounts.' */, 'details':this.props.app_state.loc['a2962j']/* 'Here\'s the toal amount of money you\'ll be paying for the videos.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_total_payments3()}
+            </div>
+        )
+    }
+
+    render_total_payments3(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         var data = transaction_item.data
         var exchanges_used = [].concat(data.exchanges_used)

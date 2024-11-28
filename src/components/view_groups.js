@@ -613,6 +613,7 @@ class ViewGroups extends Component {
 
 
     get_image_from_file(ecid){
+        if(ecid == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
         if(!ecid.startsWith('image')) return ecid
         var ecid_obj = this.get_cid_split(ecid)
         if(this.props.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
