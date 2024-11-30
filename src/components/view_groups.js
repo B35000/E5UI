@@ -346,13 +346,19 @@ class ViewGroups extends Component {
             var header = object_data != null ? object_data['header']:'E35'
             var subtitle = object_data != null ? object_data['subtitle']:'ETC'
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
-            var width_height = '180px'
+            var width = '180px'
+            var height = '180px'
             if(object_data != null && object_data['width_height']!= null){
-                width_height = object_data['width_height']
+                width = object_data['width_height']
+                height = width;
             }
+            if(object_data != null && object_data['height']!= null){
+                height = object_data['height']
+            }
+
             return(
                 <div style={{height:230, width:'90%','display': 'flex', 'align-items':'center','justify-content':'center','padding':'0px 0px 0px 50px'}}>
-                    <img alt="" src={this.get_image_from_file(img)} style={{height: width_height ,width: width_height,'border-radius':'15%'}} />
+                    <img alt="" src={this.get_image_from_file(img)} style={{height: height ,width: width,'border-radius':'15%'}} />
 
                     <div style={{'margin':'0px 0px 0px 20px'}}> 
                         <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{header}</p>

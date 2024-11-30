@@ -121,6 +121,7 @@ import AudioPip from './pages/audio_pip'
 import FullAudioPage from './pages/full_audio_page'
 import AddToPlaylist from './pages/add_to_playlist'
 import BuyVideoPage from './pages/buy_video_page'
+import FullVideoPage from './pages/full_video_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -335,7 +336,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -396,7 +397,7 @@ class App extends Component {
     web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
     my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false,
 
-    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[],
+    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{}
   };
 
   get_static_assets(){
@@ -952,7 +953,7 @@ class App extends Component {
         
 
         /* new video page */
-        'b311a':'video','b311b':'video-fee','b311c':'video-list','b311d':'Video','b311e':'Film','b311f':'Series','b311g':'Set the video art for your new post. The art will be rendered in a 1:1 aspect ratio.','b311h':'Set the type of post your\'e uploading to the videoport section.','b311i':'Add Video','b311j':'Add a new video item with the specified details set.','b311k':'Video Price','b311l':'Specify the price for accessing this video if added individually.','b311m':'Set the details for a new video item in your show or film.','b311n':'Video Title.','b311o':'Set the title for the new video item in your show.','b311p':'Video Creator.','b311q':'Set the creators of the video file.','b311r':'Video File','b311s':'Pick the video track from your uploaded files.','b311t':'You need to set a title for the video track.','b311u':'You need to set a composer of the video track.','b311v':'You need to add a video track.','b311w':'Editing that Video Track.','b311x':'You need to add some videos to the new videopost.','b311y':'','b311z':'','b311aa':'','b311ab':'','b311ac':'','b311ad':'','b311ae':'','b311af':'','b311ag':'','b311ah':'','b311ai':'','b311aj':'','b311ak':'','b311al':'','b311am':'','b311an':'','b311ao':'','b311ap':'','b311aq':'','b311ar':'','b311as':'','b311at':'','b311au':'','b311av':'','b311aw':'','b311ax':'','b311ay':'','b311az':'',
+        'b311a':'video','b311b':'video-fee','b311c':'video-list','b311d':'Video','b311e':'Film','b311f':'Series','b311g':'Set the video art for your new post.','b311h':'Set the type of post your\'e uploading to the videoport section.','b311i':'Add Video','b311j':'Add a new video item with the specified details set.','b311k':'Video Price','b311l':'Specify the price for accessing this video if added individually.','b311m':'Set the details for a new video item in your show or film.','b311n':'Video Title.','b311o':'Set the title for the new video item in your show.','b311p':'Video Creator.','b311q':'Set the creators of the video file.','b311r':'Video File','b311s':'Pick the video track from your uploaded files.','b311t':'You need to set a title for the video track.','b311u':'You need to set a composer of the video track.','b311v':'You need to add a video track.','b311w':'Editing that Video Track.','b311x':'You need to add some videos to the new videopost.','b311y':'','b311z':'','b311aa':'','b311ab':'','b311ac':'','b311ad':'','b311ae':'','b311af':'','b311ag':'','b311ah':'','b311ai':'','b311aj':'','b311ak':'','b311al':'','b311am':'','b311an':'','b311ao':'','b311ap':'','b311aq':'','b311ar':'','b311as':'','b311at':'','b311au':'','b311av':'','b311aw':'','b311ax':'','b311ay':'','b311az':'',
 
 
         /* new proposal page */
@@ -1217,7 +1218,7 @@ class App extends Component {
         /* add to playlist page */
         '3007':'Add to playlist.','3008':'You can add to an existing playlist or a new playlist.','3009':'existing','3010':'new','3011':'Youre creating a new Playlist.','3012':'Playlist Title','3013':'Playlist Description (optional)','3014':'Create and Add.','3015':'You need a title for your new playlist.','3016':'That title is too long.','3017':'Added your song to the new playlist.','3018':'A playlist with a similar title exists in your library.','3019':'You\'re adding the song to an existing playlist.','3020':'Added your song to the playlist.','3021':'You need to buy the track to add it to your playlists','3022':'Please purchase the song to play it.',
         
-        '3023':'edit-video','3024':'','3025':'','3026':'','3027':'','3028':'','3029':'','3030':'','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '3023':'edit-video','3024':'Videopost Sales.','3025':'Video Sales','3026':'details','3027':'queue','3028':'Loading...','3029':'e is already playing that video.','3030':'','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -1443,6 +1444,7 @@ class App extends Component {
     this.new_video_page = React.createRef();
     this.buy_video_page = React.createRef();
     this.edit_videopost_page = React.createRef();
+    this.full_video_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -1634,6 +1636,8 @@ class App extends Component {
       albums_to_stash: this.get_albums_to_stash(),
       custom_gateway: this.state.custom_gateway,
       pdf_bookmarks: this.state.pdf_bookmarks,
+
+      video_timestamp_data:this.state.video_timestamp_data
     }
   }
 
@@ -1734,7 +1738,8 @@ class App extends Component {
       var cupcake_should_update_song_plays = cupcake_state.should_update_song_plays
       var cupcake_albums_to_stash = cupcake_state.albums_to_stash
       var cupcake_custom_gateway = cupcake_state.custom_gateway
-      var cupcake_pdf_bookmarks = cupcake_state.pdf_bookmarks
+      var cupcake_pdf_bookmarks = cupcake_state.pdf_bookmarks;
+      var cupcake_video_timestamp_data = cupcake_state.video_timestamp_data
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -1930,6 +1935,10 @@ class App extends Component {
 
       if(cupcake_pdf_bookmarks != null){
         this.setState({pdf_bookmarks: cupcake_pdf_bookmarks})
+      }
+
+      if(cupcake_video_timestamp_data != null){
+        this.setState({video_timestamp_data: cupcake_video_timestamp_data})
       }
 
     }
@@ -2689,12 +2698,12 @@ class App extends Component {
     if(width<250){
       return 'e';
     }
-    else if(width > 1920){
-      return 'e';
-    }
-    else if(width > 1400){
-      return 'e';//xl
-    }
+    // else if(width > 1920){
+    //   return 'e';
+    // }
+    // else if(width > 1400){
+    //   return 'e';//xl
+    // }
     else if(width > 930){
       return 'l';//l
     }
@@ -2967,6 +2976,7 @@ class App extends Component {
           {this.render_dialog_bottomsheet()}
           {this.render_view_number_bottomsheet()}
           {this.render_edit_videopost_object_bottomsheet()}
+          {this.render_full_video_bottomsheet()}
           
           {this.render_toast_container()}
         </div>
@@ -3040,7 +3050,7 @@ class App extends Component {
           update_coin_balances={this.update_coin_balances.bind(this)} load_contracts_exchange_interactions_data={this.load_contracts_exchange_interactions_data.bind(this)} load_burn_address_end_balance_events={this.load_burn_address_end_balance_events.bind(this)}
           load_bags_stores={this.load_bags_stores.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)} show_buy_album_bottomsheet={this.show_buy_album_bottomsheet.bind(this)} play_song={this.play_song.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         
-          play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)}
+          play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
         />
         {this.render_homepage_toast()}
@@ -11441,6 +11451,8 @@ class App extends Component {
       this.edit_channel_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_storefront_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_contractor_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_videopost_page.current?.when_image_gif_files_picked(picked_files)
+
       this.add_comment_page.current?.when_image_gif_files_picked(picked_files)
       this.send_job_request_page.current?.when_image_gif_files_picked(picked_files)
     }
@@ -11455,6 +11467,7 @@ class App extends Component {
       this.new_token_page.current?.when_banner_selected(picked_files)
       this.new_audio_page.current?.when_banner_selected(picked_files)
       this.new_video_page.current?.when_banner_selected(picked_files)
+      
 
       this.edit_job_page.current?.when_banner_selected(picked_files)
       this.edit_token_page.current?.when_banner_selected(picked_files)
@@ -11462,6 +11475,7 @@ class App extends Component {
       this.edit_channel_page.current?.when_banner_selected(picked_files)
       this.edit_storefront_page.current?.when_banner_selected(picked_files)
       this.edit_contractor_page.current?.when_banner_selected(picked_files)
+      this.edit_videopost_page.current?.when_banner_selected(picked_files)
     }
     else if(function_name == 'create_storefront_variant_image'){
       this.new_token_page.current?.when_variant_image_gif_files_picked(picked_files)
@@ -11476,6 +11490,7 @@ class App extends Component {
       this.edit_audiopost_page.current?.when_album_art_selected(picked_files)
 
       this.new_video_page.current?.when_album_art_selected(picked_files)
+      this.edit_videopost_page.current?.when_album_art_selected(picked_files)
     }
     else if(function_name == 'create_storefront_image_album_art'){
       this.new_storefront_item_page.current?.when_storefront_image_selected(picked_files)
@@ -11498,13 +11513,15 @@ class App extends Component {
       this.edit_channel_page.current?.when_pdf_files_picked(picked_files)
       this.edit_storefront_page.current?.when_pdf_files_picked(picked_files)
       this.edit_contractor_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_videopost_page.current?.when_pdf_files_picked(picked_files)
+
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
-      
       this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
       
     }
     else if(function_name == 'create_video_pick_video_file'){
       this.new_video_page.current?.when_video_file_picked(picked_files)
+      this.new_video_page.current?.when_pdf_files_picked(picked_files)
     }
     
   }
@@ -12552,6 +12569,165 @@ class App extends Component {
     }, (1 * 500));
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_full_video_bottomsheet(){
+    if(this.state.full_video_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.full_video_bottomsheet} onClose={this.open_full_video_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_full_video_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_full_video_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_full_video_bottomsheet.bind(this)} open={this.state.full_video_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_full_video_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_full_video_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <FullVideoPage ref={this.full_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
+            update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)}
+            />
+      </div>
+    )
+  }
+
+  open_full_video_bottomsheet(){
+    if(this.state.full_video_bottomsheet == true){
+      //closing
+      if(this.is_picture_in_pictiure_showing()){
+        //just hide the page
+        this.setState({full_video_bottomsheet: !this.state.full_video_bottomsheet});
+      }else{
+        this.full_video_bottomsheet = this.full_video_page.current?.state;
+        this.setState({full_video_bottomsheet: !this.state.full_video_bottomsheet});
+        var me = this;
+        setTimeout(function() {
+          me.setState({full_video_bottomsheet2: false});
+          me.video_pip_page.current?.when_expanded_player_closed()
+        }, (1 * 1000));
+      }
+      
+    }else{
+      //opening
+      this.setState({full_video_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({full_video_bottomsheet: !me.state.full_video_bottomsheet});
+
+          if(me.full_video_bottomsheet != null){
+            me.full_video_page.current?.setState(me.full_video_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_full_video_bottomsheet(queue, object){
+    this.open_full_video_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.full_video_page.current != null){
+        me.full_video_page.current.set_data(queue, object, 0)
+      }
+    }, (1 * 500));
+  }
+
+  play_video(video, object){
+    var queue = this.get_video_queue(video, object)
+    this.show_full_video_bottomsheet(queue, object)
+    this.load_video_queue(queue, 0)
+  }
+
+  load_video_queue = async (queue, pos) => {
+    var videos_to_load = []
+    
+    for(var i=pos; i<queue.length; i++){
+      var video = queue[i]
+      if(videos_to_load.length < 1){
+        videos_to_load.push(video['video'])
+      }
+    }
+
+    for(var i=0; i<videos_to_load.length; i++){
+      var video = videos_to_load[i]
+      await this.fetch_uploaded_data_from_ipfs([video], false)
+      if(i == 0){
+        //if its the video thats to be played
+        await this.wait(150)
+        this.full_video_page.current?.start_playing()
+      }
+    }
+  }
+
+  get_video_queue(item, object){
+    var videos = []
+    var video_ids = []
+    item['album_art'] = object['ipfs'].album_art
+    item['object'] = object
+    videos.push(item)
+    video_ids.push(item['video_id'])
+
+    var objects_videos = object['ipfs'].videos
+    var should_start_adding = false
+    objects_videos.forEach(video => {
+      if(should_start_adding && !video_ids.includes(video['video_id'])){
+        video['album_art'] = object['ipfs'].album_art
+        video['object'] = object
+        videos.push(video)
+        video_ids.push(video['video_id'])
+      }
+      if(!should_start_adding && video['video_id'] == item['video_id']){
+        should_start_adding = true;
+      }
+    });
+
+    return videos
+  }
+
+  is_picture_in_pictiure_showing(){
+    return document.pictureInPictureElement != null
+  }
+
+  when_picture_in_picture_exited(){
+    this.setState({full_video_bottomsheet: true});
+  }
+
+  update_video_time_for_future_reference(time, current_video){
+    var clone = structuredClone(this.state.video_timestamp_data)
+    clone[current_video['video_id']] = time
+    this.setState({video_timestamp_data: clone})
+  }
 
 
 
@@ -17969,10 +18145,23 @@ class App extends Component {
         var video_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         console.log('video_data', video_data)
         if(video_data != null){
-          if(video_data.album_art != null && video_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
+          if(video_data.album_art != null && video_data.album_art.startsWith('image')) {
+            this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
+          }
+
+          var sales_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21, p3/* context */:id})
+          var videopost_sales = 0
+          var video_sales = 0
+          sales_events.forEach(event => {
+            if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+              videopost_sales++
+            }else{
+              video_sales++
+            }
+          });
 
           const data = {'id':id, 'ipfs':video_data, 'event': created_video_events[i], 'e5':e5, 'timestamp':parseInt(created_video_events[i].returnValues.p6), 
-          'author':created_video_events[i].returnValues.p5, 'e5_id':id+e5
+          'author':created_video_events[i].returnValues.p5, 'e5_id':id+e5, 'videopost_sales':videopost_sales, 'video_sales':video_sales,
           }
 
           var obj = this.get_item_in_array(created_videos, id)

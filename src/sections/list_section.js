@@ -2417,7 +2417,7 @@ class PostListSection extends Component {
         var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
         return(
             <div style={{width:w, height:'auto'}}>
-                <img src={image} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
                 <div style={{height:5}}/>
                 <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
                 <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>
@@ -2783,11 +2783,11 @@ class PostListSection extends Component {
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
-        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
-        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
+        var author = sender
         return(
             <div style={{width:w, height:'auto'}}>
-                <img src={image} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
                 <div style={{height:5}}/>
                 <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
                 <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>

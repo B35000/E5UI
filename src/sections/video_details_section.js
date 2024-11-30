@@ -214,7 +214,9 @@ class VideoDetailsSection extends Component {
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('7', item['banner-icon'])}
+                    <div onClick={()=> this.play_album(object)}>
+                        {this.render_detail_item('7', item['banner-icon'])}
+                    </div>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
@@ -246,6 +248,8 @@ class VideoDetailsSection extends Component {
                     {this.render_detail_item('3', item['award_count'])}
                     <div style={{height: 10}}/>
 
+                    {this.render_video_sales_data(object, item)}
+                    <div style={{height: 10}}/>
 
                     {this.render_edit_object_button(object)}
                     <div style={{height: 10}}/>
@@ -291,7 +295,7 @@ class VideoDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
-            this.props.play_video(item, object, this.get_video_items(), this.is_page_my_collection_page())
+            this.props.play_video(item, object)
         }
     }
 
@@ -538,8 +542,26 @@ class VideoDetailsSection extends Component {
             'award_count':{'title':`${number_with_commas(number_of_awards)}`, 'details': this.props.app_state.loc['2816']/* 'Number of Awards.' */, 'size':'l'},
 
             'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
-            'banner-icon':{'header':'', 'subtitle':'', 'image':image},
+            'banner-icon':{'header':'', 'subtitle':'', 'image':image, 'height':'auto'},
             'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+
+            'videopost_sales':{'title':number_with_commas(object['videopost_sales']), 'details':this.props.app_state.loc['3024']/* 'Videopost Sales' */, 'size':'l'},
+            'video_sales':{'title':number_with_commas(object['video_sales']), 'details':this.props.app_state.loc['3025']/* 'Video Sales' */, 'size':'l'},
+        }
+    }
+
+    render_video_sales_data(object, item){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+
+        if(object['event'].returnValues.p5 == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('3', item['videopost_sales'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['video_sales'])}
+                    <div style={{height: 10}}/>
+                </div>
+            )
         }
     }
 
@@ -695,7 +717,7 @@ class VideoDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
-            this.props.play_video(item, object, this.get_video_items(), this.is_page_my_collection_page())
+            this.props.play_video(item, object)
         }
     }
 

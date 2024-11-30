@@ -179,7 +179,7 @@ class AudioPip extends Component {
         var current_song = this.state.songs[this.state.pos]
         var audio_file = current_song['track']
         var ecid_obj = this.get_cid_split(audio_file)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data['data'] == null) return false
         return true

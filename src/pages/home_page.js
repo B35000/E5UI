@@ -2279,11 +2279,11 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
-            var my_added_album_ids = this.props.app_state.my_albums
+            var my_added_videopost_ids = this.props.app_state.my_videoposts
             var all_videos = this.get_all_sorted_objects(this.props.app_state.created_videos)
             var my_acquired_albums = []
-            for(var i=0; i<my_added_album_ids.length; i++){
-                var obj = this.get_item_in_array(my_added_album_ids[i], all_videos)
+            for(var i=0; i<my_added_videopost_ids.length; i++){
+                var obj = this.get_item_in_array(my_added_videopost_ids[i], all_videos)
                 if(obj != null) my_acquired_albums.push(obj)
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums))))
@@ -3248,7 +3248,7 @@ class home_page extends Component {
                 open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)}
                 update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.props.download_playlist.bind(this)}
 
-                when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)}
+                when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)} play_video={this.props.play_video.bind(this)}
                 />
             </div>
         )
