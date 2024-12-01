@@ -66,7 +66,7 @@ class NewVideoPage extends Component {
 
         exchange_id:'', price_amount:0, price_data:[], 
         exchange_id2:'', price_amount2:0, price_data2:[],
-        video_title:'', video_composer:'',
+        video_title:'', video_composer:'', video_subtitle_language:'', selected_subtitle_language:'', subtitles:[],
 
         videos:[], edit_video_item_pos:-1,
 
@@ -2081,6 +2081,38 @@ class NewVideoPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_video_file()}
                 {this.render_detail_item('0')}
+
+
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311y']/* 'Video Subtitles.' */, 'details':this.props.app_state.loc['b311z']/* 'You may add subtitles for your uploaded video. The file has to be a .vtt file.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_video_subtitle_picker_ui()}
+                <div style={{height:10}}/>
+
+                {this.render_selected_subtitle_file()}
+                <div style={{height:10}}/>
+
+                
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['b311ae']/* 'You\'ll need to set the language for the subtitle file. Then click add file to add it to the new video.' */})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['b311aa']/* 'Language (eg. German)' */} when_text_input_field_changed={this.when_video_subtitle_language_input_field_changed.bind(this)} text={this.state.video_subtitle_language} theme={this.props.theme}/>
+
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_languages_from_typed_text().languages, 'indexed_option':'indexed', 'when_tapped':'when_language_selected'})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_subtitle_language})}
+                
+                <div style={{height:10}}/>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_add_subtitle_file_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['b311ad']/* 'Add subtitle file.' */, 'action':''})}
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_my_subtitles()}
             </div>
         )
     }
@@ -2091,6 +2123,10 @@ class NewVideoPage extends Component {
 
     when_video_composer_input_field_changed(text){
         this.setState({video_composer: text})
+    }
+
+    when_video_subtitle_language_input_field_changed(text){
+        this.setState({video_subtitle_language: text})
     }
 
     render_video_picker_ui(){
@@ -2168,6 +2204,206 @@ class NewVideoPage extends Component {
 
 
 
+    get_languages_from_typed_text(){
+        var selected_languages = []
+        var languages = this.props.app_state.languages
+        var typed_text = this.state.video_subtitle_language
+
+        if(typed_text == ''){
+            return {
+                language_objects:[
+                    {
+                        "code": "en",
+                        "name": "English",
+                        "nativeName": "English"
+                    },
+                    {
+                        "code": "fr",
+                        "name": "French",
+                        "nativeName": "français, langue française"
+                    },
+                    {
+                        "code": "eo",
+                        "name": "Esperanto",
+                        "nativeName": "Esperanto"
+                    },
+                    {
+                        "code": "it",
+                        "name": "Italian",
+                        "nativeName": "Italiano"
+                    }
+                ],
+                languages:['English', 'français, langue française', 'Esperanto', 'Italiano']
+            }
+
+        }
+        selected_languages = languages.filter(function (el) {
+            return (
+                (el['code'].toLowerCase().startsWith(typed_text.toLowerCase()) || el['code'].toLowerCase() == typed_text.toLowerCase()) || 
+                (el['name'].toLowerCase().startsWith(typed_text.toLowerCase()) || el['name'].toLowerCase() == typed_text.toLowerCase())|| 
+                (el['nativeName'].toLowerCase().startsWith(typed_text.toLowerCase()) || el['nativeName'].toLowerCase() == typed_text.toLowerCase())
+            )
+        });
+
+        var language_objects = []
+        var languages = []
+        var l = selected_languages.length > 7 ? 7 : selected_languages.length
+        for(var i=0; i<l; i++){
+            language_objects.push(selected_languages[i])
+            languages.push(selected_languages[i]['nativeName'])
+        }
+
+        return {language_objects:language_objects, languages:languages}
+    }
+
+    when_language_selected(tag, pos){
+        if(tag != 'e') this.setState({selected_subtitle_language: tag, video_subtitle_language:''})
+    }
+
+
+
+
+    render_video_subtitle_picker_ui(){
+        return(
+            <div>
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 10px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                    
+                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".vtt" onChange ={this.when_subtitle_file_picked.bind(this)}/>
+                </div>
+            </div>
+        )
+    }
+
+    when_subtitle_file_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    var data = ev.target.result
+                    this.setState({video_subtitle_file: data})
+                }.bind(this);
+                var subtitleFile = e.target.files[i];
+                this.setState({video_subtitle_file_name: subtitleFile['name']})
+                reader.readAsText(subtitleFile);
+            }
+        }
+    }
+
+    render_selected_subtitle_file(){
+        var selected_subtitle_file = this.state.video_subtitle_file
+        if(selected_subtitle_file == null){
+            return(
+                <div>
+                    {this.render_empty_views(1)}
+                </div>
+            )
+        }else{
+            var title = this.state.video_subtitle_file_name
+            var details = number_with_commas(this.lengthInUtf8Bytes(this.state.video_subtitle_file)) + this.props.app_state.loc['b311ab']/* ' bytes' */
+            return(
+                <div onClick={() => this.when_subtitle_file_tapped()}>
+                    {this.render_detail_item('3', {'details':details,'title':title, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    lengthInUtf8Bytes(str) {
+        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+        var m = encodeURIComponent(str).match(/%[89ABab]/g);
+        return str.length + (m ? m.length : 0);
+    }
+
+    when_subtitle_file_tapped(){
+        this.setState({video_subtitle_file_name:'', video_subtitle_file:null})
+        this.props.notify(this.props.app_state.loc['b311ac']/* 'Staged .vtt file removed.' */, 1200);
+    }
+
+    when_add_subtitle_file_clicked(){
+        var video_subtitle_file_name = this.state.video_subtitle_file_name
+        var video_subtitle_file = this.state.video_subtitle_file
+        var selected_subtitle_language = this.state.selected_subtitle_language;
+
+        if(video_subtitle_file == null){
+           this.props.notify(this.props.app_state.loc['b311af']/* 'Please add a subtitle file first.' */, 5200); 
+        }
+        else if(selected_subtitle_language == ''){
+            this.props.notify(this.props.app_state.loc['b311ag']/* 'Please set the subtitle file\'s language first.' */, 5200);
+        }
+        else if(this.does_subtitles_contain_language(selected_subtitle_language)){
+            this.props.notify(this.props.app_state.loc['b311ah']/* 'You can\'t use the same language twice.' */, 5200);
+        }
+        else{
+            var language_obj_list = this.props.app_state.languages.filter(function (el) {
+                return el['nativeName'].toLowerCase() == selected_subtitle_language.toLowerCase()
+            });
+            var selected_language_object = language_obj_list[0]
+
+            var clone = this.state.subtitles.slice()
+            clone.push({'subtitle_file_name':video_subtitle_file_name, 'subtitle_file':video_subtitle_file, 'subtitle_language_object':selected_language_object, 'subtitle_language_name':selected_subtitle_language})
+            this.setState({subtitles: clone})
+        }
+    }
+
+    does_subtitles_contain_language(language_native_name){
+        var items = this.state.subtitles
+        var languages = items.filter(function (el) {
+            return el['subtitle_language_name'] == language_native_name
+        });
+        if(languages.length > 0) return true
+        return false
+    }
+
+    render_my_subtitles(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.subtitles)
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_subtitle_clicked(item, index)}>
+                            {this.render_detail_item('3', {'title':item['subtitle_language_name'], 'details':item['subtitle_file_name'], 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_subtitle_clicked(item, index){
+        var cloned_array = this.state.subtitles.slice()
+        cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        this.setState({subtitles: cloned_array})
+    }
+
+
+
+
 
 
     when_add_video_tapped(){
@@ -2175,6 +2411,7 @@ class NewVideoPage extends Component {
         var video_composer = this.state.video_composer.trim()
         var price_data2 = this.state.price_data2
         var video_file = this.state.video_file
+        var subtitles = this.state.subtitles
 
         if(video_title == ''){
             this.props.notify(this.props.app_state.loc['b311t']/* 'You need to set a title for the video track.' */, 3800)
@@ -2186,7 +2423,7 @@ class NewVideoPage extends Component {
             this.props.notify(this.props.app_state.loc['b311v']/* 'You need to add a video track.' */, 3800)
         }
         else{
-            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file}
+            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles}
 
             var clone = this.state.videos.slice()
             if(this.state.edit_video_item_pos != -1){
@@ -2196,7 +2433,7 @@ class NewVideoPage extends Component {
                 clone.push(video)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({videos: clone, video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null})
+            this.setState({videos: clone, video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null, subtitles:[]})
             
         }
     }
@@ -2301,7 +2538,7 @@ class NewVideoPage extends Component {
 
     focus_tab(item_pos){
         if(this.is_tab_active(item_pos)){
-            this.setState({video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null})
+            this.setState({video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null, subtitles:[]})
         }else{
             this.props.notify(this.props.app_state.loc['b311w']/* 'Editing that Video Track.' */, 2000)
             this.set_focused_video_data(item_pos)
@@ -2310,7 +2547,7 @@ class NewVideoPage extends Component {
 
     set_focused_video_data(item_pos){
         var video = this.state.videos[item_pos]
-        this.setState({video_title: video['video_title'], video_composer: video['video_composer'], price_data2: video['price_data'], video_file: video['video'], edit_video_item_pos: item_pos});
+        this.setState({video_title: video['video_title'], video_composer: video['video_composer'], price_data2: video['price_data'], video_file: video['video'], edit_video_item_pos: item_pos, subtitles: (video['subtitles'] == null ? [] : video['subtitles']) });
     }
 
 
@@ -2425,7 +2662,7 @@ class NewVideoPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)} when_language_selected={this.when_language_selected.bind(this)}/>
             </div>
         )
     }

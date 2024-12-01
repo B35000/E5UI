@@ -17,7 +17,8 @@ class FullVideoPage extends Component {
     
     state = {
         selected: 0, videos:null, object:null, pos:null,
-        detials_or_queue_tags:this.detials_or_queue_tags(), is_player_resetting:false
+        detials_or_queue_tags:this.detials_or_queue_tags(), is_player_resetting:false,
+        subtitle_option_tags:null
     };
 
 
@@ -50,7 +51,7 @@ class FullVideoPage extends Component {
 
 
     set_data(videos, object, pos){
-        this.setState({videos:videos, object:object, pos:pos, is_player_resetting:true})
+        this.setState({videos:videos, object:object, pos:pos, is_player_resetting:true, subtitle_option_tags: this.subtitle_option_tags(videos[pos]['subtitles'] == null ? [] : videos[pos]['subtitles']) })
     }
 
     render(){
@@ -181,6 +182,7 @@ class FullVideoPage extends Component {
         return data['data']
     }
 
+
     get_cid_split(ecid){
         var split_cid_array = ecid.split('_');
         var filetype = split_cid_array[0]
@@ -209,17 +211,29 @@ class FullVideoPage extends Component {
             )
         }else{
             var video = this.get_video_file()
+            var current_video = this.state.videos[this.state.pos]
+            var subtitles = current_video['subtitles'] == null ? [] : current_video['subtitles']
             return(
                 <div style={{}}>
                     <video ref={this.video_player} width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
                         <source src={video} type="video/mp4"/>
                         <source src={video} type="video/ogg"/>
+                        {subtitles.map((item, index) => (
+                            <track label={item['subtitle_language_name']} kind="subtitles" srclang={item['subtitle_language_object']['code']} src={this.get_subtitle_file(item)}/>
+                        ))}
                         Your browser does not support the video tag.
                     </video>
+                    <div style={{height:10}}/>
+                    {this.render_subtitle_options(subtitles)}
                 </div>
             )
         }
         
+    }
+
+    get_subtitle_file(item){
+        const blob = new Blob([item['subtitle_file']], { type: 'text/vtt' });
+        return URL.createObjectURL(blob);
     }
 
     start_playing(){
@@ -245,6 +259,67 @@ class FullVideoPage extends Component {
     when_time_updated = () => {
         var time = this.video_player.current?.currentTime
         this.props.update_video_time_for_future_reference(time, this.state.videos[this.state.pos])
+    }
+
+
+    render_subtitle_options(subtitles){
+        if(subtitles.length > 0 && this.state.subtitle_option_tags != null){
+            return(
+                <div>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.subtitle_option_tags} tag_size={'l'} when_tags_updated={this.when_subtitle_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+    }
+
+    when_subtitle_option_tags_object_updated(tags_obj){
+        this.setState({subtitle_option_tags: tags_obj})
+        var selected_item = this.get_selected_item(tags_obj, tags_obj['i'].active)
+        this.hideTracks()
+        var me = this;
+        setTimeout(function() {
+            if(selected_item !== 'e') me.show_selected_track(selected_item)
+        }, (1 * 500));
+    }
+
+    subtitle_option_tags(subtitles){
+        var array = ['e',]
+        subtitles.forEach(subtitle => {
+            array.push(subtitle['subtitle_language_name'])
+        });
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], array, [0]
+            ],
+        };
+    }
+
+    hideTracks() {
+        if(this.video_player.current != null){
+            for (var i = 0; i < this.video_player.current.textTracks.length; i++) {
+                this.video_player.current.textTracks[i].mode = 'hidden';
+            }
+        }
+    }
+
+    show_selected_track(selected_item){
+        if(this.video_player.current != null){
+            for (var i = 0; i < this.video_player.current.textTracks.length; i++) {
+                if(this.video_player.current.textTracks[i].language === this.get_language_from_selected_item(selected_item)){
+                    this.video_player.current.textTracks[i].mode = 'showing';
+                }
+            }
+        }
+    }
+
+    get_language_from_selected_item(selected_item){
+        var current_video = this.state.videos[this.state.pos]
+        var subtitles = current_video['subtitles'] == null ? [] : current_video['subtitles']
+        var object = subtitles.find(x => x['subtitle_language_name'] === selected_item);
+        return object['subtitle_language_object']['code']
     }
 
 
@@ -294,9 +369,6 @@ class FullVideoPage extends Component {
             </div>
         )
     }
-
-
-
 
     render_markdown_if_any(object){
         var state = object['ipfs']
@@ -536,7 +608,11 @@ class FullVideoPage extends Component {
             this.props.notify(this.props.app_state.loc['3029']/* e is already playing the video. */, 1500)
             return;
         }
-        this.setState({is_player_resetting:true, pos: index})
+        this.setState({
+            is_player_resetting:true, 
+            pos: index, 
+            subtitle_option_tags: this.subtitle_option_tags(this.state.videos[index]['subtitles'] == null ? [] : this.state.videos[index]['subtitles']) 
+        })
         var me = this;
         setTimeout(function() {
             me.props.load_video_queue(me.state.videos, me.state.pos)

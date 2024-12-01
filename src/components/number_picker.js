@@ -62,13 +62,16 @@ class NumberPicker extends Component {
                     <div style={{height: 10}}/>
                     <div className="row">
                         <div className="col-9" style={{'padding': '0px 0px 0px 10px'}}>
-                            {this.render_detail_item('1', this.get_number_power_data())}
+                          {this.render_detail_item('1', this.get_number_power_data())}
                         </div>
-                        <div className="col-2" style={{'padding': '3px 0px 0px 0px'}}>
-                            <div className="text-end" style={{'padding': '5px'}} onClick={()=>this.reset_number_picker2()}>
-                              <img alt="" src={'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'} style={{height:35 ,width:35}} />
-                            </div>
+                        <div className="col-2" style={{'padding': '7px 0px 0px 0px'}}>
+                          <div className="text-end" style={{'display': 'flex','flex-direction': 'row'}}>
+                            <img alt="" src={'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e'} style={{height:35 ,width:35}} onClick={()=>this.switch_pickers()}/>
                             
+                            <div style={{width: 15}}/>
+
+                            <img alt="" src={'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'} style={{height:35 ,width:35}} onClick={()=>this.reset_number_picker2()} />
+                          </div>
                         </div>
                     </div>
                     
