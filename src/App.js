@@ -54,6 +54,7 @@ import NewMailPage from './pages/create_action_pages/new_mail_page';
 import NewContractorPage from './pages/create_action_pages/new_contractor_page';
 import NewAudioPage from './pages/create_action_pages/new_audio_page'
 import NewVideoPage from './pages/create_action_pages/new_video_page';
+import NewNitroPage from './pages/create_action_pages/new_nitro_page'
 
 import EditJobPage from './pages/edit_action_pages/edit_job_page'
 import EditTokenPage from './pages/edit_action_pages/edit_token_page'
@@ -63,7 +64,8 @@ import EditStorefrontItemPage from './pages/edit_action_pages/edit_storefront_it
 import EditContractorPage from './pages/edit_action_pages/edit_contractor_page';
 import EditProposalPage from './pages/edit_action_pages/edit_proposal_page';
 import EditAudioPage from './pages/edit_action_pages/edit_audiopost_page';
-import EditVideoPage from './pages/edit_action_pages/edit_videopost_page'
+import EditVideoPage from './pages/edit_action_pages/edit_videopost_page';
+import EditNitroPage from './pages/edit_action_pages/edit_nitropost_page';
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -336,7 +338,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -360,7 +362,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(68), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
+    sync_steps:(68), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:35, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -385,7 +387,7 @@ class App extends Component {
 
     my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{},
     
-    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{},load_video_metrics:{},
+    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{}, load_video_metrics:{}, load_nitro_metrics:{},
 
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
@@ -397,7 +399,9 @@ class App extends Component {
     web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
     my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false,
 
-    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{}
+    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
+
+    nitro_node_details:{}, nitro_links:{}
   };
 
   get_static_assets(){
@@ -939,6 +943,9 @@ class App extends Component {
         
         /* new job page */
         '273':'job','274':'targeted-pay','275':'Set a title for your new Job Post.','276':'Enter Title...','277':'Set tags for indexing your new Job Post.','278':'Enter your preferred text, then tap add to add it to the new Job Post.','279':'Search an object by its id or title, the tap it to add it to the new Job Post.','280':'Search.','281':'The link is already in the Job Post.','282':'Link added to Job Post.','283':'Select an exchange by its ID, then the desired price then click add.','284':'Add Pay.',
+
+        /* new nitro page */
+        'a273a':'nitro','a273b':'Node URL.','a273c':'Set the url link to the node.','a273d':'Test and Add.','a273e':'Please add a url link.','a273f':'That link is not valid.','a273g':'https://<your-public-ip>:3000','a273h':'That provided link is not available for use.','a273i':'Testing that link...','a273j':'Provided link added.','a273k':'The link should not end with the \'/\' character.','a273l':'You havent set a node url link','a273m':'Set an image to identify your new node. The image will be rendered in a 1:1 aspect ratio.','a273n':'Nitro Link.','a273o':'nitro key (e.g. eeeee2Edp...di4reeeee)','a273p':'Please provide the nitro key for your node.','a273q':'That key isn\'t valid.','a273r':'You need to set your wallet first to encrypt that nitro key.','a273s':'That link is too long.','a273t':'','a273u':'','a273v':'','a273w':'','a273x':'','a273y':'','a273z':'','a273ba':'','a273bb':'','a273bc':'','a273bd':'','a273be':'','a273bf':'','a273bg':'','a273bh':'','a273bi':'','a273bj':'','a273bk':'','a273bl':'','a273bm':'','a273bn':'',
         
         /* new mail page */
         '285':'mail','286':'Set a title for your new encrypted mail.','287':'Set a recipient for your new Mail.','288':'Account ID','289':'Set tags for indexing your new Mail.','290':'Enter your preferred text, then tap add to add it to the new Mail.','291':'Search an object by its title or ID, then tap it to add it to the new mail.','292':'Enter Object ID...','293':'The link is already in the Mail.','294':'Link added to Mail.','295':'Please add a title for your new Mail.','296':'That recipient account is invalid.',
@@ -1047,7 +1054,7 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'','1264t':'','1264u':'','1264v':'','1264w':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
@@ -1076,7 +1083,7 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Uploaded Images','1593bs':'Uploaded Audio Files.','1593bt':'Uploaded Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'Uploaded PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'','1593cv':'','1593cw':'','1593cx':'','1593cy':'','1593coz':'','1593da':'','1593db':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'','1593cw':'','1593cx':'','1593cy':'','1593coz':'','1593da':'','1593db':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1153,6 +1160,11 @@ class App extends Component {
 
         /* video details section */
         'b2527a':'Play Videopost.','b2527b':'Play all the videos in this videopost.','b2527c':'Edit Indexed Videopost','b2527d':'Change the basic details for your Indexed Videopost.','b2527e':'Purchase access to this videopost and its content.','b2527f':'You need to purchase access to the video first.','b2527g':'','b2527h':'','b2527i':'','b2527j':'','b2527k':'','b2527l':'','b2527m':'','b2527n':'','b2527o':'','b2527p':'','b2527q':'','b2527r':'','b2527s':'','b2527t':'','b2527u':'','b2527v':'','b2527w':'','b2527x':'','b2527y':'','b2527z':'','b2527ba':'','b2527bb':'','b2527bc':'','b2527bd':'','b2527be':'','b2527bf':'','b2527bg':'','b2527bh':'','b2527bi':'','b2527bj':'',
+
+
+        /* nitro details section */
+        'c2527a':'Pin the Nitro post to your feed.','c2527b':'Pin Nitropost','c2527c':'Pin/Unpin Nitropost','c2527d':'Edit Indexed Nitropost','c2527e':'Change the basic details for your Indexed Nitropost','c2527f':'Loading Node Details...','c2527g':'Node Unavailable.','c2527h':'The node is unavailable or down.','c2527i':'Status','c2527j':'Online.','c2527k':'Booted','c2527l':'Start Up Time','c2527m':'Node Storage Service Offline.','c2527n':'Storage Purchase Recipient','c2527o':'Storage Purchase Limit.','c2527p':'Mbs','c2527q':'Accounts Served.','c2527r':'Tracked Hashes.','c2527s':'Tracked E5s.','c2527t':'Price per Megabyte of Storage.','c2527u':'','c2527v':'','c2527w':'','c2527x':'','c2527y':'','c2527z':'','c2527ba':'','c2527bb':'','c2527bc':'','c2527bd':'','c2527be':'','c2527bf':'','c2527bg':'','c2527bh':'',
+
         
         /* proposal details section */
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
@@ -1213,12 +1225,13 @@ class App extends Component {
         
         '2973':'Album Sales','2974':'Song Sales','2975':'edit-audio','2976':'Playing ','2977':'Taken from','2978':'File size','2979':'Composers','2980':'Bitrate','2981':'Codec','2982':'Codec Profile','2983':'Container','2984':'Lossless','2985':'Number of Channels','2986':'Number of Samples','2987':'Sample Rate','2988':'data','2989':'lyrics','2990':'queue','2991':'Play Queue','2992':'Below are the tracks that are up next.','2993':'synchronize','2994':'Repeating current song.','2995':'Your queue has been shuffled.','2996':'up-next','2997':'previous',
         
+
         '2998':'Add to Playlist.','2999':'Play Next.','3000':'Play Last.','3001':'Remove from queue.','3002':'Song will be played next.','3003':'Song will be played last.','3004':'Removed song from queue.','3005':'You need to be playing something first.','3006':'You cant remove that song.','3006a':'Add the track to one of your playlists.','3006b':'Play the track next.','3006c':'Play the track last.','3006d':'Remove track from queue.','3006e':'Remove from Playlist.','3006f':'Remove the track from your playlist.','3006g':'Track removed from your playlist.','3006h':'Confirm Deletion.','3006i':'Are you sure you want to delete the playlist?','3006j':'Playlist Deleted.','3006k':'Download Track.', '3006l':'Cache the track in your cookies to load it faster in the future. Cookies will be enabled.', '3006m':'The track will be cached in a few moments.', '3006n':'', '3006o':'',
         
         /* add to playlist page */
         '3007':'Add to playlist.','3008':'You can add to an existing playlist or a new playlist.','3009':'existing','3010':'new','3011':'Youre creating a new Playlist.','3012':'Playlist Title','3013':'Playlist Description (optional)','3014':'Create and Add.','3015':'You need a title for your new playlist.','3016':'That title is too long.','3017':'Added your song to the new playlist.','3018':'A playlist with a similar title exists in your library.','3019':'You\'re adding the song to an existing playlist.','3020':'Added your song to the playlist.','3021':'You need to buy the track to add it to your playlists','3022':'Please purchase the song to play it.',
         
-        '3023':'edit-video','3024':'Videopost Sales.','3025':'Video Sales','3026':'details','3027':'queue','3028':'Loading...','3029':'e is already playing that video.','3030':'','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '3023':'edit-video','3024':'Videopost Sales.','3025':'Video Sales','3026':'details','3027':'queue','3028':'Loading...','3029':'e is already playing that video.','3030':'edit-nitro','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','3053':'','3054':'','3055':'','3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -1251,7 +1264,7 @@ class App extends Component {
 
         'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
 
-        'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', 'microalgorand', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
+        'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
 
         'XTZ': this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
 
@@ -2360,6 +2373,9 @@ class App extends Component {
     this.buy_video_page = React.createRef();
     this.edit_videopost_page = React.createRef();
     this.full_video_page = React.createRef();
+
+    this.new_nitro_page = React.createRef();
+    this.edit_nitropost_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -3884,6 +3900,7 @@ class App extends Component {
           {this.render_buy_album_bottomsheet()}
           {this.render_add_to_playlist_bottomsheet()}
           {this.render_buy_video_bottomsheet()}
+          {this.render_edit_nitropost_object_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -3942,7 +3959,7 @@ class App extends Component {
           show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
           show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
 
-          add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} add_audio_reply_to_stack={this.add_audio_reply_to_stack.bind(this)} add_video_reply_to_stack={this.add_video_reply_to_stack.bind(this)}
+          add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} add_audio_reply_to_stack={this.add_audio_reply_to_stack.bind(this)} add_video_reply_to_stack={this.add_video_reply_to_stack.bind(this)} add_nitro_reply_to_stack={this.add_nitro_reply_to_stack.bind(this)}
           
           open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
 
@@ -3967,6 +3984,7 @@ class App extends Component {
         
           play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
+          load_nitro_node_details={this.load_nitro_node_details.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -4172,6 +4190,26 @@ class App extends Component {
     }
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593ct']/* 'video-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['b311a']/* 'video' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+    this.set_cookies_after_stack_action(stack)
+  }
+
+  add_nitro_reply_to_stack(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == this.getLocale()['1593ct']/* 'video-messages' */ && stack[i].e5 == this.state.selected_e5){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593cu']/* 'nitro-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['a273a']/* 'nitro' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -6260,6 +6298,11 @@ class App extends Component {
         <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
       )
     }
+    else if(target == '12'/* nitro */){
+      return(
+        <NewNitroPage ref={this.new_nitro_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} test_node_url_link={this.test_node_url_link.bind(this)}/>
+      )
+    }
     
   }
 
@@ -6305,6 +6348,33 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  test_node_url_link = async (link, key) => {
+    this.prompt_top_notification(this.getLocale()['a273i']/* 'Testing that link...' */, 1000)
+    var request = `${link}/marco`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      console.log(obj)
+      var success = obj.success
+      if(success == true){
+        var encrypted_key = await this.encrypt_nitro_node_key_with_my_public_key(key)
+        this.new_nitro_page.current?.set_node_url(link, encrypted_key)
+        this.edit_nitropost_page.current?.set_node_url(link, encrypted_key)
+        this.prompt_top_notification(this.getLocale()['a273j']/* 'Provided link added.' */, 5000)
+      }else{
+        this.prompt_top_notification(this.getLocale()['a273h']/* 'That provided link is not available for use.' */, 6000)
+      }
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['a273h']/* 'That provided link is not available for use.' */, 6000)
+    }
   }
 
 
@@ -6955,7 +7025,7 @@ class App extends Component {
             <Sheet isOpen={this.state.edit_videopost_bottomsheet} onClose={this.open_edit_videopost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        {this.render_edit_audio_element()}
+                        {this.render_edit_video_element()}
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
                 </Sheet.Container>
@@ -6965,12 +7035,12 @@ class App extends Component {
     }
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_videopost_bottomsheet.bind(this)} open={this.state.edit_videopost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_edit_audio_element()}
+        {this.render_edit_video_element()}
       </SwipeableBottomSheet>
     )
   }
 
-  render_edit_audio_element(){
+  render_edit_video_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     
@@ -7031,6 +7101,89 @@ class App extends Component {
 
 
 
+  render_edit_nitropost_object_bottomsheet(){
+    if(this.state.edit_nitropost_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.edit_nitropost_bottomsheet} onClose={this.open_edit_nitropost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_edit_nitropost_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_edit_nitropost_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_nitropost_bottomsheet.bind(this)} open={this.state.edit_nitropost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_edit_nitropost_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_edit_nitropost_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+          <EditNitroPage ref={this.edit_nitropost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} test_node_url_link={this.test_node_url_link.bind(this)} />
+        </div>
+    )
+  }
+
+  open_edit_nitropost_bottomsheet(){
+    if(this.state.edit_nitropost_bottomsheet == true){
+      //closing
+      this.edit_nitropost_bottomsheet = this.edit_nitropost_page.current?.state;
+
+      this.setState({edit_nitropost_bottomsheet: !this.state.edit_nitropost_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_nitropost_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_nitropost_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_nitropost_bottomsheet: !me.state.edit_nitropost_bottomsheet});
+          if(me.edit_nitropost_bottomsheet != null){
+            me.edit_nitropost_page.current?.setState(me.edit_nitropost_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_edit_nitropost_object(target, object){
+    this.open_edit_nitropost_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_nitropost_page.current){
+      me.edit_nitropost_page.current?.setState(object['ipfs'])
+      me.edit_nitropost_page.current?.setState({type:me.getLocale()['3030']/* 'edit-nitro' */})
+      me.edit_nitropost_page.current?.setState({object_id: object['id']})
+      me.edit_nitropost_page.current?.set()
+    }
+    }, (1 * 500));
+    this.load_my_subscriptions() 
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7064,6 +7217,9 @@ class App extends Component {
     }
     else if(target == '11'){
       this.open_edit_videopost_object(target, object)
+    }
+    else if(target == '12'){
+      this.open_edit_nitropost_object(target, object)
     }
   }
 
@@ -9244,7 +9400,7 @@ class App extends Component {
     this.open_view_transaction_bottomsheet()
   }
 
-
+  //here
   open_edit_object_uis(tx){
     if(tx.type == this.getLocale()['1130']/* 'contract' */){
         this.open_new_object('1')
@@ -9698,7 +9854,24 @@ class App extends Component {
         }
         }, (1 * 500));  
     }
-    
+    else if(tx.type == this.getLocale()['a273a']/* nitro */){
+        this.open_new_object('12')
+        var me = this;
+        setTimeout(function() {
+          if(me.new_nitro_page.current){
+          me.new_nitro_page.current?.setState(tx)
+        }
+        }, (1 * 500));  
+    }
+    else if(tx.type == this.getLocale()['3030']/* 'edit-nitro' */){
+        this.open_edit_nitropost_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.edit_nitropost_page.current){
+          me.edit_nitropost_page.current?.setState(tx)
+        }
+        }, (1 * 500));  
+    }
   }
 
   delete_message_item(item, transaction_item){
@@ -11026,6 +11199,9 @@ class App extends Component {
     }
     else if(page == 'video'){
       this.add_video_reply_to_stack(tx)
+    }
+    else if(page == 'nitro'){
+      this.add_nitro_reply_to_stack(tx)
     }
     this.open_add_comment_bottomsheet()
   }
@@ -12359,6 +12535,7 @@ class App extends Component {
       this.new_proposal_page.current?.when_image_gif_files_picked(picked_files)
       this.new_audio_page.current?.when_image_gif_files_picked(picked_files)
       this.new_video_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_nitro_page.current?.when_image_gif_files_picked(picked_files)
 
       this.edit_job_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_token_page.current?.when_image_gif_files_picked(picked_files)
@@ -12366,6 +12543,7 @@ class App extends Component {
       this.edit_channel_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_storefront_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_contractor_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_videopost_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_videopost_page.current?.when_image_gif_files_picked(picked_files)
 
       this.add_comment_page.current?.when_image_gif_files_picked(picked_files)
@@ -12382,7 +12560,7 @@ class App extends Component {
       this.new_token_page.current?.when_banner_selected(picked_files)
       this.new_audio_page.current?.when_banner_selected(picked_files)
       this.new_video_page.current?.when_banner_selected(picked_files)
-      
+      this.new_nitro_page.current?.when_banner_selected(picked_files)
 
       this.edit_job_page.current?.when_banner_selected(picked_files)
       this.edit_token_page.current?.when_banner_selected(picked_files)
@@ -12390,6 +12568,7 @@ class App extends Component {
       this.edit_channel_page.current?.when_banner_selected(picked_files)
       this.edit_storefront_page.current?.when_banner_selected(picked_files)
       this.edit_contractor_page.current?.when_banner_selected(picked_files)
+      this.edit_videopost_page.current?.when_banner_selected(picked_files)
       this.edit_videopost_page.current?.when_banner_selected(picked_files)
     }
     else if(function_name == 'create_storefront_variant_image'){
@@ -12406,6 +12585,9 @@ class App extends Component {
 
       this.new_video_page.current?.when_album_art_selected(picked_files)
       this.edit_videopost_page.current?.when_album_art_selected(picked_files)
+
+      this.new_nitro_page.current?.when_album_art_selected(picked_files)
+      this.edit_nitropost_page.current?.when_album_art_selected(picked_files)
     }
     else if(function_name == 'create_storefront_image_album_art'){
       this.new_storefront_item_page.current?.when_storefront_image_selected(picked_files)
@@ -12421,6 +12603,7 @@ class App extends Component {
       this.new_proposal_page.current?.when_pdf_files_picked(picked_files)
       this.new_audio_page.current?.when_pdf_files_picked(picked_files)
       this.new_video_page.current?.when_pdf_files_picked(picked_files)
+      this.new_nitro_page.current?.when_pdf_files_picked(picked_files)
 
       this.edit_job_page.current?.when_pdf_files_picked(picked_files)
       this.edit_token_page.current?.when_pdf_files_picked(picked_files)
@@ -12428,6 +12611,7 @@ class App extends Component {
       this.edit_channel_page.current?.when_pdf_files_picked(picked_files)
       this.edit_storefront_page.current?.when_pdf_files_picked(picked_files)
       this.edit_contractor_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_videopost_page.current?.when_pdf_files_picked(picked_files)
       this.edit_videopost_page.current?.when_pdf_files_picked(picked_files)
 
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
@@ -15880,6 +16064,14 @@ class App extends Component {
 
 
 
+    /* ---------------------------------------- NITRO LINK DATA -------------------------------------- */
+    await this.get_my_nitro_link_data(web3, E52contractInstance, e5, account);
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
     /* ---------------------------------------- EVENT DATA ------------------------------------------- */
     this.load_all_e5_runs_data(web3, contractInstance, e5, account)
     this.load_my_e5_runs_data(web3, contractInstance, e5, account)
@@ -16579,6 +16771,32 @@ class App extends Component {
 
     this.my_video_collection_account = account
   }
+
+  get_my_nitro_link_data = async (web3, E52contractInstance, e5, account) => {
+    var nitro_link_registry = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:400});
+    var registered_nitro_links = {}
+    var registered_nitro_links_authors = {}
+    nitro_link_registry.forEach(event => {
+      var id = event.returnValues.p1/* target_id */
+      var data = event.returnValues.p4/* string_data */
+      var author = event.returnValues.p2/* sender_acc_id */
+      if(registered_nitro_links[id] != null){
+        if(author.toString() == registered_nitro_links_authors[id].toString()){
+          //link was reset by author
+          registered_nitro_links[id] = data
+        }
+      }else{
+        registered_nitro_links[id] = data
+        registered_nitro_links_authors[id] = author
+      }
+      
+    });
+    var registered_nitro_links_clone = structuredClone(this.state.nitro_links)
+    registered_nitro_links_clone[e5] = registered_nitro_links
+    this.setState({nitro_links: registered_nitro_links_clone})
+  }
+
+  
 
 
 
@@ -17522,7 +17740,7 @@ class App extends Component {
   }
 
   record_number_of_items(e5, object_type, count){
-    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics}
+    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics, 'nitro':this.state.load_nitro_metrics}
 
     var load_metrics_clone = structuredClone(obj[object_type])
     if(load_metrics_clone[e5] == null){
@@ -17571,6 +17789,9 @@ class App extends Component {
     }
     else if(object_type == 'video'){
       this.setState({load_video_metrics: load_metrics_clone})
+    }
+    else if(object_type == 'nitro'){
+      this.setState({load_nitro_metrics: load_metrics_clone})
     }
   }
 
@@ -19111,6 +19332,85 @@ class App extends Component {
     
   }
 
+  get_nitro_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts) => {
+    var created_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */})
+
+    created_nitro_events = created_nitro_events.reverse()
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:21/* 21(nitro_object) */ , p2/* item */: prioritized_accounts})
+
+      prioritized_object_events = prioritized_object_events.reverse()
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_nitro_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_nitro_events = final_object_events
+    }
+    
+    this.record_number_of_items(e5, 'nitro', created_nitro_events.length)
+    var created_nitros = this.state.created_nitros[e5] == null ? [] : this.state.created_nitros[e5].slice()
+    var created_nitro_mappings = this.state.created_nitro_mappings[e5] == null ? {} : structuredClone(this.state.created_nitro_mappings[e5])
+    var is_first_time = this.state.created_nitros[e5] == null
+    is_first_time = true
+    for(var i=0; i<created_nitro_events.length; i++){
+      var id = created_nitro_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_nitro_events[i].returnValues.p1.toString() == hash.toString()){
+        var nitro_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        if(nitro_data != null){
+          if(nitro_data.album_art != null && nitro_data.album_art.startsWith('image')) {
+            this.fetch_uploaded_data_from_ipfs([nitro_data.album_art], false)
+          }
+
+          const data = {'id':id, 'ipfs':nitro_data, 'event': created_nitro_events[i], 'e5':e5, 'timestamp':parseInt(created_nitro_events[i].returnValues.p6),
+          'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5,
+          }
+
+          var obj = this.get_item_in_array(created_nitros, id)
+          if(obj == null){
+            created_nitros.push(data)
+          }else{
+            var pos = created_nitros.indexOf(obj)
+            if(pos != -1){
+              created_nitros[pos] = obj
+            }
+          }
+          created_nitro_mappings[id] = data
+        }
+      }
+
+      if(is_first_time){
+        var created_nitros_clone = structuredClone(this.state.created_nitros)
+        var created_nitro_mappings_clone = structuredClone(this.state.created_nitro_mappings)
+        
+        created_nitros_clone[e5] = created_nitros
+        created_nitro_mappings_clone[e5] = created_nitro_mappings
+        
+        this.setState({created_nitros: created_nitros_clone, created_nitro_mappings:created_nitro_mappings_clone})        
+      }
+    }
+
+    var created_nitros_clone = structuredClone(this.state.created_nitros)
+    var created_nitro_mappings_clone = structuredClone(this.state.created_nitro_mappings)
+    
+    created_nitros_clone[e5] = created_nitros
+    created_nitro_mappings_clone[e5] = created_nitro_mappings
+    
+    this.setState({created_nitros: created_nitros_clone, created_nitro_mappings:created_nitro_mappings_clone})
+
+    console.log('nitro count: '+created_nitros.length)
+    
+  }
+
   load_run_data = async (contractInstance, E52contractInstance, e5, web3, H52contractInstance) => {
     var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
 
@@ -19136,6 +19436,8 @@ class App extends Component {
 
     var created_video_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */})
 
+    var created_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */})
+
     var data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {})
 
     var metadata_events = await this.load_event_data(web3, E52contractInstance, 'e5', e5, {})
@@ -19146,7 +19448,7 @@ class App extends Component {
 
     var transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {})
 
-    var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events}
+    var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events, 'video':created_video_events, 'nitro':created_nitro_events}
 
     var all_data_clone = structuredClone(this.state.all_data)
     all_data_clone[e5] = obj
@@ -19855,6 +20157,27 @@ class App extends Component {
     }
   }
 
+  load_nitro_data = async (posts_to_load) => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.get_web3_url_from_e5(e5)
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != ''){
+        const web3 = new Web3(web3_url);
+
+        var account = this.state.user_account_id[e5]
+        var contract_addresses = this.state.addresses[e5]
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load)
+      }
+    }
+  }
+  
+
 
   
 
@@ -19916,6 +20239,7 @@ class App extends Component {
     obj[this.getLocale()['1216']/* 'bags' */] = 25
     obj[this.getLocale()['1264k']/* 'audioport' */] = 19
     obj[this.getLocale()['1264p']/* 'videoport' */] = 20
+    obj[this.getLocale()['1264s']/* 'nitro' */] = 21
     obj['w'] = 31
 
     return obj[page]
@@ -20478,16 +20802,26 @@ class App extends Component {
         console.log('stackdata','Waiting for payment plan to be selected...')
         await new Promise(resolve => setTimeout(resolve, 1000))
       }
+
+      var data_files = []
+      for(var i=0; i<datas.length; i++){
+        var _data = datas[i]
+        var file_name = _data['name']
+        data_files.push(this.make_file2(_data['data'], file_name))
+      }
+      //upload the streamable files
+      const streamable_cid_obj = await client.uploadDirectory(data_files)
+      var streamable_cid = streamable_cid_obj.toString()
+
       var files = []
       for(var i=0; i<datas.length; i++){
         var _data = datas[i]
         var file_name = 'data'+i
+        _data['data'] = `https://${streamable_cid}.ipfs.w3s.link/${_data['name']}`
         files.push(this.make_file(this.encrypt_storage_data(JSON.stringify(_data)), file_name))
       }
-      console.log('stackdata', files)
       const directoryCid = await client.uploadDirectory(files)
       var cid = directoryCid.toString()
-      console.log('stackdata', cid)
       var e_cids = []
       var cids = []
       for(var i=0; i<datas.length; i++){
@@ -20542,6 +20876,23 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+  }
+
+  make_file2(dataURL, file_name){
+    const [metadata, base64Data] = dataURL.split(',');
+    const mimeType = metadata.match(/:(.*?);/)[1]; // Extract the MIME type
+
+    // Decode the Base64 data into binary data
+    const binaryString = atob(base64Data);
+    const binaryData = new Uint8Array(binaryString.length);
+
+    for (let i = 0; i < binaryString.length; i++) {
+      binaryData[i] = binaryString.charCodeAt(i);
+    }
+
+    // Create a Blob from the binary data
+    const blob = new Blob([binaryData], { type: mimeType });
+    return new File([blob], file_name, { type: mimeType });
   }
 
 
@@ -20678,9 +21029,9 @@ class App extends Component {
   }
 
   get_actual_number(number, depth){
-      var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
-      var depth_vaule = bigInt(('1e'+p))
-      return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
+    var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+    var depth_vaule = bigInt(('1e'+p))
+    return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
   }
 
 
@@ -20816,6 +21167,13 @@ class App extends Component {
       return null
     }
     
+  }
+
+
+  encrypt_nitro_node_key_with_my_public_key = async (key) => {
+    var uint8array = await this.props.get_account_raw_public_key()
+    var encrypted_key = this.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+    return encrypted_key
   }
 
 
@@ -21907,7 +22265,6 @@ class App extends Component {
     return data
   }
 
-
   load_burn_address_end_balance_events = async (e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
@@ -21938,6 +22295,35 @@ class App extends Component {
 
 
 
+
+
+  load_nitro_node_details = async (object) =>{
+    var link = object['ipfs'] == null ? null : object['ipfs'].node_url
+    if(link == null) return;
+    var request = `${link}/marco`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var success = obj.success
+      if(success == true){
+        var clone = structuredClone(this.state.nitro_node_details)
+        clone[object['e5_id']] = obj
+        this.setState({nitro_node_details:clone})
+      }else{
+        var clone = structuredClone(this.state.nitro_node_details)
+        clone[object['e5_id']] = 'unavailable'
+        this.setState({nitro_node_details:clone})
+      }
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['a273h'], 6000)
+    }
+  }
 
 
 

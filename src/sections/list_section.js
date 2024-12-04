@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups';
 import TextInput from './../components/text_input';
 
+import EndImg from './../assets/end_token_icon.png';
+
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
@@ -140,7 +142,11 @@ class PostListSection extends Component {
                 <div>{this.render_contractor_list_group()}</div>
                 )
             }
-            
+            else if(selected_tag == this.props.app_state.loc['1264s']/* 'nitro' */){
+                return(
+                    <div>{this.render_nitro_list_group()}</div>
+                )
+            }
         }
         else if(selected_page == 'e'){
             var selected_tag = this.props.explore_page_tags_object['i'].active
@@ -608,7 +614,7 @@ class PostListSection extends Component {
         var p = ((loaded_objects*100)/total_count)
         var per = Math.round(p * 1000) / 1000
         var percentage = per + '%'
-        var obj = {'subscriptions':'Subscriptions Indexed.', 'contracts':'Contracts Indexed.', 'proposals':'Proposals Indexed.', 'tokens':'Tokens Indexed.', 'posts':'Posts Indexed.', 'channels':'Channels Indexed.', 'jobs':'Jobs Indexed.', 'sent_mail':'Sent Mail Indexed.', 'received_mail':'Received Mail Indexed.', 'storefront':'Storefront Items Indexed.', 'bags':'Bags Indexed.', 'contractor':'Contractors Indexed.',  'audioport':'Audioposts Indexed.', 'videoport':'Videoposts Indexed'}
+        var obj = {'subscriptions':'Subscriptions Indexed.', 'contracts':'Contracts Indexed.', 'proposals':'Proposals Indexed.', 'tokens':'Tokens Indexed.', 'posts':'Posts Indexed.', 'channels':'Channels Indexed.', 'jobs':'Jobs Indexed.', 'sent_mail':'Sent Mail Indexed.', 'received_mail':'Received Mail Indexed.', 'storefront':'Storefront Items Indexed.', 'bags':'Bags Indexed.', 'contractor':'Contractors Indexed.',  'audioport':'Audioposts Indexed.', 'videoport':'Videoposts Indexed', 'nitro':'Nitroposts Indexed'}
         var title = obj[object_type]
         var number = this.format_account_balance_figure(loaded_objects) +' out of '+ this.format_account_balance_figure(total_count)
         return(
@@ -622,7 +628,7 @@ class PostListSection extends Component {
     }
 
     get_total_count_for_object_type(object_type){
-        var obj = {'subscriptions':this.props.app_state.load_subscription_metrics, 'contracts':this.props.app_state.load_contracts_metrics, 'proposals':this.props.app_state.load_proposal_metrics, 'tokens':this.props.app_state.load_tokens_metrics, 'posts':this.props.app_state.load_posts_metrics, 'channels':this.props.app_state.load_channels_metrics, 'jobs':this.props.app_state.load_jobs_metrics, 'sent_mail':this.props.app_state.load_sent_mail_metrics, 'received_mail':this.props.app_state.load_received_mail_metrics, 'storefront':this.props.app_state.load_storefront_metrics, 'bags':this.props.app_state.load_bags_metrics, 'contractor':this.props.app_state.load_contractors_metrics, 'audioport':this.props.app_state.load_audio_metrics, 'videoport':this.props.app_state.load_video_metrics}
+        var obj = {'subscriptions':this.props.app_state.load_subscription_metrics, 'contracts':this.props.app_state.load_contracts_metrics, 'proposals':this.props.app_state.load_proposal_metrics, 'tokens':this.props.app_state.load_tokens_metrics, 'posts':this.props.app_state.load_posts_metrics, 'channels':this.props.app_state.load_channels_metrics, 'jobs':this.props.app_state.load_jobs_metrics, 'sent_mail':this.props.app_state.load_sent_mail_metrics, 'received_mail':this.props.app_state.load_received_mail_metrics, 'storefront':this.props.app_state.load_storefront_metrics, 'bags':this.props.app_state.load_bags_metrics, 'contractor':this.props.app_state.load_contractors_metrics, 'audioport':this.props.app_state.load_audio_metrics, 'videoport':this.props.app_state.load_video_metrics, 'nitro':this.props.app_state.load_nitro_metrics}
         
         var load_metrics = obj[object_type]
         var total_count = 0        
@@ -971,6 +977,114 @@ class PostListSection extends Component {
         this.props.when_proposal_item_clicked(index, object['id'], object['e5'], object)
     }
 
+
+
+
+
+
+
+
+    render_nitro_list_group(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_nitro_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'nitro')}
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div ref={this.nitro_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'nitro')}
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 3px 5px 3px'}}>
+                                {this.render_nitro_object_if_locked(item, index)}
+                            </li>
+                        ))}
+                        {this.render_loading_screen_card()}
+                    </ul>
+                    
+                </div>
+            );
+        }
+    }
+
+    get_nitro_items(){
+        return this.remove_duplicates(this.props.get_nitro_items())
+    }
+
+    render_nitro_object_if_locked(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_nitro_item(object)
+        if(this.is_post_taken_down_for_sender(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_nitro_item_clicked(index, object)}>
+                        {this.render_detail_item('8', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_nitro_item_clicked(index, object)}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_nitro_item(object){
+        var tags = object['ipfs'] == null ? ['NitroPost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'NitroPost ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
+        var author = sender
+        var default_image = EndImg
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    when_nitro_item_clicked(index, object){
+        this.props.when_nitro_item_clicked(index, object['id'], object['e5'], object)
+    }
 
 
 
@@ -2890,7 +3004,6 @@ class PostListSection extends Component {
         if(this.is_post_anonymous(object)){
             author = ''
         }
-        var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
         return {

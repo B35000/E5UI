@@ -123,11 +123,13 @@ class RPCSettingsPage extends Component {
                 {this.render_detail_item('3', {'title':'Add Provider', 'details':this.props.app_state.loc['1334']/* 'Add a RPC provider for making transactions.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1335']/* 'Enter Node Url...' */} when_text_input_field_changed={this.when_typed_rpc_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_rpc()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1336']/* 'Add' */,'action':''})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_rpc()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 <div style={{height:20}}/>

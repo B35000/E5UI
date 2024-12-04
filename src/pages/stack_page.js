@@ -2723,11 +2723,32 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */|| txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
                     ints.push(format_edit_object.metadata_action)
+
+                    if(txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
+                        var url = t.node_url
+                        var original_url = this.get_all_sorted_objects_mappings(this.props.app_state.nitro_links)[t.object_id]
+
+                        if(original_url != url){
+                            var transaction_obj = [ /* set data */
+                                [20000, 13, 0],
+                                [t.object_id], [23],/* target objects */
+                                [400], /* contexts */
+                                [0] /* int_data */
+                            ]
+
+                            var string_obj = [[]]
+                            string_obj[0].push(url)
+                            
+                            strs.push(string_obj)
+                            adds.push([])
+                            ints.push(transaction_obj)
+                        }
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
                     var format_object = await this.format_award_object(txs[i], calculate_gas, ints, ipfs_index)
@@ -2864,6 +2885,49 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(buy_album_obj.obj)
                 }
+                else if(txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+                    var contractor_obj = this.format_nitro_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(contractor_obj)
+
+                    new_tx_index = ints.length -1
+
+                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    strs.push(index_data.str)
+                    adds.push([])
+                    ints.push(index_data.int)
+
+
+                    var transaction_obj = [ /* set data */
+                        [20000, 13, 0],
+                        [new_tx_index], [35],/* target objects */
+                        [400], /* contexts */
+                        [0] /* int_data */
+                    ]
+
+                    var string_obj = [[]]
+                    var url = txs[i].node_url
+                    string_obj[0].push(url)
+                    
+                    strs.push(string_obj)
+                    adds.push([])
+                    ints.push(transaction_obj)
+                }
+                else if(txs[i].type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
+                    var message_obj = await this.format_nitropost_comment_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                    
+                    var message_transfers = this.get_message_transfers(txs[i]);
+                    if(message_transfers[1].length != 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers);
+                    }
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -2883,7 +2947,7 @@ class StackPage extends Component {
 
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */ || pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
                 metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
@@ -2900,6 +2964,11 @@ class StackPage extends Component {
         }
         
 
+
+
+
+
+
         var index_data_in_tags = [ /* index data in tags */
             [20000, 12, 0],
             [], []/* target objects */
@@ -2908,7 +2977,7 @@ class StackPage extends Component {
         var index_data_strings = [ [], [] ]
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */|| pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
                 // var tx_tags = pushed_txs[i].entered_indexing_tags
                 index_data_in_tags[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 index_data_in_tags[2].push(35)
@@ -3306,7 +3375,7 @@ class StackPage extends Component {
                         obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
                     var t = txs[i]
                     obj[t.id] = t
                 }
@@ -3353,15 +3422,25 @@ class StackPage extends Component {
                     var award_object = {'sale_type':sale_type, 'videos_included':this.get_selected_video_ids(t)}
                     obj[t.id] = award_object
                 }
+                else if(txs[i].type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }   
+                }
             }
         }
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */|| pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
                 obj[pushed_txs[i].id] = pushed_txs[i]
             }
         }
 
+
+
+
+        
         if(this.props.app_state.should_update_contacts_onchain){
             var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
             var data = {'contacts':contacts_clone, 'time':Date.now()}
@@ -5935,6 +6014,45 @@ class StackPage extends Component {
         });
 
         return {videoposts:videoposts, videos:videos}
+    }
+
+    format_nitro_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 21/* 21(nitro_object) */, 0]
+        ]
+        return obj
+    }
+
+    format_nitropost_comment_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
     }
 
 
@@ -9402,16 +9520,26 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593bc']/* 'File Upload Limit.' */, 'details':fs, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['1593br']/* 'Uploaded Images' */, 'title':image_count, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bs']/* 'Uploaded Audio Files.' */, 'title':audio_count, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bt']/* 'Uploaded Videos.' */, 'title':video_count, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['1593ce']/* 'Uploaded PDFs.' */, 'title':pdf_count, 'size':'l'})}
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1593br']/* 'Images' */, 'title':this.format_number(image_count), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bs']/* 'Audio Files.' */, 'title':this.format_number(audio_count), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bt']/* 'Videos.' */, 'title':this.format_number(video_count), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1593ce']/* 'Uploaded PDFs.' */, 'title':this.format_number(pdf_count), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                    </ul>
+                </div>
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bu']/* 'Total Storage Space Utilized.' */, 'title':ts, 'size':'l'})}
@@ -9440,6 +9568,13 @@ class StackPage extends Component {
 
             </div>
         )
+    }
+
+    format_number(number){
+        if(number == 0){
+            return '000'
+        }
+        return number
     }
 
     render_current_storage_email(){
@@ -9543,7 +9678,7 @@ class StackPage extends Component {
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
                     </div>
                 </div>
             )
@@ -9565,7 +9700,7 @@ class StackPage extends Component {
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="video/*" onChange ={this.when_video_picked.bind(this)} multiple/>
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)} multiple/>
                     </div>
                 </div>
             )
@@ -10050,6 +10185,10 @@ class StackPage extends Component {
         const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
         return pattern.test(url);
     }
+
+
+
+
 
 
 

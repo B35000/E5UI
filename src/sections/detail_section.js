@@ -19,6 +19,7 @@ import ContractorDetailsSection from './contractor_detail_section'
 import CoinsDetailsSection from './coins_details_section'
 import AudioDetailSection from './audio_details_section'
 import VideoDetailsSection from './video_details_section'
+import NitroDetailsSection from './nitro_details_section'
 
 var bigInt = require("big-integer");
 
@@ -77,6 +78,12 @@ class PostDetailSection extends Component {
                 return(
                     <SubscriptionDetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} notify={this.props.notify.bind(this)}
                     selected_subscription_item={this.props.selected_subscription_item} work_page_tags_object={this.props.work_page_tags_object} viewed_subscriptions={this.props.viewed_subscriptions} open_pay_subscription_ui={this.props.open_pay_subscription_ui.bind(this)} open_cancel_subscription_ui={this.props.open_cancel_subscription_ui.bind(this)} open_collect_subscription_ui={this.props.open_collect_subscription_ui.bind(this)} open_modify_subscription_ui={this.props.open_modify_subscription_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_subscription_items={this.props.get_subscription_items.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} pin_subscription={this.props.pin_subscription.bind(this)} view_number={this.props.view_number.bind(this)}
+                    />
+                )
+            }
+            else if(selected_tag == this.props.app_state.loc['1264s']/* 'nitro' */){
+                return(
+                    <NitroDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_nitro_item={this.props.selected_nitro_item} viewed_nitros={this.props.viewed_nitros} work_page_tags_object={this.props.work_page_tags_object} show_images={this.props.show_images.bind(this)} add_nitro_reply_to_stack={this.props.add_nitro_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_nitro_items={this.props.get_nitro_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_nitro={this.props.pin_nitro.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)}
                     />
                 )
             }

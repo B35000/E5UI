@@ -300,6 +300,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['a273a']/* 'nitro' */){
+                return(
+                    <div>
+                        {this.render_nitro_data()}
+                    </div>
+                )
+            }
             else if(tx.type == this.props.app_state.loc['760']/* 'job' */){
                 return(
                     <div>
@@ -739,6 +746,20 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_edit_videopost()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
+                return(
+                    <div>
+                        {this.render_mail_message_data('Nitropost Messages')}
+                    </div>
+                )   
+            }
+            else if(tx.type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
+                return(
+                    <div>
+                        {this.render_edit_nitropost()}
                     </div>
                 )
             }
@@ -1827,6 +1848,59 @@ class ViewTransactionPage extends Component {
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
             'banner-icon':{'header':'me', 'subtitle':this.truncate(title, 15), 'image':image},
+        }
+    }
+
+
+
+
+
+
+
+
+    render_nitro_data(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_nitro_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['node_url'])}
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    get_nitro_details_data(object){
+        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var node_url = object['ipfs'] == null ? 'Nitro ID' : object['ipfs'].node_url
+        var album_art = object['ipfs'].album_art
+        var default_image = EndImg
+        var image = album_art == null ? default_image : this.get_image_from_file(album_art)
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'node_url':{'title':node_url, 'details':this.props.app_state.loc['a273n']/* 'Nitro Link.' */, 'size':'l'},
+            'banner-icon':{'header':'', 'subtitle':'', 'image':image},
         }
     }
     
@@ -5209,7 +5283,6 @@ class ViewTransactionPage extends Component {
         var object = this.format_post();
         var item = this.get_video_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
-
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
@@ -5228,6 +5301,37 @@ class ViewTransactionPage extends Component {
                     {this.render_video_tabs()}
                     {this.render_contractor_price_amounts()}
 
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_edit_nitropost(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_nitro_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['node_url'])}
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_pdf_files_if_any()}
+                    {this.render_markdown_if_any()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
