@@ -513,7 +513,7 @@ class BuyVideoPage extends Component {
             var token_balance = this.props.calculate_actual_balance(e5, token_id)
             var final_amount = exchange_amounts[token_id]
 
-            if(token_balance < final_amount){
+            if(bigInt(token_balance).lesser(final_amount)){
                 can_pay = false
             }
         }

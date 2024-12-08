@@ -124,6 +124,8 @@ import FullAudioPage from './pages/full_audio_page'
 import AddToPlaylist from './pages/add_to_playlist'
 import BuyVideoPage from './pages/buy_video_page'
 import FullVideoPage from './pages/full_video_page'
+import BuyNitroPage from './pages/buy_nitro_storage'
+import ConfigureNitroNodePage from './pages/configure_nitro_node'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -338,7 +340,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -401,7 +403,7 @@ class App extends Component {
 
     run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
 
-    nitro_node_details:{}, nitro_links:{}
+    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{},
   };
 
   get_static_assets(){
@@ -1163,7 +1165,7 @@ class App extends Component {
 
 
         /* nitro details section */
-        'c2527a':'Pin the Nitro post to your feed.','c2527b':'Pin Nitropost','c2527c':'Pin/Unpin Nitropost','c2527d':'Edit Indexed Nitropost','c2527e':'Change the basic details for your Indexed Nitropost','c2527f':'Loading Node Details...','c2527g':'Node Unavailable.','c2527h':'The node is unavailable or down.','c2527i':'Status','c2527j':'Online.','c2527k':'Booted','c2527l':'Start Up Time','c2527m':'Node Storage Service Offline.','c2527n':'Storage Purchase Recipient','c2527o':'Storage Purchase Limit.','c2527p':'Mbs','c2527q':'Accounts Served.','c2527r':'Tracked Hashes.','c2527s':'Tracked E5s.','c2527t':'Price per Megabyte of Storage.','c2527u':'','c2527v':'','c2527w':'','c2527x':'','c2527y':'','c2527z':'','c2527ba':'','c2527bb':'','c2527bc':'','c2527bd':'','c2527be':'','c2527bf':'','c2527bg':'','c2527bh':'',
+        'c2527a':'Pin the Nitro post to your feed.','c2527b':'Pin Nitropost','c2527c':'Pin/Unpin Nitropost','c2527d':'Edit Indexed Nitropost','c2527e':'Change the basic details for your Indexed Nitropost','c2527f':'Loading Node Details...','c2527g':'Node Unavailable.','c2527h':'The node is unavailable or down.','c2527i':'Status','c2527j':'Online.','c2527k':'Booted','c2527l':'Start Up Time','c2527m':'Node Storage Service Offline.','c2527n':'Storage Purchase Recipient','c2527o':'Storage Purchase Limit.','c2527p':'Mbs','c2527q':'Accounts Served.','c2527r':'Tracked Hashes.','c2527s':'Tracked E5s.','c2527t':'Price per Megabyte of Storage.','c2527u':'Loading Your Storage Info...','c2527v':'Your account doesnt exist in the node.','c2527w':'Files Stored.','c2527x':'files','c2527y':'Acquired Space.','c2527z':'Utilized Space','c2527ba':'Buy Storage.','c2527bb':'Acquire storage from the provider in their respective node.','c2527bc':'Configure Node.','c2527bd':'Configure your nitro node directly from E5.','c2527be':'configure','c2527bf':'Total Files Stored','c2527bg':'Total Space Utilized','c2527bh':'',
 
         
         /* proposal details section */
@@ -1231,7 +1233,18 @@ class App extends Component {
         /* add to playlist page */
         '3007':'Add to playlist.','3008':'You can add to an existing playlist or a new playlist.','3009':'existing','3010':'new','3011':'Youre creating a new Playlist.','3012':'Playlist Title','3013':'Playlist Description (optional)','3014':'Create and Add.','3015':'You need a title for your new playlist.','3016':'That title is too long.','3017':'Added your song to the new playlist.','3018':'A playlist with a similar title exists in your library.','3019':'You\'re adding the song to an existing playlist.','3020':'Added your song to the playlist.','3021':'You need to buy the track to add it to your playlists','3022':'Please purchase the song to play it.',
         
-        '3023':'edit-video','3024':'Videopost Sales.','3025':'Video Sales','3026':'details','3027':'queue','3028':'Loading...','3029':'e is already playing that video.','3030':'edit-nitro','3031':'','3032':'','3033':'','3034':'','3035':'','3036':'','3037':'','3038':'','3039':'','3040':'','3041':'','3042':'','3043':'','3044':'','3045':'','3046':'','3047':'','3048':'','3049':'','3050':'','3051':'','3052':'','3053':'','3054':'','3055':'','3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '3023':'edit-video','3024':'Videopost Sales.','3025':'Video Sales','3026':'details','3027':'queue','3028':'Loading...','3029':'e is already playing that video.','3030':'edit-nitro',
+        
+        
+        '3031':'buy-storage','3032':'nitro','3033':'storage','3034':'Set the amount of space you wish to buy in the node.','3035':'Selected Space.','3036':'Set Maximum','3037':'Final Fees.','3038':'The final price of the storage amounts you wish to purchase is shown.','3039':'Please set an amount of storage to purchase.',
+        
+        /* configure nitro page */
+        '3040':'boot','3041':'restore','3042':'backup','3043':'new-E5','3044':'delete-E5','3045':'iteration','3046':'content-gateway','3047':'provider','3048':'boot-storage','3049':'reconfigure-storage','3050':'back-ups','3051':'Boot the node to begin the syncronization process.','3052':'App Key...','3053':'Backup key (Optional)...','3054':'Boot Node','3054a':'','3054b':'','3054c':'','3054d':'','3054e':'','3054f':'','3054g':'','3054h':'','3054i':'An app key is required to boot the node.','3054j':'Attempting to boot the node...','3054k':'Something went wrong with the request.','3054l':'Restore the node to a previous back up.','3054m':'File Name...','3054n':'Backup file encryption key (optional)...','3054o':'This should be the previous key used to encrypt the backup files (if the node was rebooted). If unset, the backup key you set above will be used. And if that is unset, the encrypted backup key provided while posting the node will be used.','3054p':'replace-key','3054q':'Replace backup key','3054r':'If set to replace-key, the backup key will be updated to the key you provide above.','3054s':'Restore Node','3054t':'You need to specify a file name first.',
+        '3054u':'Attempting to restore the node...','3054v':'Manually back up the node at this time remotely.','3054w':'Back up node','3054x':'Attempting to back up the node remotely...','3054y':'E5 Address...','3054z':'Web3 provider...','3054ba':'Starting Block Number...','3054bb':'Synchronizing Iteration...','3054bc':'Please select an E5.','3054bd':'That E5 address is not valid.','3054be':'That web3 provider is not valid.','3054bf':'Please set a starting block to start synching from.','3054bg':'Please set an iteration value for node\'s the sync process.','3054bh':'Attempting to boot the E5 in the node...','3054bi':'Delete an E5 and its events from the node.','3054bj':'Boot E5','3054bk':'Remove E5',
+        '3054bl':'Attempting to remove the E5 from the node...','3054bm':'Change the node\'s block syncronization iteration value.','3054bn':'Change Iteration','3054bo':'Attempting to change the synchronization iteration...','3054bp':'Change the gateway used to fetch data in ipfs.','3054bq':'Provider...','3054br':'Update Gateway','3054bs':'Current Provider','3054bt':'Unset','3054bu':'Update Provider.','3054bv':'That gateway provider is not valid.','3054bw':'Attempting to change the gateway provider...','3054bx':'Change the Web3 provider url.','3054by':'Update Provider','3054bz':'Attempting to change the web3 provider url...','3054ca':'Boot and enable storage capabilities in your node.','3054cb':'Max buyable Capapacity','3054cc':'Storage Price.','3054cd':'Set the price per megabyte of storage for your node in your preferred tokens.','3054ce':'Boot Stroage','3054cf':'You need to specify a maximum amount of storage that can be bought','3054cg':'You need to specify a price for your storage.','3054ch':'You need to specify a recipient for the storage purchases.','3054ci':'Attempting to enable storage with your specified configuration...','3054cj':'Max-Buyable-Capacity','3054ck':'Price','3054cl':'Recipient','3054cm':'Change the current setting for the storage service in the node.','3054cn':'Update Capacity','3054co':'Attempting to update your storage configuration...','3054cp':'Update Prices','3054cq':'Update Recipient','3054cr':'','3054cs':'','3054ct':'','3054cu':'','3054cv':'','3054cw':'','3054cx':'','3054cy':'','3054cz':'','3054da':'','3054db':'','3054dc':'','3054dd':'','3054de':'','3054df':'','3054dg':'','3054dh':'','3054di':'','3054dj':'','3054dk':'','3054dl':'','3054dm':'','3054dn':'',
+        
+        
+        '3055':'','3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -2373,9 +2386,11 @@ class App extends Component {
     this.buy_video_page = React.createRef();
     this.edit_videopost_page = React.createRef();
     this.full_video_page = React.createRef();
+    this.buy_nitro_storage_page = React.createRef();
 
     this.new_nitro_page = React.createRef();
     this.edit_nitropost_page = React.createRef();
+    this.configure_nitro_node_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -3901,6 +3916,8 @@ class App extends Component {
           {this.render_add_to_playlist_bottomsheet()}
           {this.render_buy_video_bottomsheet()}
           {this.render_edit_nitropost_object_bottomsheet()}
+          {this.render_buy_nitro_storage_bottomsheet()}
+          {this.render_configure_nitro_node_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -3984,7 +4001,7 @@ class App extends Component {
         
           play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
-          load_nitro_node_details={this.load_nitro_node_details.bind(this)}
+          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -6362,11 +6379,14 @@ class App extends Component {
       var data = await response.text();
       var obj = JSON.parse(data);
       console.log(obj)
-      var success = obj.success
+      var success = obj['success']
+      console.log(success)
       if(success == true){
+        console.log('attempting to encrypt key...')
         var encrypted_key = await this.encrypt_nitro_node_key_with_my_public_key(key)
-        this.new_nitro_page.current?.set_node_url(link, encrypted_key)
-        this.edit_nitropost_page.current?.set_node_url(link, encrypted_key)
+        console.log('successfully encrypted key', encrypted_key)
+        if(this.new_nitro_page.current != null) this.new_nitro_page.current?.set_node_url(link, encrypted_key)
+        if(this.edit_nitropost_page.current != null) this.edit_nitropost_page.current?.set_node_url(link, encrypted_key)
         this.prompt_top_notification(this.getLocale()['a273j']/* 'Provided link added.' */, 5000)
       }else{
         this.prompt_top_notification(this.getLocale()['a273h']/* 'That provided link is not available for use.' */, 6000)
@@ -9872,6 +9892,16 @@ class App extends Component {
         }
         }, (1 * 500));  
     }
+    else if(tx.type == this.getLocale()['3031']/* 'buy-storage' */){
+      this.open_buy_nitro_storage_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.buy_nitro_storage_page.current){
+            me.buy_nitro_storage_page.current?.setState(tx)
+          }
+        }, (1 * 500));
+    }
+    
   }
 
   delete_message_item(item, transaction_item){
@@ -12815,6 +12845,576 @@ class App extends Component {
   }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+  render_buy_nitro_storage_bottomsheet(){
+    if(this.state.buy_nitro_storage_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.buy_nitro_storage_bottomsheet} onClose={this.open_buy_nitro_storage_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_buy_nitro_storage_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_buy_nitro_storage_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_nitro_storage_bottomsheet.bind(this)} open={this.state.buy_nitro_storage_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_buy_nitro_storage_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_buy_nitro_storage_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div>
+        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+          'overflow-y':'auto'}}>
+            <BuyNitroPage ref={this.buy_nitro_storage_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_nitro_storage_to_stack={this.add_buy_nitro_storage_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
+        </div>
+      </div>
+    )
+  }
+
+  open_buy_nitro_storage_bottomsheet(){
+    if(this.state.buy_nitro_storage_bottomsheet == true){
+      //closing
+      this.buy_nitro_storage_bottomsheet = this.buy_nitro_storage_page.current?.state;
+
+      this.setState({buy_nitro_storage_bottomsheet: !this.state.buy_nitro_storage_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({buy_nitro_storage_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({buy_nitro_storage_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({buy_nitro_storage_bottomsheet: !me.state.buy_nitro_storage_bottomsheet});
+
+          if(me.buy_nitro_storage_bottomsheet != null){
+            me.buy_nitro_storage_page.current?.setState(me.buy_nitro_storage_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_buy_nitro_storage_bottomsheet(object){
+    this.open_buy_nitro_storage_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.buy_nitro_storage_page.current != null){
+        me.buy_nitro_storage_page.current.set_data(object)
+      }
+    }, (1 * 500));
+  }
+
+  add_buy_nitro_storage_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  render_configure_nitro_node_bottomsheet(){
+    if(this.state.configure_nitro_node_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.configure_nitro_node_bottomsheet} onClose={this.open_configure_nitro_node_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_configure_nitro_node_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_configure_nitro_node_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_configure_nitro_node_bottomsheet.bind(this)} open={this.state.configure_nitro_node_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_configure_nitro_node_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_configure_nitro_node_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div>
+        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+          'overflow-y':'auto'}}>
+            <ConfigureNitroNodePage ref={this.configure_nitro_node_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} boot_nitro_node={this.boot_nitro_node.bind(this)} restore_nitro_node={this.restore_nitro_node.bind(this)} isValidE5Address={this.isValidE5Address.bind(this)} boot_new_e5={this.boot_new_e5.bind(this)} delete_e5_from_node={this.delete_e5_from_node.bind(this)} change_iteration_in_node={this.change_iteration_in_node.bind(this)} change_gateway={this.change_gateway.bind(this)} update_web3_provider_in_node={this.update_web3_provider_in_node.bind(this)} boot_storage={this.boot_storage.bind(this)} update_storage_config={this.update_storage_config.bind(this)} back_up_node={this.back_up_node.bind(this)}
+            decrypt_storage_data_using_key={this.decrypt_storage_data_using_key.bind(this)}
+            />
+        </div>
+      </div>
+    )
+  }
+
+  open_configure_nitro_node_bottomsheet(){
+    if(this.state.configure_nitro_node_bottomsheet == true){
+      //closing
+      this.configure_nitro_node_bottomsheet = this.configure_nitro_node_page.current?.state;
+
+      this.setState({configure_nitro_node_bottomsheet: !this.state.configure_nitro_node_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({configure_nitro_node_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({configure_nitro_node_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({configure_nitro_node_bottomsheet: !me.state.configure_nitro_node_bottomsheet});
+
+          if(me.configure_nitro_node_bottomsheet != null){
+            me.configure_nitro_node_page.current?.setState(me.configure_nitro_node_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_configure_nitro_node_bottomsheet(object){
+    this.open_configure_nitro_node_bottomsheet()
+    var me = this;
+    setTimeout(async function() {
+      if(me.configure_nitro_node_page.current != null){
+        var final_backup_key = await me.decrypt_nitro_node_key_with_my_public_key(object['ipfs'].encrypted_key, object['e5'])
+        me.configure_nitro_node_page.current.set_data(object, final_backup_key)
+      }
+    }, (1 * 500));
+  }
+
+  boot_nitro_node = async (entered_app_key_text, entered_backup_key_text, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054j']/* 'Attempting to boot the node...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    const params = new URLSearchParams({
+      backup_key: final_backup_key,
+      app_key: entered_app_key_text
+    });
+    var request = `${node_url}/boot?${params.toString()}`
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: ''
+    }
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  restore_nitro_node = async (entered_backup_key_text, entered_filename_text, entered_backup_file_text, should_restore_key_title_tag_selected, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054u']/* 'Attempting to restore the node...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+    var final_files_backup_key = entered_backup_file_text == '' ? final_backup_key : entered_backup_file_text
+
+    const params = new URLSearchParams({
+      backup_key: final_backup_key,
+      file_name: entered_filename_text,
+      data_key: final_files_backup_key,
+      should_restore_key: should_restore_key_title_tag_selected
+    });
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: '' // Convert the data object to a JSON string
+    }
+    var request = `${node_url}/restore?${params.toString()}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+
+  }
+
+  back_up_node = async (entered_backup_key_text, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054x']/* 'Attempting to back up the node remotely' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    const params = new URLSearchParams({
+      backup_key: final_backup_key,
+    });
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: ''
+    }
+    var request = `${node_url}/backup?${params.toString()}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  isValidE5Address = (adr) => {
+    try {
+      const web3 = new Web3()
+      web3.utils.toChecksumAddress(adr)
+      return true
+    } 
+    catch (e) {
+      return false
+    }
+  }
+
+  boot_new_e5 = async (entered_backup_key_text, selected_e5, entered_address_text, entered_web3_text, entered_start_block_text, entered_iteration_text, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054bh']/* 'Attempting to boot the E5 in the node...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    var arg_obj = {
+      e5: selected_e5, 
+      backup_key: final_backup_key,
+      e5_address: entered_address_text, 
+      web3: entered_web3_text, 
+      first_block:parseInt(entered_start_block_text), 
+      iteration:parseInt(entered_iteration_text)
+    }
+
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify(arg_obj),
+    });
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: ''
+    }
+    var request = `${node_url}/new_e5?${params.toString()}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  delete_e5_from_node = async (entered_backup_key_text, selected_e5, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054bl']/* 'Attempting to remove the E5 from the node...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    const params = new URLSearchParams({
+      e5: selected_e5,
+      backup_key: final_backup_key
+    });
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: ''
+    }
+    var request = `${node_url}/delete_e5?${params.toString()}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  change_iteration_in_node = async (entered_backup_key_text, selected_e5, entered_iteration_text, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054bo']/* 'Attempting to change the synchronization iteration...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    const params = new URLSearchParams({
+      backup_key: final_backup_key,
+      e5: selected_e5,
+      new_iteration:parseInt(entered_iteration_text),
+    });
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: ''
+    }
+    var request = `${node_url}/update_iteration?${params.toString()}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  change_gateway = async (entered_backup_key_text, entered_ipfs_provider_text, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054bw']/* 'Attempting to change the gateway provider...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    const params = new URLSearchParams({
+      backup_key: final_backup_key,
+      new_provider: entered_ipfs_provider_text
+    });
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: ''
+    }
+    var request = `${node_url}/update_content_gateway?${params.toString()}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  update_web3_provider_in_node = async (entered_backup_key_text, selected_e5, entered_web3_text, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054bz']/* 'Attempting to change the web3 provider url...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    const params = new URLSearchParams({
+      backup_key: final_backup_key,
+      e5: selected_e5,
+      new_provider: entered_web3_text
+    });
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: ''
+    }
+    var request = `${node_url}/update_provider?${params.toString()}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_purchase_recipient_account, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054ci']/* Attempting to enable storage with your specified configuration... */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    var arg_obj = {
+      backup_key: final_backup_key,
+      max_buyable_capacity: parseInt(max_buyable_capacity),
+      price_per_megabyte: price_per_megabyte,
+      target_account_e5: selected_e5,
+      target_storage_purchase_recipient_account: target_storage_purchase_recipient_account
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${node_url}/boot_storage`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  update_storage_config = async (entered_backup_key_text, key, value, e5, nitro_object) => {
+    this.prompt_top_notification(this.getLocale()['3054co']/* Attempting to update your storage configuration... */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    var arg_obj = {
+      backup_key: final_backup_key,
+      key: key,
+      value: value,
+      e5: e5,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${node_url}/reconfigure_storage`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
+
+  decrypt_storage_data_using_key(data, key){
+    try{
+      var bytes  = CryptoJS.AES.decrypt(data, key);
+      var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      return originalText
+    }catch(e){
+      return data
+    }
+  }
 
 
 
@@ -19332,8 +19932,12 @@ class App extends Component {
     
   }
 
-  get_nitro_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts) => {
+  get_nitro_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, account) => {
     var created_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */})
+
+    var bought_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:23, p2/* sender_acc_id */:account})
+
+    console.log('bought_nitros', bought_nitro_events, 'account', account, 'e5', e5)
 
     created_nitro_events = created_nitro_events.reverse()
     if(prioritized_accounts && prioritized_accounts.length > 0){
@@ -19355,12 +19959,22 @@ class App extends Component {
       });
       created_nitro_events = final_object_events
     }
+
+    var bought_nitros = []
+    bought_nitro_events.forEach(event => {
+      if(!bought_nitros.includes(event.returnValues.p3/* context */)){
+        bought_nitros.push(event.returnValues.p3/* context */)
+      }
+    });
+
     
     this.record_number_of_items(e5, 'nitro', created_nitro_events.length)
     var created_nitros = this.state.created_nitros[e5] == null ? [] : this.state.created_nitros[e5].slice()
     var created_nitro_mappings = this.state.created_nitro_mappings[e5] == null ? {} : structuredClone(this.state.created_nitro_mappings[e5])
+
     var is_first_time = this.state.created_nitros[e5] == null
     is_first_time = true
+
     for(var i=0; i<created_nitro_events.length; i++){
       var id = created_nitro_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -19371,8 +19985,9 @@ class App extends Component {
             this.fetch_uploaded_data_from_ipfs([nitro_data.album_art], false)
           }
 
+          var is_bought = bought_nitros.includes(id)
           const data = {'id':id, 'ipfs':nitro_data, 'event': created_nitro_events[i], 'e5':e5, 'timestamp':parseInt(created_nitro_events[i].returnValues.p6),
-          'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5,
+          'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5, 'bought':is_bought,
           }
 
           var obj = this.get_item_in_array(created_nitros, id)
@@ -19407,7 +20022,7 @@ class App extends Component {
     
     this.setState({created_nitros: created_nitros_clone, created_nitro_mappings:created_nitro_mappings_clone})
 
-    console.log('nitro count: '+created_nitros.length)
+    console.log('nitro count',created_nitros.length)
     
   }
 
@@ -19508,6 +20123,9 @@ class App extends Component {
     if(page == this.getLocale()['1264p']/* videoport */){
       this.load_subscription_data(posts_to_load)
       this.load_video_data(posts_to_load)
+    }
+    if(page == this.getLocale()['1264s']/* 'nitro' */){
+      this.load_nitro_data(posts_to_load)
     }
 
     if(page == 'w'){
@@ -20172,7 +20790,7 @@ class App extends Component {
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load)
+        this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load, account)
       }
     }
   }
@@ -21171,9 +21789,21 @@ class App extends Component {
 
 
   encrypt_nitro_node_key_with_my_public_key = async (key) => {
-    var uint8array = await this.props.get_account_raw_public_key()
+    var uint8array = await this.get_account_raw_public_key()
     var encrypted_key = this.encrypt_key_with_accounts_public_key_hash(key, uint8array)
     return encrypted_key
+  }
+
+  decrypt_nitro_node_key_with_my_public_key = async (encrypted_key, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const privateKey = this.state.accounts[e5].privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    var private_key_to_use = Buffer.from(hash)
+
+    var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
+    var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+
+    return my_key.toString()
   }
 
 
@@ -22299,7 +22929,6 @@ class App extends Component {
 
   load_nitro_node_details = async (object) =>{
     var link = object['ipfs'] == null ? null : object['ipfs'].node_url
-    if(link == null) return;
     var request = `${link}/marco`
     try{
       const response = await fetch(request);
@@ -22321,7 +22950,46 @@ class App extends Component {
       }
     }
     catch(e){
-      this.prompt_top_notification(this.getLocale()['a273h'], 6000)
+      var clone = structuredClone(this.state.nitro_node_details)
+      clone[object['e5_id']] = 'unavailable'
+      this.setState({nitro_node_details:clone})
+    }
+  }
+
+  load_my_account_storage_info = async (object) =>{
+    var account = this.state.user_account_id[object['e5']]
+    if(account != null && account != 1){
+      var link = object['ipfs'] == null ? null : object['ipfs'].node_url
+      var request = `${link}/account_storage_data/${account}`
+      try{
+        const response = await fetch(request);
+        if (!response.ok) {
+          console.log(response)
+          throw new Error(`Failed to retrieve data. Status: ${response}`);
+        }
+        var data = await response.text();
+        var obj = JSON.parse(data);
+        var success = obj.success
+        if(success == true){
+          var info = obj.account
+          var clone = structuredClone(this.state.nitro_node_storage_payment_info)
+          clone[object['e5_id']] = info
+          this.setState({nitro_node_storage_payment_info: clone})
+        }else{
+          var clone = structuredClone(this.state.nitro_node_storage_payment_info)
+          clone[object['e5_id']] = 'unavailable'
+          this.setState({nitro_node_storage_payment_info: clone})
+        }
+      }
+      catch(e){
+        var clone = structuredClone(this.state.nitro_node_storage_payment_info)
+        clone[object['e5_id']] = 'unavailable'
+        this.setState({nitro_node_storage_payment_info: clone})
+      }
+    }else{
+      var clone = structuredClone(this.state.nitro_node_storage_payment_info)
+      clone[object['e5_id']] = 'unavailable'
+      this.setState({nitro_node_storage_payment_info: clone})
     }
   }
 

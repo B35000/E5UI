@@ -1903,7 +1903,7 @@ class NewJobPage extends Component {
         )
     }
 
-   get_suggested_tokens(){
+    get_suggested_tokens(){
         var items = [
             {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['268'], 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['269'], 'size':'s'}},

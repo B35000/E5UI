@@ -192,7 +192,7 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */ && item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */ && item.type != this.props.app_state.loc['1593ct']/* 'video-messages' */){
+        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */ && item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */ && item.type != this.props.app_state.loc['1593ct']/* 'video-messages' */ && item.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1788']/* 'Make some changes to the transaction' */, 'title':this.props.app_state.loc['1789']/* 'Edit' */})}
@@ -762,6 +762,13 @@ class ViewTransactionPage extends Component {
                         {this.render_edit_nitropost()}
                     </div>
                 )
+            }
+            else if(tx.type == this.props.app_state.loc['3031']/* 'buy-storage' */){
+               return(
+                    <div>
+                        {this.render_buy_storage_transaction_data()}
+                    </div>
+                ) 
             }
 
         }
@@ -6068,6 +6075,10 @@ class ViewTransactionPage extends Component {
 
 
 
+
+
+
+
     render_selected_video_tabs(){
         var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-100;
@@ -6157,6 +6168,63 @@ class ViewTransactionPage extends Component {
 
 
 
+
+
+
+
+    render_buy_storage_transaction_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3035']/* 'Selected Space.' */, 'subtitle':this.format_power_figure(transaction_item.amount), 'barwidth':this.get_number_width(transaction_item.amount), 'number':`${this.format_account_balance_figure(transaction_item.amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                </div>
+                <div style={{height:20}}/>
+                {this.render_payment_amounts()}
+            </div>
+        )
+    }
+
+
+    render_payment_amounts(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index]
+        var object = transaction_item.nitro_object
+        var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3037']/* 'Final Fees.' */, 'details':this.props.app_state.loc['3038']/* 'The final price of the storage amounts you wish to purchase is shown.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_buy_storage_price_amounts(transaction_item.amounts_to_transfer, node_details['target_account_e5'])}
+            </div>
+        )
+    }
+
+    render_buy_storage_price_amounts(price_data, e5){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
+        var items = [].concat(price_data)
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['exchange']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
 
 

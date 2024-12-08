@@ -2331,7 +2331,13 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_nitros)))))
+            var my_bought_nitros = []
+            var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+            for(var i=0; i<all_nitros.length; i++){
+                var obj = all_nitros[i]
+                if(obj['bought'] == true) my_bought_nitros.push(obj)
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bought_nitros))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_nitros = []
@@ -3163,6 +3169,7 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.load_nitro_node_details(object)
+        this.props.load_my_account_storage_info(object)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -3326,7 +3333,7 @@ class home_page extends Component {
                 open_purchase_album_ui={this.props.show_buy_album_bottomsheet.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)}
                 update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.props.download_playlist.bind(this)}
 
-                when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)} play_video={this.props.play_video.bind(this)}
+                when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)} play_video={this.props.play_video.bind(this)} show_buy_nitro_storage_bottomsheet={this.props.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.props.show_configure_nitro_node_bottomsheet.bind(this)} load_nitro_node_details={this.props.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.props.load_my_account_storage_info.bind(this)}
                 />
             </div>
         )

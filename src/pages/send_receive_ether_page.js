@@ -448,7 +448,7 @@ class SendReceiveEtherPage extends Component {
         this.props.start_scan('send_receive_ether_page')
     }
 
-     set_scan_data(data){
+    set_scan_data(data){
         this.setState({recipient_address:data})
     }
 
@@ -947,10 +947,6 @@ class SendReceiveEtherPage extends Component {
     }
 
     isValidAddress = (adr) => {
-        // if(adr == ''){
-        //     return false
-        // }
-        // return true
         var e5 = this.state.ether['e5']
         try {
             const web3 = new Web3()

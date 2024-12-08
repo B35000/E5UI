@@ -106,6 +106,8 @@ class NitroDetailsSection extends Component {
 
             if(object == null || object['ipfs'] == null) return;
             this.props.get_objects_messages(object['id'],  object['e5'])
+            this.props.load_nitro_node_details(object)
+            this.props.load_my_account_storage_info(object)
         }
     }
 
@@ -218,7 +220,12 @@ class NitroDetailsSection extends Component {
                         {this.render_detail_item('2', item['age'])}
                     </div>
 
+                    <div style={{height: 10}}/>
                     {this.render_nitro_node_details(object)}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_node_account_storage_details(object)}
+                    
 
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
@@ -233,9 +240,12 @@ class NitroDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_edit_object_button(object)}
-                    <div style={{height: 10}}/>
 
                     {this.render_pin_post_button(object)}
+
+                    {this.render_buy_storage_button(object)}
+
+                    {this.render_configure_nitro_node(object)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -532,7 +542,7 @@ class NitroDetailsSection extends Component {
         if(node_details == null){
             return(
                 <div>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.log['c2527f']/* 'Loading Node Details...' */})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527f']/* 'Loading Node Details...' */})}
                 </div>
             )
         }
@@ -548,7 +558,7 @@ class NitroDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527j']/* 'Online.' */, 'details':this.props.app_state.loc['c2527i']/* 'Status' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'title':node_details['booted'], 'details':this.props.app_state.loc['c2527k']/* 'Booted' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':node_details['booted'].toString(), 'details':this.props.app_state.loc['c2527k']/* 'Booted' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':''+(new Date(node_details['start_up_time'])), 'details':this.props.app_state.loc['c2527l']/* 'Start Up Time' */, 'size':'l'})}
@@ -566,12 +576,21 @@ class NitroDetailsSection extends Component {
         if(node_details['max_buyable_capacity'] == 0){
             return(
                 <div>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.log['c2527m']/* 'Node Storage Service Offline.' */})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527m']/* 'Node Storage Service Offline.' */})}
                 </div>
             )
         }else{
             return(
                 <div>
+                    {this.render_detail_item('3', {'title':number_with_commas(node_details['total_files_stored']), 'details':this.props.app_state.loc['c2527bf']/* 'Total Files Stored' */, 'size':'l'})}
+
+                    {this.render_detail_item('0')}
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527bg']/* 'Total Space Utilized' */, 'subtitle':this.format_power_figure(node_details['total_space_utilized']), 'barwidth':this.get_number_width(node_details['total_space_utilized']), 'number':`${number_with_commas(node_details['total_space_utilized'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                    </div>
+                    <div style={{height:10}}/>
+
                     {this.render_detail_item('3', {'title':number_with_commas(node_details['storage_accounts']), 'details':this.props.app_state.loc['c2527q']/* 'Accounts Served.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
@@ -581,16 +600,17 @@ class NitroDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527o']/* 'Storage Purchase Limit.' */, 'subtitle':this.format_power_figure(node_details['max_buyable_capacity']), 'barwidth':this.get_number_width(node_details['max_buyable_capacity']), 'number':`${number_with_commas(node_details['max_buyable_capacity'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
                     </div>
-
-                    {this.render_detail_item('3', {'title':node_details['ipfs_hashes'], 'details':this.props.app_state.loc['c2527r']/* 'Tracked Hashes.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.log['c2527s']/* 'Tracked E5s.' */})}
+                    {this.render_detail_item('3', {'title':node_details['ipfs_hashes'], 'details':this.props.app_state.loc['c2527r']/* 'Tracked Hashes.' */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527s']/* 'Tracked E5s.' */})}
                     <div style={{height:10}}/>
                     {this.load_preferred_e5_ui(node_details['tracked_E5s'])}
 
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.log['c2527t']/* 'Price per Megabyte of Storage.' */})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527t']/* 'Price per Megabyte of Storage.' */})}
                     <div style={{height:10}}/>
                     {this.render_price_amounts(node_details['price_per_megabyte'], node_details['target_account_e5'])}
                 </div>
@@ -669,8 +689,11 @@ class NitroDetailsSection extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        // var object = this.get_job_items()[this.props.selected_job_post_item];
-        var items = [].concat(price_data)
+        var prices = []
+        price_data.forEach(item => {
+            prices.push({'exchange':parseInt(item['exchange']),'amount': bigInt(item['amount']) })
+        });
+        var items = [].concat(prices)
         if(items.length == 0){
             items = [0, 1, 2]
             return(
@@ -747,9 +770,84 @@ class NitroDetailsSection extends Component {
 
 
 
+    render_node_account_storage_details(object){
+        var node_details = this.props.app_state.nitro_node_storage_payment_info[object['e5_id']]
+        if(node_details == null){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527u']/* 'Loading Your Storage Info...' */})}
+                </div>
+            )
+        }
+        else if(node_details == 'unavailable'){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527v']/* 'Your account doesnt exist in the node.' */})}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(node_details['acquired_space'])+' Mbs', 'details':this.props.app_state.loc['c2527y']/* 'Acquired Space.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':node_details['utilized_space']+' Mbs', 'details':this.props.app_state.loc['c2527z']/* 'Utilized Space.' */, 'size':'l'})}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527w']/* 'Files Stored.' */, 'subtitle':this.format_power_figure(node_details['files']), 'barwidth':this.get_number_width(node_details['files']), 'number':`${number_with_commas(node_details['files'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527x']/* files */, })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    render_buy_storage_button(object){
+        var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        if(node_details != null && node_details != 'unavailable' && node_details['max_buyable_capacity'] !== 0 && node_details['price_per_megabyte'] != null && node_details['price_per_megabyte'].length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['c2527ba']/* 'Buy storage' */, 'details':this.props.app_state.loc['c2527bb']/* 'Acquire storage from the provider in their respective node.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.buy_storgae(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527ba']/* 'Buy Storage' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    buy_storgae(object){
+        this.props.show_buy_nitro_storage_bottomsheet(object)
+    }
 
 
 
+    render_configure_nitro_node(object){
+        var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(node_details != null && node_details !== 'unavailable' && object['event'].returnValues.p5 == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['c2527bc']/* 'Configure Node.' */, 'details':this.props.app_state.loc['c2527bd']/* 'Configure your nitro node directly from E5.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.configure_node(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527be']/* 'configure' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    configure_node(object){
+        this.props.show_configure_nitro_node_bottomsheet(object)
+    }
 
 
 
@@ -1215,17 +1313,17 @@ class NitroDetailsSection extends Component {
         }
     }
 
-    get_all_sorted_objects_mappings(object){
-        var all_objects = {}
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            var all_objects_clone = structuredClone(all_objects)
-            all_objects = { ...all_objects_clone, ...e5_objects}
-        }
+    // get_all_sorted_objects_mappings(object){
+    //     var all_objects = {}
+    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+    //         var e5 = this.props.app_state.e5s['data'][i]
+    //         var e5_objects = object[e5]
+    //         var all_objects_clone = structuredClone(all_objects)
+    //         all_objects = { ...all_objects_clone, ...e5_objects}
+    //     }
 
-        return all_objects
-    }
+    //     return all_objects
+    // }
 
     format_message(message){
         if(message == ''){
@@ -1261,30 +1359,30 @@ class NitroDetailsSection extends Component {
         return objects;
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
+    // get_all_sorted_objects(object){
+    //     var all_objects = []
+    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+    //         var e5 = this.props.app_state.e5s['data'][i]
+    //         var e5_objects = object[e5]
+    //         if(e5_objects != null){
+    //             all_objects = all_objects.concat(e5_objects)
+    //         }
+    //     }
 
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
+    //     return this.sortByAttributeDescending(all_objects, 'timestamp')
+    // }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
+    // sortByAttributeDescending(array, attribute) {
+    //   return array.sort((a, b) => {
+    //       if (a[attribute] < b[attribute]) {
+    //       return 1;
+    //       }
+    //       if (a[attribute] > b[attribute]) {
+    //       return -1;
+    //       }
+    //       return 0;
+    //   });
+    // }
 
     get_stacked_items(object){
         // var object = this.get_post_items()[this.props.selected_audio_item];
@@ -1537,6 +1635,28 @@ class NitroDetailsSection extends Component {
             var power = amount.toString().length - 9
             return 'e'+(power+1)
         }
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
     }
 
     /* gets a formatted time diffrence from now to a given time */

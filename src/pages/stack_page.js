@@ -2730,13 +2730,13 @@ class StackPage extends Component {
                     ints.push(format_edit_object.metadata_action)
 
                     if(txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
-                        var url = t.node_url
-                        var original_url = this.get_all_sorted_objects_mappings(this.props.app_state.nitro_links)[t.object_id]
+                        var url = txs[i].node_url
+                        var original_url = this.get_all_sorted_objects_mappings(this.props.app_state.nitro_links)[txs[i].object_id]
 
                         if(original_url != url){
                             var transaction_obj = [ /* set data */
                                 [20000, 13, 0],
-                                [t.object_id], [23],/* target objects */
+                                [txs[i].object_id], [23],/* target objects */
                                 [400], /* contexts */
                                 [0] /* int_data */
                             ]
@@ -2927,6 +2927,24 @@ class StackPage extends Component {
                         adds.push([])
                         ints.push(message_transfers);
                     }
+                }
+                else if(txs[i].type == this.props.app_state.loc['3031']/* 'buy-storage' */){
+                    var buy_album_obj = this.format_buy_nitro_object(txs[i], ints)
+                    if(buy_album_obj.depth_swap_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.depth_swap_obj)
+                    }
+
+                    if(buy_album_obj.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.transfers_obj)
+                    }
+                    
+                    strs.push(buy_album_obj.string_obj)
+                    adds.push([])
+                    ints.push(buy_album_obj.obj)
                 }
                 
                 delete_pos_array.push(i)
@@ -5690,7 +5708,7 @@ class StackPage extends Component {
 
         //index city if set
         var city = t.selected_device_city
-        if(city != ''){
+        if(city != '' && city != null){
             transaction_obj[1].push(target_stack_index)
             transaction_obj[2].push(35)
             transaction_obj[3].push(20/* 20(tag_registry) */)
@@ -6053,6 +6071,74 @@ class StackPage extends Component {
         }
 
         return {int: obj, str: string_obj}
+    }
+
+    format_buy_nitro_object = (t, ints) => {
+        var ints_clone = ints.slice()
+        var object = t.nitro_object
+        var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        var purchase_recipient = node_details['target_storage_purchase_recipient_account']
+        var post_id = t.nitro_object['id'];
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [23], [23],/* 23(nitro node storage sale) */
+            [post_id], /* contexts */
+            [purchase_recipient] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var data = t.amounts_to_transfer
+
+        for(var i=0; i<data.length; i++){
+            var exchange = data[i]['exchange']
+            var amount = (data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, transfers_obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var u=0; u<transfer_actions.length; u++){
+                transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(transfer_actions[u]['amount'])
+                transfers_obj[6].push(transfer_actions[u]['depth'])
+            }
+        }
+        
+        var string_data = 'storage'
+        string_obj[0].push(string_data)
+
+
+        return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj, obj:obj, string_obj:string_obj}
     }
 
 

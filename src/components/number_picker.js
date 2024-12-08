@@ -193,10 +193,14 @@ class NumberPicker extends Component {
 
     when_text_input_field_changed(text){
       if(!isNaN(text)){ 
-        var new_obj = this.get_create_number_data()
+        if(this.props.number_limit != null && bigInt(text).greater(bigInt(this.props.number_limit))){
+
+        }else{
+          var new_obj = this.get_create_number_data()
           new_obj['number'] = this.get_power_number() + (bigInt(0).add(bigInt(text))).toString().toLocaleString('fullwide', {useGrouping:false});
           this.setState({create_number_data: new_obj, entered_number: text})
           this.props.when_number_picker_value_changed(bigInt(new_obj['number']))
+        }
       }
     }
 

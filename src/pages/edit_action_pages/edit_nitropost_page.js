@@ -80,7 +80,7 @@ class EditNitroPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -446,7 +446,7 @@ class EditNitroPage extends Component {
         else if(!key.startsWith('eeeee') || !key.endsWith('eeeee')){
             this.props.notify(this.props.app_state.loc['a273q']/* 'That key isn\'t valid.' */, 4000)
         }
-        else if(this.props.app_state.has_wallet_been_set){
+        else if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a273r']/* 'You need to set your wallet first to encrypt that nitro key.' */, 4000)
         }
         else{
@@ -454,10 +454,14 @@ class EditNitroPage extends Component {
         }
     }
 
-    isValidURL(url) {
-        if(url.startsWith('http')) return true;
-        const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
-        return pattern.test(url);
+    isValidURL(string) {
+        let url;
+        try {
+            url = new URL(string);
+        } catch (_) {
+            return false;  
+        }
+        return url.protocol === "http:" || url.protocol === "https:" || url.protocol === "wss:";
     }
 
     set_node_url(link, encrypted_key){
