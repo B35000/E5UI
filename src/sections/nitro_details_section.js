@@ -792,7 +792,7 @@ class NitroDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':this.format_account_balance_figure(node_details['acquired_space'])+' Mbs', 'details':this.props.app_state.loc['c2527y']/* 'Acquired Space.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'title':node_details['utilized_space']+' Mbs', 'details':this.props.app_state.loc['c2527z']/* 'Utilized Space.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.round_off(node_details['utilized_space'])+' Mbs', 'details':this.props.app_state.loc['c2527z']/* 'Utilized Space.' */, 'size':'l'})}
 
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -801,6 +801,10 @@ class NitroDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    round_off(number){
+        return (Math.round(number * 100) / 100)
     }
 
 
@@ -1180,7 +1184,7 @@ class NitroDetailsSection extends Component {
                 </div>
             )
         }
-        var size = item['size'] == null ? '11px' : item['size'];
+        var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         return(
             <div>

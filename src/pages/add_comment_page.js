@@ -745,7 +745,7 @@ class AddCommentPage extends Component {
         var size = this.get_selected_item(this.state.get_comment_font_size_settings_object, this.props.app_state.loc['1042c']/* size */)
 
         if((size == '25px' && message.length > 75) || (size == '40px' && message.length > 45)){
-            this.props.notify(this.props.app_state.loc['1042e']/* 'hat message is inconveniencingly long for its size.' */, 4000)
+            this.props.notify(this.props.app_state.loc['1042e']/* 'that message is inconveniencingly long for its size.' */, 4000)
             return;
         }
 

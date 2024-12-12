@@ -7,6 +7,7 @@ import DurationPicker from './../components/duration_picker';
 import QRCode from "react-qr-code";
 import { parseBlob } from 'music-metadata';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
+import EndImg from './../assets/end_token_icon.png';
 
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
@@ -45,6 +46,13 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class StackPage extends Component {
     
     state = {
@@ -68,7 +76,8 @@ class StackPage extends Component {
         get_skip_nsfw_warning_tags_object: this.get_skip_nsfw_warning_tags_object(),
         get_graph_type_tags_object: this.get_graph_type_tags_object(),
         get_remember_account_tags_object: this.get_remember_account_tags_object(),
-        get_file_data_option_tags_object:this.get_file_data_option_tags_object(),
+        get_file_data_option_tags_object: this.get_file_data_option_tags_object(),
+        get_upload_storage_option_tags_object: this.get_upload_storage_option_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -703,6 +712,16 @@ class StackPage extends Component {
 
 
 
+    get_upload_storage_option_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1593cv']/* web3.storage */, this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */,], [1]
+            ],
+        };
+    }
 
     get_file_data_option_tags_object(){
         return{
@@ -720,6 +739,10 @@ class StackPage extends Component {
             console.log('stackpage', 'setting email', web3_email)
             this.setState({storage_email_input: web3_email})
         }
+    }
+
+    set_my_preferred_nitro(){
+        if(this.props.app_state.my_preferred_nitro != '') this.setState({selected_nitro_item: this.props.app_state.my_preferred_nitro})
     }
 
 
@@ -1865,6 +1888,10 @@ class StackPage extends Component {
         var should_optimize_run = true;
         var now = Date.now()
         var ipfs_index = await this.get_ipfs_index_object(txs, now, calculate_gas)
+        if(ipfs_index == ''){
+            this.props.lock_run(false)
+            return;
+        }
         var new_transaction_index_obj={}
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
@@ -3593,6 +3620,9 @@ class StackPage extends Component {
     }
 
     get_object_ipfs_index(tx, calculate_gas, ipfs_index, data_index){
+        if(Object.keys(tx).length == 0){
+            return null
+        }
         if(calculate_gas != null && calculate_gas == true){
             return 'QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk'
         }
@@ -7415,12 +7445,12 @@ class StackPage extends Component {
 
 
 
-                {/* {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.load_my_nitro_objects_to_select()}
 
-                {this.render_detail_item('0')} */}
+                {this.render_detail_item('0')}
 
 
 
@@ -7503,6 +7533,9 @@ class StackPage extends Component {
             </div>
         )
     }
+
+
+
     
 
     when_theme_tags_updated(tag_group){
@@ -9635,26 +9668,181 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593az']/* 'Storage Configuration' */, 'details':this.props.app_state.loc['1593bb']/* 'Connect your account to a third party storage provider to store larger files.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <div className="row" style={{width:'100%'}}>
-                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={35} placeholder={this.props.app_state.loc['1593bd']/* 'zaphod@beeblebrox.galaxy' */} when_text_input_field_changed={this.when_storage_email_input_field_changed.bind(this)} text={this.state.storage_email_input} theme={this.props.theme} />
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
-                        <div onClick={()=>this.verify_email()}>
-                            <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                                <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {this.render_current_storage_email()}
-
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_upload_storage_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_upload_storage_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['1593be']/* 'Note: You have to set this in every new device you use.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+
+                {this.render_storage_option()}
 
             </div>
         )
     }
+
+    when_get_upload_storage_option_tags_object_updated(tag_obj){
+        this.setState({get_upload_storage_option_tags_object: tag_obj})
+    }
+
+
+    render_storage_option(){
+        var selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        
+        if(selected_item == this.props.app_state.loc['1593cv']/* web3.storage */){
+            return(
+                <div>
+                    <div className="row" style={{width:'100%'}}>
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput font={this.props.app_state.font} height={35} placeholder={this.props.app_state.loc['1593bd']/* 'zaphod@beeblebrox.galaxy' */} when_text_input_field_changed={this.when_storage_email_input_field_changed.bind(this)} text={this.state.storage_email_input} theme={this.props.theme} />
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                            <div onClick={()=>this.verify_email()}>
+                                <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                    <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {this.render_current_storage_email()}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1593be']/* 'Note: You have to set this in every new device you use.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1593cx']/* ''To see a nitro option here, first purchase storage from it in the nitro section.' */})}
+                    <div style={{height: 10}}/>
+
+                    {this.load_my_nitro_objects_to_select()}
+                    <div style={{height: 10}}/>
+                    {this.render_node_account_storage_details()}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+    load_my_nitro_objects_to_select(){
+        var items = this.load_active_nitros()
+        var items2 = [0, 1, 2]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_nitro_item_clicked(item)}>
+                            {this.render_nitro_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_nitros(){
+        var my_bought_nitros = []
+        var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        for(var i=0; i<all_nitros.length; i++){
+            var obj = all_nitros[i]
+            if(obj['bought'] == true) my_bought_nitros.push(obj)
+        }
+        return my_bought_nitros
+    }
+
+    render_nitro_item(item){
+        var object = item
+        var default_image = EndImg
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+        var title = item['e5']+' • '+item['id']
+        var details = object['ipfs'] == null ? 'Nitropost ID' : start_and_end(object['ipfs'].entered_title_text)
+        if(this.state.selected_nitro_item == item['e5_id']){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_nitro_item_clicked(item){
+        if(item['e5_id'] == this.state.selected_nitro_item){
+            this.setState({selected_nitro_item: null})
+        }else{
+            this.setState({selected_nitro_item: item['e5_id']})
+            this.props.set_my_nitro_selection(item['e5_id'])
+            this.props.load_nitro_node_details(item)
+            this.props.load_my_account_storage_info(item)
+        }
+    }
+
+
+
+
+    render_node_account_storage_details(){
+        if(this.state.selected_nitro_item == null) return;
+        var node_details = this.props.app_state.nitro_node_storage_payment_info[this.state.selected_nitro_item]
+        if(node_details == null){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527u']/* 'Loading Your Storage Info...' */})}
+                </div>
+            )
+        }
+        else if(node_details == 'unavailable'){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527v']/* 'Your account doesnt exist in the node.' */})}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(node_details['acquired_space'])+' Mbs', 'details':this.props.app_state.loc['c2527y']/* 'Acquired Space.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':this.round_off(node_details['utilized_space'])+' Mbs', 'details':this.props.app_state.loc['c2527z']/* 'Utilized Space.' */, 'size':'l'})}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527w']/* 'Files Stored.' */, 'subtitle':this.format_power_figure(node_details['files']), 'barwidth':this.get_number_width(node_details['files']), 'number':`${number_with_commas(node_details['files'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527x']/* files */, })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    round_off(number){
+        return (Math.round(number * 100) / 100)
+    }
+
+
+
 
     format_number(number){
         if(number == 0){
@@ -9700,9 +9888,24 @@ class StackPage extends Component {
 
     get_upload_file_size_limit(){
         var max_size = this.state.default_upload_limit
-        if(this.props.app_state.web3_account_email != ''){
-            max_size = (1.5*1024*1024*1024)
+        var selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['1593cv']/* web3.storage */){
+            if(this.props.app_state.web3_account_email != ''){
+                max_size = (1.5*1024*1024*1024)
+            }
         }
+        else if(selected_item == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+            if(this.state.selected_nitro_item != null){
+                var node_details = this.props.app_state.nitro_node_storage_payment_info[this.state.selected_nitro_item]
+                if(node_details != null){
+                    var available_space = parseFloat(node_details['acquired_space']) - parseFloat(node_details['utilized_space'])
+
+                    max_size = (available_space * 1024 * 1024)
+                }
+            }
+        }
+        
         return max_size
     }
 
@@ -9727,6 +9930,7 @@ class StackPage extends Component {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     }
+
 
 
     render_upload_files_ui(){
@@ -10019,6 +10223,7 @@ class StackPage extends Component {
     }
 
     upload_files = async () => {
+        var size_total = 0
         for(var i = 0; i<this.file_names.length; i++){
             this.files[i]['name'] = this.file_names[i]
             if(this.selected_files_type == 'audio'){
@@ -10028,9 +10233,45 @@ class StackPage extends Component {
             else if(this.selected_files_type == 'pdf'){
                 this.files[i]['thumbnail'] = await this.get_pdf_image(this.files[i]['data'])
             }
+            size_total += this.files[i]['size']
         }
-        this.props.upload_multiple_files_to_web3_or_chainsafe(this.files, this.selected_files_type)
+        
+        var selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+            if(size_total > this.get_upload_file_size_limit()){
+                this.props.notify(this.props.app_state.loc['1593cy']/* 'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.' */, 9000)
+            }else{
+                if(this.state.selected_nitro_item == null){
+                   this.props.notify(this.props.app_state.loc['1593coz']/* 'You need to select a nitro node first.' */, 9000) 
+                }else{
+                    var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+                    var obj = this.get_item_in_array2(this.state.selected_nitro_item, all_nitros)
+                    var node_details = this.props.app_state.nitro_node_details[this.state.selected_nitro_item]
+                    
+                    if(obj == null){
+                        this.props.notify(this.props.app_state.loc['1593da']/* 'Please wait a few moments for E5 to syncronize fully.' */, 5000)
+                    }
+                    else if(node_details == null){
+                        this.props.notify(this.props.app_state.loc['1593db']/* 'Please wait a few moments for your selected node to come online.' */, 5000)
+                    }
+                    else{
+                        this.props.upload_multiple_files_to_nitro_node(this.files, this.selected_files_type, obj, node_details)
+                    }
+                }
+                
+            }
+        }
+        else{
+            this.props.upload_multiple_files_to_web3_or_chainsafe(this.files, this.selected_files_type)
+        }
     }
+
+    get_item_in_array2(e5_id, object_array){
+        var object = object_array.find(x => x['e5_id'] === e5_id);
+        return object
+    }
+
 
 
     
@@ -10085,7 +10326,7 @@ class StackPage extends Component {
             }
         });
 
-        return return_items
+        return return_items.reverse()
     }
 
     get_cid_split(ecid){
@@ -10283,7 +10524,17 @@ class StackPage extends Component {
 
 
 
-
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
 
     render_empty_views(size){
         var items = []
@@ -10351,6 +10602,14 @@ class StackPage extends Component {
             var power = amount.toString().length - 9
             return 'e'+(power+1)
         }
+    }
+
+    get_number_width(number){
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
     }
 
     /* gets a formatted time diffrence from now to a given time */

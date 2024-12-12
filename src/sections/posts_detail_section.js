@@ -1064,7 +1064,7 @@ class PostsDetailsSection extends Component {
                 </div>
             )
         }
-        var size = item['size'] == null ? '11px' : item['size'];
+        var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         return(
             <div>

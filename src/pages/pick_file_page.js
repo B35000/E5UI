@@ -214,7 +214,7 @@ class PickFilePage extends Component {
             }
         });
 
-        return return_items
+        return return_items.reverse()
     }
 
     includes_function(array, ecid){

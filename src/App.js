@@ -403,7 +403,7 @@ class App extends Component {
 
     run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
 
-    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{},
+    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:''
   };
 
   get_static_assets(){
@@ -1085,7 +1085,7 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'','1593cw':'','1593cx':'','1593cy':'','1593coz':'','1593da':'','1593db':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'','1593dg':'','1593dh':'','1593di':'','1593dj':'','1593dk':'','1593dl':'','1593dm':'','1593dn':'','1593do':'','1593dp':'','1593dq':'','1593dr':'','1593ds':'','1593dt':'','1593du':'','1593dv':'','1593dw':'','1593dx':'','1593dy':'','1593dz':'','1593ea':'','1593eb':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1241,7 +1241,7 @@ class App extends Component {
         /* configure nitro page */
         '3040':'boot','3041':'restore','3042':'backup','3043':'new-E5','3044':'delete-E5','3045':'iteration','3046':'content-gateway','3047':'provider','3048':'boot-storage','3049':'reconfigure-storage','3050':'back-ups','3051':'Boot the node to begin the syncronization process.','3052':'App Key...','3053':'Backup key (Optional)...','3054':'Boot Node','3054a':'','3054b':'','3054c':'','3054d':'','3054e':'','3054f':'','3054g':'','3054h':'','3054i':'An app key is required to boot the node.','3054j':'Attempting to boot the node...','3054k':'Something went wrong with the request.','3054l':'Restore the node to a previous back up.','3054m':'File Name...','3054n':'Backup file encryption key (optional)...','3054o':'This should be the previous key used to encrypt the backup files (if the node was rebooted). If unset, the backup key you set above will be used. And if that is unset, the encrypted backup key provided while posting the node will be used.','3054p':'replace-key','3054q':'Replace backup key','3054r':'If set to replace-key, the backup key will be updated to the key you provide above.','3054s':'Restore Node','3054t':'You need to specify a file name first.',
         '3054u':'Attempting to restore the node...','3054v':'Manually back up the node at this time remotely.','3054w':'Back up node','3054x':'Attempting to back up the node remotely...','3054y':'E5 Address...','3054z':'Web3 provider...','3054ba':'Starting Block Number...','3054bb':'Synchronizing Iteration...','3054bc':'Please select an E5.','3054bd':'That E5 address is not valid.','3054be':'That web3 provider is not valid.','3054bf':'Please set a starting block to start synching from.','3054bg':'Please set an iteration value for node\'s the sync process.','3054bh':'Attempting to boot the E5 in the node...','3054bi':'Delete an E5 and its events from the node.','3054bj':'Boot E5','3054bk':'Remove E5',
-        '3054bl':'Attempting to remove the E5 from the node...','3054bm':'Change the node\'s block syncronization iteration value.','3054bn':'Change Iteration','3054bo':'Attempting to change the synchronization iteration...','3054bp':'Change the gateway used to fetch data in ipfs.','3054bq':'Provider...','3054br':'Update Gateway','3054bs':'Current Provider','3054bt':'Unset','3054bu':'Update Provider.','3054bv':'That gateway provider is not valid.','3054bw':'Attempting to change the gateway provider...','3054bx':'Change the Web3 provider url.','3054by':'Update Provider','3054bz':'Attempting to change the web3 provider url...','3054ca':'Boot and enable storage capabilities in your node.','3054cb':'Max buyable Capapacity','3054cc':'Storage Price.','3054cd':'Set the price per megabyte of storage for your node in your preferred tokens.','3054ce':'Boot Stroage','3054cf':'You need to specify a maximum amount of storage that can be bought','3054cg':'You need to specify a price for your storage.','3054ch':'You need to specify a recipient for the storage purchases.','3054ci':'Attempting to enable storage with your specified configuration...','3054cj':'Max-Buyable-Capacity','3054ck':'Price','3054cl':'Recipient','3054cm':'Change the current setting for the storage service in the node.','3054cn':'Update Capacity','3054co':'Attempting to update your storage configuration...','3054cp':'Update Prices','3054cq':'Update Recipient','3054cr':'','3054cs':'','3054ct':'','3054cu':'','3054cv':'','3054cw':'','3054cx':'','3054cy':'','3054cz':'','3054da':'','3054db':'','3054dc':'','3054dd':'','3054de':'','3054df':'','3054dg':'','3054dh':'','3054di':'','3054dj':'','3054dk':'','3054dl':'','3054dm':'','3054dn':'',
+        '3054bl':'Attempting to remove the E5 from the node...','3054bm':'Change the node\'s block syncronization iteration value.','3054bn':'Change Iteration','3054bo':'Attempting to change the synchronization iteration...','3054bp':'Change the gateway used to fetch data in ipfs.','3054bq':'Provider...','3054br':'Update Gateway','3054bs':'Current Provider','3054bt':'Unset','3054bu':'Update Provider.','3054bv':'That gateway provider is not valid.','3054bw':'Attempting to change the gateway provider...','3054bx':'Change the Web3 provider url.','3054by':'Update Provider','3054bz':'Attempting to change the web3 provider url...','3054ca':'Boot and enable storage capabilities in your node.','3054cb':'Max buyable Capapacity','3054cc':'Storage Price.','3054cd':'Set the price per megabyte of storage for your node in your preferred tokens.','3054ce':'Boot Stroage','3054cf':'You need to specify a maximum amount of storage that can be bought','3054cg':'You need to specify a price for your storage.','3054ch':'You need to specify a recipient for the storage purchases.','3054ci':'Attempting to enable storage with your specified configuration...','3054cj':'Max-Buyable-Capacity','3054ck':'Price','3054cl':'Recipient','3054cm':'Change the current setting for the storage service in the node.','3054cn':'Update Capacity','3054co':'Attempting to update your storage configuration...','3054cp':'Update Prices','3054cq':'Update Recipient','3054cr':'enabled','3054cs':'Free Basic Storage','3054ct':'If set to enabled, users will be able to store post metadata in your node for free.','3054cu':'free-storage','3054cv':'update selection','3054cw':'','3054cx':'','3054cy':'','3054cz':'','3054da':'','3054db':'','3054dc':'','3054dd':'','3054de':'','3054df':'','3054dg':'','3054dh':'','3054di':'','3054dj':'','3054dk':'','3054dl':'','3054dm':'','3054dn':'',
         
         
         '3055':'','3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
@@ -2583,7 +2583,8 @@ class App extends Component {
       custom_gateway: this.state.custom_gateway,
       pdf_bookmarks: this.state.pdf_bookmarks,
 
-      video_timestamp_data:this.state.video_timestamp_data
+      video_timestamp_data:this.state.video_timestamp_data,
+      my_preferred_nitro:this.state.my_preferred_nitro,
     }
   }
 
@@ -2686,6 +2687,7 @@ class App extends Component {
       var cupcake_custom_gateway = cupcake_state.custom_gateway
       var cupcake_pdf_bookmarks = cupcake_state.pdf_bookmarks;
       var cupcake_video_timestamp_data = cupcake_state.video_timestamp_data
+      var cupcake_my_preferred_nitro = cupcake_state.my_preferred_nitro
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -2887,6 +2889,10 @@ class App extends Component {
         this.setState({video_timestamp_data: cupcake_video_timestamp_data})
       }
 
+      if(cupcake_my_preferred_nitro != null){
+        this.setState({my_preferred_nitro: cupcake_my_preferred_nitro})
+      }
+
     }
 
     var me = this;
@@ -2908,6 +2914,7 @@ class App extends Component {
         me.stack_page.current?.set_selected_graph_type_tag()
         me.stack_page.current?.set_selected_remember_account_type_tag()
         me.stack_page.current?.set_web3_email_account(web3_email)
+        me.stack_page.current?.set_my_preferred_nitro()
     }, (1 * 1000));
 
     
@@ -5370,7 +5377,7 @@ class App extends Component {
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
-      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)}
+      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)}
       />
     )
   }
@@ -5747,6 +5754,14 @@ class App extends Component {
 
   set_custom_gateway(url){
     this.setState({custom_gateway: url})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  set_my_nitro_selection(id){
+    this.setState({my_preferred_nitro: id})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -13329,7 +13344,7 @@ class App extends Component {
     }
   }
 
-  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_purchase_recipient_account, nitro_object) => {
+  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_purchase_recipient_account, selected_basic_storage_setting, nitro_object) => {
     this.prompt_top_notification(this.getLocale()['3054ci']/* Attempting to enable storage with your specified configuration... */, 1200)
     var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
@@ -13340,7 +13355,8 @@ class App extends Component {
       max_buyable_capacity: parseInt(max_buyable_capacity),
       price_per_megabyte: price_per_megabyte,
       target_account_e5: selected_e5,
-      target_storage_purchase_recipient_account: target_storage_purchase_recipient_account
+      target_storage_purchase_recipient_account: target_storage_purchase_recipient_account,
+      unlimited_basic_storage: selected_basic_storage_setting
     }
 
     var body = {
@@ -13601,6 +13617,8 @@ class App extends Component {
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
     
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    console.log('datas', 'uploaded_data_obj', this.state.uploaded_data)
+    if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
     return data['data']
   }
 
@@ -13619,14 +13637,44 @@ class App extends Component {
       return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
   }
 
-  download_image(img,  name){
+  download_image = async (img,  name) => {
     this.prompt_top_notification(this.getLocale()['2738b']/* 'Downloading image.' */, 1500)
-    const a = document.createElement('a');
-    a.href = img;
-    a.download = `${name}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    if(!img.startsWith('http')){
+      // Create and click the download link
+      const a = document.createElement("a");
+      a.href = img;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      // Clean up
+      document.body.removeChild(a);
+      return
+    }
+    try {
+      // Fetch the image as a blob
+      const response = await fetch(img);
+      if (!response.ok) {
+          throw new Error("Failed to fetch image");
+      }
+
+      const blob = await response.blob();
+
+      // Create a temporary object URL
+      const objectUrl = URL.createObjectURL(blob);
+
+      // Create and click the download link
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      console.error("Error downloading the image:", error);
+    }
   }
 
 
@@ -16654,6 +16702,26 @@ class App extends Component {
 
 
 
+
+    /* ---------------------------------------- NITRO LINK DATA -------------------------------------- */
+    await this.get_my_nitro_link_data(web3, E52contractInstance, e5, account);
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
+
+    /* ---------------------------------------- BALANCE DATA -------------------------------------- */
+    await this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, [], account)
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
     /* ---------------------------------------- BALANCE DATA -------------------------------------- */
     await this.load_e5_balance_data(web3, contractInstance, account, e5, contract_addresses);
     this.load_pending_withdraw_event_data(web3, contractInstance, account, e5, contract_addresses)
@@ -16664,11 +16732,6 @@ class App extends Component {
 
 
 
-    /* ---------------------------------------- NITRO LINK DATA -------------------------------------- */
-    await this.get_my_nitro_link_data(web3, E52contractInstance, e5, account);
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
 
 
 
@@ -17137,24 +17200,29 @@ class App extends Component {
   fetch_uploaded_data_from_ipfs = async (cids, is_my_cids) => {
     var clone = structuredClone(this.state.uploaded_data) 
     for(var i=0; i<cids.length; i++){
+      console.log('datas', 'fetching', cids[i])
       var ecid_obj = this.get_cid_split(cids[i])
       var id = ecid_obj['cid']
       var filetype = ecid_obj['filetype']
       var storage_id = ecid_obj['storage']
       var file_name = ecid_obj['file_name']
+      console.log('datas', 'fetching object', ecid_obj)
       var data = this.fetch_from_storage(cids[i])
       if(data == null){
-        data = await this.fetch_file_data_from_chainsafe_storage(id, storage_id, file_name, 0)
+        data = await this.fetch_file_data_from_respective_storage(id, storage_id, file_name, 0)
         this.store_in_local_storage(cids[i], data)
       }
-      if(clone[filetype] == null) clone[filetype] = {}
-      clone[filetype][cids[i]] = data
-      if(is_my_cids){
-        var cid_clone = this.state.uploaded_data_cids.slice()
-        cid_clone.push(cids[i])
-        this.setState({uploaded_data_cids: cids, uploaded_data: clone})
-      }else{
-        this.setState({uploaded_data: clone})
+      if(data != null){
+        console.log('datas', 'obtained object', data)
+        if(clone[filetype] == null) clone[filetype] = {}
+        clone[filetype][cids[i]] = data
+        if(is_my_cids){
+          var cid_clone = this.state.uploaded_data_cids.slice()
+          cid_clone.push(cids[i])
+          this.setState({uploaded_data_cids: cids, uploaded_data: clone})
+        }else{
+          this.setState({uploaded_data: clone})
+        }
       }
     }
   }
@@ -17380,14 +17448,14 @@ class App extends Component {
       var id = event.returnValues.p1/* target_id */
       var data = event.returnValues.p4/* string_data */
       var author = event.returnValues.p2/* sender_acc_id */
-      if(registered_nitro_links[id] != null){
-        if(author.toString() == registered_nitro_links_authors[id].toString()){
+      if(registered_nitro_links[(id+e5)] != null){
+        if(author.toString() == registered_nitro_links_authors[(id+e5)].toString()){
           //link was reset by author
-          registered_nitro_links[id] = data
+          registered_nitro_links[(id+e5)] = data
         }
       }else{
-        registered_nitro_links[id] = data
-        registered_nitro_links_authors[id] = author
+        registered_nitro_links[(id+e5)] = data
+        registered_nitro_links_authors[(id+e5)] = author
       }
       
     });
@@ -19821,7 +19889,7 @@ class App extends Component {
         }else{
           var pos = created_audios.indexOf(obj)
           if(pos != -1){
-            created_audios[pos] = obj
+            created_audios[pos] = data
           }
         }
         created_audio_mappings[id] = data
@@ -19906,7 +19974,7 @@ class App extends Component {
           }else{
             var pos = created_videos.indexOf(obj)
             if(pos != -1){
-              created_videos[pos] = obj
+              created_videos[pos] = data
             }
           }
           created_video_mappings[id] = data
@@ -19960,7 +20028,7 @@ class App extends Component {
       created_nitro_events = final_object_events
     }
 
-    var bought_nitros = []
+    const bought_nitros = []
     bought_nitro_events.forEach(event => {
       if(!bought_nitros.includes(event.returnValues.p3/* context */)){
         bought_nitros.push(event.returnValues.p3/* context */)
@@ -19990,13 +20058,18 @@ class App extends Component {
           'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5, 'bought':is_bought,
           }
 
+          if(this.state.my_preferred_nitro == (id+e5)){
+            this.load_nitro_node_details(data)
+            this.load_my_account_storage_info(data)
+          }
+
           var obj = this.get_item_in_array(created_nitros, id)
           if(obj == null){
             created_nitros.push(data)
           }else{
             var pos = created_nitros.indexOf(obj)
             if(pos != -1){
-              created_nitros[pos] = obj
+              created_nitros[pos] = data
             }
           }
           created_nitro_mappings[id] = data
@@ -20985,18 +21058,18 @@ class App extends Component {
       }
       return data
     }
-    // else if(option == 'ch'){
-    //   var data = this.fetch_from_storage(id)
-    //   if(data == null){
-    //     data = await this.fetch_data_from_chainsafe_storage(id, 0)
-    //     this.store_in_local_storage(id, data)
-    //   }
-    //   if(included_underscore){
-    //     if(data == null) return null;
-    //     return data[internal_id]
-    //   }
-    //   return data
-    // }
+    else if(option == 'ni'){
+      var data = this.fetch_from_storage(id)
+      if(data == null){
+        data = await this.fetch_data_from_nitro(id, 0)
+        this.store_in_local_storage(id, data)
+      }
+      if(included_underscore){
+        if(data == null) return null;
+        return data[internal_id]
+      }
+      return data
+    }
   }
 
   store_image_in_ipfs = async (data) => {
@@ -21006,7 +21079,14 @@ class App extends Component {
 
   store_objects_data_in_ipfs_using_option = async (data, unappend_identifier, unencrypt_image) => {
     var set_storage_option = this.state.storage_option
+    var my_preferred_nitro = this.state.my_preferred_nitro
 
+    if(my_preferred_nitro != ''){
+      //upload to nitro storage
+      var cid = await this.store_data_in_nitro(data, unencrypt_image, my_preferred_nitro)
+      if(unappend_identifier == true) return cid
+      return 'ni.'+cid;
+    }
     if(set_storage_option == 'infura'){
       var cid = await this.store_data_in_infura(data, unencrypt_image)
       if(unappend_identifier == true) return cid
@@ -21026,6 +21106,92 @@ class App extends Component {
       var cid = await this.store_data_in_chainsafe_storage(data, unencrypt_image)
       if(unappend_identifier == true) return cid
       return 'ch.'+cid;
+    }
+  }
+
+
+
+  store_data_in_nitro = async (_data, unencrypt_image, my_preferred_nitro) => {
+    var node_details = this.state.nitro_node_details[my_preferred_nitro]
+    if(node_details == null){
+      this.prompt_top_notification(this.getLocale()['1593db']/* 'Please wait a few moments for your selected node to come online.' */, 5000)
+      return '';
+    }
+    var data = _data
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details)
+    if(block_hash_and_signature == null){
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return '';
+    }
+
+    var node_url = this.get_nitro_link_from_e5_id(my_preferred_nitro)
+    var arg_obj = {
+      signature_data: block_hash_and_signature.data,
+      signature:block_hash_and_signature.signature,
+      file_datas: [JSON.stringify(data)],
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${node_url}/store_data`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      if(obj.success == false){
+        this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */+' '+obj.message, 8000)
+        return '';
+      }else{
+        return my_preferred_nitro+'-'+obj.files[0]
+      }
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return '';
+    }
+
+  }
+
+  fetch_data_from_nitro = async (cid, depth) => {
+    await this.wait(this.state.ipfs_delay)
+    var split_cid_array = cid.split('-');
+    var e5_id = split_cid_array[0]
+    var nitro_cid = split_cid_array[1]
+
+    var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
+    // console.log('datas', nitro_url)
+    if(nitro_url == null) return
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify({hashes:[nitro_cid]}),
+    });
+    var request = `${nitro_url}/data?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('datas',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var object_data = obj['data']
+      var cid_data = JSON.parse(object_data[nitro_cid])
+      
+      return cid_data
+    }
+    catch(e){
+      if(depth < 3){
+        return await this.fetch_data_from_nitro(cid, depth+1)
+      }
     }
   }
 
@@ -21051,6 +21217,8 @@ class App extends Component {
       return added.path.toString()
     } catch (error) {
       console.log('Error uploading file: ', error)
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return '';
     }
   }
 
@@ -21096,7 +21264,7 @@ class App extends Component {
       console.log('Error fetching infura file: ', error)
 
       if(depth<5){
-        return this.fetch_object_data_from_infura(cid, depth+1)
+        return await this.fetch_object_data_from_infura(cid, depth+1)
       }
     }
   }
@@ -21305,8 +21473,11 @@ class App extends Component {
     return new File([blob], `${file_name}.json`)
   }
 
-  fetch_file_data_from_chainsafe_storage = async (cid, storage_id, file_name, depth) => {
-    // console.log('stackdata','loading cid', cid)
+  fetch_file_data_from_respective_storage = async (cid, storage_id, file_name, depth) => {
+    if(storage_id == 'ni'){
+      console.log('datas', 'file is a nitro object, fetching from nitro storage instead...')
+      return await this.fetch_file_data_from_nitro_storage(cid, depth)
+    }
     await this.wait(this.state.ipfs_delay)
     var gateways = [
       `https://ipfs.chainsafe.io/ipfs/${cid}`,
@@ -21314,7 +21485,6 @@ class App extends Component {
     ]
     await this.wait(this.state.ipfs_delay)
     var selected_gateway = storage_id == 'ch' ? gateways[0] : gateways[1]
-    // console.log('stackdata', selected_gateway)
     if(storage_id == 'ch'){
       selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
     }else{
@@ -21337,7 +21507,7 @@ class App extends Component {
     } catch (error) {
       console.log('stackdata','Error fetching web3.storage file: ', error)
       if(depth<2){
-        return this.fetch_file_data_from_chainsafe_storage(cid, storage_id, file_name, depth+1)
+        return this.fetch_file_data_from_respective_storage(cid, storage_id, file_name, depth+1)
       }
     }
   }
@@ -21356,60 +21526,70 @@ class App extends Component {
     }
   }
 
+  fetch_file_data_from_nitro_storage = async (cid, depth) => {
+    await this.wait(this.state.ipfs_delay)
+    var split_cid_array = cid.split('-');
+    var e5_id = split_cid_array[0]
+    var nitro_cid = split_cid_array[1]
+
+    var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
+    // console.log('datas', nitro_url)
+    if(nitro_url == null) return
+
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify({hashes:[nitro_cid]}),
+    });
+    var request = `${nitro_url}/data?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('datas',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var object_data = obj['data']
+      // console.log('datas', object_data)
+      var cid_data = object_data[nitro_cid]
+
+      if(cid_data != null){
+        var file_pointer_link = cid_data['data']
+        var split_cid_array2 = file_pointer_link.split('-');
+        var e5_id2 = split_cid_array2[0]
+        var nitro_cid2 = split_cid_array2[1]
+
+        var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
+        var content_type = this.get_file_extension(cid_data['name'])
+        if(nitro_url != null){
+          cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
+        }
+        console.log('datas', cid_data)
+
+        return cid_data
+      }
+    }
+    catch(e){
+      if(depth < 3){
+        await this.fetch_file_data_from_nitro_storage(cid, depth+1)
+      }
+    }
+  }
+
+  get_nitro_link_from_e5_id(e5_id){
+    var all_nitro_pointer_mappings = this.get_all_sorted_objects_mappings(this.state.nitro_links)
+    return all_nitro_pointer_mappings[e5_id]
+  }
 
 
-  // upload_file_to_web3_or_chainsafe = async (_data, type) => {
-  //   this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 5000)
-  //   if(this.state.web3_account_email != ''){
-  //     const client = await createW3UpClient()
-  //     const myAccount = await client.login(this.state.web3_account_email)
-  //     while (true) {
-  //       const res = await myAccount.plan.get()
-  //       if (res.ok) break
-  //       console.log('stackdata','Waiting for payment plan to be selected...')
-  //       await new Promise(resolve => setTimeout(resolve, 1000))
-  //     }
-  //     var file_name = 'data'
-  //     const files = [
-  //       this.make_file(this.encrypt_storage_data(JSON.stringify(_data)), file_name)
-  //     ]
-  //     const directoryCid = await client.uploadDirectory(files)
-  //     var cid = directoryCid.toString()
-  //     const ecid = _data['type']+'_'+cid+'.w3'+','+file_name
-  //     this.when_uploading_file_complete(ecid, cid, _data, type)
-  //     this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
-  //   }else{
-  //     //upload to chainsafe
-  //     var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data))
-  //     if(cid == ''){
-  //       this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
-  //     }else{
-  //       var e_cid = _data['type']+'_'+cid+'.ch'
-  //       this.when_uploading_file_complete(e_cid, cid, _data)
-  //       this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
-  //     }
-  //   }
-  // }
 
-  // when_uploading_file_complete(ecid, cid, _data){
-  //   var clone = structuredClone(this.state.uploaded_data)
-  //   if(clone[_data['type']] == null) clone[_data['type']] = {}
-  //   clone[_data['type']][cid] = _data
-    
-  //   var cid_clone = this.state.uploaded_data_cids.slice()
-  //   cid_clone.push(ecid)
-    
-  //   this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true})
-  //   var me = this;
-  //   setTimeout(function() {
-  //     me.set_cookies()
-  //   }, (1 * 1000));
-  // }
+
+
+
 
 
   upload_multiple_files_to_web3_or_chainsafe = async (datas, type) => {
     this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
-    console.log('stackpage',datas)
+    // console.log('stackpage',datas)
     if(this.state.web3_account_email != ''){
       //upload to web3
       const client = await createW3UpClient()
@@ -21433,7 +21613,7 @@ class App extends Component {
 
       var files = []
       for(var i=0; i<datas.length; i++){
-        var _data = datas[i]
+        var _data = structuredClone(datas[i])
         var file_name = 'data'+i
         _data['data'] = `https://${streamable_cid}.ipfs.w3s.link/${_data['name']}`
         files.push(this.make_file(this.encrypt_storage_data(JSON.stringify(_data)), file_name))
@@ -21478,8 +21658,199 @@ class App extends Component {
     }
   }
 
+  upload_multiple_files_to_nitro_node = async(datas, type, nitro_object, node_details) => {
+    this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
+    var file_datas = []
+    var file_types = []
+    for(var i=0; i<datas.length; i++){
+      var data = datas[i]
+      file_datas.push(data['data'])
+      file_types.push(this.get_file_extension(data['name']))
+    }
+
+    var file_names = await this.upload_multiple_datas_to_nitro_node(file_datas, file_types, nitro_object, node_details)
+    if(file_names == null){
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return;
+    }
+
+    var nitro_object_e5_id = nitro_object['e5_id']
+    var final_objects = []
+    var datas_clone = JSON.parse(JSON.stringify({'data':datas}))['data']
+    for(var i=0; i<datas_clone.length; i++){
+      var data2 = structuredClone(datas_clone[i])
+      var file_cid = file_names[i]
+      var link = nitro_object_e5_id+'-'+file_cid
+      data2['data'] = link
+      final_objects.push(JSON.stringify(data2))
+    }
+
+    var file_object_cids = await this.upload_file_objects_to_nitro(final_objects, nitro_object, node_details)
+    if(file_names == null){
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return;
+    }
+
+    var e_cids = []
+    for(var i=0; i<datas.length; i++){
+      var cid = nitro_object_e5_id+'-'+file_object_cids[i]
+      var _data = datas[i]
+      const ecid = _data['type']+'_'+cid+'.ni'+',0';
+      e_cids.push(ecid)
+    }
+
+    this.when_uploading_multiple_files_complete(e_cids, '', datas)
+    this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
+    
+    this.setState({storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+
+  }
+
+  get_file_extension(fileName) {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1 || lastDotIndex === 0) {
+      return null; // No extension or hidden file
+    }
+    return fileName.substring(lastDotIndex + 1);
+  }
+
+  upload_multiple_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details) =>{
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details)
+    if(block_hash_and_signature == null){
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return;
+    }
+
+    var node_url = nitro_object['ipfs'].node_url
+    var arg_obj = {
+      signature_data: block_hash_and_signature.data,
+      signature:block_hash_and_signature.signature,
+      file_datas: file_datas,
+      file_types: file_types,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${node_url}/store_files`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      if(obj.success == false){
+        return null
+      }else{
+        return obj.files
+      }
+    }
+    catch(e){
+      return null
+    }
+  }
+
+  get_block_hash_and_signature = async (node_details) => {
+    try{
+      const e5 = node_details['target_account_e5']
+      const web3 = new Web3(this.get_web3_url_from_e5(e5))
+      var current_block_number = parseInt(await web3.eth.getBlockNumber())
+      var round_down_value = await this.get_round_down_value(web3, current_block_number)
+      var round_down_block = this.round_down(current_block_number, round_down_value)
+      var current_block = await web3.eth.getBlock(round_down_block);
+      var block_hash = current_block.hash.toString()
+
+      var address = this.state.accounts[e5].address
+      web3.eth.accounts.wallet.add(this.state.accounts[e5].privateKey);
+      var signature = await web3.eth.sign(block_hash, address)
+      return {data: block_hash, signature: signature}
+    }catch(e){
+      console.log(e)
+      return null
+    }
+  }
+
+  round_down(number, round_down_value){
+    var n = (Math.floor(number / round_down_value)) * round_down_value
+    return n
+  }
+
+  get_round_down_value = async (web3, blockNumber) => {
+    try{
+      const currentBlock = await web3.eth.getBlock(blockNumber - 1);
+      const previousBlock = await web3.eth.getBlock(blockNumber - 2);
+      const miningTime = currentBlock.timestamp - previousBlock.timestamp;
+      return Math.round(1 / (miningTime / 120))
+    }
+    catch(e){
+      console.log(e)
+      return 10
+    }
+  }
+
+  upload_file_objects_to_nitro = async (file_objects, nitro_object, node_details) => {
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details)
+    if(block_hash_and_signature == null){
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return;
+    }
+
+    var node_url = nitro_object['ipfs'].node_url
+    var arg_obj = {
+      signature_data: block_hash_and_signature.data,
+      signature:block_hash_and_signature.signature,
+      file_datas: file_objects,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${node_url}/store_data`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      if(obj.success == false){
+        return null
+      }else{
+        return obj.files
+      }
+    }
+    catch(e){
+      return null
+    }
+  }
+
+
+
+
+
+
+
+
 
   when_uploading_multiple_files_complete(e_cids, cids, datas){
+    // console.log('datas', datas)
     var clone = structuredClone(this.state.uploaded_data)
     var cid_clone = this.state.uploaded_data_cids.slice()
     for(var i=0; i<datas.length; i++){

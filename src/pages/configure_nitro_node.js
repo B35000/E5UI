@@ -40,7 +40,7 @@ function start_and_end(str) {
 class ConfigureNitroNodePage extends Component {
     
     state = {
-        selected: 0, nitro_object:null, get_configure_nitro_node_title_tags_object:this.get_configure_nitro_node_title_tags_object(), should_restore_key_title_tags_object:this.should_restore_key_title_tags_object(), reconfigure_storage_title_tags_object:this.reconfigure_storage_title_tags_object(),
+        selected: 0, nitro_object:null, get_configure_nitro_node_title_tags_object:this.get_configure_nitro_node_title_tags_object(), should_restore_key_title_tags_object:this.should_restore_key_title_tags_object(), reconfigure_storage_title_tags_object:this.reconfigure_storage_title_tags_object(), basic_storage_enabled_tags_object:this.basic_storage_enabled_tags_object(false),
 
         entered_app_key_text:'',entered_backup_text:'', entered_filename_text:'', entered_backup_file_text:'', entered_address_text:'',
 
@@ -79,7 +79,22 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' */, this.props.app_state.loc['3054cl']/* 'Recipient' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' */, this.props.app_state.loc['3054cl']/* 'Recipient' */, this.props.app_state.loc['3054cu']/* 'free-storage' */], [1]
+            ],
+        };
+    }
+
+    basic_storage_enabled_tags_object(enabled){
+        var selection = 0
+        if(enabled == true){
+            selection = 1
+        }
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['3054cr']/* 'enabled' */], [selection]
             ],
         };
     }
@@ -739,7 +754,7 @@ class ConfigureNitroNodePage extends Component {
             <div>
                 <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -1038,6 +1053,14 @@ class ConfigureNitroNodePage extends Component {
 
                 {this.render_set_token_and_amount_part()}
 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']/* 'Free Basic Storage' */, 'details':this.props.app_state.loc['3054ct']/* 'If set to enabled, users will be able to store post metadata in your node for free.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
+                
+
                 <div style={{height:20}}/>
                 <div onClick={()=> this.when_boot_storage_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3054ce']/* 'Boot Stroage' */, 'action':''},)}
@@ -1052,6 +1075,10 @@ class ConfigureNitroNodePage extends Component {
 
     when_recipient_input_field_changed(text){
         if(!isNaN(text)) this.setState({recipient_id: text})
+    }
+
+    when_basic_storage_enabled_tags_object_updated(tag_obj){
+        this.setState({basic_storage_enabled_tags_object: tag_obj})
     }
 
     render_set_token_and_amount_part(){
@@ -1336,6 +1363,8 @@ class ConfigureNitroNodePage extends Component {
         var selected_e5 = this.state.selected_e5
         var price_per_megabyte = this.state.price_data
         var target_storage_purchase_recipient_account = this.state.recipient_id
+        
+        var selected_basic_storage_setting = this.get_selected_item(this.state.basic_storage_enabled_tags_object, this.state.basic_storage_enabled_tags_object['i'].active) === this.props.app_state.loc['3054cr']/* enabled */
 
         if(max_buyable_capacity == 0){
             this.props.notify(this.props.app_state.loc['3054cf']/* 'You need to specify a maximum amount of storage that can be bought' */, 4000)
@@ -1352,7 +1381,7 @@ class ConfigureNitroNodePage extends Component {
                 prices.push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
             });
 
-            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, prices, target_storage_purchase_recipient_account, this.state.nitro_object)
+            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, prices, target_storage_purchase_recipient_account, selected_basic_storage_setting, this.state.nitro_object)
         }
     }
 
@@ -1396,6 +1425,12 @@ class ConfigureNitroNodePage extends Component {
 
             this.setState({price_data: prices})
         }
+        else if(selected_item == this.props.app_state.loc['3054cu']/* 'free-storage' */){
+            var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
+            var unlimited_basic_storage = node_details['unlimited_basic_storage']
+
+            this.setState({basic_storage_enabled_tags_object:this.basic_storage_enabled_tags_object(unlimited_basic_storage)})
+        }
     }
 
 
@@ -1422,6 +1457,13 @@ class ConfigureNitroNodePage extends Component {
                     {this.render_recipient_ui()}
                 </div>
             ) 
+        }
+        else if(selected_item == this.props.app_state.loc['3054cu']/* 'free-storage' */){
+            return(
+                <div>
+                    {this.render_free_storage_ui()}
+                </div>
+            )
         }
     }
 
@@ -1516,6 +1558,29 @@ class ConfigureNitroNodePage extends Component {
         }
     }
 
+
+    render_free_storage_ui(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']/* 'Free Basic Storage' */, 'details':this.props.app_state.loc['3054ct']/* 'If set to enabled, users will be able to store post metadata in your node for free.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                <div style={{height:20}}/>
+                <div onClick={()=> this.when_change_free_basic_storage_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3054cv']/* 'update selection' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_change_free_basic_storage_tapped(){
+        var entered_backup_text = this.state.entered_backup_text
+        var selected_e5 = this.state.selected_e5
+        var selected_basic_storage_setting = this.get_selected_item(this.state.basic_storage_enabled_tags_object, this.state.basic_storage_enabled_tags_object['i'].active) === this.props.app_state.loc['3054cr']/* enabled */
+
+        this.props.update_storage_config(entered_backup_text, 'unlimited_basic_storage', selected_basic_storage_setting, selected_e5, this.state.nitro_object)
+    }
 
 
 
