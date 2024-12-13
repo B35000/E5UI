@@ -1083,13 +1083,13 @@ class home_page extends Component {
         var posts_to_load = []
         var searched_data = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
-        if(searched_data != null){
-            posts_to_load = [searched_data].concat(posts_to_load)
-        }
+        // if(searched_data != null){
+        //     posts_to_load = [searched_data].concat(posts_to_load)
+        // }
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page())
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data)
     }
 
     get_selected_page(){
@@ -1302,9 +1302,9 @@ class home_page extends Component {
         var posts_to_load = []
         var searched_data = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
-        if(searched_data != null){
-            posts_to_load = [searched_data].concat(posts_to_load)
-        }
+        // if(searched_data != null){
+        //     posts_to_load = [searched_data].concat(posts_to_load)
+        // }
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
@@ -1312,7 +1312,7 @@ class home_page extends Component {
             //if viewing my collection or my playlists, load my albums first
             posts_to_load = posts_to_load.concat(this.props.app_state.my_albums)
         }
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page)
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data)
 
         // this.setState({ selected_job_post_item:null, selected_contract_item:null, selected_subscription_item:null, selected_post_item:null, selected_channel_item:null, selected_proposal_item:null, selected_storefront_item:null, selected_bag_item:null, selected_contractor_item: null})
 

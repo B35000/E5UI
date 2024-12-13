@@ -343,7 +343,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
-    account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
+    account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false,
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, web3-storage, nft-storage */,
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1427']/* 'filtered' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
@@ -364,7 +364,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(68), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:35, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
+    sync_steps:(48), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:35, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -446,7 +446,7 @@ class App extends Component {
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
-        e5_address:'0x4c124f6C90fa3F12A9b6b837B89832E2E460e731',
+        e5_address:''/* '0x4c124f6C90fa3F12A9b6b837B89832E2E460e731' */,
         first_block:19614310, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:400_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4',
         end_token_power_limit: 72,
       },
@@ -14593,6 +14593,7 @@ class App extends Component {
 
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
+      await this.check_if_beacon_node_is_online()
       // await this.load_static_assets()
       // this.inc_synch_progress()
       // await this.load_coin_static_assets()
@@ -16127,6 +16128,29 @@ class App extends Component {
 
 
 
+
+
+  check_if_beacon_node_is_online = async () => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var request = `${beacon_node}/marco`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      if(obj.success == true){
+        console.log('beacon node online!')
+        this.setState({beacon_node_enabled: true})
+      }
+    }
+    catch(e){
+      // console.log(e)
+    }
+  }
+
   get_browser_cache_size_limit(){
         if (localStorage && !localStorage.getItem('size')) {
             var i = 0;
@@ -16194,8 +16218,9 @@ class App extends Component {
 
   //needs revision
   load_event_data = async (_web3, contract_instance, event_id, e5, filter) => {
-    // var data = await this.load_event_data_the_old_way(_web3, contract_instance, event_id, e5, filter)
-    // return data;
+    if(this.state.beacon_node_enabled == true){
+      return await this.load_events_from_nitro(_web3, contract_instance, event_id, e5, filter)
+    }
 
     var focused_events = this.e5_events[e5]
 
@@ -16274,6 +16299,56 @@ class App extends Component {
     return filtered_events
   }
 
+  load_events_from_nitro = async (_web3, contract_instance, event_id, e5, filter) => {
+    var requested_contract = this.get_contract_id_from_contract(e5, contract_instance)
+    var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':event_id, 'filter':filter}
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify({requests:[event_request]}),
+    });
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+    var request = `${beacon_node}/events?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      return obj['data'][0]
+    }
+    catch(e){
+      console.log(e)
+      return []
+    }
+  }
+
+  get_contract_id_from_contract(e5, contract_instance){
+    var requested_contract = 'E5'
+    if(contract_instance['_address'] == this.e5_contract_addresses[e5][1]){
+      requested_contract = 'E52'
+    }
+    else if(contract_instance['_address'] == this.e5_contract_addresses[e5][2]){
+      requested_contract = 'F5'
+    }
+    else if(contract_instance['_address'] == this.e5_contract_addresses[e5][3]){
+      requested_contract = 'G5'
+    }
+    else if(contract_instance['_address'] == this.e5_contract_addresses[e5][4]){
+      requested_contract = 'G52'
+    }
+    else if(contract_instance['_address'] == this.e5_contract_addresses[e5][5]){
+      requested_contract = 'H5'
+    }
+    else if(contract_instance['_address'] == this.e5_contract_addresses[e5][6]){
+      requested_contract = 'H52'
+    }
+    return requested_contract
+  }
+
   
 
   load_event_data_the_old_way = async (_web3, contract_instance, event_id, e5, f) => {
@@ -16317,107 +16392,118 @@ class App extends Component {
     // await this.get_accounts_data(_account, is_syncing, web3_url, e5_address, e5)
     // return;
 
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = contract_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    if(!this.state.beacon_node_enabled){
+      const E52contractArtifact = require('./contract_abis/E52.json');
+      const E52_address = contract_addresses[1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    const F5contractArtifact = require('./contract_abis/F5.json');
-    const F5_address = contract_addresses[2];
-    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+      const F5contractArtifact = require('./contract_abis/F5.json');
+      const F5_address = contract_addresses[2];
+      const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
-    const G5contractArtifact = require('./contract_abis/G5.json');
-    const G5_address = contract_addresses[3];
-    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+      const G5contractArtifact = require('./contract_abis/G5.json');
+      const G5_address = contract_addresses[3];
+      const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
 
-    const G52contractArtifact = require('./contract_abis/G52.json');
-    const G52_address = contract_addresses[4];
-    const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+      const G52contractArtifact = require('./contract_abis/G52.json');
+      const G52_address = contract_addresses[4];
+      const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
 
-    const H5contractArtifact = require('./contract_abis/H5.json');
-    const H5_address = contract_addresses[5];
-    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
+      const H5contractArtifact = require('./contract_abis/H5.json');
+      const H5_address = contract_addresses[5];
+      const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
-    const H52contractArtifact = require('./contract_abis/H52.json');
-    const H52_address = contract_addresses[6];
-    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+      const H52contractArtifact = require('./contract_abis/H52.json');
+      const H52_address = contract_addresses[6];
+      const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    if(this.from == null) this.from = {}
-    var from = this.from[e5] == null ? this.get_first_block(e5) : this.from[e5] + 1
-    
-    var all_e5_events = await this.load_all_event_data(web3, contractInstance, 'allEvents', e5, {}, from) 
-    if(is_syncing){
-      this.inc_synch_progress()
+      if(this.from == null) this.from = {}
+      var from = this.from[e5] == null ? this.get_first_block(e5) : this.from[e5] + 1
+      
+      var all_e5_events = await this.load_all_event_data(web3, contractInstance, 'allEvents', e5, {}, from) 
+      if(is_syncing){
+        this.inc_synch_progress()
+      }
+      // await this.wait(this.state.web3_delay)
+      var all_e52_events = await this.load_all_event_data(web3, E52contractInstance, 'allEvents', e5, {}, from)
+      if(is_syncing){
+        this.inc_synch_progress()
+      }
+      // await this.wait(this.state.web3_delay)
+      var all_f5_events = await this.load_all_event_data(web3, F5contractInstance, 'allEvents', e5, {}, from)
+      if(is_syncing){
+        this.inc_synch_progress()
+      }
+      // await this.wait(this.state.web3_delay)
+      var all_g5_events = await this.load_all_event_data(web3, G5contractInstance, 'allEvents', e5, {}, from)
+      if(is_syncing){
+        this.inc_synch_progress()
+      }
+      // await this.wait(this.state.web3_delay)
+      var all_g52_events = await this.load_all_event_data(web3, G52contractInstance, 'allEvents', e5, {}, from)
+      if(is_syncing){
+        this.inc_synch_progress()
+      }
+      // await this.wait(this.state.web3_delay)
+      var all_h5_events = await this.load_all_event_data(web3, H5contractInstance, 'allEvents', e5, {}, from)
+      if(is_syncing){
+        this.inc_synch_progress()
+      }
+      // await this.wait(this.state.web3_delay)
+      var all_h52_events = await this.load_all_event_data(web3, H52contractInstance, 'allEvents', e5, {}, from)
+      if(is_syncing){
+        this.inc_synch_progress()
+      }
+      await this.wait(this.state.web3_delay)
+
+      if(this.e5_events == null) this.e5_events = {}
+      if(this.e52_events == null) this.e52_events = {}
+      if(this.f5_events == null) this.f5_events = {}
+      if(this.g5_events == null) this.g5_events = {}
+      if(this.g52_events == null) this.g52_events = {}
+      if(this.h5_events == null) this.h5_events = {}
+      if(this.h52_events == null) this.h52_events = {}
+
+      if(this.e5_events[e5] == null) this.e5_events[e5] = []
+      if(this.e52_events[e5] == null) this.e52_events[e5] = []
+      if(this.f5_events[e5] == null) this.f5_events[e5] = []
+      if(this.g5_events[e5] == null) this.g5_events[e5] = []
+      if(this.g52_events[e5] == null) this.g52_events[e5] = []
+      if(this.h5_events[e5] == null) this.h5_events[e5] = []
+      if(this.h52_events[e5] == null) this.h52_events[e5] = []
+
+      all_e5_events.forEach(element => {
+        this.e5_events[e5].push(element)
+      });
+      all_e52_events.forEach(element => {
+        this.e52_events[e5].push(element)
+      });
+      all_f5_events.forEach(element => {
+        this.f5_events[e5].push(element)
+      });
+      all_g5_events.forEach(element => {
+        this.g5_events[e5].push(element)
+      });
+      all_g52_events.forEach(element => {
+        this.g52_events[e5].push(element)
+      });
+      all_h5_events.forEach(element => {
+        this.h5_events[e5].push(element)
+      });
+      all_h52_events.forEach(element => {
+        this.h52_events[e5].push(element)
+      });
+    }else{
+      if(is_syncing){
+        this.inc_synch_progress()
+        this.inc_synch_progress()
+        this.inc_synch_progress()
+        this.inc_synch_progress()
+        this.inc_synch_progress()
+        this.inc_synch_progress()
+      }
     }
-    // await this.wait(this.state.web3_delay)
-    var all_e52_events = await this.load_all_event_data(web3, E52contractInstance, 'allEvents', e5, {}, from)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-    // await this.wait(this.state.web3_delay)
-    var all_f5_events = await this.load_all_event_data(web3, F5contractInstance, 'allEvents', e5, {}, from)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-    // await this.wait(this.state.web3_delay)
-    var all_g5_events = await this.load_all_event_data(web3, G5contractInstance, 'allEvents', e5, {}, from)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-    // await this.wait(this.state.web3_delay)
-    var all_g52_events = await this.load_all_event_data(web3, G52contractInstance, 'allEvents', e5, {}, from)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-    // await this.wait(this.state.web3_delay)
-    var all_h5_events = await this.load_all_event_data(web3, H5contractInstance, 'allEvents', e5, {}, from)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-    // await this.wait(this.state.web3_delay)
-    var all_h52_events = await this.load_all_event_data(web3, H52contractInstance, 'allEvents', e5, {}, from)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-    await this.wait(this.state.web3_delay)
-
-    if(this.e5_events == null) this.e5_events = {}
-    if(this.e52_events == null) this.e52_events = {}
-    if(this.f5_events == null) this.f5_events = {}
-    if(this.g5_events == null) this.g5_events = {}
-    if(this.g52_events == null) this.g52_events = {}
-    if(this.h5_events == null) this.h5_events = {}
-    if(this.h52_events == null) this.h52_events = {}
-
-    if(this.e5_events[e5] == null) this.e5_events[e5] = []
-    if(this.e52_events[e5] == null) this.e52_events[e5] = []
-    if(this.f5_events[e5] == null) this.f5_events[e5] = []
-    if(this.g5_events[e5] == null) this.g5_events[e5] = []
-    if(this.g52_events[e5] == null) this.g52_events[e5] = []
-    if(this.h5_events[e5] == null) this.h5_events[e5] = []
-    if(this.h52_events[e5] == null) this.h52_events[e5] = []
-
-    all_e5_events.forEach(element => {
-      this.e5_events[e5].push(element)
-    });
-    all_e52_events.forEach(element => {
-      this.e52_events[e5].push(element)
-    });
-    all_f5_events.forEach(element => {
-      this.f5_events[e5].push(element)
-    });
-    all_g5_events.forEach(element => {
-      this.g5_events[e5].push(element)
-    });
-    all_g52_events.forEach(element => {
-      this.g52_events[e5].push(element)
-    });
-    all_h5_events.forEach(element => {
-      this.h5_events[e5].push(element)
-    });
-    all_h52_events.forEach(element => {
-      this.h52_events[e5].push(element)
-    });
 
     this.set_cookies()
     if(!should_skip_account_data){
@@ -17200,20 +17286,20 @@ class App extends Component {
   fetch_uploaded_data_from_ipfs = async (cids, is_my_cids) => {
     var clone = structuredClone(this.state.uploaded_data) 
     for(var i=0; i<cids.length; i++){
-      console.log('datas', 'fetching', cids[i])
+      // console.log('datas', 'fetching', cids[i])
       var ecid_obj = this.get_cid_split(cids[i])
       var id = ecid_obj['cid']
       var filetype = ecid_obj['filetype']
       var storage_id = ecid_obj['storage']
       var file_name = ecid_obj['file_name']
-      console.log('datas', 'fetching object', ecid_obj)
+      // console.log('datas', 'fetching object', ecid_obj)
       var data = this.fetch_from_storage(cids[i])
       if(data == null){
         data = await this.fetch_file_data_from_respective_storage(id, storage_id, file_name, 0)
         this.store_in_local_storage(cids[i], data)
       }
       if(data != null){
-        console.log('datas', 'obtained object', data)
+        // console.log('datas', 'obtained object', data)
         if(clone[filetype] == null) clone[filetype] = {}
         clone[filetype][cids[i]] = data
         if(is_my_cids){
@@ -18518,9 +18604,10 @@ class App extends Component {
 
     var my_blocked_time_value_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f256(created_subscriptions, account_as_list, 0,3).call((error, result) => {});
 
+    var all_data = await this.fetch_multiple_objects_data(created_subscriptions, web3, e5, contract_addresses)
 
     for(var i=0; i<created_subscriptions.length; i++){
-      var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses);
+      var subscription_data = all_data[created_subscriptions[i]] == null ? await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses): all_data[created_subscriptions[i]]
       var my_payment = my_payments_for_all_subscriptions[i]
 
       var paid_accounts = [];
@@ -18700,8 +18787,10 @@ class App extends Component {
 
     var enter_exit_accounts_notifications = []
 
+    var all_data = await this.fetch_multiple_objects_data(created_contracts, web3, e5, contract_addresses)
+    
     for(var i=0; i<created_contracts.length; i++){
-      var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
+      var contracts_data = all_data[created_contracts[i]] == null ? await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses) : all_data[created_contracts[i]]
       var event = i>0 ? created_contract_events[i-1]: null
       var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
       var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
@@ -18884,8 +18973,11 @@ class App extends Component {
     var senders_vote_in_proposal_for_all_proposals = await G52contractInstance.methods.f237(my_proposal_ids, account_as_list).call((error, result) => {});
 
     this.record_number_of_items(e5, 'proposals',my_proposal_ids.length)
+
+    var all_data = await this.fetch_multiple_objects_data(my_proposal_ids, web3, e5, contract_addresses)
+
     for(var i=0; i<my_proposal_ids.length; i++){
-      var proposals_data = await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses);
+      var proposals_data = all_data[my_proposal_ids[i]] == null ? await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses) : all_data[my_proposal_ids[i]]
       var event = my_proposals_events[i]
       var end_balance = /* await this.get_balance_in_exchange(3, my_proposal_ids[i], e5, contract_addresses); */ balances[i][0]
       var spend_balance = /* await this.get_balance_in_exchange(5, my_proposal_ids[i], e5, contract_addresses); */ balances[i][1]
@@ -19000,9 +19092,10 @@ class App extends Component {
     token_symbol_directory['wei'] = 0
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
 
+    var all_data = await this.fetch_multiple_objects_data(created_tokens, web3, e5, contract_addresses)
 
     for(var i=0; i<created_tokens.length; i++){
-      var tokens_data = await this.fetch_objects_data(created_tokens[i], web3, e5, contract_addresses);
+      var tokens_data = all_data[created_tokens[i]] == null ? await this.fetch_objects_data(created_tokens[i], web3, e5, contract_addresses) : all_data[created_tokens[i]]
       var event = i>1 ? created_token_events[i-2]: null
 
       var depth_values = []
@@ -19185,11 +19278,16 @@ class App extends Component {
     this.record_number_of_items(e5, 'posts', created_post_events.length)
     var created_posts = []
     var is_first_time = this.state.created_posts[e5] == null
+
+    var all_data = await this.fetch_multiple_objects_data(created_post_events, web3, e5, contract_addresses)
+    console.log('all_data', all_data)
+
     for(var i=0; i<created_post_events.length; i++){
       var id = created_post_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
-        var post_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
+        
         created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
       }
 
@@ -19234,11 +19332,14 @@ class App extends Component {
     this.record_number_of_items(e5, 'channels', created_channel_events.length)
     var created_channel = []
     var is_first_time = this.state.created_channels[e5] == null
+
+    var all_data = await this.fetch_multiple_objects_data(created_channel_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_channel_events.length; i++){
       var id = created_channel_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
-        var channel_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var channel_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
 
         var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */})
         var old_moderators = []
@@ -19320,11 +19421,14 @@ class App extends Component {
     var my_jobs = []
     var my_job_ids = []
     var is_first_time = this.state.created_jobs[e5] == null
+
+    var all_data = await this.fetch_multiple_objects_data(created_job_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_job_events.length; i++){
       var id = created_job_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
-        var job_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var job_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
         await this.wait(90)
         var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
@@ -19435,6 +19539,9 @@ class App extends Component {
     var created_mail = []
     var mail_activity = {}
     var is_first_time = this.state.created_mail[e5] == null
+
+    await this.fetch_multiple_cids_from_nitro(my_created_mail_events, 0, 'p4')
+
     for(var i=0; i<my_created_mail_events.length; i++){
       var convo_id = my_created_mail_events[i].returnValues.p5
       var cid = my_created_mail_events[i].returnValues.p4
@@ -19485,6 +19592,9 @@ class App extends Component {
     var parent_mail_id = {}
     var is_first_time = this.state.received_mail[e5] == null
     var received_mail_notifications = []
+
+    await this.fetch_multiple_cids_from_nitro(my_received_mail_events, 0, 'p4')
+
     for(var i=0; i<my_received_mail_events.length; i++){
       var convo_id = my_received_mail_events[i].returnValues.p5
       var cid = my_received_mail_events[i].returnValues.p4
@@ -19564,11 +19674,14 @@ class App extends Component {
     var created_store_mappings = {}
     var my_stores = []
     var is_first_time = this.state.created_stores[e5] == null
+
+    var all_data = await this.fetch_multiple_objects_data(created_store_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_store_events.length; i++){
       var id = created_store_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_store_events[i].returnValues.p1.toString() == hash.toString()){
-        var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(data != null){
           if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false)
 
@@ -19645,9 +19758,12 @@ class App extends Component {
     var created_bags = []
     var my_created_bag_ids = []
     var is_first_time = this.state.created_bags[e5] == null
+
+    var all_data = await this.fetch_multiple_objects_data(created_bag_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
-      var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+      var data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
       var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
 
       if(data != null){
@@ -19789,11 +19905,15 @@ class App extends Component {
     var created_contractor = []
     var my_contractor_posts = []
     var is_first_time = this.state.created_contractors[e5] == null
+
+    var all_data = await this.fetch_multiple_objects_data(created_contractor_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_contractor_events.length; i++){
       var id = created_contractor_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()){
-        var contractor_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var contractor_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
+        
         if(contractor_data != null){
           var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:38})
 
@@ -19860,11 +19980,14 @@ class App extends Component {
     var created_audio_mappings = this.state.created_audio_mappings[e5] == null ? {} : structuredClone(this.state.created_audio_mappings[e5])
     var is_first_time = this.state.created_audios[e5] == null
     is_first_time = true
+
+    var all_data = await this.fetch_multiple_objects_data(created_audio_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_audio_events[i].returnValues.p1.toString() == hash.toString()){
-        var audio_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var audio_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
         if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false)
 
@@ -19942,11 +20065,14 @@ class App extends Component {
     var created_video_mappings = this.state.created_video_mappings[e5] == null ? {} : structuredClone(this.state.created_video_mappings[e5])
     var is_first_time = this.state.created_videos[e5] == null
     is_first_time = true
+
+    var all_data = await this.fetch_multiple_objects_data(created_video_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_video_events.length; i++){
       var id = created_video_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_video_events[i].returnValues.p1.toString() == hash.toString()){
-        var video_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var video_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         console.log('video_data', video_data)
         if(video_data != null){
           if(video_data.album_art != null && video_data.album_art.startsWith('image')) {
@@ -20043,11 +20169,13 @@ class App extends Component {
     var is_first_time = this.state.created_nitros[e5] == null
     is_first_time = true
 
+    var all_data = await this.fetch_multiple_objects_data(created_nitro_events, web3, e5, contract_addresses)
+
     for(var i=0; i<created_nitro_events.length; i++){
       var id = created_nitro_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_nitro_events[i].returnValues.p1.toString() == hash.toString()){
-        var nitro_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var nitro_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         if(nitro_data != null){
           if(nitro_data.album_art != null && nitro_data.album_art.startsWith('image')) {
             this.fetch_uploaded_data_from_ipfs([nitro_data.album_art], false)
@@ -20100,47 +20228,114 @@ class App extends Component {
   }
 
   load_run_data = async (contractInstance, E52contractInstance, e5, web3, H52contractInstance) => {
-    var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        /* 0 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ }],
+        /* 1 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */}],
+        /* 2 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:32/* 32(consensus_request) */}],
+        /* 3 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}],
+        /* 4 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */ }],
+      /* 5 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */ }],
+        /* 6 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */}],
+        /* 7 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */}],
+      /* 8 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */}],
+        /* 9 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */}],
+        /* 10 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */}],
+        /* 11 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */}],
+        /* 12 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */}],
+        /* 13 */[web3, E52contractInstance, 'e4', e5, {}],/* data */
+        /* 14 */[web3, E52contractInstance, 'e5', e5, {}],/* metadata */
+        /* 15 */[web3, contractInstance, 'e2', e5, {}],/* withdraw */
+        /* 16 */[web3, contractInstance, 'e4', e5, {}],/* transaction */
+        /* 17 */[web3, H52contractInstance, 'e1', e5, {}],/* transfer */
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12]}
 
-    var created_contract_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */})
+      var all_data_clone = structuredClone(this.state.all_data)
+      all_data_clone[e5] = obj
+      this.setState({all_data: all_data_clone})
+    }
+    else{
+      var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
 
-    var created_proposals_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:32/* 32(consensus_request) */})
+      var created_contract_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */})
 
-    var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+      var created_proposals_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:32/* 32(consensus_request) */})
 
-    var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */ })
+      var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
 
-    var created_channel_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */ })
+      var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */ })
 
-    var created_job_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */})
+      var created_channel_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */ })
 
-    var created_store_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */})
+      var created_job_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */})
 
-    var created_bag_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */})
+      var created_store_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */})
 
-    var created_contractor_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */})
+      var created_bag_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */})
 
-    var created_audio_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */})
+      var created_contractor_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */})
 
-    var created_video_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */})
+      var created_audio_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */})
 
-    var created_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */})
+      var created_video_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */})
 
-    var data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {})
+      var created_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */})
 
-    var metadata_events = await this.load_event_data(web3, E52contractInstance, 'e5', e5, {})
+      var data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {})
 
-    var withdraw_events = await this.load_event_data(web3, contractInstance, 'e2', e5, {})
+      var metadata_events = await this.load_event_data(web3, E52contractInstance, 'e5', e5, {})
 
-    var transaction_events = await this.load_event_data(web3, contractInstance, 'e4', e5, {})
+      var withdraw_events = await this.load_event_data(web3, contractInstance, 'e2', e5, {})
 
-    var transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {})
+      var transaction_events = await this.load_event_data(web3, contractInstance, 'e4', e5, {})
 
-    var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events, 'video':created_video_events, 'nitro':created_nitro_events}
+      var transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {})
 
-    var all_data_clone = structuredClone(this.state.all_data)
-    all_data_clone[e5] = obj
-    this.setState({all_data: all_data_clone})
+      var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events, 'video':created_video_events, 'nitro':created_nitro_events}
+
+      var all_data_clone = structuredClone(this.state.all_data)
+      all_data_clone[e5] = obj
+      this.setState({all_data: all_data_clone})
+    }
+  }
+
+  load_multiple_events_from_nitro = async (event_params) => {
+    var event_requests = []
+    for(var i=0; i<event_params.length; i++){
+      const _web3 = event_params[i][0]
+      const contract_instance = event_params[i][1]
+      const event_id = event_params[i][2]
+      const e5 = event_params[i][3]
+      const filter = event_params[i][4]
+      var requested_contract = this.get_contract_id_from_contract(e5, contract_instance)
+      var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':event_id, 'filter':filter}
+      event_requests.push(event_request)
+    }
+    
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify({requests: event_requests}),
+    });
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+    var request = `${beacon_node}/events?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      return obj['data']
+    }
+    catch(e){
+      console.log(e)
+      return []
+    }
   }
 
 
@@ -20874,7 +21069,7 @@ class App extends Component {
 
 
 
-  fetch_objects_to_load_from_searched_tags = async (searched_tags, page) => {
+  fetch_objects_to_load_from_searched_tags = async (searched_tags, page, search) => {
     var target_type = this.get_target_type_from_page(page)
     if(target_type == 0) return;
 
@@ -20888,30 +21083,82 @@ class App extends Component {
     if(searched_tags.length != 0) searched_tags_including_prioritized_tags = searched_tags
 
     var posts_to_load = []
-    for(var i=0; i<this.state.e5s['data'].length; i++){
-      var e5 = this.state.e5s['data'][i]
-      var e5_address = this.state.e5s[e5].e5_address;
-      if(e5_address != ''){
-        var web3_url = this.get_web3_url_from_e5(e5)
-        const web3 = new Web3(web3_url);
-        var contract_addresses = this.state.addresses[e5]
+    // for(var i=0; i<this.state.e5s['data'].length; i++){
+    //   var e5 = this.state.e5s['data'][i]
+    //   var e5_address = this.state.e5s[e5].e5_address;
+    //   if(e5_address != ''){
+    //     var web3_url = this.get_web3_url_from_e5(e5)
+    //     const web3 = new Web3(web3_url);
+    //     var contract_addresses = this.state.addresses[e5]
 
-        const E52contractArtifact = require('./contract_abis/E52.json');
-        const E52_address = contract_addresses[1];
-        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    //     const E52contractArtifact = require('./contract_abis/E52.json');
+    //     const E52_address = contract_addresses[1];
+    //     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var all_indexed_tags_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */: 20/* 20(tag_registry) */, p5/* int_data */:target_type});
+    //     var all_indexed_tags_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */: 20/* 20(tag_registry) */, p5/* int_data */:target_type});
 
-        all_indexed_tags_events.forEach(event_item => {
-          var items_tag = event_item.returnValues.p4/* string_data */
-          var items_id = event_item.returnValues.p1/* target_id */
-          var item_poster = event_item.returnValues.p2/* sender_acc_id */
-          if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id) || searched_tags_including_prioritized_tags.includes(item_poster)){
-            posts_to_load.push(items_id)
-          }
+    //     all_indexed_tags_events.forEach(event_item => {
+    //       var items_tag = event_item.returnValues.p4/* string_data */
+    //       var items_id = event_item.returnValues.p1/* target_id */
+    //       var item_poster = event_item.returnValues.p2/* sender_acc_id */
+    //       if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id) || searched_tags_including_prioritized_tags.includes(item_poster)){
+    //         posts_to_load.push(items_id)
+    //       }
+    //     });
+    //   }
+    // }
+
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+
+    if(searched_tags.length != 0 && this.state.beacon_node_enabled == true){
+      var arg_obj = {tags: searched_tags, target_type: target_type}
+      const params = new URLSearchParams({
+        arg_string: JSON.stringify(arg_obj)
+      });
+      var request = `${beacon_node}/tags?${params.toString()}`
+      try{
+        const response = await fetch(request);
+        if (!response.ok) {
+          console.log(response)
+          throw new Error(`Failed to retrieve data. Status: ${response}`);
+        }
+        var data = await response.text();
+        var obj = JSON.parse(data);
+        obj['data'].forEach(element => {
+          if(!posts_to_load.includes(parseInt(element))) posts_to_load.push(parseInt(element))
         });
       }
+      catch(e){
+        
+      }
     }
+
+    if(search != null && search != '' && this.state.beacon_node_enabled == true){
+      var arg_obj = {title: search, target_type: target_type}
+      const params = new URLSearchParams({
+        arg_string: JSON.stringify(arg_obj)
+      });
+      var request = `${beacon_node}/title?${params.toString()}`
+      try{
+        const response = await fetch(request);
+        if (!response.ok) {
+          console.log(response)
+          throw new Error(`Failed to retrieve data. Status: ${response}`);
+        }
+        var data = await response.text();
+        var obj = JSON.parse(data);
+        obj['data'].forEach(element => {
+          if(!posts_to_load.includes(parseInt(element))) posts_to_load.push(parseInt(element))
+        });
+      }
+      catch(e){
+        console.log(e)
+      }
+    }
+
 
     this.posts_to_load = posts_to_load
     this.load_data_from_page_in_focus(page)
@@ -20984,6 +21231,97 @@ class App extends Component {
 
 
 
+  fetch_multiple_objects_data = async (ids, web3, e5, addresses) => {
+    if(this.state.beacon_node_enabled == false){
+      console.log('all_data', 'beacon node offline')
+      return {}
+    }
+    var event_params = []
+    for(var i=0; i<ids.length; i++){
+      const E52contractArtifact = require('./contract_abis/E52.json');
+      const E52_address = addresses[1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+      var target_id = ids[i];
+      event_params.push([web3, E52contractInstance, 'e5', e5, {p1/* target_obj_id */: target_id}])
+    }
+    var all_events = await this.load_multiple_events_from_nitro(event_params)
+    var obj_id_ecid = {}
+    var hashes = []
+    var valid_ids = []
+
+    console.log('all_data', 'all events length', all_events.length)
+
+    for(var i=0; i<all_events.length; i++){
+      var objects_event = all_events[i]
+      if(objects_event.length != 0){
+        var ecid = objects_event[objects_event.length - 1].returnValues.p4
+        if(ecid != 'e3' && ecid != 'e2' && ecid != 'e1' && ecid != 'e'){
+          var cid = ecid
+          if(ecid.includes('.')){
+            var split_cid_array = ecid.split('.');
+            cid = split_cid_array[1]
+          }
+          var id = cid;
+          var internal_id = ''
+          if(cid.includes('_')){
+            var split_cid_array2 = cid.split('_');
+            id = split_cid_array2[0]
+            internal_id = split_cid_array2[1]
+          }
+          obj_id_ecid[ids[i]] = {'id':id, 'internal_id':internal_id}
+          if(this.fetch_from_storage(id) == null) hashes.push(id)
+          valid_ids.push(ids[i])
+        }
+      }
+    }
+
+    console.log('all_data', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify({hashes: hashes}),
+    });
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+    var request = `${beacon_node}/data?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('datas',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var object_data = obj['data']
+      console.log('all_data', 'object_data', object_data)
+      for(var i=0; i<hashes.length; i++){
+        var cid_data = JSON.parse(object_data[hashes[i]])
+        if(cid_data != null){
+          this.store_in_local_storage(hashes[i], cid_data)
+        }
+      }
+    }
+    catch(e){
+      return {}
+    }
+
+    var data = {}
+    for(var i=0; i<valid_ids.length; i++){
+      var valid_id = valid_ids[i]
+      var valid_id_cid = obj_id_ecid[valid_id]['id']
+      var valid_id_internal_id = obj_id_ecid[valid_id]['internal_id']
+      var data = this.fetch_from_storage(valid_id_cid)
+      if(data != null){
+        var final_data = data
+        if(valid_id_internal_id != ''){
+          final_data = data[valid_id_internal_id]
+        }
+        data[valid_id] = final_data
+      }
+    }
+
+    return data
+  }
 
   fetch_objects_data = async (id, web3, e5, addresses) => {
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -22198,6 +22536,10 @@ class App extends Component {
         var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id,})
         created_channel_data = created_channel_data.reverse()
 
+        if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+          await this.fetch_multiple_cids_from_nitro(created_channel_data, 0, 'p4')
+        }
+
         var is_first_time = this.state.object_messages[id] == null ? true: false
         for(var j=0; j<created_channel_data.length; j++){
           if(parseInt(created_channel_data[j].returnValues.p6) > cutoff_timestamp){
@@ -22235,6 +22577,10 @@ class App extends Component {
     var created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
 
     var application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37})
+
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_job_respnse_data, 0, 'p4')
+    }
 
     var messages = []
     var is_first_time = this.state.job_responses[id] == null ? true: false
@@ -22289,7 +22635,10 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     var created_awward_data = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})
-    // console.log('get_direct_purchase_events: ', created_awward_data)
+    
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_awward_data, 0, 'p4')
+    }
 
     var direct_purchases = []
     var is_first_time_for_direct_purchases = this.state.direct_purchases[id] == null ? true: false
@@ -22347,6 +22696,10 @@ class App extends Component {
     var created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38})
 
     var application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39})
+
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_job_respnse_data, 0, 'p4')
+    }
 
     var messages = []
     var is_first_time = this.state.contractor_applications[id] == null ? true: false
@@ -22416,6 +22769,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17/* shadow_object_container */, p3/* context */:contractor_id, p5/* int_data */:request_id})
+        if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+          await this.fetch_multiple_cids_from_nitro(created_channel_data, 0, 'p4')
+        }
         var is_first_time = this.state.object_messages[request_id] == null ? true: false
         for(var j=0; j<created_channel_data.length; j++){
           var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
@@ -22444,6 +22800,10 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     var created_awward_data = (await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})).reverse()
+
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_awward_data, 0, 'p4')
+    }
 
     var award_events = []
     var is_first_time = this.state.award_data[id] == null ? true: false
@@ -22692,12 +23052,29 @@ class App extends Component {
     const G52_address = this.state.addresses[e5][4];
     const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
-    var record_proposal_vote_event_data = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p2/* consensus_id */: id})
+    var record_proposal_vote_event_data = null
+    var submit_proposal_event_data = null
+    var archive_proposal_event_data = null
 
-    var submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: id })
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, G52contractInstance, 'e1', e5, {p2/* consensus_id */: id}],
+        [web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: id }],
+        [web3, G52contractInstance, 'archive', e5, {p1/* proposal_id */: id}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      
+      record_proposal_vote_event_data = all_events[0]
+      submit_proposal_event_data = all_events[1]
+      archive_proposal_event_data = all_events[2]
+    }
+    else{
+      record_proposal_vote_event_data = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p2/* consensus_id */: id})
 
-    var archive_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'archive', e5, {p1/* proposal_id */: id})
+      submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: id })
 
+      archive_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'archive', e5, {p1/* proposal_id */: id})
+    }
     var proposal_token_event_data = await this.get_token_event_data(id, e5);
 
     var clone = structuredClone(this.state.proposal_events)
@@ -22712,18 +23089,35 @@ class App extends Component {
     const F5_address = this.state.addresses[e5][2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
-    var pay_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p1/* subscription_id */: id})
+    var pay_subscription_event_data = null
+    var cancel_subscription_event_data = null
+    var modify_subscription_event_data = null
+    var collect_subscription_event_data = null
+    
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, F5contractInstance, 'e1', e5, {p1/* subscription_id */: id}],
+        [web3, F5contractInstance, 'e2', e5, {p1/* subscription_id */: id}],
+        [web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */: id}],
+        [web3, F5contractInstance, 'e4', e5, {p1/* subscription_id */: id}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      
+      pay_subscription_event_data = all_events[0]
+      cancel_subscription_event_data = all_events[1]
+      modify_subscription_event_data = all_events[2]
+      collect_subscription_event_data = all_events[3]
+    }else{
+      pay_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p1/* subscription_id */: id})
 
-    var cancel_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e2', e5, {p1/* subscription_id */: id})
+      cancel_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e2', e5, {p1/* subscription_id */: id})
 
-    var modify_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */: id})
+      modify_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */: id})
 
-    var collect_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e4', e5, {p1/* subscription_id */: id})
+      collect_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e4', e5, {p1/* subscription_id */: id})
+    }
 
     var subscription_token_event_data = await this.get_token_event_data(id, e5);
-
-    // console.log('-------------------------modify_subscription_event_data-------------------------------')
-    // console.log(modify_subscription_event_data)
 
     var clone = structuredClone(this.state.subscription_events)
     clone[id] = {'transfer':subscription_token_event_data, 'pay':pay_subscription_event_data.reverse(), 'cancel':cancel_subscription_event_data, 'modify':modify_subscription_event_data, 'collect':collect_subscription_event_data}
@@ -22739,26 +23133,50 @@ class App extends Component {
     const H5_address = this.state.addresses[e5][5];
     const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
-    var update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p1/* exchange */: id})
-
-    var update_proportion_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e2', e5, {p1/* exchange */: id})
-
-    var modify_exchange_event_data = await this.load_event_data(web3, H5contractInstance, 'e3', e5, {p1/* exchange */: id})
-
-    var transfer_event_data = await this.get_accounts_token_event_data(id, this.state.user_account_id[e5], e5) 
-    var exchange_token_event_data = await this.get_token_event_data(id, e5);
-
-
     const H52contractArtifact = require('./contract_abis/H52.json');
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
+    var transfer_event_data = await this.get_accounts_token_event_data(id, this.state.user_account_id[e5], e5) 
+    var exchange_token_event_data = await this.get_token_event_data(id, e5);
 
-    var update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p1/* exchange */: id})
+    var update_exchange_ratio_event_data = null
+    var update_proportion_ratio_event_data = null
+    var modify_exchange_event_data = null
+    var update_balance_event_data = null
+    var freeze_unfreeze_event_data = null
+    var depth_mint_event_data = null
 
-    var freeze_unfreeze_event_data = await this.load_event_data(web3, H52contractInstance, 'e3', e5, {p1/* exchange */: id})
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, H5contractInstance, 'e1', e5, {p1/* exchange */: id}],
+        [web3, H5contractInstance, 'e2', e5, {p1/* exchange */: id}],
+        [web3, H5contractInstance, 'e3', e5, {p1/* exchange */: id}],
+        [web3, H52contractInstance, 'e2', e5, {p1/* exchange */: id}],
+        [web3, H52contractInstance, 'e3', e5, {p1/* exchange */: id}],
+        [web3, H52contractInstance, 'power', e5, {p1/* exchange */: id}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
 
-    var depth_mint_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p1/* exchange */: id})
+      update_exchange_ratio_event_data = all_events[0]
+      update_proportion_ratio_event_data = all_events[1]
+      modify_exchange_event_data = all_events[2]
+      update_balance_event_data = all_events[3]
+      freeze_unfreeze_event_data = all_events[4]
+      depth_mint_event_data = all_events[5]
+    }else{
+      update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p1/* exchange */: id})
+
+      update_proportion_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e2', e5, {p1/* exchange */: id})
+
+      modify_exchange_event_data = await this.load_event_data(web3, H5contractInstance, 'e3', e5, {p1/* exchange */: id})
+
+      update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p1/* exchange */: id})
+
+      freeze_unfreeze_event_data = await this.load_event_data(web3, H52contractInstance, 'e3', e5, {p1/* exchange */: id})
+
+      depth_mint_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p1/* exchange */: id})
+    }
 
 
     var clone = structuredClone(this.state.exchange_events)
@@ -22796,15 +23214,39 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var modify_moderator_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:4})
 
-    var enable_disable_interactible_checkers_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:5})
+    var modify_moderator_event_data = null
+    var enable_disable_interactible_checkers_event_data = null
+    var add_interactible_account_event_data = null
+    var block_accounts_event_data = null
+    var revoke_author_privelages_event_data = null
 
-    var add_interactible_account_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:2})
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:4}],
+        [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:5}],
+        [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:2}],
+        [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:17}],
+        [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:16}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      
+      modify_moderator_event_data = all_events[0]
+      enable_disable_interactible_checkers_event_data = all_events[1]
+      add_interactible_account_event_data = all_events[2]
+      block_accounts_event_data = all_events[3]
+      revoke_author_privelages_event_data = all_events[4]
+    }else{
+      modify_moderator_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:4})
 
-    var block_accounts_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:17})
+      enable_disable_interactible_checkers_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:5})
 
-    var revoke_author_privelages_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:16})
+      add_interactible_account_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:2})
+
+      block_accounts_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:17})
+
+      revoke_author_privelages_event_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:16})
+    }
 
     var clone = structuredClone(this.state.moderator_events)
     clone[id] = {'modify_moderator':modify_moderator_event_data, 'enable_interactible':enable_disable_interactible_checkers_event_data, 'add_interactible':add_interactible_account_event_data, 'block_account':block_accounts_event_data, 'revoke_privelages':revoke_author_privelages_event_data}
@@ -22894,25 +23336,62 @@ class App extends Component {
 
           var run_data = await contractInstance.methods.f287([id]).call((error, result) => {});
 
-          var make_object_event_data = await this.load_event_data(web3, contractInstance, 'e1', e5, {p3/* sender_account_id */: id})
+          var make_object_event_data = null
+          var withdraw_event_data = null
+          var pending_withdraw_event_data = null
+          var transaction_event_data = null
+          var pay_subscription_event_data = null
+          var cancel_subscription_event_data = null
+          var enter_contract_event_data = null
+          var exit_contract_event_data = null
+          var record_proposal_vote_event_data = null
+          var update_exchange_ratio_event_data = null
 
-          var withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: id})
+          if(this.state.beacon_node_enabled == true){
+            var event_params = [
+              [web3, contractInstance, 'e1', e5, {p3/* sender_account_id */: id}],
+              [web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: id}],
+              [web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: id}],
+              [web3, contractInstance, 'e4', e5, {p1/* sender_account_id */: id}],
+              [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */: id}],
+              [web3, F5contractInstance, 'e2', e5, {p2/* sender_acc_id */: id}],
+              [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 3}],
+              [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 11}],
+              [web3, G52contractInstance, 'e1', e5, {p3/* voter_account_id */: id}],
+              [web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id }],
+            ]
+            var all_events = await this.load_multiple_events_from_nitro(event_params)
+            make_object_event_data = all_events[0]
+            withdraw_event_data = all_events[1]
+            pending_withdraw_event_data = all_events[2]
+            transaction_event_data = all_events[3]
+            pay_subscription_event_data = all_events[4]
+            cancel_subscription_event_data = all_events[5]
+            enter_contract_event_data = all_events[6]
+            exit_contract_event_data = all_events[7]
+            record_proposal_vote_event_data = all_events[8]
+            update_exchange_ratio_event_data = all_events[9]
+          }else{
+            make_object_event_data = await this.load_event_data(web3, contractInstance, 'e1', e5, {p3/* sender_account_id */: id})
 
-          var pending_withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: id})
+            withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: id})
 
-          var transaction_event_data = await this.load_event_data(web3, contractInstance, 'e4', e5, {p1/* sender_account_id */: id})
+            pending_withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: id})
 
-          var pay_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */: id})
+            transaction_event_data = await this.load_event_data(web3, contractInstance, 'e4', e5, {p1/* sender_account_id */: id})
 
-          var cancel_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e2', e5, {p2/* sender_acc_id */: id})
+            pay_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */: id})
 
-          var enter_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 3})
+            cancel_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e2', e5, {p2/* sender_acc_id */: id})
 
-          var exit_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 11})
+            enter_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 3})
 
-          var record_proposal_vote_event_data = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p3/* voter_account_id */: id})
+            exit_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 11})
 
-          var update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id })
+            record_proposal_vote_event_data = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p3/* voter_account_id */: id})
+
+            update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id })
+          }
 
           var contract_token_event_data = await this.get_token_event_data(id, e5);
 
@@ -23130,6 +23609,10 @@ class App extends Component {
 
     var created_exchange_royalty_events = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 12/* 12(stage_royalty_id) */, p3/* context */: id})).reverse()
 
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events, 0, 'p4')
+    }
+
     var royalty_events = []
     var is_first_time = this.state.token_royalty_data_staging_data[id] == null ? true: false
     for(var j=0; j<created_exchange_royalty_events.length; j++){
@@ -23157,6 +23640,9 @@ class App extends Component {
 
     var created_exchange_royalty_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 13/* 13(record_royalty_payout_id) */, p3/* context */: id})
 
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events, 0, 'p4')
+    }
     var royalty_payout_events = []
     var is_first_time = this.state.token_royalty_payout_data[id] == null ? true: false
     for(var j=0; j<created_exchange_royalty_events.length; j++){
@@ -23230,14 +23716,33 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, { p2/* sender */: account_id})
 
-    var received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
+    var send_tokens_event_data = null
+    var received_tokens_event_data = null
+    var update_balance_event_data = null
+    var depth_swap_event_data = null
 
-    var update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id})
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, H52contractInstance, 'e1', e5, { p2/* sender */: account_id}],
+        [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id}],
+        [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
+        [web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2 /* depth_auth_mint */}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      send_tokens_event_data = all_events[0]
+      received_tokens_event_data = all_events[1]
+      update_balance_event_data = all_events[2]
+      depth_swap_event_data = all_events[3]
+    }else{
+      send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, { p2/* sender */: account_id})
 
-    var depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2 /* depth_auth_mint */})
+      received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
 
+      update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id})
+
+      depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2 /* depth_auth_mint */})
+    }
 
     var all_events = [];
     for(var i=0; i<send_tokens_event_data.length; i++){
@@ -23364,6 +23869,69 @@ class App extends Component {
     }
   }
 
+
+
+  fetch_multiple_cids_from_nitro = async (events, depth, p) => {
+    var hashes = this.get_cid_from_data_from_events(events, p)
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify({hashes: hashes}),
+    });
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+    var request = `${beacon_node}/data?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('datas',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var object_data = obj['data']
+      for(var i=0; i<hashes.length; i++){
+        var cid_data = JSON.parse(object_data[hashes[i]])
+        if(cid_data != null){
+          this.store_in_local_storage(hashes[i], cid_data)
+        }
+      }
+    }
+    catch(e){
+      if(depth < 3){
+        await this.wait(this.state.ipfs_delay)
+        return await this.fetch_multiple_cids_from_nitro(events, depth+1, p)
+      }
+    }
+  }
+
+  get_cid_from_data_from_events(events, p){
+    var cids = []
+    for(var i=0; i<events.length; i++){
+      var event = events[i]
+      var ecid = event.returnValues[p]
+
+      var cid = ecid
+      if(ecid.includes('.')){
+        var split_cid_array = ecid.split('.');
+        cid = split_cid_array[1]
+      }
+      var included_underscore = false
+      var id = cid;
+      var internal_id = ''
+      if(cid.includes('_')){
+        included_underscore = true;
+        var split_cid_array2 = cid.split('_');
+        id = split_cid_array2[0]
+        internal_id = split_cid_array2[1]
+      }
+      var data = this.fetch_from_storage(id)
+      if(data == null){
+        cids.push(id)
+      }
+    }
+    return cids
+  }
 
 
 
