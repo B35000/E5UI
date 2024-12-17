@@ -719,7 +719,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_job_item(object)
-        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || this.is_object_blocked_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -774,6 +774,10 @@ class PostListSection extends Component {
             }
         });
         return filtered
+    }
+
+    is_object_blocked_for_sender(object){
+        return this.props.app_state.posts_blocked_by_my_following.includes(object['e5_id'])
     }
 
 
@@ -1797,7 +1801,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_post_item(object)
-        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -2112,7 +2116,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_storefront_item(object)
-        if(this.is_object_sender_blocked(object) || !this.is_item_listed(object)){
+        if(this.is_object_sender_blocked(object) || !this.is_item_listed(object) || this.is_object_blocked_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -2699,7 +2703,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_audio_item(object)
-        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -2939,7 +2943,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_video_item(object)
-        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}

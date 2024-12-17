@@ -11,7 +11,6 @@ import { Draggable } from "react-drag-reorder";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
-import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -184,6 +183,17 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+    get_markdown_preview_or_editor_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
+            ],
+        };
+    }
+
 
     
     set(){
@@ -191,6 +201,10 @@ class NewStorefrontItemPage extends Component {
 
         if(this.state.markdown == null){
             this.setState({markdown:''})
+        }
+
+        if(this.state.get_markdown_preview_or_editor_object == null){
+            this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
         }
     }
 
@@ -754,7 +768,7 @@ class NewStorefrontItemPage extends Component {
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                       {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked2(item, index, target_type)}>
                               {this.render_detail_item('3', item['label'])}
                           </li>
                       ))}
@@ -801,7 +815,7 @@ class NewStorefrontItemPage extends Component {
     }
 
 
-    when_suggestion_clicked(item, pos, target_type){
+    when_suggestion_clicked2(item, pos, target_type){
         if(target_type == 'target_receiver'){
             this.setState({target_receiver: item['id']})
         }
@@ -2196,11 +2210,14 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_edit_markdown_parts()}
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height:10}}/>
+
+                        <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
                     </div>
-                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
-                        
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_detail_item('13', {'source':this.state.markdown})}
                     </div>
                 </div>
                 
@@ -2209,18 +2226,43 @@ class NewStorefrontItemPage extends Component {
     }
 
     render_edit_markdown_parts(){
-        var theme = this.props.app_state.theme['markdown_theme']
         return(
-            <div data-color-mode={theme}>
-                <MDEditor
-                    value={this.state.markdown}
-                    height={this.props.height-200}
-                    onChange={(val) => {
-                        this.setState({markdown: val})
-                    }}
-                />
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_markdown_preview_or_editor_object} tag_size={'l'} when_tags_updated={this.when_get_markdown_preview_or_editor_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_preview_or_editor_option_ui()}
             </div>
         )
+    }
+
+    when_get_markdown_preview_or_editor_object_updated(tags_obj){
+        this.setState({get_markdown_preview_or_editor_object: tags_obj})
+    }
+
+    render_preview_or_editor_option_ui(){
+        var selected_item = this.get_selected_item(this.state.get_markdown_preview_or_editor_object, this.state.get_markdown_preview_or_editor_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['a311bt']/* 'Editor' */){
+            return(
+                <div>
+                    <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bu']/* 'preview' */){
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':this.state.markdown})}
+                </div>
+            )
+        }
+    }
+
+    when_markdown_field_changed(text){
+        this.setState({markdown: text})
     }
     
 

@@ -19,10 +19,10 @@ import imageCompression from 'browser-image-compression';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 
-var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
+var bigInt = require("big-integer");
 
 
 function number_with_commas(x) {
@@ -93,7 +93,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0.7*1024*1024), custom_gateway_text:'',
+        default_upload_limit:(0.7*1024*1024), custom_gateway_text:'', follow_account_text:'',
     };
 
     get_stack_page_tags_object(){
@@ -111,7 +111,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593cr']/* 'gateway 🚧' */ ], [1],[1]
             ],
             'account-data':[
-              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */], [1],[1]
             ],
             'signatures':[
               ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
@@ -125,7 +125,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593cr']/* 'gateway 🚧' */, ], [1],[1]
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1593aj']/* 'signatures' */] = [
               ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
@@ -862,6 +862,13 @@ class StackPage extends Component {
             return(
                 <div>
                     {this.render_set_custom_ipfs_gateway()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593df']/* 'following 👥' */){
+            return(
+                <div>
+                    {this.render_set_following_moderator()}
                 </div>
             )
         }
@@ -3208,6 +3215,44 @@ class StackPage extends Component {
             ints.push(transaction_obj)
         }
 
+        if(this.props.app_state.should_update_followed_accounts == true){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [8], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var followed_accounts = this.props.app_state.followed_accounts
+            var data = {'followed_accounts': followed_accounts, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'following');
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+        if(this.props.app_state.should_update_posts_blocked_by_me == true){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [9], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var posts_blocked_by_me = this.props.app_state.posts_blocked_by_me
+            var data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blockedposts');
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
         var added_video_data = this.get_videos_to_add(pushed_txs);
         if(added_video_data.videos.length != 0){
             var transaction_obj = [ /* set data */
@@ -3571,6 +3616,17 @@ class StackPage extends Component {
             obj['myvideo'] = data
         }
 
+        if(this.props.app_state.should_update_followed_accounts == true){
+            var followed_accounts = this.props.app_state.followed_accounts
+            var data = {'followed_accounts': followed_accounts, 'time':Date.now()}
+            obj['following'] = data
+        }
+
+        if(this.props.app_state.should_update_posts_blocked_by_me == true){
+            var posts_blocked_by_me = this.props.app_state.posts_blocked_by_me
+            var data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
+            obj['blockedposts'] = data
+        }
 
 
 
@@ -7714,7 +7770,6 @@ class StackPage extends Component {
         )
     }
 
-
     render_e5_item(item){
         var image = this.props.app_state.e5s[item].e5_img
         var details = this.props.app_state.e5s[item].token
@@ -7733,7 +7788,6 @@ class StackPage extends Component {
             )
         }
     }
-
 
     when_e5_clicked(item){
         this.props.when_selected_e5_changed(item)
@@ -8492,7 +8546,6 @@ class StackPage extends Component {
         }
     }
 
-
     render_users_blocked_accounts(){
         var items = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5];
         if(items == null){
@@ -8760,8 +8813,7 @@ class StackPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        // console.log('-----------------------render_users_aliases-------------------------------')
-        // console.log(items)
+        
         if(items.length == 0){
             items = [0, 0]
             return(
@@ -9092,7 +9144,7 @@ class StackPage extends Component {
 
     get_senders_name_or_you(sender, e5){
         if(sender == this.props.app_state.user_account_id[e5]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }
         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -10463,7 +10515,6 @@ class StackPage extends Component {
         }
     }
 
-
     render_set_custom_gateway_data(){
         return(
             <div>
@@ -10515,6 +10566,176 @@ class StackPage extends Component {
 
 
 
+
+
+
+
+
+
+
+
+    render_set_following_moderator(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_following_moderator_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_following_moderator_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_following_moderator_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_following_moderator_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593dg']/* 'Followed Moderators.' */, 'details':this.props.app_state.loc['1593dh']/* 'You can specify specific accounts you wish to moderate the content you see here in E5.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593di']/* 'Account ID...' */} when_text_input_field_changed={this.when_follow_account_text_changed.bind(this)} text={this.state.follow_account_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_follow_account()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:20}}/>
+                {this.render_my_followed_accounts()}
+            </div>
+        )
+    }
+
+    when_follow_account_text_changed(text){
+        this.setState({follow_account_text: text})
+    }
+
+    add_follow_account(){
+        var account = this.state.follow_account_text
+        var account_id = this.get_typed_alias_id(account)
+
+        if(account == ''){
+            this.props.notify(this.props.app_state.loc['1593dj']/* 'You need to specify an account first.' */, 4000)
+        }
+        else if(this.is_account_aleady_followed(account)){
+            this.props.notify(this.props.app_state.loc['1593dk']/* 'Youre already following that account.' */, 4000)
+        }
+        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == account_id){
+            this.props.notify(this.props.app_state.loc['1593dn']/* 'You cant follow yourself.' */, 4000)
+        }
+        else{
+            this.props.follow_account(account_id)
+            this.props.notify(this.props.app_state.loc['1593dl']/* 'You are now following that account.' */, 2000)
+        }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
+    }
+
+    is_account_aleady_followed(account){
+        var n = this.props.app_state.selected_e5 + ':' + account
+        return this.props.app_state.followed_accounts.includes(n)
+    }
+
+    render_my_followed_accounts(){
+        var items = [].concat(this.props.app_state.followed_accounts)
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dm']/* Unfollow */}</p>,
+                                    action: () =>this.props.remove_followed_account(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}}>
+                                            {this.render_followed_account_item(item)}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_followed_account_item(item){
+        var split_account_array = item.split(':')
+        var e5 = split_account_array[0]
+        var account = split_account_array[1]
+        var alias = this.get_followed_account_name_from_id(account, e5)
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':' • '+(account), 'details':alias, 'title_image':this.props.app_state.e5s[e5].e5_img, 'size':'l'})}
+            </div>
+        )
+    }
+
+    get_followed_account_name_from_id(account, e5) {
+        if (account == this.props.app_state.user_account_id[e5]) {
+            return this.props.app_state.loc['1694']/* 'You' */
+        } else {
+            var alias = (this.props.app_state.alias_bucket[e5][account] == null ? account : this.props.app_state.alias_bucket[e5][account])
+            return alias
+        }
+    }
 
 
 

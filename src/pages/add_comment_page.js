@@ -6,7 +6,6 @@ import TextInput from './../components/text_input';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import imageCompression from 'browser-image-compression';
-import MDEditor from '@uiw/react-md-editor';
 
 var bigInt = require("big-integer");
 
@@ -30,7 +29,7 @@ class AddCommentPage extends Component {
     
     state = {
         selected: 0, object: null, focused_message_id: 0, page: '', contractor_object: null,
-        entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), entered_pdf_objects:[], get_text_or_markdown_tags_object:this.get_text_or_markdown_tags_object(), markdown:'',
+        entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), entered_pdf_objects:[], get_text_or_markdown_tags_object:this.get_text_or_markdown_tags_object(), markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()
     };
 
     get_comment_font_size_settings_object(){
@@ -65,6 +64,17 @@ class AddCommentPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['1042g']/* 'text' */, this.props.app_state.loc['1042h']/* 'markdown' */], [1]
+            ],
+        };
+    }
+
+    get_markdown_preview_or_editor_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
             ],
         };
     }
@@ -254,19 +264,57 @@ class AddCommentPage extends Component {
             )
         }
         else if(selected_item == this.props.app_state.loc['1042h']/* 'markdown' */){
-            var theme = this.props.app_state.theme['markdown_theme']
             return(
-                <div data-color-mode={theme}>
-                    <MDEditor
-                        value={this.state.markdown}
-                        onChange={(val) => {
-                            this.setState({markdown: val})
-                        }}
-                    />
+                <div>
+                    {this.render_edit_markdown_parts()}
                 </div>
             )
         }
     }
+
+    render_edit_markdown_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_markdown_preview_or_editor_object} tag_size={'l'} when_tags_updated={this.when_get_markdown_preview_or_editor_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_preview_or_editor_option_ui()}
+            </div>
+        )
+    }
+
+    when_get_markdown_preview_or_editor_object_updated(tags_obj){
+        this.setState({get_markdown_preview_or_editor_object: tags_obj})
+    }
+
+    render_preview_or_editor_option_ui(){
+        var selected_item = this.get_selected_item(this.state.get_markdown_preview_or_editor_object, this.state.get_markdown_preview_or_editor_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['a311bt']/* 'Editor' */){
+            return(
+                <div>
+                    <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bu']/* 'preview' */){
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':this.state.markdown})}
+                </div>
+            )
+        }
+    }
+
+    when_markdown_field_changed(text){
+        this.setState({markdown: text})
+    }
+
+
+
+
 
     when_get_comment_font_size_settings_object_updated(tag_obj){
         this.setState({get_comment_font_size_settings_object: tag_obj})

@@ -1,5 +1,47 @@
 import React, { Component, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 
+/* images */
+import music_label from './assets/music_default_label.png'
+import expand_icon from './assets/expand_icon.png'
+import close_pip from './assets/close_pip.png'
+import empty_image from './assets/default_image_background.png'
+import download_icon from './assets/download_icon.png'
+import zoom_in_icon from './assets/zoom_in_icon.png'
+import zoom_out_icon from './assets/zoom_out_icon.png'
+import video_label from './assets/default_music_icon.png'
+import letter from './assets/letter.png'
+import e5_empty_icon from './assets/e5empty_icon.png'
+import e5_empty_icon3 from './assets/e5empty_icon3.png'
+import alert_icon from './assets/alert_icon.png'
+import add_icon from './assets/add_icon.png'
+import background from './assets/background.png'
+import JobIcon from './assets/job_icon_light.png'
+import ExploreIcon from './assets/explore_icon_light.png'
+import WalletIcon from './assets/wallet_icon_light.png'
+import StackIcon from './assets/stack_icon_light.png'
+import close from './assets/close_icon.png'
+import add_text from './assets/add_text_input_item.png'
+import play from './assets/play_icon.png'
+import pause from './assets/pause_icon.png'
+import previous from './assets/previous_icon.png'
+import next from './assets/next_icon.png'
+import shuffle_icon from './assets/shuffle_icon.png'
+import repeat from './assets/repeat_icon.png'
+import alert_icon_dark from './assets/alert_icon_dark.png'
+import add_icon_dark from './assets/add_icon_dark.png'
+import JobIconDark from './assets/job_icon.png'
+import ExploreIconDark from './assets/explore_icon.png'
+import WalletIconDark from './assets/wallet_icon.png'
+import StackIconDark from './assets/stack_icon.png'
+import close_dark from './assets/close_icon_dark.png'
+import add_text_dark from './assets/add_text_dark.png'
+import play_dark from './assets/play_icon_dark.png'
+import pause_dark from './assets/pause_icon_dark.png'
+import previous_dark from './assets/previous_icon_dark.png'
+import next_dark from './assets/next_icon_dark.png'
+import shuffle_dark from './assets/shuffle_icon_dark.png'
+import repeat_dark from './assets/repeat_icon_dark.png'
+
 /* blockchain stuff */
 import { mnemonicToSeedSync, mnemonicToSeed } from 'bip39';
 import { Buffer } from 'buffer';
@@ -144,8 +186,6 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { zoomPlugin } from '@react-pdf-viewer/zoom';
 import '@react-pdf-viewer/zoom/lib/styles/index.css';
-// import { currentPagePlugin } from '@react-pdf-viewer/current-page';
-// import '@react-pdf-viewer/current-page/lib/styles/index.css';
 
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -154,18 +194,13 @@ const { ethers } = require("ethers");
 const ecies = require('ecies-geth');
 var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
-var bigInt = require("big-integer");
 const xrpl = require("xrpl")
 const BITBOXSDK = require('bitbox-sdk').BITBOX;
 const BITBOX = new BITBOXSDK();
 
-
-var TextDecoder = textEncoding.TextDecoder;
-window.Buffer = window.Buffer || Buffer;
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-
-
-
+var bigInt = require("big-integer");
+const primary_following = 'E25:1002'
 
 
 
@@ -265,24 +300,9 @@ function shuffle(array) {
 }
 
 const PDFViewerWrapper  = forwardRef(({ fileUrl, theme /* , record_page, current_page */ }, ref) => {
-  const zoomPluginInstance = zoomPlugin();
-  // const { ZoomInButton, ZoomOutButton, ZoomPopover } = zoomPluginInstance;
-  
-  // const currentPagePluginInstance = currentPagePlugin();
-  // const { jumpToPage } = currentPagePluginInstance;
-  
+  const zoomPluginInstance = zoomPlugin();  
   const zoomLevels = [0.5, 1.0, 1.5, 2.0, 3.0];
   const [currentZoom, setCurrentZoom] = useState(0.5);
-
-  // const [currentPage, setCurrentPage] = useState(() => {
-  //   const savedPage = current_page;
-  //   return savedPage ? parseInt(savedPage, 10) : 1;
-  // });
-
-  // useEffect(() => {
-  //   jumpToPage(currentPage - 1);
-  // }, [currentPage, jumpToPage]);
-
 
 
   const zoomIn = () => {
@@ -305,14 +325,6 @@ const PDFViewerWrapper  = forwardRef(({ fileUrl, theme /* , record_page, current
     setCurrentZoom(newZoom);
   }
 
-  // const onPageChange = (e) => {
-  //   const newPage = e.currentPage + 1;
-  //   setCurrentPage(newPage);
-  //   record_page(newPage);
-  //   console.log('new_page', newPage)
-  // };
-
-
 
 
   useImperativeHandle(ref, () => ({
@@ -323,17 +335,20 @@ const PDFViewerWrapper  = forwardRef(({ fileUrl, theme /* , record_page, current
 
   return (
       <div>
-        {/* <div style={{ marginBottom: '10px', display: 'flex', gap: '10px', 'align-items':'center','justify-content':'center', }}>
-          <ZoomOutButton/>
-          <ZoomInButton/>
-          <ZoomPopover/>
-        </div> */}
-        <Viewer fileUrl={fileUrl} /* onPageChange={onPageChange} */ plugins={[zoomPluginInstance]} theme={{theme: theme,}} />
+        <Viewer fileUrl={fileUrl} plugins={[zoomPluginInstance]} theme={{theme: theme,}} />
       </div>
   );
 });
 
 class App extends Component {
+
+  // render(){
+  //   return(
+  //     <div>
+  //       {makeid(3)}
+  //     </div>
+  //   )
+  // }
 
   state = {
     page:'?',/* UNUSED the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
@@ -403,24 +418,37 @@ class App extends Component {
 
     run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
 
-    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:''
+    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:'', followed_accounts:[primary_following], should_update_followed_accounts:false, posts_blocked_by_me:[], should_update_posts_blocked_by_me:false, posts_blocked_by_my_following:[],
   };
 
   get_static_assets(){
     return {
-      'letter':'https://nftstorage.link/ipfs/bafkreigapfe43wknpmflvp234k7fuijmv4fxbyjaybhcgc37pscsschi4u',
-      'e5_empty_icon':'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e',
-      'e5_empty_icon3':'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424',
+      // 'letter':'https://nftstorage.link/ipfs/bafkreigapfe43wknpmflvp234k7fuijmv4fxbyjaybhcgc37pscsschi4u',
+      // 'e5_empty_icon':'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e',
+      // 'e5_empty_icon3':'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424',
+      // 'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74',
+      // 'music_label':'https://bafkreigntzixxxm2yyqjv2gffpbaxf7uuxmqcwhpvrkuwswztbhkdj35mu.ipfs.w3s.link/',
+      // 'expand_icon':'https://bafkreihfwjiuc3nucu6dbhtlojc7ovhuakkfknrrnhb2wfe723whj3f4qe.ipfs.w3s.link/',
+      // 'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/',
+      // 'empty_image':'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/',
+      // 'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
+      // 'download_icon':'https://bafkreie6m6aird6xkug5mzgqxccks65u4lsi5pghbvmb64uhvitikadnii.ipfs.w3s.link/',
+      // 'zoom_in_icon':'https://bafkreiaqdlkxszb7tnhm7bql5psp4m4ofyh3a7k7rdotgvpwnvgakm4uw4.ipfs.w3s.link/',
+      // 'zoom_out_icon':'https://bafkreidm4kb7zlaaqluepfllptvejmu3r3qvw35wt5d2z63jjlhwzin3qa.ipfs.w3s.link/',
+      // 'video_label':'https://bafkreid5u7arxovxweciekc6ddys4szsibdgnma5yddtcxlk3iq32dvx2e.ipfs.w3s.link/'
+      'letter':letter,
+      'e5_empty_icon':e5_empty_icon,
+      'e5_empty_icon3':e5_empty_icon3,
       'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74',
-      'music_label':'https://bafkreigntzixxxm2yyqjv2gffpbaxf7uuxmqcwhpvrkuwswztbhkdj35mu.ipfs.w3s.link/',
-      'expand_icon':'https://bafkreihfwjiuc3nucu6dbhtlojc7ovhuakkfknrrnhb2wfe723whj3f4qe.ipfs.w3s.link/',
-      'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/',
-      'empty_image':'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/',
+      'music_label':music_label,
+      'expand_icon':expand_icon,
+      'close_pip':close_pip,
+      'empty_image':empty_image,
       'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
-      'download_icon':'https://bafkreie6m6aird6xkug5mzgqxccks65u4lsi5pghbvmb64uhvitikadnii.ipfs.w3s.link/',
-      'zoom_in_icon':'https://bafkreiaqdlkxszb7tnhm7bql5psp4m4ofyh3a7k7rdotgvpwnvgakm4uw4.ipfs.w3s.link/',
-      'zoom_out_icon':'https://bafkreidm4kb7zlaaqluepfllptvejmu3r3qvw35wt5d2z63jjlhwzin3qa.ipfs.w3s.link/',
-      'video_label':'https://bafkreid5u7arxovxweciekc6ddys4szsibdgnma5yddtcxlk3iq32dvx2e.ipfs.w3s.link/'
+      'download_icon':download_icon,
+      'zoom_in_icon':zoom_in_icon,
+      'zoom_out_icon':zoom_out_icon,
+      'video_label':video_label
     }
   }
 
@@ -958,7 +986,7 @@ class App extends Component {
 
         /* new audio page */
         'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.',
-        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'Fee for Everything','a311bs':'',
+        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'Fee for Everything','a311bs':'New Markdown here...', 'a311bt':'editor', 'a311bu':'preview', 'a311bv':'You can add some Markdown text below.', 'a311bw':'', 'a311bx':'', 'a311by':'', 'a311bz':'', 'a311ca':'',
         
 
         /* new video page */
@@ -1085,7 +1113,7 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'','1593dg':'','1593dh':'','1593di':'','1593dj':'','1593dk':'','1593dl':'','1593dm':'','1593dn':'','1593do':'','1593dp':'','1593dq':'','1593dr':'','1593ds':'','1593dt':'','1593du':'','1593dv':'','1593dw':'','1593dx':'','1593dy':'','1593dz':'','1593ea':'','1593eb':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'','1593dr':'','1593ds':'','1593dt':'','1593du':'','1593dv':'','1593dw':'','1593dx':'','1593dy':'','1593dz':'','1593ea':'','1593eb':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1165,7 +1193,7 @@ class App extends Component {
 
 
         /* nitro details section */
-        'c2527a':'Pin the Nitro post to your feed.','c2527b':'Pin Nitropost','c2527c':'Pin/Unpin Nitropost','c2527d':'Edit Indexed Nitropost','c2527e':'Change the basic details for your Indexed Nitropost','c2527f':'Loading Node Details...','c2527g':'Node Unavailable.','c2527h':'The node is unavailable or down.','c2527i':'Status','c2527j':'Online.','c2527k':'Booted','c2527l':'Start Up Time','c2527m':'Node Storage Service Offline.','c2527n':'Storage Purchase Recipient','c2527o':'Storage Purchase Limit.','c2527p':'Mbs','c2527q':'Accounts Served.','c2527r':'Tracked Hashes.','c2527s':'Tracked E5s.','c2527t':'Price per Megabyte of Storage.','c2527u':'Loading Your Storage Info...','c2527v':'Your account doesnt exist in the node.','c2527w':'Files Stored.','c2527x':'files','c2527y':'Acquired Space.','c2527z':'Utilized Space','c2527ba':'Buy Storage.','c2527bb':'Acquire storage from the provider in their respective node.','c2527bc':'Configure Node.','c2527bd':'Configure your nitro node directly from E5.','c2527be':'configure','c2527bf':'Total Files Stored','c2527bg':'Total Space Utilized','c2527bh':'',
+        'c2527a':'Pin the Nitro post to your feed.','c2527b':'Pin Nitropost','c2527c':'Pin/Unpin Nitropost','c2527d':'Edit Indexed Nitropost','c2527e':'Change the basic details for your Indexed Nitropost','c2527f':'Loading Node Details...','c2527g':'Node Unavailable.','c2527h':'The node is unavailable or down.','c2527i':'Status','c2527j':'Online.','c2527k':'Booted','c2527l':'Start Up Time','c2527m':'Node Storage Service Offline.','c2527n':'Storage Purchase Recipient','c2527o':'Storage Purchase Limit.','c2527p':'Mbs','c2527q':'Accounts Served.','c2527r':'Tracked Hashes.','c2527s':'Tracked E5s.','c2527t':'Price per Megabyte of Storage.','c2527u':'Loading Your Storage Info...','c2527v':'Your account doesnt exist in the node.','c2527w':'Files Stored.','c2527x':'files','c2527y':'Acquired Space.','c2527z':'Utilized Space','c2527ba':'Buy Storage.','c2527bb':'Acquire storage from the provider in their respective node.','c2527bc':'Configure Node.','c2527bd':'Configure your nitro node directly from E5.','c2527be':'configure','c2527bf':'Total Files Stored','c2527bg':'Total Space Utilized','c2527bh':'Block Post.','c2527bi':'Block this post from being viewed by your followers.','c2527bj':'Block/Unblock','c2527bk':'🙅 Post Blocked','c2527bl':'The post has been blocked for you and your followers.','c2527bm':'','c2527bn':'','c2527bo':'','c2527bp':'','c2527bq':'','c2527br':'','c2527bs':'',
 
         
         /* proposal details section */
@@ -1241,7 +1269,7 @@ class App extends Component {
         /* configure nitro page */
         '3040':'boot','3041':'restore','3042':'backup','3043':'new-E5','3044':'delete-E5','3045':'iteration','3046':'content-gateway','3047':'provider','3048':'boot-storage','3049':'reconfigure-storage','3050':'back-ups','3051':'Boot the node to begin the syncronization process.','3052':'App Key...','3053':'Backup key (Optional)...','3054':'Boot Node','3054a':'','3054b':'','3054c':'','3054d':'','3054e':'','3054f':'','3054g':'','3054h':'','3054i':'An app key is required to boot the node.','3054j':'Attempting to boot the node...','3054k':'Something went wrong with the request.','3054l':'Restore the node to a previous back up.','3054m':'File Name...','3054n':'Backup file encryption key (optional)...','3054o':'This should be the previous key used to encrypt the backup files (if the node was rebooted). If unset, the backup key you set above will be used. And if that is unset, the encrypted backup key provided while posting the node will be used.','3054p':'replace-key','3054q':'Replace backup key','3054r':'If set to replace-key, the backup key will be updated to the key you provide above.','3054s':'Restore Node','3054t':'You need to specify a file name first.',
         '3054u':'Attempting to restore the node...','3054v':'Manually back up the node at this time remotely.','3054w':'Back up node','3054x':'Attempting to back up the node remotely...','3054y':'E5 Address...','3054z':'Web3 provider...','3054ba':'Starting Block Number...','3054bb':'Synchronizing Iteration...','3054bc':'Please select an E5.','3054bd':'That E5 address is not valid.','3054be':'That web3 provider is not valid.','3054bf':'Please set a starting block to start synching from.','3054bg':'Please set an iteration value for node\'s the sync process.','3054bh':'Attempting to boot the E5 in the node...','3054bi':'Delete an E5 and its events from the node.','3054bj':'Boot E5','3054bk':'Remove E5',
-        '3054bl':'Attempting to remove the E5 from the node...','3054bm':'Change the node\'s block syncronization iteration value.','3054bn':'Change Iteration','3054bo':'Attempting to change the synchronization iteration...','3054bp':'Change the gateway used to fetch data in ipfs.','3054bq':'Provider...','3054br':'Update Gateway','3054bs':'Current Provider','3054bt':'Unset','3054bu':'Update Provider.','3054bv':'That gateway provider is not valid.','3054bw':'Attempting to change the gateway provider...','3054bx':'Change the Web3 provider url.','3054by':'Update Provider','3054bz':'Attempting to change the web3 provider url...','3054ca':'Boot and enable storage capabilities in your node.','3054cb':'Max buyable Capapacity','3054cc':'Storage Price.','3054cd':'Set the price per megabyte of storage for your node in your preferred tokens.','3054ce':'Boot Stroage','3054cf':'You need to specify a maximum amount of storage that can be bought','3054cg':'You need to specify a price for your storage.','3054ch':'You need to specify a recipient for the storage purchases.','3054ci':'Attempting to enable storage with your specified configuration...','3054cj':'Max-Buyable-Capacity','3054ck':'Price','3054cl':'Recipient','3054cm':'Change the current setting for the storage service in the node.','3054cn':'Update Capacity','3054co':'Attempting to update your storage configuration...','3054cp':'Update Prices','3054cq':'Update Recipient','3054cr':'enabled','3054cs':'Free Basic Storage','3054ct':'If set to enabled, users will be able to store post metadata in your node for free.','3054cu':'free-storage','3054cv':'update selection','3054cw':'','3054cx':'','3054cy':'','3054cz':'','3054da':'','3054db':'','3054dc':'','3054dd':'','3054de':'','3054df':'','3054dg':'','3054dh':'','3054di':'','3054dj':'','3054dk':'','3054dl':'','3054dm':'','3054dn':'',
+        '3054bl':'Attempting to remove the E5 from the node...','3054bm':'Change the node\'s block syncronization iteration value.','3054bn':'Change Iteration','3054bo':'Attempting to change the synchronization iteration...','3054bp':'Change the gateway used to fetch data in ipfs.','3054bq':'Provider...','3054br':'Update Gateway','3054bs':'Current Provider','3054bt':'Unset','3054bu':'Update Provider.','3054bv':'That gateway provider is not valid.','3054bw':'Attempting to change the gateway provider...','3054bx':'Change the Web3 provider url.','3054by':'Update Provider','3054bz':'Attempting to change the web3 provider url...','3054ca':'Boot and enable storage capabilities in your node.','3054cb':'Max buyable Capapacity','3054cc':'Storage Price.','3054cd':'Set the price per megabyte of storage for your node in your preferred tokens.','3054ce':'Boot Stroage','3054cf':'You need to specify a maximum amount of storage that can be bought','3054cg':'You need to specify a price for your storage.','3054ch':'You need to specify a recipient for the storage purchases.','3054ci':'Attempting to enable storage with your specified configuration...','3054cj':'Max-Buyable-Capacity','3054ck':'Price','3054cl':'Recipient','3054cm':'Change the current setting for the storage service in the node.','3054cn':'Update Capacity','3054co':'Attempting to update your storage configuration...','3054cp':'Update Prices','3054cq':'Update Recipient','3054cr':'enabled','3054cs':'Free Basic Storage','3054ct':'If set to enabled, users will be able to store post metadata in your node for free.','3054cu':'free-storage','3054cv':'update selection','3054cw':'Post added to your blocked list.','3054cx':'Post unblocked.','3054cy':'','3054cz':'','3054da':'','3054db':'','3054dc':'','3054dd':'','3054de':'','3054df':'','3054dg':'','3054dh':'','3054di':'','3054dj':'','3054dk':'','3054dl':'','3054dm':'','3054dn':'',
         
         
         '3055':'','3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
@@ -1273,9 +1301,9 @@ class App extends Component {
 
         'XLM': this.get_coin_info('XLM', 'Stellar', 'https://bafkreiaeipmjvsizk6sbucvudjg332iaumravdte3p6gdnotfjbxsriqre.ipfs.w3s.link/', 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
 
-        'DOT': this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
+        // 'DOT': this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
 
-        'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
+        // 'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
 
         'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
 
@@ -2395,6 +2423,8 @@ class App extends Component {
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
     this.posts_to_load = []
+    this.has_my_followed_accounts_loaded = {}
+    this.has_posts_blocked_by_me_loaded = {}
   }
 
   componentDidMount() {
@@ -2449,7 +2479,6 @@ class App extends Component {
     console.log('nft_storage_cid', cid)
   }
 
-  /* called when the component is unmounted or closed */
   componentWillUnmount() {
     console.log("unmounted");
     window.removeEventListener("resize", this.resize.bind(this));
@@ -2585,6 +2614,10 @@ class App extends Component {
 
       video_timestamp_data:this.state.video_timestamp_data,
       my_preferred_nitro:this.state.my_preferred_nitro,
+      followed_accounts: this.state.followed_accounts, 
+      should_update_followed_accounts: this.state.should_update_followed_accounts,
+      posts_blocked_by_me: this.state.posts_blocked_by_me, 
+      should_update_posts_blocked_by_me: this.state.should_update_posts_blocked_by_me,
     }
   }
 
@@ -2688,6 +2721,12 @@ class App extends Component {
       var cupcake_pdf_bookmarks = cupcake_state.pdf_bookmarks;
       var cupcake_video_timestamp_data = cupcake_state.video_timestamp_data
       var cupcake_my_preferred_nitro = cupcake_state.my_preferred_nitro
+
+      var cupcake_followed_accounts = cupcake_state.followed_accounts 
+      var cupcake_should_update_followed_accounts = cupcake_state.should_update_followed_accounts
+      var cupcake_posts_blocked_by_me = cupcake_state.posts_blocked_by_me
+      var cupcake_should_update_posts_blocked_by_me = cupcake_state.should_update_posts_blocked_by_me
+
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -2891,6 +2930,22 @@ class App extends Component {
 
       if(cupcake_my_preferred_nitro != null){
         this.setState({my_preferred_nitro: cupcake_my_preferred_nitro})
+      }
+
+      if(cupcake_followed_accounts != null){
+        this.setState({followed_accounts: cupcake_followed_accounts})
+      }
+
+      if(cupcake_should_update_followed_accounts != null){
+        this.setState({should_update_followed_accounts: cupcake_should_update_followed_accounts})
+      }
+
+      if(cupcake_posts_blocked_by_me != null){
+        this.setState({posts_blocked_by_me: cupcake_posts_blocked_by_me})
+      }
+
+      if(cupcake_should_update_posts_blocked_by_me != null){
+        this.setState({should_update_posts_blocked_by_me: cupcake_should_update_posts_blocked_by_me})
       }
 
     }
@@ -3670,6 +3725,163 @@ class App extends Component {
 
   }
 
+  // get_theme_data(theme){
+  //   //this.props.theme['']
+  //   if(theme == this.getLocale()['1417']/* 'light' */){
+  //     return{
+  //       'name':this.getLocale()['1417']/* 'light' */,
+  //       'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'#dddddd', 'button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1',
+        
+  //       'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+  //       'primary_text_color':'#393e46','secondary_text_color':'grey',
+        
+  //       'navbar_button_selected_color':'#f2f2f2','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
+        
+  //       'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white',
+        
+  //       'chart_color':'#FCFCFC','chart_background_color':'#D5D5D5',
+  
+  //       'number_picker_label_color':'#D5D5D5','number_picker_label_shadow':'#c9c9c9',
+  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
+  //       'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+  //       'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+
+  //       'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
+
+  //       'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24',
+  //       'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu',
+  //       'add_text':'https://bafybeih7uo6hedtxgdge4digebt6o5gocacajgcbq2lc4nlfyb2uu55zma.ipfs.w3s.link/add_text_input_item.png',
+        
+  //       'play':'https://bafkreid5yges52pk6hbs6tlfjtnxebbqffc6cwjoxoxrc4ebqyguj3tufq.ipfs.w3s.link/',
+  //       'pause':'https://bafkreiee5y4hq4xnhf44ubuhbycokfczhaxghlexzb7pg6ld3a3cwwhyia.ipfs.w3s.link/',
+  //       'previous':'https://bafkreicjrx4etkijgxfvtmopoex5uxijbic5nsu44k2ogfg7wnmcyqd7yi.ipfs.w3s.link/',
+  //       'next':'https://bafkreiblnp7g25ngh3mjot4ejjr7n34l2zm6wzwrhjrdfk3lgj3pjcihzy.ipfs.w3s.link/',
+  //       'shuffle':'https://bafkreiclbvrwjghnqjh3pkqyj5dr2zjkh336db64ex2dtc55v6c3b2n7xy.ipfs.w3s.link/',
+  //       'repeat':'https://bafkreia6gpgcsv742esoa2g3mfadgumxogwpzbcslx3espbe2h5ohn2h7u.ipfs.w3s.link/',
+  //     }
+  //   }
+  //   else if(theme == this.getLocale()['1418']/* 'dark' */){
+  //     return{
+  //       'name':this.getLocale()['1418']/* 'dark' */,
+  //       'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444','button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1',
+        
+  //       'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
+
+  //       'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
+        
+  //       'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
+
+  //       'view_group_card_item_background':'#2e2e2e','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white',
+
+  //       'chart_color':'#333333','chart_background_color':'#232323',
+
+  //       'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#262626',
+  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
+  //       'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
+        
+  //       'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
+
+  //       'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
+        
+  //       'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
+  //       'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
+  //       'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+
+  //       'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
+  //       'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
+  //       'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
+  //       'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
+  //       'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
+  //       'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
+  //     }
+  //   }
+  //   else if(theme == this.getLocale()['2740']/* midnight */){
+  //     return{
+  //       'name':this.getLocale()['2740']/* midnight */,
+  //       'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'white', 'line_color':'#C1C1C1',
+        
+  //       'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
+
+  //       'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
+        
+  //       'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
+
+  //       'view_group_card_item_background':'#1a1a1a','tag_background_color':'#303030', 'indexed_tag_background':'#242424', 'tag_shadow':'#303030', 'tag_text_color':'white',
+
+  //       'chart_color':'#1a1a1a','chart_background_color':'#0a0a0a',
+
+  //       'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
+  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
+  //       'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+  //       'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
+
+
+  //       'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
+
+  //       'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
+  //       'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
+  //       'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+
+  //       'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
+  //       'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
+  //       'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
+  //       'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
+  //       'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
+  //       'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
+  //     }
+  //   }
+  //   else if(theme == this.getLocale()['2741']/* green */){
+  //     return{
+  //       'name':this.getLocale()['2741']/* green */,
+  //       'bar_shadow':'#01c664','bar_color':'#01c601', 'bar_background_color':'#bef4d9','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'#71fc71', 'line_color':'#71fc71',
+        
+  //       'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
+
+  //       'primary_text_color':'#71fc71', 'secondary_text_color':'#5bc15b',
+        
+  //       'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#5bc15b','secondary_navbar_text_color':'#5bc15b','card_shadow_color':'#013f01',
+  //       'navbar_text_shadow_color':'#5bc15b',
+
+  //       'view_group_card_item_background':'#141e0a','tag_background_color':'#203f00', 'indexed_tag_background':'#002100', 'tag_shadow':'#004f00', 'tag_text_color':'#71fc71',
+
+  //       'chart_color':'#01c601','chart_background_color':'#141e0a',
+
+  //       'number_picker_label_color':'#171717','number_picker_label_shadow':'#013f01',
+  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#5bc15b', 'number_picker_picked_label_text_color':'white',
+  //       'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+  //       'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+
+
+  //       'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli',
+
+  //       'close':'https://nftstorage.link/ipfs/bafkreidjlt2fejd5t2urmawpfg5xgtm55zlctx2zek3bqxwikehoyq6whe',
+  //       'clear':'https://nftstorage.link/ipfs/bafkreicdhnkw75k4k7m4hwiwaebgsiv2mf6zix5d6ctr2shpa7jtuy5bke',
+  //       'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+
+  //       'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
+  //       'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
+  //       'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
+  //       'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
+  //       'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
+  //       'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
+  //     }
+  //   }
+
+
+
+
+  //   else if(theme == this.getLocale()['1593a']/* 'auto' */){
+  //     var obj = this.get_theme_data(this.get_time_of_day_theme())
+  //     obj['name'] = this.getLocale()['1593a']/* 'auto' */
+
+  //     return obj
+  //   }
+  // }
+
   get_theme_data(theme){
     //this.props.theme['']
     if(theme == this.getLocale()['1417']/* 'light' */){
@@ -3691,20 +3903,20 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
-        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
+        'background':background, 'JobIcon':JobIcon, 'ExploreIcon': ExploreIcon, 'WalletIcon':WalletIcon, 'StackIcon': StackIcon, 
 
-        'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24',
+        'close':close,
         'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu',
-        'add_text':'https://bafybeih7uo6hedtxgdge4digebt6o5gocacajgcbq2lc4nlfyb2uu55zma.ipfs.w3s.link/add_text_input_item.png',
+        'add_text':add_text,
         
-        'play':'https://bafkreid5yges52pk6hbs6tlfjtnxebbqffc6cwjoxoxrc4ebqyguj3tufq.ipfs.w3s.link/',
-        'pause':'https://bafkreiee5y4hq4xnhf44ubuhbycokfczhaxghlexzb7pg6ld3a3cwwhyia.ipfs.w3s.link/',
-        'previous':'https://bafkreicjrx4etkijgxfvtmopoex5uxijbic5nsu44k2ogfg7wnmcyqd7yi.ipfs.w3s.link/',
-        'next':'https://bafkreiblnp7g25ngh3mjot4ejjr7n34l2zm6wzwrhjrdfk3lgj3pjcihzy.ipfs.w3s.link/',
-        'shuffle':'https://bafkreiclbvrwjghnqjh3pkqyj5dr2zjkh336db64ex2dtc55v6c3b2n7xy.ipfs.w3s.link/',
-        'repeat':'https://bafkreia6gpgcsv742esoa2g3mfadgumxogwpzbcslx3espbe2h5ohn2h7u.ipfs.w3s.link/',
+        'play':play,
+        'pause':pause,
+        'previous':previous,
+        'next':next,
+        'shuffle':shuffle_icon,
+        'repeat':repeat,
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
@@ -3726,20 +3938,20 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
 
-        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
+        'background':background, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
         
-        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
+        'close':close_dark,
         'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
-        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+        'add_text':add_text_dark,
 
-        'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
-        'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
-        'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
-        'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
-        'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
-        'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
+        'play':play_dark,
+        'pause':pause_dark,
+        'previous':previous_dark,
+        'next':next_dark,
+        'shuffle':shuffle_dark,
+        'repeat':repeat_dark,
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -3761,21 +3973,21 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
-        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
+        'background':background, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
 
-        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
+        'close':close_dark,
         'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
-        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+        'add_text':add_text_dark,
 
-        'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
-        'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
-        'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
-        'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
-        'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
-        'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
+        'play':play_dark,
+        'pause':pause_dark,
+        'previous':previous_dark,
+        'next':next_dark,
+        'shuffle':shuffle_dark,
+        'repeat':repeat_dark,
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
@@ -3815,10 +4027,6 @@ class App extends Component {
         'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
       }
     }
-
-
-
-
     else if(theme == this.getLocale()['1593a']/* 'auto' */){
       var obj = this.get_theme_data(this.get_time_of_day_theme())
       obj['name'] = this.getLocale()['1593a']/* 'auto' */
@@ -3844,9 +4052,12 @@ class App extends Component {
   }
 
 
-
-
   render(){
+    // return(
+    //   <div>
+    //     {makeid(3)}
+    //   </div>
+    // )
     if(this.getScreenSize() == 'e'){
       return(
         <div>
@@ -3855,7 +4066,7 @@ class App extends Component {
       )
     }else{
       return (
-        <div className="App">
+        <div>
           {this.render_audio_pip()}
           {this.render_page()}
           {this.render_synchronizing_bottomsheet()}
@@ -4008,7 +4219,7 @@ class App extends Component {
         
           play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
-          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)}
+          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -4243,6 +4454,23 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack)
   }
 
+  block_post(object){
+    var clone = this.state.posts_blocked_by_me.slice()
+    if(clone.includes(object['e5_id'])){
+      var index = clone.indexOf(object['e5_id'])
+      clone.splice(index, 1)
+      this.prompt_top_notification(this.getLocale()['3054cx']/* 'Post unblocked.' */, 1800)
+    }else{
+      this.prompt_top_notification(this.getLocale()['3054cw']/* 'Post added to your blocked list.' */, 1900)
+      clone.push(object['e5_id'])
+    }
+    this.setState({posts_blocked_by_me: clone, should_update_posts_blocked_by_me:true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
 
 
 
@@ -4396,7 +4624,6 @@ class App extends Component {
       </SwipeableBottomSheet>
     )
   }
-
   open_send_receive_ether_bottomsheet(){
     if(this.state.send_receive_bottomsheet == true){
       //closing
@@ -5131,41 +5358,41 @@ class App extends Component {
     return x.toString()
   }
 
-  create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-    var seed = this.state.final_seed
-    const wallet = await this.generate_dot_wallet(seed)
-    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-    const api = await ApiPromise.create({ provider: wsProvider });
-    await api.isReady;
+  // create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  //   var seed = this.state.final_seed
+  //   const wallet = await this.generate_dot_wallet(seed)
+  //   const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+  //   const api = await ApiPromise.create({ provider: wsProvider });
+  //   await api.isReady;
 
-    try{
-      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
-    }catch(e){
-      console.log(e)
-      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
-    }
+  //   try{
+  //     const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+  //     this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+  //   }catch(e){
+  //     console.log(e)
+  //     this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+  //   }
 
-    await api.disconnect()
-  }
+  //   await api.disconnect()
+  // }
 
-  create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-    var seed = this.state.final_seed
-    const wallet = await this.generate_ksm_wallet(seed)
-    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-    const api = await ApiPromise.create({ provider: wsProvider });
-    await api.isReady;
+  // create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  //   var seed = this.state.final_seed
+  //   const wallet = await this.generate_ksm_wallet(seed)
+  //   const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+  //   const api = await ApiPromise.create({ provider: wsProvider });
+  //   await api.isReady;
 
-    try{
-      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
-    }catch(e){
-      console.log(e)
-      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
-    }
+  //   try{
+  //     const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+  //     this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+  //   }catch(e){
+  //     console.log(e)
+  //     this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+  //   }
 
-    await api.disconnect()
-  }
+  //   await api.disconnect()
+  // }
 
   create_and_broadcast_algorand_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
     var seed = this.state.final_seed
@@ -5377,7 +5604,7 @@ class App extends Component {
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
-      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)}
+      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)}
       />
     )
   }
@@ -5768,6 +5995,35 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  follow_account(account){
+    var clone = this.state.followed_accounts.slice()
+    var final_account = this.state.selected_e5 + ':' + account
+
+    clone.push(final_account)
+    this.setState({followed_accounts: clone, should_update_followed_accounts: true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  remove_followed_account(item, index){
+    var e5 = item.split(':')[0]
+    if(item == primary_following && this.props.app_state.user_account_id[e5] == 1){
+      this.prompt_top_notification(this.getLocale()['1593dp']/* 'First make a transaction to remove that account.' */, 6300)
+      return;
+    }
+
+    var clone = this.state.followed_accounts.slice()
+    clone.splice(index, 1);
+    this.setState({followed_accounts: clone, should_update_followed_accounts: true})
+    this.prompt_top_notification(this.getLocale()['1593do']/* 'Account removed from your following list.' */, 2300)
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
 
 
 
@@ -5868,10 +6124,13 @@ class App extends Component {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           var clone = structuredClone(me.state.is_running)
           clone[e5] = false
-          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false, should_update_playlists_in_E5:false})
+          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false, should_update_playlists_in_E5:false, should_update_followed_accounts:false, should_update_posts_blocked_by_me: false})
           me.delete_stack_items(delete_pos_array)
           me.reset_gas_calculation_figure(me)
           me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+
+          me.has_my_followed_accounts_loaded[e5] = null
+          me.has_posts_blocked_by_me_loaded[e5] = null
           setTimeout(function() {
             me.start_get_accounts_for_specific_e5(false, e5, false)
           }, (1 * 500));
@@ -12493,11 +12752,6 @@ class App extends Component {
 
 
 
-
-
-
-
-
   render_pick_file_bottomsheet(){
     if(this.state.pick_file_bottomsheet2 != true) return;
     var os = getOS()
@@ -13789,7 +14043,7 @@ class App extends Component {
       <div style={{height:this.state.height, width:'100%', 'background-color':'white', overflow: 'auto'}}>
         {pdf && (
           <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
-            <PDFViewerWrapper ref={this.pdf_viewer_wrapper} theme={theme} /* current_page={current_page} */ /* record_page={this.record_page.bind(this)} */ fileUrl={this.get_pdf_from_file(pdf)} />
+            <PDFViewerWrapper ref={this.pdf_viewer_wrapper} theme={theme} fileUrl={this.get_pdf_from_file(pdf)} />
           </Worker>
         )}
       </div>
@@ -13814,29 +14068,56 @@ class App extends Component {
 
   download_pdf(base64Data, name){
     this.prompt_top_notification(this.getLocale()['2738d']/* 'Downloading pdf.' */, 1500)
-    // Remove the `data:application/pdf;base64,` prefix if it exists
-    const base64Prefix = "data:application/pdf;base64,";
-    const pdfData = base64Data.startsWith(base64Prefix) ? base64Data.replace(base64Prefix, "") : base64Data;
-    
-    // console.log(name)
+    if(!base64Data.startsWith('http')){
+      const base64Prefix = "data:application/pdf;base64,";
+      const pdfData = base64Data.startsWith(base64Prefix) ? base64Data.replace(base64Prefix, "") : base64Data;
+      
 
-    // Convert Base64 to a Blob
-    const byteCharacters = atob(pdfData);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+      const byteCharacters = atob(pdfData);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${name}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    }else{
+      this.download_pdf_from_url(base64Data, name)
     }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: "application/pdf" });
+  }
 
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = `${name}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(blobUrl);
+  download_pdf_from_url = async (url,  name) => {
+    try {
+      // Fetch the image as a blob
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch pdf");
+      }
+
+      const blob = await response.blob();
+      // Create a temporary object URL
+      const objectUrl = URL.createObjectURL(blob);
+      // Create and click the download link
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      console.error("Error downloading the image:", error);
+    }
   }
 
   zoom_in(){
@@ -14742,6 +15023,7 @@ class App extends Component {
   get_account_from_seed(seed, web3_url){
     const web3 = new Web3(web3_url);
     const mnemonic = seed.trim();
+    window.Buffer = window.Buffer || Buffer;
     const seedBytes = mnemonicToSeedSync(mnemonic);
     const hdNode = ethers.utils.HDNode.fromSeed(seedBytes);
     const wallet = new ethers.Wallet(hdNode.privateKey);
@@ -15663,137 +15945,137 @@ class App extends Component {
 
 
   get_and_set_dot_wallet_info = async (seed1) => {
-    var seed = seed1
-    const wallet = await this.generate_dot_wallet(seed)
-    const address = wallet.dot_address
-    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-    const api = await ApiPromise.create({ provider: wsProvider });
-    await api.isReady;
-    const existential_deposit = await this.get_existential_dot_deposit(api)
-    const address_balance = await this.get_dot_balance(address, api)
-    await api.disconnect()
+    // var seed = seed1
+    // const wallet = await this.generate_dot_wallet(seed)
+    // const address = wallet.dot_address
+    // const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    // const api = await ApiPromise.create({ provider: wsProvider });
+    // await api.isReady;
+    // const existential_deposit = await this.get_existential_dot_deposit(api)
+    // const address_balance = await this.get_dot_balance(address, api)
+    // await api.disconnect()
 
-    var fee_info = {'fee':await this.get_dot_transaction_fee(), 'type':'fixed', 'per':'transaction'}
-    var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
+    // var fee_info = {'fee':await this.get_dot_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    // var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
     // var clone = structuredClone(this.state.coin_data)
     // clone['DOT'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
-    return data
+    // return data
   }
 
-  generate_dot_wallet = async (mnemonic) => {
-    await waitReady();
-    const keyring = new Keyring({ type: 'sr25519' });
+  // generate_dot_wallet = async (mnemonic) => {
+  //   await waitReady();
+  //   const keyring = new Keyring({ type: 'sr25519' });
     
-    const keys = keyring.addFromMnemonic(mnemonic)
-    const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
-    return {keys: keys, dot_address: public_address}
-  }
+  //   const keys = keyring.addFromMnemonic(mnemonic)
+  //   const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
+  //   return {keys: keys, dot_address: public_address}
+  // }
 
-  get_dot_balance = async (address, api) => {
-    if(!this.is_address_set(address)) return 0
-    try{
-      const { nonce, data: balance } = await api.query.system.account(address);
-      const address_balance = (balance.free.toString())
-      return address_balance
-    }catch(e){
-      console.log(e)
-      return 0
-    }
-  }
+  // get_dot_balance = async (address, api) => {
+  //   if(!this.is_address_set(address)) return 0
+  //   try{
+  //     const { nonce, data: balance } = await api.query.system.account(address);
+  //     const address_balance = (balance.free.toString())
+  //     return address_balance
+  //   }catch(e){
+  //     console.log(e)
+  //     return 0
+  //   }
+  // }
 
-  get_existential_dot_deposit = async (api) => {
-    try{
-      return api.consts.balances.existentialDeposit.toNumber()
-    }catch(e){
-      console.log(e)
-    }
-  }
+  // get_existential_dot_deposit = async (api) => {
+  //   try{
+  //     return api.consts.balances.existentialDeposit.toNumber()
+  //   }catch(e){
+  //     console.log(e)
+  //   }
+  // }
 
-  get_dot_transaction_fee = async () => {
-    return (0.015 * 10_000_000_000)
-  }
+  // get_dot_transaction_fee = async () => {
+  //   return (0.015 * 10_000_000_000)
+  // }
 
-  update_dot_balance = async (clone) => {
-    // var clone = structuredClone(this.state.coin_data)
-    const address = clone['DOT']['address']
-    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-    const api = await ApiPromise.create({ provider: wsProvider });
-    await api.isReady;
-    const address_balance = await this.get_dot_balance(address, api)
-    await api.disconnect()
-    clone['DOT']['balance'] = address_balance
-    // this.setState({coin_data: clone})
-    return clone
-  }
+  // update_dot_balance = async (clone) => {
+  //   // var clone = structuredClone(this.state.coin_data)
+  //   const address = clone['DOT']['address']
+  //   const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+  //   const api = await ApiPromise.create({ provider: wsProvider });
+  //   await api.isReady;
+  //   const address_balance = await this.get_dot_balance(address, api)
+  //   await api.disconnect()
+  //   clone['DOT']['balance'] = address_balance
+  //   // this.setState({coin_data: clone})
+  //   return clone
+  // }
 
 
 
 
   get_and_set_kusama_wallet_info = async (seed) => {
-    const wallet = await this.generate_ksm_wallet(seed)
-    const address = wallet.ksm_address
-    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-    const api = await ApiPromise.create({ provider: wsProvider });
-    await api.isReady
-    const existential_deposit = await this.get_existential_ksm_deposit(api)
-    const balance = await this.get_ksm_balance(address, api)
-    await api.disconnect()
+    // const wallet = await this.generate_ksm_wallet(seed)
+    // const address = wallet.ksm_address
+    // const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    // const api = await ApiPromise.create({ provider: wsProvider });
+    // await api.isReady
+    // const existential_deposit = await this.get_existential_ksm_deposit(api)
+    // const balance = await this.get_ksm_balance(address, api)
+    // await api.disconnect()
 
-    var fee_info = {'fee':await this.get_ksm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
-    var data = {'balance':balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
-    // var clone = structuredClone(this.state.coin_data)
-    // clone['KSM'] = data;
-    // this.setState({coin_data: clone})
-    // await this.wait(100)
-    return data
+    // var fee_info = {'fee':await this.get_ksm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    // var data = {'balance':balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
+    // // var clone = structuredClone(this.state.coin_data)
+    // // clone['KSM'] = data;
+    // // this.setState({coin_data: clone})
+    // // await this.wait(100)
+    // return data
   }
 
-  generate_ksm_wallet = async (mnemonic) => {
-    await waitReady();
-    const keyring = new Keyring({ type: 'sr25519' });
-    const keys = keyring.addFromMnemonic(mnemonic)
-    const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
-    return {keys: keys, ksm_address: public_address}
-  }
+  // generate_ksm_wallet = async (mnemonic) => {
+  //   await waitReady();
+  //   const keyring = new Keyring({ type: 'sr25519' });
+  //   const keys = keyring.addFromMnemonic(mnemonic)
+  //   const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
+  //   return {keys: keys, ksm_address: public_address}
+  // }
 
-  get_ksm_balance = async (address, api) => {
-    if(!this.is_address_set(address)) return 0
-    try{
-      const { nonce, data: balance } = await api.query.system.account(address);
-      const address_balance = (balance.free.toString())
-      return address_balance
-    }catch(e){
-      console.log(e)
-      return 0
-    }
-  }
+  // get_ksm_balance = async (address, api) => {
+  //   if(!this.is_address_set(address)) return 0
+  //   try{
+  //     const { nonce, data: balance } = await api.query.system.account(address);
+  //     const address_balance = (balance.free.toString())
+  //     return address_balance
+  //   }catch(e){
+  //     console.log(e)
+  //     return 0
+  //   }
+  // }
 
-  get_existential_ksm_deposit = async (api) => {
-    try{
-      return api.consts.balances.existentialDeposit.toNumber()
-    }catch(e){
-      console.log(e)
-    }
-  }
+  // get_existential_ksm_deposit = async (api) => {
+  //   try{
+  //     return api.consts.balances.existentialDeposit.toNumber()
+  //   }catch(e){
+  //     console.log(e)
+  //   }
+  // }
 
-  get_ksm_transaction_fee = async () => {
-    return (0.01 * 1_000_000_000_000)
-  }
+  // get_ksm_transaction_fee = async () => {
+  //   return (0.01 * 1_000_000_000_000)
+  // }
 
-  update_ksm_balance = async (clone) => {
-    // var clone = structuredClone(this.state.coin_data)
-    const address = clone['KSM']['address']
-    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-    const api = await ApiPromise.create({ provider: wsProvider });
-    await api.isReady;
-    const address_balance = await this.get_ksm_balance(address, api)
-    await api.disconnect()
-    clone['KSM']['balance'] = address_balance
-    // this.setState({coin_data: clone})
-    return clone
-  }
+  // update_ksm_balance = async (clone) => {
+  //   // var clone = structuredClone(this.state.coin_data)
+  //   const address = clone['KSM']['address']
+  //   const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+  //   const api = await ApiPromise.create({ provider: wsProvider });
+  //   await api.isReady;
+  //   const address_balance = await this.get_ksm_balance(address, api)
+  //   await api.disconnect()
+  //   clone['KSM']['balance'] = address_balance
+  //   // this.setState({coin_data: clone})
+  //   return clone
+  // }
 
 
 
@@ -16859,6 +17141,28 @@ class App extends Component {
 
 
 
+    /* ---------------------------------------- FOLLOWED ACCOUNTS DATA ------------------------------------------- */
+    this.get_my_followed_accounts_data(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
+
+
+
+    /* ---------------------------------------- MY BLOCKED POSTS DATA ------------------------------------------- */
+    this.load_my_blocked_posts(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
+
 
     /* ---------------------------------------- ALBUM COLLECTION DATA ------------------------------------------- */
     await this.get_my_collection_data(web3, E52contractInstance, e5, account)
@@ -17049,7 +17353,6 @@ class App extends Component {
     // }
 
     this.load_run_data(contractInstance, E52contractInstance, e5, web3, H52contractInstance)
-
 
 
 
@@ -17550,7 +17853,105 @@ class App extends Component {
     this.setState({nitro_links: registered_nitro_links_clone})
   }
 
-  
+  get_my_followed_accounts_data = async (web3, E52contractInstance, e5, account) => {
+    var followed_accounts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:8})
+
+    if(followed_accounts_data.length > 0){
+      var latest_event = followed_accounts_data[followed_accounts_data.length - 1];
+      var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var loaded_followed_accounts = followed_account_data['followed_accounts']
+
+      var clone = []
+      for(var i=0; i<loaded_followed_accounts.length; i++){
+        var account = loaded_followed_accounts[i]
+        if(!clone.includes(account)){
+          clone.push(account)
+        }
+      }
+      if(this.has_my_followed_accounts_loaded[e5] != account){
+        this.setState({followed_accounts: clone})
+        this.has_my_followed_accounts_loaded[e5] = account
+      }
+    }
+
+    if(this.state.followed_accounts.length != 0){
+      this.load_blocked_posts(web3, E52contractInstance, e5, account)
+    }
+  }
+
+  load_my_blocked_posts = async (web3, E52contractInstance, e5, account) => {
+    var my_blocked_posts_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:9})
+
+    if(my_blocked_posts_event_data.length > 0){
+      var latest_event = my_blocked_posts_event_data[my_blocked_posts_event_data.length - 1];
+      var blocked_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var posts_blocked_by_me = blocked_account_data['posts_blocked_by_me']
+
+      var clone = this.state.posts_blocked_by_me.slice()
+      for(var i=0; i<posts_blocked_by_me.length; i++){
+        var post = posts_blocked_by_me[i]
+        if(!clone.includes(post)){
+          clone.push(post)
+        }
+      }
+      if(this.has_posts_blocked_by_me_loaded[e5] != account){
+        this.setState({posts_blocked_by_me: clone})
+        this.has_posts_blocked_by_me_loaded[e5] = account
+      }
+      
+    }
+  }
+
+  load_blocked_posts = async (web3, E52contractInstance, e5, account) => {
+    var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
+    var followed_accounts_blocked_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: accounts_to_load, p3/* context */:9})
+
+    var accounts_obj = {}
+    followed_accounts_blocked_posts_events_data.forEach(event => {
+      accounts_obj[event.returnValues.p2/* sender_acc_id */] = event;
+    });
+
+    followed_accounts_blocked_posts_events_data = []
+    for (const account in accounts_obj) {
+      if (accounts_obj.hasOwnProperty(account)) {
+        followed_accounts_blocked_posts_events_data.push(accounts_obj[account])
+      }
+    }
+
+    if(followed_accounts_blocked_posts_events_data.length != 0){
+      if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+        await this.fetch_multiple_cids_from_nitro(followed_accounts_blocked_posts_events_data, 0, 'p4')
+      }
+
+      var clone = this.state.posts_blocked_by_my_following.slice()
+      for(var i=0; i<followed_accounts_blocked_posts_events_data.length; i++){
+        var latest_event = followed_accounts_blocked_posts_events_data[i]
+        var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+        var blocked_post = followed_account_data['posts_blocked_by_me']
+        blocked_post.forEach(post_id => {
+          if(!clone.includes(post_id)){
+            clone.push(post_id)
+          }
+        });
+      }
+      this.setState({posts_blocked_by_my_following: clone})
+    }
+  }
+
+  filter_followed_accounts_by_e5(e5){
+    var loaded_followed_accounts = this.state.followed_accounts
+    var accepted_ids = []
+    for(var i=0; i<loaded_followed_accounts.length; i++){
+      var item = loaded_followed_accounts[i]
+      var split_account_array = item.split(':')
+      var item_e5 = split_account_array[0]
+      var account = split_account_array[1]
+      if(item_e5 == e5){
+        accepted_ids.push(account)
+      }
+    }
+    return accepted_ids
+  }
 
 
 

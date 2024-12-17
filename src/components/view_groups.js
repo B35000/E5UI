@@ -3,10 +3,11 @@ import React, { Component } from 'react';
 
 import CanvasJSReact from './../externals/canvasjs.react';
 // import E5EmptyIcon from './../assets/e5empty_icon.png';
+import empty_image from './../assets/default_image_background.png'
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import Linkify from "linkify-react";
-import MarkdownPreview from '@uiw/react-markdown-preview';
+import Markdown from 'react-markdown'
 
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -470,8 +471,8 @@ class ViewGroups extends Component {
             var theme = this.props.theme['markdown_theme']
             var padding = '10px 15px 10px 15px'
             return(
-                <div data-color-mode={theme}>{/* dart */}
-                    <MarkdownPreview source={source} style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius}} />
+                <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius}}>
+                    <Markdown>{source}</Markdown>
                 </div>
             )
         }
@@ -622,13 +623,13 @@ class ViewGroups extends Component {
 
 
     get_image_from_file(ecid){
-        if(ecid == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        if(ecid == null) return empty_image
         if(!ecid.startsWith('image')) return ecid
         var ecid_obj = this.get_cid_split(ecid)
-        if(this.props.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        if(this.props.uploaded_data[ecid_obj['filetype']] == null) return empty_image
         var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
 
-        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        if(data == null) return empty_image
 
         return data['data']
     }
