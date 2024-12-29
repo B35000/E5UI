@@ -5,6 +5,9 @@ import TextInput from './../components/text_input';
 // import Letter from './../assets/letter.png'; 
 import Linkify from "linkify-react";
 
+import EndImg from './../assets/end_token_icon.png';
+import SpendImg from './../assets/spend_token_icon.png';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -119,9 +122,9 @@ class SearchedAccountPage extends Component {
 
     render(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
-        var f = 170
+        var f = 130
         if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e' || selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
-            f = 120
+            f = 90
         }
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
@@ -705,15 +708,15 @@ class SearchedAccountPage extends Component {
         }else{
             return(
                 <div>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {years_exchanges.map((item, index) => (
-                            <li style={{'padding': '3px 0px 3px 0px', 'list-style': 'none'}}>
+                            <div style={{'padding': '3px 0px 3px 0px'}}>
                                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':this.format_account_balance_figure(data[year][years_exchanges[index]]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[year][years_exchanges[index]]), 'barwidth':this.calculate_bar_width(data[year][years_exchanges[index]]), 'number':this.format_account_balance_figure(data[year][years_exchanges[index]]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
                                 </div>
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             )
         }
@@ -1230,12 +1233,11 @@ class SearchedAccountPage extends Component {
                     </div>
                 );
             }else{
-                console.log('view_searched_account', 'number of objects', items.length)
                 return(
                     <div ref={this.creations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
-                                <li style={{ 'padding': '5px 0px 5px 0px' }}>
+                                <li style={{ 'padding': '5px 3px 5px 3px' }}>
                                     <div key={index}>
                                         {this.render_object(item, index)}
                                     </div>
@@ -1327,7 +1329,15 @@ class SearchedAccountPage extends Component {
                     {this.render_detail_item('8', item['label'])}
                 </div>
             )
-        }else{
+        }
+        else if(object_type == 19 || object_type == 20 || object_type == 21){
+            return(
+                <div>
+                    {this.render_detail_item('8', item['id'])}
+                </div>
+            )
+        }
+        else{
             return(
                 <div>
                     {this.render_detail_item('3', item['id'])}
@@ -1342,23 +1352,37 @@ class SearchedAccountPage extends Component {
         var title = object['ipfs'] == null ? 'Object ID' : object['ipfs'].entered_title_text
         var age = object['block']
         var time = object['timestamp']
-        var image = null
+        var object_type = object['type']
+
+        var default_img_obj = {'31':EndImg, '19':this.props.app_state.static_assets['music_label'], '20':this.props.app_state.static_assets['video_label'], '21':EndImg}
+        var image = default_img_obj[(object_type.toString())]
         var name = object['ipfs'] == null ? 'Token' : object['ipfs'].entered_title_text
         var symbol = object['ipfs'] == null ? 'tokens' : object['ipfs'].entered_symbol_text
-        if(object['ipfs'].token_image!= null){
+        if(object['ipfs'].token_image != null){
             image = this.get_image_from_file(object['ipfs'].token_image)
         }
-        var object_type = object['type']
+        if(object['ipfs'].album_art != null){
+            image = this.get_image_from_file(object['ipfs'].album_art)
+        }      
+        
         if(object_type == 31/* token_exchange */){
             return{
                 'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
                 'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
                 'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
             }
-        }else{
+        }
+        else if(object_type == 19 || object_type == 20 || object_type == 21){
             return{
                 'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
-                'id':{'title':object['e5']+' • '+this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l'},
+                'id':{'title':this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+                'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            }
+        }
+        else{
+            return{
+                'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
+                'id':{'title':' • '+this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
                 'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
             }
         }
@@ -1374,7 +1398,7 @@ class SearchedAccountPage extends Component {
     }
 
     get_object_type(object_type){
-        var object_id_obj = {'17':this.props.app_state.loc['1729']/* 'job object' */,'18':this.props.app_state.loc['1730']/* 'post object' */,'24':this.props.app_state.loc['1731']/* 'shadow object' */,'25':this.props.app_state.loc['1732']/* 'storefront bag object' */,'26':this.props.app_state.loc['1733']/* 'contractor object' */,'27':this.props.app_state.loc['1734']/* 'storefront item object' */,'28':this.props.app_state.loc['1735']/* 'storefront object' */,'29':this.props.app_state.loc['1736']/* 'account object' */,'30':this.props.app_state.loc['1737']/* 'contract object' */,'31':this.props.app_state.loc['1738']/* 'token exchange object' */,'32':this.props.app_state.loc['1739']/* 'consensus object' */,'33':this.props.app_state.loc['1740']/* 'subscription object' */,'34':this.props.app_state.loc['1741']/* 'custom object' */,'36':this.props.app_state.loc['1742']/* 'channel object' */}
+        var object_id_obj = {'17':this.props.app_state.loc['1729']/* 'job object' */,'18':this.props.app_state.loc['1730']/* 'post object' */,'24':this.props.app_state.loc['1731']/* 'shadow object' */,'25':this.props.app_state.loc['1732']/* 'storefront bag object' */,'26':this.props.app_state.loc['1733']/* 'contractor object' */,'27':this.props.app_state.loc['1734']/* 'storefront item object' */,'28':this.props.app_state.loc['1735']/* 'storefront object' */,'29':this.props.app_state.loc['1736']/* 'account object' */,'30':this.props.app_state.loc['1737']/* 'contract object' */,'31':this.props.app_state.loc['1738']/* 'token exchange object' */,'32':this.props.app_state.loc['1739']/* 'consensus object' */,'33':this.props.app_state.loc['1740']/* 'subscription object' */,'34':this.props.app_state.loc['1741']/* 'custom object' */,'36':this.props.app_state.loc['1742']/* 'channel object' */, '19':this.props.app_state.loc['1770k']/* 'audio object' */, '20':this.props.app_state.loc['1770l']/* 'video object' */, '21':this.props.app_state.loc['1770j']/* 'nitro object' */}
         return object_id_obj[(object_type.toString())]
     }
 
@@ -1476,6 +1500,9 @@ class SearchedAccountPage extends Component {
         var title = ''+this.get_sender_title_text2(item)
         var time = ''+this.get_time_difference(item['time'])
         var message = ''+this.format_message(item['message'])
+
+        var size = item['size'] == null ? '15px' : item['size'];
+        var font = item['font'] == null ? this.props.app_state.font : item['font']
         return(
             <div>
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
@@ -1487,7 +1514,7 @@ class SearchedAccountPage extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{time}</p>
                         </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}}><Linkify options={{target: '_blank'}}>{message}</Linkify></p>
+                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}}><Linkify options={{target: '_blank'}}>{message}</Linkify></p>
                     {this.render_images_if_any(item)}
                 </div>
             </div>

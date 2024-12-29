@@ -106,7 +106,7 @@ class NitroDetailsSection extends Component {
 
             if(object == null || object['ipfs'] == null) return;
             this.props.get_objects_messages(object['id'],  object['e5'])
-            this.props.load_nitro_node_details(object)
+            this.props.load_nitro_node_details(object, true)
             this.props.load_my_account_storage_info(object)
         }
     }
@@ -565,7 +565,6 @@ class NitroDetailsSection extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_nitro_storage_details_if_set(node_details)}
-
                 </div>
             )
         }
@@ -808,6 +807,8 @@ class NitroDetailsSection extends Component {
     }
 
 
+
+
     render_buy_storage_button(object){
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
         if(node_details != null && node_details != 'unavailable' && node_details['max_buyable_capacity'] !== 0 && node_details['price_per_megabyte'] != null && node_details['price_per_megabyte'].length > 0){
@@ -823,7 +824,6 @@ class NitroDetailsSection extends Component {
             )
         }
     }
-
 
     buy_storgae(object){
         this.props.show_buy_nitro_storage_bottomsheet(object)
@@ -848,10 +848,11 @@ class NitroDetailsSection extends Component {
         }
     }
 
-
     configure_node(object){
         this.props.show_configure_nitro_node_bottomsheet(object)
     }
+
+    
 
 
 
@@ -974,9 +975,10 @@ class NitroDetailsSection extends Component {
 
 
     render_top_title(object){
+        var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2526']/* 'Comments.' */, 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.truncate(top_title, 40), 'size':'l'})} 
             </div>
         )
     }
@@ -988,15 +990,15 @@ class NitroDetailsSection extends Component {
     }
 
     componentDidUpdate(){
-        // var has_scrolled = this.has_user_scrolled[this.props.selected_audio_item]
-        // if(has_scrolled == null){
-        //     this.scroll_to_bottom()
-        // }
+        var has_scrolled = this.has_user_scrolled[this.props.selected_audio_item]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
     render_sent_received_messages(object){
-        var middle = this.props.height-250;
-        if(this.get_focused_message(object) != null) middle = this.props.height-310
+        var middle = this.props.height-240;
+        if(this.get_focused_message(object) != null) middle = this.props.height-290
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object))
 
@@ -1024,16 +1026,16 @@ class NitroDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{'overflow-y': 'scroll'}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <div ref={this.messagesEnd}/>
                         {this.render_messages(items.concat(stacked_items), object)}
+                        <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
             )
             }else{
                 return(
-                    <div style={{'overflow-y': 'scroll'}}>
+                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             <div ref={this.messagesEnd}/>
                             {this.render_all_comments(object)}
@@ -1068,7 +1070,7 @@ class NitroDetailsSection extends Component {
         }else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.map((item, index) => (
+                    {items.reverse().map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
                                 {this.render_message_as_focused_if_so(item, object)}

@@ -252,16 +252,16 @@ class VideoDetailsSection extends Component {
                     {this.render_video_sales_data(object, item)}
                     <div style={{height: 10}}/>
 
-                    {this.render_edit_object_button(object)}
-                    <div style={{height: 10}}/>
+                    {this.render_discography(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['b2527a']/* 'Play Videopost' */, 'details':this.props.app_state.loc['b2527b']/* 'Play all the videos in this videopost.' */})}
                     <div style={{height:10}}/>
-                   <div onClick={()=> this.play_album(object)}>
+                    <div onClick={()=> this.play_album(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['b2527a']/* 'Play Videopost.' */, 'action':''},)}
                     </div>
 
+                    {this.render_edit_object_button(object)}
 
                     {this.render_award_button(object)}
 
@@ -270,6 +270,8 @@ class VideoDetailsSection extends Component {
                     {this.render_buy_album_button(object)}
 
                     {this.render_block_post_button(object)}
+
+                    {this.render_similar_videoposts(object)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -765,6 +767,181 @@ class VideoDetailsSection extends Component {
 
 
 
+    render_discography(object){
+        var items = this.get_authors_discography(object)
+        if(items.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527bb']/* 'Discography.' */, 'details':this.props.app_state.loc['b2527h']/* 'Videoposts by ' */+this.get_senders_name(object['event'].returnValues.p5, object), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'margin':'3px 5px 0px 5px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_discography_item_clicked(index, item)}>
+                                {this.render_discography_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_discography_item(object){
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        return(
+            <div style={{width:100, height:'auto'}}>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:'auto' ,width:100,'border-radius': '10px'}}/>
+                <div style={{height:5}}/>
+                <p style={{'color': this.props.theme['primary_text_color'], width:100, 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 15)}</p>
+            </div>
+        )
+    }
+
+    when_discography_item_clicked(index, object){
+        this.props.when_discography_video_item_clicked(object)
+    }
+
+    get_authors_discography(object){
+        return this.filter_for_taken_down_posts(this.sort_by_author(this.props.get_video_items('discography'), object))
+    }
+
+    sort_by_author(objects, current_album){
+        var filtered_objects = [];
+        filtered_objects = objects.filter(function (object) {
+            return (current_album['author'] == object['author'] && current_album['e5_id'] != object['e5_id'])
+        });
+        return filtered_objects
+    }
+
+    filter_for_taken_down_posts(objects){
+        var filtered_objects = []
+        objects.forEach(object => {
+            if(!this.is_post_taken_down_for_sender(object) && this.check_if_sender_has_paid_subscriptions(object)){
+                filtered_objects.push(object)
+            }
+        });
+        return filtered_objects
+    }
+
+    check_if_sender_has_paid_subscriptions(object){
+        var has_sender_paid_all_subs = true
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        if(required_subscriptions == null) return true
+        required_subscriptions.forEach(subscription_id => {
+            if(!this.has_paid_subscription(parseInt(subscription_id))){
+                has_sender_paid_all_subs=  false
+            }
+        });
+
+        return has_sender_paid_all_subs
+    }
+
+    has_paid_subscription(required_subscription_set){
+        var my_payment = this.get_all_sorted_objects_mappings(this.props.app_state.my_subscription_payment_mappings)[required_subscription_set]
+        if(my_payment == null || my_payment == 0) return false;
+        return true
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+
+        return data['data']
+    }
+
+
+
+
+
+
+
+
+
+
+    render_similar_videoposts(object){
+        var items = this.get_similar_posts(object)
+        if(items.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b2527i']/* 'Similar Videoposts.' */, 'details':this.props.app_state.loc['b2527j']/* 'Some posts similar to the videopost by its tags' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'margin':'3px 5px 0px 5px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_discography_item_clicked(index, item)}>
+                                {this.render_similar_videopost_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_similar_videopost_item(object){
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var author = sender
+        return(
+            <div style={{width:100, height:'auto'}}>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:'auto' ,width:100,'border-radius': '10px'}}/>
+                <div style={{height:5}}/>
+                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 15)}</p>
+                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 15)}</p>
+            </div>
+        )
+    }
+
+    get_similar_posts(object){
+        return this.filter_for_taken_down_posts(this.sort_feed_based_on_my_section_tags(this.props.get_video_items('discography'), object))
+    }
+
+    sort_feed_based_on_my_section_tags(objects, current_album){
+        var feed_objs = []
+        var section_tags = current_album['ipfs'].entered_indexing_tags
+
+        feed_objs = objects.filter(function (object) {
+            var object_tags = object['ipfs'].entered_indexing_tags
+            var includes = section_tags.some(r=> object_tags.includes(r))
+            return (includes && current_album['e5_id'] != object['e5_id'])
+        });
+
+        var selected_objects = []
+        feed_objs.forEach(object => {
+            var object_tags = object['ipfs'].entered_indexing_tags
+            var exact_count = 0
+            section_tags.forEach(tag => {
+                if(object_tags.includes(tag)){
+                    exact_count++
+                }
+            });
+            if(exact_count >= 2){
+                selected_objects.push(object)
+            }
+        });
+
+
+        return selected_objects
+    }
+
+
+
+
+
+
 
     render_post_awards(object){
         var he = this.props.height-47
@@ -962,9 +1139,10 @@ class VideoDetailsSection extends Component {
 
 
     render_top_title(object){
+        var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2526']/* 'Comments.' */, 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.truncate(top_title, 40), 'size':'l'})} 
             </div>
         )
     }
@@ -976,15 +1154,15 @@ class VideoDetailsSection extends Component {
     }
 
     componentDidUpdate(){
-        // var has_scrolled = this.has_user_scrolled[this.props.selected_audio_item]
-        // if(has_scrolled == null){
-        //     this.scroll_to_bottom()
-        // }
+        var has_scrolled = this.has_user_scrolled[this.props.selected_audio_item]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
     render_sent_received_messages(object){
-        var middle = this.props.height-250;
-        if(this.get_focused_message(object) != null) middle = this.props.height-310
+        var middle = this.props.height-240;
+        if(this.get_focused_message(object) != null) middle = this.props.height-290
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object))
 
@@ -1012,16 +1190,16 @@ class VideoDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{'overflow-y': 'scroll'}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <div ref={this.messagesEnd}/>
                         {this.render_messages(items.concat(stacked_items), object)}
+                        <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
             )
             }else{
                 return(
-                    <div style={{'overflow-y': 'scroll'}}>
+                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             <div ref={this.messagesEnd}/>
                             {this.render_all_comments(object)}
@@ -1056,7 +1234,7 @@ class VideoDetailsSection extends Component {
         }else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.map((item, index) => (
+                    {items.reverse().map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
                                 {this.render_message_as_focused_if_so(item, object)}

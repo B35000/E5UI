@@ -777,7 +777,30 @@ class PostListSection extends Component {
     }
 
     is_object_blocked_for_sender(object){
-        return this.props.app_state.posts_blocked_by_my_following.includes(object['e5_id'])
+        var is_object_blocked_for_sender = false;
+        if(this.props.app_state.posts_blocked_by_my_following.includes(object['e5_id'])){
+            is_object_blocked_for_sender = true
+        }
+
+        var object_tags = object['ipfs'].entered_indexing_tags
+        var all_censored_phrases = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
+        var includes = all_censored_phrases.some(r=> object_tags.includes(r.toLowerCase()))
+        if(includes){
+           is_object_blocked_for_sender = true 
+        }
+
+        var author = object['author']
+        if(all_censored_phrases.includes(author.toString())){
+            is_object_blocked_for_sender = true 
+        }
+
+        var entered_title_text = object['ipfs'].entered_title_text
+        var includes2 = all_censored_phrases.some(r=> entered_title_text.toLowerCase().includes(r.toLowerCase()))
+        if(includes2){
+           is_object_blocked_for_sender = true 
+        }
+
+        return is_object_blocked_for_sender
     }
 
 
@@ -1662,12 +1685,7 @@ class PostListSection extends Component {
         
         return(
             <div onClick={() => this.props.when_searched_account_clicked(item, this.state.searched_account)}>
-                {this.render_detail_item('8', {'title':alias+': '+this.state.searched_account, 'details':start_and_end(address), 'size':'l', 'image':e5_img})}
-                {/* <div style={{height: 3}}/>
-                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style': 'l', 'title':'Ether Balance in Wei', 'subtitle': this.format_power_figure(ether_balance), 'barwidth': this.calculate_bar_width(ether_balance), 'number': this.format_account_balance_figure(ether_balance), 'barcolor': '', 'relativepower': 'wei', })}
-                </div>
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/> */}
+                {this.render_detail_item('3', {'title':' • '+alias+' • '+this.state.searched_account, 'details':start_and_end(address), 'size':'l','title_image':e5_img})}
             </div>
         )
     }
@@ -1763,14 +1781,23 @@ class PostListSection extends Component {
         var has_sender_paid_all_subs = true
         if(required_subscriptions == null) return true
         required_subscriptions.forEach(subscription_id => {
-            var subscription_item = this.get_all_sorted_objects_mappings(this.props.app_state.created_subscription_object_mapping)[subscription_id]
-            if(subscription_item == null) return false
-            if(subscription_item['payment'] == 0){
-                has_sender_paid_all_subs = false
+            // var subscription_item = this.get_all_sorted_objects_mappings(this.props.app_state.created_subscription_object_mapping)[subscription_id]
+            // if(subscription_item == null) return false
+            // if(subscription_item['payment'] == 0){
+            //     has_sender_paid_all_subs = false
+            // }
+            if(!this.has_paid_subscription(parseInt(subscription_id))){
+                has_sender_paid_all_subs=  false
             }
         });
 
         return has_sender_paid_all_subs
+    }
+
+    has_paid_subscription(required_subscription_set){
+        var my_payment = this.get_all_sorted_objects_mappings(this.props.app_state.my_subscription_payment_mappings)[required_subscription_set]
+        if(my_payment == null || my_payment == 0) return false;
+        return true
     }
 
     is_post_preview_enabled(object){

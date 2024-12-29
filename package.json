@@ -76,6 +76,7 @@
     "react-toastify": "^10.0.5",
     "react-zoom-pan-pinch": "^3.6.1",
     "ripple-secret-codec": "^1.0.3",
+    "socket.io-client": "^4.8.1",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "text-encoding": "^0.7.0",

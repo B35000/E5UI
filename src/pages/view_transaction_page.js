@@ -1170,7 +1170,7 @@ class ViewTransactionPage extends Component {
             'token_id': {'title':'ID: '+selected_object['id'], 'details':this.props.app_state.loc['1813']/* 'Token Identifier' */, 'size':'l'},
             'token_type': {'title':this.props.app_state.loc['1814']/* 'Token Type' */, 'details':type, 'size':'l'},
 
-            'unlocked_supply': {'title':this.props.app_state.loc['1814']/* 'Unlocked Supply' */, 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
+            'unlocked_supply': {'title':this.props.app_state.loc['1814%']/* 'Unlocked Supply' */, 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
             'unlocked_liquidity': {'title':this.props.app_state.loc['1815']/* 'Unlocked Liquidity' */, 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
             'fully_custom': {'title':this.props.app_state.loc['1816']/* 'Fully Custom' */, 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
 

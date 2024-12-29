@@ -282,7 +282,7 @@ class AudioPip extends Component {
         setTimeout(function() {
             me.audio.current?.play()
             me.check_if_plays_are_available_and_pause_otherwise()
-        }, (1 * 300));
+        }, (1 * 700));
         
     }
 
@@ -323,7 +323,7 @@ class AudioPip extends Component {
                 me.audio.current?.play()
                 me.props.load_queue(me.state.songs, me.state.pos)
                 me.check_if_plays_are_available_and_pause_otherwise()
-            }, (1 * 300));
+            }, (1 * 700));
         }else{
             if(this.state.pos == this.state.songs.length - 1){
                 //it was the last song
@@ -355,7 +355,7 @@ class AudioPip extends Component {
                     me.audio.current?.play()
                     me.props.load_queue(me.state.songs, me.state.pos)
                     me.check_if_plays_are_available_and_pause_otherwise()
-                }, (1 * 300));
+                }, (1 * 700));
             }, (1 * 300));
         }
     }
@@ -372,7 +372,7 @@ class AudioPip extends Component {
                     me.audio.current?.play()
                     me.props.load_queue(me.state.songs, me.state.pos)
                     me.check_if_plays_are_available_and_pause_otherwise()
-                }, (1 * 300));
+                }, (1 * 700));
             }, (1 * 300));
         }
     }

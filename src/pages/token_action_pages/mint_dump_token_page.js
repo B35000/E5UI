@@ -299,6 +299,8 @@ class NewMintActionPage extends Component {
                 var buy_tokens = [].concat(selected_object['data'][3])
                 var buy_amounts = [].concat(selected_object['data'][4])
                 var buy_depths = [].concat(selected_object['data'][5])
+
+                var exchanges_balance_amounts = [].concat(selected_object['exchanges_balances'])
                 return(
                     <div>
                         {this.render_space()}
@@ -313,6 +315,17 @@ class NewMintActionPage extends Component {
                                 ))}
                             </ul>
                         </div>
+                        <div style={{height:20}}/>
+                        {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['996f']/* 'Exchanges Liquidity.' */, 'details':this.props.app_state.loc['996g']/* 'The tokens the exchange has available to send to you after the sell action.' */})}
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                            {buy_tokens.map((item, index) => (
+                                <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'number':exchanges_balance_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(exchanges_balance_amounts[index]), 'barwidth':this.calculate_bar_width(exchanges_balance_amounts[index]), 'number':this.format_account_balance_figure(exchanges_balance_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                     </div>
                 )
             }else{
@@ -755,7 +768,6 @@ class NewMintActionPage extends Component {
             output_reserve_ratio = selected_object['data'][2][0]
         }
         var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
-
         var can_make_swap_obj = this.check_if_sender_can_make_swap();
         var can_make_swap = can_make_swap_obj.can_make_swap
         var reason = can_make_swap_obj.reason
@@ -768,6 +780,9 @@ class NewMintActionPage extends Component {
         }
         else if(price < 1){
             this.props.notify(this.props.app_state.loc['979']/* 'That amount is too low.' */, 3600)
+        }
+        else if(stack_action == 1/* sell-action */ && !this.check_if_liquidity_is_available_for_sell(price)){
+            this.props.notify(this.props.app_state.loc['996h']/* 'The exchange doesn\'t have enough liquidity to fulfil that sell.' */, 6600)
         }
         else{
             if(!this.check_if_sender_has_tokens_for_sell() && action == this.props.app_state.loc['950']/* 'dump-sell' */){
@@ -906,6 +921,21 @@ class NewMintActionPage extends Component {
         }
 
         return true
+    }
+
+    check_if_liquidity_is_available_for_sell(price){
+        var selected_object = this.state.token_item
+        var buy_tokens = [].concat(selected_object['data'][3])
+        var exchanges_balance_amounts = [].concat(selected_object['exchanges_balances'])
+        var buy_amounts = [].concat(selected_object['data'][4])
+        var is_liquidity_available = true
+        for(var i=0; i<buy_tokens.length; i++){
+            var sell_amount = this.calculate_price_from_sell_action(buy_amounts[i], price)
+            if(bigInt(exchanges_balance_amounts[i]).lesser(sell_amount)){
+                is_liquidity_available = false
+            }
+        }
+        return is_liquidity_available
     }
 
 

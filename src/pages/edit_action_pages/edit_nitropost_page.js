@@ -1271,6 +1271,8 @@ class EditNitroPage extends Component {
                         <div style={{height:10}}/>
 
                         <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+
+                        {this.render_markdown_shortcut_list()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_detail_item('13', {'source':this.state.markdown})}
@@ -1305,6 +1307,8 @@ class EditNitroPage extends Component {
             return(
                 <div>
                     <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+
+                    {this.render_markdown_shortcut_list()}
                 </div>
             )
         }
@@ -1320,6 +1324,43 @@ class EditNitroPage extends Component {
     when_markdown_field_changed(text){
         this.setState({markdown: text})
     }
+
+    render_markdown_shortcut_list(){
+        var items = [
+            {'title':this.props.app_state.loc['a311ca']/* 'Headings' */, 'details':'# H1 \n## H2 \n### H3', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cd']/* 'Bold' */, 'details':'**bold text**', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ce']/* 'Italic' */, 'details':'*italicized text*', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cf']/* 'Blockquote' */, 'details':'> blockquote', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cg']/* 'Ordered List' */, 'details':'1. First item \n2. Second item \n3. Third item', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ch']/* 'Unordered List' */, 'details':'- First item \n- Second item \n- Third item', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ci']/* 'Code' */, 'details':'`code`', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cj']/* 'Horizontal rule' */, 'details':'---', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ck']/* 'Link' */, 'details':'[title](https://www.example.com)', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cl']/* 'Image' */, 'details':'![alt text](image.jpg)', 'size':'l'},
+        ]
+
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_markdown_shortcut_clicked(item['details'])}>
+                                {this.render_detail_item('3', item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    when_markdown_shortcut_clicked(text){
+        this.setState({markdown: this.state.markdown+'\n'+text})
+    }
+
+
+    
 
 
 

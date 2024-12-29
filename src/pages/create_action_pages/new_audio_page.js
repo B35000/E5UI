@@ -73,7 +73,7 @@ class NewAudioPage extends Component {
         entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:'',
 
         album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
-        markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()
+        markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), song_credits:''
     };
 
     get_new_job_page_tags_object(){
@@ -1708,12 +1708,14 @@ class NewAudioPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'100%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                         <div style={{height:10}}/>
 
                         <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+
+                        {this.render_markdown_shortcut_list()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_detail_item('13', {'source':this.state.markdown})}
@@ -1748,6 +1750,8 @@ class NewAudioPage extends Component {
             return(
                 <div>
                     <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+                    
+                    {this.render_markdown_shortcut_list()}
                 </div>
             )
         }
@@ -1762,6 +1766,40 @@ class NewAudioPage extends Component {
 
     when_markdown_field_changed(text){
         this.setState({markdown: text})
+    }
+
+    render_markdown_shortcut_list(){
+        var items = [
+            {'title':this.props.app_state.loc['a311ca']/* 'Headings' */, 'details':'# H1 \n## H2 \n### H3', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cd']/* 'Bold' */, 'details':'**bold text**', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ce']/* 'Italic' */, 'details':'*italicized text*', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cf']/* 'Blockquote' */, 'details':'> blockquote', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cg']/* 'Ordered List' */, 'details':'1. First item \n2. Second item \n3. Third item', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ch']/* 'Unordered List' */, 'details':'- First item \n- Second item \n- Third item', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ci']/* 'Code' */, 'details':'`code`', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cj']/* 'Horizontal rule' */, 'details':'---', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ck']/* 'Link' */, 'details':'[title](https://www.example.com)', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cl']/* 'Image' */, 'details':'![alt text](image.jpg)', 'size':'l'},
+        ]
+
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_markdown_shortcut_clicked(item['details'])}>
+                                {this.render_detail_item('3', item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    when_markdown_shortcut_clicked(text){
+        this.setState({markdown: this.state.markdown+'\n'+text})
     }
 
 
@@ -2278,6 +2316,12 @@ class NewAudioPage extends Component {
                 {this.render_detail_item('0')}
 
 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bw']/* 'Song Credits' */, 'details':this.props.app_state.loc['a311bx']/* 'You can credit the people that helped make the track.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={80} placeholder={this.props.app_state.loc['a311by']/* 'Credits...' */} when_text_input_field_changed={this.when_song_credits_input_field_changed.bind(this)} text={this.state.song_credits} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311u']/* 'Audio Track.' */, 'details':this.props.app_state.loc['a311v']/* 'Pick the track from your uploaded files.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_audio_picker_ui()}
@@ -2318,6 +2362,10 @@ class NewAudioPage extends Component {
 
     when_free_plays_amount_picked(number){
         this.setState({songs_free_plays_count: number})
+    }
+
+    when_song_credits_input_field_changed(text){
+        this.setState({song_credits: text})
     }
 
     render_audio_picker_ui(){
@@ -2471,6 +2519,7 @@ class NewAudioPage extends Component {
         var audio_file = this.state.audio_file
         var songs_free_plays_count = this.state.songs_free_plays_count
         var song_lyrics = this.state.song_lyrics
+        var song_credits = this.state.song_credits
 
         if(song_title == ''){
             this.props.notify(this.props.app_state.loc['a311q']/* 'You need to set a title for the track.' */, 3800)
@@ -2482,7 +2531,7 @@ class NewAudioPage extends Component {
             this.props.notify(this.props.app_state.loc['a311w']/* 'You need to add an audio track.' */, 3800)
         }
         else{
-            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics}
+            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics, 'credits':song_credits}
 
             var clone = this.state.songs.slice()
             if(this.state.edit_song_item_pos != -1){
@@ -2492,7 +2541,7 @@ class NewAudioPage extends Component {
                 clone.push(song)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null})
+            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, song_credits:''})
             
         }
     }
@@ -2604,7 +2653,7 @@ class NewAudioPage extends Component {
 
     focus_tab(item_pos){
         if(this.is_tab_active(item_pos)){
-            this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0})
+            this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0, song_credits:''})
         }else{
             this.props.notify(this.props.app_state.loc['a311x']/* 'Editing that Track.' */, 2000)
             this.set_focused_song_data(item_pos)
@@ -2613,7 +2662,7 @@ class NewAudioPage extends Component {
 
     set_focused_song_data(item_pos){
         var song = this.state.songs[item_pos]
-        this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics']});
+        this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics'], song_credits: song['credits']});
     }
 
 

@@ -867,7 +867,7 @@ class ViewJobRequestPage extends Component {
         var object = this.state.request_item;
         return(
             <div style={{padding:'0px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'ID: '+object['job_request_id'], 'details':object['title_description'], 'size':'l'})} 
+                {this.render_detail_item('3', {'title':'ID: '+object['job_request_id'], 'details':this.truncate(object['title_description'], 40), 'size':'l'})} 
             </div>
         )
     }
@@ -879,16 +879,16 @@ class ViewJobRequestPage extends Component {
     }
 
     componentDidUpdate(){
-        // var object = this.state.request_item;
-        // var has_scrolled = this.has_user_scrolled[object['job_request_id']]
-        // if(has_scrolled == null){
-        //     this.scroll_to_bottom()
-        // }
+        var object = this.state.request_item;
+        var has_scrolled = this.has_user_scrolled[object['job_request_id']]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
     render_sent_received_messages(){
-        // var middle = this.props.height-250;
-        // if(this.get_focused_message() != null) middle = this.props.height-300
+        // var middle = this.props.height-240;
+        // if(this.get_focused_message() != null) middle = this.props.height-290
         // var size = this.props.size;
         // if(size == 'm'){
         //     middle = this.props.height-100;
@@ -916,38 +916,20 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }
-        // else if(this.get_focused_message() != null){
-        //     var focused_message_replies = this.get_focused_message_replies()
-        //     return(
-        //         <div>
-        //             <div style={{'padding': '2px 5px 2px 5px'}}>
-        //                 {this.render_message_as_focused_if_so(this.get_focused_message())}
-        //             </div>
-        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-        //                         {this.render_messages(focused_message_replies)}
-        //                         <div ref={this.messagesEnd}/>
-        //                     </ul>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     )
-        // }
         else{
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{ 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <div ref={this.messagesEnd}/>
                         {this.render_messages(items.concat(stacked_items))}
+                        <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
             )
             }else{
                 return(
-                    <div style={{ 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             <div ref={this.messagesEnd}/>
                             {this.render_all_comments()}
@@ -982,7 +964,7 @@ class ViewJobRequestPage extends Component {
         }else{
             return(
                 <div>
-                    {items.map((item, index) => (
+                    {items.reverse().map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
                                 {this.render_message_as_focused_if_so(item)}

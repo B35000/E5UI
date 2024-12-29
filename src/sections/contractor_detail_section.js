@@ -167,6 +167,7 @@ class ContractorDetailsSection extends Component {
 
                     {this.render_taken_down_message_if_post_is_down(object)}
                     <div style={{height: 10}}/>
+                    {this.render_message_if_blocked_by_sender(object)}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -197,12 +198,46 @@ class ContractorDetailsSection extends Component {
                     </div>
 
                     {this.render_pin_contractor_button(object)}
+                    {this.render_block_post_button(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    is_object_blocked_by_me(object){
+        return this.props.app_state.posts_blocked_by_me.includes(object['e5_id'])
+    }
+
+    render_message_if_blocked_by_sender(object){
+        if(!this.is_object_blocked_by_me(object)){
+            return;
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527bk']/* '🙅 Post Blocked */, 'details':this.props.app_state.loc['c2527bl']/* 'The post has been blocked for you and your followers. */, 'size':'l'})}
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+    render_block_post_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527bh']/* 'Block Post. */, 'details':this.props.app_state.loc['c2527bi']/* 'Block this post from being viewed by your followers.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.block_post(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527bj']/* 'Block' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    block_post(object){
+        this.props.block_post(object)
     }
 
     render_markdown_if_any(object){

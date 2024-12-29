@@ -513,20 +513,20 @@ class MailDetailsSection extends Component {
     }
 
     componentDidUpdate(){
-        // var has_scrolled = this.has_user_scrolled[this.props.selected_mail_item]
-        // if(has_scrolled == null){
-        //     this.scroll_to_bottom()
-        // }
+        var has_scrolled = this.has_user_scrolled[this.props.selected_mail_item]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
 
     render_sent_received_messages(object){
-        var middle = this.props.height-200;
-        if(this.get_focused_message(object) != null) middle = this.props.height-300
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
+        var middle = this.props.height-240;
+        if(this.get_focused_message(object) != null) middle = this.props.height-290
+        // var size = this.props.size;
+        // if(size == 'm'){
+        //     middle = this.props.height-100;
+        // }
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object))
 
@@ -550,30 +550,12 @@ class MailDetailsSection extends Component {
                 </div>
             )
         }
-        // else if(this.get_focused_message(object) != null){
-        //     var focused_message_replies = this.get_focused_message_replies(object)
-        //     return(
-        //         <div>
-        //             <div style={{'padding': '2px 5px 2px 5px'}}>
-        //                 {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
-        //             </div>
-        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-        //                         {this.render_messages(focused_message_replies, object)}
-        //                         <div ref={this.messagesEnd}/>
-        //                     </ul>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     )
-        // }
         else{
             return(
-                <div style={{overflow: 'scroll'}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <div ref={this.messagesEnd}/>
                         {this.render_messages(items.concat(stacked_items), object)}
+                        <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
             )
@@ -605,7 +587,7 @@ class MailDetailsSection extends Component {
         else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.map((item, index) => (
+                    {items.reverse().map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div>
                                 {this.render_message_as_focused_if_so(item, object)}

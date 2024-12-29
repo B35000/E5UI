@@ -93,7 +93,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0.7*1024*1024), custom_gateway_text:'', follow_account_text:'',
+        default_upload_limit:(0.7*1024*1024), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'',
     };
 
     get_stack_page_tags_object(){
@@ -111,7 +111,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593cr']/* 'gateway 🚧' */ ], [1],[1]
             ],
             'account-data':[
-              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'Censor 🚫' */], [1],[1]
             ],
             'signatures':[
               ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
@@ -125,7 +125,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593cr']/* 'gateway 🚧' */, ], [1],[1]
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'Censor 🚫' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1593aj']/* 'signatures' */] = [
               ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
@@ -872,6 +872,14 @@ class StackPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['1593dq']/* 'Censor 🚫' */){
+            return(
+                <div>
+                    {this.render_censor_keywords_ui()}
+                </div>
+            )
+        }
+        
 
     }
 
@@ -1915,10 +1923,10 @@ class StackPage extends Component {
 
                     var contract_stack_id = ints.length-1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
 
                     if(contract_type == this.props.app_state.loc['165']/* 'private' */){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
@@ -2019,10 +2027,10 @@ class StackPage extends Component {
 
                         var token_stack_id = ints.length-1
 
-                        var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                        strs.push(index_data.str)
-                        adds.push([])
-                        ints.push(index_data.int)
+                        // var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                        // strs.push(index_data.str)
+                        // adds.push([])
+                        // ints.push(index_data.int)
 
                         var buy_token = [
                             [30000, 8, 0],
@@ -2063,10 +2071,10 @@ class StackPage extends Component {
 
                         var token_stack_id = ints.length-1
 
-                        var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                        strs.push(index_data.str)
-                        adds.push([])
-                        ints.push(index_data.int)
+                        // var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                        // strs.push(index_data.str)
+                        // adds.push([])
+                        // ints.push(index_data.int)
                         
                         var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
@@ -2149,10 +2157,10 @@ class StackPage extends Component {
 
                     var subscription_stack_id = ints.length-1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
 
                     var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
@@ -2219,10 +2227,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['760']/* 'job' */){
                     var job_obj = this.format_job_object(txs[i])
@@ -2232,10 +2240,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
                     var channel_obj = this.format_channel_object(txs[i])
@@ -2247,10 +2255,10 @@ class StackPage extends Component {
 
                     var channel_stack_id = ints.length-1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
                     
                     var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
@@ -2315,10 +2323,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], true/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
                     var buy_sell_obj = this.format_buy_sell_object(txs[i], ints)
@@ -2379,10 +2387,10 @@ class StackPage extends Component {
 
                     var proposal_stack_id = ints.length-1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
 
                     if(include_yes_vote == this.props.app_state.loc['438o']/* 'vote' */){
                         var yes_vote_object = [/* vote proposal */
@@ -2597,10 +2605,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
 
                     var bag_variants = []
                     txs[i].items_to_deliver.forEach(item => {
@@ -2698,10 +2706,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
                     var now = parseInt(now.toString() + i)
@@ -2835,10 +2843,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1593cc']/* 'audio-messages' */){
                     var message_obj = await this.format_audiopost_comment_object(txs[i], calculate_gas, ipfs_index)
@@ -2881,10 +2889,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1593ct']/* 'video-messages' */){
                     var message_obj = await this.format_videopost_comment_object(txs[i], calculate_gas, ipfs_index)
@@ -2927,10 +2935,10 @@ class StackPage extends Component {
 
                     new_tx_index = ints.length -1
 
-                    var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
-                    strs.push(index_data.str)
-                    adds.push([])
-                    ints.push(index_data.int)
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
 
 
                     var transaction_obj = [ /* set data */
@@ -3246,6 +3254,25 @@ class StackPage extends Component {
             var posts_blocked_by_me = this.props.app_state.posts_blocked_by_me
             var data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
             var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blockedposts');
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+        if(this.props.app_state.should_update_censored_keyword_phrases == true){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [10], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var censored_keyword_phrases = this.props.app_state.censored_keyword_phrases
+            var data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'censoredkeywords');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -3626,6 +3653,12 @@ class StackPage extends Component {
             var posts_blocked_by_me = this.props.app_state.posts_blocked_by_me
             var data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
             obj['blockedposts'] = data
+        }
+
+        if(this.props.app_state.should_update_censored_keyword_phrases == true){
+            var censored_keyword_phrases = this.props.app_state.censored_keyword_phrases
+            var data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
+            obj['censoredkeywords'] = data
         }
 
 
@@ -8034,7 +8067,7 @@ class StackPage extends Component {
         var selected_coins = []
         var coins = this.props.app_state.coin_data
         for (const coin in coins) {
-            if (coins.hasOwnProperty(coin)) {
+            if (coins.hasOwnProperty(coin) && coins[coin] != null) {
                 var balance = coins[coin]['balance'];
                 if(balance != 0){
                     selected_coins.push({'title':coin, 'balance':balance , 'base_unit':this.get_coin_data(coin)['base_unit'], 'image':this.get_coin_data(coin)['label']['image']})
@@ -8425,7 +8458,7 @@ class StackPage extends Component {
     }
 
     get_senders_name(sender){
-         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
     }
 
@@ -8707,7 +8740,7 @@ class StackPage extends Component {
     }
 
     when_typed_alias_changed(text){
-        this.setState({typed_alias_word: text})
+        this.setState({typed_alias_word: text.toLowerCase()})
     }
 
     render_my_account_id(){
@@ -9844,10 +9877,11 @@ class StackPage extends Component {
     when_nitro_item_clicked(item){
         if(item['e5_id'] == this.state.selected_nitro_item){
             this.setState({selected_nitro_item: null})
+            this.props.set_my_nitro_selection(null)
         }else{
             this.setState({selected_nitro_item: item['e5_id']})
             this.props.set_my_nitro_selection(item['e5_id'])
-            this.props.load_nitro_node_details(item)
+            this.props.load_nitro_node_details(item, false)
             this.props.load_my_account_storage_info(item)
         }
     }
@@ -10695,7 +10729,7 @@ class StackPage extends Component {
             return(
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
-                        {items.map((item, index) => (
+                        {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeLeft={{
@@ -10745,6 +10779,153 @@ class StackPage extends Component {
 
 
 
+
+
+
+
+    render_censor_keywords_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_censor_keywords_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_censor_keywords_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_censor_keywords_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_censor_keywords_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593dr']/* 'Censor Keywords.' */, 'details':this.props.app_state.loc['1593ds']/* 'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593dt']/* 'Keyword or phrase...' */} when_text_input_field_changed={this.when_censor_keyword_text_text_changed.bind(this)} text={this.state.censor_keyword_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_censored_keyword()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:20}}/>
+                {this.render_my_censored_keywords()}
+            </div>
+        )
+    }
+
+    when_censor_keyword_text_text_changed(text){
+        this.setState({censor_keyword_text: text})
+    }
+
+    add_censored_keyword(){
+        var censor_keyword_text = this.state.censor_keyword_text.trim()
+
+        if(censor_keyword_text == ''){
+            this.props.notify(this.props.app_state.loc['1593du']/* 'You need to specify an account first.' */, 4000)
+        }
+        else if(this.already_censored_keyword(censor_keyword_text)){
+            this.props.notify(this.props.app_state.loc['1593dv']/* 'Youve already censored that keyword.' */, 4000)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(censor_keyword_text) /* || /\p{Emoji}/u.test(typed_word) */){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else{
+            this.props.censor_keyword(censor_keyword_text)
+            this.props.notify(this.props.app_state.loc['1593dw']/* 'You are now censoring that keyword or phrase.' */, 2000)
+        }
+    }
+
+    already_censored_keyword(already_censored_keyword){
+        return this.props.app_state.censored_keyword_phrases.includes(already_censored_keyword)
+    }
+
+    render_my_censored_keywords(){
+        var items = [].concat(this.props.app_state.censored_keyword_phrases)
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dy']/* Uncensor */}</p>,
+                                    action: () =>this.props.uncensor_keyword(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}}>
+                                            {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':item})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     get_all_sorted_objects(object){
         var all_objects = []
         for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
@@ -10782,12 +10963,13 @@ class StackPage extends Component {
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}/>
             </div>
         )
-
     }
 
     format_account_balance_figure(amount){

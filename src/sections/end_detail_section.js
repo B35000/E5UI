@@ -22,7 +22,7 @@ function number_with_commas(x) {
 class EndDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(), y_aggregate_chart_tags_object: this.y_aggregate_chart_tags_object()
+        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(), y_aggregate_chart_tags_object: this.y_aggregate_chart_tags_object(), trading_volume_chart_tags_object: this.y_aggregate_chart_tags_object()
     };
 
     y_aggregate_chart_tags_object(){
@@ -356,10 +356,13 @@ class EndDetailSection extends Component {
 
                     {this.show_y_aggregate_chart(selected_object, symbol)}
 
+                    {this.show_24_hour_volume_data(selected_object, symbol)}
+
                     {this.render_detail_item('0')}
                     {this.render_price_of_token(selected_object)}
 
                     {this.show_transaction_count_chart(selected_object, symbol)}
+                    
                     {this.render_detail_item('0')}
 
                     {this.render_token_liquidity_balance(selected_object, symbol)}
@@ -382,7 +385,6 @@ class EndDetailSection extends Component {
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'number':selected_object['balance'], 'relativepower':symbol})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
-                        
                     </div>
 
                     <div style={{height:10}}/>
@@ -1065,6 +1067,105 @@ class EndDetailSection extends Component {
 
 
 
+    show_24_hour_volume_data(selected_object, symbol){
+        var exchange_ratio_events = selected_object['exchange_ratio_data']
+        if(exchange_ratio_events.length != 0){
+            var average_volume = this.get_average_trading_volume(exchange_ratio_events)
+            var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, 'e')
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447i']/* 'Trading Volume' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the trading volume of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
+
+                    {this.render_detail_item('6', {'dataPoints':this.get_trading_volume_data_points(exchange_ratio_events, selected_object), 'interval':110, 'hide_label': true})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.trading_volume_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_trading_volume_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447k']/* 'Y-Axis: Volume' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':selected_item+' '+this.props.app_state.loc['2447l']/* 'trading volume average.' */, 'number':average_volume, 'relativepower':symbol})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item+' '+this.props.app_state.loc['2447l']/* 'trading volume average.' */, 'subtitle':this.format_power_figure(average_volume), 'barwidth':this.calculate_bar_width(average_volume), 'number':this.format_account_balance_figure(average_volume), 'barcolor':'', 'relativepower':symbol, })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_trading_volume_chart_tags_object_updated(tag_obj){
+        this.setState({trading_volume_chart_tags_object: tag_obj})
+    }
+
+    get_trading_volume_data_points(event_data, selected_object){
+        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        var data = []
+        var largest_number = bigInt(0)
+        for(var i=0; i<events.length; i++){
+            var amount = events[i].returnValues.p8/* amount */
+            data.push(amount)
+            if(largest_number.lesser(amount)) largest_number = bigInt(amount)
+
+            if(i==events.length-1){
+                var diff = Date.now()/1000 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=(61*2650)){
+                    data.push(data[data.length-1])      
+                }
+            }
+            else{
+                var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=(61*2650)){
+                    data.push(data[data.length-1])      
+                }
+            }  
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/5)) == 0 && i != 0 && !recorded){
+                    // recorded = true
+                    var label = ""+this.format_account_balance_figure(data[factor * xVal])
+                    dps.push({x: xVal,y: yVal, indexLabel: label});
+                }else{
+                    dps.push({x: xVal, y: yVal});
+                }
+                xVal++;
+            }
+        }
+
+        return dps
+    }
+
+    get_trading_volume_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p8/* amount */))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+    get_average_trading_volume(event_data){
+        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        if(events.length == 0) return bigInt(0)
+        var total = bigInt(0)
+        events.forEach(event => {
+            total = total.plus(bigInt(event.returnValues.p8/* amount */))
+        });
+        return total.divide(events.length)
+    }
+
+
+
 
 
 
@@ -1079,8 +1180,9 @@ class EndDetailSection extends Component {
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2387']/* 'Y-Aggregate' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the y-aggregate of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object), 'interval':this.get_exchange_ratio_interval_figure(exchange_ratio_events)})}
+                    {this.render_detail_item('6', {'dataPoints':this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object), 'interval':this.get_exchange_ratio_interval_figure(exchange_ratio_events, selected_object)})}
                     <div style={{height: 10}}/>
+
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2390']/* 'Y-Axis: Y-aggregate' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
@@ -1094,7 +1196,7 @@ class EndDetailSection extends Component {
     }
 
     get_exchange_ratio_data_points(event_data, selected_object){
-        var events = this.filter_exchange_ratio_events(event_data);
+        var events = this.filter_exchange_ratio_events(event_data, this.state.y_aggregate_chart_tags_object, true);
         var data = []
         for(var i=0; i<events.length; i++){
             var input_amount = 1
@@ -1118,8 +1220,7 @@ class EndDetailSection extends Component {
                 for(var t=0; t<diff; t+=60){
                     data.push(data[data.length-1])      
                 }
-            }
-            
+            }  
         }
 
 
@@ -1145,26 +1246,21 @@ class EndDetailSection extends Component {
         return dps
     }
 
-    get_exchange_ratio_interval_figure(events){
+    get_exchange_ratio_interval_figure(events, selected_object){
         var data = []
         events.forEach(event => {
-            data.push(Math.round(event.returnValues.p2/10**18) * 100)
+            var input_amount = 1
+            var input_reserve_ratio = event.returnValues.p5/* exchange_ratio_x */
+            var output_reserve_ratio = event.returnValues.p6/* exchange_ratio_y */
+            var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, selected_object)
+            data.push(price)
         });
         var largest = Math.max.apply(Math, data);
         return largest
     }
 
-    get_lowest_exchange_ratio_figure(events){
-        var data = []
-        events.forEach(event => {
-            data.push(Math.round(event.returnValues.p2/10**18) *100)
-        });
-        var largest = Math.min.apply(Math, data);
-        return largest
-    }
-
-    filter_exchange_ratio_events(events){
-        var selected_item = this.get_selected_item(this.state.y_aggregate_chart_tags_object, 'e')
+    filter_exchange_ratio_events(events, tags, add_if_empty){
+        var selected_item = this.get_selected_item(tags, 'e')
 
         var filter_value = 60*60
         if(selected_item == '1h'){
@@ -1193,7 +1289,7 @@ class EndDetailSection extends Component {
             }
         });
 
-        if(data.length == 0 && events.length != 0){
+        if(data.length == 0 && events.length != 0 && add_if_empty == true){
             data.push(events[events.length-1])
         }
 
@@ -1519,7 +1615,6 @@ class EndDetailSection extends Component {
         return this.props.app_state.exchange_events[object['id']][event]
     }
 
-
     render_updated_exchange_ratio_item_logs(object){
         var middle = this.props.height - 120;
         var items = [].concat(this.get_item_logs(object, 'exchange_ratio'))
@@ -1559,7 +1654,6 @@ class EndDetailSection extends Component {
         }
     }
 
-
     when_exchange_ratio_item_clicked(index){
         if (this.state.selected_exchange_ratio_event_item == index) {
             this.setState({ selected_exchange_ratio_event_item: null })
@@ -1567,7 +1661,6 @@ class EndDetailSection extends Component {
             this.setState({ selected_exchange_ratio_event_item: index })
         }
     }
-
 
     render_exchange_ratio_event_item(item, object, index){
         var action_obj = {'0':this.props.app_state.loc['2409']/* 'Buy' */, '1':this.props.app_state.loc['2410']/* 'Sell' */}
@@ -1625,7 +1718,6 @@ class EndDetailSection extends Component {
         }
     }
 
-
     get_sender_title_text(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
             return 'You'
@@ -1659,7 +1751,6 @@ class EndDetailSection extends Component {
             </div>
         )
     }
-
 
     render_contract_transfer_item_logs(object){
         var middle = this.props.height - 120;
@@ -1700,7 +1791,6 @@ class EndDetailSection extends Component {
         }
     }
 
-
     when_contract_transfer_item_clicked(index){
         if (this.state.selected_contract_transfer_event_item == index) {
             this.setState({ selected_contract_transfer_event_item: null })
@@ -1708,7 +1798,6 @@ class EndDetailSection extends Component {
             this.setState({ selected_contract_transfer_event_item: index })
         }
     }
-
 
     render_contract_transfer_event_item(item, object, index){
         var exchange_id = item['event'].returnValues.p1;
@@ -2011,7 +2100,6 @@ class EndDetailSection extends Component {
         )
     }
 
-
     render_exchange_transfer_item_logs(object){
         var middle = this.props.height - 120;
         var items = [].concat(this.get_item_logs(object, 'exchange-transfer'))
@@ -2051,7 +2139,6 @@ class EndDetailSection extends Component {
         }
     }
 
-
     when_exchange_transfer_item_clicked(index){
         if (this.state.selected_exchange_transfer_event_item == index) {
             this.setState({ selected_exchange_transfer_event_item: null })
@@ -2059,7 +2146,6 @@ class EndDetailSection extends Component {
             this.setState({ selected_exchange_transfer_event_item: index })
         }
     }
-
 
     render_exchange_transfer_event_item(item, object, index){
         var exchange_id = item['event'].returnValues.p1;
@@ -2124,7 +2210,6 @@ class EndDetailSection extends Component {
         )
     }
 
-
     render_update_balance_item_logs(object){
         var middle = this.props.height - 120;
         var items = [].concat(this.get_item_logs(object, 'update_balance'))
@@ -2164,7 +2249,6 @@ class EndDetailSection extends Component {
         }
     }
 
-
     when_update_balance_item_clicked(index){
         if (this.state.selected_update_balance_event_item == index) {
             this.setState({ selected_update_balance_event_item: null })
@@ -2172,7 +2256,6 @@ class EndDetailSection extends Component {
             this.setState({ selected_update_balance_event_item: index })
         }
     }
-
 
     render_update_balance_event_item(item, object, index){
         var new_balance = item.returnValues.p3
@@ -2754,7 +2837,6 @@ class EndDetailSection extends Component {
             </div>
         )
     }
-
 
     render_depth_mint_event_item_logs(object){
         var middle = this.props.height - 120;

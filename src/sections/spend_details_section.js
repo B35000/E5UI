@@ -22,7 +22,7 @@ function number_with_commas(x) {
 class SpendDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object()
+        selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object(), trading_volume_chart_tags_object: this.total_supply_chart_tags_object()
     };
 
     componentDidMount() {
@@ -335,8 +335,9 @@ class SpendDetailSection extends Component {
                     </div>
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
+                    {/* <div style={{height:10}}/> */}
+                    {/* {this.show_24_hour_volume_data(selected_object, symbol)} */}
 
-                    <div style={{height:10}}/>
                     {this.render_detail_item('0')}
                     {this.render_price_of_token(selected_object)}
                     {this.render_detail_item('0')}
@@ -1065,6 +1066,145 @@ class SpendDetailSection extends Component {
         }
 
         return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+
+
+
+
+
+    show_24_hour_volume_data(selected_object, symbol){
+        var exchange_ratio_events = selected_object['exchange_ratio_data']
+        if(exchange_ratio_events.length != 0){
+            var average_volume = this.get_average_trading_volume(exchange_ratio_events)
+            var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, 'e')
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447i']/* 'Trading Volume' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the trading volume of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
+
+                    {this.render_detail_item('6', {'dataPoints':this.get_trading_volume_data_points(exchange_ratio_events, selected_object), 'interval':110, 'hide_label': true})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.trading_volume_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_trading_volume_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447k']/* 'Y-Axis: Volume' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':selected_item+' '+this.props.app_state.loc['2447l']/* 'trading volume average.' */, 'number':average_volume, 'relativepower':symbol})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item+' '+this.props.app_state.loc['2447l']/* 'trading volume average.' */, 'subtitle':this.format_power_figure(average_volume), 'barwidth':this.calculate_bar_width(average_volume), 'number':this.format_account_balance_figure(average_volume), 'barcolor':'', 'relativepower':symbol, })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_trading_volume_chart_tags_object_updated(tag_obj){
+        this.setState({trading_volume_chart_tags_object: tag_obj})
+    }
+
+    get_trading_volume_data_points(event_data, selected_object){
+        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        var data = []
+        var largest_number = bigInt(0)
+        for(var i=0; i<events.length; i++){
+            var amount = events[i].returnValues.p8/* amount */
+            data.push(amount)
+            if(largest_number.lesser(amount)) largest_number = bigInt(amount)
+
+            if(i==events.length-1){
+                var diff = Date.now()/1000 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=(61*2650)){
+                    data.push(data[data.length-1])      
+                }
+            }
+            else{
+                var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=(61*2650)){
+                    data.push(data[data.length-1])      
+                }
+            }  
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/5)) == 0 && i != 0 && !recorded){
+                    // recorded = true
+                    var label = ""+this.format_account_balance_figure(data[factor * xVal])
+                    dps.push({x: xVal,y: yVal, indexLabel: label});
+                }else{
+                    dps.push({x: xVal, y: yVal});
+                }
+                xVal++;
+            }
+        }
+
+        return dps
+    }
+
+    get_trading_volume_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p8/* amount */))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+    get_average_trading_volume(event_data){
+        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        if(events.length == 0) return bigInt(0)
+        var total = bigInt(0)
+        events.forEach(event => {
+            total = total.plus(bigInt(event.returnValues.p8/* amount */))
+        });
+        return total.divide(events.length)
+    }
+
+    filter_exchange_ratio_events(events, tags, add_if_empty){
+        var selected_item = this.get_selected_item(tags, 'e')
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now()/1000 - filter_value
+        events.forEach(event => {
+            if(event.returnValues.p9 > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        if(data.length == 0 && events.length != 0 && add_if_empty == true){
+            data.push(events[events.length-1])
+        }
+
+        return data
     }
 
 

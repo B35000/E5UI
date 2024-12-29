@@ -42,6 +42,14 @@ import next_dark from './assets/next_icon_dark.png'
 import shuffle_dark from './assets/shuffle_icon_dark.png'
 import repeat_dark from './assets/repeat_icon_dark.png'
 
+import end25_image from './assets/E25.png'
+import spend25_image from './assets/325.png'
+import E5_E25_image from './assets/End25.png'
+import end35_image from './assets/e35_end_token.png'
+import spend35_image from './assets/e35_spend_token.png'
+import E5_E35_image from './assets/end35.png'
+
+
 /* blockchain stuff */
 import { mnemonicToSeedSync, mnemonicToSeed } from 'bip39';
 import { Buffer } from 'buffer';
@@ -168,6 +176,7 @@ import BuyVideoPage from './pages/buy_video_page'
 import FullVideoPage from './pages/full_video_page'
 import BuyNitroPage from './pages/buy_nitro_storage'
 import ConfigureNitroNodePage from './pages/configure_nitro_node'
+import DialerPage from './pages/dialer_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -186,6 +195,8 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { zoomPlugin } from '@react-pdf-viewer/zoom';
 import '@react-pdf-viewer/zoom/lib/styles/index.css';
+
+import io from 'socket.io-client';
 
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -355,7 +366,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false,
@@ -418,7 +429,9 @@ class App extends Component {
 
     run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
 
-    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:'', followed_accounts:[primary_following], should_update_followed_accounts:false, posts_blocked_by_me:[], should_update_posts_blocked_by_me:false, posts_blocked_by_my_following:[],
+    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:'', followed_accounts:[primary_following], should_update_followed_accounts:false, posts_blocked_by_me:[], should_update_posts_blocked_by_me:false, posts_blocked_by_my_following:[], my_subscription_payment_mappings:{},
+
+    censored_keyword_phrases: [], should_update_censored_keyword_phrases: false, censored_keywords_by_my_following:[],
   };
 
   get_static_assets(){
@@ -467,15 +480,15 @@ class App extends Component {
         web3:['https://etc.etcdesktop.com'], 
         token:'ETC',
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
-        first_block:19151130, end_image:'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4', spend_image:'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', 
-        iteration:400_000, url:0, active:true, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
+        first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', 
+        iteration:400_000, url:0, active:true, e5_img:E5_E25_image/* 'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu' */,
         end_token_power_limit: 72
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:''/* '0x4c124f6C90fa3F12A9b6b837B89832E2E460e731' */,
-        first_block:19614310, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:400_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4',
+        first_block:19614310, end_image:end35_image/* 'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq' */, spend_image:spend35_image/* 'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e' */, ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:400_000, url:0, active:false, e5_img:E5_E35_image/* 'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4' */,
         end_token_power_limit: 72,
       },
       'E45':{
@@ -986,7 +999,7 @@ class App extends Component {
 
         /* new audio page */
         'a311a':'audio','a311b':'album-fee','a311c':'track-list','a311d':'Set an fee for buying the entire audio catalog.','a311e':'Add Audio Item.','a311f':'Add a new audio item with the specified details set.','a311g':'Add Audio.','a311h':'Audio Price (Optional)','a311i':'Specify the price for accessing this audio if added individually.','a311j':'Set the details for a new audio item in your album.','a311k':'Audio Title.','a311l':'Set a title for the audio item in the album.','a311m':'Title...','a311n':'Audio Composer.','a311o':'Set the composers of the auido file.','a311p':'Composers...','a311q':'You need to set a title for the track.','a311r':'You need to set a composer of the track.','a311s':'Edited the track item.','a311t':'Added the track item.','a311u':'Audio Track.','a311v':'Pick the track from your uploaded files.','a311w':'You need to add an audio track.','a311x':'Editing that Track.','a311y':'Album Genre.','a311z':'Set the genre for your new album.','a311aa':'Year Recorded.','a311ab':'Set the year the album was recorded or released.','a311ac':'Author','a311ad':'Set the author of the Album.','a311ae':'Copyright','a311af':'Set the copyright holder for the album.','a311ag':'Comment','a311ah':'Add a comment for the album from its author.','a311ai':'Post Comment Section.','a311aj':'If set to disabled, senders cannot add comments in the album.','a311ak':'Post Listing.','a311al':'You need to specify the posts genre.','a311am':'You need to speicfy the posts year.','a311an':'You need to specify the posts author.','a311ao':'You need to specify the posts copyright holder.','a311ap':'You need to add the authors comment for the post.','a311aq':'You need to add some tracks to the new post.',
-        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'Fee for Everything','a311bs':'New Markdown here...', 'a311bt':'editor', 'a311bu':'preview', 'a311bv':'You can add some Markdown text below.', 'a311bw':'', 'a311bx':'', 'a311by':'', 'a311bz':'', 'a311ca':'',
+        'a311ar':'Album','a311as':'EP','a311at':'Audiobook','a311au':'Podcast','a311av':'Single','a311aw':'Post Type.','a311ax':'Set the type of post you\'re uploading to the audioport section.','a311ay':'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.','a311az':'You need to set the album art for your new post.','a311ba':'Track Free Plays.','a311bb':'Set the number of free plays for your track if and before a purchase is required.','a311bc':'plays','a311bd':'Purchase Recipient','a311be':'Set the recipient account ID for all the purchases of this audiopost.','a311bf':'You need to set a purchase recipient for your new audiopost.','a311bg':'metadata','a311bh':'Audio Lyrics (Optional).', 'a311bi':'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.','a311bj':' lines.','a311bk':'Lyrics Added','a311bl':'Content Channeling','a311bm':'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.','a311bn':'Channeling City (Optional)','a311bo':'If you\'ve set local channeling, you can restrict your post to a specific city.','a311bp':'Enter City...','a311bq':'markdown','a311br':'Fee for Everything','a311bs':'New Markdown here...', 'a311bt':'editor', 'a311bu':'preview', 'a311bv':'You can add some Markdown text below.', 'a311bw':'Track Credits', 'a311bx':'You can credit the people that helped make the track.', 'a311by':'Credits...', 'a311bz':'Credits', 'a311ca':'Headings','a311cb':'Basic Markdown Syntax.','a311cc':'Extended Markdown Syntax.','a311cd':'Bold','a311ce':'Italic','a311cf':'Blockquote','a311cg':'Ordered List','a311ch':'Unordered List','a311ci':'Code','a311cj':'Horizontal rule','a311ck':'Link','a311cl':'Image','a311cm':'Table','a311cn':'Fenced Code Block','a311co':'Footnote','a311cp':'Heading ID','a311cq':'Definition List','a311cr':'Strikethrough','a311cs':'Task List','a311ct':'Emoji','a311cu':'Highlight','a311cv':'Subscript','a311cw':'Superscript','a311cx':'','a311cy':'','a311cz':'','a311da':'','a311db':'','a311dc':'','a311dd':'','a311de':'','a311df':'','a311dg':'','a311dh':'','a311di':'','a311dj':'','a311dk':'','a311dl':'','a311dm':'','a311dn':'','a311do':'','a311dp':'','a311dq':'','a311dr':'','a311ds':'','a311dt':'','a311du':'','a311dv':'','a311dw':'','a311dx':'','a311dy':'','a311dz':'',
         
 
         /* new video page */
@@ -1051,7 +1064,7 @@ class App extends Component {
         '930':'freeze/unfreeze','931':'freeze','932':'unfreeze','933':'account','934':'Freeze or Unfreeze the token ','935':' for a specified set of accounts.','936':'Set the account to be frozen or unfrozen.','937':'Account ID','938':'Set the amount to freeze or unfreeze.','939':'Action Amount.','940':'Freeze/Unfreeze Amount','941':'Add Action','942':'Please put a valid account ID.','943':'Please put a valid amount.','944':'Action added.','945':'Action removed.','945a':'Accounts balance.','945b':'Accounts frozen balance.', '945c':'The amount youve set exceeds the specified accounts frozen balance.','945d':'Target Account ID: ','945e':'Set Maximum Amount.',
         
         /* mint-dump token page */
-        '946':'buy-sell','947':'mint','948':'dump','949':'mint-buy','950':'dump-sell','951':'Buy or Sell the specified token','952':'Your Balance','953':'Set the recipient of the mint/dump action.','954':'Recipient of action','955':'Recipient ID','956':'Set the amount(the aggregate of the buy tokens) of tokens your submitting for the mint-buy action.','957':'Amount for action','958':'Amount','959':'Buy Limit','960':'Sell Limit','961':'Set Maximum','962':'The amount you get when selling the token','963':'Receive Amount.','964':'Token ID: ','965':'The amount youll probably get from the buy action','966':'Receive Amount.','967':'Amount set to submit for the buy action.','968':'Fees for Action','969':'The amounts you have available for buying the token.','970':'Your balances','971':'My Account','972':'Account','973':'The transaction will revert if you dont receive your tokens specified in the range set below.','974':'Upper Lower Bounds (optional)','975':'Upper Bound','976':'Lower Bound','977':'Please put a valid account ID.','978':'Please put a valid amount.','979':'That amount is too low.','980':'You dont have enough tokens for that sell action.','981':'You dont have enough tokens to buy that much.','982':'You cant interact with the same exchange twice in one run.','983':'The amount youve set exceeds the maximum buy amount enforced by the exchange.','984':'The amount youve set exceeds the maximum sell amount enforced by the exchange.','985':'You need to enter ','986':' more contracts first.','987':'You need to make ','988':' more runs first.','989':'You need to wait ','990':' more blocks.','991':'You need to wait about ','992':' first.','993':'You need to make ','994':' more runs first.','995':'You need to enter ','996':' more contracts first','996a':'tokens','996b':'Set the amount of tokens your submitting for the dump-sell action','996c':'Transaction Impact.','996d':'The impact proportion your transaction will have in the exchanges liquidity.','996e':'proportion.','996f':'',
+        '946':'buy-sell','947':'mint','948':'dump','949':'mint-buy','950':'dump-sell','951':'Buy or Sell the specified token','952':'Your Balance','953':'Set the recipient of the mint/dump action.','954':'Recipient of action','955':'Recipient ID','956':'Set the amount(the aggregate of the buy tokens) of tokens your submitting for the mint-buy action.','957':'Amount for action','958':'Amount','959':'Buy Limit','960':'Sell Limit','961':'Set Maximum','962':'The amount you get when selling the token','963':'Receive Amount.','964':'Token ID: ','965':'The amount youll probably get from the buy action','966':'Receive Amount.','967':'Amount set to submit for the buy action.','968':'Fees for Action','969':'The amounts you have available for buying the token.','970':'Your balances','971':'My Account','972':'Account','973':'The transaction will revert if you dont receive your tokens specified in the range set below.','974':'Upper Lower Bounds (optional)','975':'Upper Bound','976':'Lower Bound','977':'Please put a valid account ID.','978':'Please put a valid amount.','979':'That amount is too low.','980':'You dont have enough tokens for that sell action.','981':'You dont have enough tokens to buy that much.','982':'You cant interact with the same exchange twice in one run.','983':'The amount youve set exceeds the maximum buy amount enforced by the exchange.','984':'The amount youve set exceeds the maximum sell amount enforced by the exchange.','985':'You need to enter ','986':' more contracts first.','987':'You need to make ','988':' more runs first.','989':'You need to wait ','990':' more blocks.','991':'You need to wait about ','992':' first.','993':'You need to make ','994':' more runs first.','995':'You need to enter ','996':' more contracts first','996a':'tokens','996b':'Set the amount of tokens your submitting for the dump-sell action','996c':'Transaction Impact.','996d':'The impact proportion your transaction will have in the exchanges liquidity.','996e':'proportion.','996f':'Exchanges Liquidity.','996g':'The tokens the exchange has available to send to you after the sell action.','996h':'The exchange doesn\'t have enough liquidity to fulfil that sell.','996i':'','996j':'','996k':'','996l':'',
         
         /* modify token page */
         '997':'modify-token','998':'modify','999':'token','1000':'fixed','1001':'spread','1002':'Make changes to the configuration of the token ID: ','1003':'units','1004':'Add Change','1005':'Target ID...','1006':'Current ','1007':'Current Value','1008':'Halving type','1009':'Block Limit Sensitivity','1010':'Reconfig action added.','1011':'Please put a valid account ID.','1012':'Modify Target','1013':'proportion','1014':'duration','1015':'value: ','1016':'target ID','1017':'Reconfig action removed.','1017a':'Edit token prices','1017b':'Change the prices of your token exchange','1017c':'You cant modify your tokens price if its not fully custom.','1017d':'','1017e':'','1017f':'',
@@ -1084,7 +1097,7 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'Total Audioposts, Videoposts and Nitros created','1264x':'audiopost-items','1264y':'videopost-items','1264z':'nitro-items','1264aa':'','1264ab':'','1264ac':'','1264ad':'','1264ae':'','1264af':'','1264ag':'','1264ah':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
@@ -1113,7 +1126,8 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'','1593dr':'','1593ds':'','1593dt':'','1593du':'','1593dv':'','1593dw':'','1593dx':'','1593dy':'','1593dz':'','1593ea':'','1593eb':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'Censor 🚫','1593dr':'Censor Keywords.','1593ds':'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.','1593dt':'Keyword or phrase...','1593du':'Type something first.',
+        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'','1593ea':'','1593eb':'','1593ec':'','1593ed':'','1593ee':'','1593ef':'','1593eg':'','1593eh':'','1593ei':'','1593ej':'','1593ek':'','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1131,14 +1145,14 @@ class App extends Component {
         '1667':'accept-job-request','1668':'accept','1669':'job','1670':'request','1671':'linear','1672':'nested','1673':'contract','1674':'activity','1675':'activity','1676':'contract','1677':'activity','1678':'Expiry time from now: ','1679':'Payment Option','1680':'Job Description','1681':'Sender ID','1682':'Accepted','1683':'Set Pay','1684':'The requested pay for the job','1685':'','1686':'Payment Option','1687':'Sender ID','1688':'Job Description','1689':'Set Pay','1690':'The amounts youll be receiving for the job.','1691':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1692':'Copied message to clipboard.','1693':'responses','1694':'You','1695':'Type something first.','1696':'You need to make at least 1 transaction to participate.','1697':'Message added to stack.','1698':'The contractor Accepted the job request.','1698a':' ago','1698b':' In ','1698c':'The job request has already expired.',
         
         /* view searched account */
-        '1699':'main-data','1700':'subscription-data','1701':'contract-data','1702':'exchange-data','1703':'creations','1704':'withdraws','1705':'pending-withdraws','1706':'runs','1707':'payments','1708':'cancellations','1709':'entries','1710':'exits','1711':'votes','1712':'swaps','1713':'transfers','1714':'Address','1715':'Ether Balance in Ether','1716':'Ether Balance in Wei','1717':'Last Transaction Block','1718':'Last Transaction age','1719':'Number of entered contracts','1720':'Number of E5 runs','1721':'Balance Search','1722':'Search the accounts balance in a specified exchange','1723':'Exchange ID or Symbol...','1724':'Balance','1725':'Transaction Runs','1726':'hart containing the total number of E5 runs theyve made over time.','1727':'Y-Axis: Total Runs Made','1728':'X-Axis: Time','1729':'job object','1730':'post object','1731':'shadow object','1732':'storefront bag object','1733':'contractor object','1734':'storefront item object','1735':'storefront object','1736':'account object','1737':'contract object','1738':'token exchange object','1739':'consensus object','1740':'subscription object','1741':'custom object','1742':'channel object','1743':'Object ID','1744':'Block Number','1745':'transaction ID','1746':'Amount in Wei','1747':'Amount in Ether','1748':'Age','1749':'Amount Added in Wei','1750':'Transaction ID','1751':'Transaction Stack Size','1752':'Estimated Gas Consumed','1753':'Included Wei','1754':'Gas Price Paid','1755':'Coinbase (Miner)','1756':'Subscription ID','1757':'Time Units: ','1758':'Subscription ID:  ','1759':'Contract ID','1760':'Contract ID: ','1761':'Proposal ID','1762':'Contract ID: ','1763':'Exchange ID','1764':'Amount Swapped','1765':'Updted Token Exchange Liquidity','1766':'Updated Exchange Ratio X','1767':'Updated Exchange Ratio Y','1768':'Updated Exchange Ratios X:Y','1769':'','1770':'Action: ','1770a':'balances','1770b':'income','1770c':' exchanges.','1770d':'Yearly Income.','1770e':'Heres how much money the account has made in the last few years.','1770f':'Yearly Expenditure.','1770g':'Heres how much money the account has spent in the last few years.','1770h':'expenditure','1770i':'activity','1770j':'','1770k':'','1770l':'','1770m':'',
+        '1699':'main-data','1700':'subscription-data','1701':'contract-data','1702':'exchange-data','1703':'creations','1704':'withdraws','1705':'pending-withdraws','1706':'runs','1707':'payments','1708':'cancellations','1709':'entries','1710':'exits','1711':'votes','1712':'swaps','1713':'transfers','1714':'Address','1715':'Ether Balance in Ether','1716':'Ether Balance in Wei','1717':'Last Transaction Block','1718':'Last Transaction age','1719':'Number of entered contracts','1720':'Number of E5 runs','1721':'Balance Search','1722':'Search the accounts balance in a specified exchange','1723':'Exchange ID or Symbol...','1724':'Balance','1725':'Transaction Runs','1726':'hart containing the total number of E5 runs theyve made over time.','1727':'Y-Axis: Total Runs Made','1728':'X-Axis: Time','1729':'job object','1730':'post object','1731':'shadow object','1732':'storefront bag object','1733':'contractor object','1734':'storefront item object','1735':'storefront object','1736':'account object','1737':'contract object','1738':'token exchange object','1739':'consensus object','1740':'subscription object','1741':'custom object','1742':'channel object','1743':'Object ID','1744':'Block Number','1745':'transaction ID','1746':'Amount in Wei','1747':'Amount in Ether','1748':'Age','1749':'Amount Added in Wei','1750':'Transaction ID','1751':'Transaction Stack Size','1752':'Estimated Gas Consumed','1753':'Included Wei','1754':'Gas Price Paid','1755':'Coinbase (Miner)','1756':'Subscription ID','1757':'Time Units: ','1758':'Subscription ID:  ','1759':'Contract ID','1760':'Contract ID: ','1761':'Proposal ID','1762':'Contract ID: ','1763':'Exchange ID','1764':'Amount Swapped','1765':'Updted Token Exchange Liquidity','1766':'Updated Exchange Ratio X','1767':'Updated Exchange Ratio Y','1768':'Updated Exchange Ratios X:Y','1769':'','1770':'Action: ','1770a':'balances','1770b':'income','1770c':' exchanges.','1770d':'Yearly Income.','1770e':'Heres how much money the account has made in the last few years.','1770f':'Yearly Expenditure.','1770g':'Heres how much money the account has spent in the last few years.','1770h':'expenditure','1770i':'activity','1770j':'nitro object','1770k':'audio object','1770l':'video object','1770m':'',
         
         /* view transaction log */
         '1771':'Timestamp','1772':'Transaction Age','1773':'Transaction Block','1774':'Transaction Stack Size','1775':'Gas Consumed','1776':'Sender Account ID','1777':'Sender Account Address','1778':'Included Value in Ether','1779':'Included Value in Wei','1780':'Coinbase Address',
         
         /* view transaction page */
         '1781':'view-transaction','1782':'Stack ID: ','1783':'Type:','1784':'Delete the transaction completely','1785':'Delete','1786':'Confirm Delete Action','1787':'Are you sure?','1788':'Make some changes to the transaction.','1789':'Edit','1790':'If set to shown, the transaction will be included during a run','1791':'If set to hidden, the transaction will be ignored when running your transactions','1792':'Show Transaction','1793':'Hide Transaction','1794':'The transaction is Hidden','1795':'The transaction is Shown','1796':'status','1797':'Item deleted from stack.','1798':'transaction shown','1799':'transaction hidden','1800':'The set access rights setting for your new contract.','1801':'Moderator Accounts','1802':'Youve set ','1803':' moderators','1804':'Interactable Accounts','1805':' accounts','1806':'For ','1807':'The set access rights setting for your new token.','1808':'Capped','1809':'Uncapped','1810':'2 (Main Contract)','1811':'Fixed','1812':'Spread','1813':'Token Identifier','1814':'Token Type',
-        '1814':'Unlocked Supply','1815':'Unlocked Liquidity','1816':'Fully Custom','1817':'Mint Limit','1818':'Authority: ','1819':'Exchange Authority Identifier','1820':'Target: ','1821':'Trust Fee Target Identifier','1822':'Mint/Burn Token','1823':'Authority Mint Limit (percentage of supply)','1824':'Current Block Mint Total','1825':'Active Block Limit Reduction Proportion','1826':'The set access rights setting for your new contract','1827':'non-cancellable','1828':'cancellable','1829':'Block ID','1830':'Authority ID','1831':'Minimum Buy Amount','1832':'time-units','1833':'Subscription Type','1834':'Maximum Buy Amount','1835':'time-units','1836':'Minimum Cancellable Amount','1837':'Time Unit','1838':'Remaining Subscription Time','1839':'Subscription Beneficiary','1840':'Entry Fees','1841':' tokens used','1842':'Price Amounts','1843':'The amounts you are offering for the job.','1844':'The set access rights setting for your new channel','1845':'The items variant details are shown below','1846':'Number of Units','1847':'Your account ID: ','1848':'Amount','1849':'Your Balance','1850':'Selected Action','1851':'Target Recipient Account','1852':'Enter Contract Until: ','1853':'Entry Exipry Time','1854':'Time remaining','1855':'Below are the individual transfer actions.','1856':'Transfer actions','1857':'recipient account: ','1858':'Extend Stay In Contract Until: ','1859':'New Exipry Time','1860':'Time remaining','1861':'Consensus Type','1862':'Proposal Expiry time','1863':'Proposal expiry time from now','1864':'Proposal Submit Expiry time','1865':'Proposal submit expiry time from now','1866':'','1867':'','1868':'','1869':'','1870':'','1871':'','1872':'','1873':'','1874':'Contract Authority ID','1875':'Modify Target','1876':'target: ','1877':', token ID: ','1878':'Modify Target','1879':'position','1880':'units','1881':'proportion','1882':'duration','1883':'value: ','1884':'target ID','1885':'tokens','1886':'Receiver ID: ','1887':'Your set vote for the proposal','1888':'Bounty Exchange ID: ','1889':'Time Units','1890':'Token ID: ','1891':'Time Unit','1892':'Time Units To Cancel','1893':'Total Collectible Time','1894':'Total Collectible Time Units','1895':'Token ID: ','1896':'Modify Subscription Action','1897':' action added','1898':'Modify Target','1899':'position','1900':'Modify Contract Action','1901':' actions added','1902':'Modify Target','1903':'position','1904':'units',
+        '1814%':'Unlocked Supply','1815':'Unlocked Liquidity','1816':'Fully Custom','1817':'Mint Limit','1818':'Authority: ','1819':'Exchange Authority Identifier','1820':'Target: ','1821':'Trust Fee Target Identifier','1822':'Mint/Burn Token','1823':'Authority Mint Limit (percentage of supply)','1824':'Current Block Mint Total','1825':'Active Block Limit Reduction Proportion','1826':'The set access rights setting for your new contract','1827':'non-cancellable','1828':'cancellable','1829':'Block ID','1830':'Authority ID','1831':'Minimum Buy Amount','1832':'time-units','1833':'Subscription Type','1834':'Maximum Buy Amount','1835':'time-units','1836':'Minimum Cancellable Amount','1837':'Time Unit','1838':'Remaining Subscription Time','1839':'Subscription Beneficiary','1840':'Entry Fees','1841':' tokens used','1842':'Price Amounts','1843':'The amounts you are offering for the job.','1844':'The set access rights setting for your new channel','1845':'The items variant details are shown below','1846':'Number of Units','1847':'Your account ID: ','1848':'Amount','1849':'Your Balance','1850':'Selected Action','1851':'Target Recipient Account','1852':'Enter Contract Until: ','1853':'Entry Exipry Time','1854':'Time remaining','1855':'Below are the individual transfer actions.','1856':'Transfer actions','1857':'recipient account: ','1858':'Extend Stay In Contract Until: ','1859':'New Exipry Time','1860':'Time remaining','1861':'Consensus Type','1862':'Proposal Expiry time','1863':'Proposal expiry time from now','1864':'Proposal Submit Expiry time','1865':'Proposal submit expiry time from now','1866':'','1867':'','1868':'','1869':'','1870':'','1871':'','1872':'','1873':'','1874':'Contract Authority ID','1875':'Modify Target','1876':'target: ','1877':', token ID: ','1878':'Modify Target','1879':'position','1880':'units','1881':'proportion','1882':'duration','1883':'value: ','1884':'target ID','1885':'tokens','1886':'Receiver ID: ','1887':'Your set vote for the proposal','1888':'Bounty Exchange ID: ','1889':'Time Units','1890':'Token ID: ','1891':'Time Unit','1892':'Time Units To Cancel','1893':'Total Collectible Time','1894':'Total Collectible Time Units','1895':'Token ID: ','1896':'Modify Subscription Action','1897':' action added','1898':'Modify Target','1899':'position','1900':'Modify Contract Action','1901':' actions added','1902':'Modify Target','1903':'position','1904':'units',
         '1905':'Modify Token Exchange Action','1906':' actions added','1907':'Modify Target','1908':'position','1909':'Exchange Transfer Action','1910':'Receiver ID:','1911':'Force Exit Action','1912':'Archive Action','1913':' bounty exchanges included','1914':'Bounty Exchange ID: ','1915':'Default depth 0','1916':'Freeze/Unfreeze Action','1917':' actions included','1918':'Target Account ID: ','1919':'Authmint Actions','1920':'Target Recipient ID: ','1921':'Access Rights Actions','1922':' actions included','1923':'Target: ','1924':'Target: Revoke Moderator Privelages','1925':', time from now: ','1926':' messages included','1927':'Selected Contract','1928':'The contract you picked for the application action','1929':'Selected Expiry Time','1930':'The expiry time you picked for the application action','1931':'Set Prices','1932':'The amounts youre youll be charging for the job','1933':' items','1934':'in your bag.','1935':'items','1936':' units in ','1937':'Edit','1938':'Selected Contract','1939':'The contract you picked for the fulfilment action','1940':'Selected Expiry Time','1941':'The expiry time you picked for the fulfilment action','1942':'Estimated Delivery time','1943':'The payment option you prefer','1944':'The amounts youre youll be charging for the bag fulfilment','1945':'Contract ID: ','1946':'Sender ID: ','1947':'Expiry time from now: ','1948':'Shipping Details','1949':'Number of Units ordered in ','1950':'Number of Units','1951':'Purchase Amounts','1952':'This is the final amount for the price of the item your buying','1953':'Shipping Fee','1954':'The charged shipping fee for buying the items','1955':'Collected Signatures','1956':'Below are the collected signatures from your direct purchases','1957':'Delete','1958':'Variant ID: ','1959':'Received Signature','1960':'The expiry time you picked for the application action','1961':'Set Description','1962':'Set Prices','1963':'The amounts youll be charging for the job','1964':'Selected Contract','1965':'The contract you picked for the job.','1966':'Set Description','1967':'Set Prices','1968':'The amounts youll be receiving for the job','1969':'Reset Alias.','1970':'Price Amounts','1971':'The amounts you are offering for the job.','1972':'Item Variants','1973':'The items variant details are shown below','1974':'Multiplier','1975':'message:','1976':'Total amount of spend','1977':'Custom Amounts','1978':'Your included custom amounts for the award action.','1979':'Depth-mint Actions',
         
         /* wiki page */
@@ -1151,7 +1165,7 @@ class App extends Component {
         '2028':'metadata','2029':'responses','2030':'activity','2031':'Pin the bag for future reference.','2032':'Pin the Bag Order.','2033':'','2034':'','2035':'','2036':'','2037':'','2038':'','2039':'','2040':'','2041':'','2042':'Pin/Unpin Bag','2043':'Fulfil the delivery request for the sender account','2044':'Fulfil Bag','2045':'Sender Account','2046':'Bag ID: ','2047':'ago','2048':'Store ID:','2049':' ordered.','2050':'Variant Description','2051':'Pick-up Location','2052':'In ','2053':'Bag Responses','2054':'Expiry time from now: ','2055':'Contract ID: ','2056':'Sender ID: ','2057':'Accepted','2058':'The bag owner picked this fulfilment application','2059':'Expiry time from now: ','2060':'Contract ID: ','2061':'Sender ID: ','2062':'Shopping Bag Acivity','2063':'Copied message to clipboard.','2064':' responses','2064a':'Bag Value.','2064b':'The total amount to be paid by the bag owner in the respective denominations.','2064c':'creator','2064d':'moderator','2064e':'','2064f':'','2064g':'','2064h':'',
         
         /* channel details section */
-        '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101':'The channel has been locked by its moderators.','2102':'In Channel ','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
+        '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101;':'The channel has been locked by its moderators.','2102':'In Channel ','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
         
         /* contract details section */
         '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay',
@@ -1167,7 +1181,7 @@ class App extends Component {
         /* end detail section */
         '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions',
         '2370':'Perform Action','2371':'Edit Token Post','2372':'Change the basic details for your Token Post','2373':'Perform Action','2374':'0 (Burn Account)','2375':'ID: ','2376':'Token Identifier','2377':'Token Type','2378':'Block Number','2379':'Exchanges Liquidity','2380':'Buy/Sell Token','2381':'Tokens Total Supply','2382':'The Market Capitalization of the token in its respective denominations.','2383':'Token Market Cap','2384':'Depth-Mint Tokens','2385':'Mint your token from outside its exchange.','2386':'Depth-Mint','2387':'Y-Aggregate','2388':'Chart containing the y-aggregate of ','2389':' over time.','2390':'Y-Axis: Y-aggregate','2391':'X-Axis: Time','2392':'Total Transactions','2393':'Chart containing the total number of buy/sell transactions over time.','2394':'Y-Axis: Total Transactions','2395':'Total Transactions','2396':'Exchange Liquidity','2397':'Chart containing the total supply of ','2398':' in the exchange over time.','2399':'Y-Axis: Exchange Liquidity','2400':'Action','2401':'Amount Swapped','2402':'Updted Token Exchange Liquidity','2403':'Updated Exchange Ratio X','2404':'Updated Exchange Ratio Y','2405':'Updated Exchange Ratios X:Y','2406':'Set an accounts access rights, moderator privelages or block an account','2407':'In Exchange ','2408':'Updated Exchange Ratio Events','2409':'Buy','2410':'Sell','2411':'Swapping Account ID','2412':'Your Transfer Events','2413':'Action: ','2414':'Exchange Modification Events','2415':'Modifier','2416':'Targeted Modify Item','2417':'target ID','2418':'Exchange Transfer Events','2419':'To: ','2420':'From: ','2421':'Action: ','2422':'New Balance ','2423':'Action: Freeze','2424':'Action: Unfreeze','2425':'Amount, depth: ','2426':'Exchange Modify Moderator Events','2427':'Not Moderator','2428':'Moderator',
-        '2429':'Targeted Account','2430':'Moderator Account','2431':'Authority value','2432':'Exchange Access Rights Settings Events','2433':'Access Rights Disabled(Public)','2434':'Access Rights Enabled(Private)','2435':'Access Rights Status','2436':'Moderator Account','2437':'Exchange  Account Access Settings Events','2438':'Targeted Account','2439':'Moderator Account','2440':'In Exchange ','2441':'Exchange  Blocked Account Events','2442':'Targeted Account','2443':'Moderator Account','2444':'Exchange  Depth-Mint Events','2445':'Targeted Receiver','2446':'Moderator Sender','2447':'Amount, depth: ', '2447a':'Your Wallets Dominance', '2447b':'Stage Royalties.', '2447c':'Stage payouts to the token-holders.', '2447d':'royalty-stagings','2447e':'Exchange Royalty Payment Stagings.','2447f':'Scheduled for: ','2447g':'Exchange Liquidity Proportions.','2447h':'Proportions of the exchange\'s balances that have not been transfered out by its moderators.','2447i':'',
+        '2429':'Targeted Account','2430':'Moderator Account','2431':'Authority value','2432':'Exchange Access Rights Settings Events','2433':'Access Rights Disabled(Public)','2434':'Access Rights Enabled(Private)','2435':'Access Rights Status','2436':'Moderator Account','2437':'Exchange  Account Access Settings Events','2438':'Targeted Account','2439':'Moderator Account','2440':'In Exchange ','2441':'Exchange  Blocked Account Events','2442':'Targeted Account','2443':'Moderator Account','2444':'Exchange  Depth-Mint Events','2445':'Targeted Receiver','2446':'Moderator Sender','2447':'Amount, depth: ', '2447a':'Your Wallets Dominance', '2447b':'Stage Royalties.', '2447c':'Stage payouts to the token-holders.', '2447d':'royalty-stagings','2447e':'Exchange Royalty Payment Stagings.','2447f':'Scheduled for: ','2447g':'Exchange Liquidity Proportions.','2447h':'Proportions of the exchange\'s balances that have not been transfered out by its moderators.','2447i':'Trading Volume','2447j':'Chart containing the trading volume of ','2447k':'Y-axis: Volume','2447l':'trading volume average.','2447m':'','2447n':'','2447o':'','2447p':'','2447q':'','2447r':'','2447s':'','2447t':'','2447u':'','2447v':'','2447w':'','2447x':'','2447y':'','2447z':'','2447ba':'','2447bb':'','2447bc':'','2447bd':'','2447be':'','2447bf':'',
         
         /* ethers details section */
         '2448':'transactions','2449':'Reload wallet.','2450':'Your Balance in Wei','2451':'Your Balance in Ether','2452':'Transactions (2.3M Gas average)','2453':'Gas Price in Wei','2454':'Gas Price in Gwei','2455':'E5 txs/ether (2.3M Gas average)','2456':'Gas txs/ether (23K Gas average)','2457':'Send/Receive Ether','2458':'Send or receive ether from a specified account.','2459':'Send/Receive','2460':'Node Settings','2461':'Change the remote procedure call (RPC) provider setting for making your transactions.','2462':'Open','2463':'Wallet Status','2464':'Syncronizing wallet, please wait...','2465':'Wallet sync failed. Please reload the wallet.','2466':'Wallet Status','2467':'Syncronized.','2468':'Chain ID','2469':'Gas Limit per Block','2470':'Base Fee in wei','2471':'Base Fee in gwei','2472':'Your Address','2473':'Average block time for the last 5 blocks','2474':'Wallet Address','2475':'copied address to clipboard','2476':' seconds','2477':'Gas Used','2478':'Gas Price Paid in Wei','2479':'Gas Price Paid in Gwei','2480':'Value','2481':'Number of Blocks Mined',
@@ -1185,15 +1199,15 @@ class App extends Component {
         '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒 Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
 
         /* audio details section */
-        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'Shuffle Album', 'a2527t':'Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times.', 'a2527z':'Downloading...','a2527ba':'Done.',
+        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'Shuffle Album', 'a2527t':'Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times.', 'a2527z':'Downloading...','a2527ba':'Done.','a2527bb':'Discography.','a2527bc':'Audioposts by ','a2527bd':'Similar Audioposts.','a2527be':'Some posts similar to the audiopost by its tags','a2527bf':'','a2527bg':'','a2527bh':'','a2527bi':'','a2527bj':'','a2527bk':'',
 
 
         /* video details section */
-        'b2527a':'Play Videopost.','b2527b':'Play all the videos in this videopost.','b2527c':'Edit Indexed Videopost','b2527d':'Change the basic details for your Indexed Videopost.','b2527e':'Purchase access to this videopost and its content.','b2527f':'You need to purchase access to the video first.','b2527g':'','b2527h':'','b2527i':'','b2527j':'','b2527k':'','b2527l':'','b2527m':'','b2527n':'','b2527o':'','b2527p':'','b2527q':'','b2527r':'','b2527s':'','b2527t':'','b2527u':'','b2527v':'','b2527w':'','b2527x':'','b2527y':'','b2527z':'','b2527ba':'','b2527bb':'','b2527bc':'','b2527bd':'','b2527be':'','b2527bf':'','b2527bg':'','b2527bh':'','b2527bi':'','b2527bj':'',
+        'b2527a':'Play Videopost.','b2527b':'Play all the videos in this videopost.','b2527c':'Edit Indexed Videopost','b2527d':'Change the basic details for your Indexed Videopost.','b2527e':'Purchase access to this videopost and its content.','b2527f':'You need to purchase access to the video first.','b2527g':'','b2527h':'Videoposts by ','b2527i':'Similar Videoposts.','b2527j':'Some posts similar to the videopost by its tags','b2527k':'','b2527l':'','b2527m':'','b2527n':'','b2527o':'','b2527p':'','b2527q':'','b2527r':'','b2527s':'','b2527t':'','b2527u':'','b2527v':'','b2527w':'','b2527x':'','b2527y':'','b2527z':'','b2527ba':'','b2527bb':'','b2527bc':'','b2527bd':'','b2527be':'','b2527bf':'','b2527bg':'','b2527bh':'','b2527bi':'','b2527bj':'',
 
 
         /* nitro details section */
-        'c2527a':'Pin the Nitro post to your feed.','c2527b':'Pin Nitropost','c2527c':'Pin/Unpin Nitropost','c2527d':'Edit Indexed Nitropost','c2527e':'Change the basic details for your Indexed Nitropost','c2527f':'Loading Node Details...','c2527g':'Node Unavailable.','c2527h':'The node is unavailable or down.','c2527i':'Status','c2527j':'Online.','c2527k':'Booted','c2527l':'Start Up Time','c2527m':'Node Storage Service Offline.','c2527n':'Storage Purchase Recipient','c2527o':'Storage Purchase Limit.','c2527p':'Mbs','c2527q':'Accounts Served.','c2527r':'Tracked Hashes.','c2527s':'Tracked E5s.','c2527t':'Price per Megabyte of Storage.','c2527u':'Loading Your Storage Info...','c2527v':'Your account doesnt exist in the node.','c2527w':'Files Stored.','c2527x':'files','c2527y':'Acquired Space.','c2527z':'Utilized Space','c2527ba':'Buy Storage.','c2527bb':'Acquire storage from the provider in their respective node.','c2527bc':'Configure Node.','c2527bd':'Configure your nitro node directly from E5.','c2527be':'configure','c2527bf':'Total Files Stored','c2527bg':'Total Space Utilized','c2527bh':'Block Post.','c2527bi':'Block this post from being viewed by your followers.','c2527bj':'Block/Unblock','c2527bk':'🙅 Post Blocked','c2527bl':'The post has been blocked for you and your followers.','c2527bm':'','c2527bn':'','c2527bo':'','c2527bp':'','c2527bq':'','c2527br':'','c2527bs':'',
+        'c2527a':'Pin the Nitro post to your feed.','c2527b':'Pin Nitropost','c2527c':'Pin/Unpin Nitropost','c2527d':'Edit Indexed Nitropost','c2527e':'Change the basic details for your Indexed Nitropost','c2527f':'Loading Node Details...','c2527g':'Node Unavailable.','c2527h':'The node is unavailable or down.','c2527i':'Status','c2527j':'Online.','c2527k':'Booted','c2527l':'Start Up Time','c2527m':'Node Storage Service Offline.','c2527n':'Storage Purchase Recipient','c2527o':'Storage Purchase Limit.','c2527p':'Mbs','c2527q':'Accounts Served.','c2527r':'Tracked Hashes.','c2527s':'Tracked E5s.','c2527t':'Price per Megabyte of Storage.','c2527u':'Loading Your Storage Info...','c2527v':'Your account doesnt exist in the node.','c2527w':'Files Stored.','c2527x':'files','c2527y':'Acquired Space.','c2527z':'Utilized Space','c2527ba':'Buy Storage.','c2527bb':'Acquire storage from the provider in their respective node.','c2527bc':'Configure Node.','c2527bd':'Configure your nitro node directly from E5.','c2527be':'configure','c2527bf':'Total Files Stored','c2527bg':'Total Space Utilized','c2527bh':'Block Post.','c2527bi':'Block this post from being viewed by your followers.','c2527bj':'Block/Unblock','c2527bk':'🙅 Post Blocked','c2527bl':'The post has been blocked for you and your followers.','c2527bm':'Nitro dialer offline.','c2527bn':'Nitro dialer online.','c2527bo':'Nitro dialer subscription.','c2527bp':'Pay Subscription','c2527bq':'Pay the subscription required by the node moderator to make calls via the node.','c2527br':'','c2527bs':'',
 
         
         /* proposal details section */
@@ -1209,7 +1223,7 @@ class App extends Component {
         '2643':'search','2644':'payments','2645':'cancellations','2646':'collections','2647':'modifications','2648':'Pay Subscription','2649':'Pay for the subscription for your account','2650':'Pin the subscription to your feed','2651':'Pin Subscription','2652':'Pin/Unpin Subscription','2653':'Author Moderator Privelages Disabled','2654':'Author of Object is not a Moderator by default','2655':'Author Moderator Privelages Enabled','2656':'Author of Object is a Moderator by default','2657':'Cancel Subscription','2658':'Cancel your subscription payment and receive your tokens back','2659':'Collect Subscription','2660':'Collect the subscription payments from the subscription account','2661':'Modify Subscription','2662':'Modify the configuration of the subscription.','2663':'Perform Moderator Actions','2664':'Set an accounts access rights, moderator privelages or block an account','2665':'Perform Action','2666':'In Subscription ','2667':'Subscription Transfer Events','2668':'Pay Subscription Events','2669':'Search account ID...','2670':'Paying Account','2671':'Cancel Subscription Events','2672':'Cancelling Account','2673':'Collect Subscription Events','2674':'Collecting Account','2675':'Total Time Units Collected','2676':'units','2677':'Modify Subscription Events','2678':'Subscription Modify Moderator Events','2679':'Subscription Access Rights Settings Events','2680':'Subscription Account Access Settings Events','2681':'Subscription Blocked Account Events','2682':'Search Subscription Payment','2683':'Remaining Subscription Time','2684':'Remaining Time Units (As of Now)','2685':'time-units','2686':'Latest Payment Time','2687':'Latest Payment Block','2688':'First Payment Time','2689':'First Payment Block','2690':'Highest Time Units Paid For ','2691':'Lowest Time Units Paid For ','2692':'Time Units Paid For','2693':'Chart containing the amount in time units that have been accumulated.','2694':'Y-Axis: Time Units','2695':'X-Axis: Time',
         
         /* App page */
-        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'Downloading pdf.', '2738e':'', '2738f':'', 
+        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'Downloading pdf.', '2738e':'e needs access to your microphone to make the call.', '2738f':'', '2738g':'', '2738h':'', '2738i':'', '2738j':'', '2738k':'', '2738l':'', '2738m':'', '2738n':'', '2738o':'', '2738p':'', '2738q':'', '2738r':'', '2738s':'', '2738t':'', '2738u':'', '2738v':'', '2738w':'', '2738x':'', '2738y':'', '2738z':'', 
         
 
         '2739':'edit-proposal','2740':'midnight','2741':'green-ish','2742':'Not Safe For Work Warning.','2743':'Warning. This content contains material that may not be suitable for all audiences. Viewer discretion is advised. The content may include explicit language, sexual themes, nudity, or other adult-oriented material. It is intended for mature audiences only.','2744':'Proceed.','2745':'Years','2746':'Days','2747':'Hours','2748':'Minutes','2749':'Set Alias','2750':'Release','2751':'Delete',
@@ -1269,10 +1283,13 @@ class App extends Component {
         /* configure nitro page */
         '3040':'boot','3041':'restore','3042':'backup','3043':'new-E5','3044':'delete-E5','3045':'iteration','3046':'content-gateway','3047':'provider','3048':'boot-storage','3049':'reconfigure-storage','3050':'back-ups','3051':'Boot the node to begin the syncronization process.','3052':'App Key...','3053':'Backup key (Optional)...','3054':'Boot Node','3054a':'','3054b':'','3054c':'','3054d':'','3054e':'','3054f':'','3054g':'','3054h':'','3054i':'An app key is required to boot the node.','3054j':'Attempting to boot the node...','3054k':'Something went wrong with the request.','3054l':'Restore the node to a previous back up.','3054m':'File Name...','3054n':'Backup file encryption key (optional)...','3054o':'This should be the previous key used to encrypt the backup files (if the node was rebooted). If unset, the backup key you set above will be used. And if that is unset, the encrypted backup key provided while posting the node will be used.','3054p':'replace-key','3054q':'Replace backup key','3054r':'If set to replace-key, the backup key will be updated to the key you provide above.','3054s':'Restore Node','3054t':'You need to specify a file name first.',
         '3054u':'Attempting to restore the node...','3054v':'Manually back up the node at this time remotely.','3054w':'Back up node','3054x':'Attempting to back up the node remotely...','3054y':'E5 Address...','3054z':'Web3 provider...','3054ba':'Starting Block Number...','3054bb':'Synchronizing Iteration...','3054bc':'Please select an E5.','3054bd':'That E5 address is not valid.','3054be':'That web3 provider is not valid.','3054bf':'Please set a starting block to start synching from.','3054bg':'Please set an iteration value for node\'s the sync process.','3054bh':'Attempting to boot the E5 in the node...','3054bi':'Delete an E5 and its events from the node.','3054bj':'Boot E5','3054bk':'Remove E5',
-        '3054bl':'Attempting to remove the E5 from the node...','3054bm':'Change the node\'s block syncronization iteration value.','3054bn':'Change Iteration','3054bo':'Attempting to change the synchronization iteration...','3054bp':'Change the gateway used to fetch data in ipfs.','3054bq':'Provider...','3054br':'Update Gateway','3054bs':'Current Provider','3054bt':'Unset','3054bu':'Update Provider.','3054bv':'That gateway provider is not valid.','3054bw':'Attempting to change the gateway provider...','3054bx':'Change the Web3 provider url.','3054by':'Update Provider','3054bz':'Attempting to change the web3 provider url...','3054ca':'Boot and enable storage capabilities in your node.','3054cb':'Max buyable Capapacity','3054cc':'Storage Price.','3054cd':'Set the price per megabyte of storage for your node in your preferred tokens.','3054ce':'Boot Stroage','3054cf':'You need to specify a maximum amount of storage that can be bought','3054cg':'You need to specify a price for your storage.','3054ch':'You need to specify a recipient for the storage purchases.','3054ci':'Attempting to enable storage with your specified configuration...','3054cj':'Max-Buyable-Capacity','3054ck':'Price','3054cl':'Recipient','3054cm':'Change the current setting for the storage service in the node.','3054cn':'Update Capacity','3054co':'Attempting to update your storage configuration...','3054cp':'Update Prices','3054cq':'Update Recipient','3054cr':'enabled','3054cs':'Free Basic Storage','3054ct':'If set to enabled, users will be able to store post metadata in your node for free.','3054cu':'free-storage','3054cv':'update selection','3054cw':'Post added to your blocked list.','3054cx':'Post unblocked.','3054cy':'','3054cz':'','3054da':'','3054db':'','3054dc':'','3054dd':'','3054de':'','3054df':'','3054dg':'','3054dh':'','3054di':'','3054dj':'','3054dk':'','3054dl':'','3054dm':'','3054dn':'',
+        '3054bl':'Attempting to remove the E5 from the node...','3054bm':'Change the node\'s block syncronization iteration value.','3054bn':'Change Iteration','3054bo':'Attempting to change the synchronization iteration...','3054bp':'Change the gateway used to fetch data in ipfs.','3054bq':'Provider...','3054br':'Update Gateway','3054bs':'Current Provider','3054bt':'Unset','3054bu':'Update Provider.','3054bv':'That gateway provider is not valid.','3054bw':'Attempting to change the gateway provider...','3054bx':'Change the Web3 provider url.','3054by':'Update Provider','3054bz':'Attempting to change the web3 provider url...','3054ca':'Boot and enable storage capabilities in your node.','3054cb':'Max buyable Capapacity','3054cc':'Storage Price.','3054cd':'Set the price per megabyte of storage for your node in your preferred tokens.','3054ce':'Boot Stroage','3054cf':'You need to specify a maximum amount of storage that can be bought','3054cg':'You need to specify a price for your storage.','3054ch':'You need to specify a recipient for the storage purchases.','3054ci':'Attempting to enable storage with your specified configuration...','3054cj':'Max-Buyable-Capacity','3054ck':'Price','3054cl':'Recipient','3054cm':'Change the current setting for the storage service in the node.','3054cn':'Update Capacity','3054co':'Attempting to update your storage configuration...','3054cp':'Update Prices','3054cq':'Update Recipient','3054cr':'enabled','3054cs':'Free Basic Storage','3054ct':'If set to enabled, users will be able to store post metadata in your node for free.','3054cu':'free-storage','3054cv':'update selection','3054cw':'Post added to your blocked list.','3054cx':'Post unblocked.','3054cy':'dialer','3054cz':'Configure or disable the nodes dialer functionality.','3054da':'optional','3054db':'Optional Subscription?','3054dc':'Dialer Enabled?','3054dd':'If set to enabled, your node will handle dials from accounts over the internet.','3054de':'If set to optional, the subscription set will be ignored and calls will be handled by the node for free.','3054df':'Subscription Id...','3054dg':'Configure Dialer','3054dh':'You havent set a subscription to use.','3054di':'Attempting to update your dialer configuration...','3054dj':'dialer node endpoint...','3054dk':'That enpoint is not valid.','3054dl':'','3054dm':'','3054dn':'',
+        
+        /* dialer */
+        '3055':'Call Recipient.','3055a':'Your recipient\'s socket id.','3055b':'Call status','3055c':'N/A','3055d':'Connecting...','3055e':'hold','3055f':'resume call','3055g':'end call','3055h':'Your socket id.','3055i':'receive call','3055j':'Incoming call from ','3055k':'Caller','3055l':'Caller\'s socket id.','3055m':'Active','3055n':'e needs access to your microphone to receive that call.','3055o':'Call active.','3055p':'Call ended by ','3055q':'Call ended.','3055r':'','3055s':'','3055t':'','3055u':'','3055v':'','3055w':'','3055x':'','3055y':'','3055z':'','3055ba':'','3055bb':'',
         
         
-        '3055':'','3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -2419,12 +2436,15 @@ class App extends Component {
     this.new_nitro_page = React.createRef();
     this.edit_nitropost_page = React.createRef();
     this.configure_nitro_node_page = React.createRef();
+    this.remoteStream = React.createRef();
+    this.dialer_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
     this.posts_to_load = []
     this.has_my_followed_accounts_loaded = {}
     this.has_posts_blocked_by_me_loaded = {}
+    this.has_censored_keywords_by_me_loaded = {}
   }
 
   componentDidMount() {
@@ -2618,6 +2638,9 @@ class App extends Component {
       should_update_followed_accounts: this.state.should_update_followed_accounts,
       posts_blocked_by_me: this.state.posts_blocked_by_me, 
       should_update_posts_blocked_by_me: this.state.should_update_posts_blocked_by_me,
+
+      censored_keyword_phrases: this.state.censored_keyword_phrases, 
+      should_update_censored_keyword_phrases: this.state.should_update_censored_keyword_phrases
     }
   }
 
@@ -2726,6 +2749,8 @@ class App extends Component {
       var cupcake_should_update_followed_accounts = cupcake_state.should_update_followed_accounts
       var cupcake_posts_blocked_by_me = cupcake_state.posts_blocked_by_me
       var cupcake_should_update_posts_blocked_by_me = cupcake_state.should_update_posts_blocked_by_me
+      var cupcake_censored_keyword_phrases =  cupcake_state.censored_keyword_phrases 
+      var cupcake_should_update_censored_keyword_phrases = cupcake_state.should_update_censored_keyword_phrases
 
       
       if(cupcake_theme != null){
@@ -2946,6 +2971,14 @@ class App extends Component {
 
       if(cupcake_should_update_posts_blocked_by_me != null){
         this.setState({should_update_posts_blocked_by_me: cupcake_should_update_posts_blocked_by_me})
+      }
+
+      if(cupcake_censored_keyword_phrases != null){
+        this.setState({censored_keyword_phrases: cupcake_censored_keyword_phrases})
+      }
+
+      if(cupcake_should_update_censored_keyword_phrases != null){
+        this.setState({should_update_censored_keyword_phrases: cupcake_should_update_censored_keyword_phrases})
       }
 
     }
@@ -3905,7 +3938,7 @@ class App extends Component {
         
         'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
-        'background':background, 'JobIcon':JobIcon, 'ExploreIcon': ExploreIcon, 'WalletIcon':WalletIcon, 'StackIcon': StackIcon, 
+        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':JobIcon, 'ExploreIcon': ExploreIcon, 'WalletIcon':WalletIcon, 'StackIcon': StackIcon, 
 
         'close':close,
         'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu',
@@ -3940,7 +3973,7 @@ class App extends Component {
         
         'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
 
-        'background':background, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
+        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
         
         'close':close_dark,
         'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
@@ -3976,7 +4009,7 @@ class App extends Component {
         'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
-        'background':background, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
+        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
 
         'close':close_dark,
         'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
@@ -4050,6 +4083,13 @@ class App extends Component {
   reset_theme(){
     this.setState({theme: this.get_theme_data(this.state.theme['name'])})
   }
+
+
+
+
+
+
+
 
 
   render(){
@@ -4136,6 +4176,7 @@ class App extends Component {
           {this.render_edit_nitropost_object_bottomsheet()}
           {this.render_buy_nitro_storage_bottomsheet()}
           {this.render_configure_nitro_node_bottomsheet()}
+          {this.render_dialer_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -4146,6 +4187,7 @@ class App extends Component {
           {this.render_full_video_bottomsheet()}
           
           {this.render_toast_container()}
+          <audio ref={this.remoteStream} autoPlay />
         </div>
       );
     }
@@ -4624,6 +4666,7 @@ class App extends Component {
       </SwipeableBottomSheet>
     )
   }
+
   open_send_receive_ether_bottomsheet(){
     if(this.state.send_receive_bottomsheet == true){
       //closing
@@ -5604,7 +5647,7 @@ class App extends Component {
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
-      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)}
+      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)}
       />
     )
   }
@@ -6024,6 +6067,26 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  censor_keyword(word_phrase){
+    var clone = this.state.censored_keyword_phrases.slice()
+    clone.push(word_phrase)
+    this.setState({censored_keyword_phrases: clone, should_update_censored_keyword_phrases: true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  uncensor_keyword(word_phrase, index){
+    var clone = this.state.censored_keyword_phrases.slice()
+    clone.splice(index, 1);
+    this.setState({censored_keyword_phrases: clone, should_update_censored_keyword_phrases: true})
+    this.prompt_top_notification(this.getLocale()['1593dx']/* 'Keyword or phrase removed from your censored list.' */, 2300)
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
 
 
 
@@ -6124,13 +6187,14 @@ class App extends Component {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           var clone = structuredClone(me.state.is_running)
           clone[e5] = false
-          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false, should_update_playlists_in_E5:false, should_update_followed_accounts:false, should_update_posts_blocked_by_me: false})
+          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false, should_update_playlists_in_E5:false, should_update_followed_accounts:false, should_update_posts_blocked_by_me: false, should_update_censored_keyword_phrases:false})
           me.delete_stack_items(delete_pos_array)
           me.reset_gas_calculation_figure(me)
           me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
 
           me.has_my_followed_accounts_loaded[e5] = null
           me.has_posts_blocked_by_me_loaded[e5] = null
+          me.has_censored_keywords_by_me_loaded[e5] = null
           setTimeout(function() {
             me.start_get_accounts_for_specific_e5(false, e5, false)
           }, (1 * 500));
@@ -13257,7 +13321,7 @@ class App extends Component {
         <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
           'overflow-y':'auto'}}>
             <ConfigureNitroNodePage ref={this.configure_nitro_node_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} boot_nitro_node={this.boot_nitro_node.bind(this)} restore_nitro_node={this.restore_nitro_node.bind(this)} isValidE5Address={this.isValidE5Address.bind(this)} boot_new_e5={this.boot_new_e5.bind(this)} delete_e5_from_node={this.delete_e5_from_node.bind(this)} change_iteration_in_node={this.change_iteration_in_node.bind(this)} change_gateway={this.change_gateway.bind(this)} update_web3_provider_in_node={this.update_web3_provider_in_node.bind(this)} boot_storage={this.boot_storage.bind(this)} update_storage_config={this.update_storage_config.bind(this)} back_up_node={this.back_up_node.bind(this)}
-            decrypt_storage_data_using_key={this.decrypt_storage_data_using_key.bind(this)}
+            decrypt_storage_data_using_key={this.decrypt_storage_data_using_key.bind(this)} update_dialer_provider_in_node={this.update_dialer_provider_in_node.bind(this)}
             />
         </div>
       </div>
@@ -13686,9 +13750,44 @@ class App extends Component {
     }
   }
 
+  update_dialer_provider_in_node = async (entered_backup_key_text, e5, subscription, dialer_payment_optional, nitro_object, dialer_endpoint) => {
+    this.prompt_top_notification(this.getLocale()['3054di']/* Attempting to update your dialer configuration... */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
 
+    var arg_obj = {
+      backup_key: final_backup_key,
+      target_subscription: subscription,
+      target_subscriptions_e5: e5,
+      subscription_payment_optional: dialer_payment_optional,
+      dialer_endpoint:dialer_endpoint
+    }
 
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
 
+    var request = `${node_url}/configure_dialer`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
 
 
 
@@ -13877,18 +13976,18 @@ class App extends Component {
   }
 
   get_cid_split2(ecid){
-      var split_cid_array = ecid.split('_');
-      var filetype = split_cid_array[0]
-      var cid_with_storage = split_cid_array[1]
-      var cid = cid_with_storage
-      var storage = 'ch'
-      if(cid_with_storage.includes('.')){
-          var split_cid_array2 = cid_with_storage.split('.')
-          cid = split_cid_array2[0]
-          storage = split_cid_array2[1]
-      }
+    var split_cid_array = ecid.split('_');
+    var filetype = split_cid_array[0]
+    var cid_with_storage = split_cid_array[1]
+    var cid = cid_with_storage
+    var storage = 'ch'
+    if(cid_with_storage.includes('.')){
+        var split_cid_array2 = cid_with_storage.split('.')
+        cid = split_cid_array2[0]
+        storage = split_cid_array2[1]
+    }
 
-      return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
   }
 
   download_image = async (img,  name) => {
@@ -14772,6 +14871,92 @@ class App extends Component {
 
 
 
+  render_dialer_bottomsheet(){
+    // if(this.state.dialer_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.dialer_bottomsheet} onClose={this.open_dialer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                        {this.render_dialer_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_dialer_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialer_bottomsheet.bind(this)} open={this.state.dialer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_dialer_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_dialer_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <DialerPage ref={this.dialer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} 
+        
+        />
+      </div>
+    )
+  }
+
+  open_dialer_bottomsheet(){
+    if(this.state.dialer_bottomsheet == true){
+      //closing
+      this.dialer_bottomsheet = this.dialer_page.current?.state;
+
+      this.setState({dialer_bottomsheet: !this.state.dialer_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({dialer_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({dialer_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({dialer_bottomsheet: !me.state.dialer_bottomsheet});
+
+          if(me.dialer_bottomsheet != null){
+            me.dialer_page.current?.setState(me.dialer_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_dialer_bottomsheet(data){
+    this.open_dialer_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.dialer_page.current != null){
+        me.dialer_page.current.set_data(data)
+      }
+    }, (1 * 500));
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -14834,12 +15019,12 @@ class App extends Component {
       width = 330
     }
     return (
-          <div>
+          <div style={{'display': 'flex', 'align-items':'center','justify-content':'center',}}>
               <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40}}>
-                  <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
+                  <div style={{'padding': '6px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
                       <img src={this.state.theme['alert_icon']} style={{height:25,width:'auto','scale': '0.9'}} />
                   </div>
-                  <div style={{'padding': '0px 0px 0px 8px', 'margin':'5px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
+                  <div style={{'padding': '0px 0px 0px 8px', 'margin':'1px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
                       <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1', 'margin':'0px', 'font-family': this.state.font}}>{message}</p>
                   </div>
               </div>
@@ -16425,7 +16610,7 @@ class App extends Component {
       var obj = JSON.parse(data);
       if(obj.success == true){
         console.log('beacon node online!')
-        this.setState({beacon_node_enabled: true})
+        this.setState({beacon_node_enabled: true, beacon_data: obj})
       }
     }
     catch(e){
@@ -17082,7 +17267,10 @@ class App extends Component {
 
 
     /* ---------------------------------------- BALANCE DATA -------------------------------------- */
-    await this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, [], account)
+    const F5contractArtifact = require('./contract_abis/F5.json');
+    const F5_address = contract_addresses[2];
+    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+    await this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, [], account, F5contractInstance)
     if(is_syncing){
       this.inc_synch_progress()
     }
@@ -17159,6 +17347,15 @@ class App extends Component {
     //   this.inc_synch_progress()
     // }
 
+
+
+
+
+    /* ---------------------------------------- MY CENSORED KEYWORDS DATA ------------------------------------------- */
+    this.load_my_censored_keywords(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
 
 
 
@@ -17245,9 +17442,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- SUBSCRIPTION DATA ------------------------------------------- */
-    const F5contractArtifact = require('./contract_abis/F5.json');
-    const F5_address = contract_addresses[2];
-    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+    
 
     // this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance)
     // if(is_syncing){
@@ -17353,7 +17548,6 @@ class App extends Component {
     // }
 
     this.load_run_data(contractInstance, E52contractInstance, e5, web3, H52contractInstance)
-
 
 
     // this.get_total_supply_of_ether(e5)
@@ -17535,6 +17729,7 @@ class App extends Component {
         });
 
         this.setState({job_section_tags: job_section_tags_clone, explore_section_tags: explore_section_tags_clone})
+        
       }
     }else{
       if(this.section_tags_data_user != account && this.section_tags_data_user != null && this.section_tags_data_user != 1){
@@ -17876,6 +18071,7 @@ class App extends Component {
 
     if(this.state.followed_accounts.length != 0){
       this.load_blocked_posts(web3, E52contractInstance, e5, account)
+      this.load_censored_keywords(web3, E52contractInstance, e5, account)
     }
   }
 
@@ -17900,6 +18096,8 @@ class App extends Component {
       }
       
     }
+
+    
   }
 
   load_blocked_posts = async (web3, E52contractInstance, e5, account) => {
@@ -17952,6 +18150,66 @@ class App extends Component {
     }
     return accepted_ids
   }
+
+  load_my_censored_keywords = async (web3, E52contractInstance, e5, account) => {
+    var my_censored_keywords_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10})
+
+    if(my_censored_keywords_event_data.length > 0){
+      var latest_event = my_censored_keywords_event_data[my_censored_keywords_event_data.length - 1];
+      var censored_keywords_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var censored_keywords_by_me = censored_keywords_data['censored_keywords']
+
+      var clone = this.state.censored_keyword_phrases.slice()
+      for(var i=0; i<censored_keywords_by_me.length; i++){
+        var post = censored_keywords_by_me[i]
+        if(!clone.includes(post)){
+          clone.push(post)
+        }
+      }
+      if(this.has_censored_keywords_by_me_loaded[e5] != account){
+        this.setState({censored_keyword_phrases: clone})
+        this.has_censored_keywords_by_me_loaded[e5] = account
+      }
+    }
+  }
+
+  load_censored_keywords = async (web3, E52contractInstance, e5, account) => {
+    var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
+    var followed_accounts_censored_keywords_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: accounts_to_load, p3/* context */:10})
+
+    var accounts_obj = {}
+    followed_accounts_censored_keywords_events_data.forEach(event => {
+      accounts_obj[event.returnValues.p2/* sender_acc_id */] = event;
+    });
+
+    followed_accounts_censored_keywords_events_data = []
+    for (const account in accounts_obj) {
+      if (accounts_obj.hasOwnProperty(account)) {
+        followed_accounts_censored_keywords_events_data.push(accounts_obj[account])
+      }
+    }
+
+    if(followed_accounts_censored_keywords_events_data.length != 0){
+      if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+        await this.fetch_multiple_cids_from_nitro(followed_accounts_censored_keywords_events_data, 0, 'p4')
+      }
+
+      var clone = this.state.censored_keywords_by_my_following.slice()
+      for(var i=0; i<followed_accounts_censored_keywords_events_data.length; i++){
+        var latest_event = followed_accounts_censored_keywords_events_data[i]
+        var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+        var censored_keywords = followed_account_data['censored_keywords']
+        censored_keywords.forEach(keyword => {
+          if(!clone.includes(keyword)){
+            clone.push(keyword)
+          }
+        });
+      }
+      this.setState({censored_keywords_by_my_following: clone})
+    }
+  }
+
+
 
 
 
@@ -19680,7 +19938,7 @@ class App extends Component {
     var created_posts = []
     var is_first_time = this.state.created_posts[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(created_post_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events), web3, e5, contract_addresses)
     console.log('all_data', all_data)
 
     for(var i=0; i<created_post_events.length; i++){
@@ -19734,7 +19992,7 @@ class App extends Component {
     var created_channel = []
     var is_first_time = this.state.created_channels[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(created_channel_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_channel_events.length; i++){
       var id = created_channel_events[i].returnValues.p2
@@ -19823,7 +20081,7 @@ class App extends Component {
     var my_job_ids = []
     var is_first_time = this.state.created_jobs[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(created_job_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_job_events.length; i++){
       var id = created_job_events[i].returnValues.p2
@@ -20076,7 +20334,7 @@ class App extends Component {
     var my_stores = []
     var is_first_time = this.state.created_stores[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(created_store_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_store_events.length; i++){
       var id = created_store_events[i].returnValues.p2
@@ -20160,7 +20418,7 @@ class App extends Component {
     var my_created_bag_ids = []
     var is_first_time = this.state.created_bags[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(created_bag_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_bag_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
@@ -20307,7 +20565,7 @@ class App extends Component {
     var my_contractor_posts = []
     var is_first_time = this.state.created_contractors[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(created_contractor_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_contractor_events.length; i++){
       var id = created_contractor_events[i].returnValues.p2
@@ -20382,7 +20640,7 @@ class App extends Component {
     var is_first_time = this.state.created_audios[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(created_audio_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
@@ -20467,7 +20725,7 @@ class App extends Component {
     var is_first_time = this.state.created_videos[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(created_video_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_video_events.length; i++){
       var id = created_video_events[i].returnValues.p2
@@ -20527,10 +20785,27 @@ class App extends Component {
     
   }
 
-  get_nitro_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, account) => {
-    var created_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */})
+  get_nitro_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, account,F5contractInstance) => {
+    var created_nitro_events = null
+    var bought_nitro_events = null
+    var paid_subscription_events = null
 
-    var bought_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:23, p2/* sender_acc_id */:account})
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */}],
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:23, p2/* sender_acc_id */:account}],
+        [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      created_nitro_events = all_events[0]
+      bought_nitro_events = all_events[1]
+      paid_subscription_events = all_events[2]
+    }
+    else{
+      created_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */})
+      bought_nitro_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:23, p2/* sender_acc_id */:account})
+      paid_subscription_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account})
+    }
 
     console.log('bought_nitros', bought_nitro_events, 'account', account, 'e5', e5)
 
@@ -20562,6 +20837,30 @@ class App extends Component {
       }
     });
 
+    var subscriptions_interacted_with = []
+    var account_as_list = []
+    paid_subscription_events.forEach(event => {
+      var subscription = event.returnValues.p1
+      if(!subscriptions_interacted_with.includes(subscription)){
+        subscriptions_interacted_with.push(subscription)
+        account_as_list.push([account])
+      }
+    });
+
+    var my_payments_for_all_subscriptions = subscriptions_interacted_with.length == 0 ? [] : await F5contractInstance.methods.f229(subscriptions_interacted_with, account_as_list).call((error, result) => {});
+
+    var subscription_payment_obj = {}
+    for(var s=0; s<subscriptions_interacted_with.length; s++){
+      var sub = subscriptions_interacted_with[s]
+      var my_payment = my_payments_for_all_subscriptions[s][0]
+      subscription_payment_obj[parseInt(sub)] = my_payment
+    }
+
+    var my_subscription_payment_mappings = structuredClone(this.state.my_subscription_payment_mappings)
+    my_subscription_payment_mappings[e5] = subscription_payment_obj
+    this.setState({my_subscription_payment_mappings: my_subscription_payment_mappings})
+
+
     
     this.record_number_of_items(e5, 'nitro', created_nitro_events.length)
     var created_nitros = this.state.created_nitros[e5] == null ? [] : this.state.created_nitros[e5].slice()
@@ -20570,7 +20869,7 @@ class App extends Component {
     var is_first_time = this.state.created_nitros[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(created_nitro_events, web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events), web3, e5, contract_addresses)
 
     for(var i=0; i<created_nitro_events.length; i++){
       var id = created_nitro_events[i].returnValues.p2
@@ -20587,8 +20886,8 @@ class App extends Component {
           'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5, 'bought':is_bought,
           }
 
-          if(this.state.my_preferred_nitro == (id+e5)){
-            this.load_nitro_node_details(data)
+          if(this.state.my_preferred_nitro == (id+e5) || true){
+            this.load_nitro_node_details(data, false)
             this.load_my_account_storage_info(data)
           }
 
@@ -20714,6 +21013,8 @@ class App extends Component {
       var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':event_id, 'filter':filter}
       event_requests.push(event_request)
     }
+
+    console.log('all_data', event_requests)
     
     const params = new URLSearchParams({
       arg_string:JSON.stringify({requests: event_requests}),
@@ -20726,17 +21027,26 @@ class App extends Component {
     try{
       const response = await fetch(request);
       if (!response.ok) {
-        console.log(response)
+        console.log('all_data', response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
       var obj = JSON.parse(data);
+      console.log('all_data', obj)
       return obj['data']
     }
     catch(e){
-      console.log(e)
       return []
     }
+  }
+
+  get_ids_from_events(events){
+    var ids = []
+    events.forEach(event => {
+      var id = event.returnValues.p2
+      ids.push(id)
+    });
+    return ids
   }
 
 
@@ -21150,10 +21460,6 @@ class App extends Component {
     const contractAddress = e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = contract_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-
     const F5contractArtifact = require('./contract_abis/F5.json');
     const F5_address = contract_addresses[2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
@@ -21459,7 +21765,11 @@ class App extends Component {
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load, account)
+        const F5contractArtifact = require('./contract_abis/F5.json');
+        const F5_address = contract_addresses[2];
+        const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+
+        this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, posts_to_load, account, F5contractInstance)
       }
     }
   }
@@ -21636,6 +21946,8 @@ class App extends Component {
     if(this.state.beacon_node_enabled == false){
       console.log('all_data', 'beacon node offline')
       return {}
+    }else{
+      console.log('all_data', 'beacon node online, loading: ', ids)
     }
     var event_params = []
     for(var i=0; i<ids.length; i++){
@@ -21696,7 +22008,7 @@ class App extends Component {
       var object_data = obj['data']
       console.log('all_data', 'object_data', object_data)
       for(var i=0; i<hashes.length; i++){
-        var cid_data = JSON.parse(object_data[hashes[i]])
+        var cid_data = object_data[hashes[i]]
         if(cid_data != null){
           this.store_in_local_storage(hashes[i], cid_data)
         }
@@ -21711,9 +22023,9 @@ class App extends Component {
       var valid_id = valid_ids[i]
       var valid_id_cid = obj_id_ecid[valid_id]['id']
       var valid_id_internal_id = obj_id_ecid[valid_id]['internal_id']
-      var data = this.fetch_from_storage(valid_id_cid)
-      if(data != null){
-        var final_data = data
+      var valid_id_data = this.fetch_from_storage(valid_id_cid)
+      if(valid_id_data != null){
+        var final_data = valid_id_data
         if(valid_id_internal_id != ''){
           final_data = data[valid_id_internal_id]
         }
@@ -21721,6 +22033,7 @@ class App extends Component {
       }
     }
 
+    console.log('all_data', 'return', data)
     return data
   }
 
@@ -21857,7 +22170,7 @@ class App extends Component {
       return '';
     }
     var data = _data
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details)
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
     if(block_hash_and_signature == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return '';
@@ -21908,7 +22221,6 @@ class App extends Component {
     var nitro_cid = split_cid_array[1]
 
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
-    // console.log('datas', nitro_url)
     if(nitro_url == null) return
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes:[nitro_cid]}),
@@ -22458,7 +22770,7 @@ class App extends Component {
   }
 
   upload_multiple_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details) =>{
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details)
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
     if(block_hash_and_signature == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return;
@@ -22500,9 +22812,8 @@ class App extends Component {
     }
   }
 
-  get_block_hash_and_signature = async (node_details) => {
+  get_block_hash_and_signature = async (e5) => {
     try{
-      const e5 = node_details['target_account_e5']
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
       var current_block_number = parseInt(await web3.eth.getBlockNumber())
       var round_down_value = await this.get_round_down_value(web3, current_block_number)
@@ -22539,7 +22850,7 @@ class App extends Component {
   }
 
   upload_file_objects_to_nitro = async (file_objects, nitro_object, node_details) => {
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details)
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
     if(block_hash_and_signature == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return;
@@ -23900,15 +24211,26 @@ class App extends Component {
     var contract_addresses = this.state.addresses[e5]
     if(contract_addresses != null){
       var is_first_time = this.state.account_post_history[account_id] == null ? true: false
+
+      var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events2(events), web3, e5, contract_addresses)
+
       for(var i=0; i<events.length; i++){
         var event = events[i]
-        var object_type = event.returnValues.p2/* object_type */
         var id = event.returnValues.p1 /* object_id */
-        var block = event.returnValues.p5/* blocknumber */
+        var object_type = event.returnValues.p2/* object_type */
+        var author = event.returnValues.p3/* sender_account_id */
         var timestamp = event.returnValues.p4/* timestamp */
-        var ipfs = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        var block = event.returnValues.p5/* blocknumber */
+        var ipfs = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id];
+        if(object_type == 31){
+          if(ipfs != null && ipfs.token_image != null && ipfs.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([ipfs.token_image], false)
+        }
+        else if(object_type == 19 || object_type == 20 || object_type == 21){
+          if(ipfs != null && ipfs.album_art != null && ipfs.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([ipfs.album_art], false)
+        }
+
         if(ipfs != null){
-          data.push({'e5':e5, 'id':id, 'type':object_type, 'ipfs':ipfs, 'block':block, 'timestamp':timestamp})
+          data.push({'e5':e5, 'author':author, 'id':id, 'type':object_type, 'ipfs':ipfs, 'block':block, 'timestamp':timestamp})
         }
         if(is_first_time){
           var clone = JSON.parse(JSON.stringify(this.state.account_post_history))
@@ -23920,6 +24242,15 @@ class App extends Component {
     var clone = JSON.parse(JSON.stringify(this.state.account_post_history))
     clone[account_id] = data
     this.setState({account_post_history: clone})
+  }
+
+  get_ids_from_events2(events){
+    var ids = []
+    events.forEach(event => {
+      var id = event.returnValues.p1
+      ids.push(id)
+    });
+    return ids
   }
 
 
@@ -24204,7 +24535,7 @@ class App extends Component {
 
 
 
-  load_nitro_node_details = async (object) =>{
+  load_nitro_node_details = async (object, should_load_subscription_if_any) =>{
     var link = object['ipfs'] == null ? null : object['ipfs'].node_url
     var request = `${link}/marco`
     try{
@@ -24233,7 +24564,7 @@ class App extends Component {
     }
   }
 
-  load_my_account_storage_info = async (object) =>{
+  load_my_account_storage_info = async (object) => {
     var account = this.state.user_account_id[object['e5']]
     if(account != null && account != 1){
       var link = object['ipfs'] == null ? null : object['ipfs'].node_url
@@ -24274,6 +24605,7 @@ class App extends Component {
 
   fetch_multiple_cids_from_nitro = async (events, depth, p) => {
     var hashes = this.get_cid_from_data_from_events(events, p)
+    if(hashes.length == 0) return;
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes: hashes}),
     });
@@ -24290,13 +24622,17 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = JSON.parse(data);
+      // console.log('appdataa',obj)
       var object_data = obj['data']
+      var count = 0
       for(var i=0; i<hashes.length; i++){
-        var cid_data = JSON.parse(object_data[hashes[i]])
+        var cid_data = object_data[hashes[i]]
         if(cid_data != null){
+          count++
           this.store_in_local_storage(hashes[i], cid_data)
         }
       }
+      // this.prompt_top_notification('loaded '+count+' hashes', 3000)
     }
     catch(e){
       if(depth < 3){

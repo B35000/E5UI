@@ -665,9 +665,9 @@ class home_page extends Component {
         var m = '0px -11px 0px 0px';
         m = '0px 0px 0px 0px'
         return(
-            <SwipeableBottomSheet fullScreen={true}  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':m, 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-                <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
-                    {this.render_post_detail_object(size, this.props.height, this.props.width)}
+            <SwipeableBottomSheet /* fullScreen={true} */  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':m, 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
+                <div style={{ height: this.props.height-40, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
+                    {this.render_post_detail_object(size, this.props.height-40, this.props.width)}
                 </div>
             </SwipeableBottomSheet>
         )
@@ -2235,6 +2235,10 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
 
+        if(all == 'discography'){
+            return this.get_all_sorted_objects(this.props.app_state.created_audios)
+        }
+
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264k']/* 'audioport' */ || all != null){
             return (this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios))))))).concat(this.props.app_state.my_playlists)
         }
@@ -2292,6 +2296,10 @@ class home_page extends Component {
     get_video_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+
+        if(all == 'discography'){
+            return this.get_all_sorted_objects(this.props.app_state.created_videos)
+        }
         
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264p']/* 'videoport' */ || all != null){
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_videos))))))
@@ -3148,6 +3156,8 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
     }
 
     when_playlist_selected(song, index){
@@ -3191,6 +3201,8 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
     }
 
     when_nitro_item_clicked(index, id, e5, object){
@@ -3208,7 +3220,7 @@ class home_page extends Component {
 
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
-        this.props.load_nitro_node_details(object)
+        this.props.load_nitro_node_details(object, true)
         this.props.load_my_account_storage_info(object)
 
         if(this.props.screensize == 's'){
@@ -3374,6 +3386,8 @@ class home_page extends Component {
                 update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.props.download_playlist.bind(this)}
 
                 when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)} play_video={this.props.play_video.bind(this)} show_buy_nitro_storage_bottomsheet={this.props.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.props.show_configure_nitro_node_bottomsheet.bind(this)} load_nitro_node_details={this.props.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.props.load_my_account_storage_info.bind(this)} block_post={this.props.block_post.bind(this)}
+
+                when_discography_audio_item_clicked={this.when_discography_audio_item_clicked.bind(this)} when_discography_video_item_clicked={this.when_discography_video_item_clicked.bind(this)}
                 />
             </div>
         )
@@ -3542,6 +3556,50 @@ class home_page extends Component {
 
     open_view_posted_royalty_staging(staging_data, token_item){
         this.props.show_view_staged_royalties_bottomsheet(staging_data, token_item)
+    }
+
+    when_discography_audio_item_clicked(object){
+        var id = object['id']
+        var e5 = object['e5']
+        this.setState({selected_audio_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
+        var viewed_audios_clone = this.state.viewed_audios.slice()
+        var pos = viewed_audios_clone.indexOf(id)
+        if(pos == -1){
+            viewed_audios_clone.push(id)
+            this.setState({viewed_audios: viewed_audios_clone})
+            this.update_cookies()
+        }
+
+        this.props.fetch_uploaded_files_for_object(object)
+        this.props.get_objects_messages(id, e5)
+        this.props.get_post_award_data(id, e5)
+
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
+    }
+
+    when_discography_video_item_clicked(object){
+        var id = object['id']
+        var e5 = object['e5']
+
+        this.setState({selected_video_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
+
+        var viewed_videos_clone = this.state.viewed_videos.slice()
+        var pos = viewed_videos_clone.indexOf(id)
+        if(pos == -1){
+            viewed_videos_clone.push(id)
+            this.setState({viewed_videos: viewed_videos_clone})
+            this.update_cookies()
+        }
+
+        this.props.fetch_uploaded_files_for_object(object)
+        this.props.get_objects_messages(id, e5)
+        this.props.get_post_award_data(id, e5)
+
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
     }
 
 
@@ -3847,6 +3905,13 @@ class home_page extends Component {
             }
         }
     }
+
+
+
+
+
+
+
 
 
 
@@ -4600,9 +4665,6 @@ class home_page extends Component {
                     <div style={{height: 5}}/>
                     {this.render_transaction_data()}
 
-
-                    
-
                 </div>
             </div>
         )
@@ -4912,6 +4974,9 @@ class home_page extends Component {
         var store_events = this.load_all_event_data('store').length
         var bag_events = this.load_all_event_data('bag').length
         var contractor_events = this.load_all_event_data('contractor').length
+        var audio_events = this.load_all_event_data('audio').length
+        var video_events = this.load_all_event_data('video').length
+        var nitro_events = this.load_all_event_data('nitro').length
 
         return(
             <div>
@@ -4944,6 +5009,14 @@ class home_page extends Component {
                         {this.render_detail_item('2', this.render_small_number(store_events, this.props.app_state.loc['2833']/* storefront-items */))}
                         {this.render_detail_item('2', this.render_small_number(bag_events, this.props.app_state.loc['2834']/* bags */))}
                         {this.render_detail_item('2', this.render_small_number(contractor_events, this.props.app_state.loc['2835']/* contractors */))}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1264w']/* Total Audioposts, Videoposts and Nitros created */}</p>
+                        {this.render_detail_item('2', this.render_small_number(audio_events, this.props.app_state.loc['1264x']/* audiopost-items */))}
+                        {this.render_detail_item('2', this.render_small_number(video_events, this.props.app_state.loc['1264y']/* videopost-items */))}
+                        {this.render_detail_item('2', this.render_small_number(nitro_events, this.props.app_state.loc['1264z']/* nitro-items */))}
                 </div>
                 <div style={{height: 10}}/>
 

@@ -507,6 +507,8 @@ class FullAudioPage extends Component {
                 {this.render_detail_item('3', {'title':metadata['format']['sampleRate'], 'details':this.props.app_state.loc['2987']/* Sample Rate */, 'size':'l'})}
                 <div style={{height:10}}/>
 
+                {this.render_detail_item('3', {'details':(song['credits'] == null ? '': song['credits']), 'title':this.props.app_state.loc['a311bz']/* Credits */, 'size':'l'})}
+
             </div>
         )
     }

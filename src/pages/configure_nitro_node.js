@@ -40,13 +40,11 @@ function start_and_end(str) {
 class ConfigureNitroNodePage extends Component {
     
     state = {
-        selected: 0, nitro_object:null, get_configure_nitro_node_title_tags_object:this.get_configure_nitro_node_title_tags_object(), should_restore_key_title_tags_object:this.should_restore_key_title_tags_object(), reconfigure_storage_title_tags_object:this.reconfigure_storage_title_tags_object(), basic_storage_enabled_tags_object:this.basic_storage_enabled_tags_object(false),
+        selected: 0, nitro_object:null, get_configure_nitro_node_title_tags_object:this.get_configure_nitro_node_title_tags_object(), should_restore_key_title_tags_object:this.should_restore_key_title_tags_object(), reconfigure_storage_title_tags_object:this.reconfigure_storage_title_tags_object(), basic_storage_enabled_tags_object:this.basic_storage_enabled_tags_object(false), dialer_optional_tags_object:this.dialer_optional_tags_object(false), dialer_enabled_tags_object:this.dialer_enabled_tags_object(false),
 
         entered_app_key_text:'',entered_backup_text:'', entered_filename_text:'', entered_backup_file_text:'', entered_address_text:'',
-
         entered_ipfs_provider_text:'', entered_web3_text:'', entered_start_block_text:'', entered_iteration_text:'', 
-        
-        max_buyable_capacity:0, exchange_id:'', price_amount:0, price_data:[], recipient_id:''
+        max_buyable_capacity:0, exchange_id:'', price_amount:0, price_data:[], recipient_id:'', entered_subscription_text:'', entered_dialer_enpoint_text:''
     };
 
 
@@ -85,6 +83,36 @@ class ConfigureNitroNodePage extends Component {
     }
 
     basic_storage_enabled_tags_object(enabled){
+        var selection = 0
+        if(enabled == true){
+            selection = 1
+        }
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['3054cr']/* 'enabled' */], [selection]
+            ],
+        };
+    }
+
+    dialer_optional_tags_object(enabled){
+        var selection = 0
+        if(enabled == true){
+            selection = 1
+        }
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['3054da']/* 'optional' */], [selection]
+            ],
+        };
+    }
+
+    dialer_enabled_tags_object(enabled){
         var selection = 0
         if(enabled == true){
             selection = 1
@@ -285,6 +313,8 @@ class ConfigureNitroNodePage extends Component {
 
                     {this.render_nitro_storage_details_if_set(node_details)}
 
+                    <div style={{height:10}}/>
+                    {this.render_nitro_dialer_details_if_set(node_details)}
                 </div>
             )
         }
@@ -476,6 +506,34 @@ class ConfigureNitroNodePage extends Component {
         }
 
         return all_objects
+    }
+
+    render_nitro_dialer_details_if_set(node_details){
+        if(node_details['dialer_config']['subscription'] == 0 && node_details['dialer_config']['e5'] == '' && node_details['dialer_config']['optional'] == false){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527bm']/* 'Nitro Dialer offline.' */})}
+                </div>
+            )
+        }
+        else if(node_details['dialer_config']['subscription'] == 0 && node_details['dialer_config']['e5'] == '' && node_details['dialer_config']['optional'] == true){
+           return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527bn']/* 'Nitro Dialer online.' */})}
+                </div>
+            ) 
+        }
+        else{
+            var img = this.props.app_state.e5s[node_details['dialer_config']['e5']] == null ? this.props.app_state.e5s['E25']: this.props.app_state.e5s[node_details['dialer_config']['e5']].e5_img
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527bn']/* 'Nitro Dialer online.' */})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':node_details['dialer_config']['subscription'], 'details':this.props.app_state.loc['c2527bo']/* 'Nitro dialer subscription.' */,'title_image':img, 'size':'l'})}
+                </div>
+            )
+        }
     }
 
 
@@ -1581,6 +1639,10 @@ class ConfigureNitroNodePage extends Component {
 
         this.props.update_storage_config(entered_backup_text, 'unlimited_basic_storage', selected_basic_storage_setting, selected_e5, this.state.nitro_object)
     }
+
+
+
+
 
 
 

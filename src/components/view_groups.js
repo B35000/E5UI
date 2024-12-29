@@ -471,7 +471,7 @@ class ViewGroups extends Component {
             var theme = this.props.theme['markdown_theme']
             var padding = '10px 15px 10px 15px'
             return(
-                <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius}}>
+                <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':'#F1F1F1'}}>
                     <Markdown>{source}</Markdown>
                 </div>
             )
