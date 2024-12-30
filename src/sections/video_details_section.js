@@ -6,6 +6,8 @@ import TextInput from './../components/text_input';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 var bigInt = require("big-integer");
 
@@ -68,6 +70,7 @@ class VideoDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[],
+        screen_width:0,
     };
 
     get_comment_structure_tags(){
@@ -87,13 +90,14 @@ class VideoDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['a2527d']/* 'media' */,this.props.app_state.loc['2514']/* awards */,this.props.app_state.loc['a2527a']/* 'comments' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['a2527d']/* 'media' */,this.props.app_state.loc['b2527k']/* videography */,this.props.app_state.loc['2514']/* awards */,this.props.app_state.loc['a2527a']/* 'comments' */,this.props.app_state.loc['a2527bh']/* 'similar' */],[1]
           ],
         }
     }
 
     componentDidMount() {
         this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
+        this.setState({screen_width: this.screen.current.offsetWidth})
     }
 
     componentWillUnmount() {
@@ -115,7 +119,7 @@ class VideoDetailsSection extends Component {
 
     render(){
         return(
-            <div>
+            <div ref={this.screen}>
                 {this.render_posts_list_detail()}
             </div>
         )
@@ -199,6 +203,20 @@ class VideoDetailsSection extends Component {
             return(
                 <div>
                     {this.render_videos(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['b2527k']/* videography */){
+            return(
+                <div>
+                    {this.render_videography(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a2527bh']/* 'similar' */){
+            return(
+                <div>
+                    {this.render_similar_videoposts_section(object)}
                 </div>
             )
         }
@@ -768,7 +786,7 @@ class VideoDetailsSection extends Component {
 
 
     render_discography(object){
-        var items = this.get_authors_discography(object)
+        var items = [].concat(this.get_authors_discography(object))
         if(items.length == 0) return;
         return(
             <div>
@@ -803,6 +821,7 @@ class VideoDetailsSection extends Component {
     }
 
     when_discography_item_clicked(index, object){
+        this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags()})
         this.props.when_discography_video_item_clicked(object)
     }
 
@@ -868,7 +887,7 @@ class VideoDetailsSection extends Component {
 
 
     render_similar_videoposts(object){
-        var items = this.get_similar_posts(object)
+        var items = [].concat(this.get_similar_posts(object))
         if(items.length == 0) return;
         return(
             <div>
@@ -936,6 +955,188 @@ class VideoDetailsSection extends Component {
 
         return selected_objects
     }
+
+
+
+
+
+
+
+
+
+
+    render_videography(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['b2527l']/* 'Discography.' */, 'details':this.props.app_state.loc['b2527m']/* 'All the available videoposts by the author are listed below. */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_author_videography_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_author_videography_items(object){
+        var items = [].concat(this.get_authors_discography(object))
+        var background_color = this.props.theme['card_background_color']
+        var col = Math.round(400 / 200)
+        var w = (this.state.screen_width / 2) - 10
+        var rowHeight = w+40;
+        if(items.length == 0){
+            var items = ['1','1']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={index}>
+                                <div style={{height:w, width:w, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:50 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.reverse().map((item, index) => (
+                            <ImageListItem key={index}>
+                                <div onClick={() => this.when_discography_item_clicked(index, item)}>
+                                    {this.render_my_bought_video_item(item, index, w)}
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+    render_my_bought_video_item(object, index, w){
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
+        var author = sender
+        return(
+            <div style={{width:w, height:'auto'}}>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
+                <div style={{height:5}}/>
+                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
+                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>
+            </div>
+        )
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+
+
+
+
+
+
+
+    render_similar_videoposts_section(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527bi']/* 'Similar Posts.' */, 'details':this.props.app_state.loc['b2527n']/* 'Posts similar to the Videopost. */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        {this.render_similar_videoposts_in_list(object)}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_similar_videoposts_in_list(object){
+        var middle = this.props.height-200;
+        var items = [].concat(this.get_similar_posts(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.reverse().map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={() => this.when_discography_item_clicked(index, item)}>
+                                    <div>
+                                        {this.render_similar_videopost_item_in_list(item)}
+                                        <div style={{height: 4}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_similar_videopost_item_in_list(object){
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var author = sender
+        if(this.is_post_anonymous(object)){
+            author = 'Anonymous'
+        }
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'})}
+            </div>
+        )
+    }
+
+
+
+
 
 
 
@@ -1151,6 +1352,7 @@ class VideoDetailsSection extends Component {
         super(props);
         this.messagesEnd = React.createRef();
         this.has_user_scrolled = {}
+        this.screen = React.createRef()
     }
 
     componentDidUpdate(){

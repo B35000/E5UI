@@ -9,6 +9,8 @@ import Linkify from "linkify-react";
 
 import Reorder, { reorder, reorderImmutable, reorderFromTo, reorderFromToImmutable } from 'react-reorder';
 import tags from './../components/tags';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 var bigInt = require("big-integer");
 
@@ -65,7 +67,8 @@ function toTree(data) {
 class AudioDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], get_navigate_playlist_details_tags_object_tags: this.get_navigate_playlist_details_tags_object_tags()
+        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], get_navigate_playlist_details_tags_object_tags: this.get_navigate_playlist_details_tags_object_tags(),
+        screen_width:0,
     };
 
     get_comment_structure_tags(){
@@ -81,6 +84,7 @@ class AudioDetailSection extends Component {
 
     componentDidMount(){
         this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
+        this.setState({screen_width: this.screen.current.offsetWidth})
     }
 
     componentWillUnmount() {
@@ -103,7 +107,7 @@ class AudioDetailSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['a2527d']/* 'media' */,this.props.app_state.loc['2514']/* awards */,this.props.app_state.loc['a2527a']/* 'comments' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['a2527d']/* 'media' */, this.props.app_state.loc['a2527bf']/* discography */,this.props.app_state.loc['2514']/* awards */,this.props.app_state.loc['a2527a']/* 'comments' */, this.props.app_state.loc['a2527bh']/* 'similar' */],[1]
           ],
         }
     }
@@ -126,7 +130,7 @@ class AudioDetailSection extends Component {
 
     render(){
         return(
-            <div>
+            <div ref={this.screen}>
                 {this.render_posts_list_detail()}
             </div>
         )
@@ -200,7 +204,6 @@ class AudioDetailSection extends Component {
 
     render_post_details_section(object){
         var selected_item = this.get_selected_item(this.state.navigate_view_post_list_detail_tags_object, this.state.navigate_view_post_list_detail_tags_object['i'].active)
-        // var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
         
         if(object == null){
             return(
@@ -235,6 +238,20 @@ class AudioDetailSection extends Component {
             return(
                 <div>
                     {this.render_audio_songs(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a2527bf']/* discography */){
+            return(
+                <div>
+                    {this.render_author_discography_section(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a2527bh']/* 'similar' */){
+            return(
+                <div>
+                    {this.render_similar_audioposts_section(object)}
                 </div>
             )
         }
@@ -1249,7 +1266,7 @@ class AudioDetailSection extends Component {
 
 
     render_discography(object){
-        var items = this.get_authors_discography(object)
+        var items = [].concat(this.get_authors_discography(object))
         if(items.length == 0) return;
         return(
             <div>
@@ -1286,6 +1303,7 @@ class AudioDetailSection extends Component {
     }
 
     when_discography_item_clicked(index, object){
+        this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags()})
         this.props.when_discography_audio_item_clicked(object)
     }
 
@@ -1341,7 +1359,7 @@ class AudioDetailSection extends Component {
 
 
     render_similar_audioposts(object){
-        var items = this.get_similar_posts(object)
+        var items = [].concat(this.get_similar_posts(object))
         if(items.length == 0) return;
         return(
             <div>
@@ -1408,6 +1426,176 @@ class AudioDetailSection extends Component {
 
 
         return selected_objects
+    }
+
+
+
+
+
+
+
+
+
+    render_author_discography_section(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527bb']/* 'Discography.' */, 'details':this.props.app_state.loc['a2527bg']/* 'All the available audioposts by the author are listed below. */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_author_discography_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_author_discography_items(object){
+        var items = [].concat(this.get_authors_discography(object))
+        var background_color = this.props.theme['card_background_color']
+        var col = Math.round(400 / 200)
+        var w = (this.state.screen_width / 2) - 10
+        var rowHeight = w+40;
+        if(items.length == 0){
+            var items = ['1','1']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={index}>
+                                <div style={{height:w, width:w, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:50 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.reverse().map((item, index) => (
+                            <ImageListItem key={index}>
+                                <div onClick={() => this.when_discography_item_clicked(index, item)}>
+                                    {this.render_my_bought_audio_item(item, index, w)}
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+    render_my_bought_audio_item(object, index, w){
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        return(
+            <div style={{width:w, height:'auto'}}>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
+                <div style={{height:5}}/>
+                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
+                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_similar_audioposts_section(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527bi']/* 'Similar Posts.' */, 'details':this.props.app_state.loc['a2527bj']/* 'Posts Similar to the Audiopost. */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        {this.render_similar_audioposts_in_list(object)}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_similar_audioposts_in_list(object){
+        var middle = this.props.height-200;
+        var items = [].concat(this.get_similar_posts(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.reverse().map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={() => this.when_discography_item_clicked(index, item)}>
+                                    <div>
+                                        {this.render_similar_audiopost_item_in_list(item)}
+                                        <div style={{height: 4}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_similar_audiopost_item_in_list(object){
+        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        if(this.is_post_anonymous(object)){
+            author = ''
+        }
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'})}
+            </div>
+        )
     }
 
     
@@ -1639,6 +1827,7 @@ class AudioDetailSection extends Component {
         super(props);
         this.messagesEnd = React.createRef();
         this.has_user_scrolled = {}
+        this.screen = React.createRef()
     }
 
     componentDidUpdate(){
