@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/E5UI/static/css/main.4ed95b94.css",
-    "main.js": "/E5UI/static/js/main.430be566.js",
+    "main.js": "/E5UI/static/js/main.7e878c96.js",
     "static/js/345.e4054ec5.chunk.js": "/E5UI/static/js/345.e4054ec5.chunk.js",
     "static/js/723.dc298572.chunk.js": "/E5UI/static/js/723.dc298572.chunk.js",
     "static/js/643.e94e321c.chunk.js": "/E5UI/static/js/643.e94e321c.chunk.js",
@@ -26,12 +26,14 @@
     "static/media/job_icon_light.png": "/E5UI/static/media/job_icon_light.e20d6d8792a0ac88b51d.png",
     "static/media/end_token_icon.png": "/E5UI/static/media/end_token_icon.3e84e49554dd5d90fee1.png",
     "static/media/close_icon.png": "/E5UI/static/media/close_icon.1706d5909da39c8b3e8c.png",
+    "static/media/end35.png": "/E5UI/static/media/end35.b389fd3daf3aae604c1f.png",
     "static/media/spend_token_icon.png": "/E5UI/static/media/spend_token_icon.7f1834773c362a8dc89a.png",
     "static/media/add_icon_dark.png": "/E5UI/static/media/add_icon_dark.1e58964d007fb799b757.png",
+    "static/media/End25.png": "/E5UI/static/media/End25.30e5370741c8151f4956.png",
     "static/media/stack_icon.png": "/E5UI/static/media/stack_icon.8644af3ec52504228584.png",
-    "static/media/end35.png": "/E5UI/static/media/end35.40589a46410f9b96914e.png",
     "static/media/E25.png": "/E5UI/static/media/E25.649ba0cf79b6d1ae957f.png",
     "static/media/e35_spend_token.png": "/E5UI/static/media/e35_spend_token.6c818476387f80588282.png",
+    "static/media/325.png": "/E5UI/static/media/325.76abcce6578392d7f178.png",
     "static/media/e35_end_token.png": "/E5UI/static/media/e35_end_token.696ab34502c7658bbdf7.png",
     "static/media/alert_icon_dark.png": "/E5UI/static/media/alert_icon_dark.2dc0b969242b8e58b2f3.png",
     "static/media/p2p_trust_image.png": "/E5UI/static/media/p2p_trust_image.df63ef54215983ad839c.png",
@@ -58,7 +60,7 @@
     "static/media/shuffle_icon_dark.png": "/E5UI/static/media/shuffle_icon_dark.960d3786befb8f51dc13.png",
     "index.html": "/E5UI/index.html",
     "main.4ed95b94.css.map": "/E5UI/static/css/main.4ed95b94.css.map",
-    "main.430be566.js.map": "/E5UI/static/js/main.430be566.js.map",
+    "main.7e878c96.js.map": "/E5UI/static/js/main.7e878c96.js.map",
     "345.e4054ec5.chunk.js.map": "/E5UI/static/js/345.e4054ec5.chunk.js.map",
     "723.dc298572.chunk.js.map": "/E5UI/static/js/723.dc298572.chunk.js.map",
     "643.e94e321c.chunk.js.map": "/E5UI/static/js/643.e94e321c.chunk.js.map",
@@ -76,6 +78,6 @@
   },
   "entrypoints": [
     "static/css/main.4ed95b94.css",
-    "static/js/main.430be566.js"
+    "static/js/main.7e878c96.js"
   ]
 }
