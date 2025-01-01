@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/E5UI/static/css/main.4ed95b94.css",
-    "main.js": "/E5UI/static/js/main.397709b5.js",
+    "main.js": "/E5UI/static/js/main.2b42f745.js",
     "static/js/345.e4054ec5.chunk.js": "/E5UI/static/js/345.e4054ec5.chunk.js",
     "static/js/723.dc298572.chunk.js": "/E5UI/static/js/723.dc298572.chunk.js",
     "static/js/643.e94e321c.chunk.js": "/E5UI/static/js/643.e94e321c.chunk.js",
@@ -22,6 +22,7 @@
     "static/media/e5empty_icon3.png": "/E5UI/static/media/e5empty_icon3.82753041adaab216b7f9.png",
     "static/media/explore_icon_light.png": "/E5UI/static/media/explore_icon_light.3385b9c695c67c0439c1.png",
     "static/media/ComicSans.ttf": "/E5UI/static/media/ComicSans.3198d266c6629f0b7ce0.ttf",
+    "static/media/letter_crack1.png": "/E5UI/static/media/letter_crack1.ccfb0d629dadd3e20cb2.png",
     "static/media/wallet_icon_light.png": "/E5UI/static/media/wallet_icon_light.e0078004dc43668c0795.png",
     "static/media/job_icon_light.png": "/E5UI/static/media/job_icon_light.e20d6d8792a0ac88b51d.png",
     "static/media/end_token_icon.png": "/E5UI/static/media/end_token_icon.3e84e49554dd5d90fee1.png",
@@ -54,13 +55,14 @@
     "static/media/background.png": "/E5UI/static/media/background.8dfcf80661d5eeed149c.png",
     "static/media/letter.png": "/E5UI/static/media/letter.0ed8625c19055ed06b21.png",
     "static/media/add_text_dark.png": "/E5UI/static/media/add_text_dark.7fb0adba2c554169387a.png",
+    "static/media/zip_file.png": "/E5UI/static/media/zip_file.a80c173a20cc5e113bfc.png",
     "static/media/previous_icon.png": "/E5UI/static/media/previous_icon.749a26b9667f53b9c7a6.png",
     "static/media/close_pip.png": "/E5UI/static/media/close_pip.5d8ee8877359e7e4ce43.png",
     "static/media/next_icon.png": "/E5UI/static/media/next_icon.a63bae70902c53b1ca64.png",
     "static/media/shuffle_icon_dark.png": "/E5UI/static/media/shuffle_icon_dark.960d3786befb8f51dc13.png",
     "index.html": "/E5UI/index.html",
     "main.4ed95b94.css.map": "/E5UI/static/css/main.4ed95b94.css.map",
-    "main.397709b5.js.map": "/E5UI/static/js/main.397709b5.js.map",
+    "main.2b42f745.js.map": "/E5UI/static/js/main.2b42f745.js.map",
     "345.e4054ec5.chunk.js.map": "/E5UI/static/js/345.e4054ec5.chunk.js.map",
     "723.dc298572.chunk.js.map": "/E5UI/static/js/723.dc298572.chunk.js.map",
     "643.e94e321c.chunk.js.map": "/E5UI/static/js/643.e94e321c.chunk.js.map",
@@ -78,6 +80,6 @@
   },
   "entrypoints": [
     "static/css/main.4ed95b94.css",
-    "static/js/main.397709b5.js"
+    "static/js/main.2b42f745.js"
   ]
 }
