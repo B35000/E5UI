@@ -256,6 +256,7 @@ class VideoDetailsSection extends Component {
                     {this.render_item_data(items, object)}
                     {this.render_item_images(object)}
                     {this.render_pdf_files_if_any(object)}
+                    {this.render_zip_files_if_any(object)}
                     
                     <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
@@ -353,6 +354,59 @@ class VideoDetailsSection extends Component {
         else{
             this.props.play_video(item, object)
         }
+    }
+
+
+    render_zip_files_if_any(object){
+        var state = object['ipfs']
+        if(state.entered_zip_objects != null && state.entered_zip_objects.length > 0){
+            return(
+                <div>
+                    {this.render_zips_part(state.entered_zip_objects)}
+                </div>
+            )
+        }
+    }
+
+    render_zips_part(entered_zip_objects){
+        var items = [].concat(entered_zip_objects)
+
+        if(items.length == 0) return;
+        
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_zip_item_clicked(item)}>
+                            {this.render_uploaded_zip_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_uploaded_zip_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end(data['name'])
+        var thumbnail = this.props.app_state.static_assets['zip_file']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%',})}
+            </div>
+        )
+    }
+
+    when_uploaded_zip_item_clicked(item){
+        this.props.when_zip_file_opened(item)
     }
 
 

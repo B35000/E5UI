@@ -56,7 +56,7 @@ class NewMailPage extends Component {
         edit_text_item_pos:-1,
 
         get_sort_links_tags_object:this.get_sort_links_tags_object(), entered_pdf_objects:[],
-        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()
+        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
     };
 
     get_new_job_page_tags_object(){
@@ -65,7 +65,7 @@ class NewMailPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -206,6 +206,13 @@ class NewMailPage extends Component {
             return(
                 <div>
                     {this.render_enter_markdown_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162q']/* 'zip-files' */){
+            return(
+                <div>
+                    {this.render_enter_zip_part()}
                 </div>
             )
         }
@@ -1571,6 +1578,136 @@ class NewMailPage extends Component {
 
 
 
+    render_enter_zip_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_zip_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_zip_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_zip_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+    
+    render_pick_zip_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['162p']/* 'The gray circle stages a pdf file. Then swipe it to remove.' */})}
+                {this.render_create_zip_ui_buttons_part()}
+                {this.render_zips_part()}
+            </div>
+        )
+    }
+    
+    render_create_zip_ui_buttons_part(){
+        return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('zip', 'create_zip', 10**16)}/>
+            </div>
+        </div>
+        )
+    }
+    
+    when_zip_files_picked(files){
+        var clonedArray = this.state.entered_zip_objects == null ? [] : this.state.entered_zip_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_zip_objects: clonedArray});
+    }
+    
+    render_zips_part(){
+        var items = [].concat(this.state.entered_zip_objects)
+    
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_zip_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <div style={{'margin':'3px 0px 3px 0px'}}>
+                                            {this.render_uploaded_zip_file(item, index)}
+                                        </div>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+    
+    render_uploaded_zip_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        var details = data['name']
+        var thumbnail = this.props.app_state.static_assets['zip_file']
+    
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+    
+    when_zip_clicked(item, index){
+        var cloned_array = this.state.entered_zip_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_zip_objects: cloned_array})
+    }
+
+
+
+
+
+
 
 
     render_enter_markdown_part(){
@@ -1594,10 +1731,26 @@ class NewMailPage extends Component {
                         {this.render_markdown_shortcut_list()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_detail_item('13', {'source':this.state.markdown})}
+                        {this.render_markdown_or_empty()}
                     </div>
                 </div>
                 
+            )
+        }
+    }
+
+    render_markdown_or_empty(){
+        if(this.state.markdown.trim() == ''){
+            return(
+                <div>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':this.state.markdown})}
+                </div>
             )
         }
     }
@@ -1634,7 +1787,7 @@ class NewMailPage extends Component {
         else if(selected_item == this.props.app_state.loc['a311bu']/* 'preview' */){
             return(
                 <div>
-                    {this.render_detail_item('13', {'source':this.state.markdown})}
+                    {this.render_markdown_or_empty()}
                 </div>
             )
         }

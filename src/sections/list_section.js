@@ -2541,7 +2541,7 @@ class PostListSection extends Component {
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <ImageListItem key={index}>
                                 <div onClick={() => this.when_audio_item_clicked(index, item)}>
                                     {this.render_my_bought_audio_item(item, index, w)}
@@ -2737,25 +2737,6 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        // var default_image = this.props.app_state.static_assets['music_label']
-        // var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
-        // return(
-        //     <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-        //         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 5px', 'padding':'0px 0px 5px 0px'}}>
-        //             <div onClick={() => this.when_audio_item_clicked(index, object)}>
-        //                 <img src={image} alt="" style={{height:105 ,width:105,'border-radius': '10px'}}/>
-        //             </div>
-        //             <div style={{width:15}}/>
-        //             <div style={{width:'50%'}}>
-        //                 {this.render_detail_item('1', item['tags'])}
-        //                 <div style={{height: 10}}/>
-        //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
-        //                     {this.render_detail_item('3', item['id'])}
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // )
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -2911,7 +2892,7 @@ class PostListSection extends Component {
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <ImageListItem key={index}>
                                 <div onClick={() => this.when_video_item_clicked(index, item)}>
                                     {this.render_my_bought_video_item(item, index, w)}
@@ -2976,26 +2957,7 @@ class PostListSection extends Component {
                     {this.render_empty_object()}
                 </div>
             )
-        }
-        // var default_image = this.props.app_state.static_assets['music_label']
-        // var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
-        // return(
-        //     <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-        //         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 5px', 'padding':'0px 0px 5px 0px'}}>
-        //             <div onClick={() => this.when_audio_item_clicked(index, object)}>
-        //                 <img src={image} alt="" style={{height:105 ,width:105,'border-radius': '10px'}}/>
-        //             </div>
-        //             <div style={{width:15}}/>
-        //             <div style={{width:'50%'}}>
-        //                 {this.render_detail_item('1', item['tags'])}
-        //                 <div style={{height: 10}}/>
-        //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
-        //                     {this.render_detail_item('3', item['id'])}
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // )
+        }      
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>

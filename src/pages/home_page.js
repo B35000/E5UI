@@ -2265,13 +2265,14 @@ class home_page extends Component {
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
-            var my_added_album_ids = this.props.app_state.my_albums.reverse()
-            var all_audios = this.get_all_sorted_objects(this.props.app_state.created_audios)
-            var my_acquired_albums = []
-            for(var i=0; i<my_added_album_ids.length; i++){
-                var obj = this.get_item_in_array(my_added_album_ids[i], all_audios)
-                if(obj != null) my_acquired_albums.push(obj)
-            }
+            // var my_added_album_ids = this.props.app_state.my_albums.reverse()
+            // var all_audios = this.get_all_sorted_objects(this.props.app_state.created_audios)
+            // var my_acquired_albums = []
+            // for(var i=0; i<my_added_album_ids.length; i++){
+            //     var obj = this.get_item_in_array(my_added_album_ids[i], all_audios)
+            //     if(obj != null) my_acquired_albums.push(obj)
+            // }
+            var my_acquired_albums = this.props.app_state.my_acquired_audios.reverse()
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264m']/* 'playlists' */){
@@ -2327,13 +2328,14 @@ class home_page extends Component {
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
-            var my_added_videopost_ids = this.props.app_state.my_videoposts.reverse()
-            var all_videos = this.get_all_sorted_objects(this.props.app_state.created_videos)
-            var my_acquired_albums = []
-            for(var i=0; i<my_added_videopost_ids.length; i++){
-                var obj = this.get_item_in_array(my_added_videopost_ids[i], all_videos)
-                if(obj != null) my_acquired_albums.push(obj)
-            }
+            // var my_added_videopost_ids = this.props.app_state.my_videoposts.reverse()
+            // var all_videos = this.get_all_sorted_objects(this.props.app_state.created_videos)
+            // var my_acquired_albums = []
+            // for(var i=0; i<my_added_videopost_ids.length; i++){
+            //     var obj = this.get_item_in_array(my_added_videopost_ids[i], all_videos)
+            //     if(obj != null) my_acquired_albums.push(obj)
+            // }
+            var my_acquired_albums = this.props.app_state.my_acquired_videos.reverse()
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
         }
         else {
@@ -3388,6 +3390,8 @@ class home_page extends Component {
                 when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)} play_video={this.props.play_video.bind(this)} show_buy_nitro_storage_bottomsheet={this.props.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.props.show_configure_nitro_node_bottomsheet.bind(this)} load_nitro_node_details={this.props.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.props.load_my_account_storage_info.bind(this)} block_post={this.props.block_post.bind(this)}
 
                 when_discography_audio_item_clicked={this.when_discography_audio_item_clicked.bind(this)} when_discography_video_item_clicked={this.when_discography_video_item_clicked.bind(this)}
+
+                when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}
                 />
             </div>
         )

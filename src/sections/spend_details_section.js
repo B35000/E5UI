@@ -22,7 +22,7 @@ function number_with_commas(x) {
 class SpendDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object(), trading_volume_chart_tags_object: this.total_supply_chart_tags_object()
+        selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object()
     };
 
     componentDidMount() {
@@ -74,7 +74,7 @@ class SpendDetailSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
             ],
         };
     }
@@ -86,6 +86,17 @@ class SpendDetailSection extends Component {
             },
             'e':[
                 ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+            ],
+        };
+    }
+
+    trading_volume_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
             ],
         };
     }
@@ -927,12 +938,16 @@ class SpendDetailSection extends Component {
 
 
 
+
+
+
+
     render_proportion_ratio_chart(selected_object){
         var proportion_ratio_events = selected_object['proportion_ratio_data']
         if(proportion_ratio_events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2602b']/* 'Demand Pressure' */, 'details':this.props.app_state.loc['2602c']/* 'Chart containing the demand pressure over time.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2602b']/* 'Inverse Demand Pressure' */, 'details':this.props.app_state.loc['2602c']/* 'Chart containing the inverse demand pressure over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(proportion_ratio_events), 'interval':this.get_interval_for_proportion_ratio_chart(proportion_ratio_events)})}
                     <div style={{height: 10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
@@ -947,7 +962,7 @@ class SpendDetailSection extends Component {
         var events = this.filter_proportion_ratio_events(event_data);
         var data = []
         for(var i=0; i<events.length; i++){
-            data.push(100 - (Math.round(events[i].returnValues.p2/10**18) * 100) + 0.001)
+            data.push((Math.round(events[i].returnValues.p2/10**18) * 100))
 
             if(i==events.length-1){
                 var diff = Date.now()/1000 - events[i].returnValues.p5
@@ -991,7 +1006,7 @@ class SpendDetailSection extends Component {
     get_proportion_ratio_interval_figure(events){
         var data = []
         events.forEach(event => {
-            data.push(100 - (Math.round(event.returnValues.p2/10**18) * 100) + 0.001)
+            data.push((Math.round(event.returnValues.p2/10**18) * 100))
         });
         var largest = Math.max.apply(Math, data);
         return largest

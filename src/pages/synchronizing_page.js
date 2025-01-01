@@ -3,6 +3,7 @@ import syncrhonizing_image from './../assets/synchronizing_icon.png';
 import ViewGroups from './../components/view_groups'
 import p2p_trust from './../assets/p2p_trust_image.png';
 import unanimous_consensus from './../assets/unanimous_consensus_image.png';
+import letter_crack1 from './../assets/letter_crack1.png'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -24,12 +25,15 @@ class synchronizing_page extends Component {
     render_sync_page(){
         var h = this.props.app_state.height-100
         var size = this.props.app_state.size
-        var image_width = '200px'
+        var image_width = '180px'
         var bar_width = '180px'
         if(size == 's') {
-            image_width = '150px'
+            image_width = '130px'
             bar_width = '135px'
         }
+        var img = 'https://nftstorage.link/ipfs/bafkreiaszixz3iclvzxocneibrmppoazemylhb5ynki5sownn7n2bub4m4'
+        img = letter_crack1
+
         return(
             <div style={{width:'100%', height:h,'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                 <div>
@@ -37,7 +41,7 @@ class synchronizing_page extends Component {
                     <div style={{width:bar_width, 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                         {this.render_synch_bar()}
                     </div>
-                    <img style={{width:image_width, 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiaszixz3iclvzxocneibrmppoazemylhb5ynki5sownn7n2bub4m4'} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
+                    <img style={{width:image_width, 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={img} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
                 </div>
             </div>
         )

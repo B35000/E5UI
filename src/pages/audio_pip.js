@@ -28,6 +28,7 @@ class AudioPip extends Component {
        
         if(this.state.play_pause_state == 1){
             this.setState({value: 0, play_pause_state: 0/* paused */, isloading:true})
+            this.props.when_audio_play_paused_from_pip(0)
 
             var me = this;
             setTimeout(function() {
@@ -42,6 +43,9 @@ class AudioPip extends Component {
     }
 
     render(){
+        if(this.props.app_state.hide_pip != 'e'){
+            return;
+        }
         return(
             <div>
                 {this.render_everything()}
@@ -241,15 +245,18 @@ class AudioPip extends Component {
         if(!this.has_file_loaded() || this.is_song_available_for_playing()){
             this.setState({play_pause_state: 0})
             this.audio.current?.pause()
+            this.props.when_audio_play_paused_from_pip(0)
         }
         if(this.state.play_pause_state == 0/* paused */){
             console.log('playing')
             this.setState({play_pause_state: 1})
             this.audio.current?.play()
+            this.props.when_audio_play_paused_from_pip(1)
         }else{
             console.log('pausing')
             this.setState({play_pause_state: 0})
             this.audio.current?.pause()
+            this.props.when_audio_play_paused_from_pip(0)
         }
         
     }
@@ -268,6 +275,7 @@ class AudioPip extends Component {
 
     start_playing(){
         this.setState({play_pause_state: 1})
+        this.props.when_audio_play_paused_from_pip(1)
         console.log(this.state.songs)
         var song = this.state.songs[this.state.pos]
         var song_object = song['object'];
@@ -305,6 +313,7 @@ class AudioPip extends Component {
         if(!this.is_song_available_for_playing()){
             this.audio.current.currentTime = 0
             this.setState({value: 0, play_pause_state: 0/* paused */})
+            this.props.when_audio_play_paused_from_pip(0)
             this.audio.current?.pause()
             this.props.notify_account_to_make_purchase()
         }
@@ -328,6 +337,7 @@ class AudioPip extends Component {
             if(this.state.pos == this.state.songs.length - 1){
                 //it was the last song
                 this.setState({play_pause_state: 0})
+                this.props.when_audio_play_paused_from_pip(0)
                 this.audio.current?.pause()
             }else{
                 this.play_next()
@@ -456,6 +466,7 @@ class AudioPip extends Component {
         if(!this.is_song_available_for_playing()){
             this.audio.current.currentTime = 0
             this.setState({value: 0, play_pause_state: 0/* paused */})
+            this.props.when_audio_play_paused_from_pip(0)
             this.audio.current?.pause()
             this.props.notify_account_to_make_purchase()
         }else{

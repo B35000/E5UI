@@ -383,7 +383,7 @@ class CoinsDetailsSection extends Component {
         var data = this.props.app_state.coin_data[item['symbol']]
         var status = this.props.app_state.coin_data_status
         if(data != null && data['address'] != null && this.is_address_set(data['address'])){
-            var address = data['address']
+            var address = start_and_end(data['address'])
             return(
                 <div onClick={() => this.copy_to_clipboard(address)}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2917']/* Wallet Address.' */, 'details':address, 'size':'l'})}

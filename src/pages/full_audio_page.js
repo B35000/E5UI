@@ -342,7 +342,7 @@ class FullAudioPage extends Component {
     }
 
     render_pause_button(){
-        var image = this.state.play_pause_state == 1/* playing */ ? this.props.theme['pause']: this.props.theme['play']       
+        var image = this.state.play_pause_state == 1/* playing */ ? this.props.theme['pause']: this.props.theme['play']     
         var translate = this.state.play_pause_state == 1/* playing */ ? '0px 0px':'5px 0px'
         return(
             <img onClick={()=>this.play_pause()} alt="" src={image} style={{height:40 ,width:'auto', 'text-align':'center', 'translate': translate}}/>
@@ -508,7 +508,7 @@ class FullAudioPage extends Component {
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'details':(song['credits'] == null ? '': song['credits']), 'title':this.props.app_state.loc['a311bz']/* Credits */, 'size':'l'})}
-
+                <div style={{height:10}}/>
             </div>
         )
     }

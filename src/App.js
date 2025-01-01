@@ -41,6 +41,7 @@ import previous_dark from './assets/previous_icon_dark.png'
 import next_dark from './assets/next_icon_dark.png'
 import shuffle_dark from './assets/shuffle_icon_dark.png'
 import repeat_dark from './assets/repeat_icon_dark.png'
+import zip_file from './assets/zip_file.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -372,8 +373,8 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false,
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, web3-storage, nft-storage */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1427']/* 'filtered' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
-    remember_account:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
+    remember_account:'e', hide_pip:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -432,6 +433,8 @@ class App extends Component {
     nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:'', followed_accounts:[primary_following], should_update_followed_accounts:false, posts_blocked_by_me:[], should_update_posts_blocked_by_me:false, posts_blocked_by_my_following:[], my_subscription_payment_mappings:{},
 
     censored_keyword_phrases: [], should_update_censored_keyword_phrases: false, censored_keywords_by_my_following:[],
+
+    queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[],
   };
 
   get_static_assets(){
@@ -461,7 +464,8 @@ class App extends Component {
       'download_icon':download_icon,
       'zoom_in_icon':zoom_in_icon,
       'zoom_out_icon':zoom_out_icon,
-      'video_label':video_label
+      'video_label':video_label,
+      'zip_file':zip_file,
     }
   }
 
@@ -974,7 +978,7 @@ class App extends Component {
         '64':'modify-contract','65':'modify','66':'contract','67':'auth','68':'Vote Bounty Split Proportion','69':'Maximum Extend Enter Contract Limit','70':'Minimum End Bounty Amount','71':'Proposal Expiry Duration Limit','72':'Maximum Enter Contract Duration','73':'Auto Wait','74':'Proposal Modify Expiry Duration Limit','75':'Moderator Modify Privelage','76':'Unlimited Extend Contract Time','77':'Maximum Proposal Expiry Submit Expiry time difference','78':'Bounty Limit Type','79':'Force Exit Enabled','80':'Minimum Spend Bounty Amount','81':'no','82':'yes','83':'modifiable','84':'non-modifiable','85':'enabled','86':'disabled','87':'relative','88':'absolute','89':'enabled','90':'disabled','91':'Make changes to the configuration of the contract ID: ','92':'units','93':'Add Change.','94':'Target ID...','95':'Current ','96':'Current Value.','97':'Reconfiguration action added.','98':'Please pute a valid account ID.','99':'Reconfiguration action added.','100':'Modify Target.','101':'Position.','102':'Proportion.','103':'Duration.','104':'Value: ','105':'Target ID','106':'Reconfiguration action removed.','107':'My Account','108':'Account','108a':'Edit contract prices.', '108b':'Change the entry fees of your contract.', '108c':'You cant change the first price-value of the entry fees used', '108d':'', '108e':'', '108f':'',
         
         /* new channel page */
-        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.', '303a':'Subscription Locked Channel Preview.','304b':'If set to visible, a preview of your new channel will be shown to outsiders if subscription locked.','162o':'The gray circle stages a pdf file. Then swipe it to remove.','162p':'','162q':'','162r':'pdfs','162s':'','162t':'','162u':'',
+        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.', '303a':'Subscription Locked Channel Preview.','304b':'If set to visible, a preview of your new channel will be shown to outsiders if subscription locked.','162o':'The gray circle stages a pdf file. Then swipe it to remove.','162p':'The gray circle stages a zip file. Then swipe it to remove.','162q':'zip-files','162r':'pdfs','162s':'','162t':'','162u':'',
         
         /* new contract page */
         '163':'configuration','164':'entry-fees','165':'private','166':'public','167':'Set a title for your new Contract.','168':'Set tags for indexing your new Contract.','169':'Add.','170':'Enter Contract.','171':'If set to enter-contract, youll enter the contract your creating in one transaction.','172':'Preset the new contract settings based on common use cases.','173':'👥 Workgroup Contract','174':'A contract representing shared consensus within an organization or group of people.','175':'🧘 Personal Contract','176':'A contract primarily used by one person.','177':'👷🏼 Work Contract','178':'A contract used for the job and contractor markets.',
@@ -1125,9 +1129,9 @@ class App extends Component {
         '1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.',
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
-        '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration (Optional)','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
+        '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
         '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'Censor 🚫','1593dr':'Censor Keywords.','1593ds':'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.','1593dt':'Keyword or phrase...','1593du':'Type something first.',
-        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'','1593ea':'','1593eb':'','1593ec':'','1593ed':'','1593ee':'','1593ef':'','1593eg':'','1593eh':'','1593ei':'','1593ej':'','1593ek':'','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
+        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'','1593eg':'','1593eh':'','1593ei':'','1593ej':'','1593ek':'','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1199,7 +1203,7 @@ class App extends Component {
         '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.', '2526a':'🔒 Taken Down.', '2526b':'The object has been taken down.', '2526c':'', '2526d':'', '2526e':'',
 
         /* audio details section */
-        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'Shuffle Album', 'a2527t':'Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times.', 'a2527z':'Downloading...','a2527ba':'Done.','a2527bb':'Discography.','a2527bc':'Audioposts by ','a2527bd':'Similar Audioposts.','a2527be':'Some posts similar to the audiopost by its tags','a2527bf':'Discography','a2527bg':'All the available audioposts by the author are listed below.','a2527bh':'similar','a2527bi':'Similar Posts.','a2527bj':'Posts similar to the Audiopost.','a2527bk':'','a2527bl':'','a2527bm':'','a2527bn':'','a2527bo':'','a2527bp':'','a2527bq':'','a2527br':'','a2527bs':'','a2527bt':'',
+        'a2527a':'comments', 'a2527b':'Edit Indexed Audiopost', 'a2527c':'Change the basic details for your Indexed Audiopost', 'a2527d':'media', 'a2527e':'Buy', 'a2527f':'Purchase unlimited access and add it to your collection and playlists.', 'a2527g':'Poster', 'a2527h':'Playlist Id.', 'a2527i':'Created On', 'a2527j':'Songs.', 'a2527k':'Delete Playlist.', 'a2527l':'Delete the Playlist from your feed.', 'a2527m':'Play Playlist.', 'a2527n':'Play all the tracks in this playlist.', 'a2527o':'Nothing to play', 'a2527p':'You need to set your account first.', 'a2527q':'Play Album', 'a2527r':'Play all the tracks in this audiopost.', 'a2527s':'Shuffle Album', 'a2527t':'Shuffle Playlist', 'a2527u':'Download Playlist.', 'a2527v':'Download all the tracks in this playlist for faster load times.', 'a2527w':'Nothing to download.', 'a2527x':'Download Audiopost.', 'a2527y':'Download all the tracks in the audiopost for faster load times.', 'a2527z':'Downloading...','a2527ba':'Done.','a2527bb':'Discography.','a2527bc':'Audioposts by ','a2527bd':'Similar Audioposts.','a2527be':'Some posts similar to the audiopost by its tags','a2527bf':'discography','a2527bg':'All the available audioposts by the author are listed below.','a2527bh':'similar','a2527bi':'Similar Posts.','a2527bj':'Posts similar to the Audiopost.','a2527bk':'','a2527bl':'','a2527bm':'','a2527bn':'','a2527bo':'','a2527bp':'','a2527bq':'','a2527br':'','a2527bs':'','a2527bt':'',
 
 
         /* video details section */
@@ -1214,7 +1218,7 @@ class App extends Component {
         '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID', '2258a':'Edit Proposal', '2258b':'Change the basic details of your Proposal.',
         
         /* spend details section */
-        '2559':'updated-proportion-ratios','2560':'Mint or Dump the token for a specified account.','2561':'Mint/Dump','2562':'Make a token transfer to a specified account.','2563':'Send/Transfer','2564':'The exchanges balance for each of the tokens used to buy ','2565':'Buy Token Liquidity','2566':'Author Moderator Privelages Disabled','2567':'Author of Object is not a Moderator by default','2568':'Author Moderator Privelages Enabled','2569':'Author of Object is a Moderator by default','2570':'The amount you get when selling one unit of the token.','2571':'Token Price','2572':'Modify Exchanage','2573':'AuthMint Tokens','2574':'Bypass the exchanges restrictions and mint your token as an authority','2575':'AuthMint','2576':'Set an accounts access rights, moderator privelages or block an account','2577':'Chart containing the block limit reduction proportion over time.','2578':'Y-Axis: Proportion','2579':'Circulating Supply','2580':'Total Supply','2581':'Y-Axis: Total Supply','2582':'Total Transactions','2583':'Chart containing the total number of buy/sell transactions over time.','2584':'Y-Axis: Total Transactions','2585':'X-Axis: Time','2586':'Exchange Mint Limit Proportion Ratio Events','2587':'Tokens Received','2588':'Updated Active Limit','2589':'Exchange Modification Events','2590':'Targeted Modify Item','2591':'Exchange Transfer Events','2592':'Update Balance Events','2593':'Receiver Account','2594':'Freeze-Unfreeze Events','2595':'Action: Freeze','2596':'Action: Unfreeze','2597':'Authority Account','2598':'Exchange Modify Moderator Events','2599':'Exchange Account Access Settings Events','2600':'Targeted Account','2601':'Moderator Account','2602':'Exchange Blocked Account Events','2602a':'Active Mint Limit.','2602b':'Demand Pressure.','2602c':'Chart containing the demand pressure over time.','2602d':'','2602e':'','2602f':'','2602g':'',
+        '2559':'updated-proportion-ratios','2560':'Mint or Dump the token for a specified account.','2561':'Mint/Dump','2562':'Make a token transfer to a specified account.','2563':'Send/Transfer','2564':'The exchanges balance for each of the tokens used to buy ','2565':'Buy Token Liquidity','2566':'Author Moderator Privelages Disabled','2567':'Author of Object is not a Moderator by default','2568':'Author Moderator Privelages Enabled','2569':'Author of Object is a Moderator by default','2570':'The amount you get when selling one unit of the token.','2571':'Token Price','2572':'Modify Exchanage','2573':'AuthMint Tokens','2574':'Bypass the exchanges restrictions and mint your token as an authority','2575':'AuthMint','2576':'Set an accounts access rights, moderator privelages or block an account','2577':'Chart containing the block limit reduction proportion over time.','2578':'Y-Axis: Proportion','2579':'Circulating Supply','2580':'Total Supply','2581':'Y-Axis: Total Supply','2582':'Total Transactions','2583':'Chart containing the total number of buy/sell transactions over time.','2584':'Y-Axis: Total Transactions','2585':'X-Axis: Time','2586':'Exchange Mint Limit Proportion Ratio Events','2587':'Tokens Received','2588':'Updated Active Limit','2589':'Exchange Modification Events','2590':'Targeted Modify Item','2591':'Exchange Transfer Events','2592':'Update Balance Events','2593':'Receiver Account','2594':'Freeze-Unfreeze Events','2595':'Action: Freeze','2596':'Action: Unfreeze','2597':'Authority Account','2598':'Exchange Modify Moderator Events','2599':'Exchange Account Access Settings Events','2600':'Targeted Account','2601':'Moderator Account','2602':'Exchange Blocked Account Events','2602a':'Active Mint Limit.','2602b':'Block Limit Reduction Proportion','2602c':'Chart containing the block limit reduction proportion over time.','2602d':'','2602e':'','2602f':'','2602g':'',
         
         /* storefront details section */
         '2603':'direct-purchases','2604':'unfulfilled','2605':'fulfilled','2606':'Set Denomination','2607':'Author Seller','2608':'Target Payment Recipient','2609':'Fulfilment Accounts','2610':'The accounts involved with shipping and fulfilling direct purchase orders from clients.','2611':'Fulfilment Location','2612':' variants','2613':'To choose from.','2614':'Pin the storefront item to your feed.','2615':'Pin Item','2616':'Pin/Unpin Item','2617':'Activity Section Enabled','2618':'You can leave a product review message in the activity section','2619':'Activity Section Disabled','2620':'The activity section has been disabled by the storefront owner.','2621':'In Stock','2622':'The item is available for purchasing.','2623':'Out of Stock','2624':'The item is not available for purchasing.','2625':'Add the item to your shopping bag.','2626':'Add to Bag','2627':'Purchase the item directly from the seller.','2628':'Direct Purchase','2629':'Purchase','2630':'Edit Storefront Post','2631':'Change the basic details for your Storefront Post','2632':'Edit Item','2633':'Block Number','2634':'Direct Purchases','2635':', Sender Account ID: ','2636':'Fulfilent Signature: ','2637':', Client ID: ','2638':'Clear Purchase','2639':'Fulfilment Signature: ','2640':'Signature Data: ','2641':'Signature Address: ','2642':'The activity section has been disabled.', '2642a':'Direct Purchases.','2642b':'','2642c':'','2642d':'','2642e':'',
@@ -1223,7 +1227,7 @@ class App extends Component {
         '2643':'search','2644':'payments','2645':'cancellations','2646':'collections','2647':'modifications','2648':'Pay Subscription','2649':'Pay for the subscription for your account','2650':'Pin the subscription to your feed','2651':'Pin Subscription','2652':'Pin/Unpin Subscription','2653':'Author Moderator Privelages Disabled','2654':'Author of Object is not a Moderator by default','2655':'Author Moderator Privelages Enabled','2656':'Author of Object is a Moderator by default','2657':'Cancel Subscription','2658':'Cancel your subscription payment and receive your tokens back','2659':'Collect Subscription','2660':'Collect the subscription payments from the subscription account','2661':'Modify Subscription','2662':'Modify the configuration of the subscription.','2663':'Perform Moderator Actions','2664':'Set an accounts access rights, moderator privelages or block an account','2665':'Perform Action','2666':'In Subscription ','2667':'Subscription Transfer Events','2668':'Pay Subscription Events','2669':'Search account ID...','2670':'Paying Account','2671':'Cancel Subscription Events','2672':'Cancelling Account','2673':'Collect Subscription Events','2674':'Collecting Account','2675':'Total Time Units Collected','2676':'units','2677':'Modify Subscription Events','2678':'Subscription Modify Moderator Events','2679':'Subscription Access Rights Settings Events','2680':'Subscription Account Access Settings Events','2681':'Subscription Blocked Account Events','2682':'Search Subscription Payment','2683':'Remaining Subscription Time','2684':'Remaining Time Units (As of Now)','2685':'time-units','2686':'Latest Payment Time','2687':'Latest Payment Block','2688':'First Payment Time','2689':'First Payment Block','2690':'Highest Time Units Paid For ','2691':'Lowest Time Units Paid For ','2692':'Time Units Paid For','2693':'Chart containing the amount in time units that have been accumulated.','2694':'Y-Axis: Time Units','2695':'X-Axis: Time',
         
         /* App page */
-        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'Downloading pdf.', '2738e':'e needs access to your microphone to make the call.', '2738f':'', '2738g':'', '2738h':'', '2738i':'', '2738j':'', '2738k':'', '2738l':'', '2738m':'', '2738n':'', '2738o':'', '2738p':'', '2738q':'', '2738r':'', '2738s':'', '2738t':'', '2738u':'', '2738v':'', '2738w':'', '2738x':'', '2738y':'', '2738z':'', 
+        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'Downloading pdf.', '2738e':'e needs access to your microphone to make the call.', '2738f':'Downloading Zip file.', '2738g':'', '2738h':'', '2738i':'', '2738j':'', '2738k':'', '2738l':'', '2738m':'', '2738n':'', '2738o':'', '2738p':'', '2738q':'', '2738r':'', '2738s':'', '2738t':'', '2738u':'', '2738v':'', '2738w':'', '2738x':'', '2738y':'', '2738z':'', 
         
 
         '2739':'edit-proposal','2740':'midnight','2741':'green-ish','2742':'Not Safe For Work Warning.','2743':'Warning. This content contains material that may not be suitable for all audiences. Viewer discretion is advised. The content may include explicit language, sexual themes, nudity, or other adult-oriented material. It is intended for mature audiences only.','2744':'Proceed.','2745':'Years','2746':'Days','2747':'Hours','2748':'Minutes','2749':'Set Alias','2750':'Release','2751':'Delete',
@@ -1258,7 +1262,7 @@ class App extends Component {
         '2942':'Confirm that you want to send the coin to the target recipient.','2943':'Picked Amount.','2944':'Picked Fee.','2945':'Broadcast Transaction.','2946':'Something went wrong with the transaction broadcast.','2947':'Amount Sent','2948':'Fee Used','2949':'Transaction Size.','2950':'UTXOs consumed.','2951':'Broadcasting your Transaction...','2952':'You need to send at least 1XLM since the receiver doesnt have a XLM account.','2953':'Included Memo.','2954':'Memo (Optional)',
         
         /* pick file page */
-        '2955':'image','2956':'audio','2957':'video','2958':'Pick one or multile image files from your storage. To see an image file here, you need to upload it in the stack page.','2959':'You can\'t finish with no files selected.','2960':'You can\'t pick more than ','2961':' files.',
+        '2955':'image','2956':'audio','2957':'video','2958':'Pick one or multiple image files from your storage. To see an image file here, you need to upload it in the stack page.','2959':'You can\'t finish with no files selected.','2960':'You can\'t pick more than ','2961':' files.',
         
         /* buy album page */
         '2962':'buy-album','2963':'buy','2964':'album','2965':'track','2966':'Purchase access to one track or the entire catalogue.','2967':'Total Purchase amounts.','2968':'Here\'s the toal amount of money you\'ll be paying for the tracks.','2969':'Please pick a track to purchase.','2970':'You don\'t have enough money to fulfil this purchase.','2971':'The following songs will be added to your collection after the purchase.','2972':'You can\'t re-buy that song','2972a':'Available Tracks.','2972b':'Below are the available tracks for purchase.','2972c':'Unavailable Tracks.','2972d':'Below are the tracks you\'ve already purchased.','2972e':'Buy All.',
@@ -2640,7 +2644,8 @@ class App extends Component {
       should_update_posts_blocked_by_me: this.state.should_update_posts_blocked_by_me,
 
       censored_keyword_phrases: this.state.censored_keyword_phrases, 
-      should_update_censored_keyword_phrases: this.state.should_update_censored_keyword_phrases
+      should_update_censored_keyword_phrases: this.state.should_update_censored_keyword_phrases,
+      hide_pip:this.state.hide_pip
     }
   }
 
@@ -2751,6 +2756,8 @@ class App extends Component {
       var cupcake_should_update_posts_blocked_by_me = cupcake_state.should_update_posts_blocked_by_me
       var cupcake_censored_keyword_phrases =  cupcake_state.censored_keyword_phrases 
       var cupcake_should_update_censored_keyword_phrases = cupcake_state.should_update_censored_keyword_phrases
+
+      var cupcake_hide_pip = cupcake_state.hide_pip
 
       
       if(cupcake_theme != null){
@@ -2981,6 +2988,9 @@ class App extends Component {
         this.setState({should_update_censored_keyword_phrases: cupcake_should_update_censored_keyword_phrases})
       }
 
+      if(cupcake_hide_pip != null){
+        this.setState({hide_pip: cupcake_hide_pip})
+      }
     }
 
     var me = this;
@@ -3003,6 +3013,7 @@ class App extends Component {
         me.stack_page.current?.set_selected_remember_account_type_tag()
         me.stack_page.current?.set_web3_email_account(web3_email)
         me.stack_page.current?.set_my_preferred_nitro()
+        me.stack_page.current?.set_selected_hide_pip_type_tag()
     }, (1 * 1000));
 
     
@@ -4261,7 +4272,7 @@ class App extends Component {
         
           play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
-          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)}
+          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -5610,10 +5621,11 @@ class App extends Component {
 
   render_stack_bottomsheet(){
     // if(this.state.stack_bottomsheet2 != true) return;
-    if(!this.state.show_stack) return;
+    // if(!this.state.show_stack) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
+
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.stack_bottomsheet} onClose={this.open_stack_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
@@ -5639,7 +5651,7 @@ class App extends Component {
   }
 
   render_stack_item(size){
-    if(!this.state.show_stack) return;
+    // if(!this.state.show_stack) return;
     return(
       <StackPage os={getOS()} ref={this.stack_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
       encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} 
@@ -5647,7 +5659,7 @@ class App extends Component {
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
-      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)}
+      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)}
       />
     )
   }
@@ -6087,6 +6099,16 @@ class App extends Component {
       me.set_cookies()
     }, (1 * 1000));
   }
+
+  when_hide_pip_tags_changed(item){
+    this.setState({hide_pip: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+
 
 
 
@@ -9690,7 +9712,9 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}/>
+                          <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} 
+                          
+                          />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -12979,12 +13003,33 @@ class App extends Component {
 
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
       this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
-      
+    }
+    else if(function_name == 'create_zip'){
+      this.new_channel_page.current?.when_zip_files_picked(picked_files)
+      this.new_post_page.current?.when_zip_files_picked(picked_files)
+      this.new_job_page.current?.when_zip_files_picked(picked_files)
+      this.new_storefront_item_page.current?.when_zip_files_picked(picked_files)
+      this.new_mail_page.current?.when_zip_files_picked(picked_files)
+      this.new_contractor_page.current?.when_zip_files_picked(picked_files)
+      this.new_proposal_page.current?.when_zip_files_picked(picked_files)
+      this.new_audio_page.current?.when_zip_files_picked(picked_files)
+      this.new_video_page.current?.when_zip_files_picked(picked_files)
+      this.new_nitro_page.current?.when_zip_files_picked(picked_files)
+
+      this.edit_job_page.current?.when_zip_files_picked(picked_files)
+      this.edit_token_page.current?.when_zip_files_picked(picked_files)
+      this.edit_post_page.current?.when_zip_files_picked(picked_files)
+      this.edit_channel_page.current?.when_zip_files_picked(picked_files)
+      this.edit_storefront_page.current?.when_zip_files_picked(picked_files)
+      this.edit_contractor_page.current?.when_zip_files_picked(picked_files)
+      this.edit_videopost_page.current?.when_zip_files_picked(picked_files)
+      this.edit_videopost_page.current?.when_zip_files_picked(picked_files)
     }
     else if(function_name == 'create_video_pick_video_file'){
       this.new_video_page.current?.when_video_file_picked(picked_files)
       this.new_video_page.current?.when_pdf_files_picked(picked_files)
     }
+
     
   }
 
@@ -14044,6 +14089,61 @@ class App extends Component {
 
 
 
+  when_zip_file_opened = async (item) => {
+    this.prompt_top_notification(this.getLocale()['2738f']/* 'Downloading Zip file.' */, 1500)
+    var zip_file_name = this.get_name_of_file(item)
+    var img = this.get_zip_from_file(item)
+    try {
+      // Fetch the zip as a blob
+      const response = await fetch(img);
+      if (!response.ok) {
+          throw new Error("Failed to fetch image");
+      }
+
+      const blob = await response.blob();
+
+      // Create a temporary object URL
+      const objectUrl = URL.createObjectURL(blob);
+
+      // Create and click the download link
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = zip_file_name;
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      console.error("Error downloading the zip:", error);
+    }
+  }
+
+  get_zip_from_file(ecid){
+    if(!ecid.startsWith('zip')) return ecid
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return null
+    
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(data == null) return null
+    return data['data']
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   render_view_pdf_bottomsheet(){
@@ -14158,7 +14258,7 @@ class App extends Component {
   }
 
   get_name_of_file(ecid){
-    if(!ecid.startsWith('pdf')) return ecid
+    if(!ecid.startsWith('pdf') && !ecid.startsWith('image') && !ecid.startsWith('zip')) return ecid
     var ecid_obj = this.get_cid_split2(ecid)
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'unknown'
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
@@ -14254,9 +14354,14 @@ class App extends Component {
     if(!this.state.is_audio_pip_showing) return;
     var size = this.getScreenSize();
     var h = 240
-    if(size == 's' || size == 'm') h = 310
+    // if(size == 's' || size == 'm') h = 310
     var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : 1.0
     var player_size = size == 's' ? 150 : 200
+
+    if(this.state.hide_pip != 'e'){
+      player_size = 0
+      opacity = 0.0
+    }
     return(
       <div style={{'opacity':opacity}}>
         <Draggable handle="strong" bounds="body" defaultPosition={{x: this.state.width - 220, y: this.state.height - h}}>
@@ -14277,7 +14382,7 @@ class App extends Component {
     return(
       <div style={{width:player_size, height:player_size}}>
         <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} player_size={player_size} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
-        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)}
+        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)}
         />
       </div>
     )
@@ -14290,8 +14395,10 @@ class App extends Component {
     var unshuffled_queue = this.get_queue(item, object, audio_items, is_page_my_collection_page, false)
     
     var me = this;
-    setTimeout(function() {
+    setTimeout(function() { 
+      // me.stack_page.current.set_media_data(queue, 0, unshuffled_queue, should_shuffle)
       me.audio_pip_page.current?.set_data(queue, 0, unshuffled_queue, should_shuffle)
+      me.setState({queue: queue, pos: 0, original_song_list: unshuffled_queue, is_shuffling: should_shuffle})
       me.load_queue(queue, 0)
     }, (1 * 500));
   }
@@ -14305,6 +14412,8 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.audio_pip_page.current?.set_data(queue, 0, unshuffled_queue, should_shuffle)
+      // me.stack_page.current.set_media_data(queue, 0, unshuffled_queue, should_shuffle)
+      me.setState({queue: queue, pos: 0, original_song_list: unshuffled_queue, is_shuffling: should_shuffle})
       me.load_queue(queue, 0)
     }, (1 * 500));
   }
@@ -14416,6 +14525,7 @@ class App extends Component {
         //if its the song thats to be played
         await this.wait(150)
         this.audio_pip_page.current?.start_playing()
+        this.setState({play_pause_state: 1/* playing */})
       }
     }
   }
@@ -14436,7 +14546,10 @@ class App extends Component {
   when_next_track_reached(){
     if(this.full_audio_page.current != null){
       this.full_audio_page.current?.when_next_track_reached()
-    } 
+    }
+    if(this.state.pos != this.state.queue.length - 1){
+      this.setState({pos: this.state.pos +1})
+    }
   }
 
   when_playing(song, time){
@@ -14474,6 +14587,10 @@ class App extends Component {
       return true
     }
     return false
+  }
+
+  when_audio_play_paused_from_pip(state){
+    this.setState({play_pause_state: state})
   }
 
 
@@ -14558,18 +14675,30 @@ class App extends Component {
 
   play_pause(){
     this.audio_pip_page.current?.play_pause()
+    if(this.state.play_pause_state == 0/* paused */){
+      this.setState({play_pause_state: 1/* playing */})
+    }else{
+      this.setState({play_pause_state: 0/* paused */})
+    }
   }
 
   play_previous(){
     this.audio_pip_page.current?.play_previous()
+    if(this.state.pos != 0){
+      this.setState({pos: this.state.pos -1})
+    }
   }
 
   play_next(){
     this.audio_pip_page.current?.play_next()
+    if(this.state.pos != this.state.queue.length - 1){
+      this.setState({pos: this.state.pos +1})
+    }
   }
 
   skip_to(index){
     this.audio_pip_page.current?.skip_to(index)
+    this.setState({pos: index})
   }
 
   update_time(number){
@@ -14582,6 +14711,27 @@ class App extends Component {
 
   shuffle_songs_in_pip(shuffle_list, its_pos){
     this.audio_pip_page.current?.shuffle_songs_in_pip(shuffle_list, its_pos)
+    if(this.state.is_shuffling == true){
+      this.setState({is_shuffling: !this.state.is_shuffling, queue: shuffle_list, pos:its_pos})
+    }else{
+      this.setState({is_shuffling: !this.state.is_shuffling, queue: shuffle_list})
+    }
+  }
+
+
+
+
+  play_pause_from_stack(){
+    this.audio_pip_page.current?.play_pause()
+    if(this.state.play_pause_state == 0/* paused */){
+      this.setState({play_pause_state: 1/* playing */})
+    }else{
+      this.setState({play_pause_state: 0/* paused */})
+    }
+  }
+
+  open_full_screen_viewer(){
+    this.audio_pip_page.current?.expand_player()
   }
 
 
@@ -17897,7 +18047,7 @@ class App extends Component {
   }
 
   is_ecid(ecid){
-    if(ecid.startsWith('image') || ecid.startsWith('audio') || ecid.startsWith('video') || ecid.startsWith('pdf')){
+    if(ecid.startsWith('image') || ecid.startsWith('audio') || ecid.startsWith('video') || ecid.startsWith('pdf')|| ecid.startsWith('zip')){
       return true;
     }else{
       return false
@@ -19590,16 +19740,20 @@ class App extends Component {
 
     var my_proposals_events = []
     var my_proposal_ids = []
-    for(var i=0; i<contracts_ive_entered.length; i++){
-      var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contracts_ive_entered[i]})
-
-
-      for(var j=0; j<contracts_proposals.length; j++){
-        my_proposal_ids.push(parseInt(contracts_proposals[j].returnValues.p2)) //<--------issue! should be p4
-        my_proposals_events.push(contracts_proposals[j])
-      }
-
+    var all_contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contracts_ive_entered})
+    
+    for(var j=0; j<all_contracts_proposals.length; j++){
+      my_proposal_ids.push(parseInt(all_contracts_proposals[j].returnValues.p2)) //<--------issue! should be p4
+      my_proposals_events.push(all_contracts_proposals[j])
     }
+    // for(var i=0; i<contracts_ive_entered.length; i++){
+      // var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contracts_ive_entered[i]})
+
+      // for(var j=0; j<contracts_proposals.length; j++){
+      //   my_proposal_ids.push(parseInt(contracts_proposals[j].returnValues.p2)) //<--------issue! should be p4
+      //   my_proposals_events.push(contracts_proposals[j])
+      // }
+    // }
 
     var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:2})
 
@@ -20636,6 +20790,7 @@ class App extends Component {
     
     this.record_number_of_items(e5, 'audio', created_audio_events.length)
     var created_audios = this.state.created_audios[e5] == null ? [] : this.state.created_audios[e5].slice()
+    var my_acquired_audios = []
     var created_audio_mappings = this.state.created_audio_mappings[e5] == null ? {} : structuredClone(this.state.created_audio_mappings[e5])
     var is_first_time = this.state.created_audios[e5] == null
     is_first_time = true
@@ -20675,6 +20830,9 @@ class App extends Component {
           }
         }
         created_audio_mappings[id] = data
+        if(this.state.my_albums.includes(id)){
+          my_acquired_audios.push(data)
+        }
       }
 
       if(is_first_time){
@@ -20682,7 +20840,7 @@ class App extends Component {
         var created_audio_mappings_clone = structuredClone(this.state.created_audio_mappings)
         created_audios_clone[e5] = created_audios
         created_audio_mappings_clone[e5] = created_audio_mappings
-        this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone})        
+        this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone, my_acquired_audios: my_acquired_audios})        
       }
     }
 
@@ -20690,7 +20848,7 @@ class App extends Component {
     var created_audio_mappings_clone = structuredClone(this.state.created_audio_mappings)
     created_audios_clone[e5] = created_audios
     created_audio_mappings_clone[e5] = created_audio_mappings
-    this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone})
+    this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone, my_acquired_audios: my_acquired_audios})
 
     console.log('audio count: '+created_audios.length)
   }
@@ -20722,6 +20880,7 @@ class App extends Component {
     this.record_number_of_items(e5, 'video', created_video_events.length)
     var created_videos = this.state.created_videos[e5] == null ? [] : this.state.created_videos[e5].slice()
     var created_video_mappings = this.state.created_video_mappings[e5] == null ? {} : structuredClone(this.state.created_video_mappings[e5])
+    var my_acquired_videos = []
     var is_first_time = this.state.created_videos[e5] == null
     is_first_time = true
 
@@ -20763,6 +20922,9 @@ class App extends Component {
             }
           }
           created_video_mappings[id] = data
+          if(this.state.my_videoposts.includes(id)){
+            my_acquired_videos.push(data)
+          }
         }
       }
 
@@ -20771,7 +20933,7 @@ class App extends Component {
         var created_video_mappings_clone = structuredClone(this.state.created_video_mappings)
         created_videos_clone[e5] = created_videos
         created_video_mappings_clone[e5] = created_video_mappings
-        this.setState({created_videos: created_videos_clone, created_video_mappings:created_video_mappings_clone})        
+        this.setState({created_videos: created_videos_clone, created_video_mappings:created_video_mappings_clone, my_acquired_videos: my_acquired_videos})        
       }
     }
 
@@ -20779,7 +20941,7 @@ class App extends Component {
     var created_video_mappings_clone = structuredClone(this.state.created_video_mappings)
     created_videos_clone[e5] = created_videos
     created_video_mappings_clone[e5] = created_video_mappings
-    this.setState({created_videos: created_videos_clone, created_video_mappings:created_video_mappings_clone})
+    this.setState({created_videos: created_videos_clone, created_video_mappings:created_video_mappings_clone, my_acquired_videos: my_acquired_videos})
 
     console.log('video count: '+created_videos.length)
     

@@ -305,6 +305,22 @@ class AddCommentPage extends Component {
         else if(selected_item == this.props.app_state.loc['a311bu']/* 'preview' */){
             return(
                 <div>
+                    {this.render_markdown_or_empty()}
+                </div>
+            )
+        }
+    }
+
+    render_markdown_or_empty(){
+        if(this.state.markdown.trim() == ''){
+            return(
+                <div>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
                     {this.render_detail_item('13', {'source':this.state.markdown})}
                 </div>
             )

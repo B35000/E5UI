@@ -78,6 +78,7 @@ class StackPage extends Component {
         get_remember_account_tags_object: this.get_remember_account_tags_object(),
         get_file_data_option_tags_object: this.get_file_data_option_tags_object(),
         get_upload_storage_option_tags_object: this.get_upload_storage_option_tags_object(),
+        get_hide_pip_tags_object:this.get_hide_pip_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -693,7 +694,6 @@ class StackPage extends Component {
         }
     }
 
-
     get_selected_remember_account_type_option(){
         if(this.props.app_state.remember_account == 'e'){
             return 0
@@ -703,7 +703,6 @@ class StackPage extends Component {
         }
         return 0;
     }
-
 
     set_selected_remember_account_type_tag(){
         this.setState({get_remember_account_tags_object: this.get_remember_account_tags_object(),})
@@ -729,7 +728,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1593bk']/* all */, this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */, this.props.app_state.loc['1593cd']/* 'documents' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1593bk']/* all */, this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */, this.props.app_state.loc['1593cd']/* 'documents' */, this.props.app_state.loc['1593ed']/* 'zip' */], [1]
             ],
         };
     }
@@ -743,6 +742,35 @@ class StackPage extends Component {
 
     set_my_preferred_nitro(){
         if(this.props.app_state.my_preferred_nitro != '') this.setState({selected_nitro_item: this.props.app_state.my_preferred_nitro})
+    }
+
+
+
+
+
+    get_hide_pip_tags_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593ec']/* 'hidden' */], [this.get_selected_hide_pip_type_option()]
+            ], 
+        }
+    }
+
+    get_selected_hide_pip_type_option(){
+        if(this.props.app_state.hide_pip == 'e'){
+            return 0
+        }
+        else if(this.props.app_state.hide_pip == this.props.app_state.loc['1593ec']/* 'hidden' */){
+            return 1
+        }
+        return 0;
+    }
+
+    set_selected_hide_pip_type_tag(){
+        this.setState({get_hide_pip_tags_object: this.get_hide_pip_tags_object(),})
     }
 
 
@@ -1409,6 +1437,8 @@ class StackPage extends Component {
         var button_text = is_running == true ? this.props.app_state.loc['1593cs']/* 'Running...' */ : (this.props.app_state.loc['1456']/* 'Run ' */+this.props.app_state.selected_e5+this.props.app_state.loc['1457']/* ' Transactions' */)
         return(
             <div>
+                {this.render_now_playing_media_if_any()}
+
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[this.props.app_state.selected_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
@@ -1492,6 +1522,130 @@ class StackPage extends Component {
             return {'size':size, 'unit':'bytes'}
         }
     }
+
+    render_now_playing_media_if_any(){
+        if(this.props.app_state.is_audio_pip_showing == true && this.props.app_state.queue.length > 0){
+            var item = this.props.app_state.queue[this.props.app_state.pos]
+            return(
+                <div>
+                    <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dz']/* Stop */}</p>,
+                            action: () => this.props.close_audio_pip()
+                            }}>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                {this.render_song_item(item)}
+                            </div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_song_item(item){
+        var object = item['object']
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+
+        var border_radius = '7px';
+        var text_align = 'left'
+        var padding = '10px 15px 10px 15px'
+        var font_size = ['15px', '12px', 19, 50];
+        var song_title = item['song_title']
+        var song_details = item['song_composer']
+        return(
+            <div>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
+                    <img onClick={()=>this.props.open_full_screen_viewer()} src={this.get_image_from_file(image)} alt="" style={{height:43 ,width:43, 'border-radius': '10px'}}/>
+                    <div style={{width:10}}/>
+                    <div style={{width:'80%'}}>
+                        <div style={{'padding':'3px 0px 0px 0px'}}>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}}>{song_title}</p>
+
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
+                        </div>
+                    </div>
+                    <div style={{width:10}}/>
+                    <div style={{padding:'9px 0px 0px 0px'}}>
+                        {this.render_pause_button()}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    set_media_data(queue, song_pos, unshuffled_songs, is_shuffling){
+        // console.log('stack_part','queue loaded', queue)
+        // this.setState({queue: queue, pos: song_pos, original_song_list: unshuffled_songs, is_shuffling: is_shuffling})
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+
+        return data['data']
+    }
+
+    render_pause_button(){
+        var image = this.props.app_state.play_pause_state == 1/* playing */ ? this.props.theme['pause']: this.props.theme['play']     
+        return(
+            <img onClick={()=>this.play_pause_from_here()} alt="" src={image} style={{height:25 ,width:'auto', 'text-align':'center'}}/>
+        )
+    }
+
+    play_pause_from_here(){
+        // this.play_pause()
+        this.props.play_pause_from_stack()
+    }
+
+    play_pause(){
+        // if(this.state.play_pause_state == 0/* paused */){
+        //     this.setState({play_pause_state: 1/* playing */})
+        // }else{
+        //     this.setState({play_pause_state: 0/* paused */})
+        // }
+    }
+
+    when_next_track_reached(){
+        // if(this.state.pos != this.state.queue.length - 1){
+        //     this.setState({pos: this.state.pos +1})
+        // }
+    }
+
+    play_previous(){
+        // if(this.state.pos != 0){
+        //     this.setState({pos: this.state.pos -1})
+        // }
+    }
+
+    play_next(){
+        // if(this.state.pos != this.state.queue.length - 1){
+        //     this.setState({pos: this.state.pos +1})
+        // }
+    }
+
+    skip_to(index){
+        // this.setState({pos: index})
+    }
+
+    shuffle_songs_in_stack(shuffle_list, its_pos){
+        // if(this.state.is_shuffling == true){
+        //     this.setState({is_shuffling: !this.state.is_shuffling, queue: shuffle_list, pos:its_pos})
+        // }else{
+        //     this.setState({is_shuffling: !this.state.is_shuffling, queue: shuffle_list})
+        // }
+    }
+
+
+
+
 
 
 
@@ -7500,6 +7654,17 @@ class StackPage extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea'], 'details':this.props.app_state.loc['1593eb'], 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
@@ -7749,6 +7914,12 @@ class StackPage extends Component {
         this.setState({get_remember_account_tags_object: tag_object});
         var selected_item = this.get_selected_item(this.state.get_remember_account_tags_object, 'e')
         this.props.when_remember_account_tags_changed(selected_item)
+    }
+
+    when_get_hide_pip_tags_object_updated(tag_object){
+        this.setState({get_hide_pip_tags_object: tag_object})
+        var selected_item = this.get_selected_item(this.state.get_hide_pip_tags_object, 'e')
+        this.props.when_hide_pip_tags_changed(selected_item)
     }
 
 
@@ -9717,6 +9888,7 @@ class StackPage extends Component {
         var audio_count = upload_metrics['audio_count']+''
         var video_count = upload_metrics['video_count']+''
         var pdf_count = upload_metrics['pdf_count']+''
+        var zip_count = upload_metrics['zip_count']+''
         var total_size = this.format_data_size(upload_metrics['total_size'])
         var ts = total_size['size']+' '+total_size['unit']
         return(
@@ -9742,6 +9914,10 @@ class StackPage extends Component {
                             {this.render_detail_item('3', {'details':this.props.app_state.loc['1593ce']/* 'Uploaded PDFs.' */, 'title':this.format_number(pdf_count), 'size':'l'})}
                             <div style={{width: 10}}/>
                         </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1593ee']/* 'Uploaded Zips.' */, 'title':this.format_number(zip_count), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
                     </ul>
                 </div>
                 <div style={{height: 10}}/>
@@ -9765,7 +9941,6 @@ class StackPage extends Component {
     when_get_upload_storage_option_tags_object_updated(tag_obj){
         this.setState({get_upload_storage_option_tags_object: tag_obj})
     }
-
 
     render_storage_option(){
         var selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
@@ -9954,6 +10129,7 @@ class StackPage extends Component {
         var audios = 0;
         var videos = 0;
         var pdfs = 0;
+        var zips = 0;
         var total_size = 0;
 
         var items = this.props.app_state.uploaded_data_cids
@@ -9966,10 +10142,11 @@ class StackPage extends Component {
                 else if(data['type'] == 'audio') audios++
                 else if(data['type'] == 'video') videos++
                 else if(data['type'] == 'pdf') pdfs++
+                else if(data['type'] == 'zip') zips++
             }
         });
 
-        return {'image_count':images, 'audio_count':audios, 'video_count':videos, 'total_size':total_size, 'pdf_count':pdfs}
+        return {'image_count':images, 'audio_count':audios, 'video_count':videos, 'total_size':total_size, 'pdf_count':pdfs, 'zip_count':zips}
     }
 
     get_upload_file_size_limit(){
@@ -10035,6 +10212,14 @@ class StackPage extends Component {
                         </div>
                     </div>
                 </div>
+                {/* <div style={{'display': 'flex','flex-direction': 'row', 'width':'99%'}}>
+                    <div style={{'width':'95%'}}>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_file_data_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_file_data_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                    <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                        {this.render_upload_button()}
+                    </div>
+                </div> */}
                 <div style={{height: 10}}/>
                 {this.render_uploaded_files()}
             </div>
@@ -10091,6 +10276,17 @@ class StackPage extends Component {
                     </div>
                 </div>
             )
+        }
+        else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
+           return(
+                <div>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)} multiple/>
+                    </div>
+                </div>
+            ) 
         }
     }
 
@@ -10196,6 +10392,11 @@ class StackPage extends Component {
         return;
     }
 
+    when_zip_picked = (e) => {
+        this.when_file_picked(e, 'zip')
+        return;
+    }
+
 
 
 
@@ -10274,6 +10475,10 @@ class StackPage extends Component {
                 else if(type == 'pdf'){
                     var pdfFile = e.target.files[i];
                     reader.readAsDataURL(pdfFile)
+                }
+                else if(type == 'zip'){
+                    var zipFile = e.target.files[i];
+                    reader.readAsDataURL(zipFile);
                 }
 
                 while (this.is_loading_file == true) {
@@ -10402,6 +10607,9 @@ class StackPage extends Component {
         else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
             file_type = 'pdf'
         }
+        else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
+            file_type = 'zip'
+        }
 
         var items = this.props.app_state.uploaded_data_cids
         var return_items = []
@@ -10491,6 +10699,18 @@ class StackPage extends Component {
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
                 var details = data['name']
                 var thumbnail = data['thumbnail']
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = this.props.app_state.static_assets['zip_file']
                 return(
                     <div>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}

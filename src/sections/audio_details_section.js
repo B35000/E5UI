@@ -327,6 +327,7 @@ class AudioDetailSection extends Component {
                     {this.render_item_data(items, object)}
                     {this.render_item_images(object)}
                     {this.render_pdf_files_if_any(object)}
+                    {this.render_zip_files_if_any(object)}
                     
                     <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
@@ -682,6 +683,63 @@ class AudioDetailSection extends Component {
             return {'size':size, 'unit':'bytes'}
         }
     }
+
+
+
+
+    render_zip_files_if_any(object){
+        var state = object['ipfs']
+        if(state.entered_zip_objects != null && state.entered_zip_objects.length > 0){
+            return(
+                <div>
+                    {this.render_zips_part(state.entered_zip_objects)}
+                </div>
+            )
+        }
+    }
+
+    render_zips_part(entered_zip_objects){
+        var items = [].concat(entered_zip_objects)
+
+        if(items.length == 0) return;
+        
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_zip_item_clicked(item)}>
+                            {this.render_uploaded_zip_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_uploaded_zip_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end(data['name'])
+        var thumbnail = this.props.app_state.static_assets['zip_file']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%',})}
+            </div>
+        )
+    }
+
+    when_uploaded_zip_item_clicked(item){
+        this.props.when_zip_file_opened(item)
+    }
+
+
 
 
 
@@ -1045,7 +1103,6 @@ class AudioDetailSection extends Component {
                                     <p style={{'color': text_color, 'font-size': '10px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{song_length}</p>
                                 </div>
                             </div>
-
                             <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
                         </div>
                     </div>
@@ -1124,8 +1181,28 @@ class AudioDetailSection extends Component {
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }else{
-            this.props.play_song(item, object, this.get_audio_items(), this.is_page_my_collection_page(), false)
+            this.props.play_song(item, object, this.get_preferred_audio_items(), this.is_page_my_collection_page(), false)
         }
+    }
+
+    get_preferred_audio_items(){
+        var all_audios = this.get_audio_items()
+        if(this.is_page_my_collection_page()){
+            // var my_added_album_ids = this.props.app_state.my_albums.reverse()
+            // var my_acquired_albums = []
+            // for(var i=0; i<my_added_album_ids.length; i++){
+            //     var obj = this.get_item_in_array2(my_added_album_ids[i], all_audios)
+            //     if(obj != null) my_acquired_albums.push(obj)
+            // }
+            // return my_acquired_albums
+            return this.props.app_state.my_acquired_audios.reverse()
+        }
+        return all_audios
+    }
+
+    get_item_in_array2(id, object_array){
+        var object = object_array.find(x => x['id'] === id);
+        return object
     }
 
     get_songs_to_display(object){
