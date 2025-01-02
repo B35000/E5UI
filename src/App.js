@@ -18000,6 +18000,13 @@ class App extends Component {
         });
       }
 
+      var zips_to_add = object['ipfs'].entered_zip_objects == null ? [] : object['ipfs'].entered_zip_objects
+      if(zips_to_add.length > 0){
+        zips_to_add.forEach(item => {
+          if(this.is_ecid(item)) ecids.push(item)
+        });
+      }
+
       var items = object['ipfs'].entered_objects == null ? [] : object['ipfs'].entered_objects
       if(items.length > 0){
         items.forEach(item => {
