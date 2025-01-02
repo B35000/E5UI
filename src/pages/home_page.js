@@ -269,7 +269,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264e']/* 'contractor-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1199']/* 'proposals' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1264aa']/* 'main-contract' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1200']/* 'subscriptions' */] = [
               ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
@@ -2067,6 +2067,17 @@ class home_page extends Component {
 
         if(selected_option_name == this.props.app_state.loc['1211']/* 'my-proposals' */){
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.get_all_sorted_objects(this.props.app_state.my_proposals)))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264aa']/* 'main-contract' */){
+            var all_proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
+            var main_contract_proposals = []
+            for(var i=0; i<all_proposals.length; i++){
+                var proposal_target_contract_authority = all_proposals[i]['data'][1/* config */][5/* <5>target_contract_authority */]
+                if(proposal_target_contract_authority == 2){
+                    main_contract_proposals.push(all_proposals[i])
+                }
+            }
+            return main_contract_proposals
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_proposals = []

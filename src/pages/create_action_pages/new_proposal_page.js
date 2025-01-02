@@ -2184,7 +2184,7 @@ class NewProposalPage extends Component {
     set_max_expiry_time(){
         var contract_config = this.state.contract_item['data'][1]
         var now = Math.floor(Date.now()/1000)
-        var max = bigInt(now).plus(contract_config[5])
+        var max = bigInt(now).plus(contract_config[5]).plus(6*60*60)
         this.setState({proposal_expiry_time: max})
     }
 
@@ -2209,7 +2209,7 @@ class NewProposalPage extends Component {
 
     set_max_submit_expiry_time(){
         var contract_config = this.state.contract_item['data'][1]
-        var max = bigInt(this.state.proposal_expiry_time).plus(contract_config[36])
+        var max = bigInt(this.state.proposal_expiry_time).plus(contract_config[36]).plus(6*60*60)
         if(contract_config[36] == 0){
             max = bigInt(max).plus((60*60*24*7*3))
         }
