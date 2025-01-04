@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 import React, { Component, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 
 /* images */
@@ -373,8 +374,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false,
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, web3-storage, nft-storage */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
-    remember_account:'e', hide_pip:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -434,7 +434,7 @@ class App extends Component {
 
     censored_keyword_phrases: [], should_update_censored_keyword_phrases: false, censored_keywords_by_my_following:[],
 
-    queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[],
+    queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{},
   };
 
   get_static_assets(){
@@ -470,7 +470,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1101,7 +1101,7 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'Total Audioposts, Videoposts and Nitros created','1264x':'audiopost-items','1264y':'videopost-items','1264z':'nitro-items','1264aa':'main-contract','1264ab':'','1264ac':'','1264ad':'','1264ae':'','1264af':'','1264ag':'','1264ah':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'Total Audioposts, Videoposts and Nitros created','1264x':'audiopost-items','1264y':'videopost-items','1264z':'nitro-items','1264aa':'main-contract','1264ab':'Wallet Value','1264ac':'The total worth of all your wallet contents.','1264ad':'','1264ae':'','1264af':'','1264ag':'','1264ah':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
@@ -1131,7 +1131,7 @@ class App extends Component {
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
         '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'Censor 🚫','1593dr':'Censor Keywords.','1593ds':'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.','1593dt':'Keyword or phrase...','1593du':'Type something first.',
-        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'','1593eg':'','1593eh':'','1593ei':'','1593ej':'','1593ek':'','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
+        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'USD','1593eg':'SAT','1593eh':'Wallet Value in USD.','1593ei':'Wallet Value in SATs','1593ej':'','1593ek':'','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1255,7 +1255,7 @@ class App extends Component {
         '2906':'You need to set your wallet first.','2907':'You can\'t delete that message.','2908':'Delete.','2909':'Message Deleted.', '2909a':'You dont have enough spend to include that award.', 
         
         /* coins details section */
-        '2910':'Coin Name.','2911':'Coin Symbol.','2912':'Coin Decimal.','2913':'Base Unit Name.','2914':'Decimal Conversion Ratio.','2915':'Ledger Account Type.','2916':'Accounting','2917':'Wallet Address.','2918':'Unset','2919':'Your balance in ','2920':'Existential Deposit','2921':'Average Transaction Fee...','2922':'Per','2923':'Fee Type','2924':'Send/Receive ','2925':'Send or receive the coin from a specified account.','2926':'Pending...','2927':'Wait first, the wallet is pending.','2927a':'Ledger Consensus Mechanism.', '2927b':'Block Time', '2927c':'Ledger Age.','2927d':'Ledger Throughput.','2927e':'Block Size.','2927f':'Refresh Wallet.','2927g':'Refreshing Wallet...','2927h':'View Your Wallet on its Explorer.','2927i':'View your wallet on its Blockexplorer.',
+        '2910':'Coin Name.','2911':'Coin Symbol.','2912':'Coin Decimal.','2913':'Base Unit Name.','2914':'Decimal Conversion Ratio.','2915':'Ledger Account Type.','2916':'Accounting','2917':'Wallet Address.','2918':'Unset','2919':'Your balance in ','2920':'Existential Deposit','2921':'Average Transaction Fee...','2922':'Per','2923':'Fee Type','2924':'Send/Receive ','2925':'Send or receive the coin from a specified account.','2926':'Pending...','2927':'Wait first, the wallet is pending.','2927a':'Ledger Consensus Mechanism.', '2927b':'Block Time', '2927c':'Ledger Age.','2927d':'Ledger Throughput.','2927e':'Block Size.','2927f':'Refresh Wallet.','2927g':'Refreshing Wallet...','2927h':'View Your Wallet on its Explorer.','2927i':'View your wallet on its Blockexplorer.', '2927j':'Wallet Value.', '2927k':'','2927l':'','2927m':'','2927n':'','2927o':'','2927p':'','2927q':'','2927r':'',
         
         /* send_receive_coin */
         '2928':'Receive the coin using the address shown below.','2929':'Send the coin using the address shown below.','2930':'Default Transaction Fee','2931':'Transaction Fee.','2932':'Set the amount you wish to pay for your transaction.','2933':'Send to Address.','2934':'Your balance is too low to make a transaction.','2935':'Please Set an amount to transfer.','2936':'You can\'t include the minimum deposit in your transaction.','2937':'You don\'t have enough coin to make that transaction.','2938':'Please set a recipient for the transfer.','2939':'That recipient address is not valid.','2940':'That transaction fee is invalid.','2941':'Send Coin Confirmation.',
@@ -2645,7 +2645,8 @@ class App extends Component {
 
       censored_keyword_phrases: this.state.censored_keyword_phrases, 
       should_update_censored_keyword_phrases: this.state.should_update_censored_keyword_phrases,
-      hide_pip:this.state.hide_pip
+      hide_pip:this.state.hide_pip,
+      preferred_currency: this.state.preferred_currency,
     }
   }
 
@@ -2758,6 +2759,7 @@ class App extends Component {
       var cupcake_should_update_censored_keyword_phrases = cupcake_state.should_update_censored_keyword_phrases
 
       var cupcake_hide_pip = cupcake_state.hide_pip
+      var cupcake_preferred_currency = cupcake_state.preferred_currency
 
       
       if(cupcake_theme != null){
@@ -2909,10 +2911,8 @@ class App extends Component {
         this.setState({coin_data: cupcake_coin_data})
       }
 
-      var web3_email = ''
       if(cupcake_web3_account_email != null){
         this.setState({web3_account_email: cupcake_web3_account_email})
-        if(cupcake_web3_account_email != null) web3_email = cupcake_web3_account_email
       }
 
       if(cupcake_update_data_in_E5 != null){
@@ -2991,32 +2991,38 @@ class App extends Component {
       if(cupcake_hide_pip != null){
         this.setState({hide_pip: cupcake_hide_pip})
       }
-    }
 
+      if(cupcake_preferred_currency != null){
+        this.setState({preferred_currency: cupcake_preferred_currency})
+      }
+    }
+    this.set_stack_page_data()
+  }
+
+  set_stack_page_data(){
     var me = this;
     setTimeout(function() {
-        me.stack_page.current?.set_light_dark_setting_tag()
-        me.stack_page.current?.set_storage_option_tag()
-        me.stack_page.current?.set_e5_option_tag()
-        me.stack_page.current?.set_refresh_speed_tag()
-        me.stack_page.current?.set_masked_content_tag()
-        me.stack_page.current?.set_content_channeling_tags()
-        me.stack_page.current?.set_content_language_tags()
-        me.stack_page.current?.set_content_filter_settings_tags()
-        me.stack_page.current?.set_tabs_tag()
-        me.stack_page.current?.set_storage_permissions_tag()
-        me.stack_page.current?.set_stack_optimizer_tag()
-        me.stack_page.current?.set_homepage_tags_position_tag()
-        me.stack_page.current?.set_preferred_font_tag()
-        me.stack_page.current?.set_skip_nsfw_warning_tag()
-        me.stack_page.current?.set_selected_graph_type_tag()
-        me.stack_page.current?.set_selected_remember_account_type_tag()
-        me.stack_page.current?.set_web3_email_account(web3_email)
-        me.stack_page.current?.set_my_preferred_nitro()
-        me.stack_page.current?.set_selected_hide_pip_type_tag()
+      me.stack_page.current?.set_light_dark_setting_tag()
+      me.stack_page.current?.set_storage_option_tag()
+      me.stack_page.current?.set_e5_option_tag()
+      me.stack_page.current?.set_refresh_speed_tag()
+      me.stack_page.current?.set_masked_content_tag()
+      me.stack_page.current?.set_content_channeling_tags()
+      me.stack_page.current?.set_content_language_tags()
+      me.stack_page.current?.set_content_filter_settings_tags()
+      me.stack_page.current?.set_tabs_tag()
+      me.stack_page.current?.set_storage_permissions_tag()
+      me.stack_page.current?.set_stack_optimizer_tag()
+      me.stack_page.current?.set_homepage_tags_position_tag()
+      me.stack_page.current?.set_preferred_font_tag()
+      me.stack_page.current?.set_skip_nsfw_warning_tag()
+      me.stack_page.current?.set_selected_graph_type_tag()
+      me.stack_page.current?.set_selected_remember_account_type_tag()
+      me.stack_page.current?.set_web3_email_account()
+      me.stack_page.current?.set_my_preferred_nitro()
+      me.stack_page.current?.set_selected_hide_pip_type_tag()
+      me.stack_page.current?.set_selected_preferred_currency_type_tag()
     }, (1 * 1000));
-
-    
   }
 
   get_account_data_to_store(){
@@ -5659,7 +5665,7 @@ class App extends Component {
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
-      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)}
+      when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
       />
     )
   }
@@ -5686,6 +5692,7 @@ class App extends Component {
           if(me.stack_bottomsheet != null){
             me.stack_page.current?.setState(me.stack_bottomsheet)
           }
+          me.set_stack_page_data()
         }
       }, (1 * 200));
     }
@@ -6102,6 +6109,14 @@ class App extends Component {
 
   when_hide_pip_tags_changed(item){
     this.setState({hide_pip: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_preferred_currency_tags_changed(item){
+    this.setState({preferred_currency: item})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -15209,6 +15224,7 @@ class App extends Component {
 
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
+      this.load_coin_and_ether_coin_prices()
       await this.check_if_beacon_node_is_online()
       // await this.load_static_assets()
       // this.inc_synch_progress()
@@ -16745,7 +16761,61 @@ class App extends Component {
 
 
 
+  load_coin_and_ether_coin_prices = async () => {
+    var api_key = `${process.env.REACT_APP_COINAPI_KEY}`;
+    var assets = this.get_all_coin_and_ether_symbols()
+    const assetFilter = assets.join(',');
+    var request = `https://rest.coinapi.io/v1/assets?filter_asset_id=${assetFilter}`
+    
+    var body = {
+      method: "GET", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json", // Set content type to JSON
+        "X-CoinAPI-Key": api_key
+      },
+    }
 
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var json_data = JSON.parse(data)
+      var price_data = {}
+      for(var i=0; i<json_data.length; i++){
+        var asset_id = json_data[i].asset_id
+        var asset_name = json_data[i].name
+        var price_usd = json_data[i].price_usd
+        var volume_1day_usd = json_data[i].volume_1day_usd
+        var volume_1hrs_usd = json_data[i].volume_1hrs_usd
+        if(price_usd != null){
+          var data = {'id':asset_id, 'name':asset_name, 'price':price_usd, 'day_volume':volume_1day_usd, 'hour_volume':volume_1hrs_usd}
+          price_data[asset_id] = data
+        }
+      }
+      this.setState({asset_price_data: price_data})
+    }
+    catch(e){
+
+    }
+  }
+
+  get_all_coin_and_ether_symbols(){
+    var all_symbols = []
+    this.state.e5s['data'].forEach(e5 => {
+      var symbol = this.state.e5s[e5].token
+      all_symbols.push(symbol)
+    });
+    var coins = this.state.coins
+    for (const coin in coins) {
+        if (coins.hasOwnProperty(coin)) {
+          all_symbols.push(coin)
+        }
+    }
+    return all_symbols
+  }
 
   check_if_beacon_node_is_online = async () => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`

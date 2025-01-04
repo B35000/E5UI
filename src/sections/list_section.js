@@ -3331,7 +3331,7 @@ class PostListSection extends Component {
             this.get_token_data('KAR', 'Karura EVM', 'E655'),
             this.get_token_data('ACA', 'Acala EVM', 'E665'),
             // this.get_token_data('EDG', 'Edgeware EVM', 'E675'),
-            this.get_token_data('BERG', 'Bloxberg', 'E685'),
+            // this.get_token_data('BERG', 'Bloxberg', 'E685'),
             this.get_token_data('PHOENIX', 'Phoenix', 'E695'),
             this.get_token_data('OMC', 'Omchain', 'E705'),
             this.get_token_data('OM', 'Om', 'E715'),
@@ -3395,17 +3395,17 @@ class PostListSection extends Component {
 
     get_token_data(symbol, name,  e5){
         return {
-                'id':symbol,
-                'e5':e5,
-                'name': name,
-                'symbol': symbol,
-                'image': this.props.app_state.e5s[e5].ether_image,
-                'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
-                'tags':{'active_tags':[name, 'EVM', symbol], 'index_option':'indexed'},
-                'number_label':this.get_blockchain_data('s', e5),
-                'number_label_large': this.get_blockchain_data('l', e5),
-                'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},
-            }
+            'id':symbol,
+            'e5':e5,
+            'name': name,
+            'symbol': symbol,
+            'image': this.props.app_state.e5s[e5].ether_image,
+            'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
+            'tags':{'active_tags':[name, 'EVM', symbol], 'index_option':'indexed'},
+            'number_label':this.get_blockchain_data('s', e5),
+            'number_label_large': this.get_blockchain_data('l', e5),
+            'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},
+        }
     }
 
     get_blockchain_data(size, e5){

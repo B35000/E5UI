@@ -1242,7 +1242,7 @@ class SpendDetailSection extends Component {
             var depth = token_ipfs.default_depth == null ? 0 : token_ipfs.default_depth
             if(depth != 0) is_end_token = true
         }
-        if(proportion_ratio_events.length >= 23 && !is_end_token){
+        if(proportion_ratio_events.length >= 5 && !is_end_token){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -1296,7 +1296,7 @@ class SpendDetailSection extends Component {
             // yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/5)) == 0 && i != 0){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//

@@ -205,6 +205,8 @@ class CoinsDetailsSection extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit'], })}
                     </div>
 
+                    {this.render_wallet_vaue(item, balance_decimal)}
+
                     {this.render_coin_blockexplorer_link(item)}
 
                     <div style={{height: 10}}/>
@@ -225,6 +227,39 @@ class CoinsDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_wallet_vaue(item, balance_decimal){
+        var final_balance = balance_decimal == null ? 0.0 : balance_decimal
+        if(this.props.app_state.asset_price_data['BTC'] == null) return;
+        var coin_price = this.props.app_state.asset_price_data[item['symbol']]['price']
+        var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
+        var selected_preferred_currency = this.props.app_state.preferred_currency
+        if(coin_price != null){
+            var balance_value_in_usd = coin_price * final_balance
+            if(selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */){
+                var number_of_btc_for_one_usd = 1 / bitcoin_price
+                var balance_value_in_btc = number_of_btc_for_one_usd * balance_value_in_usd
+                var balance_value_in_sat = parseInt(balance_value_in_btc * this.props.app_state.coins['BTC']['conversion'])
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(balance_value_in_sat), 'barwidth':this.calculate_bar_width(balance_value_in_sat), 'number':this.format_account_balance_figure(balance_value_in_sat), 'barcolor':'#606060', 'relativepower':'SATs', })}
+                        </div>
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(parseInt(balance_value_in_usd)), 'barwidth':this.calculate_bar_width(parseInt(balance_value_in_usd)), 'number':this.format_account_balance_figure(parseInt(balance_value_in_usd)), 'barcolor':'#606060', 'relativepower':'USD', })}
+                        </div>
+                    </div>
+                )
+            }
+        }
     }
 
     render_block_size_metric(block_size){

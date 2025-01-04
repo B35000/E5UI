@@ -4662,6 +4662,13 @@ class home_page extends Component {
                     {this.render_my_balances()}
                     {this.render_detail_item('0')} 
 
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1264ab']/* 'Wallet Value' */, 'details':this.props.app_state.loc['1264ac']/* 'The total worth of all your wallet contents.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_total_wallet_value()}
+                    {this.render_detail_item('0')} 
+
+
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2821']/* 'Estimated Gas.' */, 'details':this.props.app_state.loc['2822']/* 'The estimated gas set to be consumed in your next run.' */, 'size':'l'})}
                     <div style={{height: 5}}/>
                     {this.render_stack_gas_figure()}
@@ -4746,6 +4753,67 @@ class home_page extends Component {
                     {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
                 </div>
             )
+        }
+    }
+
+
+
+
+
+    render_total_wallet_value(){
+        if(this.props.app_state.asset_price_data['BTC'] == null) return;
+        var total_wallet_value_in_usd = parseInt(this.get_total_wallet_value_in_usd())
+        var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
+        var number_of_btc_for_one_usd = 1 / bitcoin_price
+        var balance_value_in_btc = number_of_btc_for_one_usd * total_wallet_value_in_usd
+        var balance_value_in_sat = parseInt(balance_value_in_btc * this.props.app_state.coins['BTC']['conversion'])
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593eh']/* 'Wallet Value in USD.' */, 'subtitle':this.format_power_figure(total_wallet_value_in_usd), 'barwidth':this.calculate_bar_width(total_wallet_value_in_usd), 'number':this.format_account_balance_figure(total_wallet_value_in_usd), 'barcolor':'#606060', 'relativepower':'USD', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ei']/* 'Wallet Value in SATs' */, 'subtitle':this.format_power_figure(balance_value_in_sat), 'barwidth':this.calculate_bar_width(balance_value_in_sat), 'number':this.format_account_balance_figure(balance_value_in_sat), 'barcolor':'#606060', 'relativepower':'SATs', })}
+                </div>
+            </div>
+        )
+    }
+
+    get_total_wallet_value_in_usd(){
+        var total_value = 0.0
+        this.props.app_state.e5s['data'].forEach(e5 => {
+            var symbol = this.props.app_state.e5s[e5].token
+            var ether_price = this.props.app_state.asset_price_data[symbol] == null ? 0 : this.props.app_state.asset_price_data[symbol]['price']
+            var ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : (this.props.app_state.account_balance[e5] / 10**18)
+            if(ether_price != null){
+                total_value += (ether_balance * ether_price)
+            }
+        });
+        var coins = this.props.app_state.coins
+        for (const coin in coins) {
+            if (coins.hasOwnProperty(coin)) {
+                var coin_price = this.props.app_state.asset_price_data[coin] == null ? 0 : this.props.app_state.asset_price_data[coin]['price']
+                var coin_data = coins[coin]
+                var coin_balance = this.get_balance_in_decimal(coin_data) == null ? 0 : this.get_balance_in_decimal(coin_data)
+                if(coin_price != null){
+                    total_value += (coin_balance * coin_price)
+                }
+            }
+        }
+        
+        return total_value
+    }
+
+    get_balance_in_decimal(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(data != null){
+            var balance = data['balance']
+            if(balance == 0){
+                return 0
+            }else{
+                return parseFloat(balance) / item['conversion']
+            }
+        }else{
+            return 0
         }
     }
 

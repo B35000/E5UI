@@ -210,9 +210,7 @@ class EthersDetailsSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
-                    {/* {this.render_detail_item('3', item['transaction_count_chart_data_label'])}
-                    {this.render_detail_item('6', item['transaction_count_chart_data'])}
-                    {this.render_detail_item('0')} */}
+                    {this.render_wallet_vaue(item, (this.props.app_state.account_balance[item['e5']]/10**18))}
 
                     {this.render_detail_item('3', item['gas_limit'])}
                     <div style={{height: 10}}/>
@@ -243,6 +241,39 @@ class EthersDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_wallet_vaue(item, balance_decimal){
+        var final_balance = balance_decimal == null ? 0.0 : balance_decimal
+        if(this.props.app_state.asset_price_data['BTC'] == null) return;
+        var coin_price = this.props.app_state.asset_price_data[item['symbol']]['price']
+        var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
+        var selected_preferred_currency = this.props.app_state.preferred_currency
+        if(coin_price != null){
+            var balance_value_in_usd = coin_price * final_balance
+            if(selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */){
+                var number_of_btc_for_one_usd = 1 / bitcoin_price
+                var balance_value_in_btc = number_of_btc_for_one_usd * balance_value_in_usd
+                var balance_value_in_sat = parseInt(balance_value_in_btc * this.props.app_state.coins['BTC']['conversion'])
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(balance_value_in_sat), 'barwidth':this.calculate_bar_width(balance_value_in_sat), 'number':(balance_value_in_sat), 'barcolor':'#606060', 'relativepower':'SATs', })}
+                        </div>
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(parseInt(balance_value_in_usd)), 'barwidth':this.calculate_bar_width(parseInt(balance_value_in_usd)), 'number':this.format_account_balance_figure(parseInt(balance_value_in_usd)), 'barcolor':'#606060', 'relativepower':'USD', })}
+                        </div>
+                    </div>
+                )
+            }
+        }
     }
 
     render_wallet_status(item){

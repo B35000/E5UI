@@ -79,6 +79,7 @@ class StackPage extends Component {
         get_file_data_option_tags_object: this.get_file_data_option_tags_object(),
         get_upload_storage_option_tags_object: this.get_upload_storage_option_tags_object(),
         get_hide_pip_tags_object:this.get_hide_pip_tags_object(),
+        get_preferred_currency_tags_object:this.get_preferred_currency_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -733,11 +734,8 @@ class StackPage extends Component {
         };
     }
 
-    set_web3_email_account(web3_email){
-        if(web3_email != null){
-            console.log('stackpage', 'setting email', web3_email)
-            this.setState({storage_email_input: web3_email})
-        }
+    set_web3_email_account(){
+        this.setState({storage_email_input: this.props.app_state.web3_account_email})
     }
 
     set_my_preferred_nitro(){
@@ -771,6 +769,39 @@ class StackPage extends Component {
 
     set_selected_hide_pip_type_tag(){
         this.setState({get_hide_pip_tags_object: this.get_hide_pip_tags_object(),})
+    }
+
+
+
+
+
+
+
+
+
+    get_preferred_currency_tags_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593ef']/* 'USD' */, this.props.app_state.loc['1593eg']/* 'SAT' */], [this.get_selected_preferred_currency_type_option()]
+            ], 
+        }
+    }
+
+    get_selected_preferred_currency_type_option(){
+        if(this.props.app_state.preferred_currency == this.props.app_state.loc['1593ef']/* 'USD' */){
+            return 1
+        }
+        else if(this.props.app_state.preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */){
+            return 2
+        }
+        return 1;
+    }
+
+    set_selected_preferred_currency_type_tag(){
+        this.setState({get_preferred_currency_tags_object: this.get_preferred_currency_tags_object(),})
     }
 
 
@@ -1448,6 +1479,8 @@ class StackPage extends Component {
                 </div>
                 <div style={{height:10}}/>
 
+                {this.render_total_wallet_value()}
+
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1450']/* 'Number of Stacked Transactions' */, 'subtitle':this.format_power_figure(this.props.app_state.stack_items.length), 'barwidth':this.calculate_bar_width(this.props.app_state.stack_items.length), 'number':this.format_account_balance_figure(this.props.app_state.stack_items.length), 'barcolor':'', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
@@ -1473,7 +1506,6 @@ class StackPage extends Component {
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1455']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
-                
 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px', 'opacity':button_opacity}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
@@ -1482,6 +1514,64 @@ class StackPage extends Component {
                 <div style={{height:7}}/>
             </div>
         )
+    }
+
+    render_total_wallet_value(){
+        if(this.props.app_state.asset_price_data['BTC'] == null) return;
+        var total_wallet_value_in_usd = parseInt(this.get_total_wallet_value_in_usd())
+        var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
+        var number_of_btc_for_one_usd = 1 / bitcoin_price
+        var balance_value_in_btc = number_of_btc_for_one_usd * total_wallet_value_in_usd
+        var balance_value_in_sat = parseInt(balance_value_in_btc * this.props.app_state.coins['BTC']['conversion'])
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593eh']/* 'Wallet Value in USD.' */, 'subtitle':this.format_power_figure(total_wallet_value_in_usd), 'barwidth':this.calculate_bar_width(total_wallet_value_in_usd), 'number':this.format_account_balance_figure(total_wallet_value_in_usd), 'barcolor':'#606060', 'relativepower':'USD', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ei']/* 'Wallet Value in SATs' */, 'subtitle':this.format_power_figure(balance_value_in_sat), 'barwidth':this.calculate_bar_width(balance_value_in_sat), 'number':this.format_account_balance_figure(balance_value_in_sat), 'barcolor':'#606060', 'relativepower':'SATs', })}
+                </div>
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    get_total_wallet_value_in_usd(){
+        var total_value = 0.0
+        this.props.app_state.e5s['data'].forEach(e5 => {
+            var symbol = this.props.app_state.e5s[e5].token
+            var ether_price = this.props.app_state.asset_price_data[symbol] == null ? 0 : this.props.app_state.asset_price_data[symbol]['price']
+            var ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : (this.props.app_state.account_balance[e5] / 10**18)
+            if(ether_price != null){
+                total_value += (ether_balance * ether_price)
+            }
+        });
+        var coins = this.props.app_state.coins
+        for (const coin in coins) {
+            if (coins.hasOwnProperty(coin)) {
+                var coin_price = this.props.app_state.asset_price_data[coin] == null ? 0 : this.props.app_state.asset_price_data[coin]['price']
+                var coin_data = coins[coin]
+                var coin_balance = this.get_balance_in_decimal(coin_data) == null ? 0 : this.get_balance_in_decimal(coin_data)
+                if(coin_price != null){
+                    total_value += (coin_balance * coin_price)
+                }
+            }
+        }
+        
+        return total_value
+    }
+
+    get_balance_in_decimal(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(data != null){
+            var balance = data['balance']
+            if(balance == 0){
+                return 0
+            }else{
+                return parseFloat(balance) / item['conversion']
+            }
+        }else{
+            return 0
+        }
     }
 
     calculate_wallet_impact_figure(){
@@ -2709,12 +2799,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)  
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
-                        strs.push([])
-                        adds.push([])
-                        ints.push(message_transfers);
-                    }
+                    // var message_transfers = this.get_message_transfers(txs[i]);
+                    // if(message_transfers[1].length != 0){
+                    //     strs.push([])
+                    //     adds.push([])
+                    //     ints.push(message_transfers);
+                    // }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1513']/* 'accept-job-application' */){
                     var message_obj = await this.format_accept_application_object(txs[i], calculate_gas, ipfs_index)
@@ -7665,6 +7755,18 @@ class StackPage extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc[''], 'details':this.props.app_state.loc[''], 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
+
                 </div>
             </div>
         )
@@ -7703,7 +7805,6 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
 
                 {this.load_my_nitro_objects_to_select()}
-
                 {this.render_detail_item('0')}
 
 
@@ -7920,6 +8021,12 @@ class StackPage extends Component {
         this.setState({get_hide_pip_tags_object: tag_object})
         var selected_item = this.get_selected_item(this.state.get_hide_pip_tags_object, 'e')
         this.props.when_hide_pip_tags_changed(selected_item)
+    }
+
+    when_get_preferred_currency_tags_object_updated(tag_object){
+        this.setState({get_preferred_currency_tags_object: tag_object})
+        var selected_item = this.get_selected_item(this.state.get_preferred_currency_tags_object, 'e')
+        this.props.when_preferred_currency_tags_changed(selected_item)
     }
 
 
