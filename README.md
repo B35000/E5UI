@@ -1,8 +1,7 @@
 # E5(Beta)
 
-Official repository for the User Interface used in the E5 webapp
-
-[Works on most web browsers](https://b35000.github.io/E5UI/). Feel free to try it out for yourself.
+Official repository for the User Interface used in the E5 webapp.
+[It Works on most web browsers](https://b35000.github.io/E5UI/). Feel free to try it out for yourself.
 
 # Getting Started
 
@@ -10,7 +9,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 To get it working, youll need to do two things; first modify the webpack.config.js file which is under node_modules>react-scripts>config by replacing all the contents with the webpack.config.js file thats in the src directory. I made some changes to make some of the libraries work, so be sure to do so yourself.
 
 Secondly, youll need to create and modify a .env file with the following api keys:
-`   REACT_APP_INFURA_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+
+```
+    REACT_APP_INFURA_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
     REACT_APP_INFURA_API_SECRET = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
     REACT_APP_WEB3_STORAGE_ACCESS_TOKEN = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
     REACT_APP_NFT_STORAGE_ACCESS_TOKEN = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
@@ -31,7 +32,8 @@ Secondly, youll need to create and modify a .env file with the following api key
     REACT_APP_CHAINSAFE_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
     REACT_APP_CHAINSAFE_BUCKET_ID = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
     REACT_APP_BEACON_NITRO_NODE_BASE_URL = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
-    REACT_APP_COINAPI_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx`
+    REACT_APP_COINAPI_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+```
 
 Then run `npm install` to install all the dependencies specified in the package.json file.
 
