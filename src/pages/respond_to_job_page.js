@@ -1,3 +1,21 @@
+// Copyright (c) 2023 Bry Onyoni
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
@@ -41,7 +59,7 @@ function makeid(length) {
 class RespondToJobPage extends Component {
     
     state = {
-        selected: 0, job_item:{'id':0},  type:this.props.app_state.loc['1307']/* 'job-response' */, id:makeid(8),
+        selected: 0, job_item:{'id':0},  type:this.props.app_state.loc['1512']/* 'job-response' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1308']/* 'respond' */, this.props.app_state.loc['1309']/* 'job' */, this.props.app_state.loc['1310']/* 'ad' */], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
         e5: this.props.app_state.selected_e5, custom_specifications:''
     };
@@ -803,7 +821,7 @@ class RespondToJobPage extends Component {
     set_object(job_post){
         if(this.state.job_item['id'] != job_post['id']){
             this.setState({
-                selected: 0, job_item:{'id':0},  type:this.props.app_state.loc['1307']/* 'job-response' */, id:makeid(8),
+                selected: 0, job_item:{'id':0},  type:this.props.app_state.loc['1512']/* 'job-response' */, id:makeid(8),
                 entered_indexing_tags:[this.props.app_state.loc['1308']/* 'respond' */, this.props.app_state.loc['1309']/* 'job' */, this.props.app_state.loc['1310']/* 'ad' */], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
             })
         }
@@ -823,8 +841,8 @@ class RespondToJobPage extends Component {
         else{          
             this.props.add_respond_to_job_to_stack(this.state)
             this.setState({
-                selected: 0,  type:'job-response', id:makeid(8),
-                entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
+                selected: 0,  type:this.props.app_state.loc['1512']/* 'job-response' */, id:makeid(8),
+                entered_indexing_tags:[this.props.app_state.loc['1308']/* 'respond' */, this.props.app_state.loc['1309']/* 'job' */, this.props.app_state.loc['1310']/* 'ad' */], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
             })
             this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 600)
         }

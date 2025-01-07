@@ -1,24 +1,39 @@
 # E5(Beta)
 
-Official repository for the User Interface used in the E5 webapp, a decentralised-ish web3 project.
+Official repository for the User Interface used in the E5 webapp
 
-<!-- <p float="left">
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo1.jpg" alt="screenshot1.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo2.jpg" alt="screenshot2.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo3.jpg" alt="screenshot3.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo4.jpg" alt="screenshot4.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo5.jpg" alt="screenshot5.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo6.jpg" alt="screenshot6.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo7.jpg" alt="screenshot7.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo8.jpg" alt="screenshot8.jpg" width="200"/>
-<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo9.jpg" alt="screenshot9.jpg" width="200"/>
-</p> -->
-
-[It only works on your phone](https://b35000.github.io/E5UI/). Feel free to try it out for yourself.
+[Works on most web browsers](https://b35000.github.io/E5UI/). Feel free to try it out for yourself.
 
 # Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+To get it working, youll need to do two things; first modify the webpack.config.js file which is under node_modules>react-scripts>config by replacing all the contents with the webpack.config.js file thats in the src directory. I made some changes to make some of the libraries work, so be sure to do so yourself.
+
+Secondly, youll need to create and modify a .env file with the following api keys:
+`   REACT_APP_INFURA_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_INFURA_API_SECRET = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_WEB3_STORAGE_ACCESS_TOKEN = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_NFT_STORAGE_ACCESS_TOKEN = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_SEED_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_BLOCKSCOUT_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_GNOSIS_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_MOONBEAM_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_MOONRIVER_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_POLYGONSCAN_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_BINANCE_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_ARBITRUM_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_FANTOM_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_APPKEY_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_DOGECOIN_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_TRON_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_BLOCKCYPHER_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_SOLANA_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_CHAINSAFE_API_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_CHAINSAFE_BUCKET_ID = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_BEACON_NITRO_NODE_BASE_URL = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+    REACT_APP_COINAPI_KEY = xxxxxxxxxxxx-xxxxxxxxx-xxxxxxxxx`
+
+Then run `npm install` to install all the dependencies specified in the package.json file.
 
 ## Available Scripts
 

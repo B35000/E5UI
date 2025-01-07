@@ -1,4 +1,22 @@
 /* eslint-disable react/jsx-pascal-case */
+// Copyright (c) 2023 Bry Onyoni
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 import React, { Component, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 
 /* images */
@@ -364,7 +382,7 @@ class App extends Component {
   // }
 
   state = {
-    page:'?',/* UNUSED the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
+    version:'1',
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -1101,7 +1119,7 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'Total Audioposts, Videoposts and Nitros created','1264x':'audiopost-items','1264y':'videopost-items','1264z':'nitro-items','1264aa':'main-contract','1264ab':'Wallet Value','1264ac':'The total worth of all your wallet contents.','1264ad':'','1264ae':'','1264af':'','1264ag':'','1264ah':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'Total Audioposts, Videoposts and Nitros created','1264x':'audiopost-items','1264y':'videopost-items','1264z':'nitro-items','1264aa':'main-contract','1264ab':'Wallet Value','1264ac':'The total worth of all your wallet contents.','1264ad':'Search by ID or Title..','1264ae':'','1264af':'','1264ag':'','1264ah':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
@@ -5693,6 +5711,7 @@ class App extends Component {
             me.stack_page.current?.setState(me.stack_bottomsheet)
           }
           me.set_stack_page_data()
+          me.stack_page.current?.run_transactions(true)
         }
       }, (1 * 200));
     }
@@ -5912,7 +5931,7 @@ class App extends Component {
               }
           }
         }
-        else if(txs[i].type == this.getLocale()['1509']/* 'mail-messages' */ || txs[i].type == this.getLocale()['1511']/* 'post-messages' */ || txs[i].type == this.getLocale()['1512']/* 'job-response' */ || txs[i].type == this.getLocale()['1514']/* 'job-messages' */ || txs[i].type == this.getLocale()['1515']/* 'proposal-messages' */ || txs[i].type == this.getLocale()['1501']/* 'bag-messages' */ || txs[i].type == this.getLocale()['1505']/* 'job-request-messages' */){
+        else if(txs[i].type == this.getLocale()['1509']/* 'mail-messages' */ || txs[i].type == this.getLocale()['1511']/* 'post-messages' */ || txs[i].type == this.getLocale()['1514']/* 'job-messages' */ || txs[i].type == this.getLocale()['1515']/* 'proposal-messages' */ || txs[i].type == this.getLocale()['1501']/* 'bag-messages' */ || txs[i].type == this.getLocale()['1505']/* 'job-request-messages' */){
           for(var i=0; i<t.messages_to_deliver.length; i++){
             if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
               total_amount = bigInt(total_amount).add(t.messages_to_deliver[i]['award_amount'])
@@ -21841,9 +21860,6 @@ class App extends Component {
 
 
 
-
-
-
       var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id})
       contracts_proposals = contracts_proposals.reverse()
       var proposal_ids = []
@@ -23529,15 +23545,19 @@ class App extends Component {
 
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       await this.fetch_multiple_cids_from_nitro(created_job_respnse_data, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(application_responses, 0, 'p4')
     }
 
     var messages = []
     var is_first_time = this.state.job_responses[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
+
+      // console.log('foundd', 'ipfs', id, ipfs_message)
       
-      if(ipfs_message != null){
+      if(ipfs_message != null && ipfs_message['picked_contract_id'] != null){
         var data = await this.load_contract_item(e5, ipfs_message['picked_contract_id'])
+        console.log('foundd', 'contract', data)
         if(data != null){
           ipfs_message['contract'] = data['contract']
           ipfs_message['proposals'] = data['proposals']
@@ -23558,7 +23578,7 @@ class App extends Component {
           }else{
             ipfs_message['is_response_accepted'] = false
           }
-          
+          // console.log('foundd', 'final', ipfs_message)
           messages.push(ipfs_message)
           if(is_first_time){
             var clone = JSON.parse(JSON.stringify(this.state.job_responses))
@@ -23654,7 +23674,7 @@ class App extends Component {
     var is_first_time = this.state.contractor_applications[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
-      if(ipfs_message != null){
+      if(ipfs_message != null && ipfs_message['contractor_post_id'] != null){
         ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
         ipfs_message['contractor_post_id'] = id;
         ipfs_message['e5'] = E5

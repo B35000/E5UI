@@ -1,3 +1,21 @@
+// Copyright (c) 2023 Bry Onyoni
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+// SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 import React, { Component } from 'react';
 // import Letter from './../assets/letter.png'; 
 import EndImg from './../assets/end_token_icon.png';
@@ -88,9 +106,9 @@ class home_page extends Component {
         
         pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[], pinned_nitros:[],
         
-        page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[], 
+        page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[],
 
-        details_container_width:0, typed_tag:'', search_visible:false
+        details_container_width:0, typed_tag:'', search_visible:true
     };
 
     constructor(props) {
@@ -2742,7 +2760,7 @@ class home_page extends Component {
     render_post_list_group(size, height){
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
-        var h = (this.state.search_visible && this.is_page_valid()) ? height-110 : height
+        var h = (this.state.search_visible && this.is_page_valid()) ? height-60 : height
         return(
             <div>
                 {this.render_search_tags_views()}
@@ -2761,18 +2779,18 @@ class home_page extends Component {
             var background = this.props.theme['card_background_color']
             return(
                 <div>
-                    <div style={{'background-color': background, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 10px 5px 10px','border-radius': '15px' }}>
+                    <div style={{'background-color': 'transparent', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 10px 5px 10px','border-radius': '15px' }}>
                         <div className="row" style={{width:'100%'}}>
                             <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1120']/* 'Enter tag...' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
+                                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1264ad']/* 'Search by ID or Title..' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
                             </div>
-                            <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
+                            <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_string()}>
                                 <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
                                     <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                                 </div>
                             </div>
                         </div>
-                        {this.render_detail_item('1',{'active_tags':this.get_filter_tags(), 'indexed_option':'indexed', 'when_tapped':'delete_added_tag'})}
+                        {/* {this.render_detail_item('1',{'active_tags':this.get_filter_tags(), 'indexed_option':'indexed', 'when_tapped':'delete_added_tag'})} */}
                     </div>
                     <div style={{height: 5}}/>
                 </div>
@@ -2809,43 +2827,11 @@ class home_page extends Component {
         this.setState({typed_tag: text})
     }
 
-    add_tag(){
+    search_string(){
         var typed_word = this.state.typed_tag.trim();
-
-        if(typed_word == ''){
-            this.props.notify(this.props.app_state.loc['1124']/* 'Type something.' */, 1400)
-        }
-        else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify(this.props.app_state.loc['1125']/* 'Enter one word.' */, 1400)
-        }
-        else{
-            typed_word = typed_word.trim()
-            var cloned_seed_array = this.get_filter_tags().slice()
-            cloned_seed_array.push(typed_word)
-            this.setState({typed_tag:''})
-            this.when_add_tags_button_tapped(cloned_seed_array)
-        }
+        this.when_search_button_tapped(typed_word)
     }
 
-    hasWhiteSpace(s) {
-        return s.indexOf(' ') >= 0;
-    }
-
-    get_filter_tags(){
-       var id = this.get_page_id()  
-       var added_tags = this.state.tags_search_data[id]
-        if(added_tags == null) added_tags = []
-        return added_tags
-    }
-
-    delete_added_tag(tag, pos){
-        var cloned_seed_array = this.get_filter_tags().slice()
-        const index = cloned_seed_array.indexOf(tag);
-        if (index > -1) { // only splice array when item is found
-            cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.when_add_tags_button_tapped(cloned_seed_array)
-    }
 
 
 
@@ -6052,7 +6038,7 @@ class home_page extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_added_tag={this.delete_added_tag.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme}/>
             </div>
         )
 
