@@ -222,7 +222,7 @@ class CoinsDetailsSection extends Component {
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit'], })}
                     </div>
-
+            
                     {this.render_wallet_vaue(item, balance_decimal)}
 
                     {this.render_coin_blockexplorer_link(item)}

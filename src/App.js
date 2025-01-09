@@ -1098,7 +1098,7 @@ class App extends Component {
         '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'font','1042c':'size','1042d':'Your balance in SPEND.','1042e':'That message is inconveniencingly long for its size.','1042f':'Gray stages images and black stages a pdf. Then tap to remove.','1042g':'text','1042h':'markdown','1042i':'','1042j':'','1042k':'','1042l':'','1042m':'',
         
         /* add to bag page */
-        '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.','1058a':'Bag City','1058b':'You may specify your location city for contractors.','1058c':'You need to set your city for contractors.','1058d':'','1058e':'','1058f':'',
+        '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.','1058a':'Bag City','1058b':'You may specify your location city for contractors.','1058c':'You need to set your city for contractors.','1058d':'Delivery Location','1058e':'You\'ll need to specify a descriptive delivery location for your bag.','1058f':'Amount...','1058g':'You need to specify a pick up location for your new bag.','1058h':'Set Previous Location.','1058i':'Custom Specifications (Optional)','1058j':'Custom Specifications.','1058k':'You can specify some custom details for the order being placed.','1058l':'','1058m':'','1058n':'','1058o':'','1058p':'','1058q':'','1058r':'','1058s':'','1058t':'',
         
         /* clear purchase page */
         '1059':'verify-signature','1060':'generate-signature','1061':'Generate Fulfilment Signature','1062':'Create a signature to finalize the fulfilment transaction.','1063':'Quantity: ','1064':'Sender Account ID: ','1065':'Signature','1066':'Copy to Clipboard','1067':'Copied signature to clipboard.','1068':'Receive Fulfilment Signature','1069':'Receive a fulfilment signature to verify the items delivery.','1070':'Variant ID: ','1071':'Quantity: ','1072':'Sender Account ID: ','1073':'Paste Signature','1074':'Paste the signature in the input field below.','1075':'Open Scanner','1076':'Scan for the signature using a built in scanner.','1077':'Please paste a signature to finish here.','1078':'The signature you received is invalid.','1078a':'Qr Code',
@@ -1119,7 +1119,7 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'Total Audioposts, Videoposts and Nitros created','1264x':'audiopost-items','1264y':'videopost-items','1264z':'nitro-items','1264aa':'main-contract','1264ab':'Wallet Value','1264ac':'The total worth of all your wallet contents.','1264ad':'Search by ID or Title..','1264ae':'','1264af':'','1264ag':'','1264ah':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'coins 🪙','1264k':'audioport','1264l':'acquired','1264m':'playlists','1264n':'Audiopost Pinned','1264o':'Audiopost Unpinned','1264p':'videoport','1264q':'Videopost Pinned','1264r':'Videopost Pinned','1264s':'nitro','1264t':'bought','1264u':'Nitro-post Pinned','1264v':'Nitro-post Unpinned','1264w':'Total Audioposts, Videoposts and Nitros created','1264x':'audiopost-items','1264y':'videopost-items','1264z':'nitro-items','1264aa':'main-contract','1264ab':'Wallet Value','1264ac':'The total worth of all your wallet contents.','1264ad':'Search by ID or Title..','1264ae':'my-responses','1264af':'','1264ag':'','1264ah':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
@@ -1149,7 +1149,7 @@ class App extends Component {
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
         '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'Censor 🚫','1593dr':'Censor Keywords.','1593ds':'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.','1593dt':'Keyword or phrase...','1593du':'Type something first.',
-        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'USD','1593eg':'SAT','1593eh':'Wallet Value in USD.','1593ei':'Wallet Value in SATs','1593ej':'','1593ek':'','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
+        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'USD','1593eg':'SAT','1593eh':'Wallet Value in USD.','1593ei':'Wallet Value in SATs','1593ej':'⚡ Beacon Node Online.','1593ek':'☠︎︎ Beacon Node Offline.','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1184,7 +1184,7 @@ class App extends Component {
         '1990':'withdraw-ether','1991':'pending-withdraws','1992':'withdraw-history','1993':'withdraw-ether','1994':'Withdraw','1995':'withdraw-ether','1996':'pending-withdraws','1997':'withdraw-history','1998':'Your withdraw balance is shown below','1999':'Withdraw balance','2000':'Withdraw balance in Wei','2001':'Withdraw balance in Ether','2002':'Impact','2003':'Receiver Wallet Address','2004':'Set Receiver Address Here','2005':'Set My Address','2006':'Withdraw Transaction Expiry Duration','2007':'The duration of time after which your withdrawal transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','2008':'Estimated Time.','2009':'Transaction Gas Price','2010':'The gas price for your withdraw run. The default is set to the amount set by the network.','2011':'Transaction Gas Price in Wei','2012':'Transaction Gas Price in Gwei','2013':'Network Gas Price in Wei','2014':'Network Gas Price in Gwei','2015':'Please set your wallet first.','2016':'Please set a valid receiver','2017':'You cant withdraw 0 ether.','2018':'Withdraw Ether Confirmation','2019':'Confirm that you want to withdraw Ether to the set address','2020':'Withdraw balance in Wei','2021':'Withdraw balance in Ether','2022':'Target Wallet Address','2023':'Withdraw Ether','2024':'Copied address to clipboard','2025':'transaction ID','2026':'target','2027':'Amount Added in Wei','2027a':'The max priority fee per gas(miner tip) for your next withdraw run.','2027b':'The maximum amount of gas fee your willing to pay for your next withdraw run.','2027c':'Confirmation.',
         
         /* bag details section */
-        '2028':'metadata','2029':'responses','2030':'activity','2031':'Pin the bag for future reference.','2032':'Pin the Bag Order.','2033':'','2034':'','2035':'','2036':'','2037':'','2038':'','2039':'','2040':'','2041':'','2042':'Pin/Unpin Bag','2043':'Fulfil the delivery request for the sender account','2044':'Fulfil Bag','2045':'Sender Account','2046':'Bag ID: ','2047':'ago','2048':'Store ID:','2049':' ordered.','2050':'Variant Description','2051':'Pick-up Location','2052':'In ','2053':'Bag Responses','2054':'Expiry time from now: ','2055':'Contract ID: ','2056':'Sender ID: ','2057':'Accepted','2058':'The bag owner picked this fulfilment application','2059':'Expiry time from now: ','2060':'Contract ID: ','2061':'Sender ID: ','2062':'Shopping Bag Acivity','2063':'Copied message to clipboard.','2064':' responses','2064a':'Bag Value.','2064b':'The total amount to be paid by the bag owner in the respective denominations.','2064c':'creator','2064d':'moderator','2064e':'','2064f':'','2064g':'','2064h':'',
+        '2028':'metadata','2029':'responses','2030':'activity','2031':'Pin the bag for future reference.','2032':'Pin the Bag Order.','2033':'','2034':'','2035':'','2036':'','2037':'','2038':'','2039':'','2040':'','2041':'','2042':'Pin/Unpin Bag','2043':'Fulfil the delivery request for the sender account','2044':'Fulfil Bag','2045':'Sender Account','2046':'Bag ID: ','2047':'ago','2048':'Store ID:','2049':' ordered.','2050':'Variant Description','2051':'Pick-up Location','2052':'In ','2053':'Bag Responses','2054':'Expiry time from now: ','2055':'Contract ID: ','2056':'Sender ID: ','2057':'Accepted','2058':'The bag owner picked this fulfilment application','2059':'Expiry time from now: ','2060':'Contract ID: ','2061':'Sender ID: ','2062':'Shopping Bag Acivity','2063':'Copied message to clipboard.','2064':' responses','2064a':'Bag Value.','2064b':'The total amount to be paid by the bag owner in the respective denominations.','2064c':'creator','2064d':'moderator','2064e':'Bag Activity.','2064f':'','2064g':'','2064h':'',
         
         /* channel details section */
         '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101;':'The channel has been locked by its moderators.','2102':'In Channel ','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
@@ -1212,7 +1212,7 @@ class App extends Component {
         '2482':'Job Offers','2483':'The amounts they are offering for the job.','2484':'Apply for the job','2485':'Respond to the ad with a contract and apply for the job.','2486':'Apply','2487':'Pin the job to your feed.','2488':'Pin Job','2489':'Pin/Unpin Job','2490':'Edit Job Post','2491':'Change the basic details for your Job Post','2492':'Perform Action','2493':'Block Number','2494':'age','2495':'ago','2496':'In ','2497':'Job Responses','2498':'Expiry time from now: ','2499':'Contract ID: ','2500':'Sender ID: ','2501':'Accepted','2502':'The job owner picked this application','2503':'Expiry time from now: ','2504':'Contract ID: ','2505':'Sender ID: ','2506':'Copied message to clipboard','2507':'responses','2507a':'Reply',
         
         /* list section */
-        '2508':'That ID is not valid.','2509':'Searching...','2509a':'Enter Name or Symbol...','2509b':' items ordered','2509c':' responses',
+        '2508':'That ID is not valid.','2509':'Searching...','2509a':'Enter Name or Symbol...','2509b':' items','2509c':' responses',
         
         /* mail details section */
         '2510':'data','2512':' with ','2513':'Conversation.',
@@ -10533,7 +10533,7 @@ class App extends Component {
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1516']/* 'storefront-bag' */, entered_indexing_tags:[this.getLocale()['1215']/* 'storefront' */, this.getLocale()['1045']/* 'bag' */, this.getLocale()['2716']/* 'cart' */], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country, selected_device_city: state_obj.selected_device_city}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1516']/* 'storefront-bag' */, entered_indexing_tags:[this.getLocale()['1215']/* 'storefront' */, this.getLocale()['1045']/* 'bag' */, this.getLocale()['2716']/* 'cart' */], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country, selected_device_city: state_obj.selected_device_city, delivery_location: state_obj.delivery_location}
       
       tx.items_to_deliver.push(state_obj)
       stack.push(tx)
@@ -17019,7 +17019,7 @@ class App extends Component {
     try{
       const response = await fetch(request);
       if (!response.ok) {
-        console.log(response)
+        console.log('all_data2',response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
@@ -17027,7 +17027,7 @@ class App extends Component {
       return obj['data'][0]
     }
     catch(e){
-      console.log(e)
+      // console.log(e)
       return []
     }
   }
@@ -17253,7 +17253,7 @@ class App extends Component {
     if(is_syncing)this.inc_synch_progress()
    
 
-    this.load_ether_history(e5, address_account.address)
+    // this.load_ether_history(e5, address_account.address)
 
     var gasPrice = await web3.eth.getGasPrice();
     var clone = structuredClone(this.state.gas_price)
@@ -20666,24 +20666,47 @@ class App extends Component {
     var my_created_bag_ids = []
     var is_first_time = this.state.created_bags[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_bag_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events), web3, e5, contract_addresses)
+
+    var response_count_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
+
+    var my_bag_responses = []
 
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
       var data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
-      var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
+      // var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
+      var response_count = []
+      var responded_to = false;
+      response_count_data.forEach(event => {
+        if(event.returnValues.p1 == id){
+          response_count.push(event)
+          if(event.returnValues.p2/* sender_acc_id */ == account){
+            //sender is author of response
+            responded_to = true
+          }
+        }
+      });
 
-      if(data != null){
-        var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':parseInt(created_bag_events[i].returnValues.p4), 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length}
+      // console.log('all_data2', 'loaded data for ', id)
+
+      if(data != null && id != 1523){
+        // console.log('all_data2', 'loaded data successfully ', data)
+        var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':parseInt(created_bag_events[i].returnValues.p4), 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length, 'responded_to':responded_to}
         created_bags.push(bag)
 
         var images = this.get_bag_images(bag)
+        // console.log('all_data2', 'staged images for bag ', bag, images)
         if(images.length > 0){
+          // console.log('all_data2', 'starting fetch of images', images)
           this.fetch_uploaded_data_from_ipfs(images, false)
+          // console.log('all_data2', 'finished calling fetch of images', images)
         }
 
         if(bag['author'] == account){
+          // console.log('all_data2', 'bag is my bag')
           my_created_bag_ids.push(id)
+          my_bag_responses = my_bag_responses.concat(response_count)
         }
       }
       if(is_first_time){
@@ -20692,79 +20715,93 @@ class App extends Component {
         this.setState({created_bags: created_bags_clone})
       }
     }
+    // console.log('all_data2', 'reached end of loading bag data')
 
 
     //------------ when someone responds to my bag
-    var my_bag_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: my_created_bag_ids, p3/* context */:36})
-    var notifications = []
-    for(var i=0; i<my_bag_responses.length; i++){
-      var ipfs_data = await this.fetch_objects_data_from_ipfs_using_option(my_bag_responses[i].returnValues.p4)
+    // var my_bag_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: my_created_bag_ids, p3/* context */:36})
+    // console.log('all_data2', 'my_bag_responses', my_bag_responses)
+    // var notifications = []
+    // if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+    //   await this.fetch_multiple_cids_from_nitro(my_bag_responses, 0, 'p4')
+    // }
+    // for(var i=0; i<my_bag_responses.length; i++){
+    //   var ipfs_data = await this.fetch_objects_data_from_ipfs_using_option(my_bag_responses[i].returnValues.p4)
 
-      if(ipfs_data['type'] == 'bag_application'){
-        notifications.push({'type':'bag_response_notification', 'ipfs':ipfs_data, 'event':my_bag_responses[i], 'e5':e5, 'timestamp':my_bag_responses[i].returnValues.p6})
-      }
+    //   if(ipfs_data['type'] == 'bag_application'){
+    //     notifications.push({'type':'bag_response_notification', 'ipfs':ipfs_data, 'event':my_bag_responses[i], 'e5':e5, 'timestamp':my_bag_responses[i].returnValues.p6})
+    //   }
 
-      if(is_first_time){
-        var my_received_applications_clone = structuredClone(this.state.my_bag_responses_notifications)
-        my_received_applications_clone[e5] = notifications
-        this.setState({my_bag_responses_notifications: my_received_applications_clone})
-      }
-    }
+    //   if(is_first_time){
+    //     var my_received_applications_clone = structuredClone(this.state.my_bag_responses_notifications)
+    //     my_received_applications_clone[e5] = notifications
+    //     this.setState({my_bag_responses_notifications: my_received_applications_clone})
+    //   }
+    // }
+
+    // console.log('all_data2', 'reached end of loading bag responses data', notifications)
 
 
 
     //my bag applications
-    var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* target_id */: account, p3/* context */:36})
-    var my_applications = []
-    var my_application_targets = []
-    var my_application_int_data = []
-    for(var i=0; i<my_created_job_respnse_data.length; i++){
-      var ipfs_data = await this.fetch_objects_data_from_ipfs_using_option(my_created_job_respnse_data[i].returnValues.p4)
+    // var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* target_id */: account, p3/* context */:36})
+    // var my_applications = []
+    // var my_application_targets = []
+    // var my_application_int_data = []
+    // if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+    //   await this.fetch_multiple_cids_from_nitro(my_created_job_respnse_data, 0, 'p4')
+    // }
+    // for(var i=0; i<my_created_job_respnse_data.length; i++){
+    //   var ipfs_data = await this.fetch_objects_data_from_ipfs_using_option(my_created_job_respnse_data[i].returnValues.p4)
 
-      if(ipfs_data['type'] == 'bag_application'){
-        my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i], 'e5':e5, 'timestamp':my_created_job_respnse_data[i].returnValues.p6})
-        my_application_targets.push(my_created_job_respnse_data[i].returnValues.p1)
-        my_application_int_data.push(my_created_job_respnse_data[i].returnValues.p5)
-      }
+    //   if(ipfs_data['type'] == 'bag_application'){
+    //     my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i], 'e5':e5, 'timestamp':my_created_job_respnse_data[i].returnValues.p6})
+    //     my_application_targets.push(my_created_job_respnse_data[i].returnValues.p1)
+    //     my_application_int_data.push(my_created_job_respnse_data[i].returnValues.p5)
+    //   }
 
-      if(is_first_time){
-        var my_applications_clone = structuredClone(this.state.my_bag_applications)
-        my_applications_clone[e5] = my_applications
-        this.setState({my_bag_applications: my_applications_clone})
-      }
-    }
+    //   if(is_first_time){
+    //     var my_applications_clone = structuredClone(this.state.my_bag_applications)
+    //     my_applications_clone[e5] = my_applications
+    //     this.setState({my_bag_applications: my_applications_clone})
+    //   }
+    // }
+
+    // console.log('all_data2', 'reached end of loading my bag applications data')
 
 
     //------------ my bag application responses
-    var my_accepted_applications_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: my_application_targets, p3/* context */:37})
-    console.log('my_accepted_applications_events: ', my_accepted_applications_events)
-    var my_accepted_applications = []
-    for(var i=0; i<my_accepted_applications_events.length; i++){
-      if(my_application_int_data.includes(my_accepted_applications_events[i].returnValues.p5)){
-        my_accepted_applications.push({'type':'my_bag_application_response_notification', 'event':my_accepted_applications_events[i], 'e5':e5, 'timestamp':my_accepted_applications_events[i].returnValues.p6})
+    // var my_accepted_applications_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: my_application_targets, p3/* context */:37})
+    // console.log('all_data2', 'my_accepted_applications_events: ', my_accepted_applications_events)
+    // var my_accepted_applications = []
+    // for(var i=0; i<my_accepted_applications_events.length; i++){
+    //   if(my_application_int_data.includes(my_accepted_applications_events[i].returnValues.p5)){
+    //     my_accepted_applications.push({'type':'my_bag_application_response_notification', 'event':my_accepted_applications_events[i], 'e5':e5, 'timestamp':my_accepted_applications_events[i].returnValues.p6})
 
-        if(is_first_time){
-          var my_job_application_responses_clone = structuredClone(this.state.my_bag_application_responses_notifications)
-          my_job_application_responses_clone[e5] = my_accepted_applications
-          this.setState({my_bag_application_responses_notifications: my_job_application_responses_clone})
-        }
-      }
-    }
+    //     if(is_first_time){
+    //       var my_job_application_responses_clone = structuredClone(this.state.my_bag_application_responses_notifications)
+    //       my_job_application_responses_clone[e5] = my_accepted_applications
+    //       this.setState({my_bag_application_responses_notifications: my_job_application_responses_clone})
+    //     }
+    //   }
+    // }
+
+    // console.log('all_data2', 'reached end of loading my bag application responses data')
 
 
     var created_bags_clone = structuredClone(this.state.created_bags)
     created_bags_clone[e5] = created_bags
 
-    var my_received_applications_clone = structuredClone(this.state.my_bag_responses_notifications)
-    my_received_applications_clone[e5] = notifications
+    // var my_received_applications_clone = structuredClone(this.state.my_bag_responses_notifications)
+    // my_received_applications_clone[e5] = notifications
 
-    var my_applications_clone = structuredClone(this.state.my_bag_applications)
-    my_applications_clone[e5] = my_applications
+    // var my_applications_clone = structuredClone(this.state.my_bag_applications)
+    // my_applications_clone[e5] = my_applications
 
-    var my_job_application_responses_clone = structuredClone(this.state.my_bag_application_responses_notifications)
-    my_job_application_responses_clone[e5] = my_accepted_applications
+    // var my_job_application_responses_clone = structuredClone(this.state.my_bag_application_responses_notifications)
+    // my_job_application_responses_clone[e5] = my_accepted_applications
 
-    this.setState({created_bags: created_bags_clone, my_bag_responses_notifications: my_received_applications_clone, my_bag_applications: my_applications_clone, my_bag_application_responses_notifications: my_job_application_responses_clone})
+    this.setState({created_bags: created_bags_clone, /* my_bag_responses_notifications: my_received_applications_clone, my_bag_applications: my_applications_clone, my_bag_application_responses_notifications: my_job_application_responses_clone */})
 
     console.log(e5, ' bag count: '+created_bags.length)
   }
@@ -21305,13 +21342,22 @@ class App extends Component {
     return ids
   }
 
+  get_ids_from_events3(events){
+    var ids = []
+    events.forEach(event => {
+      var id = event.returnValues.p1
+      ids.push(id)
+    });
+    return ids
+  }
 
 
 
 
 
 
-  load_data_from_page_in_focus(page){
+
+  load_data_from_page_in_focus = async (page) => {
     this.focused_page = page
     var posts_to_load = this.posts_to_load
     if(page == this.getLocale()['1196']/* 'jobs' */){
@@ -21347,8 +21393,8 @@ class App extends Component {
       this.load_bag_data(posts_to_load)
     }
     if(page == this.getLocale()['1216']/* 'bags' */){
-      this.load_storefront_data(posts_to_load)
       this.load_bag_data(posts_to_load)
+      this.load_storefront_data(posts_to_load)
       this.load_contract_data(posts_to_load)
     }
     if(page == this.getLocale()['1264k']/* 'audioport' */){
@@ -22259,7 +22305,7 @@ class App extends Component {
       var data = await response.text();
       var obj = JSON.parse(data);
       var object_data = obj['data']
-      console.log('all_data', 'object_data', object_data)
+      console.log('all_data', 'data', obj)
       for(var i=0; i<hashes.length; i++){
         var cid_data = object_data[hashes[i]]
         if(cid_data != null){
@@ -22280,7 +22326,7 @@ class App extends Component {
       if(valid_id_data != null){
         var final_data = valid_id_data
         if(valid_id_internal_id != ''){
-          final_data = data[valid_id_internal_id]
+          final_data = valid_id_data[valid_id_internal_id]
         }
         data[valid_id] = final_data
       }

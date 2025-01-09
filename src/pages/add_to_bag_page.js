@@ -53,7 +53,7 @@ class AddToBagPage extends Component {
     state = {
         selected: 0, storefront_item:{},  type:this.props.app_state.loc['1043']/* 'add-to-bag' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1044']/* 'add' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1046']/* 'storefront-item' */], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
-        purchase_unit_count:1, selected_variant:null, device_city: '', selected_device_city:'',
+        purchase_unit_count:1, selected_variant:null, device_city: '', selected_device_city:'', delivery_location:'', order_specifications:''
     };
 
     get_add_to_bag_tags_object(){
@@ -80,9 +80,7 @@ class AddToBagPage extends Component {
                         </div>
                     </div>
                 </div>
-                <div style={{height:10}}/>
                 {this.render_everything()}
-
             </div>
         )
     }
@@ -138,6 +136,8 @@ class AddToBagPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_set_storefront_prices_list_part()}
@@ -153,6 +153,8 @@ class AddToBagPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_set_storefront_prices_list_part()}
@@ -178,21 +180,34 @@ class AddToBagPage extends Component {
                     {this.render_item_variants()}
                     {this.render_selected_variant()}
 
-                    
                     {this.render_city_settings()}
 
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1058k']/* 'You can specify some custom details for the order being placed.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <TextInput height={60} placeholder={this.props.app_state.loc['1058i']/* 'Custom Specifications (Optional)' */} when_text_input_field_changed={this.when_order_specifications_input_field_changed.bind(this)} text={this.state.order_specifications} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')}
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1050']/* 'Amount in ' */+composition_type, 'number':this.state.purchase_unit_count, 'relativepower':composition_type})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1050']/* 'Amount in ' */+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
                     </div>
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/>
                     <div style={{height:10}}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['1058f']/* 'Amount...' */} when_text_input_field_changed={this.when_purchase_unit_count_input_field_changed.bind(this)} text={this.state.purchase_unit_count.toString()} theme={this.props.theme}/>
 
                 </div>
             )
         }
+    }
+
+    when_purchase_unit_count_input_field_changed(text){
+        if(!isNaN(text)){
+            this.setState({purchase_unit_count: bigInt(text)})
+        }
+    }
+
+    when_order_specifications_input_field_changed(text){
+        this.setState({order_specifications: text})
     }
 
     render_city_settings(){
@@ -200,7 +215,7 @@ class AddToBagPage extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058a']/* 'Bag City (Optional).' */, 'details':this.props.app_state.loc['1058b']/* 'You may specify your location city for contractors.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058a']/* 'Bag City.' */, 'details':this.props.app_state.loc['1058b']/* 'You may specify your location city for contractors.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <TextInput height={30} placeholder={this.props.app_state.loc['a311bp']/* 'Enter City...' */} when_text_input_field_changed={this.when_device_city_input_field_changed.bind(this)} text={this.state.device_city} theme={this.props.theme}/>
@@ -210,8 +225,39 @@ class AddToBagPage extends Component {
                 
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_device_city})}
+
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':this.props.app_state.loc['1058e']/* 'You\'ll need to specify a delivery location for your bag.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput height={60} placeholder={this.props.app_state.loc['1058d']/* 'Delivery Location' */} when_text_input_field_changed={this.when_delivery_location_input_field_changed.bind(this)} text={this.state.delivery_location} theme={this.props.theme}/>
+                
+                {this.render_button_if_location_exists()}
             </div>
         )
+    }
+
+
+    render_button_if_location_exists(){
+        var location = this.get_fulfilment_location_from_local_storage()
+        if(location != null){
+            location = location.replaceAll('"','')
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':location})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=> this.setState({delivery_location: location})}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1058h']/* 'Set Previous Location.' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_fulfilment_location_from_local_storage(){
+        return localStorage.getItem("delivery");
     }
 
     should_render_city_settings(){
@@ -233,6 +279,10 @@ class AddToBagPage extends Component {
 
     when_device_city_input_field_changed(text){
         this.setState({device_city: text.toLowerCase()})
+    }
+
+    when_delivery_location_input_field_changed(text){
+        this.setState({delivery_location: text})
     }
 
     get_cities_from_typed_text(){
@@ -346,7 +396,7 @@ class AddToBagPage extends Component {
         if(this.selected_variant == item){
             this.setState({selected_variant: null})
         }else{
-            this.setState({selected_variant: item, purchase_unit_count:0})
+            this.setState({selected_variant: item, purchase_unit_count:1})
         }
         
     }
@@ -359,13 +409,22 @@ class AddToBagPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':this.props.app_state.font})}
                     <div style={{height:3}}/>
-                    <div style={{padding:'0px 0px 0px 0px'}}>
-                        {this.render_detail_item('9', item['image_data']['data'])}
-                    </div>
-                    <div style={{height:5}}/>
+                    {this.render_variant_image_if_any(item)}
+                    
                     {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1107']/* 'Number of Units' */, 'size':'l'})}
                     <div style={{height:5}}/>
                     {this.render_variant_price_data(item)}
+                </div>
+            )
+        }
+    }
+
+    render_variant_image_if_any(variant_in_store){
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            return(
+                <div style={{padding:'0px 0px 0px 0px'}}>
+                    {this.render_detail_item('9', variant_in_store['image_data']['data'])}
+                    <div style={{height:5}}/>
                 </div>
             )
         }
@@ -452,7 +511,13 @@ class AddToBagPage extends Component {
         else if(this.state.selected_device_city == '' && this.should_render_city_settings()){
             this.props.notify(this.props.app_state.loc['1058c']/* 'You need to set your city for contractors.' */, 4400)
         }
+        else if(this.state.delivery_location == '' && this.should_render_city_settings()){
+            this.props.notify(this.props.app_state.loc['1058g']/* 'You need to specify a pick up location for your new bag.' */, 4400)
+        }
         else{
+            if(this.state.delivery_location != ''){
+                this.add_fulfilment_location_to_local_storage(this.state.delivery_location)
+            }
             this.props.add_bag_item_to_bag_in_stack(this.state)
             this.props.notify(this.props.app_state.loc['1058']/* 'Transaction added to Stack' */, 700)
         }
@@ -463,6 +528,10 @@ class AddToBagPage extends Component {
         var composition_type = object['ipfs'].composition_type == null ? this.props.app_state.loc['1047']/* 'items' */ : this.get_selected_item(object['ipfs'].composition_type, 'e')
 
         return composition_type
+    }
+
+    add_fulfilment_location_to_local_storage(location){
+        localStorage.setItem("delivery", JSON.stringify(location));
     }
 
 

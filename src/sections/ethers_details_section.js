@@ -226,9 +226,9 @@ class EthersDetailsSection extends Component {
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2456']/* 'Gas txs/ether (23K Gas average)' */, 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_transactions_per_ether), 'number':this.format_account_balance_figure(gas_transactions_per_ether), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
                     </div>
-                    <div style={{height:10}}/>
 
                     {this.render_wallet_vaue(item, (this.props.app_state.account_balance[item['e5']]/10**18))}
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', item['gas_limit'])}
                     <div style={{height: 10}}/>

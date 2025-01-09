@@ -237,7 +237,7 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2607']/* 'Author Seller' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_direct_purchases_if_any()}
+                    {this.render_direct_purchases_if_any(object)}
 
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['ipfs'].target_receiver, object), 'details':this.props.app_state.loc['2608']/* Target Payment Recipient' */, 'size':'l'})}
 

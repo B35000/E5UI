@@ -1242,6 +1242,7 @@ class StackPage extends Component {
                     {this.render_gas_history_chart()}
                     {this.render_mempool_metrics()}
                     {this.render_dialog_ui()}
+                    {this.render_beacon_node_enabled_message()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -1254,6 +1255,7 @@ class StackPage extends Component {
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {this.render_gas_history_chart()}
+                            {this.render_beacon_node_enabled_message()}
                         </div>
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_run_settings_part()}
@@ -1271,6 +1273,7 @@ class StackPage extends Component {
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {this.render_gas_history_chart()}
+                            {this.render_beacon_node_enabled_message()}
                         </div>
                         <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_run_settings_part()}
@@ -1283,6 +1286,24 @@ class StackPage extends Component {
                     {this.render_dialog_ui()}
                 </div>
             ) 
+        }
+    }
+
+    render_beacon_node_enabled_message(){
+        if(this.props.app_state.beacon_node_enabled == true){
+            return(
+                <div>
+                    <div style={{height: 20}}/>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['1593ej']/* 'Beacon Node Online.' */})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{height: 20}}/>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['1593ek']/* 'Beacon Node Offline.' */})}
+                </div>
+            )
         }
     }
 
@@ -2877,11 +2898,16 @@ class StackPage extends Component {
                     // ints.push(index_data.int)
 
                     var bag_variants = []
+                    
                     txs[i].items_to_deliver.forEach(item => {
-                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':[item.selected_variant['image_data']['data']['images'].length == 0 ? [] : item.selected_variant['image_data']['data']['images'][0]] })
+                        var variant_images = []
+                        if(item.selected_variant['image_data']['data']['images'].length > 0){
+                            variant_images.push(item.selected_variant['image_data']['data']['images'][0])
+                        }
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images })
                     });
 
-                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country }
+                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location  }
 
                     var metadata_action = [ /* set metadata */
                         [20000, 1, 0],
@@ -3701,11 +3727,21 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
                     var t = txs[i]
                     const bag_variants = []
+                    const bag_tags = []
                     txs[i].items_to_deliver.forEach(item => {
-                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':[item.selected_variant['image_data']['data']['images'].length == 0 ? [] : item.selected_variant['image_data']['data']['images'][0]]})
+                        var variant_images = []
+                        if(item.selected_variant['image_data']['data']['images'].length > 0){
+                            variant_images.push(item.selected_variant['image_data']['data']['images'][0])
+                        }
+
+                        item.storefront_item['ipfs'].entered_indexing_tags.forEach(tag => {
+                            bag_tags.push(tag)
+                        })
+                        
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications})
                     });
 
-                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country }
+                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location }
 
                     ipfs_index_object[t.id] = final_bag_object
                     ipfs_index_array.push({'id':t.id, 'data':final_bag_object})

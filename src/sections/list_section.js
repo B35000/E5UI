@@ -2418,14 +2418,17 @@ class PostListSection extends Component {
 
     format_bag_item(object){
         var tags = [object['event'].returnValues.p3]
-        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
-            tags = [object['ipfs'].selected_device_city].concat(tags)
+        if(object['ipfs']['tags'] != null){
+            tags = object['ipfs']['tags']
+        }
+        if(object['ipfs'].device_city != null){
+            tags = [object['ipfs'].device_city].concat(tags)
         }
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items ordered' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        var item_images = this.get_bag_images(object)
+        // var item_images = this.get_bag_images(object)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
@@ -2436,7 +2439,6 @@ class PostListSection extends Component {
 
     get_bag_images(object){
         var images = []
-
         for(var i=0; i<object['ipfs']['bag_orders'].length; i++){
             var bag_order = object['ipfs']['bag_orders'][i]
             var variant_images = bag_order['variant_images']

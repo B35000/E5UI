@@ -224,6 +224,7 @@ class BagDetailsSection extends Component {
         return(
             <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'scroll', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
+                    {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['sender_account'])}
                     <div style={{height: 10}}/>
@@ -234,6 +235,10 @@ class BagDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['delivery'])}
+
                     {this.render_detail_item('0')}
 
                     {this.render_bag_value(object)}
@@ -301,13 +306,22 @@ class BagDetailsSection extends Component {
 
 
     get_bag_details_data(object){
-        var tags = [].concat([object['event'].returnValues.p3])
+        var tags = [object['event'].returnValues.p3]
+        if(object['ipfs']['tags'] != null){
+            tags = object['ipfs']['tags']
+        }
+        if(object['ipfs'].device_city != null){
+            tags = [object['ipfs'].device_city].concat(tags)
+        }
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+' item(s) ordered'
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var delivery_location = object['ipfs'].delivery_location
         return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
             'sender_account':{'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
+            'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':delivery_location, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
     }
@@ -338,7 +352,8 @@ class BagDetailsSection extends Component {
     get_total_bag_value(items_to_deliver, object){
         var obj = {}
         items_to_deliver.forEach(item => {
-            var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
+            // var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
+            var storefront = this.get_storefront(item['storefront_item_id'])
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
             if(variant_in_store == null) return null
             var price_items = variant_in_store['price_data']
@@ -363,6 +378,18 @@ class BagDetailsSection extends Component {
         }
 
         return arr
+    }
+
+    get_storefront(storefront_id){
+        var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
+        // console.log('all_stores', all_stores)
+        var store = this.get_item_in_array_using_id(storefront_id, all_stores)
+        return store
+    }
+
+    get_item_in_array_using_id(id, object_array){
+        var object = object_array.find(x => x['id'] === id);
+        return object
     }
 
     render_all_variants(object){
@@ -402,7 +429,8 @@ class BagDetailsSection extends Component {
 
     render_variant_item_if_selected(item, object){
         // var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
-        if(this.props.app_state.created_store_mappings[object['e5']] == null){
+        var storefront = this.get_storefront(item['storefront_item_id'])
+        if(storefront == null){
             return(
                 <div>
                     <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -413,7 +441,7 @@ class BagDetailsSection extends Component {
                 </div>
             )
         }
-        var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
+        // var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
         var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
         if(variant_in_store == null){
             return(
@@ -462,7 +490,9 @@ class BagDetailsSection extends Component {
     render_variant_details(object){
         var item = this.state.selected_variant[object['id']]
         if(item != null){
-            var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
+            // var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
+            var storefront = this.get_storefront(item['storefront_item_id'])
+            
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
             if(variant_in_store == null) return null
             var items = variant_in_store['price_data']
@@ -477,9 +507,10 @@ class BagDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':this.props.app_state.loc['2050']/* 'Variant Description' */, 'size':'s'})}
                     <div style={{height: 3}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2051']/* 'Pick-up Location' */, 'details':storefront['ipfs'].fulfilment_location, 'size':'s'})}
-                    <div style={{padding:'0px 0px 0px 0px'}}>
-                        {this.render_detail_item('9', variant_in_store['image_data']['data'])}
-                    </div>
+                    <div style={{height: 3}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':(item['custom_specifications'] == null ? '...':item['custom_specifications']), 'size':'s'})}
+                    {this.render_variant_image_if_any(variant_in_store)}
+                    <div style={{height: 3}}/>
                     {items.map((units, index) => (
                         <div style={{'padding': '2px 0px 2px 0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -493,6 +524,15 @@ class BagDetailsSection extends Component {
     }
 
 
+    render_variant_image_if_any(variant_in_store){
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            return(
+                <div style={{padding:'0px 0px 0px 0px'}}>
+                    {this.render_detail_item('9', variant_in_store['image_data']['data'])}
+                </div>
+            )
+        }
+    }
 
 
 
@@ -854,10 +894,9 @@ class BagDetailsSection extends Component {
 
     render_top_title(object){
         // var object = this.get_bag_items()[this.props.selected_bag_item];
-        var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':this.truncate(top_title, 40), 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2064e']/* 'Bag Activity.' */, 'size':'l'})} 
             </div>
         )
     }
