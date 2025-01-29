@@ -65,7 +65,10 @@ class NewStorefrontItemPage extends Component {
         typed_link_text:'', link_search_results:[], added_links:[],
         edit_text_item_pos:-1, edit_variant_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'', entered_zip_objects:[]
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'', entered_zip_objects:[],
+
+        option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], edit_option_group_item_pos:-1,
+        get_option_group_type_object: this.get_option_group_type_object(), option_group_details:''
     };
 
     get_new_job_page_tags_object(){
@@ -74,7 +77,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['441']/* 'variants' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -212,10 +215,21 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+    get_option_group_type_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['535ad']/* 'single-mandatory' */, this.props.app_state.loc['535ae']/* 'single' */, this.props.app_state.loc['535af']/* 'multiple' */], [1]
+            ],
+        };
+    }
+
 
     
     set(){
-        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(), edit_text_item_pos:-1,get_sort_links_tags_object:this.get_sort_links_tags_object()})
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(), edit_text_item_pos:-1,get_sort_links_tags_object:this.get_sort_links_tags_object(), edit_option_group_item_pos:-1, get_option_group_type_object: this.get_option_group_type_object()})
 
         if(this.state.markdown == null){
             this.setState({markdown:''})
@@ -223,6 +237,10 @@ class NewStorefrontItemPage extends Component {
 
         if(this.state.get_markdown_preview_or_editor_object == null){
             this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
+        }
+
+        if(this.state.option_group_title == null){
+            this.setState({option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], option_group_details:''})
         }
     }
 
@@ -322,6 +340,13 @@ class NewStorefrontItemPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['535h']/* 'purchase-options' */){
+            return(
+                <div>
+                    {this.render_purchase_options_section()}
+                </div>
+            )
+        }
     }
 
     is_text_selected_item(selected_item){
@@ -410,7 +435,6 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['471']/* 'Direct Purchase Option' */, 'details':this.props.app_state.loc['472']/* 'If set to enabled, youll handle the shipping for the item when purchased directly by your clients' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
                 {this.render_direct_shipping_fee_view_if_enabled()}
             </div>
@@ -508,6 +532,10 @@ class NewStorefrontItemPage extends Component {
         this.remove_fulfilment_location_from_local_storage(pos)
     }
 
+
+
+
+
     render_direct_shipping_fee_view_if_enabled(){
         var selected_item = this.get_selected_item(this.state.purchase_option_tags_object, this.state.purchase_option_tags_object['i'].active)
 
@@ -516,14 +544,14 @@ class NewStorefrontItemPage extends Component {
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['479']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['480']/* 'Set the accounts involved with shipping and fulfilling direct purchase orders from clients' */, 'size':'l'})}
-
-                    <div className="row" style={{width: '103%'}}>
-                        <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                    <div style={{height:5}}/>
+                    <div className="row" style={{width: '100%'}}>
+                        <div className="col-11" style={{'padding': '5px 0px 0px 10px'}}>
                             <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['153']} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
                         </div>
-                        <div className="col-3" style={{'padding': '2px 0px 0px 0px'}}>
-                            <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['169']/* 'Add' */, 'action':'', 'prevent_default':true})}
+                        <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                            <div style={{'padding': '8px 0px 0px 5px'}} onClick={() => this.when_add_shipping_account_set()}>
+                                <img alt="" className="text-end"src={this.props.theme['add_text']} style={{height:36, width:'auto'}} />
                             </div>
                         </div>
                     </div>
@@ -556,6 +584,7 @@ class NewStorefrontItemPage extends Component {
         super(props);
         this.amount_picker = React.createRef();
         this.amount_picker2 = React.createRef();
+        this.amount_picker3 = React.createRef();
     }
 
     get_power_limit_for_exchange(exchange){
@@ -666,17 +695,8 @@ class NewStorefrontItemPage extends Component {
             items = [0, 1]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(2)}
+                    
                 </div>
             )
         }else{
@@ -2476,6 +2496,416 @@ class NewStorefrontItemPage extends Component {
     }
 
 
+
+
+
+
+
+
+    render_purchase_options_section(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_purchase_options_parts()}
+                    <div style={{height:20}}/>
+                    {this.render_purchase_options_parts2()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_purchase_options_parts()}
+                        
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_purchase_options_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_purchase_options_parts()}
+                        
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_purchase_options_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+    
+    render_purchase_options_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['535i']/* 'You can specify purchase options that will be requested upon direct purchase or bag purchase.' */})}
+                <div style={{height:10}}/>
+                {this.render_mini_option_groups()}
+
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535j']/* 'Option Group Title.' */, 'details':this.props.app_state.loc['535k']/* 'The title of the option group (Eg Color, Texture, Optional extras etc.)' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['535j']/* 'Option Group Title.' */} when_text_input_field_changed={this.when_option_group_title_input_field_changed.bind(this)} text={this.state.option_group_title} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(23 - this.state.option_group_title.length)})}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['535ah']/* 'Option Group Details...' */} when_text_input_field_changed={this.when_option_group_details_input_field_changed.bind(this)} text={this.state.option_group_details} theme={this.props.theme}/>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['535ag']/* 'Youll need to set the option group type for the new option group.' */})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_option_group_type_object} tag_size={'l'} when_tags_updated={this.when_get_option_group_type_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['535ac']/* 'Group Options. Specify an item option and its prices to see it below.' */})}
+                <div style={{height:10}}/>
+                {this.render_added_options()}
+
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535l']/* 'Item Option.' */, 'details':this.props.app_state.loc['535m']/* 'This is a specific option that will be shown during purchase (like the color \'red\')' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['535n']/* 'Option Item.' */} when_text_input_field_changed={this.when_option_item_text_input_field_changed.bind(this)} text={this.state.option_item_text} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(23 - this.state.option_item_text.length)})}
+                
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535o']/* 'Option Price.' */, 'details':this.props.app_state.loc['535p']/* 'This is the extra fee that will be included if the option is selected.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['504']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id2_input_field_changed.bind(this)} text={this.state.exchange_id2} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id2')}
+            </div>
+        )
+    }
+
+    when_get_option_group_type_object_updated(tag_obj){
+        this.setState({get_option_group_type_object: tag_obj})
+    }
+
+    when_option_group_details_input_field_changed(text){
+        this.setState({option_group_details: text})
+    }
+
+    render_purchase_options_parts2(){
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['505']/* 'Price' */, 'number':this.state.price_amount2, 'relativepower':this.props.app_state.loc['506']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['505']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount2), 'barwidth':this.calculate_bar_width(this.state.price_amount2), 'number':this.format_account_balance_figure(this.state.price_amount2), 'barcolor':'', 'relativepower':this.props.app_state.loc['506']/* 'tokens' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker3} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} when_number_picker_value_changed={this.when_price_amount2.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_option_price_set()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['507']/* 'Add Price' */, 'action':''})}
+                </div>
+                <div style={{height:10}}/>
+                {this.render_selected_option_prices()}
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535t']/* 'Add Option.' */, 'details':this.props.app_state.loc['535ab']/* 'Add Option with specified name and price data.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_option_set()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['535t']/* 'Add Option.' */, 'action':''})}
+                </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535q']/* 'Add option Group.' */, 'details':this.props.app_state.loc['535r']/* 'Add the option group with the specified options.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_option_group_set()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['535s']/* 'Add Group.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_option_group_title_input_field_changed(text){
+        if(text.length <= 23) this.setState({option_group_title: text})
+    }
+
+    when_option_item_text_input_field_changed(text){
+        if(text.length <= 23) this.setState({option_item_text: text})
+    }
+
+    when_exchange_id2_input_field_changed(text){
+        this.setState({exchange_id2: text})
+        this.reset_the_number_picker3()
+    }
+
+    reset_the_number_picker3(){
+        var me = this;
+        setTimeout(function() {
+            if(me.amount_picker3.current != null){
+                me.amount_picker3.current.reset_number_picker()
+            }
+        }, (1 * 1000));
+    }
+
+    when_price_amount2(amount){
+        this.setState({price_amount2: amount})
+    }
+
+    when_add_option_price_set(){
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id2.trim())
+        var amount = this.state.price_amount2
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['508']/* 'please put a valid exchange id' */, 1600)
+        }
+        else if(amount == 0){
+            this.props.notify(this.props.app_state.loc['509']/* 'please put a valid amount' */, 1600)
+        }
+        else if(this.is_exchange_already_added(exchange_id, this.state.option_price_data)){
+            this.props.notify(this.props.app_state.loc['510']/* 'You cant use the same exchange twice' */, 3600)
+        }
+        else{
+            var price_data_clone = this.state.option_price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({option_price_data: price_data_clone, price_amount2:0, exchange_id2:''});
+            this.props.notify(this.props.app_state.loc['511']/* 'added price!' */, 1000)
+        }
+    }
+
+    when_add_option_set(){
+        var option_item_text = this.state.option_item_text.trim()
+        var option_price_data = this.state.option_price_data
+
+        if(option_item_text == ''){
+            this.props.notify(this.props.app_state.loc['535u']/* 'You need to specify a name for the option first.' */, 3600)
+        }
+        else if(this.does_option_already_exist(option_item_text)){
+            this.props.notify(this.props.app_state.loc['535w']/* 'You can\'t specify the same option name twice.' */, 3600)
+        }
+        else{
+            var obj = {'id':makeid(4),'name':option_item_text, 'price':option_price_data}
+            var option_group_options_clone = this.state.option_group_options.slice()
+            option_group_options_clone.push(obj)
+            this.setState({option_group_options: option_group_options_clone, option_price_data:[], option_item_text:''})
+            this.props.notify(this.props.app_state.loc['535v']/* 'Option Added.' */, 1000)
+        }
+    }
+
+    does_option_already_exist(name){
+        var exists = false
+        this.state.option_group_options.forEach(option => {
+            if(option['name'] == name){
+                exists = true
+            }
+        });
+        return exists
+    }
+
+    render_selected_option_prices(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.state.option_price_data)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_option_price_clicked(item, index)}>
+                            {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_option_price_clicked(item){
+        var cloned_array = this.state.option_price_data.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({option_price_data: cloned_array})
+    }
+
+    render_added_options(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.state.option_group_options)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_option_group_option_clicked(item, index)}>
+                            {this.render_detail_item('3', {'title':item['name'], 'details':item['id'], 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_option_group_option_clicked(item, index){
+        var cloned_array = this.state.option_group_options.slice()
+        cloned_array.splice(index, 1);
+        this.setState({option_group_options: cloned_array})
+    }
+
+
+    when_add_option_group_set(){
+        var option_group_title = this.state.option_group_title.trim()
+        var option_group_details = this.state.option_group_details.trim()
+        var option_group_options = this.state.option_group_options
+        var group_type = this.state.get_option_group_type_object
+
+        if(option_group_title == ''){
+            this.props.notify(this.props.app_state.loc['535x']/* 'You need to specify a name for the option group first.' */, 6600)
+        }
+        else if(option_group_options.length == 0){
+            this.props.notify(this.props.app_state.loc['535y']/* 'You need to specify some options for the group first.' */, 6600)
+        }
+        else{
+            var obj = {'id':makeid(4),'title':option_group_title, 'details':option_group_details, 'options':option_group_options, 'group_type_tags':group_type}
+            var option_groups_clone = this.state.option_groups.slice()
+            if(this.state.edit_option_group_item_pos != -1){
+                var original_id = option_groups_clone[this.state.edit_option_group_item_pos]['id']
+                obj['id'] = original_id
+                option_groups_clone[this.state.edit_option_group_item_pos] = obj
+            }else{
+                option_groups_clone.push(obj)
+            }
+            this.setState({option_groups: option_groups_clone, option_group_options:[], option_group_title:'', edit_option_group_item_pos: -1, get_option_group_type_object: this.get_option_group_type_object(), option_group_details:''})
+            this.props.notify(this.props.app_state.loc['535v']/* 'Group added.' */, 1000)
+        }
+    }
+
+    render_mini_option_groups(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.state.option_groups)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_option_group_clicked(item, index)}>
+                            {this.render_option_group_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_option_group_item(item, index){
+        if(this.state.edit_option_group_item_pos == index){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':item['id'], 'details':'...', 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':item['id'], 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                </div>
+            )
+        }
+    }
+
+    when_option_group_clicked(item, index){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            if(me.state.edit_option_group_item_pos != index) me.remove_option_group_item(index)
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.focus_option_group_tab(index)
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
+    }
+
+    remove_option_group_item(index){
+        var cloned_array = this.state.option_groups.slice()
+        // const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+            this.setState({option_groups: cloned_array})
+        }
+    }
+
+    focus_option_group_tab(item_pos){
+        if(this.state.edit_option_group_item_pos == item_pos){
+            this.setState({edit_option_group_item_pos: -1, option_group_title:'', option_group_options:[], get_option_group_type_object:this.get_option_group_type_object(), option_group_details:''})
+        }else{
+            this.props.notify(this.props.app_state.loc['535aa']/* 'Editing that Group.' */, 2000)
+            this.set_focused_group_data(item_pos)
+        }
+    }
+
+    set_focused_group_data(item_pos){
+        var group = this.state.option_groups[item_pos]
+        this.setState({option_group_title: group['title'], option_group_options: group['options'],edit_option_group_item_pos: item_pos, get_option_group_type_object: group['group_type_tags'], option_group_details: group['details']});
+    }
+
+
     
     
 
@@ -2987,9 +3417,9 @@ class NewStorefrontItemPage extends Component {
         )
     }
 
-    truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
-    }
+    // truncate(source, size) {
+    //     return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    // }
 
 
     render_tab_item(item, index){
@@ -3018,7 +3448,7 @@ class NewStorefrontItemPage extends Component {
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
-            me.remove_tab_item(index)
+            if(!this.is_tab_active(index)) me.remove_tab_item(index)
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {
@@ -3123,31 +3553,35 @@ class NewStorefrontItemPage extends Component {
             this.setState({shipping_exchange_id: item['id']})
             this.reset_the_number_picker()
         }
-    }
-
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
+        else if(target_type == 'exchange_id2'){
+            this.setState({exchange_id2: item['id']})
+            this.reset_the_number_picker3()
         }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
     }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
+    // get_all_sorted_objects(object){
+    //     var all_objects = []
+    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+    //         var e5 = this.props.app_state.e5s['data'][i]
+    //         var e5_objects = object[e5]
+    //         if(e5_objects != null){
+    //             all_objects = all_objects.concat(e5_objects)
+    //         }
+    //     }
+    //     return this.sortByAttributeDescending(all_objects, 'timestamp')
+    // }
+
+    // sortByAttributeDescending(array, attribute) {
+    //   return array.sort((a, b) => {
+    //       if (a[attribute] < b[attribute]) {
+    //       return 1;
+    //       }
+    //       if (a[attribute] > b[attribute]) {
+    //       return -1;
+    //       }
+    //       return 0;
+    //   });
+    // }
 
 
 

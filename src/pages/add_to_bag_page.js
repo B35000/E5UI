@@ -53,7 +53,9 @@ class AddToBagPage extends Component {
     state = {
         selected: 0, storefront_item:{},  type:this.props.app_state.loc['1043']/* 'add-to-bag' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1044']/* 'add' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1046']/* 'storefront-item' */], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
-        purchase_unit_count:1, selected_variant:null, device_city: '', selected_device_city:'', delivery_location:'', order_specifications:''
+        purchase_unit_count:1, selected_variant:null, device_city: '', selected_device_city:'', delivery_location:'', order_specifications:'',
+
+        purchase_option_tags_array:[]
     };
 
     get_add_to_bag_tags_object(){
@@ -127,7 +129,9 @@ class AddToBagPage extends Component {
             return(
                 <div>
                     {this.render_content()}
+                    {this.render_purchase_options()}
                     {this.render_set_storefront_prices_list_part()}
+                    {this.render_purchase_option_fees()}
                 </div>
             )
         }
@@ -140,9 +144,10 @@ class AddToBagPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_purchase_options()}
                         {this.render_set_storefront_prices_list_part()}
-                        <div style={{height:10}}/>
-                        {this.render_empty_views(3)}
+                        {this.render_purchase_option_fees()}
+                        
                     </div>
                 </div>
                 
@@ -157,9 +162,10 @@ class AddToBagPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_purchase_options()}
                         {this.render_set_storefront_prices_list_part()}
-                        <div style={{height:10}}/>
-                        {this.render_empty_views(3)}
+                        {this.render_purchase_option_fees()}
+                        
                     </div>
                 </div>
                 
@@ -486,6 +492,155 @@ class AddToBagPage extends Component {
 
 
 
+    set_up_option_groups(object){
+        if(object['ipfs'] != null && object['ipfs'].option_groups != null && object['ipfs'].option_groups.length > 0){
+            var items = object['ipfs'].option_groups
+            var purchase_option_tags_array = []
+            items.forEach(item => {
+                purchase_option_tags_array.push(this.get_option_group_tags(item))
+            });
+            this.setState({purchase_option_tags_array: purchase_option_tags_array})
+        }
+    }
+
+
+
+
+
+
+
+
+    render_purchase_options(){
+        var object = this.state.storefront_item
+        if(object['ipfs'] != null && object['ipfs'].option_groups != null && object['ipfs'].option_groups.length > 0){
+            var items = object['ipfs'].option_groups
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1058l']/* 'Some purchasing options have been specified. Please set at your discretion.' */})}
+                    <div style={{height:10}}/>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', {'title':item['title'], 'details':item['details'], 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.purchase_option_tags_array[index]} tag_size={'l'} when_tags_updated={(tag_obj) => this.when_group_tags_updated(tag_obj, index)} theme={this.props.theme}/>
+                        </div>
+                    ))}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    when_group_tags_updated(tag_obj, index){
+        var clone = this.state.purchase_option_tags_array.slice()
+        clone[index] = tag_obj
+        this.setState({purchase_option_tags_array: clone})
+    }
+
+    get_option_group_tags(item){
+        var group_type = item['group_type_tags']
+        var selected_type = this.get_selected_item2(group_type, 'e')
+        var options = {1: 'xor'/* single-mandatory */, 2: 'or'/* single */, 3:'and'/* multiple */}
+        var default_option_array = {1:[1], 2:[0], 3:[0]}
+
+        var tag_items = ['e']
+        item['options'].forEach(option => {
+            var option_name = option['name']
+            tag_items.push(option_name)
+        });
+
+        var obj = {
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                [options[selected_type],'',0], tag_items, default_option_array[selected_type]
+            ],
+        };
+
+        return obj
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
+
+    render_purchase_option_fees(){
+        var middle = this.props.height-200;
+        var object = this.state.storefront_item
+        if(object['ipfs'] != null && object['ipfs'].option_groups != null && object['ipfs'].option_groups.length > 0){
+            var items = this.get_final_purchase_option_fees(object['ipfs'].option_groups)
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058m']/* 'Selected Option Fees.' */, 'details':this.props.app_state.loc['1058n']/* 'Below is the extra price for the selected options youve chosen.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':this.get_amounts_to_be_paid(item['amount']), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(item['amount'])), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(item['amount'])), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(item['amount'])), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_final_purchase_option_fees(options){
+        var price_obj = {}
+        for(var i=0; i<this.state.purchase_option_tags_array.length; i++){
+            var tag_obj = this.state.purchase_option_tags_array[i]
+            var selected_items = []
+            for(var j=0; j<tag_obj['e'][2].length; j++){
+                var selected_item_pos = tag_obj['e'][2][j]
+                if(selected_item_pos != 0){
+                    selected_items.push(selected_item_pos-1)
+                }
+            }
+            for(var k=0; k<selected_items.length; k++){
+                var selected_pos = selected_items[k]
+                var option_prices = options[i]['options'][selected_pos]['price']
+                option_prices.forEach(price => {
+                    if(price_obj[price['id']] == null){
+                        price_obj[price['id']] = bigInt(0)
+                    }
+                    price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                });
+            } 
+        }
+
+        var return_array = []
+        for (const exchange in price_obj) {
+            if (price_obj.hasOwnProperty(exchange)) {
+                return_array.push({'id':exchange, 'amount':price_obj[exchange]})
+            }
+        }
+
+        if(return_array.length == 0){
+            return_array.push({'id':5, 'amount':bigInt(0)})
+        }
+
+        return return_array
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     set_transaction(item){
         if(this.state.storefront_item['id'] != item['id']){
             this.setState({
@@ -495,6 +650,7 @@ class AddToBagPage extends Component {
             })
         }
         this.setState({storefront_item: item, e5: item['e5']})
+        this.set_up_option_groups(item)
     }
 
 

@@ -36,6 +36,7 @@ import { from } from "@iotexproject/iotex-address-ts";
 import imageCompression from 'browser-image-compression';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import { constants } from 'buffer';
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -2188,6 +2189,7 @@ class StackPage extends Component {
         
         
         var ipfs_index = await this.get_ipfs_index_object(txs, now, calculate_gas)
+        // var ipfs_index = await this.props.get_ipfs_index_object_max(now, calculate_gas)
         
         
         if(ipfs_index == ''){
@@ -3738,7 +3740,7 @@ class StackPage extends Component {
                             bag_tags.push(tag)
                         })
                         
-                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications})
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications, 'options':item.purchase_option_tags_array, 'storefront_options':(item.storefront_item['ipfs'].option_groups == null ? [] : item.storefront_item['ipfs'].option_groups)})
                     });
 
                     var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location }
@@ -3761,7 +3763,7 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                     var t = txs[i]
-                    var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
+                    var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups)}
 
                     ipfs_index_object[t.id] = purchase_object
                     ipfs_index_array.push({'id':t.id, 'data':purchase_object})
@@ -3879,12 +3881,10 @@ class StackPage extends Component {
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
                     }   
                 }
-            }
-        }
-
-        for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */|| pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
-                ipfs_index_object[pushed_txs[i].id] = pushed_txs[i]
+                else if(txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || txs[i].type == this.props.app_state.loc['601']/* 'token' */ || txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || txs[i].type == this.props.app_state.loc['297']/* 'post' */ || txs[i].type == this.props.app_state.loc['760']/* 'job' */ || txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */|| txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+                    ipfs_index_object[txs[i].id] = txs[i]
+                    ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
+                }
             }
         }
 
@@ -3896,12 +3896,14 @@ class StackPage extends Component {
             var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
             var data = {'contacts':contacts_clone, 'time':Date.now()}
             ipfs_index_object['contacts'] = data
+            // ipfs_index_array.push({'id':'contacts', 'data':data})
         }
 
         if(this.props.app_state.should_update_blocked_accounts_onchain){
             var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
             var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
             ipfs_index_object['blocked'] = data
+            ipfs_index_array.push({'id':'blocked', 'data':data})
         }
 
         if(this.props.app_state.should_update_section_tags_onchain){
@@ -3909,12 +3911,14 @@ class StackPage extends Component {
             var explore_section_tags = this.props.app_state.explore_section_tags
             var data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
             ipfs_index_object['tags'] = data
+            ipfs_index_array.push({'id':'tags', 'data':data})
         }
 
         if(this.props.app_state.update_data_in_E5){
             var uploaded_data = this.props.app_state.uploaded_data_cids
             var data = {'cids': uploaded_data, 'time':Date.now()}
             ipfs_index_object['ciddata'] = data
+            ipfs_index_array.push({'id':'ciddata', 'data':data})
         }
 
         var added_song_album_data = this.get_songs_and_albums_to_add(pushed_txs)
@@ -3939,18 +3943,21 @@ class StackPage extends Component {
 
             var data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
             ipfs_index_object['myaudio'] = data
+            // ipfs_index_array.push({'id':'myaudio', 'data':data})
         }
 
         if(this.props.app_state.should_update_playlists_in_E5 == true){
             var my_playlists = this.props.app_state.my_playlists
             var data = {'playlists': my_playlists, 'time':Date.now()}
             ipfs_index_object['myplaylists'] = data
+            ipfs_index_array.push({'id':'myplaylists', 'data':data})
         }
 
         if(this.props.app_state.should_update_song_plays == true){
             var song_plays = this.props.app_state.song_plays
             var data = {'plays': song_plays, 'time':Date.now()}
             ipfs_index_object['myplays'] = data
+            ipfs_index_array.push({'id':'myplays', 'data':data})
         }
 
         var added_video_data = this.get_videos_to_add(pushed_txs);
@@ -3975,36 +3982,42 @@ class StackPage extends Component {
 
             var data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
             ipfs_index_object['myvideo'] = data
+            ipfs_index_array.push({'id':'myvideo', 'data':data})
         }
 
         if(this.props.app_state.should_update_followed_accounts == true){
             var followed_accounts = this.props.app_state.followed_accounts
             var data = {'followed_accounts': followed_accounts, 'time':Date.now()}
             ipfs_index_object['following'] = data
+            ipfs_index_array.push({'id':'following', 'data':data})
         }
 
         if(this.props.app_state.should_update_posts_blocked_by_me == true){
             var posts_blocked_by_me = this.props.app_state.posts_blocked_by_me
             var data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
             ipfs_index_object['blockedposts'] = data
+            ipfs_index_array.push({'id':'blockedposts', 'data':data})
         }
 
         if(this.props.app_state.should_update_censored_keyword_phrases == true){
             var censored_keyword_phrases = this.props.app_state.censored_keyword_phrases
             var data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
             ipfs_index_object['censoredkeywords'] = data
+            ipfs_index_array.push({'id':'censoredkeywords', 'data':data})
         }
-
 
 
         const obj = {'version':this.props.app_state.version}
         ipfs_index_array.forEach(item => {
             obj[item['id']] = item['data']
         });
+        console.log('stack_page_ipfs', 'unupdated ipfs-object', obj)
 
 
-        console.log('stack_page_ipfs', 'updated ipfs-object', ipfs_index_object, obj)
-        return await this.get_object_ipfs_index(obj, calculate_gas);
+        console.log('stack_page_ipfs', 'updated ipfs-array', ipfs_index_array)
+        const link = await this.get_object_ipfs_index(obj, calculate_gas);
+        console.log('stack_page_ipfs', 'link', link)
+        return link
     }
 
     get_gas_price(){
@@ -4054,9 +4067,10 @@ class StackPage extends Component {
             return null
         }
         if(calculate_gas != null && calculate_gas == true){
-            return 'QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk'
+            return 'in.QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk_qwsedrf'
         }
         if(ipfs_index != null){
+            console.log('stack_page', 'ipfs_index', data_index)
             return ipfs_index+'_'+data_index
         }
         var object_as_string = JSON.stringify(tx, (key, value) =>
@@ -5524,10 +5538,17 @@ class StackPage extends Component {
             []/* amount */
         ]
 
+        console.log('stack_page', t.id, t)
+        const storefront_item = t.storefront_item
+        console.log('stack_page', 'storefront item', storefront_item)
+        const object = storefront_item['ipfs']
+        const purchase_options_tags = t.purchase_option_tags_array
+        const t_id = t.id
+
         var obj = [/* send awwards */
             [30000, 7, 0],
-            [t.storefront_item['ipfs'].target_receiver], [23],/* target receivers */
-            [t.storefront_item['id']],/* awward contexts */
+            [object.target_receiver], [23],/* target receivers */
+            [storefront_item['id']],/* awward contexts */
             
             [], [],/* exchange ids for first target receiver */
             [],/* amounts for first target receiver */
@@ -5535,9 +5556,12 @@ class StackPage extends Component {
         ]
         var string_obj = [[]]
 
-        for(var i=0; i<t.selected_variant['price_data'].length; i++){
-            var exchange = t.selected_variant['price_data'][i]['id']
-            var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
+        const selected_variant = t.selected_variant
+        const price_data = selected_variant['price_data']
+        console.log('stack_page', 'selected variant', price_data)
+        for(var i=0; i<price_data.length; i++){
+            var exchange = price_data[i]['id']
+            var amount = this.get_amounts_to_be_paid(price_data[i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
 
             var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
             var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
@@ -5560,40 +5584,104 @@ class StackPage extends Component {
             }
         }
 
-        for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
-            var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
-            var amount = (t.storefront_item['ipfs'].shipping_price_data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
-
-
-            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
-            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
-            for(var s=0; s<swap_actions.length; s++){
-                depth_swap_obj[1].push(exchange)
-                depth_swap_obj[2].push(23)
-                depth_swap_obj[3].push(0)
-                depth_swap_obj[4].push(53)
-                depth_swap_obj[5/* action */].push(0)
-                depth_swap_obj[6/* depth */].push(swap_actions[s])
-                depth_swap_obj[7].push('1')
-            }
-
-
-            var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
-                obj[4].push(exchange)
-                obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
-            }
-        }
-
-        var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
         
-        var string_data = await this.get_object_ipfs_index(purchase_object, calculate_gas, ipfs_index, t.id);
+        for(var i=0; i<object.shipping_price_data.length; i++){
+            var exchange = object.shipping_price_data[i]['id']
+            var amount = (object.shipping_price_data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
+            }
+        }
+
+        
+        if(object != null && object.option_groups != null && object.option_groups.length > 0){
+            var option_fees = this.get_final_purchase_option_fees(object.option_groups, purchase_options_tags)
+            for(var i=0; i<option_fees.length; i++){
+                var exchange = option_fees[i]['id']
+                var amount = (option_fees[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+                for(var t=0; t<transfer_actions.length; t++){
+                    obj[4].push(exchange)
+                    obj[5].push(23)
+                    obj[6].push(transfer_actions[t]['amount'])
+                    obj[7].push(transfer_actions[t]['depth'])
+                }
+            }
+        }
+
+        var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
+        
+        var string_data = await this.get_object_ipfs_index(purchase_object, calculate_gas, ipfs_index, t_id);
+
+        console.log('stack_page', 'string_data', string_data)
 
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
+    get_final_purchase_option_fees(options, purchase_options_tags){
+        var price_obj = {}
+        console.log('stack_page','purchase_options_tags', purchase_options_tags)
+        for(var i=0; i<purchase_options_tags.length; i++){
+            var tag_obj = purchase_options_tags[i]
+            var selected_items = []
+            for(var j=0; j<tag_obj['e'][2].length; j++){
+                var selected_item_pos = tag_obj['e'][2][j]
+                if(selected_item_pos != 0){
+                    selected_items.push(selected_item_pos-1)
+                }
+            }
+            for(var k=0; k<selected_items.length; k++){
+                var selected_pos = selected_items[k]
+                var option_prices = options[i]['options'][selected_pos]['price']
+                option_prices.forEach(price => {
+                    if(price_obj[price['id']] == null){
+                        price_obj[price['id']] = bigInt(0)
+                    }
+                    price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                });
+            } 
+        }
+
+        var return_array = []
+        for (const exchange in price_obj) {
+            if (price_obj.hasOwnProperty(exchange)) {
+                return_array.push({'id':exchange, 'amount':price_obj[exchange]})
+            }
+        }
+
+        return return_array
     }
 
     get_amounts_to_be_paid(amount, count){
@@ -7857,7 +7945,7 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc[''], 'details':this.props.app_state.loc[''], 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>

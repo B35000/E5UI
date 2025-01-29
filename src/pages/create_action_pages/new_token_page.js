@@ -672,7 +672,7 @@ class NewTokenPage extends Component {
             new_token_type_tags_object: type, 
             token_exchange_liquidity_total_supply: bigInt('1e10'),
             default_exchange_amount_buy_limit: bigInt('1e10'),
-            default_exchange_amount_sell_limit: bigInt('1e9'),
+            default_exchange_amount_sell_limit: bigInt('1e7'),
             trust_fee_proportion: bigInt('35e15'),/* 3.5% */
 
             new_token_unlocked_liquidity_tags_object: unlocked_liquidity,

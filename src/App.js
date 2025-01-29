@@ -94,6 +94,7 @@ import { Keypair, Connection, PublicKey, Transaction, SystemProgram, sendAndConf
 import { derivePath } from 'ed25519-hd-key';
 import { AptosAccount, AptosClient } from 'aptos';
 import { create as createW3UpClient } from '@web3-storage/w3up-client';
+import { from } from "@iotexproject/iotex-address-ts";
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -218,8 +219,8 @@ import '@react-pdf-viewer/zoom/lib/styles/index.css';
 
 import io from 'socket.io-client';
 
-const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
+const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const Web3 = require('web3');
 const { ethers } = require("ethers");
 const ecies = require('ecies-geth');
@@ -523,7 +524,7 @@ class App extends Component {
         web3:['https://1rpc.io/celo', 'https://forno.celo.org'],
         token:'CELO',
         e5_address:'', /* 0xdfaE4E1a8447E560a0064fdB89D1919bF7cC0902 */
-        first_block:22528756, end_image:'https://nftstorage.link/ipfs/bafkreihciglctxpprbcf3xx7ykrzfxacfblvdtjnld7p4hfczsyy67aajy', spend_image:'https://nftstorage.link/ipfs/bafkreianjrpyl6xi7vz3aahnvqy6r3liysoc4sg5z742xlawip7if4qjsi', ether_image:'https://nftstorage.link/ipfs/bafkreidcfqahs3qwnte4do6di6gvcczfwu4bikwvkqlcrmaekheevohvce', iteration:40_000, url:0, active:false, e5_img:null
+        first_block:22528756, end_image:'https://nftstorage.link/ipfs/bafkreihciglctxpprbcf3xx7ykrzfxacfblvdtjnld7p4hfczsyy67aajy', spend_image:'https://nftstorage.link/ipfs/bafkreianjrpyl6xi7vz3aahnvqy6r3liysoc4sg5z742xlawip7if4qjsi', ether_image:'https://nftstorage.link/ipfs/bafkreidcfqahs3qwnte4do6di6gvcczfwu4bikwvkqlcrmaekheevohvce', iteration:40_000, url:1, active:false, e5_img:null
       },
       'E65':{
         web3:['https://rpc.ftso.au/flare'],
@@ -563,7 +564,7 @@ class App extends Component {
       },
       'E125':{
         web3:['https://polygon.llamarpc.com'],
-        token:'MATIC',
+        token:'POL',
         e5_address:'',/* 0x3D610010C43fC1Af89D8d040ED530398817A8E94 */
         first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty', iteration:40_000, url:0, active:false, e5_img:null
       },
@@ -592,7 +593,7 @@ class App extends Component {
         first_block:73021490, end_image:'https://nftstorage.link/ipfs/bafkreifgogs44o7da3acci3uc2oqv5oxmsmegw437w2zif655ifxtkkr7a', spend_image:'https://nftstorage.link/ipfs/bafkreiht6b53kzxpwomvq7kmrqseav3rwxgrbeovw6zlqhxc4tccylav4u', ether_image:'https://nftstorage.link/ipfs/bafkreiaovtind2gl7fguqisxsdlqp2agxr7xe2t3dehietmhygwcx3dcny', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E175':{
-        web3:['https://evmos-jsonrpc.theamsolutions.info'],
+        web3:['https://evmos-evm-rpc.publicnode.com'],
         token:'EVMOS',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
         first_block:17475951, end_image:'https://nftstorage.link/ipfs/bafkreibwm67vdnsbnxxm6muhoaqejctvneslseapupegh3yh2kxtarrwly', spend_image:'https://nftstorage.link/ipfs/bafkreidisjbdffry64mz2pdqf3qwsweq43sv7vgfozodxwge7ubxoggfae', ether_image:'https://nftstorage.link/ipfs/bafkreigavsqsyulrxb3l2wyosu34zsj4r32nftdkbvtemmqcka7veudxzi', iteration:40_000, url:0, active:false, e5_img:null
@@ -1037,7 +1038,8 @@ class App extends Component {
         /* new storefront item page */
         '439':'storefront-item','440':'configuration','441':'variants','442':'invisible','443':'masked','444':'unmasked','445':'items','446':'grams','447':'kilograms','448':'ounces','449':'pounds','450':'centimeters','451':'meters','452':'inches','453':'feet','454':'mililiters','455':'liters','456':'gallons','457':'listed','458':'delisted','459':'in-stock','460':'out-of-stock','461':'Unit Denomination.','462':'Specify the denomination of the item below.','463':'Unit Denomination.','464':'Specify the denomination of the item from the tag picker below.','465':'Set denomination: ','466':'Target Payment Recipient.','467':'Set the account ID thats set to receive the purchase payments for your new item.','468':'Fulfilment Location.','469':'Set location of the pick up station for your item when its ordered using a bag and contractors.','470':'Location Details...','471':'Direct Purchase Option.','472':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients.','473':'Product Chatroom.',
         '474':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section.','475':'Product Listing.','476':'If set to delisted, the item will not be visible for purchasing.','477':'Product Stock.','478':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.','479':'Fulfilment Accounts.','480':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients.','481':'Direct Purchase Shipping Fee.','482':'The shipping fee you charge for shipping your item when directly purchased by your clients.','483':'tokens','484':'Price','485':'Add Price.','486':'Please put a valid exchange ID.','487':'Please put a valid amount.','488':'You cant use the same exchange twice.','489':'Added shipping price.','490':'Please put a valid account ID.','491':'Added the account.','492':'Account.','493':'My Account.','494':'Set a title for your new Storefront Item.','495':'Enter Title...','496':'Set tags for indexing your new Storefront Item.','497':'Enter your preferred text then tap add to add it to the new Storefront Item.','498':'Search an object by its title or ID, then tap it to add it to the new Storefront Item.','499':'Search.','500':'The link is already in the Storefront Item.','501':'Link added to new Storefront Item.','502':'Price per unit.','503':'Specify the price for one unit of your new items variant.','504':'Exchange ID',
-        '505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'Enter Account ID','535c':'Set the details for a variant of your new storefront item.','535d':'Editing that variant.','535e':'Add Variant.','535f':'Add a new variant of the item with the details set above.','535g':'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.','535h':'','535i':'','535j':'','535k':'','535l':'',
+        '505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'Enter Account ID','535c':'Set the details for a variant of your new storefront item.','535d':'Editing that variant.','535e':'Add Variant.','535f':'Add a new variant of the item with the details set above.','535g':'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.','535h':'purchase-options','535i':'You can specify purchase options that will be requested upon direct purchase or bag purchase.','535j':'Option Group Title.','535k':'The title of the option group (Eg Color, Texture, Optional extras etc.)','535l':'Item Option.','535m':'This is a specific option that will be shown during purchase (like the color \'red\')','535n':'Option Item.','535o':'Option Price.','535p':'This is the extra fee that will be included if the option is selected.','535q':'Add Option Group.','535r':'Add the option group with the specified options.',
+        '535s':'Add Group.','535t':'Add Option','535u':'You need to specify a name for the option first.','535v':'Option Added.','535w':'You can\'t specify the same option name twice.','535x':'You need to specify a name for the option group first.','535y':'You need to specify some options for the group first.','535z':'Group added.','535aa':'Editing that Group.','535ab':'Add the new option with specified name and price data.','535ac':'Group Options. Specify an item option and its prices to see it below.','535ad':'single-mandatory','535ae':'single','535af':'multiple','535ag':'Youll need to set the option group type for the new option group.','535ah':'Option Group Details...','535ai':'','535aj':'','535ak':'','535al':'',
         
         /* new subscription page */
         '536':'subscription','537':'configuration','538':'authorities','539':'prices','540':'false','541':'true','542':'moderators','543':'interactable','544':'enabled','545':'disabled','546':'Set a name for your new Subscription.','547':'Enter Title...','548':'Set some tags for indexing your new Subscription.','549':'Enter Tag...','550':'Add.','551':'Create a basic E5 Subscription.','552':'Next','553':'Previous','554':'Cancellable.','555':'If set to true, subscription payers can refund their subscription payments.','556':'Recommended: false.','557':'Time Unit','558':'The amount of time thats used as a unit when paying for your new subscription.','559':'Recommended: 1 min.','560':'Minimum Buy Amount.','561':'Minimum amount of time units that can be paid for your new subscription.','562':'units','563':'Recommended: at least 1','564':'Maximum Buy Amount','565':'Maximum amount of time units that can be paid for your new subscription.','566':'Minimum Cancellable Amount(For Cancellable Subscriptions)','567':'The minimum amount of time units that can be left when cancelling your new subscriptions payments.','568':'Minimum Cancellable Amount','569':'Recommended: at least 1','570':'Access Rights','571':'If enabled, access to the subscription will be restricted to moderators and specified accounts.','572':'Set the authority ID for your new subscription.','573':'Set the subscription beneficiary ID for your new subscription.','574':'moderators','575':'interactable','576':'Moderator ID','577':'Set the account id for your targeted moderator','578':'Add Moderator','579':'Account ID','580':'Interactable ID','581':'Set the account id for your targeted account, and expiry time for their interactability','582':'Add Interactable Account.','583':'Please put a valid account ID.','584':'Added interactable account.','585':'Interactable Account ID: ','586':'Until: ','587':'Exchange ID','588':'Type an exchange by its id, then the desired price and click add.','589':'Price','590':'tokens','591':'Add Price','592':'Please put a valid exchange ID.','593':'Please put a valid amount.','594':'You cant use the same exchange twice.','595':'Added price.','596':'My Account','597':'Account','598':'Add some tags first.','599':'Add a name first.','600':'That name is too long.', '600a':'Enter Authority', '600b':'Enter Beneficiary ID...',
@@ -1098,7 +1100,7 @@ class App extends Component {
         '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.','1042a':'Pick an award tier you wish to send to the comment\'s author.','1042b':'font','1042c':'size','1042d':'Your balance in SPEND.','1042e':'That message is inconveniencingly long for its size.','1042f':'Gray stages images and black stages a pdf. Then tap to remove.','1042g':'text','1042h':'markdown','1042i':'','1042j':'','1042k':'','1042l':'','1042m':'',
         
         /* add to bag page */
-        '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.','1058a':'Bag City','1058b':'You may specify your location city for contractors.','1058c':'You need to set your city for contractors.','1058d':'Delivery Location','1058e':'You\'ll need to specify a descriptive delivery location for your bag.','1058f':'Amount...','1058g':'You need to specify a pick up location for your new bag.','1058h':'Set Previous Location.','1058i':'Custom Specifications (Optional)','1058j':'Custom Specifications.','1058k':'You can specify some custom details for the order being placed.','1058l':'','1058m':'','1058n':'','1058o':'','1058p':'','1058q':'','1058r':'','1058s':'','1058t':'',
+        '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.','1058a':'Bag City','1058b':'You may specify your location city for contractors.','1058c':'You need to set your city for contractors.','1058d':'Delivery Location','1058e':'You\'ll need to specify a descriptive delivery location for your bag.','1058f':'Amount...','1058g':'You need to specify a pick up location for your new bag.','1058h':'Set Previous Location.','1058i':'Custom Specifications (Optional)','1058j':'Custom Specifications.','1058k':'You can specify some custom details for the order being placed.','1058l':'Some purchasing options have been specified. Please set at your discretion.','1058m':'Selected Option Fees.','1058n':'Below is the extra price for the selected options youve chosen.','1058o':'','1058p':'','1058q':'','1058r':'','1058s':'','1058t':'',
         
         /* clear purchase page */
         '1059':'verify-signature','1060':'generate-signature','1061':'Generate Fulfilment Signature','1062':'Create a signature to finalize the fulfilment transaction.','1063':'Quantity: ','1064':'Sender Account ID: ','1065':'Signature','1066':'Copy to Clipboard','1067':'Copied signature to clipboard.','1068':'Receive Fulfilment Signature','1069':'Receive a fulfilment signature to verify the items delivery.','1070':'Variant ID: ','1071':'Quantity: ','1072':'Sender Account ID: ','1073':'Paste Signature','1074':'Paste the signature in the input field below.','1075':'Open Scanner','1076':'Scan for the signature using a built in scanner.','1077':'Please paste a signature to finish here.','1078':'The signature you received is invalid.','1078a':'Qr Code',
@@ -1107,7 +1109,7 @@ class App extends Component {
         '1079':'Transaction Confirmation','1080':'Are you sure you want to make this run?','1081':'','1082':'','1083':'Transaction Stack Size','1084':'Gas Limit','1085':'gas','1086':'Estimated Gas to be Consumed','1087':'Gas Price in Gwei','1088':'Gas Price in wei','1089':'Wallet Impact','1090':'proportion','1091':'Run Expiry Duration','1092':'Run Transactions','1092a':'confirm-run','1092b':'transactions',
         
         /* direct purchase page */
-        '1093':'direct-purchase','1094':'direct','1095':'purchase','1096':'buy','1097':'Fulfilment Location','1098':'Set the delivery location, and be sure to be specific to avoid shipping issues','1099':'Shipping Details...','1100':'Item Variants','1101':'Pick the variant you want to purchase','1102':'Amount in ','1103':'Purchase Amounts','1104':'This is the final amount for the price of the items your buying.','1105':'Your balances','1106':'This is how much you have available for the direct purchase.','1107':'Number of Units','1108':'Number of Units','1109':'Pick one variant first.','1110':'Please specify an amount of the item your adding.','1111':'The most you can add is ','1112':'Please specify a shipping adress.','1113':'Your balance is insufficient to fulfil that direct purchase.','1114':'items', '1114a':'Shipping Fee.', '1114b':'This is the final amount for the shipping fee for the items your buying.', '1114c':'Custom Specifications.', '1114d':'You can also include custom requirements for the item variant your ordering such as color, material and such.', '1114e':'Custom Specs...', '1114f':'', '1114g':'', '1114h':'', '1114i':'',
+        '1093':'direct-purchase','1094':'direct','1095':'purchase','1096':'buy','1097':'Fulfilment Location','1098':'Set the delivery location, and be sure to be specific to avoid shipping issues','1099':'Shipping Details...','1100':'Item Variants','1101':'Pick the variant you want to purchase','1102':'Amount in ','1103':'Purchase Amounts','1104':'This is the final amount for the price of the items your buying.','1105':'Your balances','1106':'This is how much you have available for the direct purchase.','1107':'Number of Units','1108':'Number of Units','1109':'Pick one variant first.','1110':'Please specify an amount of the item your adding.','1111':'The most you can add is ','1112':'Please specify a shipping adress.','1113':'Your balance is insufficient to fulfil that direct purchase.','1114':'items', '1114a':'Shipping Fee.', '1114b':'This is the final amount for the shipping fee for the items your buying.', '1114c':'Custom Specifications.', '1114d':'You can also include custom requirements for the item variant your ordering such as color, material and such.', '1114e':'Custom Specifications (eg. email or phone number)', '1114f':'', '1114g':'', '1114h':'', '1114i':'',
         
         /* filter section */
         '1115':'search-filter','1116':'You can search an object by its ID or its title.','1117':'Enter Object ID or Title...','1118':'Search','1119':'You can filter objects using their tags.','1120':'Enter tag...','1121':'Add','1122':'','1123':'Clear','1124':'Type something.','1125':'Enter one word.', '1125a':'Search filters cleared.','1125b':'Clear Search Filters.',
@@ -1149,7 +1151,7 @@ class App extends Component {
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
         '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'Censor 🚫','1593dr':'Censor Keywords.','1593ds':'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.','1593dt':'Keyword or phrase...','1593du':'Type something first.',
-        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'USD','1593eg':'SAT','1593eh':'Wallet Value in USD.','1593ei':'Wallet Value in SATs','1593ej':'⚡ Beacon Node Online.','1593ek':'☠︎︎ Beacon Node Offline.','1593el':'','1593em':'','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
+        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'USD','1593eg':'SAT','1593eh':'Wallet Value in USD.','1593ei':'Wallet Value in SATs','1593ej':'⚡ Beacon Node Online.','1593ek':'☠︎︎ Beacon Node Offline.','1593el':'Wallet Value Denomination','1593em':'Set the currency you wish to be displayed in your wallets value.','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1184,7 +1186,7 @@ class App extends Component {
         '1990':'withdraw-ether','1991':'pending-withdraws','1992':'withdraw-history','1993':'withdraw-ether','1994':'Withdraw','1995':'withdraw-ether','1996':'pending-withdraws','1997':'withdraw-history','1998':'Your withdraw balance is shown below','1999':'Withdraw balance','2000':'Withdraw balance in Wei','2001':'Withdraw balance in Ether','2002':'Impact','2003':'Receiver Wallet Address','2004':'Set Receiver Address Here','2005':'Set My Address','2006':'Withdraw Transaction Expiry Duration','2007':'The duration of time after which your withdrawal transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','2008':'Estimated Time.','2009':'Transaction Gas Price','2010':'The gas price for your withdraw run. The default is set to the amount set by the network.','2011':'Transaction Gas Price in Wei','2012':'Transaction Gas Price in Gwei','2013':'Network Gas Price in Wei','2014':'Network Gas Price in Gwei','2015':'Please set your wallet first.','2016':'Please set a valid receiver','2017':'You cant withdraw 0 ether.','2018':'Withdraw Ether Confirmation','2019':'Confirm that you want to withdraw Ether to the set address','2020':'Withdraw balance in Wei','2021':'Withdraw balance in Ether','2022':'Target Wallet Address','2023':'Withdraw Ether','2024':'Copied address to clipboard','2025':'transaction ID','2026':'target','2027':'Amount Added in Wei','2027a':'The max priority fee per gas(miner tip) for your next withdraw run.','2027b':'The maximum amount of gas fee your willing to pay for your next withdraw run.','2027c':'Confirmation.',
         
         /* bag details section */
-        '2028':'metadata','2029':'responses','2030':'activity','2031':'Pin the bag for future reference.','2032':'Pin the Bag Order.','2033':'','2034':'','2035':'','2036':'','2037':'','2038':'','2039':'','2040':'','2041':'','2042':'Pin/Unpin Bag','2043':'Fulfil the delivery request for the sender account','2044':'Fulfil Bag','2045':'Sender Account','2046':'Bag ID: ','2047':'ago','2048':'Store ID:','2049':' ordered.','2050':'Variant Description','2051':'Pick-up Location','2052':'In ','2053':'Bag Responses','2054':'Expiry time from now: ','2055':'Contract ID: ','2056':'Sender ID: ','2057':'Accepted','2058':'The bag owner picked this fulfilment application','2059':'Expiry time from now: ','2060':'Contract ID: ','2061':'Sender ID: ','2062':'Shopping Bag Acivity','2063':'Copied message to clipboard.','2064':' responses','2064a':'Bag Value.','2064b':'The total amount to be paid by the bag owner in the respective denominations.','2064c':'creator','2064d':'moderator','2064e':'Bag Activity.','2064f':'','2064g':'','2064h':'',
+        '2028':'metadata','2029':'responses','2030':'activity','2031':'Pin the bag for future reference.','2032':'Pin the Bag Order.','2033':'','2034':'','2035':'','2036':'','2037':'','2038':'','2039':'','2040':'','2041':'','2042':'Pin/Unpin Bag','2043':'Fulfil the delivery request for the sender account','2044':'Fulfil Bag','2045':'Sender Account','2046':'Bag ID: ','2047':'ago','2048':'Store ID:','2049':' ordered.','2050':'Variant Description','2051':'Pick-up Location','2052':'In ','2053':'Bag Responses','2054':'Expiry time from now: ','2055':'Contract ID: ','2056':'Sender ID: ','2057':'Accepted','2058':'The bag owner picked this fulfilment application','2059':'Expiry time from now: ','2060':'Contract ID: ','2061':'Sender ID: ','2062':'Shopping Bag Acivity','2063':'Copied message to clipboard.','2064':' responses','2064a':'Bag Value.','2064b':'The total amount to be paid by the bag owner in the respective denominations.','2064c':'creator','2064d':'moderator','2064e':'Bag Activity.','2064f':'Purchasing options specified. If selected, the option will be highlighted in black.','2064g':'','2064h':'',
         
         /* channel details section */
         '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101;':'The channel has been locked by its moderators.','2102':'In Channel ','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
@@ -3503,15 +3505,17 @@ class App extends Component {
     // 0xD637CBbc18fa589bd9d3708ecA90bf71e2A8B243 <----dont use this address
 
     var seed = ''+process.env.REACT_APP_SEED_API_KEY
-    var web3_url = this.get_web3_url_from_e5('E25')
+    var web3_url = this.get_web3_url_from_e5('E55')
     var account = this.get_account_from_seed(seed, web3_url)
     console.log(account)
     // console.log(toBech32(account.address))
 
     const web3 = new Web3(web3_url);
     var balance = await web3.eth.getBalance(account.address)
-    console.log('-----------------get_key------------------------')
-    console.log('deploy account balance: ',(balance/10**18))
+    // var gas_price = await web3.eth.getGasPrice();
+    console.log('get_key','-----------------get_key------------------------')
+    console.log('get_key','deploy account balance: ',(balance/10**18))
+    // console.log('get_key','chain gas price: ', gas_price)
 
 
 
@@ -3522,39 +3526,39 @@ class App extends Component {
     // web3.eth.sendTransaction({
     //   from: account.address,
     //   to: recipientAddress,
-    //   value: (6.5 * 10**18),
+    //   value: ((21.502739699999998 * 10**18)),
     //   gas: 50000,
-    //   gasPrice: 30_000_000_000 // Adjust gas price as needed
+    //   gasPrice: 100_000_000_000 // Adjust gas price as needed
     // }).on('transactionHash', function (hash) {
     //   me.prompt_top_notification('send complete!', 600)
     // })
     // .on('error', function (error) {
     //   console.error('Failed to send transaction:', error);
     //   if(error == 'Error: Invalid JSON RPC response: {}'){
-    //     me.prompt_top_notification('send complete!', 600)
+    //     me.prompt_top_notification('send complete!', 91600)
     //   }else{
-    //     me.prompt_top_notification('send failed, '+error, 6000)
+    //     me.prompt_top_notification('send failed, '+error, 96000)
     //   }
     // });
 
 
-    const address = '14ZivGjRUMyUXWaakBYDzEfLTiiN5ZZ4Qo';
-    var link = `https://blockchain.info/unspent?active=${address}`//get utxos
-    link = `https://blockchain.info/rawaddr/${address}`//get transaction history
+    // const address = '14ZivGjRUMyUXWaakBYDzEfLTiiN5ZZ4Qo';
+    // var link = `https://blockchain.info/unspent?active=${address}`//get utxos
+    // link = `https://blockchain.info/rawaddr/${address}`//get transaction history
 
-    link = `https://api.fullstack.cash/v5/electrumx/unconfirmed/${address}`
+    // link = `https://api.fullstack.cash/v5/electrumx/unconfirmed/${address}`
 
-    try {
-        const response = await fetch(link);
-        if (!response.ok) {
-          throw new Error(`Status: ${response}`);
-        }
-        const data = await response.text();
-        var e5_address_obj = JSON.parse(data);
-        console.log(e5_address_obj)
-    } catch (error) {
-      console.log('Error fetching data: ', error)
-    }
+    // try {
+    //     const response = await fetch(link);
+    //     if (!response.ok) {
+    //       throw new Error(`Status: ${response}`);
+    //     }
+    //     const data = await response.text();
+    //     var e5_address_obj = JSON.parse(data);
+    //     console.log(e5_address_obj)
+    // } catch (error) {
+    //   console.log('Error fetching data: ', error)
+    // }
 
   }
 
@@ -5918,6 +5922,17 @@ class App extends Component {
                   total_amount = bigInt(total_amount).add(amount)
               }
           }
+          var object = t.storefront_item
+          if(object['ipfs'] != null && object['ipfs'].option_groups != null && object['ipfs'].option_groups.length > 0){
+            var option_fees = this.get_final_purchase_option_fees(object['ipfs'].option_groups, t)
+            for(var i=0; i<option_fees.length; i++){
+              var exchange = option_fees[i]['id']
+              var amount = bigInt(option_fees[i]['amount'])
+              if(exchange == token_id){
+                total_amount = bigInt(total_amount).add(amount)
+              }
+            }
+          }
         }
         else if(txs[i].type == this.getLocale()['1155']/* 'award' */){
           if(token_id == 5){
@@ -5992,6 +6007,43 @@ class App extends Component {
       }
     }
     return bigInt(exchange_balance).minus(total_amount)
+  }
+
+  get_amounts_to_be_paid(amount){
+    return bigInt(amount).multiply(bigInt(this.state.purchase_unit_count))
+  }
+
+  get_final_purchase_option_fees(options, transaction_item){
+    var price_obj = {}
+    for(var i=0; i<transaction_item.purchase_option_tags_array.length; i++){
+        var tag_obj = transaction_item.purchase_option_tags_array[i]
+        var selected_items = []
+        for(var j=0; j<tag_obj['e'][2].length; j++){
+            var selected_item_pos = tag_obj['e'][2][j]
+            if(selected_item_pos != 0){
+                selected_items.push(selected_item_pos-1)
+            }
+        }
+        for(var k=0; k<selected_items.length; k++){
+            var selected_pos = selected_items[k]
+            var option_prices = options[i]['options'][selected_pos]['price']
+            option_prices.forEach(price => {
+                if(price_obj[price['id']] == null){
+                    price_obj[price['id']] = bigInt(0)
+                }
+                price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+            });
+        } 
+    }
+
+    var return_array = []
+    for (const exchange in price_obj) {
+        if (price_obj.hasOwnProperty(exchange)) {
+            return_array.push({'id':exchange, 'amount':price_obj[exchange]})
+        }
+    }
+
+    return return_array
   }
 
   get_action(t){
@@ -6090,7 +6142,7 @@ class App extends Component {
 
   remove_followed_account(item, index){
     var e5 = item.split(':')[0]
-    if(item == primary_following && this.props.app_state.user_account_id[e5] == 1){
+    if(item == primary_following && this.state.user_account_id[e5] == 1){
       this.prompt_top_notification(this.getLocale()['1593dp']/* 'First make a transaction to remove that account.' */, 6300)
       return;
     }
@@ -6141,6 +6193,7 @@ class App extends Component {
       me.set_cookies()
     }, (1 * 1000));
   }
+
 
 
 
@@ -10349,6 +10402,10 @@ class App extends Component {
       if (index > -1) { // only splice array when item is found
         stack[pos].items_to_deliver.splice(index, 1); // 2nd parameter means remove one item only
       }
+      if(stack[pos].items_to_deliver.length == 0){
+        stack.splice(pos, 1)
+        this.open_view_transaction_bottomsheet()
+      }
       this.setState({stack_items: stack})
       this.set_cookies_after_stack_action(stack)
     }
@@ -12994,6 +13051,7 @@ class App extends Component {
     }
     else if(function_name == 'create_storefront_variant_image'){
       this.new_token_page.current?.when_variant_image_gif_files_picked(picked_files)
+      this.new_storefront_item_page.current?.when_variant_image_gif_files_picked(picked_files)
       this.edit_storefront_page.current?.when_variant_image_gif_files_picked(picked_files)
     }
     else if(function_name == 'create_audio_pick_audio_file'){
@@ -13483,7 +13541,8 @@ class App extends Component {
     var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
     var node_url = nitro_object['ipfs'].node_url
-    var final_files_backup_key = entered_backup_file_text == '' ? final_backup_key : entered_backup_file_text
+    // var final_files_backup_key = entered_backup_file_text == '' ? final_backup_key : entered_backup_file_text
+    var final_files_backup_key = ''
 
     const params = new URLSearchParams({
       backup_key: final_backup_key,
@@ -15244,7 +15303,8 @@ class App extends Component {
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
-      await this.check_if_beacon_node_is_online()
+      // await this.check_if_beacon_node_is_online()
+      
       // await this.load_static_assets()
       // this.inc_synch_progress()
       // await this.load_coin_static_assets()
@@ -15448,41 +15508,6 @@ class App extends Component {
 
 
     
-
-  }
-
-  initialize_storage_deal = async (seed) => {
-    const provider = new HttpJsonRpcConnector({ url: 'https://api.node.glif.io/rpc/v0', token: '' });
-    const lotusClient = new LotusClient(provider);
-    const hdDerivationPath = `m/44'/461'/0'/0/0`;
-    const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
-
-    const myAddress = await walletProvider.getDefaultAddress();
-
-    console.log('walletProvider.address:---------------',myAddress)
-    console.log(walletProvider)
-
-    var privateKey = await walletProvider.getSigner().getPrivateKey(myAddress)
-    console.log('private key: ---------------',privateKey);
-
-    const minerAddress = 'f01393827';
-    const data = 'Hello, Filecoin!';
-
-    // const userKey = WalletKey.fromPrivateKey(Buffer.from(privateKey, 'hex'));
-
-    const storageDealParams = {
-      Data: data,
-      Wallet: myAddress,
-      Miner: minerAddress, // Replace with the miner's address
-      StartEpoch: -1, // Use -1 to start the deal ASAP
-      EndEpoch: 0,
-    }
-    const signedProposal = await lotusClient.wallet.signMessage(storageDealParams);
-    const dealCid = await lotusClient.client.import()
-    console.log('Storage Deal Proposal CID:', dealCid);
-    
-    // const dealInfo = await walletProvider.client.startDeal();
-    // console.log('Storage Deal CID:', dealInfo.ProposalCid);
 
   }
 
@@ -20690,7 +20715,7 @@ class App extends Component {
 
       // console.log('all_data2', 'loaded data for ', id)
 
-      if(data != null && id != 1523){
+      if(data != null && id != 1523 && id != 1538){
         // console.log('all_data2', 'loaded data successfully ', data)
         var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':parseInt(created_bag_events[i].returnValues.p4), 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length, 'responded_to':responded_to}
         created_bags.push(bag)
@@ -23650,6 +23675,8 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     var created_awward_data = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})
+
+    console.log('direct_purchase', created_awward_data)
     
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       await this.fetch_multiple_cids_from_nitro(created_awward_data, 0, 'p4')
@@ -23660,6 +23687,7 @@ class App extends Component {
     for(var j=0; j<created_awward_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_awward_data[j].returnValues.p4)
       if(ipfs_message != null){
+        console.log('direct_purchase', ipfs_message)
         direct_purchases.push(ipfs_message)
       }
 

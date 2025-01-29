@@ -108,7 +108,7 @@ class home_page extends Component {
         
         page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[],
 
-        details_container_width:0, typed_tag:'', search_visible:true
+        details_container_width:0, typed_tag:'', search_visible:true, posts_container_width:0,
     };
 
     constructor(props) {
@@ -122,6 +122,7 @@ class home_page extends Component {
         this.post_nsfw_page = React.createRef();
 
         this.details_container = React.createRef()
+        this.posts_container = React.createRef()
     }
 
 
@@ -136,8 +137,10 @@ class home_page extends Component {
     componentDidMount() {
         this.set_cupcake_data()
         var w = this.details_container.current?.getBoundingClientRect().width
+        var w2 = this.posts_container.current?.getBoundingClientRect().width
+        if(w2 == null) w2 = 0
         if(w == null) w = 0
-        this.setState({details_container_width: w})
+        this.setState({details_container_width: w, posts_container_width: w2})
     }
 
     componentWillUnmount(){
@@ -417,7 +420,7 @@ class home_page extends Component {
                             </div>
                             
                             <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                                <div className="col-4" style={{height: (middle+55)}}>
+                                <div ref={this.posts_container} className="col-4" style={{height: (middle+55)}}>
                                     {this.render_post_list_group(size, (middle+55))}
                                 </div>
                                 
@@ -509,7 +512,7 @@ class home_page extends Component {
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
-                            <div className="col-5" style={{height: (middle+55)}}>
+                            <div ref={this.posts_container} className="col-5" style={{height: (middle+55)}}>
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                         </div>
@@ -519,7 +522,7 @@ class home_page extends Component {
                 return(
                     <div>
                         <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                            <div className="col-5" style={{height: (middle+55)}}>
+                            <div ref={this.posts_container} className="col-5" style={{height: (middle+55)}}>
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
@@ -544,7 +547,7 @@ class home_page extends Component {
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
-                            <div className="col-4" style={{height: (middle+55)}}>
+                            <div ref={this.posts_container} className="col-4" style={{height: (middle+55)}}>
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
@@ -555,7 +558,7 @@ class home_page extends Component {
                return(
                     <div>
                         <div className="row" style={{height:(middle+54), 'padding':'0px 1px 0px 15px'}}>
-                            <div className="col-4" style={{height: (middle+55)}}>
+                            <div ref={this.posts_container} className="col-4" style={{height: (middle+55)}}>
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
@@ -2775,9 +2778,15 @@ class home_page extends Component {
             <div>
                 {this.render_search_tags_views()}
                 <SwipeableViews index={pos} onChangeIndex={this.handleChange} disabled>
-                    <div>{this.render_post_list_group2(size, '?', this.work_list_section, h)}</div>
-                    <div>{this.render_post_list_group2(size, 'e', this.explore_list_section, h)}</div>
-                    <div>{this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}</div>
+                    <div>
+                        {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                    </div>
+                    <div>
+                        {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                    </div>
+                    <div>
+                        {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                    </div>
                 </SwipeableViews>
             </div>
         )

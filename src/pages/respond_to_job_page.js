@@ -523,7 +523,7 @@ class RespondToJobPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1332a']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1332b']/* 'You can also include extra information for the job your applying for.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications.' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications (eg. email or phone number)' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
 
             </div>
         )

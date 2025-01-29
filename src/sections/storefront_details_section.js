@@ -501,6 +501,7 @@ class StorefrontDetailsSection extends Component {
         if(object['ipfs'].fulfilment_accounts.length == 0) return;
         return(
             <div>
+                <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2609']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['2610']/* 'The accounts involved with shipping and fulfilling direct purchase orders from clients.' */, 'size':'l'})}
                 <div style={{height: 2}}/>
                 {this.render_fulfilment_accounts(object)}
@@ -1000,6 +1001,7 @@ class StorefrontDetailsSection extends Component {
                     <div style={{height:3}}/>
                     {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'details':this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account'] })}
                     <div style={{height:3}}/>
+                    {this.render_purchase_options_if_any(item)}
                     {this.render_fulfilment_signature_if_any(item, object)}
                     <div style={{height:5}}/>
                 </div>
@@ -1009,6 +1011,29 @@ class StorefrontDetailsSection extends Component {
             </div>
         )
         
+    }
+
+    render_purchase_options_if_any(item){
+        var items = item['options']
+        if(items == null || items.length == 0) return;
+        var storefront_options = item['storefront_options']
+        if(storefront_options == null || storefront_options.length == 0) return;
+        return(
+                <div>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {/* {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
+                            <div style={{height:3}}/> */}
+                            <Tags font={this.props.app_state.font} page_tags_object={item} tag_size={'l'} when_tags_updated={this.when_purchase_option_tag_selected.bind(this)} theme={this.props.theme} locked={true}/>
+                            <div style={{height:3}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+    }
+
+    when_purchase_option_tag_selected(tag_item){
+        //do nothing
     }
 
     render_clear_purchase_button(item, object, sender_type){

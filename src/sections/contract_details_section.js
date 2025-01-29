@@ -569,7 +569,7 @@ class ContractDetailsSection extends Component {
             var minimum_entered_contracts = object['data'][1][14 /* minimum_entered_contracts */]
             var minimum_transaction_count = object['data'][1][19 /* minimum_transaction_count */]
 
-            if(entered_contracts_count>= minimum_entered_contracts && e5_runs_count>= minimum_transaction_count){
+            if(entered_contracts_count>= minimum_entered_contracts && e5_runs_count>= minimum_transaction_count && this.props.app_state.user_account_id[object['e5']] != 1 && this.props.app_state.user_account_id[object['e5']] != null){
                 return (
                     <div>
                         {this.render_detail_item('0')}

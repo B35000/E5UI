@@ -330,9 +330,6 @@ class ConfigureNitroNodePage extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_nitro_storage_details_if_set(node_details)}
-
-                    <div style={{height:10}}/>
-                    {this.render_nitro_dialer_details_if_set(node_details)}
                 </div>
             )
         }
@@ -526,33 +523,6 @@ class ConfigureNitroNodePage extends Component {
         return all_objects
     }
 
-    render_nitro_dialer_details_if_set(node_details){
-        if(node_details['dialer_config']['subscription'] == 0 && node_details['dialer_config']['e5'] == '' && node_details['dialer_config']['optional'] == false){
-            return(
-                <div>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527bm']/* 'Nitro Dialer offline.' */})}
-                </div>
-            )
-        }
-        else if(node_details['dialer_config']['subscription'] == 0 && node_details['dialer_config']['e5'] == '' && node_details['dialer_config']['optional'] == true){
-           return(
-                <div>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527bn']/* 'Nitro Dialer online.' */})}
-                </div>
-            ) 
-        }
-        else{
-            var img = this.props.app_state.e5s[node_details['dialer_config']['e5']] == null ? this.props.app_state.e5s['E25']: this.props.app_state.e5s[node_details['dialer_config']['e5']].e5_img
-            return(
-                <div>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527bn']/* 'Nitro Dialer online.' */})}
-                    <div style={{height:10}}/>
-
-                    {this.render_detail_item('3', {'title':node_details['dialer_config']['subscription'], 'details':this.props.app_state.loc['c2527bo']/* 'Nitro dialer subscription.' */,'title_image':img, 'size':'l'})}
-                </div>
-            )
-        }
-    }
 
 
 
@@ -616,15 +586,15 @@ class ConfigureNitroNodePage extends Component {
                 {this.render_my_backup_files()}
                 <div style={{height:10}}/>
 
-                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3054n']/* 'Backup file encryption key (optional)...' */} when_text_input_field_changed={this.when_backup_file_key_text_input_field_changed.bind(this)} text={this.state.entered_backup_file_text} theme={this.props.theme}/>
+                {/* <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3054n']} when_text_input_field_changed={this.when_backup_file_key_text_input_field_changed.bind(this)} text={this.state.entered_backup_file_text} theme={this.props.theme}/>
                 
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['3054o']/* 'This should be the previous key used to encrypt the back up files (if the node was rebooted). If unset, the backup key you set above will be used. And if that is unset, the encrypted backup key provided while posting the node will be used.' */})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['3054o']})}
+                <div style={{height:10}}/> */}
+
+                {/* {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3054q'], 'details':this.props.app_state.loc['3054r']})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3054q']/* 'Replace backup key' */, 'details':this.props.app_state.loc['3054r']/* ''If set to replace-key, the backup key will be updated to the key you provide above.' */})}
-                <div style={{height:10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.should_restore_key_title_tags_object} tag_size={'l'} when_tags_updated={this.when_should_restore_key_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.should_restore_key_title_tags_object} tag_size={'l'} when_tags_updated={this.when_should_restore_key_title_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
 
                 <div style={{height:20}}/>
                 <div onClick={()=> this.when_restore_nitro_node_tapped()}>
@@ -705,15 +675,22 @@ class ConfigureNitroNodePage extends Component {
     decrypt_my_backup_files(){
         var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
         var encrypted_files_obj = node_details['encrypted_files_obj']
-        var backup_key = this.state.final_backup_key
-        var decrypted_files_obj = this.props.decrypt_storage_data_using_key(encrypted_files_obj, backup_key)
-        if(decrypted_files_obj !== encrypted_files_obj){
-            //if the file object was decrypted successfullly
-            var obj = JSON.parse(decrypted_files_obj)
+        // var backup_key = this.state.final_backup_key
+        // var decrypted_files_obj = this.props.decrypt_storage_data_using_key(encrypted_files_obj, backup_key)
+        // if(decrypted_files_obj !== encrypted_files_obj){
+        //     //if the file object was decrypted successfullly
+        //     var obj = JSON.parse(decrypted_files_obj)
+        //     return this.filter_backup_files(obj['data'])
+        // }else{
+        //     return []
+        // }
+        try{
+            var obj = JSON.parse(encrypted_files_obj)
             return this.filter_backup_files(obj['data'])
-        }else{
+        }catch(e){
+            console.log(e)
             return []
-        }
+        } 
     }
 
     filter_backup_files(files){

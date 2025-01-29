@@ -454,6 +454,7 @@ class PickFilePage extends Component {
         }
         else{
             this.props.return_selected_files(selected_files, this.state.function_name)
+            this.setState({selected_ecids:[]})
         }
     }
 

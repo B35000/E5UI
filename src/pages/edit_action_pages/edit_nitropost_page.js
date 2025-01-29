@@ -497,7 +497,7 @@ class EditNitroPage extends Component {
         } catch (_) {
             return false;  
         }
-        return url.protocol === "http:" || url.protocol === "https:" || url.protocol === "wss:";
+        return /* url.protocol === "http:" || */ url.protocol === "https:" || url.protocol === "wss:";
     }
 
     set_node_url(link, encrypted_key){

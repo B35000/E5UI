@@ -2346,6 +2346,7 @@ class ViewTransactionPage extends Component {
                         {this.render_item_data(items)}
                         {this.render_item_images()}
                         {this.render_selected_links()}
+                        {this.render_buy_options(object)}
 
                         {this.render_pdf_files_if_any()}
                         {this.render_zip_files_if_any()}
@@ -2440,6 +2441,40 @@ class ViewTransactionPage extends Component {
                         {this.render_detail_item('2', { 'style':'s', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                     </li>
                 ))}
+            </div>
+        )
+    }
+
+    render_buy_options(object){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(object['ipfs'].option_groups)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'title':item['id'], 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
@@ -4486,7 +4521,8 @@ class ViewTransactionPage extends Component {
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         var obj = {}
         items_to_deliver.forEach(item => {
-            var storefront = this.props.app_state.created_store_mappings[transaction_item.e5][item['storefront_item']['id']]
+            // var storefront = this.props.app_state.created_store_mappings[transaction_item.e5][item['storefront_item']['id']]
+            var storefront = transaction_item.storefront_item
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['selected_variant']['variant_id'])
             if(variant_in_store == null) return null
             var price_items = variant_in_store['price_data']
@@ -4500,6 +4536,31 @@ class ViewTransactionPage extends Component {
                     obj[token_id] = bigInt(0);
                 }
                 obj[token_id] = bigInt(obj[token_id]).add(amount)
+            }
+
+            if(storefront['ipfs'] != null && storefront['ipfs'].option_groups != null && storefront['ipfs'].option_groups > 0){
+                var options = storefront['ipfs'].option_groups
+
+                for(var i=0; i<transaction_item.purchase_option_tags_array.length; i++){
+                    var tag_obj = transaction_item.purchase_option_tags_array[i]
+                    var selected_items = []
+                    for(var j=0; j<tag_obj['e'][2].length; j++){
+                        var selected_item_pos = tag_obj['e'][2][j]
+                        if(selected_item_pos != 0){
+                            selected_items.push(selected_item_pos-1)
+                        }
+                    }
+                    for(var k=0; k<selected_items.length; k++){
+                        var selected_pos = selected_items[k]
+                        var option_prices = options[i]['options'][selected_pos]
+                        option_prices.forEach(price => {
+                            if(obj[price['id']] == null){
+                                obj[price['id']] = bigInt(0)
+                            }
+                            obj[price['id']] = bigInt(obj[price['id']]).plus(price['amount'])
+                        });
+                    } 
+                }
             }
         });
         
@@ -4719,7 +4780,6 @@ class ViewTransactionPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1951']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1952']/* 'This is the final amount for the price of the item your buying' */, 'size':'l'})}
                     <div style={{height:10}}/>
-
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px 0px 5px 0px'}}>
@@ -4729,6 +4789,7 @@ class ViewTransactionPage extends Component {
                             </li>
                         ))}
                     </ul>
+
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1953']/* 'Shipping Fee' */, 'details':this.props.app_state.loc['1954']/* 'The charged shipping fee for buying the items' */, 'size':'l'})}
                     <div style={{height:10}}/>
@@ -4741,10 +4802,76 @@ class ViewTransactionPage extends Component {
                             </li>
                         ))}
                     </ul>
+                    
+                    <div style={{height:10}}/>
+                    {this.render_purchase_option_fees()}
                 </div>
             )
         }
     }
+
+    render_purchase_option_fees(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var object = transaction_item.storefront_item
+        if(object['ipfs'] != null && object['ipfs'].option_groups != null && object['ipfs'].option_groups.length > 0){
+            var items = this.get_final_purchase_option_fees(object['ipfs'].option_groups)
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058m']/* 'Selected Option Fees.' */, 'details':this.props.app_state.loc['1058n']/* 'Below is the extra price for the selected options youve chosen.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':this.get_amounts_to_be_paid(item['amount']), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(item['amount'])), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(item['amount'])), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(item['amount'])), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_final_purchase_option_fees(options){
+        var price_obj = {}
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        for(var i=0; i<transaction_item.purchase_option_tags_array.length; i++){
+            var tag_obj = transaction_item.purchase_option_tags_array[i]
+            var selected_items = []
+            for(var j=0; j<tag_obj['e'][2].length; j++){
+                var selected_item_pos = tag_obj['e'][2][j]
+                if(selected_item_pos != 0){
+                    selected_items.push(selected_item_pos-1)
+                }
+            }
+            for(var k=0; k<selected_items.length; k++){
+                var selected_pos = selected_items[k]
+                var option_prices = options[i]['options'][selected_pos]['price']
+                option_prices.forEach(price => {
+                    if(price_obj[price['id']] == null){
+                        price_obj[price['id']] = bigInt(0)
+                    }
+                    price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                });
+            } 
+        }
+
+        var return_array = []
+        for (const exchange in price_obj) {
+            if (price_obj.hasOwnProperty(exchange)) {
+                return_array.push({'id':exchange, 'amount':price_obj[exchange]})
+            }
+        }
+
+        if(return_array.length == 0){
+            return_array.push({'id':5, 'amount':bigInt(0)})
+        }
+
+        return return_array
+    }
+
 
 
 
@@ -5250,6 +5377,7 @@ class ViewTransactionPage extends Component {
                         {this.render_item_data(items)}
                         {this.render_item_images()}
                         {this.render_selected_links()}
+                        {this.render_buy_options(object)}
 
                         {this.render_pdf_files_if_any()}
                         {this.render_zip_files_if_any()}

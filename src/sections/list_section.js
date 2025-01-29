@@ -817,6 +817,13 @@ class PostListSection extends Component {
         if(includes2){
            is_object_blocked_for_sender = true 
         }
+    
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1
+        if(author == myid){
+            is_object_blocked_for_sender = false
+        }
+
 
         return is_object_blocked_for_sender
     }
@@ -2327,6 +2334,11 @@ class PostListSection extends Component {
     
     render_tags_or_images(item, object){
         var images = this.get_bag_images(object)
+        return(
+            <div>
+                {this.render_detail_item('1', item['tags'])}
+            </div>
+        )
         if(images.length == 0){
             return(
                 <div>
@@ -2425,7 +2437,7 @@ class PostListSection extends Component {
             tags = [object['ipfs'].device_city].concat(tags)
         }
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         // var item_images = this.get_bag_images(object)
@@ -3294,7 +3306,7 @@ class PostListSection extends Component {
             this.get_token_data('GLMR', 'Moonbeam', 'E95'),
             this.get_token_data('MOVR', 'Moonriver', 'E105'),
             this.get_token_data('XDC', 'Xinfin Network', 'E115'),
-            this.get_token_data('MATIC', 'Polygon', 'E125'),
+            this.get_token_data('POL', 'Polygon', 'E125'),
             this.get_token_data('BNB', 'Binance Smart Chain', 'E135'),
             this.get_token_data('TT', 'ThunderCore', 'E155'),
             // this.get_token_data('NRG', 'Energi', 'E145'),

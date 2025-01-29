@@ -350,7 +350,7 @@ class EthersDetailsSection extends Component {
             this.get_token('GLMR', 'Moonbeam', 'E95'),
             this.get_token('MOVR', 'Moonriver', 'E105'),
             this.get_token('XDC', 'Xinfin Network', 'E115'),
-            this.get_token('MATIC', 'Polygon', 'E125'),
+            this.get_token('POL', 'Polygon', 'E125'),
             this.get_token('BNB', 'Binance S.C.', 'E135'),
             this.get_token('TT', 'ThunderCore', 'E155'),
             this.get_token('NRG', 'Energi', 'E145'),

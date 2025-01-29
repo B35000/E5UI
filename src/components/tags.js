@@ -196,126 +196,127 @@ class tags extends Component {
 
     /* called when a tag button is tapped */
     when_tag_button_clicked(pos){
-      var page_data = this.props.page_tags_object;
-      var active = page_data['i'].active;
-      var clone = {};
-      var clicked_tag_name = page_data[active][1/* tag_options */][pos];
-      var is_moving_down_option = false
-      for (var key in page_data) {
-          if (page_data.hasOwnProperty(key)) {
-              clone[key] = page_data[key];
-          }
-      }
+        if(this.props.locked != null && this.props.locked == true) return;
+        var page_data = this.props.page_tags_object;
+        var active = page_data['i'].active;
+        var clone = {};
+        var clicked_tag_name = page_data[active][1/* tag_options */][pos];
+        var is_moving_down_option = false
+        for (var key in page_data) {
+            if (page_data.hasOwnProperty(key)) {
+                clone[key] = page_data[key];
+            }
+        }
 
-      if(pos == 0){
-          //going up
-          if(page_data[active][0/* config */][1/* previous_item */] != ''){
-              //get the previous option
-              var prev = page_data[active][0/* config */][1/* previous_item */];
-              //set the previous option to empty
-              clone[active][0/* config */][1/* previous_item */] = '';
-              clone['i'].active = prev;
-          }
-      }
-      else{
-          //going down or option selected
-          var selected_text = page_data[active][1/* tag_options */][pos];/* the tag that was clicked on */
-          var selected_tag_option = this.tag_without_emoji_and_modifier(selected_text);/* the tag that was clicked on without e. or v. modifier */
-          if(selected_text.startsWith('e.') || selected_text.startsWith('v.')){
-              //entering sub-options
-              //set the previous item and its position in the selected option's config array
-              clone[selected_tag_option][0/* config */][1/* previous_item */] = active;/* set the current active item as the previous item selected in the selected tag option data group */
-              clone[selected_tag_option][0/* config */][2/* previous_item_pos */] = pos;/* set the selected item's position in its respective tag option data group */
-              clone['i'].active = selected_tag_option;/* set the selected item */
-              is_moving_down_option = true
-          }
-          else if(selected_text.startsWith('a.')){
-              //action detected
-          }
-          else{
-              //setting an option in list
-              //set the option in the array
-              var options_type = clone[active][0/* config */][0/* type */];/* the option selection type used in the tag option data group  */
-              var prev_item_tag = clone[active][0/* config */][1/* previous_item */];/* the previous tag option data group name */
-              var prev_item_pos = clone[active][0/* config */][2/* previous_item_pos */];/* the previous tag option data group name's position */
-              var prev_item = '';
+        if(pos == 0){
+            //going up
+            if(page_data[active][0/* config */][1/* previous_item */] != ''){
+                //get the previous option
+                var prev = page_data[active][0/* config */][1/* previous_item */];
+                //set the previous option to empty
+                clone[active][0/* config */][1/* previous_item */] = '';
+                clone['i'].active = prev;
+            }
+        }
+        else{
+            //going down or option selected
+            var selected_text = page_data[active][1/* tag_options */][pos];/* the tag that was clicked on */
+            var selected_tag_option = this.tag_without_emoji_and_modifier(selected_text);/* the tag that was clicked on without e. or v. modifier */
+            if(selected_text.startsWith('e.') || selected_text.startsWith('v.')){
+                //entering sub-options
+                //set the previous item and its position in the selected option's config array
+                clone[selected_tag_option][0/* config */][1/* previous_item */] = active;/* set the current active item as the previous item selected in the selected tag option data group */
+                clone[selected_tag_option][0/* config */][2/* previous_item_pos */] = pos;/* set the selected item's position in its respective tag option data group */
+                clone['i'].active = selected_tag_option;/* set the selected item */
+                is_moving_down_option = true
+            }
+            else if(selected_text.startsWith('a.')){
+                //action detected
+            }
+            else{
+                //setting an option in list
+                //set the option in the array
+                var options_type = clone[active][0/* config */][0/* type */];/* the option selection type used in the tag option data group  */
+                var prev_item_tag = clone[active][0/* config */][1/* previous_item */];/* the previous tag option data group name */
+                var prev_item_pos = clone[active][0/* config */][2/* previous_item_pos */];/* the previous tag option data group name's position */
+                var prev_item = '';
 
-              if(prev_item_tag != ''){
-                  prev_item = clone[prev_item_tag][1/* tag_options */][prev_item_pos];/* the previous item tag name */
-              }
+                if(prev_item_tag != ''){
+                    prev_item = clone[prev_item_tag][1/* tag_options */][prev_item_pos];/* the previous item tag name */
+                }
 
-              if(options_type == 'or'){
-                  //set the option picked
-                  if(prev_item.startsWith('v.')){
-                      clone[prev_item_tag][3/* chain_options */][0] = pos;/* record the selected tag position in the chain options array */
-                      clone[prev_item_tag+active] = pos;
-                  }
-                  else{
-                      if(clone[active][2/* selected_options */][0] != pos){
-                          clone[active][2/* selected_options */][0] = pos;/* record the selected tag position in the selected options array */
-                      }else{
-                          clone[active][2/* selected_options */][0] = 0;
-                      }
-                  } 
-              }
-              if(options_type == 'xor'){
-                  //set the option picked
-                  if(prev_item.startsWith('v.')){
-                      clone[prev_item_tag][3/* chain_options */][0] = pos;/* record the selected tag position in the chain options array */
-                      clone[prev_item_tag+active] = pos;
-                  }
-                  else{
-                      if(clone[active][2/* selected_options */][0] != pos){
-                          clone[active][2/* selected_options */][0] = pos;/* record the selected tag position in the selected options array */
-                      }
-                  } 
-              }
-              else if(options_type == 'and'){
-                  var array_pos = 2/* selected_options */;
-                  var modify_item = active;
-                  
-                  if(prev_item.startsWith('v.')){
-                      if(clone[prev_item_tag+active] == null){
-                          clone[prev_item_tag+active] = [pos];
-                      }else{
-                          if(clone[prev_item_tag+active].includes(pos)){
-                              //option is being unselected
-                              var index_of_pos = clone[prev_item_tag+active].indexOf(pos);
-                              clone[prev_item_tag+active].splice(index_of_pos,1);
-                          }else{
-                              //option is bein selected
-                              clone[prev_item_tag+active].push(pos);
-                          } 
-                      }
-                  }else{
-                      if(clone[modify_item][array_pos].includes(pos)){
-                          //option is being unselected
-                          var index_of_pos = clone[modify_item][array_pos].indexOf(pos);
-                          clone[modify_item][array_pos].splice(index_of_pos,1);
-                      }else{
-                          //option is bein selected
-                          clone[modify_item][array_pos].push(pos);
-                      }
-                  }
+                if(options_type == 'or'){
+                    //set the option picked
+                    if(prev_item.startsWith('v.')){
+                        clone[prev_item_tag][3/* chain_options */][0] = pos;/* record the selected tag position in the chain options array */
+                        clone[prev_item_tag+active] = pos;
+                    }
+                    else{
+                        if(clone[active][2/* selected_options */][0] != pos){
+                            clone[active][2/* selected_options */][0] = pos;/* record the selected tag position in the selected options array */
+                        }else{
+                            clone[active][2/* selected_options */][0] = 0;
+                        }
+                    } 
+                }
+                if(options_type == 'xor'){
+                    //set the option picked
+                    if(prev_item.startsWith('v.')){
+                        clone[prev_item_tag][3/* chain_options */][0] = pos;/* record the selected tag position in the chain options array */
+                        clone[prev_item_tag+active] = pos;
+                    }
+                    else{
+                        if(clone[active][2/* selected_options */][0] != pos){
+                            clone[active][2/* selected_options */][0] = pos;/* record the selected tag position in the selected options array */
+                        }
+                    } 
+                }
+                else if(options_type == 'and'){
+                    var array_pos = 2/* selected_options */;
+                    var modify_item = active;
+                    
+                    if(prev_item.startsWith('v.')){
+                        if(clone[prev_item_tag+active] == null){
+                            clone[prev_item_tag+active] = [pos];
+                        }else{
+                            if(clone[prev_item_tag+active].includes(pos)){
+                                //option is being unselected
+                                var index_of_pos = clone[prev_item_tag+active].indexOf(pos);
+                                clone[prev_item_tag+active].splice(index_of_pos,1);
+                            }else{
+                                //option is bein selected
+                                clone[prev_item_tag+active].push(pos);
+                            } 
+                        }
+                    }else{
+                        if(clone[modify_item][array_pos].includes(pos)){
+                            //option is being unselected
+                            var index_of_pos = clone[modify_item][array_pos].indexOf(pos);
+                            clone[modify_item][array_pos].splice(index_of_pos,1);
+                        }else{
+                            //option is bein selected
+                            clone[modify_item][array_pos].push(pos);
+                        }
+                    }
 
-                  
-              }
-          } 
-      }
+                    
+                }
+            } 
+        }
       
-    this.props.when_tags_updated(clone);
+        this.props.when_tags_updated(clone);
 
-    var me = this;
-    setTimeout(function() {
-        var active = clone['i'].active;
-        var position = me.state.scroll_pos[active];
-        if(is_moving_down_option){ 
-            position = 0;
-        }
-        if(position != null){
-            me.myRef.current?.scrollTo(position, 0);
-        }
-    }, (1 * 10));
+        var me = this;
+        setTimeout(function() {
+            var active = clone['i'].active;
+            var position = me.state.scroll_pos[active];
+            if(is_moving_down_option){ 
+                position = 0;
+            }
+            if(position != null){
+                me.myRef.current?.scrollTo(position, 0);
+            }
+        }, (1 * 10));
     }
 
 

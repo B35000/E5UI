@@ -368,6 +368,31 @@ class BagDetailsSection extends Component {
                 }
                 obj[token_id] = bigInt(obj[token_id]).add(amount)
             }
+
+            if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+                var options = item['storefront_options']
+
+                for(var i=0; i<item['options'].length; i++){
+                    var tag_obj = item['options'][i]
+                    var selected_items = []
+                    for(var j=0; j<tag_obj['e'][2].length; j++){
+                        var selected_item_pos = tag_obj['e'][2][j]
+                        if(selected_item_pos != 0){
+                            selected_items.push(selected_item_pos-1)
+                        }
+                    }
+                    for(var k=0; k<selected_items.length; k++){
+                        var selected_pos = selected_items[k]
+                        var option_prices = options[i]['options'][selected_pos]['price']
+                        option_prices.forEach(price => {
+                            if(obj[price['id']] == null){
+                                obj[price['id']] = bigInt(0)
+                            }
+                            obj[price['id']] = bigInt(obj[price['id']]).plus(price['amount'])
+                        });
+                    } 
+                }
+            }
         });
         
         var arr = []
@@ -495,7 +520,6 @@ class BagDetailsSection extends Component {
             
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
             if(variant_in_store == null) return null
-            var items = variant_in_store['price_data']
             var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
 
             return(
@@ -511,16 +535,85 @@ class BagDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':(item['custom_specifications'] == null ? '...':item['custom_specifications']), 'size':'s'})}
                     {this.render_variant_image_if_any(variant_in_store)}
                     <div style={{height: 3}}/>
-                    {items.map((units, index) => (
-                        <div style={{'padding': '2px 0px 2px 0px'}}>
-                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+units['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
-                            </div>
+                    {this.render_purchase_options_if_any(item)}
+                    {this.render_variant_final_prices(variant_in_store, item, object)}
+                </div>
+            )
+        }
+    }
+
+    render_variant_final_prices(variant_in_store, item, object){
+        var price_items = variant_in_store['price_data']
+        var price_obj = {}
+        price_items.forEach(price => {
+            if(price_obj[price['id']] == null) price_obj[price['id']] = bigInt(0)
+            price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+        });
+
+        if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+            var options = item['storefront_options']
+
+            for(var i=0; i<item['options'].length; i++){
+                var tag_obj = item['options'][i]
+                var selected_items = []
+                for(var j=0; j<tag_obj['e'][2].length; j++){
+                    var selected_item_pos = tag_obj['e'][2][j]
+                    if(selected_item_pos != 0){
+                        selected_items.push(selected_item_pos-1)
+                    }
+                }
+                for(var k=0; k<selected_items.length; k++){
+                    var selected_pos = selected_items[k]
+                    var option_prices = options[i]['options'][selected_pos]['price']
+                    option_prices.forEach(price => {
+                        if(price_obj[price['id']] == null){
+                            price_obj[price['id']] = bigInt(0)
+                        }
+                        price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                    });
+                } 
+            }
+        }
+
+        var price_array = []
+        for (const id in price_obj) {
+            if (price_obj.hasOwnProperty(id)) {
+                price_array.push({'id':id, 'amount':price_obj[id]})
+            }
+        }
+
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {price_array.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                        </div>
+                    ))}
+            </div>
+        )
+    }
+
+    render_purchase_options_if_any(item){
+        var items = item['options']
+        if(items == null || items.length == 0) return;
+        var storefront_options = item['storefront_options']
+        if(storefront_options == null || storefront_options.length == 0) return;
+        return(
+                <div>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
+                            <div style={{height:3}}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={item} tag_size={'l'} when_tags_updated={this.when_purchase_option_tag_selected.bind(this)} theme={this.props.theme} locked={true}/>
+                            <div style={{height:3}}/>
                         </div>
                     ))}
                 </div>
             )
-        }
+    }
+
+    when_purchase_option_tag_selected(tag_item){
+        //do nothing
     }
 
 
