@@ -218,7 +218,7 @@ import { zoomPlugin } from '@react-pdf-viewer/zoom';
 import '@react-pdf-viewer/zoom/lib/styles/index.css';
 
 import io from 'socket.io-client';
-import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
+// import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -5004,12 +5004,12 @@ class App extends Component {
   }
 
   validate_cardano_address(address){
-    try {
-      const addr = addressFromHexOrBech32(address);
-      return addr !== null;
-    } catch (error) {
-      return false;
-    }
+    // try {
+    //   const addr = addressFromHexOrBech32(address);
+    //   return addr !== null;
+    // } catch (error) {
+    //   return false;
+    // }
   }
 
 
