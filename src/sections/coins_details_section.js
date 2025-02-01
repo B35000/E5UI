@@ -575,6 +575,9 @@ class CoinsDetailsSection extends Component {
         else if(item['symbol'] == 'APT'){
             return `https://explorer.aptoslabs.com/account/${hash}`
         }
+        else if(item['symbol'] == 'ADA'){
+            return `https://cardanoscan.io/address/${hash}`
+        }
     }
 
 

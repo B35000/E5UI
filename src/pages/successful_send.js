@@ -603,6 +603,9 @@ class SuccessfulSend extends Component {
         else if(item['symbol'] == 'APT'){
             return `https://explorer.aptoslabs.com/txn/${hash}`
         }
+        else if(item['symbol'] == 'ADA'){
+            return `https://cardanoscan.io/transaction/${hash}`
+        }
     }
 
 
