@@ -2773,7 +2773,8 @@ class home_page extends Component {
     render_post_list_group(size, height){
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
-        var h = (this.state.search_visible && this.is_page_valid()) ? height-60 : height
+        var subtract = size == 'm' ? 70 : 60
+        var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
         return(
             <div>
                 {this.render_search_tags_views()}

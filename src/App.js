@@ -71,7 +71,7 @@ import E5_E35_image from './assets/end35.png'
 
 
 /* blockchain stuff */
-import { mnemonicToSeedSync, mnemonicToSeed } from 'bip39';
+import { mnemonicToSeedSync, mnemonicToSeed, entropyToMnemonic } from 'bip39';
 import { Buffer } from 'buffer';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as StellarSdk from "@stellar/stellar-sdk";
@@ -218,6 +218,7 @@ import { zoomPlugin } from '@react-pdf-viewer/zoom';
 import '@react-pdf-viewer/zoom/lib/styles/index.css';
 
 import io from 'socket.io-client';
+import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -1200,7 +1201,7 @@ class App extends Component {
         
         /* E5 details section */
         '2232':'details','2233':'End Balance of Burn Account','2234':'E5 Ether balance in Ether and wei','2235':'E5 Ether balance in Wei','2236':'Last Transaction Block','2237':'Last Transaction age','2238':'Number of entered contracts','2239':'Number of E5 runs','2240':'Withdraw balance','2241':'Withdraw your Ether to a specified address','2242':'Withdraw Ether','2243':'Withdraw','2244':'E5','2245':'Main','2246':'E5 Address:','2247':'Vote Bounty Split Proportion','2248':'Minimum End Contract Amount','2249':'E5 block invocation Limit','2250':'E5 time invocation Limit','2251':'Minimum Entered Contracts for Consensus Participation','2252':'','2253':'Tag Indexing Limit','2254':'Minimum Transaction Count for Consensus Particiation','2255':'Gas Anchor Price','2256':'Transaction Gas Reduction Proportion','2257':'Transaction Gas Anchor Price','2258':'Transaction Gas Lower Limit','2259':'Absolute Proposal Expiry Duration Limit','2260':'Primary Transaction Account','2261':'Primary Account Transaction Period','2262':'Subscriptions Created','2263':'Chart containing the total number of subscriptions made over time.','2264':'','2265':'','2266':'','2267':'','2269e':'Y-Axis: Total Subscriptions Made','2269':'X-Axis: Time','2270':'Total Subscriptions','2271':'subscriptions','2272':'Contracts Created','2273':'Chart containing the total number of contracts made over time.','2274':'Y-Axis: Total Contracts Made','2275':'X-Axis: Time','2276':'Total Contracts','2277':'contracts','2278':'Proposals Created','2279':'Chart containing the total number of proposals made over time.','2280':'Y-Axis: Total Proposals Made','2281':'Total Proposals','2282':'proposals','2283':'Exchanges Created','2284':'Chart containing the total number of exchanges made over time.','2285':'Y-Axis: Total Exchanges Made','2286':'Total Exchanges','2287':'exchanges','2288':'Indexed Posts Created','2289':'Chart containing the total number of indexed posts made over time.','2290':'Y-Axis: Total Posts Made','2291':'Total Posts','2292':'posts','2293':'Indexed Channels Created',
-        '2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers','2336f':'Account Zero Credit.','2336g':'The amount of end that has been sent to the burn account over time.','2336h':'','2336i':'','2336j':'','2336k':'','2336l':'',
+        '2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn wei','2327':'The total amount of wei thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn wei','2329':'Deposited wei','2330':'The total amount of wei thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited wei','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers','2336f':'Account Zero Credit.','2336g':'The amount of end that has been sent to the burn account over time.','2336h':'','2336i':'','2336j':'','2336k':'','2336l':'',
         
         /* end detail section */
         '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions',
@@ -1357,6 +1358,8 @@ class App extends Component {
         'SOL': this.get_coin_info('SOL', 'Solana', 'https://bafkreie4wh23gwfdj4b2otksmajb7dmfvtn376kv3jfivmwocutkq773ai.ipfs.w3s.link/', 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
 
         'APT': this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
+
+        // 'ADA': this.get_coin_info('ADA', 'Cardano', 'https://bafkreighfusfpcbbvoqmjeoyxo7bnxqc3rdhctsvj7wwe74bdpnav7uxem.ipfs.w3s.link/', 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
     }
     return list
   }
@@ -4865,6 +4868,9 @@ class App extends Component {
     else if(item['symbol'] == 'APT'){
       return this.validate_aptos_address(address)
     }
+    else if(item['symbol'] == 'ADA'){
+      return this.validate_cardano_address(address)
+    }
 
 
     return true;
@@ -4997,6 +5003,15 @@ class App extends Component {
     return true;
   }
 
+  validate_cardano_address(address){
+    try {
+      const addr = addressFromHexOrBech32(address);
+      return addr !== null;
+    } catch (error) {
+      return false;
+    }
+  }
+
 
 
 
@@ -5047,13 +5062,15 @@ class App extends Component {
     else if(item['symbol'] == 'SOL'){
       await this.create_and_broadcast_solana_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
+    else if(item['symbol'] == 'ADA'){
+      await this.create_and_broadcast_cardano_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
 
     var me = this;
     setTimeout(function() {
       me.update_coin_balances(item['symbol'], false)
     }, (1 * 30_000));
   }
-
 
   create_and_broadcast_bitcoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
     var seed = this.state.final_seed
@@ -5440,41 +5457,41 @@ class App extends Component {
     return x.toString()
   }
 
-  // create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-  //   var seed = this.state.final_seed
-  //   const wallet = await this.generate_dot_wallet(seed)
-  //   const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-  //   const api = await ApiPromise.create({ provider: wsProvider });
-  //   await api.isReady;
+  create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    // var seed = this.state.final_seed
+    // const wallet = await this.generate_dot_wallet(seed)
+    // const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    // const api = await ApiPromise.create({ provider: wsProvider });
+    // await api.isReady;
 
-  //   try{
-  //     const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
-  //     this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
-  //   }catch(e){
-  //     console.log(e)
-  //     this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
-  //   }
+    // try{
+    //   const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+    //   this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    // }catch(e){
+    //   console.log(e)
+    //   this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    // }
 
-  //   await api.disconnect()
-  // }
+    // await api.disconnect()
+  }
 
-  // create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-  //   var seed = this.state.final_seed
-  //   const wallet = await this.generate_ksm_wallet(seed)
-  //   const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-  //   const api = await ApiPromise.create({ provider: wsProvider });
-  //   await api.isReady;
+  create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    // var seed = this.state.final_seed
+    // const wallet = await this.generate_ksm_wallet(seed)
+    // const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    // const api = await ApiPromise.create({ provider: wsProvider });
+    // await api.isReady;
 
-  //   try{
-  //     const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
-  //     this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
-  //   }catch(e){
-  //     console.log(e)
-  //     this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
-  //   }
+    // try{
+    //   const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+    //   this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    // }catch(e){
+    //   console.log(e)
+    //   this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    // }
 
-  //   await api.disconnect()
-  // }
+    // await api.disconnect()
+  }
 
   create_and_broadcast_algorand_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
     var seed = this.state.final_seed
@@ -5636,6 +5653,26 @@ class App extends Component {
       console.log('aptos', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
+    
+  }
+
+  create_and_broadcast_cardano_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    // var seed = this.state.final_seed
+    // var wallet = await this.generate_cardano_wallet(seed)
+    // var amount = bigInt(transfer_amount).value
+    // try{
+    //   const tx = await wallet.lucid.newTx()
+    //   .pay.ToAddress(recipient_address, { lovelace: amount })
+    //   .complete();
+
+    //   const signedTx = await tx.sign.withWallet().complete();
+    //   const txHash = await signedTx.submit();
+
+    //   this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':txHash})
+    // }catch(e){
+    //   console.log('cardano', e)
+    //   this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    // }
     
   }
 
@@ -15462,55 +15499,6 @@ class App extends Component {
     return account;
   }
 
-  send_filecoin = async (seed) => {
-    const provider = new HttpJsonRpcConnector({ url: 'https://api.node.glif.io', token: '' });
-    const lotusClient = new LotusClient(provider);
-    const hdDerivationPath = `m/44'/461'/0'/0/0`;
-    const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
-
-    const recipientAddress = 'f15ghx3rjnyqnt6iws4lgb7hqmswdi43k5mvovstq';
-    const amount = 75_813_340_787_595_933; // Amount in FIL (1 FIL = 1e18)
-    const myAddress = await walletProvider.getDefaultAddress();
-
-    console.log('filecoin','walletProvider.address:---------------',myAddress)
-    console.log(walletProvider)
-
-    var privateKey = await walletProvider.getSigner().getPrivateKey(myAddress)
-    console.log('filecoin','private key: ---------------',privateKey);
-
-    var balance = await lotusClient.wallet.balance(myAddress);
-    console.log('filecoin','filecoin0 wallet balance:', balance);
-
-    // return;
-    const nonce = await lotusClient.mpool.getNonce(myAddress);
-
-    // Send the transaction
-    const message = await walletProvider.createMessage({
-      From: myAddress,
-      To: recipientAddress,
-      Value: amount.toString().toLocaleString('fullwide', {useGrouping:false}),
-      GasPrice: 2_000_000_000,
-      GasLimit: 6_000_000,
-      gasPremium: 2_000_000_000,
-      GasFeeCap:2_000_000_000,
-      Nonce: nonce,
-    });//bafy2bzaceb3ql3hxzmy2rwyradnocn4iqrnesgroe23jrtjbmun6koykbf53e
-    try{
-      const cid = await walletProvider.sendSignedMessage(
-        await walletProvider.signMessage(message)
-      );
-      console.log('filecoin','Transaction CID:', cid['/']);
-    }catch(e){
-      console.log('filecoin', e)
-    }
-
-
-
-
-    
-
-  }
-
 
 
 
@@ -15570,6 +15558,8 @@ class App extends Component {
     // console.log('coin', this.state.coin_data)
     coin_data['APT'] = await this.get_and_set_aptos_wallet_info(seed)
     // console.log('coin', 'aptos...')
+    coin_data['ADA'] = await this.get_and_set_cardano_wallet_info(seed)
+    // console.log('coin', 'aptos...')
     console.log('coin', coin_data)
     this.setState({coin_data_status: 'set', coin_data:coin_data})
   }
@@ -15619,6 +15609,7 @@ class App extends Component {
     if(coin == 'ATOM' || should_update_all) coin_data = await this.update_cosmos_balance(coin_data)
     if(coin == 'SOL' || should_update_all) coin_data = await this.update_solana_balance(coin_data)
     if(coin == 'APT' || should_update_all) coin_data = await this.update_aptos_balance(coin_data)
+    if(coin == 'ADA' || should_update_all) coin_data = await this.update_ada_balance(coin_data)
     this.setState({coin_data: coin_data})
   }
 
@@ -16359,51 +16350,51 @@ class App extends Component {
     // return data
   }
 
-  // generate_dot_wallet = async (mnemonic) => {
-  //   await waitReady();
-  //   const keyring = new Keyring({ type: 'sr25519' });
+  generate_dot_wallet = async (mnemonic) => {
+    // await waitReady();
+    // const keyring = new Keyring({ type: 'sr25519' });
     
-  //   const keys = keyring.addFromMnemonic(mnemonic)
-  //   const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
-  //   return {keys: keys, dot_address: public_address}
-  // }
+    // const keys = keyring.addFromMnemonic(mnemonic)
+    // const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
+    // return {keys: keys, dot_address: public_address}
+  }
 
-  // get_dot_balance = async (address, api) => {
-  //   if(!this.is_address_set(address)) return 0
-  //   try{
-  //     const { nonce, data: balance } = await api.query.system.account(address);
-  //     const address_balance = (balance.free.toString())
-  //     return address_balance
-  //   }catch(e){
-  //     console.log(e)
-  //     return 0
-  //   }
-  // }
+  get_dot_balance = async (address, api) => {
+    // if(!this.is_address_set(address)) return 0
+    // try{
+    //   const { nonce, data: balance } = await api.query.system.account(address);
+    //   const address_balance = (balance.free.toString())
+    //   return address_balance
+    // }catch(e){
+    //   console.log(e)
+    //   return 0
+    // }
+  }
 
-  // get_existential_dot_deposit = async (api) => {
-  //   try{
-  //     return api.consts.balances.existentialDeposit.toNumber()
-  //   }catch(e){
-  //     console.log(e)
-  //   }
-  // }
+  get_existential_dot_deposit = async (api) => {
+    // try{
+    //   return api.consts.balances.existentialDeposit.toNumber()
+    // }catch(e){
+    //   console.log(e)
+    // }
+  }
 
-  // get_dot_transaction_fee = async () => {
-  //   return (0.015 * 10_000_000_000)
-  // }
+  get_dot_transaction_fee = async () => {
+    return (0.015 * 10_000_000_000)
+  }
 
-  // update_dot_balance = async (clone) => {
-  //   // var clone = structuredClone(this.state.coin_data)
-  //   const address = clone['DOT']['address']
-  //   const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-  //   const api = await ApiPromise.create({ provider: wsProvider });
-  //   await api.isReady;
-  //   const address_balance = await this.get_dot_balance(address, api)
-  //   await api.disconnect()
-  //   clone['DOT']['balance'] = address_balance
-  //   // this.setState({coin_data: clone})
-  //   return clone
-  // }
+  update_dot_balance = async (clone) => {
+    // // var clone = structuredClone(this.state.coin_data)
+    // const address = clone['DOT']['address']
+    // const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    // const api = await ApiPromise.create({ provider: wsProvider });
+    // await api.isReady;
+    // const address_balance = await this.get_dot_balance(address, api)
+    // await api.disconnect()
+    // clone['DOT']['balance'] = address_balance
+    // // this.setState({coin_data: clone})
+    // return clone
+  }
 
 
 
@@ -16427,50 +16418,48 @@ class App extends Component {
     // return data
   }
 
-  // generate_ksm_wallet = async (mnemonic) => {
-  //   await waitReady();
-  //   const keyring = new Keyring({ type: 'sr25519' });
-  //   const keys = keyring.addFromMnemonic(mnemonic)
-  //   const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
-  //   return {keys: keys, ksm_address: public_address}
-  // }
+  generate_ksm_wallet = async (mnemonic) => {
+    // await waitReady();
+    // const keyring = new Keyring({ type: 'sr25519' });
+    // const keys = keyring.addFromMnemonic(mnemonic)
+    // const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
+    // return {keys: keys, ksm_address: public_address}
+  }
 
-  // get_ksm_balance = async (address, api) => {
-  //   if(!this.is_address_set(address)) return 0
-  //   try{
-  //     const { nonce, data: balance } = await api.query.system.account(address);
-  //     const address_balance = (balance.free.toString())
-  //     return address_balance
-  //   }catch(e){
-  //     console.log(e)
-  //     return 0
-  //   }
-  // }
+  get_ksm_balance = async (address, api) => {
+    // if(!this.is_address_set(address)) return 0
+    // try{
+    //   const { nonce, data: balance } = await api.query.system.account(address);
+    //   const address_balance = (balance.free.toString())
+    //   return address_balance
+    // }catch(e){
+    //   console.log(e)
+    //   return 0
+    // }
+  }
 
-  // get_existential_ksm_deposit = async (api) => {
-  //   try{
-  //     return api.consts.balances.existentialDeposit.toNumber()
-  //   }catch(e){
-  //     console.log(e)
-  //   }
-  // }
+  get_existential_ksm_deposit = async (api) => {
+    // try{
+    //   return api.consts.balances.existentialDeposit.toNumber()
+    // }catch(e){
+    //   console.log(e)
+    // }
+  }
 
-  // get_ksm_transaction_fee = async () => {
-  //   return (0.01 * 1_000_000_000_000)
-  // }
+  get_ksm_transaction_fee = async () => {
+    return (0.01 * 1_000_000_000_000)
+  }
 
-  // update_ksm_balance = async (clone) => {
-  //   // var clone = structuredClone(this.state.coin_data)
-  //   const address = clone['KSM']['address']
-  //   const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-  //   const api = await ApiPromise.create({ provider: wsProvider });
-  //   await api.isReady;
-  //   const address_balance = await this.get_ksm_balance(address, api)
-  //   await api.disconnect()
-  //   clone['KSM']['balance'] = address_balance
-  //   // this.setState({coin_data: clone})
-  //   return clone
-  // }
+  update_ksm_balance = async (clone) => {
+    // const address = clone['KSM']['address']
+    // const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    // const api = await ApiPromise.create({ provider: wsProvider });
+    // await api.isReady;
+    // const address_balance = await this.get_ksm_balance(address, api)
+    // await api.disconnect()
+    // clone['KSM']['balance'] = address_balance
+    // return clone
+  }
 
 
 
@@ -16744,6 +16733,97 @@ class App extends Component {
     clone['APT']['balance'] = balance;
     // this.setState({coin_data: clone})
     return clone
+  }
+
+
+
+  
+
+
+
+
+  get_and_set_cardano_wallet_info = async (seed) => {
+    // try{
+    //   const wallet = await this.generate_cardano_wallet(seed)
+    //   const address = wallet.address
+    //   const balance_and_utxos = await this.get_cardano_wallet_balance(wallet)
+    //   const fees = await this.get_cardano_transaction_fees(wallet, balance_and_utxos)
+
+    //   var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
+    //   var data = {'balance':balance_and_utxos.balance, 'address':address,'utxos':balance_and_utxos.utxos, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
+    //   return data
+    // }catch(e){
+    //   console.log('coin',e)
+    // }
+  }
+
+  generate_cardano_wallet = async (mnemonic) => {
+    // var hash = await this.generate_hash(mnemonic)
+    // let bytes = Buffer.from(hash, "utf8");
+    // if (bytes.length < 16) {
+    //   bytes = Buffer.concat([bytes, Buffer.alloc(16 - bytes.length)]); // Pad with zeros
+    // } else if (bytes.length > 16) {
+    //   bytes = bytes.slice(0, 16); // Trim excess bytes
+    // }
+    // const mnemonic_entropy = bytes.toString("hex");
+    // const new_mnemonic = entropyToMnemonic(mnemonic_entropy);
+
+    // const key = `${process.env.REACT_APP_BLOCKFROST_KEY}`
+    // const blockfrost = new Blockfrost("https://cardano-mainnet.blockfrost.io/api/v0", key)
+    // const lucid = await Lucid( blockfrost, "Mainnet" );
+    // lucid.selectWallet.fromSeed(new_mnemonic);
+    // const address = await lucid.wallet().address();
+
+    // return {address: address, lucid: lucid}
+  }
+
+  generate_hash = async (data) => {
+    // Encode the data as a Uint8Array
+    const encoder = new TextEncoder();
+    const encodedData = encoder.encode(data);
+    // Generate the hash using the SubtleCrypto API
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encodedData);
+    // Convert the hash to a hexadecimal string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+
+    return hashHex.substring(0, 64);
+  }
+
+  get_cardano_wallet_balance = async (wallet) => {
+    // const wallet_utxos = await wallet.lucid.wallet().getUtxos();
+    // var total_balance = bigInt(0)
+    // wallet_utxos.forEach(utxo => {
+    //   var assets = utxo['assets']
+    //   var lovelace = assets['lovelace']
+    //   if(lovelace != null){
+    //     total_balance = bigInt(total_balance).plus(lovelace)
+    //   }
+    // });
+    // return {balance: total_balance, utxos: wallet_utxos}
+  }
+
+  get_cardano_transaction_fees = async (wallet, balance_and_utxos) => {
+    // if(balance_and_utxos.utxos.length > 0){
+    //   var test_recipient = 'addr1qy80v2j6xpk7zgrqv74c6lt55nw5ppkc34cwd0vxf247rk7lu29fpk40pdwalsjjrp9dlwvwhp7jg8v9g24lmnfh9tcqfq7f90'
+    //   const draftTx = await wallet.lucid.newTx()
+    //   .pay.ToAddress(test_recipient, { lovelace: 1n })
+    //   .complete();
+    //   const fee = (await draftTx.complete()).toTransaction().body().fee();
+    //   return fee
+    // }else{
+    //   return 168_317
+    // }
+  }
+
+  update_ada_balance = async (clone) => {
+    // var wallet = clone['ADA']['wallet']
+    // const balance_and_utxos = await this.get_cardano_wallet_balance(wallet)
+    // const fees = await this.get_cardano_transaction_fees(wallet, balance_and_utxos)
+    // clone['ADA']['balance'] = balance_and_utxos.balance;
+    // clone['ADA']['utxos'] = balance_and_utxos.utxos;
+    // clone['ADA']['fee']['fee'] = fees;
+    // return clone
   }
 
 

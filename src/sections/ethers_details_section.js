@@ -263,7 +263,7 @@ class EthersDetailsSection extends Component {
 
     render_wallet_vaue(item, balance_decimal){
         var final_balance = balance_decimal == null ? 0.0 : balance_decimal
-        if(this.props.app_state.asset_price_data['BTC'] == null) return;
+        if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[item['symbol']] == null) return;
         var coin_price = this.props.app_state.asset_price_data[item['symbol']]['price']
         var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
         var selected_preferred_currency = this.props.app_state.preferred_currency

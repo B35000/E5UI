@@ -14,6 +14,7 @@
     "@glif/filecoin-address": "^3.0.12",
     "@harmony-js/crypto": "^0.1.56",
     "@iotexproject/iotex-address-ts": "^1.0.4",
+    "@lucid-evolution/lucid": "^0.4.21",
     "@mui/material": "^6.1.1",
     "@mui/x-date-pickers": "^7.17.0",
     "@polkadot/api": "^14.0.1",
@@ -88,12 +89,14 @@
     "xrpl": "^4.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start2": "craco start",
+    "build2": "craco build",
+    "test2": "craco test"
   },
   "eslintConfig": {
     "extends": [
@@ -114,6 +117,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "gh-pages": "^6.1.1",
     "html5-qrcode": "^2.3.8"
   }
