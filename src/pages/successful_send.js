@@ -368,6 +368,10 @@ class SuccessfulSend extends Component {
             return `https://explorer.ethoprotocol.com/tx/${hash}`
         }else if(e5 == 'E765'){
             return `https://mainnet-explorer.oneledger.network/tx/${hash}`
+        }else if(e5 == 'E785'){
+            return `https://explorer.evm.iota.org/tx/${hash}`
+        }else if(e5 == 'E795'){
+            return `https://www.kaiascan.io/tx/${hash}`
         }
     }
 
@@ -527,6 +531,8 @@ class SuccessfulSend extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2801']/* 'Copy Transaction Hash.' */, 'action':''})}
                 </div>
 
+                
+
                 {this.render_detail_item('0')}
 
                 {this.render_coin_blockexplorer_link()}
@@ -605,6 +611,12 @@ class SuccessfulSend extends Component {
         }
         else if(item['symbol'] == 'ADA'){
             return `https://cardanoscan.io/transaction/${hash}`
+        }
+        else if(item['symbol'] == 'STX'){
+            return `https://explorer.hiro.so/txid/${hash}?chain=mainnet`
+        }
+        else if(item['symbol'] == 'AR'){
+            return `https://viewblock.io/arweave/tx/${hash}`
         }
     }
 

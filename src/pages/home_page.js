@@ -4768,7 +4768,7 @@ class home_page extends Component {
 
     render_total_wallet_value(){
         if(this.props.app_state.asset_price_data['BTC'] == null) return;
-        var total_wallet_value_in_usd = parseInt(this.get_total_wallet_value_in_usd())
+        var total_wallet_value_in_usd = this.round_off(this.get_total_wallet_value_in_usd())
         var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
         var number_of_btc_for_one_usd = 1 / bitcoin_price
         var balance_value_in_btc = number_of_btc_for_one_usd * total_wallet_value_in_usd
@@ -4782,6 +4782,10 @@ class home_page extends Component {
                 </div>
             </div>
         )
+    }
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
     }
 
     get_total_wallet_value_in_usd(){

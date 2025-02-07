@@ -445,6 +445,7 @@ class ViewGroups extends Component {
             var title = 'Author';
             var details = 'e25885';
             var size = 'l';
+            var image_border_radius = '9px'
             var img_size = 45
             if(object_data != null){
                 title = object_data['title']
@@ -467,12 +468,13 @@ class ViewGroups extends Component {
             }
             if(object_data != null && object_data['img_size'] != null){
                 img_size = object_data['img_size']
+                if(object_data['border_radius'] != null) image_border_radius = object_data['border_radius']
             }
             return (
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
                         <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img alt="" src={this.get_image_from_file(img)} style={{height:img_size ,width:img_size}} />
+                            <img alt="" src={this.get_image_from_file(img)} style={{height:img_size ,width:img_size, 'border-radius': image_border_radius}} />
                         </div>
                         <div style={{'margin':'3px 0px 0px 5px'}}>
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 

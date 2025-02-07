@@ -263,7 +263,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'infura', 'web3-storage', 'nft-storage'], [this.get_selected_storage_option()]
+                ['xor','',0], ['e', 'infura', 'arweave'], [this.get_selected_storage_option()]
             ],
         };
     }
@@ -272,11 +272,8 @@ class StackPage extends Component {
         if(this.props.app_state.storage_option == 'infura'){
             return 1
         }
-        else if(this.props.app_state.storage_option == 'web3-storage'){
+        else if(this.props.app_state.storage_option == 'arweave'){
             return 2
-        }
-        else if(this.props.app_state.storage_option == 'nft-storage'){
-            return 3
         }
         return 1;
     }
@@ -1547,6 +1544,8 @@ class StackPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1455']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
 
+                {this.render_arweave_network_fee_if_selected()}
+
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px', 'opacity':button_opacity}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
                     {this.render_detail_item('5', {'text':button_text, 'action':''})}
@@ -1556,9 +1555,38 @@ class StackPage extends Component {
         )
     }
 
+    render_arweave_network_fee_if_selected(){
+        var set_storage_option = this.props.app_state.storage_option
+        var my_preferred_nitro = this.props.app_state.my_preferred_nitro
+        if(my_preferred_nitro == '' && set_storage_option == 'arweave'){
+            var fees = this.props.app_state.calculated_arewave_storage_fees_figures[this.props.app_state.selected_e5]
+            if(fees == null) fees = 0;
+            var wallet_data = this.props.app_state.coin_data['AR']
+            var my_balance = wallet_data != null ? wallet_data['balance'] : 0
+            var proportion = 0
+            if(fees != 0 && my_balance != 0 && my_balance >= fees){
+                proportion = (fees * 100) / my_balance 
+            }
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1593ep']/* 'Arweave Storage Fee' */}</p>
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(fees/10**12), 'number':(fees/10**12), 'barcolor':'#606060', 'relativepower':'AR', })}
+                       
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(fees), 'number':this.format_account_balance_figure(fees), 'barcolor':'#606060', 'relativepower':'winston', })}
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':proportion+'%', 'number':proportion+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593eq']/* 'proportion' */, })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
     render_total_wallet_value(){
         if(this.props.app_state.asset_price_data['BTC'] == null) return;
-        var total_wallet_value_in_usd = parseInt(this.get_total_wallet_value_in_usd())
+        var total_wallet_value_in_usd = this.round_off(this.get_total_wallet_value_in_usd())
         var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
         var number_of_btc_for_one_usd = 1 / bitcoin_price
         var balance_value_in_btc = number_of_btc_for_one_usd * total_wallet_value_in_usd
@@ -2126,7 +2154,6 @@ class StackPage extends Component {
         if(is_running == null){
             is_running = false;
         }
-
         if(pushed_txs.length == 0){
             this.props.notify(this.props.app_state.loc['1487']/* 'Add some transactions first.' */,3600)
         }
@@ -2150,11 +2177,38 @@ class StackPage extends Component {
             this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
         }
         else if(!this.props.app_state.has_wallet_been_set){
-                this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
-            }
+            this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
+        }
+        else if(!this.is_areweave_checkers_ok()){
+            console.log('insufficient Arweave balance.')
+        }
         else{
             console.log('opening_confirmation!')
             this.props.show_confirm_run_bottomsheet(run_data)
+        }
+    }
+
+    is_areweave_checkers_ok(){
+        var set_storage_option = this.props.app_state.storage_option
+        var my_preferred_nitro = this.props.app_state.my_preferred_nitro
+        var wallet_data = this.props.app_state.coin_data['AR']
+        var wallet_address = wallet_data != null ? wallet_data['address'] : 'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U'
+        var my_arweave_balance = wallet_data != null ? wallet_data['balance'] : 0
+        var fees = this.props.app_state.calculated_arewave_storage_fees_figures[this.props.app_state.selected_e5]
+        if(fees == null) fees = 0;
+        if(my_preferred_nitro == '' && set_storage_option == 'arweave'){
+            if(wallet_address == 'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U'){
+                this.props.notify(this.props.app_state.loc['2738h']/* 'Please wait for your Arweave wallet to finish loading first.' */, 9000)
+                return false
+            }
+            else if(fees > my_arweave_balance){
+                this.props.notify(this.props.app_state.loc['1593er']/* 'Your Arweave balance is insufficient to make the transaction.' */, 9000)
+                return false
+            }else{
+                return true
+            }
+        }else{
+            return true
         }
     }
 
@@ -4016,6 +4070,9 @@ class StackPage extends Component {
 
         console.log('stack_page_ipfs', 'updated ipfs-array', ipfs_index_array)
         const link = await this.get_object_ipfs_index(obj, calculate_gas);
+        if(calculate_gas != null && calculate_gas == true && ipfs_index_array.length > 0){
+            this.props.calculate_arweave_data_fees(obj)
+        }
         console.log('stack_page_ipfs', 'link', link)
         return link
     }
@@ -4062,8 +4119,8 @@ class StackPage extends Component {
         return this.props.app_state.last_blocks[e5][0];
     }
 
-    get_object_ipfs_index(tx, calculate_gas, ipfs_index, data_index){
-        if(Object.keys(tx).length == 0){
+    get_object_ipfs_index = async (tx, calculate_gas, ipfs_index, data_index) => {
+        if(Object.keys(tx).length <= 1){
             return null
         }
         if(calculate_gas != null && calculate_gas == true){
@@ -4078,7 +4135,7 @@ class StackPage extends Component {
                 ? value.toString()
                 : value // return everything else unchanged));
         )
-        var obj_cid = this.props.store_objects_data_in_ipfs_using_option(object_as_string)
+        var obj_cid = await this.props.store_objects_data_in_ipfs_using_option(object_as_string)
         return obj_cid
     }
 
@@ -7986,11 +8043,27 @@ class StackPage extends Component {
 
 
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {this.load_my_nitro_objects_to_select()}
                 {this.render_detail_item('0')}
+
+
+
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
+
+                {this.render_detail_item('0')}
+
+
 
 
 
@@ -8024,7 +8097,6 @@ class StackPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                 {this.render_detail_item('0')}
-
 
 
 
@@ -10314,7 +10386,8 @@ class StackPage extends Component {
         var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
         for(var i=0; i<all_nitros.length; i++){
             var obj = all_nitros[i]
-            if(obj['bought'] == true) my_bought_nitros.push(obj)
+            var state = this.props.app_state.nitro_node_details[obj['e5_id']]
+            if(obj['bought'] == true && state != null && state != 'unavailable') my_bought_nitros.push(obj)
         }
         return my_bought_nitros
     }
@@ -10328,14 +10401,14 @@ class StackPage extends Component {
         if(this.state.selected_nitro_item == item['e5_id']){
             return(
                 <div>
-                    {this.render_detail_item('12', {'title':title, 'image':image,'details':details, 'size':'s'})}
+                    {this.render_detail_item('12', {'title':title, 'image':image,'details':details, 'size':'s', 'border_radius':'9px'})}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('12', {'title':title, 'image':image, 'details':details, 'size':'s'})}
+                    {this.render_detail_item('12', {'title':title, 'image':image, 'details':details, 'size':'s', 'border_radius':'9px'})}
                 </div>
             )
         }

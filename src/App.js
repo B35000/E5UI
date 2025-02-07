@@ -95,6 +95,10 @@ import { derivePath } from 'ed25519-hd-key';
 import { AptosAccount, AptosClient } from 'aptos';
 import { create as createW3UpClient } from '@web3-storage/w3up-client';
 import { from } from "@iotexproject/iotex-address-ts";
+import { STACKS_MAINNET } from '@stacks/network'
+import { makeSTXTokenTransfer, broadcastTransaction, getAddressFromPrivateKey, validateStacksAddress } from '@stacks/transactions';
+import Arweave from 'arweave';
+import { getKeyFromMnemonic } from 'arweave-mnemonic-keys';
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -230,6 +234,7 @@ var CryptoJS = require("crypto-js");
 const xrpl = require("xrpl")
 const BITBOXSDK = require('bitbox-sdk').BITBOX;
 const BITBOX = new BITBOXSDK();
+const arweave = Arweave.init();
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 var bigInt = require("big-integer");
@@ -393,7 +398,7 @@ class App extends Component {
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false,
 
-    theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, web3-storage, nft-storage */,
+    theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, arweave */,
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */,
 
     new_object_target: '0', edit_object_target:'0',
@@ -454,7 +459,9 @@ class App extends Component {
 
     censored_keyword_phrases: [], should_update_censored_keyword_phrases: false, censored_keywords_by_my_following:[],
 
-    queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{},
+    queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{}, 
+    
+    calculated_arewave_storage_fees_figures:{},
   };
 
   get_static_assets(){
@@ -490,7 +497,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -549,13 +556,13 @@ class App extends Component {
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:'https://nftstorage.link/ipfs/bafkreifwbdj5pgh63ihou6vd26pwygsucauvutjrilmfmshg74xnv63274', iteration:10_000, url:0, active:false, e5_img:null
+        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:'https://bafkreiboihdu4kpgt5qo3xyffhwwvtf7twjrpmbqszntxjeoftlnyajeeq.ipfs.w3s.link/', iteration:10_000, url:0, active:false, e5_img:null
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
         token:'MOVR',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:'https://nftstorage.link/ipfs/bafkreihfgqnilqclm4p5oin5dy34ywk5q6srsjnxiomk4e2h5np4nwliia', iteration:40_000, url:0, active:false, e5_img:null
+        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:'https://bafkreihongf5cenm5oqngrxmutqlvz3qi3ucmsecx6gvc6mdqwbhkwjyci.ipfs.w3s.link/', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E115':{
         web3:['https://xdc.public-rpc.com'],
@@ -969,6 +976,24 @@ class App extends Component {
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreifn4sbeosn63ogew4z7gm4dw2t5l2xhmtauxwgh4wakaqmxjuuwwm', iteration:3_000, url:0, active:false, e5_img:null
       },
+      'E775':{
+        web3:['https://mainnet.hashio.io/api'],
+        token:'HBAR',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreic525y3d4aqb6wksu6dt6uaqhwtvbzpooqenkjm6t7xzsut7bfelq.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+      },
+      'E785':{
+        web3:['https://json-rpc.evm.iotaledger.net'],
+        token:'IOTA',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreigvxj7opelzoamc4ujrgmgwdq73g5pjtvgtrrhuuyvirzfvqjegj4.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+      },
+      'E795':{
+        web3:['https://public-en.node.kaia.io'],
+        token:'KAIA',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreigsndweoxio5jfmnjiliqncxgbuqfswdp5ptrtp2mde73jesc7kia.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+      },
     }
   }
 
@@ -1143,7 +1168,7 @@ class App extends Component {
         '1345':'Set some details for your new Job request. It should be task specific.','1346':'Enter Details...','1347':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1348':'block','1349':'Select an expiry time for your job request.','1350':'Prepaid or Postpaid','1351':'Set the payment option you prefer for the job request.','1352':'Requested Pay','1353':'Select an exchange by its id, then the desired price and click add','1354':'Exchange ID','1355':'Price','1356':'tokens','1357':'Add Pay.','1358':'Please put a valid exchange ID.','1359':'Please put a valid amount.','1360':'Added price.','1361':'Account 3','1362':'Account 5','1363':'job-request','1364':'send','1365':'job','1366':'request','1367':'You cant set an expiry time thats less than fifteen minutes from now.','1368':'You need to set a description for the job request.',
         
         /* send receive ether page */
-        '1369':'send','1370':'receive','1371':'Send Ether using the address shown below.','1372':'Sender Wallet Address','1373':'Receiver Wallet Address','1374':'Set Receiver Address Here','1375':'Balance in Wei','1376':'Balance in Ether','1377':'Transactions (2.3M Gas average)','1378':'transactions','1379':'Gas Price','1380':'Gas Price in Gwei.','1381':'Amount to Send.','1382':'Set the amount to send in the number picker below.','1383':'Picked Amount In Ether and Wei.','1384':'Set Maximum','1385':'Transaction Gas Price','1386':'Set the gas price for your transaction below.','1387':'Picked Gas Price.','1388':'Send Ether to Address','1389':'Maximum amount set.','1390':'Open Scanner','1391':'Scan for an address using a built in scanner','1392':'Scan','1393':'Send Ether Confirmation','1394':'Confirm that you want to send Ether to the targeted recipient','1395':'Picked Amount In Ether and Wei','1396':'Sender Wallet Address','1397':'Receiver Wallet Address','1398':'Send Ether','1399':'Value in Ether and Wei ','1400':'Receive Ether using the address shown below','1401':'Wallet Address','1402':'Copy to Clipboard','1403':'Copied to clipboard.','1404':'Your ether balance is insufficient to fulfil that transaction.','1405':'running your send transaction...','1406':'Please set a valid amount.','1407':'Please set a valid recipient.','1407a':'Max Priority Fee per Gas.', '1407b':'Set the max priority fee per gas for your transaction below.', '1407c':'Max Fee per Gas.', '1407d':'Set the maximum amount of gas fee your willing to pay for your transaction below.', '1407e':'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.', '1407f':'Confirmation.', '1407g':'Picked Max Priority Gas Price.', '1407h':'Picked Max Fee Gas Price.', '1407i':'', '1407j':'', '1407k':'', '1407l':'', '1407m':'',
+        '1369':'send','1370':'receive','1371':'Send Ether using the address shown below.','1372':'Sender Wallet Address','1373':'Receiver Wallet Address','1374':'Set Receiver Address Here','1375':'Balance in Wei','1376':'Balance in Ether','1377':'Transactions (2.3M Gas average)','1378':'transactions','1379':'Gas Price','1380':'Gas Price in Gwei.','1381':'Amount to Send.','1382':'Set the amount to send in the number picker below.','1383':'Picked Amount In Ether and Wei.','1384':'Set Maximum','1385':'Transaction Gas Price','1386':'Set the gas price for your transaction below.','1387':'Picked Gas Price.','1388':'Send Ether to Address','1389':'Maximum amount set.','1390':'Open Scanner','1391':'Scan for an address using a built in scanner','1392':'Scan','1393':'Send Ether Confirmation','1394':'Confirm that you want to send Ether to the targeted recipient','1395':'Picked Amount In Ether and Wei','1396':'Sender Wallet Address','1397':'Receiver Wallet Address','1398':'Send Ether','1399':'Value in Ether and Wei ','1400':'Receive Ether using the address shown below','1401':'Wallet Address','1402':'Copy to Clipboard','1403':'Copied to clipboard.','1404':'Your ether balance is insufficient to fulfil that transaction.','1405':'running your send transaction...','1406':'Please set a valid amount.','1407':'Please set a valid recipient.','1407a':'Max Priority Fee per Gas.', '1407b':'Set the max priority fee per gas for your transaction below.', '1407c':'Max Fee per Gas.', '1407d':'Set the maximum amount of gas fee your willing to pay for your transaction below.', '1407e':'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.', '1407f':'Confirmation.', '1407g':'Picked Max Priority Gas Price.', '1407h':'Picked Max Fee Gas Price.', '1407i':'Picked Amount.', '1407j':'Picked Transaction fee.', '1407k':'', '1407l':'', '1407m':'',
         
         /* stack */
         '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID: ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count',
@@ -1151,8 +1176,8 @@ class App extends Component {
         '1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Your wallet has been set.','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.', 
         '1593d':'🔔.Notifications', '1593e':'My Notifications.', '1593f':'All your important notifications are shown below.', '1593g':'Run ID: ','1593h':'Special characters are not allowed.','1593i':'Homepage Tags Position.','1593j':'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.','1593k':'top','1593l':'bottom','1593m':'App Font.','1593n':'You can change your preferred font displayed by the app.','1593o':'Auto-Skip NSFW warning.','1593p':'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.','1593q':'Max Priority Fee Per Gas.', '1593r':'The max priority fee per gas(miner tip) for your next run with E5.', '1593s':'Max Fee per Gas.', '1593t':'The maximum amount of gas fee your willing to pay for your next run with E5.', '1593u':'Name or Account ID...', '1593v':'Watch Account.', '1593w':'Track send and receive transactions for a specified account from here.', '1593x':'Watch 👁️','1593y':'Watch.', '1593z':'Loading...', '1593aa':'You cant reserve more than one alias in one run.','1593ab':'Sign Some Data.','1593ac':'Generate a signature of some data to have your account verified externally.','1593ad':'Data...','1593ae':'Sign Data.','1593af':'Please type something.','1593ag':'Please select an E5.','1593ah':'Copy to Clipboard.','1593ai':'Copied Signature to Clipboard.','1593aj':'signatures','1593ak':'sign','1593al':'verify','1593am':'Please pick an E5.','1593an':'Scan','1593ao':'That text is too long to sign.','1593ap':'Signature...','1593aq':'Verify Signature.','1593ar':'Please paste a signature.','1593as':'That data is too long.','1593at':'That signature is invalid.','1593au':'Signer Address.','1593av':'Signer Account.',
         '1593aw':'Verify  a Signature.','1593ax':'Derive an account and address from some data and its corresponding signature.','1593ay':'Signer Alias','1593az':'Storage Configuration','1593ba':'storage 💾','1593bb':'Connect your account to a third party storage provider to store larger files.','1593bc':'File Upload Limit.','1593bd':'zaphod@beeblebrox.galaxy','1593be':'Note: You have to set this in every new device you use, and storage permissions (cookies) will be enabled automatically.','1593bf':'Verify','1593bg':'That email is not valid.','1593bh':'Type something.','1593bi':'Verification email sent.','1593bj':'Upload a file to storage.','1593bk':'all','1593bl':'images','1593bm':'audio','1593bn':'video','1593bo':'Something went wrong with the upload.',
-        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred storage option','1593de':'Set the storage option you prefer to use. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'Censor 🚫','1593dr':'Censor Keywords.','1593ds':'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.','1593dt':'Keyword or phrase...','1593du':'Type something first.',
-        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'USD','1593eg':'SAT','1593eh':'Wallet Value in USD.','1593ei':'Wallet Value in SATs','1593ej':'⚡ Beacon Node Online.','1593ek':'☠︎︎ Beacon Node Offline.','1593el':'Wallet Value Denomination','1593em':'Set the currency you wish to be displayed in your wallets value.','1593en':'','1593eo':'','1593ep':'','1593eq':'','1593er':'','1593es':'','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
+        '1593bp':'Upload Successful.','1593bq':'Uploading...','1593br':'Images','1593bs':'Audio Files.','1593bt':'Videos.','1593bu':'Total Storage Space Utilized.','1593bv':'Email Verified.','1593bw':'One of the files exceeds the current file size limit of ','1593bx':' ago.','1593by':'Preparing Files...','1593bz':'Transaction Gas Price in Gwei','1593ca':'Max Fee per Gas in Gwei.','1593cb':'Max Priority Fee Per Gas in Gwei.','1593cc':'audio-messages','1593cd':'pdf','1593ce':'PDFs','1593cf':' price set.','1593cg':'Slow','1593ch':'Average','1593ci':'Fast','1593cj':'Asap','1593ck':'Set Custom Ipfs Gateway','1593cl':'You can specify a custom gateway for serving all your content.','1593cm':'https://ipfs.io/cid','1593cn':'paste \'cid\' where the content cid would be used.','1593co':'That gateway link is not valid.','1593cp':'gateway set.','1593cq':'The url needs to include the keyword \'cid\'','1593cr':'gateway 🚧','1593cs':'Running...','1593ct':'video-messages','1593cu':'nitro-messages','1593cv':'web3.storage','1593cw':'nitro 🛰️','1593cx':'To see a nitro option here, first purchase storage from it in the nitro section.','1593cy':'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.','1593coz':'You need to select a nitro node first.','1593da':'Please wait a few moments for E5 to syncronize fully.','1593db':'Please wait a few moments for your selected node to come online.','1593dc':'something went wrong.','1593dd':'Preferred nitro storage option','1593de':'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.','1593df':'following 👥','1593dg':'Followed Moderators.','1593dh':'You can specify specific accounts you wish to moderate the content you see here in E5.','1593di':'Account ID or alias...','1593dj':'You need to specify an account first.','1593dk':'Youre already following that account.','1593dl':'You are now following that account.','1593dm':'Unfollow','1593dn':'You cant follow yourself.','1593do':'Account removed from your following list.','1593dp':'First make a transaction to remove that account.','1593dq':'Censor 🚫','1593dr':'Censor Keywords.','1593ds':'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.','1593dt':'Keyword or phrase...','1593du':'Type something first.',
+        '1593dv':'Youve already censored that keyword.','1593dw':'You are now censoring that keyword or phrase.','1593dx':'Keyword or phrase removed from your censored list.','1593dy':'Uncensor','1593dz':'Stop','1593ea':'Hide Audio Player Pip.','1593eb':'If set to hidden, the mini-player used to control audio playing in the background will be hidden.','1593ec':'hidden','1593ed':'zip','1593ee':'Zip Files.','1593ef':'USD','1593eg':'SAT','1593eh':'Wallet Value in USD.','1593ei':'Wallet Value in SATs','1593ej':'⚡ Beacon Node Online.','1593ek':'☠︎︎ Beacon Node Offline.','1593el':'Wallet Value Denomination','1593em':'Set the currency you wish to be displayed in your wallets value.','1593en':'Default Data Storage Option.','1593eo':'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.','1593ep':'Estimated Arweave to be consumed.','1593eq':'proportion','1593er':'Your Arweave balance is insufficient to make the transaction.','1593es':'Arweave usually takes about 15 to 20 minutes to finalize uploads.','1593et':'','1593eu':'','1593ev':'','1593ew':'','1593ex':'','1593ey':'','1593ez':'','1593fa':'','1593fb':'','1593fc':'',
         
         /* synchonizing page */
         '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust.','1598':'Unanimous Consensus.', '1598a':'Initializing...','1598b':'This app uses cookies. Please enable them in the settings page.','1598c':'For Securing all your Transactions.','1598d':'For spending your Money.','1598e':'','1598f':'',
@@ -1248,7 +1273,7 @@ class App extends Component {
         '2643':'search','2644':'payments','2645':'cancellations','2646':'collections','2647':'modifications','2648':'Pay Subscription','2649':'Pay for the subscription for your account','2650':'Pin the subscription to your feed','2651':'Pin Subscription','2652':'Pin/Unpin Subscription','2653':'Author Moderator Privelages Disabled','2654':'Author of Object is not a Moderator by default','2655':'Author Moderator Privelages Enabled','2656':'Author of Object is a Moderator by default','2657':'Cancel Subscription','2658':'Cancel your subscription payment and receive your tokens back','2659':'Collect Subscription','2660':'Collect the subscription payments from the subscription account','2661':'Modify Subscription','2662':'Modify the configuration of the subscription.','2663':'Perform Moderator Actions','2664':'Set an accounts access rights, moderator privelages or block an account','2665':'Perform Action','2666':'In Subscription ','2667':'Subscription Transfer Events','2668':'Pay Subscription Events','2669':'Search account ID...','2670':'Paying Account','2671':'Cancel Subscription Events','2672':'Cancelling Account','2673':'Collect Subscription Events','2674':'Collecting Account','2675':'Total Time Units Collected','2676':'units','2677':'Modify Subscription Events','2678':'Subscription Modify Moderator Events','2679':'Subscription Access Rights Settings Events','2680':'Subscription Account Access Settings Events','2681':'Subscription Blocked Account Events','2682':'Search Subscription Payment','2683':'Remaining Subscription Time','2684':'Remaining Time Units (As of Now)','2685':'time-units','2686':'Latest Payment Time','2687':'Latest Payment Block','2688':'First Payment Time','2689':'First Payment Block','2690':'Highest Time Units Paid For ','2691':'Lowest Time Units Paid For ','2692':'Time Units Paid For','2693':'Chart containing the amount in time units that have been accumulated.','2694':'Y-Axis: Time Units','2695':'X-Axis: Time',
         
         /* App page */
-        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'Downloading pdf.', '2738e':'e needs access to your microphone to make the call.', '2738f':'Downloading Zip file.', '2738g':'', '2738h':'', '2738i':'', '2738j':'', '2738k':'', '2738l':'', '2738m':'', '2738n':'', '2738o':'', '2738p':'', '2738q':'', '2738r':'', '2738s':'', '2738t':'', '2738u':'', '2738v':'', '2738w':'', '2738x':'', '2738y':'', '2738z':'', 
+        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete. Synchronizing...','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.', '2738a':'The contract owner hasnt granted you access to their contract yet.', '2738b':'Downloading image.', '2738c':'Poor Internet Connection.', '2738d':'Downloading pdf.', '2738e':'e needs access to your microphone to make the call.', '2738f':'Downloading Zip file.', '2738g':'Arweave upload complete, waiting for 1 network confirmation...', '2738h':'Please wait for your Arweave wallet to finish loading first.', '2738i':'Arweave transaction confirmed! proceeding with run...', '2738j':'', '2738k':'', '2738l':'', '2738m':'', '2738n':'', '2738o':'', '2738p':'', '2738q':'', '2738r':'', '2738s':'', '2738t':'', '2738u':'', '2738v':'', '2738w':'', '2738x':'', '2738y':'', '2738z':'', 
         
 
         '2739':'edit-proposal','2740':'midnight','2741':'green-ish','2742':'Not Safe For Work Warning.','2743':'Warning. This content contains material that may not be suitable for all audiences. Viewer discretion is advised. The content may include explicit language, sexual themes, nudity, or other adult-oriented material. It is intended for mature audiences only.','2744':'Proceed.','2745':'Years','2746':'Days','2747':'Hours','2748':'Minutes','2749':'Set Alias','2750':'Release','2751':'Delete',
@@ -1360,6 +1385,10 @@ class App extends Component {
         'APT': this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
 
         // 'ADA': this.get_coin_info('ADA', 'Cardano', 'https://bafkreighfusfpcbbvoqmjeoyxo7bnxqc3rdhctsvj7wwe74bdpnav7uxem.ipfs.w3s.link/', 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
+
+        'STX': this.get_coin_info('STX', 'Stacks', 'https://bafkreigcxeejba4qmk33ecsmlzzpmfxlihwtqmwje4cyjxiu6fg3wfmcrm.ipfs.w3s.link/', 'microSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
+
+        'AR': this.get_coin_info('AR', 'Arweave', 'https://bafkreidyyzdm2fp7bz6wwv7eyyxpzll4djv4pal74x4wcfheyh6qiqd75a.ipfs.w3s.link/', 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
     }
     return list
   }
@@ -1401,7 +1430,9 @@ class App extends Component {
         'TEGgcyRe4GfyRRS73adfVVtTDBpUuSPXGY',
         'rpTTrdJSFrqhKuwv87MJj8egULabstELn9',
         '7KjURTEzcC96eWQDcLsZxRqo1gM3SA7dkHxFsrAYsspe',
-        '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d'
+        '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d',
+        'SPDDSC21KS91Y9FANB2X4T6NDRX0HRPD401EDRV2',
+        'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U',
     ]
     return default_addresses
   }
@@ -3562,7 +3593,6 @@ class App extends Component {
     // } catch (error) {
     //   console.log('Error fetching data: ', error)
     // }
-
   }
 
   init_db = async () => {
@@ -4754,19 +4784,15 @@ class App extends Component {
 
   render_send_receive_coin_bottomsheet(){
     if(this.state.send_receive_coin_bottomsheet2 != true) return;
-    var background_color = this.state.theme['send_receive_ether_background_color'];
     var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
     var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
-    var size = this.getScreenSize();
     var os = getOS()
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.send_receive_coin_bottomsheet} onClose={this.open_send_receive_coin_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} />
-                      </div>
+                      {this.render_send_receive_coin_element()}
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
                 </Sheet.Container>
@@ -4776,10 +4802,21 @@ class App extends Component {
     }
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_coin_bottomsheet.bind(this)} open={this.state.send_receive_coin_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} />
-          </div>
+        {this.render_send_receive_coin_element()}
       </SwipeableBottomSheet>
+    )
+  }
+
+  render_send_receive_coin_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)}
+        
+        />
+      </div>
     )
   }
 
@@ -4870,6 +4907,12 @@ class App extends Component {
     }
     else if(item['symbol'] == 'ADA'){
       return this.validate_cardano_address(address)
+    }
+    else if(item['symbol'] == 'STX'){
+      return this.validate_stacks_address(address)
+    }
+    else if(item['symbol'] == 'AR'){
+      return this.validate_arweave_address(address)
     }
 
 
@@ -5012,6 +5055,20 @@ class App extends Component {
     // }
   }
 
+  validate_stacks_address(address){
+    return validateStacksAddress(address);
+  }
+
+  validate_arweave_address(address){
+    if (!/^[a-zA-Z0-9_-]{43}$/.test(address)) return false;
+    try {
+      let decoded = Buffer.from(address, 'base64');
+      return decoded.length === 32;
+    } catch (e) {
+      return false;
+    }
+  }
+
 
 
 
@@ -5065,11 +5122,19 @@ class App extends Component {
     else if(item['symbol'] == 'ADA'){
       await this.create_and_broadcast_cardano_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
+    else if(item['symbol'] == 'STX'){
+      await this.create_and_broadcast_stacks_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+    }
+    else if(item['symbol'] == 'AR'){
+      await this.create_and_broadcast_arweave_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+
+    var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
 
     var me = this;
     setTimeout(function() {
       me.update_coin_balances(item['symbol'], false)
-    }, (1 * 30_000));
+    }, sync_time);
   }
 
   create_and_broadcast_bitcoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
@@ -5676,6 +5741,61 @@ class App extends Component {
     
   }
 
+  create_and_broadcast_stacks_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_stacks_wallet(seed)
+    
+    const amount = transfer_amount.toString()
+    const fees = parseInt(fee)
+    const txOptions = {
+      recipient: recipient_address,
+      amount: amount,
+      senderKey: wallet.wallet.accounts[0].stxPrivateKey,
+      STACKS_MAINNET,
+      memo: memo_text,
+      fee: fees,
+      nonce: data['nonce'],
+    };
+
+    try{
+      const transaction = await makeSTXTokenTransfer(txOptions);
+      const response = await broadcastTransaction({ transaction: transaction, attachment: '', network: 'mainnet' });
+      var transaction_hash = response.txid
+
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash})
+    }catch(e){
+      console.log('stacks', e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+    
+  }
+
+  create_and_broadcast_arweave_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    const wallet = data['wallet']
+    try{
+      var transaction = await arweave.createTransaction({
+        target: recipient_address,
+        quantity: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+      }, wallet.key);
+      await arweave.transactions.sign(transaction, wallet.key);
+      const transaction_hash = transaction['id']
+      const response = await arweave.transactions.post(transaction);
+
+      if(response.status !== 200){
+        throw new Error(`Transaction failed ${response}`);
+      }
+
+      var sync_time = (3 * 60_000)
+      var me = this;
+      setTimeout(function() {
+        me.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':transaction.reward, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash})
+      }, sync_time);
+    }catch(e){
+      console.log('arweave', e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
 
 
 
@@ -5725,6 +5845,8 @@ class App extends Component {
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)}
+      
       />
     )
   }
@@ -6242,12 +6364,42 @@ class App extends Component {
     clone[this.state.selected_e5] = true
     this.setState({is_running: clone})
 
+    var set_storage_option = this.state.storage_option
+    var my_preferred_nitro = this.state.my_preferred_nitro
+    var t = (5 * 60 * 1000)
+    if(my_preferred_nitro == '' && set_storage_option == 'arweave') t = (35 * 60 * 1000);
+
     var me = this;
     setTimeout(function() {
       var clone = structuredClone(me.state.is_running)
       clone[me.state.selected_e5] = false
       me.setState({is_running: clone})
-    }, (5 * 60 * 1000));
+    }, t);
+  }
+
+  calculate_arweave_data_fees = async (tx) => {
+    var set_storage_option = this.state.storage_option
+    var my_preferred_nitro = this.state.my_preferred_nitro
+    if(my_preferred_nitro == '' && set_storage_option == 'arweave'){
+      var object_as_string = JSON.stringify(tx, (key, value) =>
+          typeof value === 'bigint'
+              ? value.toString()
+              : value
+      )
+      var final_data = this.encrypt_storage_data(object_as_string)
+      let test_wallet_key = await arweave.wallets.generate();
+      var transaction = await arweave.createTransaction({
+        data: final_data
+      }, test_wallet_key);
+      transaction.addTag('Content-Type', 'text');
+      transaction.addTag('Client', 'E5')
+      transaction.addTag('Version', this.state.version)
+      
+      var transaction_fee = transaction.reward
+      var clone = structuredClone(this.state.calculated_arewave_storage_fees_figures)
+      clone[this.state.selected_e5] = transaction_fee
+      this.setState({calculated_arewave_storage_fees_figures: clone})
+    }
   }
 
   calculate_gas_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
@@ -6397,8 +6549,10 @@ class App extends Component {
 
   reset_gas_calculation_figure(me){
     var clone = structuredClone(me.state.calculated_gas_figures)
+    var clone2 = structuredClone(me.state.calculated_arewave_storage_fees_figures)
     clone[me.state.selected_e5] = 0
-    me.setState({calculated_gas_figures: clone})
+    clone2[me.state.selected_e5] = 0
+    me.setState({calculated_gas_figures: clone, calculated_arewave_storage_fees_figures: clone2})
   }
 
   delete_stack_items(delete_pos_array){
@@ -15558,8 +15712,19 @@ class App extends Component {
     // console.log('coin', this.state.coin_data)
     coin_data['APT'] = await this.get_and_set_aptos_wallet_info(seed)
     // console.log('coin', 'aptos...')
+    // console.log('coin', this.state.coin_data)
     coin_data['ADA'] = await this.get_and_set_cardano_wallet_info(seed)
-    // console.log('coin', 'aptos...')
+    // console.log('coin', 'cardano...')
+    // console.log('coin', this.state.coin_data)
+    coin_data['STX'] = await this.get_and_set_stacks_wallet_info(seed)
+    // console.log('coin', 'stacks...')
+    // console.log('coin', this.state.coin_data)
+
+
+    //should be last
+    coin_data['AR'] = await this.get_and_set_arweave_wallet_info(seed)
+    // console.log('coin', 'arweave...')
+    // console.log('coin', this.state.coin_data)
     console.log('coin', coin_data)
     this.setState({coin_data_status: 'set', coin_data:coin_data})
   }
@@ -15593,23 +15758,27 @@ class App extends Component {
       this.update_time[coin] = Date.now()
       this.prompt_top_notification(this.getLocale()['2927g']/* Refreshing Wallet... */, 800)
     }
-    if(coin == 'FIL' || should_update_all) coin_data = await this.update_filecoin_wallet_balance(coin_data)
-    if(coin == 'BTC' || should_update_all) coin_data = await this.update_bitcoin_balance(coin_data)
-    if(coin == 'BCH' || should_update_all) coin_data = await this.update_bitcoin_cash_balance(coin_data)
-    if(coin == 'LTC' || should_update_all) coin_data = await this.update_litecoin_balance(coin_data)
-    if(coin == 'DOGE' || should_update_all) coin_data = await this.update_dogecoin_balance(coin_data)
-    if(coin == 'DASH' || should_update_all) coin_data = await this.update_dash_balance(coin_data)
-    if(coin == 'TRX' || should_update_all) coin_data = await this.update_tron_balance(coin_data)
-    if(coin == 'XRP' || should_update_all) coin_data = await this.update_xrp_balance(coin_data)
-    if(coin == 'XLM' || should_update_all) coin_data = await this.update_xlm_balance(coin_data)
-    if(coin == 'DOT' || should_update_all) coin_data = await this.update_dot_balance(coin_data)
-    if(coin == 'KSM' || should_update_all) coin_data = await this.update_ksm_balance(coin_data)
-    if(coin == 'ALGO' || should_update_all) coin_data = await this.update_algorand_balance(coin_data)
-    if(coin == 'XTZ' || should_update_all) coin_data = await this.update_tezos_balance(coin_data)
-    if(coin == 'ATOM' || should_update_all) coin_data = await this.update_cosmos_balance(coin_data)
-    if(coin == 'SOL' || should_update_all) coin_data = await this.update_solana_balance(coin_data)
-    if(coin == 'APT' || should_update_all) coin_data = await this.update_aptos_balance(coin_data)
-    if(coin == 'ADA' || should_update_all) coin_data = await this.update_ada_balance(coin_data)
+    if(coin == 'FIL' || should_update_all) coin_data = await this.update_filecoin_wallet_balance(coin_data);
+    if(coin == 'BTC' || should_update_all) coin_data = await this.update_bitcoin_balance(coin_data);
+    if(coin == 'BCH' || should_update_all) coin_data = await this.update_bitcoin_cash_balance(coin_data);
+    if(coin == 'LTC' || should_update_all) coin_data = await this.update_litecoin_balance(coin_data);
+    if(coin == 'DOGE' || should_update_all) coin_data = await this.update_dogecoin_balance(coin_data);
+    if(coin == 'DASH' || should_update_all) coin_data = await this.update_dash_balance(coin_data);
+    if(coin == 'TRX' || should_update_all) coin_data = await this.update_tron_balance(coin_data);
+    if(coin == 'XRP' || should_update_all) coin_data = await this.update_xrp_balance(coin_data);
+    if(coin == 'XLM' || should_update_all) coin_data = await this.update_xlm_balance(coin_data);
+    if(coin == 'DOT' || should_update_all) coin_data = await this.update_dot_balance(coin_data);
+    if(coin == 'KSM' || should_update_all) coin_data = await this.update_ksm_balance(coin_data);
+    if(coin == 'ALGO' || should_update_all) coin_data = await this.update_algorand_balance(coin_data);
+    if(coin == 'XTZ' || should_update_all) coin_data = await this.update_tezos_balance(coin_data);
+    if(coin == 'ATOM' || should_update_all) coin_data = await this.update_cosmos_balance(coin_data);
+    if(coin == 'SOL' || should_update_all) coin_data = await this.update_solana_balance(coin_data);
+    if(coin == 'APT' || should_update_all) coin_data = await this.update_aptos_balance(coin_data);
+    if(coin == 'ADA' || should_update_all) coin_data = await this.update_ada_balance(coin_data);
+    if(coin == 'STX' || should_update_all) coin_data = await this.update_stacks_balance(coin_data);
+    
+    
+    if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
   }
 
@@ -16824,6 +16993,151 @@ class App extends Component {
     // clone['ADA']['utxos'] = balance_and_utxos.utxos;
     // clone['ADA']['fee']['fee'] = fees;
     // return clone
+  }
+
+
+
+
+
+
+
+
+  get_and_set_stacks_wallet_info = async (seed) => {
+    try{
+      const wallet = await this.generate_stacks_wallet(seed)
+      const address = wallet.address
+      const balance_object = await this.fetch_stacks_balance(wallet.address)
+      const nonce = balance_object.nonce
+      const balance = parseInt(balance_object.balance, 16);
+      
+      const fees_obj = await this.fetch_stacks_network_fees()
+      const fees = fees_obj * 200
+
+      var fee_info = {'fee':fees, 'type':'variable', 'per':'transaction'}
+      var data = {'balance':bigInt(balance), 'address':address,'nonce':nonce, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
+      return data
+    }catch(e){
+      console.log('coin',e)
+    }
+  }
+
+  generate_mnemonic_from_seed = async (mnemonic) => {
+    var hash = await this.generate_hash(mnemonic)
+    let bytes = Buffer.from(hash, "utf8");
+    if (bytes.length < 16) {
+      bytes = Buffer.concat([bytes, Buffer.alloc(16 - bytes.length)]); // Pad with zeros
+    } else if (bytes.length > 16) {
+      bytes = bytes.slice(0, 16); // Trim excess bytes
+    }
+    const mnemonic_entropy = bytes.toString("hex");
+    return entropyToMnemonic(mnemonic_entropy); 
+  }
+
+  generate_stacks_wallet = async (mnemonic) => {
+    const wallet_skd = require('@stacks/wallet-sdk');
+    var entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const wallet = await wallet_skd.generateWallet({
+      secretKey: entropic_mnemonic,
+      password: '',
+    });
+    const address = getAddressFromPrivateKey(wallet.accounts[0].stxPrivateKey, STACKS_MAINNET);
+    return {wallet: wallet, address: address}
+  }
+
+  fetch_stacks_balance = async (address) => {
+    const STACKS_API = 'https://api.mainnet.hiro.so';
+    const request = `${STACKS_API}/v2/accounts/${address}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      return JSON.parse(data)
+    }
+    catch(e){
+      console.log(e)
+      return null
+    }
+  }
+
+  fetch_stacks_network_fees = async () => {
+    const STACKS_API = 'https://api.mainnet.hiro.so';
+    const request = `${STACKS_API}/v2/fees/transfer`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      return JSON.parse(data)
+    }
+    catch(e){
+      console.log(e)
+      return null
+    }
+  }
+
+  update_stacks_balance = async (clone) => {
+    var address = clone['STX']['address']
+    const balance_object = await this.fetch_stacks_balance(address)
+    const nonce = balance_object.nonce
+    const balance = parseInt(balance_object.balance, 16);
+    clone['STX']['balance'] = balance;
+    clone['STX']['nonce'] = nonce;
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+
+
+  get_and_set_arweave_wallet_info = async (seed) => {
+    try{
+      const wallet = await this.generate_arweave_wallet(seed)
+      const address = wallet.address
+      const balance = await arweave.wallets.getBalance(wallet.address)
+      const fees = await this.estimate_arweave_network_fees('-zdLm14FOLtTWxTEVzhh2N9AGCnW_-O_6DIcLxgk-W0')
+
+      var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
+      var data = {'balance':bigInt(balance), 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
+      return data
+    }catch(e){
+      console.log('coin',e)
+    }
+  }
+
+  generate_arweave_wallet = async (mnemonic) => {
+    var entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    let wallet = await getKeyFromMnemonic(entropic_mnemonic)
+    const address = await arweave.wallets.jwkToAddress(wallet);
+    return { key: wallet, address: address };
+  }
+
+  estimate_arweave_network_fees = async (target) => {
+    const key = await arweave.wallets.generate();
+    const tx = await arweave.createTransaction({
+      target: target,
+      quantity: arweave.ar.arToWinston('1')
+    }, key);
+    return tx.reward
+  }
+
+  update_arweave_balance = async (clone) => {
+    var address = clone['AR']['address']
+    const balance = await arweave.wallets.getBalance(address)
+    const fees = await this.estimate_arweave_network_fees('-zdLm14FOLtTWxTEVzhh2N9AGCnW_-O_6DIcLxgk-W0')
+    clone['AR']['balance'] = balance;
+    clone['AR']['fee']['fee'] = fees;
+    return clone
   }
 
 
@@ -20441,15 +20755,17 @@ class App extends Component {
       var hash = web3.utils.keccak256('en')
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
         var job_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
-        var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
-        await this.wait(90)
-        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
-        created_job.push(job)
-        created_job_mappings[id] = job
+        if(job_data != null){
+          var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
+          await this.wait(90)
+          var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
+          created_job.push(job)
+          created_job_mappings[id] = job
 
-        if(job['author'] == account){
-          my_jobs.push(job)
-          my_job_ids.push(job['id'])
+          if(job['author'] == account){
+            my_jobs.push(job)
+            my_job_ids.push(job['id'])
+          }
         }
       }
 
@@ -22451,14 +22767,13 @@ class App extends Component {
     var cid = events[events.length - 1].returnValues.p4
     if(cid == 'e3' || cid == 'e2' || cid == 'e1' || cid == 'e') return;
 
-    const response = await this.fetch_objects_data_from_ipfs_using_option(cid)
-    return response
-
+    return await this.fetch_objects_data_from_ipfs_using_option(cid)
   }
 
 
 
   fetch_objects_data_from_ipfs_using_option = async (ecid) => {
+    if(ecid == 'ar.MY_Kh9i3VhChJuTzo_Cyu6bG6hCvasqzWGfo4oniNnA_1xjiAYxW') return null
     if(!ecid.includes('.')){
       var data = await this.fetch_object_data_from_infura(ecid)
       return data
@@ -22526,6 +22841,18 @@ class App extends Component {
       }
       return data
     }
+    else if(option == 'ar'){
+      var data = this.fetch_from_storage(id)
+      if(data == null){
+        data = await this.fetch_data_from_arweave(id)
+        this.store_in_local_storage(id, data)
+      }
+      if(included_underscore){
+        if(data == null) return null;
+        return data[internal_id]
+      }
+      return data
+    }
   }
 
   store_image_in_ipfs = async (data) => {
@@ -22563,7 +22890,83 @@ class App extends Component {
       if(unappend_identifier == true) return cid
       return 'ch.'+cid;
     }
+    else if(set_storage_option == 'arweave'){
+      var cid = await this.store_data_in_arweave_storage(data, unencrypt_image)
+      if(unappend_identifier == true) return cid
+      return 'ar.'+cid;
+    }
   }
+
+
+
+
+
+  store_data_in_arweave_storage = async (_data, unencrypt_image) => {
+    var final_data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
+    var wallet_data = this.state.coin_data['AR']
+    if(wallet_data != null){
+      const wallet = wallet_data['wallet']
+      try{
+        var transaction = await arweave.createTransaction({
+          data: final_data
+        }, wallet.key);
+        transaction.addTag('Content-Type', 'text');
+        transaction.addTag('Client', 'E5')
+        transaction.addTag('Version', this.state.version)
+        await arweave.transactions.sign(transaction, wallet.key);
+
+        const transaction_hash = transaction['id']
+        var uploader = await arweave.transactions.getUploader(transaction);
+        while (!uploader.isComplete) {
+          await uploader.uploadChunk();
+        }
+
+        this.prompt_top_notification(this.getLocale()['2738g']/* 'Arweave uploade complete, waiting for 5 network confirmations...' */, 15000)
+
+        this.is_uploading_arweave_file = true
+        while (this.is_uploading_arweave_file == true) {
+          if (this.is_uploading_arweave_file == false) break
+          console.log('appdata','Waiting for data to be uploaded')
+          this.check_if_required_confirmations(transaction_hash)
+          await new Promise(resolve => setTimeout(resolve, 15_000))
+        }
+
+        var me = this;
+        setTimeout(function() {
+          me.update_coin_balances('AR', false)
+        }, (7 * 60_000));
+
+        this.prompt_top_notification(this.getLocale()['2738i']/* 'Arweave transaction confirmed! proceeding with run...' */, 5000)
+
+        const encoded = Buffer.from(transaction_hash).toString('base64')
+        return encoded
+      }catch(e){
+        console.log('Error uploading data: ', e)
+        this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+        return '';
+      }
+    }
+  }
+
+  check_if_required_confirmations = async (transaction_hash) => {
+    const pending_status = await arweave.transactions.getStatus(transaction_hash)
+    if(pending_status.confirmed != null && pending_status.confirmed.number_of_confirmations != null && pending_status.confirmed.number_of_confirmations > 1){
+      this.is_uploading_arweave_file = false
+    }
+    console.log(pending_status)
+  }
+
+  fetch_data_from_arweave = async (id) => {
+    const decoded = Buffer.from(id, 'base64').toString();
+    var data = await arweave.transactions.getData(decoded, {decode: true, string: true})
+    console.log('appdata', data)
+    var decrypted_data = this.decrypt_storage_data(data)
+    console.log('appdata', decrypted_data)
+    var obj = JSON.parse(decrypted_data)
+    console.log('appdata', obj)
+    return obj
+  }
+
 
 
 
@@ -22652,6 +23055,7 @@ class App extends Component {
 
 
 
+
   store_data_in_infura = async (_data, unencrypt_image) => {
     var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
     const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
@@ -22732,6 +23136,8 @@ class App extends Component {
       return default_gateway
     }
   }
+
+
 
 
 

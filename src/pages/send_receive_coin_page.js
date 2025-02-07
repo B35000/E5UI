@@ -157,7 +157,7 @@ class SendReceiveCoinPage extends Component {
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts()}
                         <div style={{height: 10}}/>
-                        {this.render_empty_views(4)}
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts2()}
@@ -171,7 +171,7 @@ class SendReceiveCoinPage extends Component {
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts()}
                         <div style={{height: 10}}/>
-                        {this.render_empty_views(4)}
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts2()}
@@ -238,7 +238,7 @@ class SendReceiveCoinPage extends Component {
 
     show_memo_textarea_if_required(){
         var item = this.state.coin
-        if(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'){
+        if(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX'){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -344,7 +344,7 @@ class SendReceiveCoinPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1381']/* 'Amount to Send' */, 'details':this.props.app_state.loc['1382']/* 'Set the amount to send in the number picker below.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1383']/* Picked Amount In Ether and Wei */}</p>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407i']/* Picked Amount. */}</p>
                     {this.render_detail_item('2', this.get_picked_amount_in_base_units())}
                     {this.render_detail_item('2', this.get_picked_amount_in_decimal())}
                 </div>
@@ -397,8 +397,8 @@ class SendReceiveCoinPage extends Component {
         this.setState({picked_sats_amount: number})
     }
 
-    set_maximum(){
-        var set_fee = this.get_default_transaction_fee()
+    set_maximum = async () => {
+        var set_fee = await this.get_default_transaction_fee()
         var item = this.state.coin
         var data = this.props.app_state.coin_data[item['symbol']]
         var accounts_balance = data['balance'] - data['min_deposit']
@@ -415,7 +415,7 @@ class SendReceiveCoinPage extends Component {
         }
     }
 
-    get_default_transaction_fee(){
+    get_default_transaction_fee = async () => {
         var item = this.state.coin
         var data = this.props.app_state.coin_data[item['symbol']]
         var fee = data['fee']['fee']
@@ -429,6 +429,12 @@ class SendReceiveCoinPage extends Component {
         }
         else if(per == 'transaction'){
             final_amount = fee
+        }
+
+        if(item['symbol'] == 'AR'){
+            var target = this.props.validate_arweave_address(this.state.recipient_address) ? this.state.recipient_address : '-zdLm14FOLtTWxTEVzhh2N9AGCnW_-O_6DIcLxgk-W0'
+            var current_network_fees = await this.props.estimate_arweave_network_fees(target)
+            final_amount = parseInt(current_network_fees) * 1.5
         }
         return final_amount
     }
@@ -511,7 +517,7 @@ class SendReceiveCoinPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2931']/* 'Transaction Fee.' */, 'details':this.props.app_state.loc['2932']/* 'Set the amount you wish to pay for your transaction.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1387']/* Picked Gas Price in Gwei. */}</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407j']/* Picked Transaction fee. */}</p>
                         
                         {this.render_detail_item('2', this.get_picked_fee_amount_in_decimal())}
                         {this.render_detail_item('2', this.get_picked_fee_amount_in_base_units())}
@@ -560,8 +566,8 @@ class SendReceiveCoinPage extends Component {
         }
     }
 
-    open_confirm_send(){
-        var set_fee = this.get_default_transaction_fee()
+    open_confirm_send = async () => {
+        var set_fee = await this.get_default_transaction_fee()
         const transfer_amount = this.state.picked_sats_amount
         const recipient = this.state.recipient_address
         const memo_text = this.state.memo_text
@@ -598,10 +604,10 @@ class SendReceiveCoinPage extends Component {
     }
 
 
-    when_send_coin_confirmation_received(){
+    when_send_coin_confirmation_received = async () => {
         this.props.notify(this.props.app_state.loc['2951']/* 'Broadcasting your Transaction...' */, 1000)
         var item = this.state.coin
-        var set_fee = this.get_default_transaction_fee()
+        var set_fee = await this.get_default_transaction_fee()
         const transfer_amount = parseInt(this.state.picked_sats_amount)
         const recipient = this.state.recipient_address
         const memo_text = this.state.memo_text
@@ -673,6 +679,8 @@ class SendReceiveCoinPage extends Component {
                 <div onClick={() => this.copy_to_clipboard(address)}>
                     {this.render_detail_item('5',{'text':this.props.app_state.loc['1402']/* 'Copy to Clipboard' */, 'action':''})}
                 </div>
+
+                <div style={{height: 20}}/>
 
                 <div style={{height: 200, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'30px 0px 0px 0px'}}>
                     <QRCode

@@ -286,12 +286,16 @@ class EthersDetailsSection extends Component {
                     <div>
                         <div style={{height: 10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(parseInt(balance_value_in_usd)), 'barwidth':this.calculate_bar_width(parseInt(balance_value_in_usd)), 'number':this.format_account_balance_figure(parseInt(balance_value_in_usd)), 'barcolor':'#606060', 'relativepower':'USD', })}
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(this.round_off(balance_value_in_usd)), 'barwidth':this.calculate_bar_width(this.round_off(balance_value_in_usd)), 'number':this.format_account_balance_figure(this.round_off(balance_value_in_usd)), 'barcolor':'#606060', 'relativepower':'USD', })}
                         </div>
                     </div>
                 )
             }
         }
+    }
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
     }
 
     render_wallet_status(item){
@@ -376,7 +380,7 @@ class EthersDetailsSection extends Component {
             this.get_token('OZO', 'Ozone Chain', 'E345'),
             this.get_token('PIX', 'Pixie', 'E355'),
             this.get_token('REI', 'Rei Network', 'E365'),
-            this.get_token('KLAY', 'Klaytn Mainnet', 'E375'),
+            // this.get_token('KLAY', 'Klaytn Mainnet', 'E375'),
             this.get_token('MNT', 'Mantle', 'E385'),
             this.get_token('PLS', 'Pulse Chain', 'E395'),
             this.get_token('CANTO', 'Canto', 'E405'),
@@ -416,6 +420,9 @@ class EthersDetailsSection extends Component {
             this.get_token('ELV', 'Eluv.io', 'E745'),
             this.get_token('ETHO', 'Etho Protocol', 'E755'),
             this.get_token('OLT', 'One Ledger', 'E765'),
+            // this.get_token('HBAR', 'Hedera Hashgraph', 'E775'),
+            this.get_token('IOTA', 'IOTA EVM', 'E785'),
+            this.get_token('KAIA', 'KAIA', 'E795'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')

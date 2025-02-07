@@ -272,12 +272,16 @@ class CoinsDetailsSection extends Component {
                     <div>
                         <div style={{height: 10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(parseInt(balance_value_in_usd)), 'barwidth':this.calculate_bar_width(parseInt(balance_value_in_usd)), 'number':this.format_account_balance_figure(parseInt(balance_value_in_usd)), 'barcolor':'#606060', 'relativepower':'USD', })}
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927j']/* 'Wallet Value' */, 'subtitle':this.format_power_figure(this.round_off(balance_value_in_usd)), 'barwidth':this.calculate_bar_width(this.round_off(balance_value_in_usd)), 'number':this.format_account_balance_figure(this.round_off(balance_value_in_usd)), 'barcolor':'#606060', 'relativepower':'USD', })}
                         </div>
                     </div>
                 )
             }
         }
+    }
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
     }
 
     render_block_size_metric(block_size){
@@ -436,10 +440,11 @@ class CoinsDetailsSection extends Component {
         var data = this.props.app_state.coin_data[item['symbol']]
         var status = this.props.app_state.coin_data_status
         if(data != null && data['address'] != null && this.is_address_set(data['address'])){
-            var address = start_and_end(data['address'])
+            var address = data['address']
+            var shortened_address = start_and_end(data['address'])
             return(
                 <div onClick={() => this.copy_to_clipboard(address)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2917']/* Wallet Address.' */, 'details':address, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2917']/* Wallet Address.' */, 'details':shortened_address, 'size':'l'})}
                 </div>
             )
         }
@@ -505,11 +510,10 @@ class CoinsDetailsSection extends Component {
 
 
     render_coin_blockexplorer_link(item){
-        var link = this.get_coin_blockexplorer_link(item)
         var data = this.props.app_state.coin_data[item['symbol']]
-        // if(!this.props.app_state.has_wallet_been_set) return;
         if(data == null) return;
         if(data['address'] == null || !this.is_address_set(data['address'])) return;
+        var link = this.get_coin_blockexplorer_link(item)
 
         if(link != null){
             return(
@@ -577,6 +581,12 @@ class CoinsDetailsSection extends Component {
         }
         else if(item['symbol'] == 'ADA'){
             return `https://cardanoscan.io/address/${hash}`
+        }
+        else if(item['symbol'] == 'STX'){
+            return `https://explorer.hiro.so/address/${hash}?chain=mainnet`
+        }
+        else if(item['symbol'] == 'AR'){
+            return `https://viewblock.io/arweave/address/${hash}`
         }
     }
 
