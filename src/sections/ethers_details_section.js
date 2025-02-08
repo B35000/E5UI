@@ -423,6 +423,8 @@ class EthersDetailsSection extends Component {
             // this.get_token('HBAR', 'Hedera Hashgraph', 'E775'),
             this.get_token('IOTA', 'IOTA EVM', 'E785'),
             this.get_token('KAIA', 'KAIA', 'E795'),
+            this.get_token('S', 'Sonic', 'E805'),
+            this.get_token('BERA', 'Berachain', 'E815'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
@@ -516,7 +518,6 @@ class EthersDetailsSection extends Component {
                     <div onClick={() => this.copy_to_clipboard(this.get_account_address(e5))}>
                         {this.render_detail_item('3', item['address'])}
                     </div>
-                    <div style={{height: 10}}/>
                 </div>
             )
         }else{
@@ -525,7 +526,6 @@ class EthersDetailsSection extends Component {
                     <div>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2474']/* 'Wallet Address' */, 'details':this.format_address_if_harmony('0x0000000000000000000000000000000000000000', e5), 'size':'l'})}
                     </div>
-                    <div style={{height: 10}}/>
                 </div>
             )
         }

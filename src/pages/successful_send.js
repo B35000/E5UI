@@ -372,6 +372,10 @@ class SuccessfulSend extends Component {
             return `https://explorer.evm.iota.org/tx/${hash}`
         }else if(e5 == 'E795'){
             return `https://www.kaiascan.io/tx/${hash}`
+        }else if(e5 == 'E805'){
+            return `https://sonicscan.org/tx/${hash}`
+        }else if(e5 == 'E815'){
+            return `https://berascan.com/tx/${hash}`
         }
     }
 

@@ -497,7 +497,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -993,6 +993,18 @@ class App extends Component {
         token:'KAIA',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreigsndweoxio5jfmnjiliqncxgbuqfswdp5ptrtp2mde73jesc7kia.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+      },
+      'E805':{
+        web3:['https://rpc.soniclabs.com'],
+        token:'S',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreigfnvmswmzp2qqrbky4at4uj4xoa44f2j7r3a2ux2op7iibaskcsi.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+      },
+      'E815':{
+        web3:['https://rpc.berachain.com/'],
+        token:'BERA',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreic3mo4xe7dfftguut7apsufbc4mzlnwxqpupmyo46f6adzd5nd65u.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
       },
     }
   }

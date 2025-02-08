@@ -3322,7 +3322,7 @@ class PostListSection extends Component {
             this.get_token_data('KAVA', 'Kava EVM', 'E245'),
             this.get_token_data('NEON', 'Neon EVM', 'E255'),
             this.get_token_data('mADA', 'Milkomeda', 'E265'),
-            this.get_token_data('FTM', 'Fantom Opera', 'E275'),
+            // this.get_token_data('FTM', 'Fantom Opera', 'E275'),
             this.get_token_data('BRISE', 'Bitgert', 'E285'),
             this.get_token_data('SYS', 'Syscoin EVM', 'E295'),
             this.get_token_data('AVAX', 'Avalanche C-Chain', 'E305'),
@@ -3375,6 +3375,8 @@ class PostListSection extends Component {
             // this.get_token_data('HBAR', 'Hedera Hashgraph', 'E775'),
             this.get_token_data('IOTA', 'IOTA EVM', 'E785'),
             this.get_token_data('KAIA', 'KAIA', 'E795'),
+            this.get_token_data('S', 'Sonic', 'E805'),
+            this.get_token_data('BERA', 'Berachain', 'E815'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
