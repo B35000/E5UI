@@ -22975,11 +22975,11 @@ class App extends Component {
       // var data = await arweave.transactions.getData(decoded, {decode: true, string: true})
       var return_data = await fetch(`https://arweave.net/${decoded}`)
       var data = await return_data.text()
-      console.log('appdata', data)
+      // console.log('appdata', data)
       var decrypted_data = this.decrypt_storage_data(data)
-      console.log('appdata', decrypted_data)
+      // console.log('appdata', decrypted_data)
       var obj = JSON.parse(decrypted_data)
-      console.log('appdata', obj)
+      // console.log('appdata', obj)
       return obj
     }catch(e){
       console.log('appdata',e)

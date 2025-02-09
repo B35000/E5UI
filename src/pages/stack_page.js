@@ -4124,7 +4124,8 @@ class StackPage extends Component {
             return null
         }
         if(calculate_gas != null && calculate_gas == true){
-            return 'in.QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk_qwsedrf'
+            return 'ar.TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw=='
+            // return 'in.QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk_qwsedrf'
         }
         if(ipfs_index != null){
             console.log('stack_page', 'ipfs_index', data_index)
