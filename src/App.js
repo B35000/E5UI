@@ -497,7 +497,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -22857,7 +22857,7 @@ class App extends Component {
       var data = this.fetch_from_storage(id)
       if(data == null){
         data = await this.fetch_data_from_arweave(id)
-        this.store_in_local_storage(id, data)
+        if(data != null) this.store_in_local_storage(id, data);
       }
       if(included_underscore){
         if(data == null) return null;
@@ -22969,14 +22969,23 @@ class App extends Component {
   }
 
   fetch_data_from_arweave = async (id) => {
-    const decoded = Buffer.from(id, 'base64').toString();
-    var data = await arweave.transactions.getData(decoded, {decode: true, string: true})
-    console.log('appdata', data)
-    var decrypted_data = this.decrypt_storage_data(data)
-    console.log('appdata', decrypted_data)
-    var obj = JSON.parse(decrypted_data)
-    console.log('appdata', obj)
-    return obj
+    try{
+      const decoded = Buffer.from(id, 'base64').toString();
+      console.log(decoded)
+      // var data = await arweave.transactions.getData(decoded, {decode: true, string: true})
+      var return_data = await fetch(`https://arweave.net/${decoded}`)
+      var data = await return_data.text()
+      console.log('appdata', data)
+      var decrypted_data = this.decrypt_storage_data(data)
+      console.log('appdata', decrypted_data)
+      var obj = JSON.parse(decrypted_data)
+      console.log('appdata', obj)
+      return obj
+    }catch(e){
+      console.log('appdata',e)
+      return null
+    }
+    
   }
 
 
