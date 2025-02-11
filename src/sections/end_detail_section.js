@@ -373,11 +373,13 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
 
                     {this.show_y_aggregate_chart(selected_object, symbol)}
+                    <div style={{height:10}}/>
 
-                    {this.show_24_hour_volume_data(selected_object, symbol)}
+                    {this.render_price_of_token(selected_object)}
 
                     {this.render_detail_item('0')}
-                    {this.render_price_of_token(selected_object)}
+
+                    {this.show_24_hour_volume_data(selected_object, symbol)}
 
                     {this.show_transaction_count_chart(selected_object, symbol)}
                     
@@ -1092,7 +1094,6 @@ class EndDetailSection extends Component {
             var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, 'e')
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2447i']/* 'Trading Volume' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the trading volume of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
 
                     {this.render_detail_item('6', {'dataPoints':this.get_trading_volume_data_points(exchange_ratio_events, selected_object), 'interval':110, 'hide_label': true})}

@@ -3673,7 +3673,7 @@ class StackPage extends Component {
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
         // var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
         var run_gas_price = this.get_gas_price()
-        var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
+        var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*5/* 5 hours */) : this.state.run_time_expiry
 
         var gas_limit = this.get_latest_block_data(this.props.app_state.selected_e5).gasLimit
         var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
