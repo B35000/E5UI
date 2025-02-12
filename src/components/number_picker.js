@@ -20,7 +20,8 @@ import React, { Component } from 'react';
 import Slider from './slider'
 import ViewGroups from './view_groups'
 import TextInput from './text_input';
-// import E5EmptyIcon3 from './../assets/e5empty_icon.png';
+import e5_empty_icon from './../assets/e5empty_icon.png'
+import e5_empty_icon3 from './../assets/e5empty_icon3.png'
 var bigInt = require("big-integer");
 
 
@@ -84,11 +85,11 @@ class NumberPicker extends Component {
                         </div>
                         <div className="col-2" style={{'padding': '7px 0px 0px 0px'}}>
                           <div className="text-end" style={{'display': 'flex','flex-direction': 'row'}}>
-                            <img alt="" src={'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e'} style={{height:35 ,width:35}} onClick={()=>this.switch_pickers()}/>
+                            <img alt="" src={e5_empty_icon/* 'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e' */} style={{height:35 ,width:35}} onClick={()=>this.switch_pickers()}/>
                             
                             <div style={{width: 15}}/>
 
-                            <img alt="" src={'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'} style={{height:35 ,width:35}} onClick={()=>this.reset_number_picker2()} />
+                            <img alt="" src={e5_empty_icon3/* 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424' */} style={{height:35 ,width:35}} onClick={()=>this.reset_number_picker2()} />
                           </div>
                         </div>
                     </div>

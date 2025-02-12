@@ -20,7 +20,7 @@ import React, { Component } from 'react';
 // import Keyboard from "react-keyboard";
 
 import CanvasJSReact from './../externals/canvasjs.react';
-// import E5EmptyIcon from './../assets/e5empty_icon.png';
+import E5EmptyIcon from './../assets/e5empty_icon.png';
 import empty_image from './../assets/default_image_background.png'
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -65,7 +65,7 @@ class ViewGroups extends Component {
     render_detail_item(item_id, object_data){
         var background_color = this.props.theme['view_group_card_item_background'];
         var border_radius = '7px';
-        var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
+        // var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
 
         if(item_id=='0'){/* line */
             /* {this.render_detail_item('0')} */

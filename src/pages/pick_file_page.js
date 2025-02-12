@@ -55,7 +55,7 @@ class PickFilePage extends Component {
     
     state = {
         selected: 0, get_pick_file_tags_object:this.get_pick_file_tags_object('image'), function_name:'',
-        selected_ecids:[], max:10000
+        selected_ecids:[], max:10000, search_text:''
     };
 
     get_pick_file_tags_object(type){
@@ -88,7 +88,7 @@ class PickFilePage extends Component {
     }
 
     set_data(type, function_name, max){
-        this.setState({type: type, get_pick_file_tags_object: this.get_pick_file_tags_object(type), function_name: function_name, max: max})
+        this.setState({type: type, get_pick_file_tags_object: this.get_pick_file_tags_object(type), function_name: function_name, max: max, selected_ecids:[], search_text:''})
     }
 
     render(){
@@ -160,12 +160,22 @@ class PickFilePage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.render_title_text()})}
                 <div style={{height:10}}/>
 
+                <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                    <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2961a']/* 'Filter Files...' */} when_text_input_field_changed={this.when_search_text_input_field_changed.bind(this)} text={this.state.search_text} theme={this.props.theme} />
+                </div>
+
+                <div style={{height:10}}/>
+
                 {this.render_selected_files()}
                 {this.render_detail_item('0')} 
 
                 {this.render_uploaded_files()}
             </div>
         )
+    }
+
+    when_search_text_input_field_changed(text){
+        this.setState({search_text: text})
     }
 
     render_title_text(){
@@ -237,7 +247,18 @@ class PickFilePage extends Component {
         items.forEach(ecid => {
             var data = this.get_cid_split(ecid)
             if(data != null && data['filetype'] == file_type && !this.includes_function(this.state.selected_ecids, ecid)){
-                return_items.push(data)
+                if(this.props.app_state.uploaded_data[data['filetype']] != null && this.props.app_state.uploaded_data[data['filetype']][data['full']] != null){
+                    var file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
+                    var title = file_data['name']
+                    if(title.includes(this.state.search_text)){
+                        return_items.push(data)
+                    }
+                    else if(this.state.search_text === ''){
+                        return_items.push(data)
+                    }
+                }
+                
+                
             }
         });
 

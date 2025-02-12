@@ -304,6 +304,8 @@ class VideoDetailsSection extends Component {
 
                     {this.render_pin_post_button(object)}
 
+                    {this.render_follow_unfollow_author_button(object)}
+
                     {this.render_buy_album_button(object)}
 
                     {this.render_block_post_button(object)}
@@ -315,6 +317,36 @@ class VideoDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_follow_unfollow_author_button(object){
+        var author_id = object['event'].returnValues.p5
+        var follow_id = object['e5'] + ':' + author_id
+        var followed_accounts = this.props.app_state.followed_accounts
+
+        if(followed_accounts.includes(follow_id)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bp']/* 'Unfollow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Stop showing posts made by this author in my following feed.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.props.follow_unfollow_post_author(author_id, object['e5'])}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bp']/* 'Unfollow Post Author' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bn']/* 'Follow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Show posts made by this author in my following feed.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.props.follow_unfollow_post_author(author_id, object['e5']) }>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bn']/* 'Follow Post Author' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     is_object_blocked_by_me(object){

@@ -392,6 +392,8 @@ class AudioDetailSection extends Component {
 
                     {this.render_pin_post_button(object)}
 
+                    {this.render_follow_unfollow_author_button(object)}
+
                     {this.render_buy_album_button(object)}
 
                     {this.render_block_post_button(object)}
@@ -403,6 +405,36 @@ class AudioDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_follow_unfollow_author_button(object){
+        var author_id = object['event'].returnValues.p5
+        var follow_id = object['e5'] + ':' + author_id
+        var followed_accounts = this.props.app_state.followed_accounts
+
+        if(followed_accounts.includes(follow_id)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bp']/* 'Unfollow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Stop showing posts made by this author in my following feed.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.props.follow_unfollow_post_author(author_id, object['e5'])}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bp']/* 'Unfollow Post Author' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bn']/* 'Follow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Show posts made by this author in my following feed.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.props.follow_unfollow_post_author(author_id, object['e5']) }>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bn']/* 'Follow Post Author' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_markdown_if_any(object){
@@ -1098,7 +1130,10 @@ class AudioDetailSection extends Component {
         var text_align = 'left'
         var padding = '10px 15px 10px 15px'
         var font_size = ['15px', '12px', 19, 50];
-        var song_title = item['song_title']
+        var explicit_selection = item['explicit'] == null ? 0 : this.get_selected_item2(item['explicit'], 'e')
+        var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
+
+        var song_title = explicit_text + item['song_title']
         var song_details = item['song_composer']
         var song_length = this.get_song_duration(item['basic_data'])
         var text_color = this.props.theme['secondary_text_color']

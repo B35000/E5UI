@@ -2442,7 +2442,7 @@ class PostListSection extends Component {
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         // var item_images = this.get_bag_images(object)
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
             // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },

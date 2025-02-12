@@ -20,6 +20,11 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
+import stack_section_pointer from './../assets/wallet_section_1.png';
+import settings_section_pointer from './../assets/wallet_section_2.png';
+import wallet_section_pointer from './../assets/wallet_section_3.png';
+import deposit_section_pointer from './../assets/wallet_section_4.png';
+
 // import SettingsDataImage from './../assets/settings_data_image.png';
 // import WalletDataImage from './../assets/wallet_data_image.png';
 // import SendEtherDataImage from './../assets/send_ether_data_image.png';
@@ -75,7 +80,7 @@ class WikiPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -134,18 +139,18 @@ class WikiPage extends Component {
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiea2ghodwkrscl5stf73tnzrvlopmbgy3jtngjdcwcncv5tbkcauy'} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={settings_section_pointer/* 'https://nftstorage.link/ipfs/bafkreiea2ghodwkrscl5stf73tnzrvlopmbgy3jtngjdcwcncv5tbkcauy' */} alt="E5"/>
                     <div style={{height: 30}}/>
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1983']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreia6f7vzmxsq2olbfqmlgromkow5kenoa53nmutzwb5upisgz7ls5u'} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={wallet_section_pointer/* 'https://nftstorage.link/ipfs/bafkreia6f7vzmxsq2olbfqmlgromkow5kenoa53nmutzwb5upisgz7ls5u' */} alt="E5"/>
                     <div style={{height: 30}}/>
 
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1984']/* 'Then afterwards fill it with the E5s ether of your choice' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreic2g67litsuomu6n7nqy7ydbbpzdtplhf6lt7d2cfknfpq7vwkhpi'} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={deposit_section_pointer/* 'https://nftstorage.link/ipfs/bafkreic2g67litsuomu6n7nqy7ydbbpzdtplhf6lt7d2cfknfpq7vwkhpi' */} alt="E5"/>
                     <div style={{height: 20}}/>
                 </div>
             )
@@ -158,17 +163,17 @@ class WikiPage extends Component {
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreicb7gvqlpahbd6yhpok55dntagzzjixln7t2jpzy2mxrd4jqf26ae'} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={stack_section_pointer/* 'https://nftstorage.link/ipfs/bafkreicb7gvqlpahbd6yhpok55dntagzzjixln7t2jpzy2mxrd4jqf26ae' */} alt="E5"/>
                     <div style={{height: 30}}/>
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1988']/* 'In the settings-data section...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiea2ghodwkrscl5stf73tnzrvlopmbgy3jtngjdcwcncv5tbkcauy'} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={settings_section_pointer/* 'https://nftstorage.link/ipfs/bafkreiea2ghodwkrscl5stf73tnzrvlopmbgy3jtngjdcwcncv5tbkcauy' */} alt="E5"/>
                     <div style={{height: 30}}/>
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1989']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreia6f7vzmxsq2olbfqmlgromkow5kenoa53nmutzwb5upisgz7ls5u'} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={wallet_section_pointer/* 'https://nftstorage.link/ipfs/bafkreia6f7vzmxsq2olbfqmlgromkow5kenoa53nmutzwb5upisgz7ls5u' */} alt="E5"/>
                     <div style={{height: 30}}/>
 
                 </div>

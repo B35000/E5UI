@@ -645,6 +645,9 @@ class FullAudioPage extends Component {
     }
 
 
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
 
     render_song_thats_currently_playing(){
         var item = this.state.songs[this.state.pos]
@@ -652,7 +655,9 @@ class FullAudioPage extends Component {
         var text_align = 'left'
         var padding = '10px 15px 10px 15px'
         var font_size = ['15px', '12px', 19, 50];
-        var song_title = item['song_title']
+        var explicit_selection = item['explicit'] == null ? 0 : this.get_selected_item2(item['explicit'], 'e')
+        var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
+        var song_title = explicit_text + item['song_title']
         var song_details = item['song_composer']
         var song_length = '▶ '+this.get_song_duration(item['basic_data'])
         return(

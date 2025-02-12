@@ -91,7 +91,8 @@ class NewAudioPage extends Component {
         entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:'',
 
         album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
-        markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), song_credits:'', entered_zip_objects:[]
+        markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), song_credits:'', entered_zip_objects:[],
+        get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(),
     };
 
     get_new_job_page_tags_object(){
@@ -239,6 +240,18 @@ class NewAudioPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
+            ],
+        };
+    }
+
+
+    get_explicit_selector_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311cx']/* 'explicit' */], [1]
             ],
         };
     }
@@ -2522,8 +2535,18 @@ class NewAudioPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['a311ba']/* 'Track Free Plays.' */, 'subtitle':this.format_power_figure(this.state.songs_free_plays_count), 'barwidth':this.calculate_bar_width(this.state.songs_free_plays_count), 'number':this.format_account_balance_figure(this.state.songs_free_plays_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['a311bc']/* plays */, })}
                 </div>
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_free_plays_amount_picked.bind(this)} theme={this.props.theme} power_limit={0}/>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311cy']/* 'Explicit Track.' */, 'details':this.props.app_state.loc['a311cz']/* 'Specify if your track contains strong or offensive language.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explicit_selector_tags_object} tag_size={'l'} when_tags_updated={this.when_get_explicit_selector_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
             </div>
         )
+    }
+
+    when_get_explicit_selector_tags_object_updated(tag_obj){
+        this.setState({get_explicit_selector_tags_object: tag_obj})
     }
 
     when_song_title_input_field_changed(text){
@@ -2694,6 +2717,7 @@ class NewAudioPage extends Component {
         var songs_free_plays_count = this.state.songs_free_plays_count
         var song_lyrics = this.state.song_lyrics
         var song_credits = this.state.song_credits
+        var explicit = this.state.get_explicit_selector_tags_object
 
         if(song_title == ''){
             this.props.notify(this.props.app_state.loc['a311q']/* 'You need to set a title for the track.' */, 3800)
@@ -2705,7 +2729,7 @@ class NewAudioPage extends Component {
             this.props.notify(this.props.app_state.loc['a311w']/* 'You need to add an audio track.' */, 3800)
         }
         else{
-            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics, 'credits':song_credits}
+            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics, 'credits':song_credits, 'explicit':explicit}
 
             var clone = this.state.songs.slice()
             if(this.state.edit_song_item_pos != -1){
@@ -2715,7 +2739,7 @@ class NewAudioPage extends Component {
                 clone.push(song)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, song_credits:''})
+            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object()})
             
         }
     }
@@ -2836,7 +2860,7 @@ class NewAudioPage extends Component {
 
     set_focused_song_data(item_pos){
         var song = this.state.songs[item_pos]
-        this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics'], song_credits: song['credits']});
+        this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics'], song_credits: song['credits'], get_explicit_selector_tags_object: song['explicit']});
     }
 
 
@@ -2901,7 +2925,7 @@ class NewAudioPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null, entered_pdf_objects:[], markdown:''})
+                me.setState({id: makeid(8), type:me.props.app_state.loc['a311a']/* audio */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], selected_subscriptions:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, typed_link_text:'', link_search_results:[], added_links:[], get_post_preview_option:me.get_post_preview_option(), edit_text_item_pos:-1, get_masked_from_outsiders_option:me.get_masked_from_outsiders_option(), get_disabled_comments_section:me.get_disabled_comments_section(), get_post_anonymously_tags_option:me.get_post_anonymously_tags_option(), chatroom_enabled_tags_object:me.get_chatroom_enabled_tags_object(), get_album_item_listing_option:me.get_album_item_listing_option(), exchange_id:'', price_amount:0, price_data:[], exchange_id2:'', price_amount2:0, price_data2:[], song_title:'', song_composer:'', songs:[], edit_song_item_pos:-1, entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', album_art:null, entered_pdf_objects:[], markdown:'', get_explicit_selector_tags_object:me.get_explicit_selector_tags_object()})
             }, (1 * 1000));
 
             
