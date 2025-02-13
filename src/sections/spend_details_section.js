@@ -1285,13 +1285,13 @@ class SpendDetailSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p9
-                    for(var t=0; t<diff; t+=(60*100)){
+                    for(var t=0; t<diff; t+=(6000*100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
-                    for(var t=0; t<diff; t+=(60*100)){
+                    for(var t=0; t<diff; t+=(6000*100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -1301,6 +1301,8 @@ class SpendDetailSection extends Component {
 
         }
         
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
 
         var xVal = 1, yVal = 0;
@@ -1314,7 +1316,8 @@ class SpendDetailSection extends Component {
             // yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i == 25 || i == 76){
+                //if(i%(Math.round(noOfDps/2)) == 0 && i != 0){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
@@ -1403,6 +1406,7 @@ class SpendDetailSection extends Component {
         }
         
 
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];

@@ -463,6 +463,8 @@ class E5DetailsSection extends Component {
         }
         
 
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -613,6 +615,9 @@ class E5DetailsSection extends Component {
         }catch(e){
 
         }
+
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
         
 
 
@@ -835,6 +840,9 @@ class E5DetailsSection extends Component {
         
 
 
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+
+
         var xVal = 1, yVal = 0;
         var dps = [];
         var noOfDps = 100;
@@ -911,6 +919,9 @@ class E5DetailsSection extends Component {
         }catch(e){
 
         }
+
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1017,6 +1028,9 @@ class E5DetailsSection extends Component {
         }catch(e){
 
         }
+
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         // console.log('deposit_amount_data', 'largest_number', largest_number)
         // console.log('deposit_amount_data', 'data', data)
@@ -1146,6 +1160,9 @@ class E5DetailsSection extends Component {
         
 
 
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+
+
         var xVal = 1, yVal = 0;
         var dps = [];
         var noOfDps = 100;
@@ -1227,6 +1244,8 @@ class E5DetailsSection extends Component {
 
         }
         
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
 
         var xVal = 1, yVal = 0;
@@ -1312,6 +1331,9 @@ class E5DetailsSection extends Component {
         }catch(e){
             console.log('deflation_dps','error', e)
         }
+
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         // console.log('deflation_dps', 'data', data)
 

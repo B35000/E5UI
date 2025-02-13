@@ -1139,6 +1139,11 @@ class EndDetailSection extends Component {
             }  
         }
 
+
+
+        // data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+
+
         var xVal = 1, yVal = 0;
         var dps = [];
         var noOfDps = 100;
@@ -1150,6 +1155,7 @@ class EndDetailSection extends Component {
             else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
             
             if(yVal != null && data[factor * xVal] != null){
+                // if(i == 76){
                 if(i%(Math.round(noOfDps/5)) == 0 && i != 0 && !recorded){
                     // recorded = true
                     var label = ""+this.format_account_balance_figure(data[factor * xVal])
@@ -1242,6 +1248,8 @@ class EndDetailSection extends Component {
             }  
         }
 
+
+        // data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1372,6 +1380,7 @@ class EndDetailSection extends Component {
         }
         
 
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1468,6 +1477,8 @@ class EndDetailSection extends Component {
         }
         
 
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];

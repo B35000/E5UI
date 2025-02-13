@@ -5113,12 +5113,12 @@ class home_page extends Component {
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
-
                 </div>
+                <div style={{height: 10}}/>
+                {this.render_arweave_network_fee_if_selected()}
             </div>
         )
     }
@@ -5170,6 +5170,35 @@ class home_page extends Component {
             sum = sum/last_check;
         }
         return sum
+    }
+
+    render_arweave_network_fee_if_selected(){
+        var set_storage_option = this.props.app_state.storage_option
+        var my_preferred_nitro = this.props.app_state.my_preferred_nitro
+        if(my_preferred_nitro == '' && set_storage_option == 'arweave'){
+            var fees = this.props.app_state.calculated_arewave_storage_fees_figures[this.props.app_state.selected_e5]
+            if(fees == null) fees = 0;
+            var wallet_data = this.props.app_state.coin_data['AR']
+            var my_balance = wallet_data != null ? wallet_data['balance'] : 0
+            var proportion = 0
+            if(fees != 0 && my_balance != 0 && my_balance >= fees){
+                proportion = (fees * 100) / my_balance 
+            }
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1593ep']/* 'Arweave Storage Fee' */}</p>
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(fees/10**12), 'number':(fees/10**12), 'barcolor':'#606060', 'relativepower':'AR', })}
+                       
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(fees), 'number':this.format_account_balance_figure(fees), 'barcolor':'#606060', 'relativepower':'winston', })}
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':proportion+'%', 'number':proportion+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593eq']/* 'proportion' */, })}
+                    </div>
+                </div>
+            )
+        }
     }
 
 
@@ -5387,7 +5416,7 @@ class home_page extends Component {
 
         }
         
-
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -5537,7 +5566,7 @@ class home_page extends Component {
 
         }
         
-
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -5753,7 +5782,7 @@ class home_page extends Component {
 
         }
         
-
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -5828,6 +5857,8 @@ class home_page extends Component {
         }catch(e){
 
         }
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -5931,6 +5962,8 @@ class home_page extends Component {
         }catch(e){
 
         }
+
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         // console.log('deposit_amount_data', 'largest_number', largest_number)
         // console.log('deposit_amount_data', 'data', data)
@@ -6057,7 +6090,7 @@ class home_page extends Component {
 
         }
         
-
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -6139,7 +6172,7 @@ class home_page extends Component {
 
         }
         
-
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
         var xVal = 1, yVal = 0;
         var dps = [];

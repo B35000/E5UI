@@ -17,7 +17,7 @@
 // OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-import React, { Component, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
+import React, { Component, useState, useImperativeHandle, forwardRef } from 'react';
 
 /* images */
 import music_label from './assets/music_default_label.png'
@@ -534,7 +534,7 @@ class App extends Component {
 
     queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{}, 
     
-    calculated_arewave_storage_fees_figures:{},
+    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25
   };
 
   get_static_assets(){
