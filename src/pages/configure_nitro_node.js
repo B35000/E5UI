@@ -434,7 +434,7 @@ class ConfigureNitroNodePage extends Component {
             <div style={{'padding':'0px 0px 0px 0px'}}>
                 <div style={{height:54, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','margin':'0px 0px 0px 0px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img alt='' src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img alt='' src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -462,7 +462,7 @@ class ConfigureNitroNodePage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -665,7 +665,7 @@ class ConfigureNitroNodePage extends Component {
             <div>
                 <div style={{height:37, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img alt='' src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img alt='' src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -807,7 +807,7 @@ class ConfigureNitroNodePage extends Component {
             <div>
                 <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -821,7 +821,7 @@ class ConfigureNitroNodePage extends Component {
             return(
                 <div>
                     {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }else{
@@ -1264,7 +1264,7 @@ class ConfigureNitroNodePage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1667,7 +1667,7 @@ class ConfigureNitroNodePage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>

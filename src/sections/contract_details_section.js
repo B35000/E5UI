@@ -244,7 +244,7 @@ class ContractDetailsSection extends Component {
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -1112,7 +1112,7 @@ class ContractDetailsSection extends Component {
             <div>
                 <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
                 </div>
             </div>
@@ -1202,7 +1202,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2176']/* 'Created Proposal Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_created_proposal_item_logs(object)}
                 </div>
             </div>
@@ -1223,7 +1223,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1279,7 +1279,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1325,7 +1325,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2177']/* 'Modify Proposal Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_modify_contract_item_logs(object)}
                 </div>
             </div>
@@ -1346,7 +1346,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1394,7 +1394,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1551,7 +1551,7 @@ class ContractDetailsSection extends Component {
                         <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_enter_contract_search_text_input_field_changed.bind(this)} text={this.state.enter_contract_search_text} theme={this.props.theme}/>
                     </div>
                     
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_entered_contract_item_logs(object)}
                 </div>
             </div>
@@ -1588,7 +1588,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1633,7 +1633,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1666,7 +1666,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': this.props.app_state.loc['2190']/* 'Extend Contract Stay Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_extend_contract_item_logs(object)}
                 </div>
             </div>
@@ -1686,7 +1686,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1731,7 +1731,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1768,7 +1768,7 @@ class ContractDetailsSection extends Component {
                     <div style={{margin:'5px 10px 0px 10px'}}>
                         <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_exit_contract_search_text_input_field_changed.bind(this)} text={this.state.exit_contract_search_text} theme={this.props.theme}/>
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_exit_contract_item_logs(object)}
                 </div>
             </div>
@@ -1805,7 +1805,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1849,7 +1849,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1884,7 +1884,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2195']/* 'Force Exit Contract Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_force_exit_contract_item_logs(object)}
                 </div>
             </div>
@@ -1904,7 +1904,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1951,7 +1951,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1983,7 +1983,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2199']/* 'Contract Transfer Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_contract_transfer_item_logs(object)}
                 </div>
             </div>
@@ -2004,7 +2004,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2062,7 +2062,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2103,7 +2103,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2202']/* 'Contract Modify Moderator Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_modify_moderator_item_logs(object)}
                 </div>
             </div>
@@ -2131,7 +2131,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2182,7 +2182,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2191,7 +2191,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2203']/* 'Authority value' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         }
@@ -2219,7 +2219,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2204']/* 'Contract Access Rights Settings Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_checker_item_logs(object)}
                 </div>
             </div>
@@ -2240,7 +2240,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2289,7 +2289,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2323,7 +2323,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title':this.props.app_state.loc['2185']/*  'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2207']/* 'Contract  Account Access Settings Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_accounts_item_logs(object)}
                 </div>
             </div>
@@ -2344,7 +2344,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2394,7 +2394,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2403,7 +2403,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2208']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         }
@@ -2435,7 +2435,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2209']/* 'Contract  Blocked Account Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_blocked_accounts_item_logs(object)}
                 </div>
             </div>
@@ -2455,7 +2455,7 @@ class ContractDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2505,7 +2505,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2515,7 +2515,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ height: 2 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         }

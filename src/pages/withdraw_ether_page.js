@@ -175,7 +175,7 @@ class WithdrawEtherPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -635,7 +635,7 @@ class WithdrawEtherPage extends Component {
                                 <li style={{ 'padding': '2px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -706,7 +706,7 @@ class WithdrawEtherPage extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
                     {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -715,7 +715,7 @@ class WithdrawEtherPage extends Component {
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1746']/* 'Amount in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} />
                 </div>
             )
         }
@@ -776,7 +776,7 @@ class WithdrawEtherPage extends Component {
                                 <li style={{ 'padding': '2px' }}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -835,7 +835,7 @@ class WithdrawEtherPage extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p3), 'details':this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
                     {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -844,7 +844,7 @@ class WithdrawEtherPage extends Component {
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2027']/* 'Amount Added in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} />
                 </div>
             )
         }

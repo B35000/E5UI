@@ -524,7 +524,7 @@ class NewJobPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -1056,7 +1056,7 @@ class NewJobPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -1123,7 +1123,7 @@ class NewJobPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1428,7 +1428,7 @@ class NewJobPage extends Component {
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                     
                                 </div>
@@ -2073,7 +2073,7 @@ class NewJobPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>

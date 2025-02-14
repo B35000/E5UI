@@ -160,7 +160,7 @@ class BagDetailsSection extends Component {
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -460,7 +460,7 @@ class BagDetailsSection extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -492,7 +492,7 @@ class BagDetailsSection extends Component {
                 <div>
                     <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                            <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -505,7 +505,7 @@ class BagDetailsSection extends Component {
                 <div>
                     <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -517,7 +517,7 @@ class BagDetailsSection extends Component {
         if(this.state.selected_variant[object['id']] == item){
             return(
                 <div>
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 5px 3px 5px'}}/>
                     {this.render_detail_item('3',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
                 </div>
             )
@@ -724,7 +724,7 @@ class BagDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                     {this.render_bag_post_top_title(object)}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     {this.render_bag_post_sent_received_messages(object)}
                 </div>
             </div>
@@ -758,7 +758,7 @@ class BagDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -809,7 +809,7 @@ class BagDetailsSection extends Component {
                 <div>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -826,8 +826,8 @@ class BagDetailsSection extends Component {
                     <div style={{height:3}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2057']/* 'Accepted' */, 'details':this.props.app_state.loc['2058']/* 'The bag owner picked this fulfilment application' */, 'size':'s'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
         }else{
@@ -837,7 +837,7 @@ class BagDetailsSection extends Component {
                     <div style={{height:3}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2060']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2061']/* 'Sender ID: ' */+item['applicant_id']+', '+ this.get_senders_name2(item['applicant_id'], object), 'size':'s'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
         }
@@ -927,7 +927,7 @@ class BagDetailsSection extends Component {
 
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
-                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
@@ -1059,7 +1059,7 @@ class BagDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1105,7 +1105,7 @@ class BagDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1246,7 +1246,7 @@ class BagDetailsSection extends Component {
                 <div>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>

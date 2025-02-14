@@ -130,7 +130,7 @@ class EthersDetailsSection extends Component {
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
-                    <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -650,7 +650,7 @@ class EthersDetailsSection extends Component {
                                 <li style={{'padding': '2px'}}>
                                     <div style={{ height: 80, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -731,7 +731,7 @@ class EthersDetailsSection extends Component {
                         {this.render_detail_item('3', item_object['time'])}
                         <div style={{height: 2}}/>
                         {this.render_detail_item('3', item_object['block'])}
-                        <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }}/>
+                        <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }}/>
                     </div>         
                 </div>
             );
@@ -920,7 +920,7 @@ class EthersDetailsSection extends Component {
         return(
             <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                 <div style={{'margin':'10px 20px 0px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
                     <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div> 
             </div>

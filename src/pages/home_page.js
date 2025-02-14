@@ -492,7 +492,7 @@ class home_page extends Component {
         else{
             return(
                 <div style={{height: this.props.height, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'background-color':background_color}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:'auto',width:'18%'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:'auto',width:'18%'}} />
                 </div>
             );
         }
@@ -765,7 +765,7 @@ class home_page extends Component {
         else if(size == 'l' || size == 'xl'){
             return ( 
                 <div style={{height: '100%', width:'100%', padding:'5px 0px 0px 0px'}}>
-                  <div style={{height:'1px', 'background-color':'#7E7E7E', 'margin': line_margin}}/>
+                  <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': line_margin}}/>
                   <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('?'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
                       {this.render_navbar_button('s', '1px 0px 10px 6px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)} 
                   </div>
@@ -790,8 +790,7 @@ class home_page extends Component {
                         {this.render_navbar_button('s', '0px 0px 0px 9px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
                     </div>
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '0px 12px 5px 0px'}}/>
-            </div>
-                
+                </div>  
             );
         }
     }
@@ -4112,7 +4111,7 @@ class home_page extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -4237,7 +4236,7 @@ class home_page extends Component {
         if(this.is_tab_active(item)){
             return(
                 <div>
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 5px 3px 5px'}}/>
                     {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
                 </div>
             )
@@ -4860,7 +4859,7 @@ class home_page extends Component {
             <div style={{'padding':'0px 0px 0px 0px'}}>
                 <div style={{height:54, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','margin':'0px 0px 0px 0px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -4874,7 +4873,7 @@ class home_page extends Component {
             return(
                 <div>
                     {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
-                    {/* <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/> */}
+                    {/* <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/> */}
                 </div>
             )
         }else{
@@ -5034,7 +5033,7 @@ class home_page extends Component {
             <div>
                 <div style={{height:43, width:127, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>

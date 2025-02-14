@@ -135,7 +135,7 @@ class ViewTransactionPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -1631,7 +1631,7 @@ class ViewTransactionPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1891,7 +1891,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -2066,7 +2066,7 @@ class ViewTransactionPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -2110,7 +2110,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -2238,7 +2238,7 @@ class ViewTransactionPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -2397,7 +2397,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
                                 <div style={{height:110, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:50 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:50 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -2457,7 +2457,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -2545,7 +2545,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1855']/* 'Below are the individual transfer actions.' */, 'title':this.props.app_state.loc['1856']/* 'Transfer actions' */})}
                 <div style={{height:10}}/>
                 {this.render_stack_transactions()}
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 10px 20px'}}/>
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 20px 10px 20px'}}/>
                 
             </div>
         )
@@ -2569,7 +2569,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -2917,7 +2917,7 @@ class ViewTransactionPage extends Component {
                 <div style={{'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 0px 0px 0px'}}>
                         {this.render_spend_actions(items)}
-                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 20px 20px'}}/>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 20px 20px 20px'}}/>
                     </div>
                 </div> 
             )
@@ -2979,7 +2979,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3006,7 +3006,7 @@ class ViewTransactionPage extends Component {
         return(
             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'margin':'0px 5px 5px 5px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -3029,7 +3029,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3048,7 +3048,7 @@ class ViewTransactionPage extends Component {
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1879']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -3133,7 +3133,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3152,7 +3152,7 @@ class ViewTransactionPage extends Component {
                                 </div>
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1886']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -3180,7 +3180,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1887']/* 'Your set vote for the proposal' */, 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_vote_tags_object, 'e')})}
                 <div style={{height: 10}}/>
                 {this.render_bounty_exchanges()}
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 20px 20px'}}/>
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 20px 20px 20px'}}/>
             </div>
         )
     }
@@ -3203,7 +3203,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3414,7 +3414,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3433,7 +3433,7 @@ class ViewTransactionPage extends Component {
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1899']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -3505,7 +3505,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3524,7 +3524,7 @@ class ViewTransactionPage extends Component {
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1903']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_contract_reconfig_value(item)}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -3630,7 +3630,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3649,7 +3649,7 @@ class ViewTransactionPage extends Component {
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1908']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_token_reconfig_value(item)}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -3758,7 +3758,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3777,7 +3777,7 @@ class ViewTransactionPage extends Component {
                                 </div>
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1910']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -3825,7 +3825,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3885,7 +3885,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -3948,7 +3948,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -4010,7 +4010,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -4069,7 +4069,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -4218,7 +4218,7 @@ class ViewTransactionPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -4416,7 +4416,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -4488,7 +4488,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_all_items()}
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '2px 20px 20px 20px'}}/>
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '2px 20px 20px 20px'}}/>
             </div>
         )
     }
@@ -4926,7 +4926,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+item.order_data['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
                 {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1959']/* 'Received Signature' */, 'details':start_and_end(item.received_signature) })}
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
             </div>
         )
     }
@@ -5007,7 +5007,7 @@ class ViewTransactionPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -5082,7 +5082,7 @@ class ViewTransactionPage extends Component {
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                     
                                 </div>
@@ -5154,7 +5154,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -5639,7 +5639,7 @@ class ViewTransactionPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -5970,7 +5970,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -6165,7 +6165,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -6318,7 +6318,7 @@ class ViewTransactionPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>

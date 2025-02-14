@@ -169,7 +169,7 @@ class ChannelDetailsSection extends Component {
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -571,7 +571,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -820,7 +820,7 @@ class ChannelDetailsSection extends Component {
 
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
-                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
@@ -943,7 +943,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -991,7 +991,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img alt="" src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1130,7 +1130,7 @@ class ChannelDetailsSection extends Component {
                 <div>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -1666,7 +1666,7 @@ class ChannelDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2102']/* 'In Channel ' */ + object['id'], 'details': this.props.app_state.loc['2103']/* 'Channel Modify Moderator Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_modify_moderator_item_logs(object)}
                 </div>
             </div>
@@ -1693,7 +1693,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1742,7 +1742,7 @@ class ChannelDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1751,7 +1751,7 @@ class ChannelDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2108']/* 'Authority value' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         }
@@ -1787,7 +1787,7 @@ class ChannelDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2102']/* 'In Channel ' */ + object['id'], 'details': this.props.app_state.loc['2109']/* 'Channel Access Rights Settings Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_checker_item_logs(object)}
                 </div>
             </div>
@@ -1807,7 +1807,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1854,7 +1854,7 @@ class ChannelDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1886,7 +1886,7 @@ class ChannelDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': this.props.app_state.loc['2114']/* 'Channel Account Access Settings Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_accounts_item_logs(object)}
                 </div>
             </div>
@@ -1906,7 +1906,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1954,7 +1954,7 @@ class ChannelDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -1963,7 +1963,7 @@ class ChannelDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         }
@@ -1988,7 +1988,7 @@ class ChannelDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': this.props.app_state.loc['2124']/* 'Channel Blocked Account Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_blocked_accounts_item_logs(object)}
                 </div>
             </div>
@@ -2008,7 +2008,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2056,7 +2056,7 @@ class ChannelDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2066,7 +2066,7 @@ class ChannelDetailsSection extends Component {
                     <div style={{ height: 2 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         }

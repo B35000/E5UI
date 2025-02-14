@@ -231,7 +231,7 @@ class ProposalDetailsSection extends Component {
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -528,7 +528,7 @@ class ProposalDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -939,7 +939,7 @@ class ProposalDetailsSection extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -951,7 +951,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Spend Actions', 'size':'l'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -1004,7 +1004,7 @@ class ProposalDetailsSection extends Component {
         return(
             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'margin':'0px 5px 5px 5px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                 </div>
             </div>
         )
@@ -1029,7 +1029,7 @@ class ProposalDetailsSection extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -1041,7 +1041,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Reconfig Actions', 'size':'l'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -1050,7 +1050,7 @@ class ProposalDetailsSection extends Component {
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1879']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -1137,7 +1137,7 @@ class ProposalDetailsSection extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -1149,7 +1149,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Transfer Actions', 'size':'l'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -1158,7 +1158,7 @@ class ProposalDetailsSection extends Component {
                                 </div>
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1886']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['exchange']], 'size':'s'})}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
                     </ul>
@@ -1205,7 +1205,7 @@ class ProposalDetailsSection extends Component {
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
-                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
@@ -1324,7 +1324,7 @@ class ProposalDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1370,7 +1370,7 @@ class ProposalDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1493,7 +1493,7 @@ class ProposalDetailsSection extends Component {
                     {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
                         {this.render_stack_message_item(item)}
                     </div> */}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                 </div>
             )
         }else{
@@ -1554,7 +1554,7 @@ class ProposalDetailsSection extends Component {
                 <div>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -1997,7 +1997,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2552']/* 'In Proposal '  */+ object['id'], 'details': this.props.app_state.loc['2551']/* 'Proposal Transfer Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_contract_transfer_item_logs(object)}
                 </div>
             </div>
@@ -2017,7 +2017,7 @@ class ProposalDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2080,7 +2080,7 @@ class ProposalDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2127,7 +2127,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2552']/* 'In Proposal ' */ + object['id'], 'details': this.props.app_state.loc['2554']/* 'Proposal Vote Events' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_vote_event_item_logs(object)}
                 </div>
             </div>
@@ -2148,7 +2148,7 @@ class ProposalDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2198,7 +2198,7 @@ class ProposalDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['2549']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {

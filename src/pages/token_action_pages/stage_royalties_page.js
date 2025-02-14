@@ -197,7 +197,7 @@ class StageRoyaltiesPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -520,7 +520,7 @@ class StageRoyaltiesPage extends Component {
                                 {this.render_detail_item('3', {'details':item['account'], 'title':this.get_account_alias(item['account']), 'size':'s'})}
                                 <div style={{height:3}}/>
                                 {this.render_tokens_to_receive_from_shares(total_held_shares, item['balance'])}
-                                <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                                <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                             </li>
                         ))}
                     </ul>

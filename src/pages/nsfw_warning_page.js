@@ -94,7 +94,7 @@ class NsfwPage extends Component {
     render_content(){
         return(
             <div>
-                <img style={{width:'90px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'30px'}} src={this.props.app_state.static_assets['letter']} alt="E5"/>
+                <img style={{width:'90px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'30px'}} src={this.props.app_state.theme['letter']} alt="E5"/>
 
                 <div style={{height: 20}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2742']/* Not Safe For Work Warning. */,'details':this.props.app_state.loc['2743']/*  */, 'size':'l', 'text_align':'center'})}
@@ -128,7 +128,7 @@ class NsfwPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>

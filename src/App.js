@@ -61,6 +61,107 @@ import next_dark from './assets/next_icon_dark.png'
 import shuffle_dark from './assets/shuffle_icon_dark.png'
 import repeat_dark from './assets/repeat_icon_dark.png'
 import zip_file from './assets/zip_file.png'
+import alert_icon_green from './assets/alert_icon_green.png'
+import add_icon_green from './assets/add_icon_green.png'
+import background_green from './assets/background_green.png'
+import job_icon_green from './assets/job_icon_green.png'
+import explore_icon_green from './assets/explore_icon_green.png'
+import wallet_icon_green from './assets/wallet_icon_green.png'
+import stack_icon_green from './assets/stack_icon_green.png'
+import close_icon_green from './assets/close_icon_green.png'
+import add_text_icon_green from './assets/add_text_green.png'
+import play_icon_green from './assets/play_icon_green.png'
+import pause_icon_green from './assets/pause_icon_green.png'
+import previous_icon_green from './assets/previous_icon_green.png'
+import next_icon_green from './assets/next_icon_green.png'
+import shuffle_icon_green from './assets/shuffle_icon_green.png'
+import repeat_icon_green from './assets/repeat_icon_green.png'
+import letter_green from './assets/letter_green.png'
+import alert_icon_red from './assets/alert_icon_red.png'
+import add_icon_red from './assets/add_icon_red.png'
+import background_red from './assets/background_red.png'
+import job_icon_red from './assets/job_icon_red.png'
+import explore_icon_red from './assets/explore_icon_red.png'
+import wallet_icon_red from './assets/wallet_icon_red.png'
+import stack_icon_red from './assets/stack_icon_red.png'
+import close_icon_red from './assets/close_icon_red.png'
+import add_text_icon_red from './assets/add_text_red.png'
+import play_icon_red from './assets/play_icon_red.png'
+import pause_icon_red from './assets/pause_icon_red.png'
+import previous_icon_red from './assets/previous_icon_red.png'
+import next_icon_red from './assets/next_icon_red.png'
+import shuffle_icon_red from './assets/shuffle_icon_red.png'
+import repeat_icon_red from './assets/repeat_icon_red.png'
+import letter_red from './assets/letter_red.png'
+import alert_icon_blue from './assets/alert_icon_blue.png'
+import add_icon_blue from './assets/add_icon_blue.png'
+import background_blue from './assets/background_blue.png'
+import job_icon_blue from './assets/job_icon_blue.png'
+import explore_icon_blue from './assets/explore_icon_blue.png'
+import wallet_icon_blue from './assets/wallet_icon_blue.png'
+import stack_icon_blue from './assets/stack_icon_blue.png'
+import close_icon_blue from './assets/close_icon_blue.png'
+import add_text_icon_blue from './assets/add_text_blue.png'
+import play_icon_blue from './assets/play_icon_blue.png'
+import pause_icon_blue from './assets/pause_icon_blue.png'
+import previous_icon_blue from './assets/previous_icon_blue.png'
+import next_icon_blue from './assets/next_icon_blue.png'
+import shuffle_icon_blue from './assets/shuffle_icon_blue.png'
+import repeat_icon_blue from './assets/repeat_icon_blue.png'
+import letter_blue from './assets/letter_blue.png'
+import alert_icon_yellow from './assets/alert_icon_yellow.png'
+import add_icon_yellow from './assets/add_icon_yellow.png'
+import background_yellow from './assets/background_yellow.png'
+import job_icon_yellow from './assets/job_icon_yellow.png'
+import explore_icon_yellow from './assets/explore_icon_yellow.png'
+import wallet_icon_yellow from './assets/wallet_icon_yellow.png'
+import stack_icon_yellow from './assets/stack_icon_yellow.png'
+import close_icon_yellow from './assets/close_icon_yellow.png'
+import add_text_icon_yellow from './assets/add_text_yellow.png'
+import play_icon_yellow from './assets/play_icon_yellow.png'
+import pause_icon_yellow from './assets/pause_icon_yellow.png'
+import previous_icon_yellow from './assets/previous_icon_yellow.png'
+import next_icon_yellow from './assets/next_icon_yellow.png'
+import shuffle_icon_yellow from './assets/shuffle_icon_yellow.png'
+import repeat_icon_yellow from './assets/repeat_icon_yellow.png'
+import letter_yellow from './assets/letter_yellow.png'
+import alert_icon_pink from './assets/alert_icon_pink.png'
+import add_icon_pink from './assets/add_icon_pink.png'
+import background_pink from './assets/background_pink.png'
+import job_icon_pink from './assets/job_icon_pink.png'
+import explore_icon_pink from './assets/explore_icon_pink.png'
+import wallet_icon_pink from './assets/wallet_icon_pink.png'
+import stack_icon_pink from './assets/stack_icon_pink.png'
+import close_icon_pink from './assets/close_icon_pink.png'
+import add_text_icon_pink from './assets/add_text_pink.png'
+import play_icon_pink from './assets/play_icon_pink.png'
+import pause_icon_pink from './assets/pause_icon_pink.png'
+import previous_icon_pink from './assets/previous_icon_pink.png'
+import next_icon_pink from './assets/next_icon_pink.png'
+import shuffle_icon_pink from './assets/shuffle_icon_pink.png'
+import repeat_icon_pink from './assets/repeat_icon_pink.png'
+import letter_pink from './assets/letter_pink.png'
+
+import alert_icon_orange from './assets/alert_icon_orange.png'
+import add_icon_orange from './assets/add_icon_orange.png'
+import background_orange from './assets/background_orange.png'
+import job_icon_orange from './assets/job_icon_orange.png'
+import explore_icon_orange from './assets/explore_icon_orange.png'
+import wallet_icon_orange from './assets/wallet_icon_orange.png'
+import stack_icon_orange from './assets/stack_icon_orange.png'
+import close_icon_orange from './assets/close_icon_orange.png'
+import add_text_icon_orange from './assets/add_text_orange.png'
+import play_icon_orange from './assets/play_icon_orange.png'
+import pause_icon_orange from './assets/pause_icon_orange.png'
+import previous_icon_orange from './assets/previous_icon_orange.png'
+import next_icon_orange from './assets/next_icon_orange.png'
+import shuffle_icon_orange from './assets/shuffle_icon_orange.png'
+import repeat_icon_orange from './assets/repeat_icon_orange.png'
+import letter_orange from './assets/letter_orange.png'
+// import  from './assets/'
+// import  from './assets/'
+// import  from './assets/'
+// import  from './assets/'
 
 import ethereum_classic_logo from './assets/ethereum_testnet.png'
 import harmony_logo from './assets/harmony.png'
@@ -4077,7 +4178,7 @@ class App extends Component {
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
-        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'#dddddd', 'button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1',
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'#dddddd', 'button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -4107,12 +4208,14 @@ class App extends Component {
         'next':next,
         'shuffle':shuffle_icon,
         'repeat':repeat,
+
+        'letter':letter,
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
       return{
         'name':this.getLocale()['1418']/* 'dark' */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444','button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444','button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1', 'linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
 
@@ -4142,12 +4245,14 @@ class App extends Component {
         'next':next_dark,
         'shuffle':shuffle_dark,
         'repeat':repeat_dark,
+
+        'letter':letter,
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
       return{
         'name':this.getLocale()['2740']/* midnight */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'white', 'line_color':'#C1C1C1',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
 
@@ -4178,45 +4283,245 @@ class App extends Component {
         'next':next_dark,
         'shuffle':shuffle_dark,
         'repeat':repeat_dark,
+
+        'letter':letter,
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
       return{
         'name':this.getLocale()['2741']/* green */,
-        'bar_shadow':'#01c664','bar_color':'#01c601', 'bar_background_color':'#bef4d9','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'#71fc71', 'line_color':'#71fc71',
+        'bar_shadow':'#bcffdd','bar_color':'#03a003', 'bar_background_color':'rgb(185, 247, 198,.9)','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'#04e504', 'line_color':'#01c601','linebar_background_color':'rgb(185, 247, 198,.9)',
         
-        'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
+        'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#212821','send_receive_ether_overlay_shadow':'#303030',
 
-        'primary_text_color':'#71fc71', 'secondary_text_color':'#5bc15b',
+        'primary_text_color':'#04e504', 'secondary_text_color':'#02f902',
         
-        'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#5bc15b','secondary_navbar_text_color':'#5bc15b','card_shadow_color':'#013f01',
+        'navbar_button_selected_color':'#203f00','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'#013f01',
         'navbar_text_shadow_color':'#5bc15b',
 
-        'view_group_card_item_background':'#141e0a','tag_background_color':'#203f00', 'indexed_tag_background':'#002100', 'tag_shadow':'#004f00', 'tag_text_color':'#71fc71',
+        'view_group_card_item_background':'#13190c','tag_background_color':'#203f00', 'indexed_tag_background':'#0f230f', 'tag_shadow':'#013f01', 'tag_text_color':'#8af7a2',
 
         'chart_color':'#01c601','chart_background_color':'#141e0a',
 
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#013f01',
-        'number_picker_power_color':'white','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#5bc15b', 'number_picker_picked_label_text_color':'white',
-        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        'number_picker_power_color':'rgb(185, 247, 198,.9)','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#02f902', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'rgb(185, 247, 198,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
-        'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli',
+        'background':background_green, 'JobIcon':job_icon_green, 'ExploreIcon': explore_icon_green, 'WalletIcon':wallet_icon_green, 'StackIcon': stack_icon_green,
 
-        'close':'https://nftstorage.link/ipfs/bafkreidjlt2fejd5t2urmawpfg5xgtm55zlctx2zek3bqxwikehoyq6whe',
-        'clear':'https://nftstorage.link/ipfs/bafkreicdhnkw75k4k7m4hwiwaebgsiv2mf6zix5d6ctr2shpa7jtuy5bke',
-        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
+        'close':close_icon_green,
+        'clear':'',
+        'add_text':add_text_icon_green,
 
-        'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
-        'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
-        'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
-        'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
-        'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
-        'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
+        'play':play_icon_green,
+        'pause':pause_icon_green,
+        'previous':previous_icon_green,
+        'next':next_icon_green,
+        'shuffle':shuffle_icon_green,
+        'repeat':repeat_icon_green,
+
+        'letter':letter_green,
       }
     }
+    else if(theme == 'red'){
+      return{
+        'name':'red',
+        'bar_shadow':'#f9aeae','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)',
+        
+        'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1717','send_receive_ether_overlay_shadow':'#303030',
+
+        'primary_text_color':'#f70404', 'secondary_text_color':'#f43535',
+        
+        'navbar_button_selected_color':'#332020','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'#3f0101',
+        'navbar_text_shadow_color':'#511616',
+
+        'view_group_card_item_background':'#190c0c','tag_background_color':'#3f0600', 'indexed_tag_background':'#210000', 'tag_shadow':'#3f0101', 'tag_text_color':'#f78a8a',
+
+        'chart_color':'#f70404','chart_background_color':'#190c0c',
+
+        'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#3f0101',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#3f0101','number_picker_label_text_color':'#f90202', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'rgb(249, 202, 202,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+
+
+        'background':background_red, 'JobIcon':job_icon_red, 'ExploreIcon': explore_icon_red, 'WalletIcon':wallet_icon_red, 'StackIcon': stack_icon_red,
+
+        'close':close_icon_red,
+        'clear':'',
+        'add_text':add_text_icon_red,
+
+        'play':play_icon_red,
+        'pause':pause_icon_red,
+        'previous':previous_icon_red,
+        'next':next_icon_red,
+        'shuffle':shuffle_icon_red,
+        'repeat':repeat_icon_red,
+
+        'letter':letter_red,
+      }
+    }
+    else if(theme == 'blue'){
+      return{
+        'name':'blue',
+        'bar_shadow':'#aeb8f9','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)',
+        
+        'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#17171c','send_receive_ether_overlay_shadow':'#303030',
+
+        'primary_text_color':'#0079ff', 'secondary_text_color':'#2587f7',
+        
+        'navbar_button_selected_color':'#202c33','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'#183651',
+        'navbar_text_shadow_color':'#171651',
+
+        'view_group_card_item_background':'#0d0c19','tag_background_color':'#13293d', 'indexed_tag_background':'#010021', 'tag_shadow':'#183651', 'tag_text_color':'#2587f7',
+
+        'chart_color':'#0079ff','chart_background_color':'#0d0c19',
+
+        'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#183651',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#183651','number_picker_label_text_color':'#0079ff', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'rgb(202, 203, 249,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+
+
+        'background':background_blue, 'JobIcon':job_icon_blue, 'ExploreIcon': explore_icon_blue, 'WalletIcon':wallet_icon_blue, 'StackIcon': stack_icon_blue,
+
+        'close':close_icon_blue,
+        'clear':'',
+        'add_text':add_text_icon_blue,
+
+        'play':play_icon_blue,
+        'pause':pause_icon_blue,
+        'previous':previous_icon_blue,
+        'next':next_icon_blue,
+        'shuffle':shuffle_icon_blue,
+        'repeat':repeat_icon_blue,
+
+        'letter':letter_blue,
+      }
+    }
+    else if(theme == 'yellow'){
+      return{
+        'name':'yellow',
+        'bar_shadow':'#f9f8ae','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6',
+        
+        'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b1c17','send_receive_ether_overlay_shadow':'#303030',
+
+        'primary_text_color':'#efec4c', 'secondary_text_color':'#efea58',
+        
+        'navbar_button_selected_color':'#333220','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'#505118',
+        'navbar_text_shadow_color':'#505116',
+
+        'view_group_card_item_background':'#19190c','tag_background_color':'#7c7a26', 'indexed_tag_background':'#202100', 'tag_shadow':'#505118', 'tag_text_color':'#f7f38a',
+
+        'chart_color':'#f3f704','chart_background_color':'#19190c',
+
+        'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#505118',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#505118','number_picker_label_text_color':'#efec4c', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'rgb(246, 249, 204,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+
+
+        'background':background_yellow, 'JobIcon':job_icon_yellow, 'ExploreIcon': explore_icon_yellow, 'WalletIcon':wallet_icon_yellow, 'StackIcon': stack_icon_yellow,
+
+        'close':close_icon_yellow,
+        'clear':'',
+        'add_text':add_text_icon_yellow,
+
+        'play':play_icon_yellow,
+        'pause':pause_icon_yellow,
+        'previous':previous_icon_yellow,
+        'next':next_icon_yellow,
+        'shuffle':shuffle_icon_yellow,
+        'repeat':repeat_icon_yellow,
+
+        'letter':letter_yellow,
+      }
+    }
+    else if(theme == 'pink'){
+      return{
+        'name':'pink',
+        'bar_shadow':'#ecaef9','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9',
+        
+        'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b171c','send_receive_ether_overlay_shadow':'#303030',
+
+        'primary_text_color':'#c94cef', 'secondary_text_color':'#e058ef',
+        
+        'navbar_button_selected_color':'#312033','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#e058ef','secondary_navbar_text_color':'#c94cef','card_shadow_color':'#491851',
+        'navbar_text_shadow_color':'#481651',
+
+        'view_group_card_item_background':'#160c19','tag_background_color':'#6a267c', 'indexed_tag_background':'#190021', 'tag_shadow':'#491851', 'tag_text_color':'#e58af7',
+
+        'chart_color':'#e704f7','chart_background_color':'#160c19',
+
+        'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#491851',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#491851','number_picker_label_text_color':'#dc4cef', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'rgb(245, 204, 249,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+
+
+        'background':background_pink, 'JobIcon':job_icon_pink, 'ExploreIcon': explore_icon_pink, 'WalletIcon':wallet_icon_pink, 'StackIcon': stack_icon_pink,
+
+        'close':close_icon_pink,
+        'clear':'',
+        'add_text':add_text_icon_pink,
+
+        'play':play_icon_pink,
+        'pause':pause_icon_pink,
+        'previous':previous_icon_pink,
+        'next':next_icon_pink,
+        'shuffle':shuffle_icon_pink,
+        'repeat':repeat_icon_pink,
+
+        'letter':letter_pink,
+      }
+    }
+    else if(theme == 'orange'){
+      return{
+        'name':'orange',
+        'bar_shadow':'#f9d1ae','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6',
+        
+        'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1a17','send_receive_ether_overlay_shadow':'#303030',
+
+        'primary_text_color':'#efa04c', 'secondary_text_color':'#efb358',
+        
+        'navbar_button_selected_color':'#332c20','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efb358','secondary_navbar_text_color':'#efa04c','card_shadow_color':'#513a18',
+        'navbar_text_shadow_color':'#513d16',
+
+        'view_group_card_item_background':'#19130c','tag_background_color':'#7c5326', 'indexed_tag_background':'#211100', 'tag_shadow':'#513a18', 'tag_text_color':'#f7c28a',
+
+        'chart_color':'#f78204','chart_background_color':'#19130c',
+
+        'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#513a18',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#513a18','number_picker_label_text_color':'#ef964c', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'rgb(249, 225, 204,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+
+
+        'background':background_orange, 'JobIcon':job_icon_orange, 'ExploreIcon': explore_icon_orange, 'WalletIcon':wallet_icon_orange, 'StackIcon': stack_icon_orange,
+
+        'close':close_icon_orange,
+        'clear':'',
+        'add_text':add_text_icon_orange,
+
+        'play':play_icon_orange,
+        'pause':pause_icon_orange,
+        'previous':previous_icon_orange,
+        'next':next_icon_orange,
+        'shuffle':shuffle_icon_orange,
+        'repeat':repeat_icon_orange,
+
+        'letter':letter_orange,
+      }
+    }
+    
     else if(theme == this.getLocale()['1593a']/* 'auto' */){
       var obj = this.get_theme_data(this.get_time_of_day_theme())
       obj['name'] = this.getLocale()['1593a']/* 'auto' */
@@ -4226,6 +4531,8 @@ class App extends Component {
   }
 
   get_time_of_day_theme(){
+    return 'orange'
+
     var hour = new Date().getHours() 
     if(hour >= 18 || hour < 7){
       if(hour >= 23 || hour < 4){

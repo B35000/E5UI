@@ -130,7 +130,7 @@ class ViewGroups extends Component {
               return ( 
                   <div style={{'margin': '0px 10px 0px 10px'}}>
                       <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
-                          <div className="progress" style={{ height: 3, width: "100%", 'background-color': '#BFBFBF' }}>
+                          <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
                               <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                       </div>
@@ -158,7 +158,7 @@ class ViewGroups extends Component {
                         </div>
                         
                         <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
-                            <div className="progress" style={{ height: 3, width: "100%", 'background-color': '#BFBFBF' }}>
+                            <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
                                 <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
@@ -324,7 +324,7 @@ class ViewGroups extends Component {
                   interval: interval,//size of space between labels
                   tickLength: 0,
                   gridThickness: 0.3,
-                  gridColor: "#767676",
+                  gridColor: this.props.theme['line_color'],//"#767676"
                   lineColor: "rgb(210, 210, 210,.0)",
                   labelFontColor: this.props.theme['primary_text_color']//#292929 #DEDEDE
               },

@@ -117,7 +117,7 @@ class ModifySubscriptionPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -393,7 +393,7 @@ class ModifySubscriptionPage extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -419,7 +419,7 @@ class ModifySubscriptionPage extends Component {
                                             {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['852']/* 'position' */, 'size':'l'})}
                                             <div style={{height:5}}/>
                                             {this.render_reconfig_value(item)}
-                                            <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                            <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -581,7 +581,7 @@ class ModifySubscriptionPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', item)}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }else{

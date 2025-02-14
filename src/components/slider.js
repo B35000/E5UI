@@ -50,7 +50,7 @@ class Slider extends React.Component {
             <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px'}}>
                 <div style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px' }} onClick={(e) => this.when_button_clicked(e)}></div>
 
-                <div style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px #CECDCD', 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
+                <div style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
 
                     <div className="progress" style={{ height: 30, width: '100%', 'background-color': this.props.theme['bar_background_color'] , 'z-index':'1' , 'border-radius': '17px', 'position': 'absolute'}}>
                         <div className="progress-bar" role="progressbar" style={{ width: (this.props.value/10)+"%", 'background-image': 'none','background-color': this.props.theme['slider_color'] }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>

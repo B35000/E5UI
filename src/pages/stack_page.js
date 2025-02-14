@@ -1191,7 +1191,7 @@ class StackPage extends Component {
                         {items.map((item, index) => (
                             <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin':'5px 0px 5px 0px' }}>
                                 <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                    <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                 </div>
                             </div>
                         ))}
@@ -1917,7 +1917,7 @@ class StackPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -8332,7 +8332,7 @@ class StackPage extends Component {
             <div>
                 <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -8346,7 +8346,7 @@ class StackPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }else{
@@ -8546,7 +8546,7 @@ class StackPage extends Component {
             <div>
                 <div style={{height:43, width:127, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -8955,7 +8955,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -9136,7 +9136,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -9392,7 +9392,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -9568,7 +9568,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -9818,7 +9818,7 @@ class StackPage extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -9876,7 +9876,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -10004,7 +10004,7 @@ class StackPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }else{
@@ -10403,7 +10403,7 @@ class StackPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('12', {'title':title, 'image':image,'details':details, 'size':'s', 'border_radius':'9px'})}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }else{
@@ -11303,7 +11303,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -11466,7 +11466,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -11537,7 +11537,7 @@ class StackPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
