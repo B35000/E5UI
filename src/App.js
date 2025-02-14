@@ -141,7 +141,6 @@ import next_icon_pink from './assets/next_icon_pink.png'
 import shuffle_icon_pink from './assets/shuffle_icon_pink.png'
 import repeat_icon_pink from './assets/repeat_icon_pink.png'
 import letter_pink from './assets/letter_pink.png'
-
 import alert_icon_orange from './assets/alert_icon_orange.png'
 import add_icon_orange from './assets/add_icon_orange.png'
 import background_orange from './assets/background_orange.png'
@@ -158,6 +157,23 @@ import next_icon_orange from './assets/next_icon_orange.png'
 import shuffle_icon_orange from './assets/shuffle_icon_orange.png'
 import repeat_icon_orange from './assets/repeat_icon_orange.png'
 import letter_orange from './assets/letter_orange.png'
+
+import alert_icon_darkyellow from './assets/alert_icon_darkyellow.png'
+import add_icon_darkyellow from './assets/add_icon_darkyellow.png'
+import background_darkyellow from './assets/background_darkyellow.png'
+import job_icon_darkyellow from './assets/job_icon_darkyellow.png'
+import explore_icon_darkyellow from './assets/explore_icon_darkyellow.png'
+import wallet_icon_darkyellow from './assets/wallet_icon_darkyellow.png'
+import stack_icon_darkyellow from './assets/stack_icon_darkyellow.png'
+import close_icon_darkyellow from './assets/close_icon_darkyellow.png'
+import add_text_icon_darkyellow from './assets/add_text_darkyellow.png'
+import play_icon_darkyellow from './assets/play_icon_darkyellow.png'
+import pause_icon_darkyellow from './assets/pause_icon_darkyellow.png'
+import previous_icon_darkyellow from './assets/previous_icon_darkyellow.png'
+import next_icon_darkyellow from './assets/next_icon_darkyellow.png'
+import shuffle_icon_darkyellow from './assets/shuffle_icon_darkyellow.png'
+import repeat_icon_darkyellow from './assets/repeat_icon_darkyellow.png'
+import letter_darkyellow from './assets/letter_darkyellow.png'
 // import  from './assets/'
 // import  from './assets/'
 // import  from './assets/'
@@ -4287,6 +4303,7 @@ class App extends Component {
         'letter':letter,
       }
     }
+    
     else if(theme == this.getLocale()['2741']/* green */){
       return{
         'name':this.getLocale()['2741']/* green */,
@@ -4326,6 +4343,44 @@ class App extends Component {
         'letter':letter_green,
       }
     }
+    if(theme == 'light-green'){
+      return{
+        'name':'light-green',
+        'bar_shadow':'#c5e8d6','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'#dddddd', 'button_color':'#01c601', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF',
+        
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'#029302','secondary_text_color':'#03a003',
+        
+        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#c5e8d6',
+        
+        'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'#c5e8d6','tag_text_color':'white',
+        
+        'chart_color':'#01c601','chart_background_color':'#d4e2cc',
+  
+        'number_picker_label_color':'#d4e2cc','number_picker_label_shadow':'#c5e8d6',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#c5e8d6','number_picker_label_text_color':'#01c601', 'number_picker_picked_label_text_color':'#444444',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#c6e0b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+
+        'background':background_green, 'JobIcon':job_icon_green, 'ExploreIcon': explore_icon_green, 'WalletIcon':wallet_icon_green, 'StackIcon': stack_icon_green,
+
+        'close':close_icon_green,
+        'clear':'',
+        'add_text':add_text_icon_green,
+
+        'play':play_icon_green,
+        'pause':pause_icon_green,
+        'previous':previous_icon_green,
+        'next':next_icon_green,
+        'shuffle':shuffle_icon_green,
+        'repeat':repeat_icon_green,
+
+        'letter':letter_green,
+      }
+    }
+
     else if(theme == 'red'){
       return{
         'name':'red',
@@ -4365,6 +4420,44 @@ class App extends Component {
         'letter':letter_red,
       }
     }
+    if(theme == 'light-red'){
+      return{
+        'name':'light-red',
+        'bar_shadow':'#f9d1d1','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'#dddddd', 'button_color':'#c60b01', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF',
+        
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'#930101','secondary_text_color':'#a00803',
+        
+        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9d1d1',
+        
+        'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'#f9d1d1','tag_text_color':'white',
+        
+        'chart_color':'#c60b01','chart_background_color':'#e2cdcc',
+  
+        'number_picker_label_color':'#e2cdcc','number_picker_label_shadow':'#f9d1d1',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9d1d1','number_picker_label_text_color':'#c60b01', 'number_picker_picked_label_text_color':'#444444',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#e0b8b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+
+        'background':background_red, 'JobIcon':job_icon_red, 'ExploreIcon': explore_icon_red, 'WalletIcon':wallet_icon_red, 'StackIcon': stack_icon_red,
+
+        'close':close_icon_red,
+        'clear':'',
+        'add_text':add_text_icon_red,
+
+        'play':play_icon_red,
+        'pause':pause_icon_red,
+        'previous':previous_icon_red,
+        'next':next_icon_red,
+        'shuffle':shuffle_icon_red,
+        'repeat':repeat_icon_red,
+
+        'letter':letter_red,
+      }
+    }
+
     else if(theme == 'blue'){
       return{
         'name':'blue',
@@ -4404,6 +4497,44 @@ class App extends Component {
         'letter':letter_blue,
       }
     }
+    if(theme == 'light-blue'){
+      return{
+        'name':'light-blue',
+        'bar_shadow':'#bce4ff','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'#dddddd', 'button_color':'#0181c6', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF',
+        
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'#017493','secondary_text_color':'#0374a0',
+        
+        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#d1ebf9',
+        
+        'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'#d1ebf9','tag_text_color':'white',
+        
+        'chart_color':'#0181c6','chart_background_color':'#ccdce2',
+  
+        'number_picker_label_color':'#ccdce2','number_picker_label_shadow':'#d1ebf9',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#d1ebf9','number_picker_label_text_color':'#0181c6', 'number_picker_picked_label_text_color':'#444444',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#b8d2e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+
+        'background':background_blue, 'JobIcon':job_icon_blue, 'ExploreIcon': explore_icon_blue, 'WalletIcon':wallet_icon_blue, 'StackIcon': stack_icon_blue,
+
+        'close':close_icon_blue,
+        'clear':'',
+        'add_text':add_text_icon_blue,
+
+        'play':play_icon_blue,
+        'pause':pause_icon_blue,
+        'previous':previous_icon_blue,
+        'next':next_icon_blue,
+        'shuffle':shuffle_icon_blue,
+        'repeat':repeat_icon_blue,
+
+        'letter':letter_blue,
+      }
+    }
+
     else if(theme == 'yellow'){
       return{
         'name':'yellow',
@@ -4443,6 +4574,44 @@ class App extends Component {
         'letter':letter_yellow,
       }
     }
+    if(theme == 'light-yellow'){
+      return{
+        'name':'light-yellow',
+        'bar_shadow':'#fdffbc','bar_color':'#9ba003', 'bar_background_color':'#e2e2cc','nav_bar_color':'#dddddd', 'button_color':'#9ba003', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF',
+        
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'#757701','secondary_text_color':'#9ba003',
+        
+        'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
+        
+        'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'#DCDCDC','tag_text_color':'white',
+        
+        'chart_color':'#9ba003','chart_background_color':'#e2e2cc',
+  
+        'number_picker_label_color':'#e2e2cc','number_picker_label_shadow':'#DCDCDC',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#DCDCDC','number_picker_label_text_color':'#9ba003', 'number_picker_picked_label_text_color':'#444444',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#9ba003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkyellow, 'add_icon':add_icon_darkyellow, 'text_input_background':'#dfe0b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+
+        'background':background_darkyellow, 'JobIcon':job_icon_darkyellow, 'ExploreIcon': explore_icon_darkyellow, 'WalletIcon':wallet_icon_darkyellow, 'StackIcon': stack_icon_darkyellow,
+
+        'close':close_icon_darkyellow,
+        'clear':'',
+        'add_text':add_text_icon_darkyellow,
+
+        'play':play_icon_darkyellow,
+        'pause':pause_icon_darkyellow,
+        'previous':previous_icon_darkyellow,
+        'next':next_icon_darkyellow,
+        'shuffle':shuffle_icon_darkyellow,
+        'repeat':repeat_icon_darkyellow,
+
+        'letter':letter_darkyellow,
+      }
+    }
+
     else if(theme == 'pink'){
       return{
         'name':'pink',
@@ -4482,6 +4651,44 @@ class App extends Component {
         'letter':letter_pink,
       }
     }
+    if(theme == 'light-pink'){
+      return{
+        'name':'light-pink',
+        'bar_shadow':'#ecbcff','bar_color':'#8e03a0', 'bar_background_color':'#decce2','nav_bar_color':'#dddddd', 'button_color':'#af01c6', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF',
+        
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'#930191','secondary_text_color':'#8e03a0',
+        
+        'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f2d1f9',
+        
+        'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'#f2d1f9','tag_text_color':'white',
+        
+        'chart_color':'#af01c6','chart_background_color':'#decce2',
+  
+        'number_picker_label_color':'#decce2','number_picker_label_shadow':'#f2d1f9',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#f2d1f9','number_picker_label_text_color':'#af01c6', 'number_picker_picked_label_text_color':'#444444',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#d9b8e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+
+        'background':background_pink, 'JobIcon':job_icon_pink, 'ExploreIcon': explore_icon_pink, 'WalletIcon':wallet_icon_pink, 'StackIcon': stack_icon_pink,
+
+        'close':close_icon_pink,
+        'clear':'',
+        'add_text':add_text_icon_pink,
+
+        'play':play_icon_pink,
+        'pause':pause_icon_pink,
+        'previous':previous_icon_pink,
+        'next':next_icon_pink,
+        'shuffle':shuffle_icon_pink,
+        'repeat':repeat_icon_pink,
+
+        'letter':letter_pink,
+      }
+    }
+
     else if(theme == 'orange'){
       return{
         'name':'orange',
@@ -4521,7 +4728,44 @@ class App extends Component {
         'letter':letter_orange,
       }
     }
-    
+    if(theme == 'light-orange'){
+      return{
+        'name':'light-orange',
+        'bar_shadow':'#ffe2bc','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'#dddddd', 'button_color':'#c67b01', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF',
+        
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'#935b01','secondary_text_color':'#a05403',
+        
+        'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9ebd1',
+        
+        'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'#f9ebd1','tag_text_color':'white',
+        
+        'chart_color':'#c67b01','chart_background_color':'#e2d7cc',
+  
+        'number_picker_label_color':'#e2d7cc','number_picker_label_shadow':'#f9ebd1',
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9ebd1','number_picker_label_text_color':'#c67b01', 'number_picker_picked_label_text_color':'#444444',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
+        
+        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#e0d3b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+
+        'background':background_orange, 'JobIcon':job_icon_orange, 'ExploreIcon': explore_icon_orange, 'WalletIcon':wallet_icon_orange, 'StackIcon': stack_icon_orange,
+
+        'close':close_icon_orange,
+        'clear':'',
+        'add_text':add_text_icon_orange,
+
+        'play':play_icon_orange,
+        'pause':pause_icon_orange,
+        'previous':previous_icon_orange,
+        'next':next_icon_orange,
+        'shuffle':shuffle_icon_orange,
+        'repeat':repeat_icon_orange,
+
+        'letter':letter_orange,
+      }
+    }
+
     else if(theme == this.getLocale()['1593a']/* 'auto' */){
       var obj = this.get_theme_data(this.get_time_of_day_theme())
       obj['name'] = this.getLocale()['1593a']/* 'auto' */
@@ -4531,8 +4775,6 @@ class App extends Component {
   }
 
   get_time_of_day_theme(){
-    return 'orange'
-
     var hour = new Date().getHours() 
     if(hour >= 18 || hour < 7){
       if(hour >= 23 || hour < 4){
