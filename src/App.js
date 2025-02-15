@@ -174,8 +174,21 @@ import next_icon_darkyellow from './assets/next_icon_darkyellow.png'
 import shuffle_icon_darkyellow from './assets/shuffle_icon_darkyellow.png'
 import repeat_icon_darkyellow from './assets/repeat_icon_darkyellow.png'
 import letter_darkyellow from './assets/letter_darkyellow.png'
-// import  from './assets/'
-// import  from './assets/'
+
+import e5_logo_light from './assets/e5_logo_light.png'
+import e5_logo_dark from './assets/e5_logo_dark.png'
+import e5_logo_green from './assets/e5_logo_green.png'
+import e5_logo_darkgreen from './assets/e5_logo_darkgreen.png'
+import e5_logo_red from './assets/e5_logo_red.png'
+import e5_logo_darkred from './assets/e5_logo_darkred.png'
+import e5_logo_blue from './assets/e5_logo_blue.png'
+import e5_logo_darkblue from './assets/e5_logo_darkblue.png'
+import e5_logo_yellow from './assets/e5_logo_yellow.png'
+import e5_logo_darkyellow from './assets/e5_logo_darkyellow.png'
+import e5_logo_pink from './assets/e5_logo_pink.png'
+import e5_logo_darkpink from './assets/e5_logo_darkpurple.png'
+import e5_logo_orange from './assets/e5_logo_orange.png'
+import e5_logo_darkorange from './assets/e5_logo_darkorange.png'
 // import  from './assets/'
 // import  from './assets/'
 
@@ -294,9 +307,10 @@ import { getKeyFromMnemonic } from 'arweave-mnemonic-keys';
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import SwipeableViews from 'react-swipeable-views';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Sheet } from 'react-modal-sheet';
+import countryFlagEmoji from "country-flag-emoji";
+import * as countryCodes from "country-codes-list";
 import './main.css';
 
 /* pages stuff */
@@ -586,7 +600,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
-    account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false,
+    account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, arweave */,
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */,
@@ -1541,7 +1555,7 @@ class App extends Component {
         '3055':'Call Recipient.','3055a':'Your recipient\'s socket id.','3055b':'Call status','3055c':'N/A','3055d':'Connecting...','3055e':'hold','3055f':'resume call','3055g':'end call','3055h':'Your socket id.','3055i':'receive call','3055j':'Incoming call from ','3055k':'Caller','3055l':'Caller\'s socket id.','3055m':'Active','3055n':'e needs access to your microphone to receive that call.','3055o':'Call active.','3055p':'Call ended by ','3055q':'Call ended.','3055r':'','3055s':'','3055t':'','3055u':'','3055v':'','3055w':'','3055x':'','3055y':'','3055z':'','3055ba':'','3055bb':'',
         
         
-        '3056':'','3057':'','3058':'','3059':'','3060':'','3061':'','3062':'','3063':'','3064':'','3065':'','3066':'','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '3056':'light-green','3057':'red','3058':'light-red','3059':'blue','3060':'light-blue','3061':'yellow','3062':'light-yellow','3063':'pink','3064':'light-pink','3065':'orange','3066':'light-orange','3067':'','3068':'','3069':'','3070':'','3071':'','3072':'','3073':'','3074':'','3075':'','3076':'','3077':'','3078':'','3079':'','3080':'','3081':'','3082':'','3083':'','3084':'','3085':'','3086':'','3087':'','3088':'','3089':'','3090':'','3091':'','3092':'','3093':'','3094':'','3095':'','3096':'','3097':'','3098':'','3099':'','3100':'','3101':'','3102':'','3103':'','3104':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
         '':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
@@ -3469,254 +3483,270 @@ class App extends Component {
 
   }
   
+  get_country_data(){
+    var obj = [ 
+      {name: 'Afghanistan', code: 'AF', color:['y']}, 
+      {name: 'Åland Islands', code: 'AX', color:['g']}, 
+      {name: 'Albania', code: 'AL', color:['b']},
+      {name: 'Algeria', code: 'DZ', color:['y']}, 
+      {name: 'American Samoa', code: 'AS', color:['g']}, 
+      {name: 'Andorra', code: 'AD', color:['o']}, 
+      {name: 'Angola', code: 'AO', color:['y']},
+      {name: 'Anguilla', code: 'AI', color:['g']}, 
+      {name: 'Antarctica', code: 'AQ', color:['g']}, 
+      {name: 'Antigua and Barbuda', code: 'AG', color:['g']}, 
+      {name: 'Argentina', code: 'AR', color:['o']}, 
+      {name: 'Armenia', code: 'AM', color:['b']}, 
+      {name: 'Aruba', code: 'AW', color:['g']}, 
+      {name: 'Australia', code: 'AU', color:['g']}, 
+      {name: 'Austria', code: 'AT', color:['g']}, 
+      {name: 'Azerbaijan', code: 'AZ', color:['y']}, 
+      {name: 'Bahamas', code: 'BS', color:['g']}, 
+      {name: 'Bahrain', code: 'BH', color:['y']}, 
+      {name: 'Bangladesh', code: 'BD', color:['p']}, 
+      {name: 'Barbados', code: 'BB', color:['g']}, 
+      {name: 'Belarus', code: 'BY', color:['b']}, 
+      {name: 'Belgium', code: 'BE', color:['g']}, 
+      {name: 'Belize', code: 'BZ', color:['g']}, 
+      {name: 'Benin', code: 'BJ', color:['o']}, 
+      {name: 'Bermuda', code: 'BM', color:['g']}, 
+      {name: 'Bhutan', code: 'BT', color:['r']}, 
+      {name: 'Bolivia', code: 'BO', color:['o']}, 
+      {name: 'Bosnia and Herzegovina', code: 'BA', color:['b']}, 
+      {name: 'Botswana', code: 'BW', color:['g']}, 
+      {name: 'Bouvet Island', code: 'BV', color:['g']}, 
+      {name: 'Brazil', code: 'BR', color:['o']}, 
+      {name: 'British Indian Ocean Territory', code: 'IO', color:['g']}, 
+      {name: 'Brunei Darussalam', code: 'BN', color:['y']}, 
+      {name: 'Bulgaria', code: 'BG', color:['b']}, 
+      {name: 'Burkina Faso', code: 'BF', color:['o']}, 
+      {name: 'Burundi', code: 'BI', color:['g']}, 
+      {name: 'Cambodia', code: 'KH', color:['r']}, 
+      {name: 'Cameroon', code: 'CM', color:['o']}, 
+      {name: 'Canada', code: 'CA', color:['g']}, 
+      {name: 'Cape Verde', code: 'CV', color:['o']}, 
+      {name: 'Cayman Islands', code: 'KY', color:['g']}, 
+      {name: 'Central African Republic', code: 'CF', color:['o']}, 
+      {name: 'Chad', code: 'TD', color:['o']}, 
+      {name: 'Chile', code: 'CL', color:['o']}, 
+      {name: 'China', code: 'CN', color:['r']}, 
+      {name: 'Christmas Island', code: 'CX', color:['g']}, 
+      {name: 'Cocos (Keeling) Islands', code: 'CC', color:['g']}, 
+      {name: 'Colombia', code: 'CO', color:['o']}, 
+      {name: 'Comoros', code: 'KM', color:['o']}, 
+      {name: 'Congo', code: 'CG', color:['o']}, 
+      {name: 'Congo, The Democratic Republic of the', code: 'CD', color:['o']}, 
+      {name: 'Cook Islands', code: 'CK', color:['g']}, 
+      {name: 'Costa Rica', code: 'CR', color:['o']}, 
+      {name: 'Cote D\'Ivoire', code: 'CI', color:['o']}, 
+      {name: 'Croatia', code: 'HR', color:['b']}, 
+      {name: 'Cuba', code: 'CU', color:['o']}, 
+      {name: 'Cyprus', code: 'CY', color:['b']}, 
+      {name: 'Czech Republic', code: 'CZ', color:['b']}, 
+      {name: 'Denmark', code: 'DK', color:['g']}, 
+      {name: 'Djibouti', code: 'DJ', color:['o']}, 
+      {name: 'Dominica', code: 'DM', color:['g']}, 
+      {name: 'Dominican Republic', code: 'DO', color:['o']}, 
+      {name: 'Ecuador', code: 'EC', color:['o']}, 
+      {name: 'Egypt', code: 'EG', color:['y']}, 
+      {name: 'El Salvador', code: 'SV', color:['o']}, 
+      {name: 'Equatorial Guinea', code: 'GQ', color:['o']}, 
+      {name: 'Eritrea', code: 'ER', color:['y']}, 
+      {name: 'Estonia', code: 'EE', color:['b']}, 
+      {name: 'Ethiopia', code: 'ET', color:['o']}, 
+      {name: 'Falkland Islands (Malvinas)', code: 'FK', color:['g']}, 
+      {name: 'Faroe Islands', code: 'FO', color:['g']}, 
+      {name: 'Fiji', code: 'FJ', color:['g']}, 
+      {name: 'Finland', code: 'FI', color:['g']}, 
+      {name: 'France', code: 'FR', color:['o']}, 
+      {name: 'French Guiana', code: 'GF', color:['o']}, 
+      {name: 'French Polynesia', code: 'PF', color:['o']}, 
+      {name: 'French Southern Territories', code: 'TF', color:['o']}, 
+      {name: 'Gabon', code: 'GA', color:['o']}, 
+      {name: 'Gambia', code: 'GM', color:['g']}, 
+      {name: 'Georgia', code: 'GE', color:['b']}, 
+      {name: 'Germany', code: 'DE', color:['g']}, 
+      {name: 'Ghana', code: 'GH', color:['g']}, 
+      {name: 'Gibraltar', code: 'GI', color:['g']}, 
+      {name: 'Greece', code: 'GR', color:['b']}, 
+      {name: 'Greenland', code: 'GL', color:['g']}, 
+      {name: 'Grenada', code: 'GD', color:['g']}, 
+      {name: 'Guadeloupe', code: 'GP', color:['o']}, 
+      {name: 'Guam', code: 'GU', color:['g']}, 
+      {name: 'Guatemala', code: 'GT', color:['o']}, 
+      {name: 'Guernsey', code: 'GG', color:['g']}, 
+      {name: 'Guinea', code: 'GN', color:['o']}, 
+      {name: 'Guinea-Bissau', code: 'GW', color:['o']}, 
+      {name: 'Guyana', code: 'GY', color:['g']}, 
+      {name: 'Haiti', code: 'HT', color:['o']}, 
+      {name: 'Heard Island and Mcdonald Islands', code: 'HM', color:['g']}, 
+      {name: 'Holy See (Vatican City State)', code: 'VA', color:['o']}, 
+      {name: 'Honduras', code: 'HN', color:['o']}, 
+      {name: 'Hong Kong', code: 'HK', color:['r']}, 
+      {name: 'Hungary', code: 'HU', color:['b']}, 
+      {name: 'Iceland', code: 'IS', color:['g']}, 
+      {name: 'India', code: 'IN', color:['p']}, 
+      {name: 'Indonesia', code: 'ID', color:['y']}, 
+      {name: 'Iran, Islamic Republic Of', code: 'IR', color:['y']}, 
+      {name: 'Iraq', code: 'IQ', color:['y']},
+      {name: 'Ireland', code: 'IE', color:['g']}, 
+      {name: 'Isle of Man', code: 'IM', color:['g']}, 
+      {name: 'Israel', code: 'IL', color:['y']},//🤷 
+      {name: 'Italy', code: 'IT', color:['o']}, 
+      {name: 'Jamaica', code: 'JM', color:['g']}, 
+      {name: 'Japan', code: 'JP', color:['r']}, 
+      {name: 'Jersey', code: 'JE', color:['g']}, 
+      {name: 'Jordan', code: 'JO', color:['y']}, 
+      {name: 'Kazakhstan', code: 'KZ', color:['y']}, 
+      {name: 'Kenya', code: 'KE', color:['g'], allc: false}, 
+      {name: 'Kiribati', code: 'KI', color:['g']},
+      {name: 'Korea, Democratic People\'s Republic of', code: 'KP', color:['r']}, 
+      {name: 'Korea, Republic of', code: 'KR', color:['r']}, 
+      {name: 'Kuwait', code: 'KW', color:['y']}, 
+      {name: 'Kyrgyzstan', code: 'KG', color:['y']}, 
+      {name: 'Lao People\'s Democratic Republic', code: 'LA', color:['r']}, 
+      {name: 'Latvia', code: 'LV', color:['b']}, 
+      {name: 'Lebanon', code: 'LB', color:['y']}, 
+      {name: 'Lesotho', code: 'LS', color:['g']}, 
+      {name: 'Liberia', code: 'LR', color:['g']}, 
+      {name: 'Libyan Arab Jamahiriya', code: 'LY', color:['y']}, 
+      {name: 'Liechtenstein', code: 'LI', color:['g']}, 
+      {name: 'Lithuania', code: 'LT', color:['b']}, 
+      {name: 'Luxembourg', code: 'LU', color:['g']}, 
+      {name: 'Macau', code: 'MO', color:['r']}, 
+      {name: 'Macedonia, The Former Yugoslav Republic of', code: 'MK', color:['b']}, 
+      {name: 'Madagascar', code: 'MG', color:['o']}, 
+      {name: 'Malawi', code: 'MW', color:['g']}, 
+      {name: 'Malaysia', code: 'MY', color:['g']}, 
+      {name: 'Maldives', code: 'MV', color:['y']}, 
+      {name: 'Mali', code: 'ML', color:['o']}, 
+      {name: 'Malta', code: 'MT', color:['g']}, 
+      {name: 'Marshall Islands', code: 'MH', color:['g']}, 
+      {name: 'Martinique', code: 'MQ', color:['o']}, 
+      {name: 'Mauritania', code: 'MR', color:['y']}, 
+      {name: 'Mauritius', code: 'MU', color:['o']}, 
+      {name: 'Mayotte', code: 'YT', color:['o']}, 
+      {name: 'Mexico', code: 'MX', color:['o']}, 
+      {name: 'Micronesia, Federated States of', code: 'FM', color:['g']}, 
+      {name: 'Moldova, Republic of', code: 'MD', color:['b']}, 
+      {name: 'Monaco', code: 'MC', color:['o']}, 
+      {name: 'Mongolia', code: 'MN', color:['r']}, 
+      {name: 'Montserrat', code: 'MS', color:['g']}, 
+      {name: 'Morocco', code: 'MA', color:['y']}, 
+      {name: 'Mozambique', code: 'MZ', color:['o']}, 
+      {name: 'Myanmar', code: 'MM', color:['r']}, 
+      {name: 'Namibia', code: 'NA', color:['g']}, 
+      {name: 'Nauru', code: 'NR', color:['g']}, 
+      {name: 'Nepal', code: 'NP', color:['r']}, 
+      {name: 'Netherlands', code: 'NL', color:['g']}, 
+      {name: 'Netherlands Antilles', code: 'AN', color:['g']}, 
+      {name: 'New Caledonia', code: 'NC', color:['o']}, 
+      {name: 'New Zealand', code: 'NZ', color:['g']}, 
+      {name: 'Nicaragua', code: 'NI', color:['o']}, 
+      {name: 'Niger', code: 'NE', color:['o']}, 
+      {name: 'Nigeria', code: 'NG', color:['g']}, 
+      {name: 'Niue', code: 'NU', color:['g']}, 
+      {name: 'Norfolk Island', code: 'NF', color:['g']}, 
+      {name: 'Northern Mariana Islands', code: 'MP', color:['g']}, 
+      {name: 'Norway', code: 'NO', color:['g']}, 
+      {name: 'Oman', code: 'OM', color:['y']}, 
+      {name: 'Pakistan', code: 'PK', color:['p']}, 
+      {name: 'Palau', code: 'PW', color:['g']}, 
+      {name: 'Palestinian Territory, Occupied', code: 'PS', color:['y']}, 
+      {name: 'Panama', code: 'PA', color:['o']},
+      {name: 'Papua New Guinea', code: 'PG', color:['g']}, 
+      {name: 'Paraguay', code: 'PY', color:['o']}, 
+      {name: 'Peru', code: 'PE', color:['o']}, 
+      {name: 'Philippines', code: 'PH', color:['g']}, 
+      {name: 'Pitcairn', code: 'PN', color:['g']}, 
+      {name: 'Poland', code: 'PL', color:['g']}, 
+      {name: 'Portugal', code: 'PT', color:['o']}, 
+      {name: 'Puerto Rico', code: 'PR', color:['g']}, 
+      {name: 'Qatar', code: 'QA', color:['y']}, 
+      {name: 'Reunion', code: 'RE', color:['o']}, 
+      {name: 'Romania', code: 'RO', color:['b']}, 
+      {name: 'Russian Federation', code: 'RU', color:['b']}, 
+      {name: 'Rwanda', code: 'RW', color:['g']}, 
+      {name: 'Saint Helena', code: 'SH', color:['g']}, 
+      {name: 'Saint Kitts and Nevis', code: 'KN', color:['g']}, 
+      {name: 'Saint Lucia', code: 'LC', color:['g']}, 
+      {name: 'Saint Pierre and Miquelon', code: 'PM', color:['o']}, 
+      {name: 'Saint Vincent and the Grenadines', code: 'VC', color:['g']}, 
+      {name: 'Samoa', code: 'WS', color:['g']}, 
+      {name: 'San Marino', code: 'SM', color:['o']}, 
+      {name: 'Sao Tome and Principe', code: 'ST', color:['o']}, 
+      {name: 'Saudi Arabia', code: 'SA', color:['y']}, 
+      {name: 'Senegal', code: 'SN', color:['o']}, 
+      {name: 'Serbia and Montenegro', code: 'CS', color:['b']}, 
+      {name: 'Seychelles', code: 'SC', color:['g']}, 
+      {name: 'Sierra Leone', code: 'SL', color:['g']}, 
+      {name: 'Singapore', code: 'SG', color:['g']}, 
+      {name: 'Slovakia', code: 'SK', color:['b']}, 
+      {name: 'Slovenia', code: 'SI', color:['b']}, 
+      {name: 'Solomon Islands', code: 'SB', color:['g']}, 
+      {name: 'Somalia', code: 'SO', color:['y']}, 
+      {name: 'South Africa', code: 'ZA', color:['g']}, 
+      {name: 'South Georgia and the South Sandwich Islands', code: 'GS', color:['g']}, 
+      {name: 'Spain', code: 'ES', color:['o']}, 
+      {name: 'Sri Lanka', code: 'LK', color:['p']}, 
+      {name: 'Sudan', code: 'SD', color:['y']}, 
+      {name: 'Suriname', code: 'SR', color:['g']}, 
+      {name: 'Svalbard and Jan Mayen', code: 'SJ', color:['g']}, 
+      {name: 'Swaziland', code: 'SZ', color:['g']}, 
+      {name: 'Sweden', code: 'SE', color:['g']}, 
+      {name: 'Switzerland', code: 'CH', color:['g']}, 
+      {name: 'Syrian Arab Republic', code: 'SY', color:['y']}, 
+      {name: 'Taiwan, Province of China', code: 'TW', color:['r']}, 
+      {name: 'Tajikistan', code: 'TJ', color:['y']}, 
+      {name: 'Tanzania, United Republic of', code: 'TZ', color:['g']}, 
+      {name: 'Thailand', code: 'TH', color:['r']}, 
+      {name: 'Timor-Leste', code: 'TL', color:['o']}, 
+      {name: 'Togo', code: 'TG', color:['o']}, 
+      {name: 'Tokelau', code: 'TK', color:['g']}, 
+      {name: 'Tonga', code: 'TO', color:['g']}, 
+      {name: 'Trinidad and Tobago', code: 'TT', color:['g']}, 
+      {name: 'Tunisia', code: 'TN', color:['y']}, 
+      {name: 'Turkey', code: 'TR', color:['y']}, 
+      {name: 'Turkmenistan', code: 'TM', color:['y']}, 
+      {name: 'Turks and Caicos Islands', code: 'TC', color:['g']}, 
+      {name: 'Tuvalu', code: 'TV', color:['g']}, 
+      {name: 'Uganda', code: 'UG', color:['g']}, 
+      {name: 'Ukraine', code: 'UA', color:['b']}, 
+      {name: 'United Arab Emirates', code: 'AE', color:['y']}, 
+      {name: 'United Kingdom', code: 'GB', color:['g']}, 
+      {name: 'United States', code: 'US', color:['g']}, 
+      {name: 'United States Minor Outlying Islands', code: 'UM', color:['g']}, 
+      {name: 'Uruguay', code: 'UY', color:['o']}, 
+      {name: 'Uzbekistan', code: 'UZ', color:['y']}, 
+      {name: 'Vanuatu', code: 'VU', color:['o']}, 
+      {name: 'Venezuela', code: 'VE', color:['o']}, 
+      {name: 'Viet Nam', code: 'VN', color:['r']},
+      {name: 'Virgin Islands, British', code: 'VG', color:['g']}, 
+      {name: 'Virgin Islands, U.S.', code: 'VI', color:['g']}, 
+      {name: 'Wallis and Futuna', code: 'WF', color:['o']}, 
+      {name: 'Western Sahara', code: 'EH', color:['y']}, 
+      {name: 'Yemen', code: 'YE', color:['y']}, 
+      {name: 'Zambia', code: 'ZM', color:['g']}, 
+      {name: 'Zimbabwe', code: 'ZW', color:['g']} 
+    ]
+    const myCountryCodesObject = countryCodes.customList(
+      "countryCode",
+      "{countryCallingCode}"
+    );
+    for(var i=0; i<obj.length; i++){
+      var country_code = obj[i].code
+      var data = countryFlagEmoji.get(country_code)
+      var emoji = data['emoji']
+      obj[i].emoji = emoji
+      var country_calling_code = myCountryCodesObject[country_code]
+      obj[i].call_code = country_calling_code
+    }
+
+    return obj
+  }
 
   get_country_code(country){
-    var obj = [ 
-      {name: 'Afghanistan', code: 'AF'}, 
-      {name: 'Åland Islands', code: 'AX'}, 
-      {name: 'Albania', code: 'AL'}, 
-      {name: 'Algeria', code: 'DZ'}, 
-      {name: 'American Samoa', code: 'AS'}, 
-      {name: 'AndorrA', code: 'AD'}, 
-      {name: 'Angola', code: 'AO'}, 
-      {name: 'Anguilla', code: 'AI'}, 
-      {name: 'Antarctica', code: 'AQ'}, 
-      {name: 'Antigua and Barbuda', code: 'AG'}, 
-      {name: 'Argentina', code: 'AR'}, 
-      {name: 'Armenia', code: 'AM'}, 
-      {name: 'Aruba', code: 'AW'}, 
-      {name: 'Australia', code: 'AU'}, 
-      {name: 'Austria', code: 'AT'}, 
-      {name: 'Azerbaijan', code: 'AZ'}, 
-      {name: 'Bahamas', code: 'BS'}, 
-      {name: 'Bahrain', code: 'BH'}, 
-      {name: 'Bangladesh', code: 'BD'}, 
-      {name: 'Barbados', code: 'BB'}, 
-      {name: 'Belarus', code: 'BY'}, 
-      {name: 'Belgium', code: 'BE'}, 
-      {name: 'Belize', code: 'BZ'}, 
-      {name: 'Benin', code: 'BJ'}, 
-      {name: 'Bermuda', code: 'BM'}, 
-      {name: 'Bhutan', code: 'BT'}, 
-      {name: 'Bolivia', code: 'BO'}, 
-      {name: 'Bosnia and Herzegovina', code: 'BA'}, 
-      {name: 'Botswana', code: 'BW'}, 
-      {name: 'Bouvet Island', code: 'BV'}, 
-      {name: 'Brazil', code: 'BR'}, 
-      {name: 'British Indian Ocean Territory', code: 'IO'}, 
-      {name: 'Brunei Darussalam', code: 'BN'}, 
-      {name: 'Bulgaria', code: 'BG'}, 
-      {name: 'Burkina Faso', code: 'BF'}, 
-      {name: 'Burundi', code: 'BI'}, 
-      {name: 'Cambodia', code: 'KH'}, 
-      {name: 'Cameroon', code: 'CM'}, 
-      {name: 'Canada', code: 'CA'}, 
-      {name: 'Cape Verde', code: 'CV'}, 
-      {name: 'Cayman Islands', code: 'KY'}, 
-      {name: 'Central African Republic', code: 'CF'}, 
-      {name: 'Chad', code: 'TD'}, 
-      {name: 'Chile', code: 'CL'}, 
-      {name: 'China', code: 'CN'}, 
-      {name: 'Christmas Island', code: 'CX'}, 
-      {name: 'Cocos (Keeling) Islands', code: 'CC'}, 
-      {name: 'Colombia', code: 'CO'}, 
-      {name: 'Comoros', code: 'KM'}, 
-      {name: 'Congo', code: 'CG'}, 
-      {name: 'Congo, The Democratic Republic of the', code: 'CD'}, 
-      {name: 'Cook Islands', code: 'CK'}, 
-      {name: 'Costa Rica', code: 'CR'}, 
-      {name: 'Cote D\'Ivoire', code: 'CI'}, 
-      {name: 'Croatia', code: 'HR'}, 
-      {name: 'Cuba', code: 'CU'}, 
-      {name: 'Cyprus', code: 'CY'}, 
-      {name: 'Czech Republic', code: 'CZ'}, 
-      {name: 'Denmark', code: 'DK'}, 
-      {name: 'Djibouti', code: 'DJ'}, 
-      {name: 'Dominica', code: 'DM'}, 
-      {name: 'Dominican Republic', code: 'DO'}, 
-      {name: 'Ecuador', code: 'EC'}, 
-      {name: 'Egypt', code: 'EG'}, 
-      {name: 'El Salvador', code: 'SV'}, 
-      {name: 'Equatorial Guinea', code: 'GQ'}, 
-      {name: 'Eritrea', code: 'ER'}, 
-      {name: 'Estonia', code: 'EE'}, 
-      {name: 'Ethiopia', code: 'ET'}, 
-      {name: 'Falkland Islands (Malvinas)', code: 'FK'}, 
-      {name: 'Faroe Islands', code: 'FO'}, 
-      {name: 'Fiji', code: 'FJ'}, 
-      {name: 'Finland', code: 'FI'}, 
-      {name: 'France', code: 'FR'}, 
-      {name: 'French Guiana', code: 'GF'}, 
-      {name: 'French Polynesia', code: 'PF'}, 
-      {name: 'French Southern Territories', code: 'TF'}, 
-      {name: 'Gabon', code: 'GA'}, 
-      {name: 'Gambia', code: 'GM'}, 
-      {name: 'Georgia', code: 'GE'}, 
-      {name: 'Germany', code: 'DE'}, 
-      {name: 'Ghana', code: 'GH'}, 
-      {name: 'Gibraltar', code: 'GI'}, 
-      {name: 'Greece', code: 'GR'}, 
-      {name: 'Greenland', code: 'GL'}, 
-      {name: 'Grenada', code: 'GD'}, 
-      {name: 'Guadeloupe', code: 'GP'}, 
-      {name: 'Guam', code: 'GU'}, 
-      {name: 'Guatemala', code: 'GT'}, 
-      {name: 'Guernsey', code: 'GG'}, 
-      {name: 'Guinea', code: 'GN'}, 
-      {name: 'Guinea-Bissau', code: 'GW'}, 
-      {name: 'Guyana', code: 'GY'}, 
-      {name: 'Haiti', code: 'HT'}, 
-      {name: 'Heard Island and Mcdonald Islands', code: 'HM'}, 
-      {name: 'Holy See (Vatican City State)', code: 'VA'}, 
-      {name: 'Honduras', code: 'HN'}, 
-      {name: 'Hong Kong', code: 'HK'}, 
-      {name: 'Hungary', code: 'HU'}, 
-      {name: 'Iceland', code: 'IS'}, 
-      {name: 'India', code: 'IN'}, 
-      {name: 'Indonesia', code: 'ID'}, 
-      {name: 'Iran, Islamic Republic Of', code: 'IR'}, 
-      {name: 'Iraq', code: 'IQ'}, 
-      {name: 'Ireland', code: 'IE'}, 
-      {name: 'Isle of Man', code: 'IM'}, 
-      {name: 'Israel', code: 'IL'}, 
-      {name: 'Italy', code: 'IT'}, 
-      {name: 'Jamaica', code: 'JM'}, 
-      {name: 'Japan', code: 'JP'}, 
-      {name: 'Jersey', code: 'JE'}, 
-      {name: 'Jordan', code: 'JO'}, 
-      {name: 'Kazakhstan', code: 'KZ'}, 
-      {name: 'Kenya', code: 'KE'}, 
-      {name: 'Kiribati', code: 'KI'}, 
-      {name: 'Korea, Democratic People\'S Republic of', code: 'KP'}, 
-      {name: 'Korea, Republic of', code: 'KR'}, 
-      {name: 'Kuwait', code: 'KW'}, 
-      {name: 'Kyrgyzstan', code: 'KG'}, 
-      {name: 'Lao People\'S Democratic Republic', code: 'LA'}, 
-      {name: 'Latvia', code: 'LV'}, 
-      {name: 'Lebanon', code: 'LB'}, 
-      {name: 'Lesotho', code: 'LS'}, 
-      {name: 'Liberia', code: 'LR'}, 
-      {name: 'Libyan Arab Jamahiriya', code: 'LY'}, 
-      {name: 'Liechtenstein', code: 'LI'}, 
-      {name: 'Lithuania', code: 'LT'}, 
-      {name: 'Luxembourg', code: 'LU'}, 
-      {name: 'Macao', code: 'MO'}, 
-      {name: 'Macedonia, The Former Yugoslav Republic of', code: 'MK'}, 
-      {name: 'Madagascar', code: 'MG'}, 
-      {name: 'Malawi', code: 'MW'}, 
-      {name: 'Malaysia', code: 'MY'}, 
-      {name: 'Maldives', code: 'MV'}, 
-      {name: 'Mali', code: 'ML'}, 
-      {name: 'Malta', code: 'MT'}, 
-      {name: 'Marshall Islands', code: 'MH'}, 
-      {name: 'Martinique', code: 'MQ'}, 
-      {name: 'Mauritania', code: 'MR'}, 
-      {name: 'Mauritius', code: 'MU'}, 
-      {name: 'Mayotte', code: 'YT'}, 
-      {name: 'Mexico', code: 'MX'}, 
-      {name: 'Micronesia, Federated States of', code: 'FM'}, 
-      {name: 'Moldova, Republic of', code: 'MD'}, 
-      {name: 'Monaco', code: 'MC'}, 
-      {name: 'Mongolia', code: 'MN'}, 
-      {name: 'Montserrat', code: 'MS'}, 
-      {name: 'Morocco', code: 'MA'}, 
-      {name: 'Mozambique', code: 'MZ'}, 
-      {name: 'Myanmar', code: 'MM'}, 
-      {name: 'Namibia', code: 'NA'}, 
-      {name: 'Nauru', code: 'NR'}, 
-      {name: 'Nepal', code: 'NP'}, 
-      {name: 'Netherlands', code: 'NL'}, 
-      {name: 'Netherlands Antilles', code: 'AN'}, 
-      {name: 'New Caledonia', code: 'NC'}, 
-      {name: 'New Zealand', code: 'NZ'}, 
-      {name: 'Nicaragua', code: 'NI'}, 
-      {name: 'Niger', code: 'NE'}, 
-      {name: 'Nigeria', code: 'NG'}, 
-      {name: 'Niue', code: 'NU'}, 
-      {name: 'Norfolk Island', code: 'NF'}, 
-      {name: 'Northern Mariana Islands', code: 'MP'}, 
-      {name: 'Norway', code: 'NO'}, 
-      {name: 'Oman', code: 'OM'}, 
-      {name: 'Pakistan', code: 'PK'}, 
-      {name: 'Palau', code: 'PW'}, 
-      {name: 'Palestinian Territory, Occupied', code: 'PS'}, 
-      {name: 'Panama', code: 'PA'}, 
-      {name: 'Papua New Guinea', code: 'PG'}, 
-      {name: 'Paraguay', code: 'PY'}, 
-      {name: 'Peru', code: 'PE'}, 
-      {name: 'Philippines', code: 'PH'}, 
-      {name: 'Pitcairn', code: 'PN'}, 
-      {name: 'Poland', code: 'PL'}, 
-      {name: 'Portugal', code: 'PT'}, 
-      {name: 'Puerto Rico', code: 'PR'}, 
-      {name: 'Qatar', code: 'QA'}, 
-      {name: 'Reunion', code: 'RE'}, 
-      {name: 'Romania', code: 'RO'}, 
-      {name: 'Russian Federation', code: 'RU'}, 
-      {name: 'RWANDA', code: 'RW'}, 
-      {name: 'Saint Helena', code: 'SH'}, 
-      {name: 'Saint Kitts and Nevis', code: 'KN'}, 
-      {name: 'Saint Lucia', code: 'LC'}, 
-      {name: 'Saint Pierre and Miquelon', code: 'PM'}, 
-      {name: 'Saint Vincent and the Grenadines', code: 'VC'}, 
-      {name: 'Samoa', code: 'WS'}, 
-      {name: 'San Marino', code: 'SM'}, 
-      {name: 'Sao Tome and Principe', code: 'ST'}, 
-      {name: 'Saudi Arabia', code: 'SA'}, 
-      {name: 'Senegal', code: 'SN'}, 
-      {name: 'Serbia and Montenegro', code: 'CS'}, 
-      {name: 'Seychelles', code: 'SC'}, 
-      {name: 'Sierra Leone', code: 'SL'}, 
-      {name: 'Singapore', code: 'SG'}, 
-      {name: 'Slovakia', code: 'SK'}, 
-      {name: 'Slovenia', code: 'SI'}, 
-      {name: 'Solomon Islands', code: 'SB'}, 
-      {name: 'Somalia', code: 'SO'}, 
-      {name: 'South Africa', code: 'ZA'}, 
-      {name: 'South Georgia and the South Sandwich Islands', code: 'GS'}, 
-      {name: 'Spain', code: 'ES'}, 
-      {name: 'Sri Lanka', code: 'LK'}, 
-      {name: 'Sudan', code: 'SD'}, 
-      {name: 'Suriname', code: 'SR'}, 
-      {name: 'Svalbard and Jan Mayen', code: 'SJ'}, 
-      {name: 'Swaziland', code: 'SZ'}, 
-      {name: 'Sweden', code: 'SE'}, 
-      {name: 'Switzerland', code: 'CH'}, 
-      {name: 'Syrian Arab Republic', code: 'SY'}, 
-      {name: 'Taiwan, Province of China', code: 'TW'}, 
-      {name: 'Tajikistan', code: 'TJ'}, 
-      {name: 'Tanzania, United Republic of', code: 'TZ'}, 
-      {name: 'Thailand', code: 'TH'}, 
-      {name: 'Timor-Leste', code: 'TL'}, 
-      {name: 'Togo', code: 'TG'}, 
-      {name: 'Tokelau', code: 'TK'}, 
-      {name: 'Tonga', code: 'TO'}, 
-      {name: 'Trinidad and Tobago', code: 'TT'}, 
-      {name: 'Tunisia', code: 'TN'}, 
-      {name: 'Turkey', code: 'TR'}, 
-      {name: 'Turkmenistan', code: 'TM'}, 
-      {name: 'Turks and Caicos Islands', code: 'TC'}, 
-      {name: 'Tuvalu', code: 'TV'}, 
-      {name: 'Uganda', code: 'UG'}, 
-      {name: 'Ukraine', code: 'UA'}, 
-      {name: 'United Arab Emirates', code: 'AE'}, 
-      {name: 'United Kingdom', code: 'GB'}, 
-      {name: 'United States', code: 'US'}, 
-      {name: 'United States Minor Outlying Islands', code: 'UM'}, 
-      {name: 'Uruguay', code: 'UY'}, 
-      {name: 'Uzbekistan', code: 'UZ'}, 
-      {name: 'Vanuatu', code: 'VU'}, 
-      {name: 'Venezuela', code: 'VE'}, 
-      {name: 'Viet Nam', code: 'VN'}, 
-      {name: 'Virgin Islands, British', code: 'VG'}, 
-      {name: 'Virgin Islands, U.S.', code: 'VI'}, 
-      {name: 'Wallis and Futuna', code: 'WF'}, 
-      {name: 'Western Sahara', code: 'EH'}, 
-      {name: 'Yemen', code: 'YE'}, 
-      {name: 'Zambia', code: 'ZM'}, 
-      {name: 'Zimbabwe', code: 'ZW'} 
-    ]
-
+    const obj = this.get_country_data()
     var data = {}
     obj.forEach(element => {
       data[element.name] = element.code
@@ -4226,6 +4256,7 @@ class App extends Component {
         'repeat':repeat,
 
         'letter':letter,
+        'e5_logo':e5_logo_light,
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
@@ -4263,6 +4294,7 @@ class App extends Component {
         'repeat':repeat_dark,
 
         'letter':letter,
+        'e5_logo':e5_logo_dark,
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -4301,9 +4333,10 @@ class App extends Component {
         'repeat':repeat_dark,
 
         'letter':letter,
+        'e5_logo':e5_logo_dark,
       }
     }
-    
+
     else if(theme == this.getLocale()['2741']/* green */){
       return{
         'name':this.getLocale()['2741']/* green */,
@@ -4341,11 +4374,12 @@ class App extends Component {
         'repeat':repeat_icon_green,
 
         'letter':letter_green,
+        'e5_logo':e5_logo_green,
       }
     }
-    if(theme == 'light-green'){
+    if(theme == this.getLocale()['3056']/* 'light-green' */){
       return{
-        'name':'light-green',
+        'name':this.getLocale()['3056']/* 'light-green' */,
         'bar_shadow':'#c5e8d6','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'#dddddd', 'button_color':'#01c601', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
@@ -4378,12 +4412,13 @@ class App extends Component {
         'repeat':repeat_icon_green,
 
         'letter':letter_green,
+        'e5_logo':e5_logo_darkgreen,
       }
     }
 
-    else if(theme == 'red'){
+    else if(theme == this.getLocale()['3057']/* 'red' */){
       return{
-        'name':'red',
+        'name':this.getLocale()['3057']/* 'red' */,
         'bar_shadow':'#f9aeae','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1717','send_receive_ether_overlay_shadow':'#303030',
@@ -4418,11 +4453,12 @@ class App extends Component {
         'repeat':repeat_icon_red,
 
         'letter':letter_red,
+        'e5_logo':e5_logo_red,
       }
     }
-    if(theme == 'light-red'){
+    if(theme == this.getLocale()['3058']/* 'light-red' */){
       return{
-        'name':'light-red',
+        'name':this.getLocale()['3058']/* 'light-red' */,
         'bar_shadow':'#f9d1d1','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'#dddddd', 'button_color':'#c60b01', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
@@ -4455,12 +4491,13 @@ class App extends Component {
         'repeat':repeat_icon_red,
 
         'letter':letter_red,
+        'e5_logo':e5_logo_darkred,
       }
     }
 
-    else if(theme == 'blue'){
+    else if(theme == this.getLocale()['3059']/* 'blue' */){
       return{
-        'name':'blue',
+        'name':this.getLocale()['3059']/* 'blue' */,
         'bar_shadow':'#aeb8f9','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#17171c','send_receive_ether_overlay_shadow':'#303030',
@@ -4495,11 +4532,12 @@ class App extends Component {
         'repeat':repeat_icon_blue,
 
         'letter':letter_blue,
+        'e5_logo':e5_logo_blue,
       }
     }
-    if(theme == 'light-blue'){
+    if(theme == this.getLocale()['3060']/* 'light-blue' */){
       return{
-        'name':'light-blue',
+        'name':this.getLocale()['3060']/* 'light-blue' */,
         'bar_shadow':'#bce4ff','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'#dddddd', 'button_color':'#0181c6', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
@@ -4532,12 +4570,13 @@ class App extends Component {
         'repeat':repeat_icon_blue,
 
         'letter':letter_blue,
+        'e5_logo':e5_logo_darkblue,
       }
     }
 
-    else if(theme == 'yellow'){
+    else if(theme == this.getLocale()['3061']/* 'yellow' */){
       return{
-        'name':'yellow',
+        'name':this.getLocale()['3061']/* 'yellow' */,
         'bar_shadow':'#f9f8ae','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b1c17','send_receive_ether_overlay_shadow':'#303030',
@@ -4572,11 +4611,12 @@ class App extends Component {
         'repeat':repeat_icon_yellow,
 
         'letter':letter_yellow,
+        'e5_logo':e5_logo_yellow,
       }
     }
-    if(theme == 'light-yellow'){
+    if(theme == this.getLocale()['3062']/* 'light-yellow' */){
       return{
-        'name':'light-yellow',
+        'name':this.getLocale()['3062']/* 'light-yellow' */,
         'bar_shadow':'#fdffbc','bar_color':'#9ba003', 'bar_background_color':'#e2e2cc','nav_bar_color':'#dddddd', 'button_color':'#9ba003', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
@@ -4609,12 +4649,13 @@ class App extends Component {
         'repeat':repeat_icon_darkyellow,
 
         'letter':letter_darkyellow,
+        'e5_logo':e5_logo_darkyellow,
       }
     }
 
-    else if(theme == 'pink'){
+    else if(theme == this.getLocale()['3063']/* 'pink' */){
       return{
-        'name':'pink',
+        'name':this.getLocale()['3063']/* 'pink' */,
         'bar_shadow':'#ecaef9','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b171c','send_receive_ether_overlay_shadow':'#303030',
@@ -4649,11 +4690,12 @@ class App extends Component {
         'repeat':repeat_icon_pink,
 
         'letter':letter_pink,
+        'e5_logo':e5_logo_pink,
       }
     }
-    if(theme == 'light-pink'){
+    if(theme == this.getLocale()['3064']/* 'light-pink' */){
       return{
-        'name':'light-pink',
+        'name':this.getLocale()['3064']/* 'light-pink' */,
         'bar_shadow':'#ecbcff','bar_color':'#8e03a0', 'bar_background_color':'#decce2','nav_bar_color':'#dddddd', 'button_color':'#af01c6', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
@@ -4686,12 +4728,13 @@ class App extends Component {
         'repeat':repeat_icon_pink,
 
         'letter':letter_pink,
+        'e5_logo':e5_logo_darkpink,
       }
     }
 
-    else if(theme == 'orange'){
+    else if(theme == this.getLocale()['3065']/* 'orange' */){
       return{
-        'name':'orange',
+        'name':this.getLocale()['3065']/* 'orange' */,
         'bar_shadow':'#f9d1ae','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'#1a1a1a','button_color':'#0c0c0c', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1a17','send_receive_ether_overlay_shadow':'#303030',
@@ -4726,11 +4769,12 @@ class App extends Component {
         'repeat':repeat_icon_orange,
 
         'letter':letter_orange,
+        'e5_logo':e5_logo_orange,
       }
     }
-    if(theme == 'light-orange'){
+    if(theme == this.getLocale()['3066']/* 'light-orange' */){
       return{
-        'name':'light-orange',
+        'name':this.getLocale()['3066']/* 'light-orange' */,
         'bar_shadow':'#ffe2bc','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'#dddddd', 'button_color':'#c67b01', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
@@ -4763,6 +4807,7 @@ class App extends Component {
         'repeat':repeat_icon_orange,
 
         'letter':letter_orange,
+        'e5_logo':e5_logo_darkorange,
       }
     }
 

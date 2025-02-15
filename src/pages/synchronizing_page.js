@@ -22,6 +22,12 @@ import ViewGroups from './../components/view_groups'
 import p2p_trust from './../assets/p2p_trust_image.png';
 import unanimous_consensus from './../assets/unanimous_consensus_image.png';
 import letter_crack1 from './../assets/letter_crack1.png'
+import sublogo_dark from './../assets/sublogo_dark.png'
+import sublogo_dark_cracked1 from './../assets/sublogo_dark_cracked1.png'
+import sublogo_dark_cracked2 from './../assets/sublogo_dark_cracked2.png'
+import sublogo_dark_cracked3 from './../assets/sublogo_dark_cracked3.png'
+import sublogo_dark_cracked4 from './../assets/sublogo_dark_cracked4.png'
+import sublogo_dark_cracked5 from './../assets/sublogo_dark_cracked5.png'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -49,9 +55,7 @@ class synchronizing_page extends Component {
             image_width = '130px'
             bar_width = '135px'
         }
-        var img = 'https://nftstorage.link/ipfs/bafkreiaszixz3iclvzxocneibrmppoazemylhb5ynki5sownn7n2bub4m4'
-        img = letter_crack1
-
+        var img = this.get_default_logo()
         return(
             <div style={{width:'100%', height:h,'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                 <div>
@@ -63,6 +67,14 @@ class synchronizing_page extends Component {
                 </div>
             </div>
         )
+    }
+
+    get_default_logo(){
+        var img = letter_crack1
+
+        
+
+        return img
     }
 
     render_synchronizing_page(){
