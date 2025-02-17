@@ -630,6 +630,15 @@ class ViewGroups extends Component {
         else if(action_id == 'when_language_selected'){
             this.props.when_language_selected(tag, pos)
         }
+        else if(action_id == 'when_dialer_country_selected'){
+            this.props.when_dialer_country_selected(tag, pos)
+        }
+        else if(action_id == 'when_dialer_included_country_selected'){
+            this.props.when_dialer_included_country_selected(tag, pos)
+        }
+        else if(action_id == 'when_dialer_dark_emblem_country_selected'){
+            this.props.when_dialer_dark_emblem_country_selected(tag, pos)
+        }
     }
 
     when_image_clicked(items, index){

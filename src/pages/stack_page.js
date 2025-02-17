@@ -183,31 +183,116 @@ class StackPage extends Component {
 
 
     get_theme_tags_object(){
+        const theme_stage = this.props.app_state.get_theme_stage_tags_object
+        const my_state_color = this.get_my_state_color('dark');
+        const my_state_color_light = this.get_my_state_color('light');
+        const my_state_code = this.props.app_state.device_country_code
+        const obj = {
+            'none':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['1593a']/* 'auto' */], 
+            
+            'darkcolor-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, my_state_color, this.props.app_state.loc['1593a']/* 'auto' */], 
+            
+            'lightcolor-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, my_state_color, my_state_color_light, this.props.app_state.loc['1593a']/* 'auto' */],
+            
+            'all-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['2741']/* green */,this.props.app_state.loc['3056']/* 'light-green' */, this.props.app_state.loc['3057']/* 'red' */,this.props.app_state.loc['3058']/* 'light-red' */, this.props.app_state.loc['3059']/* 'blue' */,this.props.app_state.loc['3060']/* 'light-blue' */, this.props.app_state.loc['3061']/* 'yellow' */,this.props.app_state.loc['3062']/* 'light-yellow' */,  this.props.app_state.loc['3063']/* 'pink' */,this.props.app_state.loc['3064']/* 'light-pink' */,  this.props.app_state.loc['3065']/* 'orange' */, this.props.app_state.loc['3066']/* 'light-orange' */, this.props.app_state.loc['1593a']/* 'auto' */]
+        }
+        if(my_state_code === '254'){
+            var dark = this.get_254_state_colors('dark')
+            var light = this.get_254_state_colors('light')
+            obj['darkcolor-available'] = dark;
+            obj['lightcolor-available'] = light;
+        }
+
+        var final_array = obj[theme_stage]
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['1593a']/* 'auto' *//* , this.props.app_state.loc['2741'] *//* green */], [this.get_light_dark_option()]
+                ['xor','',0], final_array, [this.get_light_dark_option(final_array)]
             ],
         };
-        
     }
 
-    get_light_dark_option(){
-        if(this.props.app_state.theme['name'] == this.props.app_state.loc['1417']/* 'light' */){
-            return 1
+    get_254_state_colors(theme){
+        const country_data = this.props.app_state.country_data
+        const included_states = this.props.app_state.allowed_countries
+
+        var selected_objs = country_data.filter(function (el) {
+            return (included_states.includes(el['name']))
+        });
+
+        var colors = []
+        selected_objs.forEach(element => {
+            if(!colors.includes(element['color'][0])){
+                colors.push(element['color'][0])
+            }
+        });
+        
+        var obj = {
+            'g':this.props.app_state.loc['2741']/* green */, 
+            'r':this.props.app_state.loc['3057']/* 'red' */, 
+            'b':this.props.app_state.loc['3059']/* 'blue' */, 
+            'y':this.props.app_state.loc['3061']/* 'yellow' */, 
+            'p':this.props.app_state.loc['3063']/* 'pink' */, 
+            'o':this.props.app_state.loc['3065']/* 'orange' */
         }
-        else if(this.props.app_state.theme['name'] == this.props.app_state.loc['1418']/* 'dark' */){
-            return 2
+        var obj2 = {
+            'g':this.props.app_state.loc['3056']/* 'light-green' */, 
+            'r':this.props.app_state.loc['3058']/* 'light-red' */, 
+            'b':this.props.app_state.loc['3060']/* 'light-blue' */, 
+            'y':this.props.app_state.loc['3062']/* 'light-yellow' */, 
+            'p':this.props.app_state.loc['3064']/* 'light-pink' */, 
+            'o':this.props.app_state.loc['3066']/* 'light-orange' */
         }
-        else if(this.props.app_state.theme['name'] == this.props.app_state.loc['1593a']/* 'auto' */){
-            return 3
+        var array = ['e',]
+        for(var i = 0; i<colors.length; i++){
+            array.push(obj[colors[i]])
+            if(theme === 'light'){
+               array.push(obj2[colors[i]]) 
+            }
         }
-        else if(this.props.app_state.theme['name'] == this.props.app_state.loc['2741']/* green */){
-            return 4
+        return array
+    }
+
+    get_my_state_color(theme){
+        const my_state_code = this.props.app_state.device_country_code
+        const country_data = this.props.app_state.country_data
+
+        var selected_objs = country_data.filter(function (el) {
+            return (el['code'] === my_state_code)
+        });
+
+        var color = 'g'
+        if(selected_objs.length > 0){
+            color = selected_objs[0]['color'][0];
         }
-        return 1
+
+        var obj = {
+            'g':this.props.app_state.loc['2741']/* green */, 
+            'r':this.props.app_state.loc['3057']/* 'red' */, 
+            'b':this.props.app_state.loc['3059']/* 'blue' */, 
+            'y':this.props.app_state.loc['3061']/* 'yellow' */, 
+            'p':this.props.app_state.loc['3063']/* 'pink' */, 
+            'o':this.props.app_state.loc['3065']/* 'orange' */
+        }
+        if(theme === 'light'){
+            obj = {
+                'g':this.props.app_state.loc['3056']/* 'light-green' */, 
+                'r':this.props.app_state.loc['3058']/* 'light-red' */, 
+                'b':this.props.app_state.loc['3060']/* 'light-blue' */, 
+                'y':this.props.app_state.loc['3062']/* 'light-yellow' */, 
+                'p':this.props.app_state.loc['3064']/* 'light-pink' */, 
+                'o':this.props.app_state.loc['3066']/* 'light-orange' */
+            } 
+        }
+        return obj[color]
+    }
+
+    get_light_dark_option(final_array){
+        var pos = final_array.indexOf(this.props.app_state.theme['name'])
+        if(pos == -1) return 1
+        else return pos
     }
 
     set_light_dark_setting_tag(){
@@ -1290,14 +1375,14 @@ class StackPage extends Component {
     render_beacon_node_enabled_message(){
         if(this.props.app_state.beacon_node_enabled == true){
             return(
-                <div>
+                <div onClick={() => this.props.show_dialer_bottomsheet()}>
                     <div style={{height: 20}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['1593ej']/* 'Beacon Node Online.' */})}
                 </div>
             )
         }else{
             return(
-                <div>
+                <div onClick={() => this.props.show_dialer_bottomsheet()}>
                     <div style={{height: 20}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['1593ek']/* 'Beacon Node Offline.' */})}
                 </div>
@@ -3336,6 +3421,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(buy_album_obj.obj)
                 }
+                else if(txs[i].type == 'admin'){
+                    var obj = await this.format_admin_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(obj.str)
+                    adds.push([])
+                    ints.push(obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -3936,6 +4028,10 @@ class StackPage extends Component {
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || txs[i].type == this.props.app_state.loc['601']/* 'token' */ || txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || txs[i].type == this.props.app_state.loc['297']/* 'post' */ || txs[i].type == this.props.app_state.loc['760']/* 'job' */ || txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */|| txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+                    ipfs_index_object[txs[i].id] = txs[i]
+                    ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
+                }
+                else if(txs[i].type == 'admin'){
                     ipfs_index_object[txs[i].id] = txs[i]
                     ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
                 }
@@ -6745,6 +6841,29 @@ class StackPage extends Component {
 
 
         return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj, obj:obj, string_obj:string_obj}
+    }
+
+    format_admin_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [24], [23],/* 24(dialer admin registry) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = 0
+        var int_data = 0
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
     }
 
 

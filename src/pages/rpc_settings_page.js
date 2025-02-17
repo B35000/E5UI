@@ -138,7 +138,7 @@ class RPCSettingsPage extends Component {
     render_content(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Add Provider', 'details':this.props.app_state.loc['1334']/* 'Add a RPC provider for making transactions.' */, 'size':'l'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1334']/* 'Add a RPC provider for making transactions.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
@@ -146,7 +146,7 @@ class RPCSettingsPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_rpc()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                         </div>
                     </div>
                 </div>

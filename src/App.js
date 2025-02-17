@@ -443,6 +443,8 @@ const arweave = Arweave.init();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 var bigInt = require("big-integer");
 var primary_following = ['E25:1002']
+const root_e5 = 'E25'
+const root_account = 1002
 
 
 
@@ -600,7 +602,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
-    account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(), beacon_node_enabled:false, country_data:this.get_country_data(),
+    account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, arweave */,
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */,
@@ -634,7 +636,7 @@ class App extends Component {
     selected_e5:'E25', default_e5:'E25',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
-    device_country:this.get_location_info().userCountry, device_city: this.get_location_info().userCity, device_region: this.get_location_info().userRegion, device_country_code: this.get_country_code(this.get_location_info().userCountry), static_assets: this.get_static_assets(), os:getOS(), languages:this.get_supported_languages(),
+    device_country:this.get_location_info().userCountry, device_city: this.get_location_info().userCity, device_region: this.get_location_info().userRegion, device_country_code: this.get_country_code(this.get_location_info().userCountry), static_assets: this.get_static_assets(), os:getOS(), languages:this.get_supported_languages(), allowed_countries:this.get_allowed_countries(),
     
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
@@ -665,7 +667,7 @@ class App extends Component {
 
     queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{}, 
     
-    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25
+    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data()
   };
 
   get_static_assets(){
@@ -701,7 +703,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675'/* , 'E685' */, 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1564,6 +1566,99 @@ class App extends Component {
 
     if(!accepted_languages.includes(language)) return obj['en']
     return obj[language]
+  }
+
+  get_ether_data(){
+    var list = [
+      // this.get_token('ETHT', 'Ethereum Testnet', 'E15'),
+      this.get_token('ETC', 'Ethereum Classic', 'E35'),
+      this.get_token('ONE', 'Harmony', 'E45'),
+      this.get_token('CELO', 'Celo', 'E55'),
+      this.get_token('FLR', 'Flare', 'E65'),
+      this.get_token('XDAI', 'Gnosis', 'E75'),
+      this.get_token('FUSE', 'Fuse', 'E85'),
+      this.get_token('GLMR', 'Moonbeam', 'E95'),
+      this.get_token('MOVR', 'Moonriver', 'E105'),
+      this.get_token('XDC', 'Xinfin Network', 'E115'),
+      this.get_token('POL', 'Polygon', 'E125'),
+      this.get_token('BNB', 'Binance S.C.', 'E135'),
+      this.get_token('TT', 'ThunderCore', 'E155'),
+      this.get_token('NRG', 'Energi', 'E145', true),
+      this.get_token('VIC', 'Viction', 'E165'),
+      this.get_token('EVMOS', 'Evmos EVM', 'E175'),
+
+      this.get_token('ETH', 'Ethereum', 'E185'),
+      this.get_token('OETH', 'Optimism', 'E195'),
+      this.get_token('BETH', 'Base', 'E205'),
+      this.get_token('AETH', 'Arbitrum One', 'E215'),
+      this.get_token('ASTR', 'Astar EVM', 'E225'),
+      this.get_token('CRO', 'Cronos EVM', 'E235'),
+      this.get_token('KAVA', 'Kava EVM', 'E245'),
+      this.get_token('NEON', 'Neon EVM', 'E255'),
+      this.get_token('mADA', 'Milkomeda', 'E265'),
+      this.get_token('FTM', 'Fantom Opera', 'E275', true),
+      this.get_token('BRISE', 'Bitgert', 'E285'),
+      this.get_token('SYS', 'Syscoin EVM', 'E295'),
+      this.get_token('AVAX', 'Avalanche C-Chain', 'E305'),
+      this.get_token('FRA', 'Findora', 'E315'),
+      this.get_token('FDX', '5Dax', 'E325'),
+      this.get_token('ROSE', 'Oasis Emerald', 'E335'),
+      this.get_token('OZO', 'Ozone Chain', 'E345'),
+      this.get_token('PIX', 'Pixie', 'E355'),
+      this.get_token('REI', 'Rei Network', 'E365'),
+      this.get_token('KLAY', 'Klaytn Mainnet', 'E375', true),
+      this.get_token('MNT', 'Mantle', 'E385'),
+      this.get_token('PLS', 'Pulse Chain', 'E395'),
+      this.get_token('CANTO', 'Canto', 'E405'),
+      this.get_token('EOS', 'EOS EVM', 'E415'),
+      this.get_token('IOTX', 'IoTeX', 'E425'),
+      this.get_token('SGB', 'Songbird Canary', 'E435'),
+      this.get_token('ULX', 'Ultron Mainnet', 'E445'),
+      this.get_token('CET', 'CoinEx Smart Chain', 'E455'),
+      this.get_token('TFUEL', 'Theta Mainnet', 'E465'),
+      this.get_token('FITFI', 'Step Network', 'E475'),
+      this.get_token('EWT', 'Energy Web Chain', 'E485'),
+      this.get_token('CLO', 'Callisto', 'E495', true),
+      this.get_token('SDN', 'Shiden', 'E505'),
+      this.get_token('TENET', 'Tenet', 'E515'),
+      this.get_token('UBQ', 'Ubiq', 'E525'),
+      this.get_token('GO', 'GoChain', 'E535'),
+      this.get_token('OMAX', 'Omax Mainnet', 'E545'),
+      this.get_token('WEMIX', 'Wemix3.0 Mainnet', 'E555'),
+      this.get_token('CFX', 'Conflux eSpace', 'E565'),
+      this.get_token('TLOS', 'Telos EVM', 'E575'),
+      this.get_token('RSK', 'RSK Mainnet', 'E585'),
+      this.get_token('META', 'Metadium', 'E595'),
+      this.get_token('KAI', 'Kardiachain', 'E605'),
+      this.get_token('CMP', 'Caduceus', 'E615'),
+      this.get_token('SEELE', 'Seele', 'E625'),
+      this.get_token('BTT', 'BitTorrent Chain', 'E635'),
+      this.get_token('AAC', 'Double-A Chain', 'E645'),
+      this.get_token('KAR', 'Karura EVM', 'E655'),
+      this.get_token('ACA', 'Acala EVM', 'E665'),
+      this.get_token('EDG', 'Edgeware EVM', 'E675', true),
+      this.get_token('BERG', 'Bloxberg', 'E685', true),
+      this.get_token('PHOENIX', 'Phoenix', 'E695'),
+      this.get_token('OMC', 'Omchain', 'E705'),
+      this.get_token('OM', 'Om', 'E715'),
+      this.get_token('MINTME', 'MintMe.com Coin', 'E725'),
+      this.get_token('ECS', 'eCredits', 'E735'),
+      this.get_token('ELV', 'Eluv.io', 'E745'),
+      this.get_token('ETHO', 'Etho Protocol', 'E755'),
+      this.get_token('OLT', 'One Ledger', 'E765'),
+      this.get_token('HBAR', 'Hedera Hashgraph', 'E775', true),
+      this.get_token('IOTA', 'IOTA EVM', 'E785'),
+      this.get_token('KAIA', 'KAIA', 'E795'),
+      this.get_token('S', 'Sonic', 'E805'),
+      this.get_token('BERA', 'Berachain', 'E815'),
+    ]
+
+    return list
+  }
+
+  get_token(ticker, name, e5, disabled){
+    if(disabled !== null && disabled === true) return {symbol: ticker, name: name, e5: e5, disabled: true};
+    else return {symbol: ticker, name: name, e5: e5, disabled: false};
   }
 
   get_coin_data(){
@@ -2610,6 +2705,24 @@ class App extends Component {
     ]
   }
 
+  get_default_logo_title(){
+    var item = localStorage.getItem("logo_title");
+    if(item == null){
+      return 'start-white'
+    }else{
+      return item
+    }
+  }
+
+  get_default_dark_emblem_country(){
+    var item = localStorage.getItem("selected_dark_emblem_country")
+    if(item == null){
+      return ''
+    }else{
+      return item
+    }
+  }
+
 
 
 
@@ -3266,6 +3379,9 @@ class App extends Component {
         this.setState({preferred_currency: cupcake_preferred_currency})
       }
     }
+
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    this.setState({beacon_chain_url: beacon_node})
     this.set_stack_page_data()
   }
 
@@ -3484,7 +3600,7 @@ class App extends Component {
   }
   
   get_country_data(){
-    var obj = [ 
+    var obj = [
       {name: 'Afghanistan', code: 'AF', color:['y']}, 
       {name: 'Åland Islands', code: 'AX', color:['g']}, 
       {name: 'Albania', code: 'AL', color:['b']},
@@ -3591,7 +3707,7 @@ class App extends Component {
       {name: 'Iraq', code: 'IQ', color:['y']},
       {name: 'Ireland', code: 'IE', color:['g']}, 
       {name: 'Isle of Man', code: 'IM', color:['g']}, 
-      {name: 'Israel', code: 'IL', color:['y']},//🤷 
+      {name: 'Israel', code: 'IL', color:['y']}, 
       {name: 'Italy', code: 'IT', color:['o']}, 
       {name: 'Jamaica', code: 'JM', color:['g']}, 
       {name: 'Japan', code: 'JP', color:['r']}, 
@@ -3729,20 +3845,24 @@ class App extends Component {
       {name: 'Zambia', code: 'ZM', color:['g']}, 
       {name: 'Zimbabwe', code: 'ZW', color:['g']} 
     ]
-    const myCountryCodesObject = countryCodes.customList(
-      "countryCode",
-      "{countryCallingCode}"
-    );
+    const myCountryCodesObject = countryCodes.customList("countryCode", "{countryCallingCode}");
     for(var i=0; i<obj.length; i++){
       var country_code = obj[i].code
       var data = countryFlagEmoji.get(country_code)
-      var emoji = data['emoji']
+      var emoji = data == null ? '🏳️' : data['emoji']
       obj[i].emoji = emoji
       var country_calling_code = myCountryCodesObject[country_code]
       obj[i].call_code = country_calling_code
     }
 
     return obj
+  }
+
+  get_allowed_countries(){
+    return [
+      'United States', 
+      'Kenya',
+    ]
   }
 
   get_country_code(country){
@@ -3903,15 +4023,10 @@ class App extends Component {
 
   is_allowed_in_e5(){
     // return true
-    var obj = ['United States', 'Kenya']
+    var obj = this.state.allowed_countries
     var user_country = this.get_location_info().userCountry
 
     if(!obj.includes(user_country)){
-      var me = this;
-      setTimeout(function() {
-          me.prompt_top_notification(me.getLocale()['2738']/* 'Not available in your region yet.' */, 100000)
-      }, (2 * 1000));
-      
       return false
     }
     return true
@@ -6554,7 +6669,7 @@ class App extends Component {
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)}
       
       />
     )
@@ -16015,7 +16130,7 @@ class App extends Component {
 
 
   render_dialer_bottomsheet(){
-    // if(this.state.dialer_bottomsheet2 != true) return;
+    if(this.state.dialer_bottomsheet2 != true) return;
     var os = getOS()
     if(os == 'iOS'){
         return(
@@ -16042,8 +16157,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialerPage ref={this.dialer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} 
-        
+        <DialerPage ref={this.dialer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_dialer_admin_config_update_object_to_stack={this.add_dialer_admin_config_update_object_to_stack.bind(this)}
         />
       </div>
     )
@@ -16053,7 +16167,6 @@ class App extends Component {
     if(this.state.dialer_bottomsheet == true){
       //closing
       this.dialer_bottomsheet = this.dialer_page.current?.state;
-
       this.setState({dialer_bottomsheet: !this.state.dialer_bottomsheet});
       var me = this;
       setTimeout(function() {
@@ -16075,14 +16188,37 @@ class App extends Component {
     }
   }
 
-  show_dialer_bottomsheet(data){
+  show_dialer_bottomsheet(){
+    const my_id = this.state.user_account_id[root_e5]
+    if(my_id != root_account || this.state.selected_e5 != root_e5){
+      // this.prompt_top_notification('youre not root', 500)
+      return;
+    }
     this.open_dialer_bottomsheet()
     var me = this;
+    var data = {'country_data':this.state.country_data, 'allowed_countries':this.state.allowed_countries, 'beacon_chain_url':this.state.beacon_chain_url, 'e5s':this.state.e5s, 'ether_data':this.state.ether_data}
     setTimeout(function() {
       if(me.dialer_page.current != null){
         me.dialer_page.current.set_data(data)
       }
     }, (1 * 500));
+  }
+
+  add_dialer_admin_config_update_object_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -16199,6 +16335,7 @@ class App extends Component {
     // const node = await IPFS.create()
     // var data = node.cat(cid)
     // console.log(data)
+    await this.load_root_config()
 
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
@@ -16219,8 +16356,15 @@ class App extends Component {
       }else{
         this.when_wallet_data_updated(['(32)'], 0, '', true,) 
       }
-    } 
+    }else{
+      var me = this;
+      setTimeout(function() {
+          me.prompt_top_notification(me.getLocale()['2738']/* 'Not available in your region yet.' */, 100000)
+      }, (2 * 1000));
+    }
   }
+
+  
 
   inc_synch_progress(){
     const steps = this.state.sync_steps;
@@ -17966,6 +18110,7 @@ class App extends Component {
 
   check_if_beacon_node_is_online = async () => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
     var request = `${beacon_node}/marco`
     try{
       const response = await fetch(request);
@@ -18140,6 +18285,7 @@ class App extends Component {
       arg_string:JSON.stringify({requests:[event_request]}),
     });
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
@@ -18345,6 +18491,49 @@ class App extends Component {
     }
 
     this.update_watched_account_data()
+  }
+
+  load_root_config = async () => {
+    const e5 = root_e5
+    const account = root_account
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(web3_url);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.state.e5s[e5].e5_address
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+    var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: this.get_first_block(e5), toBlock: this.get_first_block(e5)+20 }, (error, events) => {})
+    var contract_addresses = contract_addresses_events[0].returnValues.p5
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var root_data_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: {p1/* target_id */: 24/* 24(dialer admin registry) */, p2/* context */:account/* sender_acc_id */} }, (error, events) => {})
+
+    if(root_data_events.length > 0){
+      var latest_event = root_data_events[root_data_events.length - 1];
+      var root_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      const allowed_countries = root_data.data['allowed_countries']
+      const logo_title = this.get_selected_item(root_data.get_logo_title_tags_object, 'e')
+      const selected_dark_emblem_country = root_data.selected_dark_emblem_country
+      const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
+      const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
+      const beacon_chain_url = root_data.data['beacon_chain_url']
+      const e5s = root_data.data['e5s']
+      const ether_data = root_data.data['ether_data']
+
+      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data })
+
+      localStorage.setItem("logo_title", logo_title);
+      localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
+    }
+  }
+
+  get_selected_item(object, option){
+    var selected_item = object[option][2][0]
+    var picked_item = object[option][1][selected_item];
+    return picked_item
   }
 
 
@@ -22443,6 +22632,7 @@ class App extends Component {
       arg_string:JSON.stringify({requests: event_requests}),
     });
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
@@ -23249,6 +23439,7 @@ class App extends Component {
     // }
 
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
@@ -23436,6 +23627,7 @@ class App extends Component {
       arg_string:JSON.stringify({hashes: hashes}),
     });
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
@@ -26159,6 +26351,7 @@ class App extends Component {
       arg_string:JSON.stringify({hashes: hashes}),
     });
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }

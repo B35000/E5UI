@@ -71,8 +71,16 @@ class synchronizing_page extends Component {
 
     get_default_logo(){
         var img = letter_crack1
+        const logo_title = this.props.app_state.logo_title
+        const selected_dark_emblem_country = this.props.app_state.selected_dark_emblem_country
+        const my_state = this.props.app_state.device_country
+        const obj = {'start-white':letter_crack1, 'crack-stage-0':sublogo_dark, 'crack-stage-1':sublogo_dark_cracked1, 'crack-stage-2':sublogo_dark_cracked2, 'crack-stage-3':sublogo_dark_cracked3, 'crack-stage-4':sublogo_dark_cracked4, 'crack-stage-5':sublogo_dark_cracked5, 'E5':this.props.theme['e5_logo']}
 
+        img = obj[logo_title]
         
+        if(logo_title === 'E5' && selected_dark_emblem_country === my_state){
+            img = sublogo_dark
+        }
 
         return img
     }

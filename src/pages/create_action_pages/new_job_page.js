@@ -142,12 +142,19 @@ class NewJobPage extends Component {
 
 
     get_content_channeling_object(){
+        const channeling_setting = this.props.app_state.get_content_channeling_tags_object
+        var obj = {
+            'local-only':['e', this.props.app_state.loc['1231']/* 'local' */], 
+            
+            'local-language':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */ ], 
+            
+            'all':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1233']/* 'international' */ ]}
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1233']/* 'international' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1231']/* 'local' */], [1]
+                ['xor','',0], obj[channeling_setting], [1]
             ],
         };
     }
@@ -179,7 +186,7 @@ class NewJobPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
