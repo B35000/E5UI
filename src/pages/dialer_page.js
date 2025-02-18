@@ -64,7 +64,9 @@ class DialerPage extends Component {
         
         typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'',
 
-        get_ether_list_sort_order_object:this.get_ether_list_sort_order_object(), picked_translation_object:{}, add_translation_language:'', override_object:{}, typed_language:'', typed_language_override_url:'', typed_language_url:'',
+        get_ether_list_sort_order_object:this.get_ether_list_sort_order_object(), picked_translation_object:{}, add_translation_language:'', override_object:{}, typed_language:'', typed_language_override_url:'', typed_language_url:'', 
+        
+        typed_spend_country_name: '', spend_exchange_allowed_countries:[]
     };
 
 
@@ -738,7 +740,7 @@ class DialerPage extends Component {
 
                 <div className="row" style={{width:'100%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Image url...'} when_text_input_field_changed={this.when_typed_image_url_input_field_changed.bind(this)} text={this.get_typed_image_text()} theme={this.props.theme}/>
+                        <TextInput height={60} placeholder={'Image url...'} when_text_input_field_changed={this.when_typed_image_url_input_field_changed.bind(this)} text={this.get_typed_image_text()} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
@@ -764,11 +766,25 @@ class DialerPage extends Component {
                 
 
                 <TextInput height={30} placeholder={'Enter End token power limit'} when_text_input_field_changed={this.when_power_limit_input_field_changed.bind(this)} text={this.state.power_limit} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                <div style={{height:30}}/>
 
+
+                {this.render_detail_item('4', {'text':'Change the countries that can access the E5s spend exchange.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Search filter country'} when_text_input_field_changed={this.when_spend_country_input_field_changed.bind(this)} text={this.state.typed_spend_country_name} theme={this.props.theme}/>
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_country_selected'})}
+                <div style={{height:15}}/>
+                {this.render_detail_item('4', {'text':'Tap a country to remove from the spend exchange accessible list.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_included_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_included_country_selected'})}
+
+                <div style={{height:10}}/>
                 <div onClick={()=> this.add_or_edit_ether_e5()}>
                     {this.render_detail_item('5', {'text':(this.state.editing_e5_item == '' ? 'Add E5': 'Edit E5'), 'action':''})}
                 </div>
+
+
             </div>
         )
     }
@@ -916,14 +932,15 @@ class DialerPage extends Component {
     edit_selected_e5(item){
         if(this.state.editing_e5_item == item){
             this.setState({editing_e5_item: '',
-                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:''
+                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[]
             })
         }else{
-            const token_obj = this.get_item_in_array(this.state.data['ether_data'], item, 'e5')
+            const obj = this.state.data['e5s'][item]
+            const token_obj = this.get_item_in_array(this.state.data['ether_data'], obj.token, 'symbol')
             const symbol = token_obj['symbol']
             const name = token_obj['name']
             const ether_disabled = token_obj['disabled']
-            const obj = this.state.data['e5s'][item]
+            
             const rpcs = obj.web3
             const e5_address = obj.e5_address
             const end_image = obj.end_image
@@ -932,8 +949,9 @@ class DialerPage extends Component {
             const e5_image = obj.e5_img
             const first_block = obj.first_block
             const iteration = obj.iteration
+            const spend_access = obj.spend_access == null ? []: obj.spend_access
             this.setState({editing_e5_item: item, 
-                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString()
+                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString(), spend_exchange_allowed_countries: spend_access
             })
         }
     }
@@ -1099,6 +1117,75 @@ class DialerPage extends Component {
     }
 
 
+
+    when_spend_country_input_field_changed(text){
+        this.setState({typed_spend_country_name: text})
+    }
+
+    get_countries_from_typed_text2(){
+        var selected_countries = []
+        var all_countries = this.state.data['country_data']
+        var typed_text = this.state.typed_spend_country_name
+        var already_included_countries = this.state.spend_exchange_allowed_countries.map(e => e.toLowerCase())
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el['name'].toLowerCase().includes(typed_text.toLowerCase())) && 
+                !already_included_countries.includes(el['name'].toLowerCase())
+            });
+        }else{
+            selected_countries = all_countries.filter(function (el) {
+                return (!already_included_countries.includes(el['name'].toLowerCase()))
+            });
+        }
+
+        var selected = []
+        var l = selected_countries.length > 7 ? 7 : selected_countries.length
+        for(var i=0; i<l; i++){
+            selected.push(selected_countries[i]['name'])
+        }
+        return selected;
+    }
+
+    when_spend_country_selected(tag, pos){
+        if(tag != 'e'){
+            var clone = this.state.spend_exchange_allowed_countries.slice()
+            clone.push(tag)
+            this.setState({spend_exchange_allowed_countries: clone})
+        }
+    }
+
+    get_included_countries_from_typed_text2(){
+        var selected_countries = []
+        var all_countries = this.state.spend_exchange_allowed_countries
+        var typed_text = this.state.typed_spend_country_name
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el.toLowerCase().startsWith(typed_text.toLowerCase()))
+            });
+        }else{
+            selected_countries = all_countries.filter(function (el) {
+                return (true)
+            });
+        }
+
+        return selected_countries
+    }
+
+    when_spend_included_country_selected(tag, pos){
+        if(tag != 'e'){
+            var clone = this.state.spend_exchange_allowed_countries.slice()
+            var index = clone.indexOf(tag)
+            if(index != -1){
+                clone.splice(index, 1)
+            }
+            this.setState({spend_exchange_allowed_countries: clone})
+        }
+    }
+
+
+
     add_or_edit_ether_e5(){
         const e5 = this.state.typed_e5_id
         const symbol = this.state.typed_symbol_id
@@ -1111,6 +1198,7 @@ class DialerPage extends Component {
         const ether_image = this.state.ether_image
         const first_block = parseInt(this.state.typed_first_block)
         const iteration = parseInt(this.state.typed_iteration)
+        const spend_exchange_allowed_countries = this.state.spend_exchange_allowed_countries
         const e5_active = this.get_selected_item(this.state.get_e5_active_setting_object, 'e') == 'active' ? true : false
         const power_limit = parseInt(this.state.power_limit)
         const ether_disabled = this.get_selected_item(this.state.get_ether_disabled_setting_object, 'e') == 'disabled' ? true : false
@@ -1204,13 +1292,13 @@ class DialerPage extends Component {
             e5_address:e5_address, 
             first_block:first_block, end_image:end_image, spend_image:spend_image, ether_image:ether_image, 
             iteration:iteration, url:0, active:e5_active, e5_img:e5_image,
-            end_token_power_limit: power_limit
+            end_token_power_limit: power_limit, spend_access:spend_exchange_allowed_countries
         }
         clone['e5s'][e5] = e5_data
         if(editing_e5_item == '') clone['e5s']['data'].push(e5)
         this.setState({data: clone,
             editing_e5_item: '',
-            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:''
+            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[]
         });
     }
 
@@ -1256,11 +1344,11 @@ class DialerPage extends Component {
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
                 <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_dialer_country_selected={this.when_dialer_country_selected.bind(this)}
-                when_dialer_included_country_selected={this.when_dialer_included_country_selected.bind(this)} when_dialer_dark_emblem_country_selected={this.when_dialer_dark_emblem_country_selected.bind(this)} when_add_translation_language_tapped={this.when_add_translation_language_tapped.bind(this)}
+                when_dialer_included_country_selected={this.when_dialer_included_country_selected.bind(this)} when_dialer_dark_emblem_country_selected={this.when_dialer_dark_emblem_country_selected.bind(this)} when_add_translation_language_tapped={this.when_add_translation_language_tapped.bind(this)} when_spend_country_selected={this.when_spend_country_selected.bind(this)} when_spend_included_country_selected={this.when_spend_included_country_selected.bind(this)}
                 />
             </div>
         )

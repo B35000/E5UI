@@ -642,6 +642,12 @@ class ViewGroups extends Component {
         else if(action_id == 'when_add_translation_language_tapped'){
             this.props.when_add_translation_language_tapped(tag, pos)
         }
+        else if(action_id == 'when_spend_country_selected'){
+            this.props.when_spend_country_selected(tag, pos)
+        }
+        else if(action_id == 'when_spend_included_country_selected'){
+            this.props.when_spend_included_country_selected(tag, pos)
+        }
     }
 
     when_image_clicked(items, index){

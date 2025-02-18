@@ -723,14 +723,14 @@ class App extends Component {
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
         iteration:400_000, url:0, active:true, e5_img:E5_E25_image/* 'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu' */,
-        end_token_power_limit: 72
+        end_token_power_limit: 72, spend_access:this.get_allowed_countries()
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:''/* '0x4c124f6C90fa3F12A9b6b837B89832E2E460e731' */,
         first_block:19614310, end_image:end35_image/* 'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq' */, spend_image:spend35_image/* 'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, iteration:400_000, url:0, active:false, e5_img:E5_E35_image/* 'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4' */,
-        end_token_power_limit: 72,
+        end_token_power_limit: 72, spend_access:this.get_allowed_countries()
       },
       'E45':{
         web3:['https://api.harmony.one'],
