@@ -352,7 +352,8 @@ class DialerPage extends Component {
 
         if(typed_text != ''){
             selected_countries = all_countries.filter(function (el) {
-                return (el['name'].toLowerCase().startsWith(typed_text.toLowerCase()) || el['code'] == typed_text.toUpperCase()) && !already_included_countries.includes(el['name'].toLowerCase())
+                return (el['name'].toLowerCase().includes(typed_text.toLowerCase())) && 
+                !already_included_countries.includes(el['name'].toLowerCase())
             });
         }else{
             selected_countries = all_countries.filter(function (el) {
@@ -383,7 +384,7 @@ class DialerPage extends Component {
 
         if(typed_text != ''){
             selected_countries = all_countries.filter(function (el) {
-                return (el['name'].toLowerCase().startsWith(typed_text.toLowerCase()) || el['code'] == typed_text.toUpperCase())
+                return (el.toLowerCase().startsWith(typed_text.toLowerCase()))
             });
         }else{
             selected_countries = all_countries.filter(function (el) {
