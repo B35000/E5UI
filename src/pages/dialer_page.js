@@ -64,7 +64,7 @@ class DialerPage extends Component {
         
         typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'',
 
-        get_ether_list_sort_order_object:this.get_ether_list_sort_order_object(),
+        get_ether_list_sort_order_object:this.get_ether_list_sort_order_object(), picked_translation_object:{}, add_translation_language:'', override_object:{}, typed_language:'', typed_language_override_url:'', typed_language_url:'',
     };
 
 
@@ -229,6 +229,8 @@ class DialerPage extends Component {
         }
     }
 
+
+
     render_content(){
         return(
             <div>
@@ -289,6 +291,51 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_detail_item('4', {'text':this.state.data['beacon_chain_url'], 'textsize':'14px', 'font':this.props.app_state.font})}
                 
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('4', {'text':'Add or remove a translation object.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={'Search filter language.'} when_text_input_field_changed={this.when_typed_language_input_field_changed.bind(this)} text={this.state.typed_language} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                
+                {this.render_detail_item('1',{'active_tags':this.get_specified_languages(), 'indexed_option':'indexed', 'when_tapped':'when_add_translation_language_tapped'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('4', {'text':this.state.add_translation_language, 'textsize':'14px', 'font':this.props.app_state.font})}
+
+                <div style={{height:20}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Url for language object'} when_text_input_field_changed={this.when_typed_language_url_input_field_changed.bind(this)} text={this.state.typed_language_url} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.test_typed_language_url()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                <div onClick={()=> this.add_or_edit_language_link()}>
+                    {this.render_detail_item('5', {'text':'Add/Change language', 'action':''})}
+                </div>
+                <div style={{height:10}}/>
+
+                {this.render_added_languages()}
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Tranlsation Override link', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={'Url for override file'} when_text_input_field_changed={this.when_typed_language_override_url_input_field_changed.bind(this)} text={this.state.typed_language_override_url} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+                <div onClick={()=> this.add_or_edit_language_override_link()}>
+                    {this.render_detail_item('5', {'text':'Add/Change language override', 'action':''})}
+                </div>
             </div>
         )
     }
@@ -441,6 +488,197 @@ class DialerPage extends Component {
         return url.protocol == "http:" || url.protocol == "https:" || url.protocol == "wss:";
     }
 
+    
+
+    when_typed_language_input_field_changed(text){
+        this.setState({typed_language: text})
+    }
+
+    get_specified_languages(){
+        var selected_languages = []
+        var data = this.props.app_state.language_data
+        var typed_text = this.state.typed_language
+
+        var all_languages = []
+        for (const language_code in data) {
+            if (data.hasOwnProperty(language_code)) {
+                all_languages.push(data[language_code])
+            }
+        }
+
+        if(typed_text != ''){
+            selected_languages = all_languages.filter(function (el) {
+                return (el['name'].toLowerCase().includes(typed_text.toLowerCase()))
+            });
+        }else{
+            selected_languages = all_languages.filter(function (el) {
+                return true
+            });
+        }
+
+        var selected = []
+        var l = selected_languages.length > 7 ? 7 : selected_languages.length
+        for(var i=0; i<l; i++){
+            selected.push(selected_languages[i]['name'])
+        }
+        return selected;
+    }
+
+    when_add_translation_language_tapped(tag, pos){
+       if(tag != 'e'){
+            if(this.state.add_translation_language == tag){
+                this.setState({add_translation_language: ''})
+            }else{
+                this.setState({add_translation_language: tag, typed_language:''})
+            }   
+        }
+    }
+
+
+
+    when_typed_language_url_input_field_changed(text){
+        this.setState({typed_language_url: text})
+    }
+
+    test_typed_language_url(){
+        var typed_url = this.state.typed_language_url
+        var add_translation_language = this.state.add_translation_language
+        if(typed_url == ''){
+            this.props.notify('type a url first', 5000)
+        }
+        else if(add_translation_language == ''){
+            this.props.notify('first set a translation language', 5000)
+        }
+        else if(!this.isValidHttpUrl(typed_url)){
+            this.props.notify('that url is invalid', 5000)
+        }
+        else{
+            this.props.test_entered_link_data(typed_url, add_translation_language)
+        }
+    }
+
+    add_or_edit_language_link(){
+        var typed_url = this.state.typed_language_url
+        var add_translation_language = this.state.add_translation_language
+        if(typed_url == ''){
+            this.props.notify('type a url first', 5000)
+        }
+        else if(add_translation_language == ''){
+            this.props.notify('first set a translation language', 5000)
+        }
+        else if(!this.isValidHttpUrl(typed_url)){
+            this.props.notify('that url is invalid', 5000)
+        }
+        else{
+            var language_id = this.find_language_id_from_name(add_translation_language)
+            if(this.props.app_state.loaded_language_object == null || this.props.app_state.loaded_language_object['0'] != language_id){
+                this.props.notify('You need to first test the link you set.', 5000)
+            }else{
+                var clone = structuredClone(this.state.data)
+                clone['all_locales'][language_id] = typed_url
+                this.setState({data: clone})
+                this.props.notify(`${add_translation_language} added.`, 2000)
+            }
+        }
+    }
+
+    find_language_id_from_name(name){
+        var data = this.props.app_state.language_data
+        for (const language_code in data) {
+            if (data.hasOwnProperty(language_code) && data[language_code]['name'] == name) {
+                return language_code
+            }
+        }
+    }
+
+    get_language_name_from_id(id){
+        var language_data = this.props.app_state.language_data
+        return language_data[id] == null ? 'Unknown' : language_data[id]['name']
+    }
+
+    render_added_languages(){
+        var items = []
+        var data = this.state.data['all_locales']
+        for (const language_code in data) {
+            if (data.hasOwnProperty(language_code)) {
+                items.push(language_code)
+            }
+        }
+        items = [].concat(items)
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.delete_language_url(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}}>
+                                            {this.render_detail_item('3', {'title':this.get_language_name_from_id(item), 'details':item, 'size':'l'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    delete_language_url(language_id){
+        if(language_id == 'en'){
+            this.props.notify('You cant delete english', 5000)
+            return
+        }
+        var clone = structuredClone(this.state.data)
+        delete clone['all_locales'][language_id]
+        this.setState({data: clone})
+    }
+
+
+
+    when_typed_language_override_url_input_field_changed(text){
+        this.setState({typed_language_override_url: text})
+    }
+
+    add_or_edit_language_override_link = async () => {
+        var typed_language_override_url = this.state.typed_language_override_url
+        if(typed_language_override_url == ''){
+            this.props.notify('type a url first', 5000)
+        }
+        else if(!this.isValidHttpUrl(typed_language_override_url)){
+            this.props.notify('that url is not valid', 5000)
+        }
+        else{
+            var obj = await this.props.test_and_return_language_override_data(typed_language_override_url)
+            this.setState({override_object: obj})
+        }
+    }
+    
+
 
 
 
@@ -498,13 +736,13 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
 
                 <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Image url...'} when_text_input_field_changed={this.when_typed_image_url_input_field_changed.bind(this)} text={this.get_typed_image_text()} theme={this.props.theme}/>
+                    </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
                             <img alt="" className="text-end" src={this.get_typed_image_text()} style={{height:37, width:'auto'}} />
                         </div>
-                    </div>
-                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Image url...'} when_text_input_field_changed={this.when_typed_image_url_input_field_changed.bind(this)} text={this.get_typed_image_text()} theme={this.props.theme}/>
                     </div>
                 </div>
                 <div style={{height:10}}/>
@@ -1021,7 +1259,7 @@ class DialerPage extends Component {
         return(
             <div>
                 <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_dialer_country_selected={this.when_dialer_country_selected.bind(this)}
-                when_dialer_included_country_selected={this.when_dialer_included_country_selected.bind(this)} when_dialer_dark_emblem_country_selected={this.when_dialer_dark_emblem_country_selected.bind(this)}
+                when_dialer_included_country_selected={this.when_dialer_included_country_selected.bind(this)} when_dialer_dark_emblem_country_selected={this.when_dialer_dark_emblem_country_selected.bind(this)} when_add_translation_language_tapped={this.when_add_translation_language_tapped.bind(this)}
                 />
             </div>
         )

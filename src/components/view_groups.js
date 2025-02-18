@@ -639,6 +639,9 @@ class ViewGroups extends Component {
         else if(action_id == 'when_dialer_dark_emblem_country_selected'){
             this.props.when_dialer_dark_emblem_country_selected(tag, pos)
         }
+        else if(action_id == 'when_add_translation_language_tapped'){
+            this.props.when_add_translation_language_tapped(tag, pos)
+        }
     }
 
     when_image_clicked(items, index){
