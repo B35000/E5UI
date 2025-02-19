@@ -671,7 +671,7 @@ class App extends Component {
     
     calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
-    language_data:this.get_language_data_object(), all_locales:{'en':english},
+    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:''
   };
 
   get_static_assets(){
@@ -723,14 +723,14 @@ class App extends Component {
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
         iteration:400_000, url:0, active:true, e5_img:E5_E25_image/* 'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu' */,
-        end_token_power_limit: 72, spend_access:this.get_allowed_countries()
+        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:''/* '0x4c124f6C90fa3F12A9b6b837B89832E2E460e731' */,
         first_block:19614310, end_image:end35_image/* 'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq' */, spend_image:spend35_image/* 'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, iteration:400_000, url:0, active:false, e5_img:E5_E35_image/* 'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4' */,
-        end_token_power_limit: 72, spend_access:this.get_allowed_countries()
+        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:false
       },
       'E45':{
         web3:['https://api.harmony.one'],
@@ -2689,6 +2689,7 @@ class App extends Component {
       hide_pip:this.state.hide_pip,
       preferred_currency: this.state.preferred_currency,
       all_locales: this.state.all_locales,
+      theme_image: this.state.theme_image,
     }
   }
 
@@ -2803,7 +2804,7 @@ class App extends Component {
       var cupcake_hide_pip = cupcake_state.hide_pip
       var cupcake_preferred_currency = cupcake_state.preferred_currency
       var cupcake_all_locales = cupcake_state.all_locales
-
+      var cupcake_theme_image = cupcake_state.theme_image
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -3043,6 +3044,10 @@ class App extends Component {
         const my_language = this.get_language()
         this.setState({all_locales: cupcake_all_locales, loc: (cupcake_all_locales[my_language] == null ? this.state.loc : cupcake_all_locales[my_language])})
         this.reset_locale_settings()
+      }
+
+      if(cupcake_theme_image != null){
+        this.setState({theme_image: cupcake_theme_image})
       }
     }
 
@@ -3883,6 +3888,12 @@ class App extends Component {
       return false
     }
     return true
+  }
+
+  get_dialer_addresses(){
+    return[
+      '0xa88FcDa55dFE3929E3f089FbEce6Ce2728f8bf3a',
+    ]
   }
 
 
@@ -6522,7 +6533,7 @@ class App extends Component {
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)}
       
       />
     )
@@ -7024,6 +7035,14 @@ class App extends Component {
 
   when_preferred_currency_tags_changed(item){
     this.setState({preferred_currency: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_device_theme_image_changed(item){
+    this.setState({theme_image: item})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -16010,7 +16029,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialerPage ref={this.dialer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_dialer_admin_config_update_object_to_stack={this.add_dialer_admin_config_update_object_to_stack.bind(this)} test_entered_link_data={this.test_entered_link_data.bind(this)} test_and_return_language_override_data={this.test_and_return_language_override_data.bind(this)}
+        <DialerPage ref={this.dialer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_dialer_admin_config_update_object_to_stack={this.add_dialer_admin_config_update_object_to_stack.bind(this)} test_entered_link_data={this.test_entered_link_data.bind(this)} test_and_return_language_override_data={this.test_and_return_language_override_data.bind(this)} is_valid_ether_address={this.is_valid_ether_address.bind(this)}
         />
       </div>
     )
@@ -16044,12 +16063,11 @@ class App extends Component {
   show_dialer_bottomsheet(){
     const my_id = this.state.user_account_id[root_e5]
     if(my_id != root_account || this.state.selected_e5 != root_e5){
-      // this.prompt_top_notification('youre not root', 500)
       return;
     }
     this.open_dialer_bottomsheet()
     var me = this;
-    var data = {'country_data':this.state.country_data, 'allowed_countries':this.state.allowed_countries, 'beacon_chain_url':this.state.beacon_chain_url, 'e5s':this.state.e5s, 'ether_data':this.state.ether_data, 'all_locales':this.state.all_locales}
+    var data = {'country_data':this.state.country_data, 'allowed_countries':this.state.allowed_countries, 'beacon_chain_url':this.state.beacon_chain_url, 'e5s':this.state.e5s, 'ether_data':this.state.ether_data, 'all_locales':this.state.all_locales, 'dialer_addresses':this.state.dialer_addresses, 'theme_images':this.state.theme_images}
     setTimeout(function() {
       if(me.dialer_page.current != null){
         me.dialer_page.current.set_data(data)
@@ -16122,6 +16140,17 @@ class App extends Component {
     catch(e){
       console.log('something went wrong:', e)
        this.prompt_top_notification('the override file is valid', 4000)
+    }
+  }
+
+  is_valid_ether_address = (adr) => {
+    try {
+      const web3 = new Web3()
+      web3.utils.toChecksumAddress(adr)
+      return true
+    } 
+    catch (e) {
+      return false
     }
   }
 
@@ -18417,6 +18446,8 @@ class App extends Component {
       const e5s = root_data.data['e5s']
       const ether_data = root_data.data['ether_data']
       const all_locales = root_data.data['all_locales']
+      const dialer_addresses = root_data.data['dialer_addresses']
+      const theme_images = root_data.data['theme_images']
 
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
@@ -18435,7 +18466,7 @@ class App extends Component {
         this.reset_locale_settings()
       }
 
-      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data})
+      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images})
 
       localStorage.setItem("logo_title", logo_title);
       localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);

@@ -37,6 +37,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -66,7 +73,9 @@ class DialerPage extends Component {
 
         get_ether_list_sort_order_object:this.get_ether_list_sort_order_object(), picked_translation_object:{}, add_translation_language:'', override_object:{}, typed_language:'', typed_language_override_url:'', typed_language_url:'', 
         
-        typed_spend_country_name: '', spend_exchange_allowed_countries:[]
+        typed_spend_country_name: '', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_dialer_address:'',
+
+        get_theme_images_tags_object:this.get_theme_images_tags_object(), typed_image_link:''
     };
 
 
@@ -76,7 +85,7 @@ class DialerPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'admin-stuff'], [1]
+                ['xor','',0], ['e', 'admin-stuff', 'e5-stuff'], [1]
             ],
         };
     }
@@ -160,6 +169,35 @@ class DialerPage extends Component {
         };
     }
 
+    get_e5_public_enabled_tags_object(enabled){
+        var n = enabled == true ? 1 : 0
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', 'public-enabled'], [n]
+            ],
+        };
+    }
+
+    get_theme_images_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['2741']/* green */,this.props.app_state.loc['3056']/* 'light-green' */, this.props.app_state.loc['3057']/* 'red' */,this.props.app_state.loc['3058']/* 'light-red' */, this.props.app_state.loc['3059']/* 'blue' */,this.props.app_state.loc['3060']/* 'light-blue' */, this.props.app_state.loc['3061']/* 'yellow' */,this.props.app_state.loc['3062']/* 'light-yellow' */,  this.props.app_state.loc['3063']/* 'pink' */,this.props.app_state.loc['3064']/* 'light-pink' */,  this.props.app_state.loc['3065']/* 'orange' */, this.props.app_state.loc['3066']/* 'light-orange' */], [1]
+            ],
+        };
+    }
+
+
+
+
+
+
+
     set_data(data){
         this.setState({data: data})
     }
@@ -194,13 +232,32 @@ class DialerPage extends Component {
 
     render_everything(){
         if(this.state.data == null) return;
+        var selected_item = this.get_selected_item(this.state.get_title_tags_object, this.state.get_title_tags_object['i'].active)
+
+        if(selected_item == 'admin-stuff'){
+            return(
+                <div>
+                    {this.render_admin_stuff()}
+                </div>
+            )
+        }
+        else if(selected_item == 'e5-stuff'){
+            return(
+                <div>
+                    {this.render_e5_stuff()}
+                </div>
+            )
+        }
+    }
+
+    render_admin_stuff(){
         var size = this.props.app_state.size
         if(size == 's'){
             return(
                 <div>
-                    {this.render_content()}
+                    {this.render_admin_content()}
                     {this.render_detail_item('0')}
-                    {this.render_content_2()}
+                    {this.render_admin_content2()}
                 </div>
             )
         }
@@ -208,10 +265,10 @@ class DialerPage extends Component {
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_content()}
+                        {this.render_admin_content()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_content_2()}
+                        {this.render_admin_content2()}
                     </div>
                 </div>
                 
@@ -221,10 +278,10 @@ class DialerPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_content()}
+                        {this.render_admin_content()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_content_2()}
+                        {this.render_admin_content2()}
                     </div>
                 </div>
             )
@@ -233,7 +290,7 @@ class DialerPage extends Component {
 
 
 
-    render_content(){
+    render_admin_content(){
         return(
             <div>
                 {this.render_detail_item('4', {'text':'Change the countries that can access E5. Tap a country to add or remove from accessible list.', 'textsize':'14px', 'font':this.props.app_state.font})}
@@ -268,16 +325,36 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_theme_stage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_theme_stage_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('4', {'text':'Set the content channelling stage', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_tags_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-
                 {this.render_detail_item('0')}
 
+
+                {this.render_detail_item('4', {'text':'Add or remove a dialer address', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={60} placeholder={'Enter address here...'} when_text_input_field_changed={this.when_typed_dialer_address_input_field_changed.bind(this)} text={this.state.typed_dialer_address} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_dialer_address()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_dialer_addresses_horizontal()}
+            </div>
+        )
+    }
+
+    render_admin_content2(){
+        return(
+            <div>
                 {this.render_detail_item('4', {'text':'Beacon node url.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'100%'}}>
@@ -338,6 +415,28 @@ class DialerPage extends Component {
                 <div onClick={()=> this.add_or_edit_language_override_link()}>
                     {this.render_detail_item('5', {'text':'Add/Change language override', 'action':''})}
                 </div>
+
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('4', {'text':'Add or remove a theme image', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_theme_images_tags_object} tag_size={'l'} when_tags_updated={this.when_get_theme_images_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={60} placeholder={'Enter link to image here...'} when_text_input_field_changed={this.when_typed_image_link_input_field_changed.bind(this)} text={this.state.typed_image_link} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_theme_image()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_theme_images_horizontal()}
             </div>
         )
     }
@@ -375,7 +474,7 @@ class DialerPage extends Component {
         if(tag != 'e'){
             var clone = structuredClone(this.state.data)
             clone['allowed_countries'].push(tag)
-            this.setState({data: clone})
+            this.setState({data: clone, typed_country_name:''})
         }
     }
 
@@ -404,7 +503,7 @@ class DialerPage extends Component {
             if(index != -1){
                 clone['allowed_countries'].splice(index, 1)
             }
-            this.setState({data: clone})
+            this.setState({data: clone, typed_country_name:''})
         }
     }
 
@@ -609,17 +708,13 @@ class DialerPage extends Component {
         }
         items = [].concat(items)
         if(items.length == 0){
-            items = [0, 0]
+            items = [1, 2, 3]
             return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
                             </li>
                         ))}
                     </ul>
@@ -627,28 +722,58 @@ class DialerPage extends Component {
             )
         }else{
             return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
-                            <SwipeableList>
-                                <SwipeableListItem
-                                    swipeLeft={{
-                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
-                                    action: () =>this.delete_language_url(item)
-                                    }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
-                                        <li style={{'padding': '2px'}}>
-                                            {this.render_detail_item('3', {'title':this.get_language_name_from_id(item), 'details':item, 'size':'l'})}
-                                        </li>
-                                    </div>
-                                </SwipeableListItem>
-                            </SwipeableList>
-                            
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.delete_language_url(item)}>
+                                {this.render_detail_item('3', {'title':this.get_language_name_from_id(item), 'details':item, 'size':'l'})}
+                            </li>
                         ))}
                     </ul>
                 </div>
             )
         }
+        // if(items.length == 0){
+        //     items = [0, 0]
+        //     return(
+        //         <div style={{}}>
+        //             <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+        //                 {items.map((item, index) => (
+        //                     <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+        //                         <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+        //                             <div style={{'margin':'10px 20px 10px 0px'}}>
+        //                                 <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+        //                             </div>
+        //                         </div>
+        //                     </li>
+        //                 ))}
+        //             </ul>
+        //         </div>
+        //     )
+        // }else{
+        //     return(
+        //         <div style={{}}>
+        //             <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+        //                 {items.map((item, index) => (
+        //                     <SwipeableList>
+        //                         <SwipeableListItem
+        //                             swipeLeft={{
+        //                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+        //                             action: () =>this.delete_language_url(item)
+        //                             }}>
+        //                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+        //                                 <li style={{'padding': '2px'}}>
+        //                                     {this.render_detail_item('3', {'title':this.get_language_name_from_id(item), 'details':item, 'size':'l'})}
+        //                                 </li>
+        //                             </div>
+        //                         </SwipeableListItem>
+        //                     </SwipeableList>
+                            
+        //                 ))}
+        //             </ul>
+        //         </div>
+        //     )
+        // }
     }
 
     delete_language_url(language_id){
@@ -680,14 +805,197 @@ class DialerPage extends Component {
             this.setState({override_object: obj})
         }
     }
+
+
+
+    when_typed_dialer_address_input_field_changed(text){
+        this.setState({typed_dialer_address: text})
+    }
+
+    add_dialer_address(){
+        var address = this.state.typed_dialer_address
+
+        if(address == ''){
+            this.props.notify('type something first', 4000)
+        }
+        else if(!this.props.is_valid_ether_address(address)){
+            this.props.notify('that ether address is invalid', 4000)
+        }
+        else{
+            var clone = structuredClone(this.state.data)
+            clone['dialer_addresses'].push(address)
+            this.setState({data: clone, typed_dialer_address:''})
+            this.props.notify('Address added', 2000)
+        }
+    }
+
+    render_dialer_addresses_horizontal(){
+        var items = this.state.data['dialer_addresses']
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.delete_dialer_address(index)}>
+                                {this.render_detail_item('4', {'text':start_and_end(item), 'textsize':'13px', 'font':this.props.app_state.font})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    delete_dialer_address(index){
+        var clone = structuredClone(this.state.data)
+        clone['dialer_addresses'].splice(index, 1)
+        this.setState({data: clone})
+        this.props.notify('Address deleted', 2000)
+    }
+
+
+
+
+    when_get_theme_images_tags_object_updated(tag_obj){
+        this.setState({get_theme_images_tags_object:tag_obj})
+    }
+
+    when_typed_image_link_input_field_changed(text){
+        this.setState({typed_image_link: text})
+    }
+
+    add_theme_image(){
+        var link = this.state.typed_image_link
+        var selected_theme = this.get_selected_item(this.state.get_theme_images_tags_object, 'e')
+
+        if(link == ''){
+            this.props.notify('type something', 4000)
+        }
+        else if(!this.isValidHttpUrl(link)){
+            this.props.notify('that image link isnt valid', 4000)
+        }
+        else{
+            var clone = structuredClone(this.state.data)
+            if(clone['theme_images'][selected_theme] == null) clone['theme_images'][selected_theme] = [];
+            clone['theme_images'][selected_theme].push(link)
+            this.setState({data: clone, typed_image_link:''})
+        }
+    }
+
+    render_theme_images_horizontal(){
+        var selected_theme = this.get_selected_item(this.state.get_theme_images_tags_object, 'e')
+        var items = this.state.data['theme_images'][selected_theme]
+        if(items == null) items = [];
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.delete_image(index)}>
+                                <img alt="" src={item} style={{height:70 ,width:'auto', 'border-radius':'8px'}} />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_empty_horizontal_list_item3(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:70, width:140, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:35 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    delete_image(index){
+        var selected_theme = this.get_selected_item(this.state.get_theme_images_tags_object, 'e')
+        var clone = structuredClone(this.state.data)
+        clone['theme_images'][selected_theme].splice(index, 1)
+        this.setState({data: clone})
+        this.props.notify('Image deleted', 2000)
+    }
+
+
+
+
     
 
 
 
 
+    render_e5_stuff(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_e5_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_e5_content2()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_e5_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_e5_content2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_e5_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_e5_content2()}
+                    </div>
+                </div>
+            )
+        }
+    }
 
-
-    render_content_2(){
+    render_e5_content(){
         return(
             <div>
                 {this.render_detail_item('4', {'text':'Add or edit a new ether and its respective E5.', 'textsize':'14px', 'font':this.props.app_state.font})}
@@ -695,17 +1003,35 @@ class DialerPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_ether_list_sort_order_object} tag_size={'l'} when_tags_updated={this.when_get_ether_list_sort_order_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.render_my_balances_horizontal()}
+                <div style={{height:30}}/>
+
+
+                {this.render_detail_item('4', {'text':'Set the ether E5 below', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
 
-                <TextInput height={30} placeholder={'Enter token E5 id here'} when_text_input_field_changed={this.when_typed_e5_id_input_field_changed.bind(this)} text={this.state.typed_e5_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={'Enter ether E5 id here'} when_text_input_field_changed={this.when_typed_e5_id_input_field_changed.bind(this)} text={this.state.typed_e5_id} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('4', {'text':'Set the ether symbol below.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
 
-                <TextInput height={30} placeholder={'Enter token symbol here'} when_text_input_field_changed={this.when_typed_symbol_id_input_field_changed.bind(this)} text={this.state.typed_symbol_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={'Enter ether symbol here'} when_text_input_field_changed={this.when_typed_symbol_id_input_field_changed.bind(this)} text={this.state.typed_symbol_id} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('4', {'text':'Set the ether name below', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
 
                 <TextInput height={30} placeholder={'Enter token name here'} when_text_input_field_changed={this.when_typed_token_name_input_field_changed.bind(this)} text={this.state.typed_token_name} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
 
+
+
+                {this.render_detail_item('4', {'text':'Add or remove rpc urls for the ether', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
 
                 <div className="row" style={{width:'100%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
@@ -719,18 +1045,14 @@ class DialerPage extends Component {
                 </div>
                 <div style={{height:10}}/>
                 {this.render_added_rpcs()}
-                <div style={{height:30}}/>
+                {this.render_detail_item('0')}
+
 
                 {this.render_detail_item('4', {'text':'Tap disabled to disable the ether.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_ether_disabled_setting_object} tag_size={'l'} when_tags_updated={this.when_get_ether_disabled_setting_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-
-
-                <TextInput height={30} placeholder={'Enter E5 address'} when_text_input_field_changed={this.when_typed_e5_address_input_field_changed.bind(this)} text={this.state.typed_e5_address} theme={this.props.theme}/>
-                <div style={{height:30}}/>
-
 
                 {this.render_detail_item('4', {'text':'Pick the tag, then set the image after.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
@@ -748,25 +1070,53 @@ class DialerPage extends Component {
                         </div>
                     </div>
                 </div>
+            </div>
+        )
+    }
+
+    render_e5_content2(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':'Set the ethers E5 address below', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
 
+                <TextInput height={30} placeholder={'Enter E5 address'} when_text_input_field_changed={this.when_typed_e5_address_input_field_changed.bind(this)} text={this.state.typed_e5_address} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('4', {'text':'Set the first block for the E5.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
 
                 <TextInput height={30} placeholder={'Enter first block'} when_text_input_field_changed={this.when_first_block_input_field_changed.bind(this)} text={this.state.typed_first_block} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('4', {'text':'Set the iteration for synchronizing with the E5.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
 
-
                 <TextInput height={30} placeholder={'Enter iteration'} when_text_input_field_changed={this.when_iteration_input_field_changed.bind(this)} text={this.state.typed_iteration} theme={this.props.theme}/>
-                <div style={{height:30}}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('4', {'text':'Tap active to set the new E5 as active.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_e5_active_setting_object} tag_size={'l'} when_tags_updated={this.when_get_e5_active_setting_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('4', {'text':'Tap active to set the new E5 as public enabled.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_e5_public_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_e5_public_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+                
                 
 
+                {this.render_detail_item('4', {'text':'Set the end token power limit for the E5', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
                 <TextInput height={30} placeholder={'Enter End token power limit'} when_text_input_field_changed={this.when_power_limit_input_field_changed.bind(this)} text={this.state.power_limit} theme={this.props.theme}/>
-                <div style={{height:30}}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('4', {'text':'Change the countries that can access the E5s spend exchange.', 'textsize':'14px', 'font':this.props.app_state.font})}
@@ -778,13 +1128,24 @@ class DialerPage extends Component {
                 {this.render_detail_item('4', {'text':'Tap a country to remove from the spend exchange accessible list.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:5}}/>
                 {this.render_detail_item('1',{'active_tags':this.get_included_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_included_country_selected'})}
-
                 <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.add_all_countries()}>
+                            {this.render_detail_item('5', {'text':'Add all', 'action':''})}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.remove_all_countries()}>
+                            {this.render_detail_item('5', {'text':'remove all', 'action':''})}
+                        </div>
+                    </div>
+                </div>                
+
+                <div style={{height:30}}/>
                 <div onClick={()=> this.add_or_edit_ether_e5()}>
                     {this.render_detail_item('5', {'text':(this.state.editing_e5_item == '' ? 'Add E5': 'Edit E5'), 'action':''})}
                 </div>
-
-
             </div>
         )
     }
@@ -876,7 +1237,7 @@ class DialerPage extends Component {
             <div>
                 <div style={{height:43, width:127, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>
@@ -932,7 +1293,7 @@ class DialerPage extends Component {
     edit_selected_e5(item){
         if(this.state.editing_e5_item == item){
             this.setState({editing_e5_item: '',
-                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[]
+                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false),
             })
         }else{
             const obj = this.state.data['e5s'][item]
@@ -950,8 +1311,9 @@ class DialerPage extends Component {
             const first_block = obj.first_block
             const iteration = obj.iteration
             const spend_access = obj.spend_access == null ? []: obj.spend_access
+            const public_enabled = obj.public_enabled == null ? false: obj.public_enabled
             this.setState({editing_e5_item: item, 
-                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString(), spend_exchange_allowed_countries: spend_access
+                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString(), spend_exchange_allowed_countries: spend_access, get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(public_enabled)
             })
         }
     }
@@ -1184,6 +1546,23 @@ class DialerPage extends Component {
         }
     }
 
+    add_all_countries(){
+        var all_countries = this.state.data['country_data']
+        var selected = []
+        for(var i=0; i<all_countries.length; i++){
+            selected.push(all_countries[i]['name'])
+        }
+        this.setState({spend_exchange_allowed_countries: selected})
+    }
+
+    remove_all_countries(){
+       this.setState({spend_exchange_allowed_countries: []}) 
+    }
+
+    when_get_e5_public_enabled_tags_object_updated(tag_obj){
+        this.setState({get_e5_public_enabled_tags_object: tag_obj})
+    }
+
 
 
     add_or_edit_ether_e5(){
@@ -1202,6 +1581,7 @@ class DialerPage extends Component {
         const e5_active = this.get_selected_item(this.state.get_e5_active_setting_object, 'e') == 'active' ? true : false
         const power_limit = parseInt(this.state.power_limit)
         const ether_disabled = this.get_selected_item(this.state.get_ether_disabled_setting_object, 'e') == 'disabled' ? true : false
+        const public_enabled = this.get_selected_item(this.state.get_e5_public_enabled_tags_object, 'e') == 'public-enabled' ? true : false
         const editing_e5_item = this.state.editing_e5_item
         
         var clone = structuredClone(this.state.data)
@@ -1243,6 +1623,9 @@ class DialerPage extends Component {
             else if(e5_image == ''){
                 this.props.notify('You need to specify a valid e5 image', 5000)
                 return;
+            }
+            else if(!this.props.is_valid_ether_address(e5_address)){
+                this.props.notify('that E5 address is invalid', 5000)
             }
         }
         else if(first_block == 0){
@@ -1292,13 +1675,13 @@ class DialerPage extends Component {
             e5_address:e5_address, 
             first_block:first_block, end_image:end_image, spend_image:spend_image, ether_image:ether_image, 
             iteration:iteration, url:0, active:e5_active, e5_img:e5_image,
-            end_token_power_limit: power_limit, spend_access:spend_exchange_allowed_countries
+            end_token_power_limit: power_limit, spend_access:spend_exchange_allowed_countries, public_enabled: public_enabled,
         }
         clone['e5s'][e5] = e5_data
         if(editing_e5_item == '') clone['e5s']['data'].push(e5)
         this.setState({data: clone,
             editing_e5_item: '',
-            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[]
+            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false)
         });
     }
 

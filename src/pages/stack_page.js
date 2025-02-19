@@ -2267,9 +2267,22 @@ class StackPage extends Component {
         else if(!this.is_areweave_checkers_ok()){
             console.log('insufficient Arweave balance.')
         }
+        else if(this.is_e5_public_disabled_for_sender()){
+            this.props.notify(this.props.app_state.loc['1593et']/* 'The E5 you wish to use is not active yet.' */, 9000)
+        }
         else{
             console.log('opening_confirmation!')
             this.props.show_confirm_run_bottomsheet(run_data)
+        }
+    }
+
+    is_e5_public_disabled_for_sender(){
+        var setting = this.props.app_state.e5s[this.props.app_state.selected_e5].public_enabled
+        if(setting == null || setting == false){
+            var my_address = this.props.app_state.accounts[this.props.app_state.selected_e5] == null ? '0x00' : this.props.app_state.accounts[this.props.app_state.selected_e5].address
+            return !this.props.app_state.dialer_addresses.includes(my_address)
+        }else{
+            return false
         }
     }
 
@@ -3808,7 +3821,7 @@ class StackPage extends Component {
     }
 
     get_ipfs_index_object = async (txs, now, calculate_gas) => {
-        const ipfs_index_object = {'version':this.props.app_state.version}
+        const ipfs_index_object = {'version':this.props.app_state.version, 'c':this.get_device_color()}
         const ipfs_index_array = []
         console.log('stack_page_ipfs', 'initial object data', ipfs_index_object)
         const pushed_txs = []
@@ -4157,7 +4170,7 @@ class StackPage extends Component {
         }
 
 
-        const obj = {'version':this.props.app_state.version}
+        const obj = {'version':this.props.app_state.version, 'c':this.get_device_color()}
         ipfs_index_array.forEach(item => {
             obj[item['id']] = item['data']
         });
@@ -4171,6 +4184,21 @@ class StackPage extends Component {
         }
         console.log('stack_page_ipfs', 'link', link)
         return link
+    }
+
+    get_device_color(){
+        const my_state_code = this.props.app_state.device_country_code
+        const country_data = this.props.app_state.country_data
+
+        var selected_objs = country_data.filter(function (el) {
+            return (el['code'] === my_state_code)
+        });
+
+        var color = 'g'
+        if(selected_objs.length > 0){
+            color = selected_objs[0]['color'][0];
+        }
+        return color
     }
 
     get_gas_price(){
@@ -4216,7 +4244,7 @@ class StackPage extends Component {
     }
 
     get_object_ipfs_index = async (tx, calculate_gas, ipfs_index, data_index) => {
-        if(Object.keys(tx).length <= 1){
+        if(Object.keys(tx).length <= 2){
             return null
         }
         if(calculate_gas != null && calculate_gas == true){
@@ -8129,6 +8157,10 @@ class StackPage extends Component {
 
                     {this.render_detail_item('0')}
 
+
+
+                    {this.render_theme_image_setting_if_any()}
+
                 </div>
             </div>
         )
@@ -8264,6 +8296,57 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    render_theme_image_setting_if_any(){
+        var selected_theme = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
+
+        const findKeyByValue = (obj, value) => {
+            return Object.entries(obj).find(([key, val]) => val === value)?.[0];
+        };
+
+        var name_key = findKeyByValue(this.props.app_state.loc, selected_theme)
+        var english_theme_name = this.props.app_state.all_locales['en'][name_key]
+
+        if(this.props.app_state.theme_images[english_theme_name] != null && this.props.app_state.theme_images[english_theme_name].length > 0){
+            var items = this.props.app_state.theme_images[english_theme_name]
+            return(
+                <div>
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593eu']/* 'Background Theme' */, 'details':this.props.app_state.loc['1593ev']/* 'Set the background theme image for the webapp. */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.set_background_image(item)}>
+                                    {this.render_image(item)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_image(item){
+        if(this.props.app_state.theme_image == item){
+            return(
+                <div>
+                    <img alt="" src={item} style={{height:50 ,width:'auto', 'border-radius':'8px'}} />
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '4px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <img alt="" src={item} style={{height:50 ,width:'auto', 'border-radius':'8px'}} />
+                </div>
+            )
+        }
+    }
+
+    set_background_image(item){
+        this.props.when_device_theme_image_changed(item)
     }
 
 

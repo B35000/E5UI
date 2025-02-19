@@ -383,6 +383,7 @@ class home_page extends Component {
         var navbar_color = this.props.theme['nav_bar_color'];
         var background_color = this.props.theme['homepage_background_color'];
         var back = this.props.theme['background']
+        if(this.props.app_state.theme_image != '') back = this.props.app_state.theme_image;
 
         if(size == 'l'){
             var middle = this.props.height-112;
@@ -4787,7 +4788,7 @@ class home_page extends Component {
                     {this.render_detail_item('0')} 
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2819']/* 'Active Wallets.' */, 'details':this.props.app_state.loc['2820']/* 'Your wallet ethers that have balances.' */, 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2819']/* 'Active Wallets.' */, 'details':this.props.app_state.loc['2820']/* 'Your wallet ethers and coins that have balances.' */, 'size':'l'})}
                     {this.render_my_balances()}
                     {this.render_detail_item('0')} 
 
