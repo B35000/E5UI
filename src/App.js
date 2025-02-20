@@ -671,7 +671,7 @@ class App extends Component {
     
     calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
-    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:''
+    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false,
   };
 
   get_static_assets(){
@@ -4991,7 +4991,7 @@ class App extends Component {
         
           play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
-          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)}
+          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_theme_data={this.get_theme_data.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -18448,6 +18448,7 @@ class App extends Component {
       const all_locales = root_data.data['all_locales']
       const dialer_addresses = root_data.data['dialer_addresses']
       const theme_images = root_data.data['theme_images']
+      const line_setting = this.get_selected_item(root_data.get_line_setting_object, 'e') == 'enabled' ? true : false
 
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
@@ -18466,7 +18467,7 @@ class App extends Component {
         this.reset_locale_settings()
       }
 
-      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images})
+      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images, line_setting:line_setting})
 
       localStorage.setItem("logo_title", logo_title);
       localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);

@@ -2899,8 +2899,12 @@ class home_page extends Component {
         var pos = obj[this.state.page];
         var subtract = size == 'm' ? 70 : 60
         var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
+        var subtract2 = this.should_show_line() == true ? 10 : 0
+        h -= subtract2;
+        if(size == 'm') h-= 4
         return(
             <div>
+                {this.render_line_if_enabled()}
                 {this.render_search_tags_views()}
                 <SwipeableViews index={pos} onChangeIndex={this.handleChange}>
                     <div>
@@ -2916,6 +2920,83 @@ class home_page extends Component {
             </div>
         )
         
+    }
+
+    should_show_line(){
+        var beacon_node_enabled = this.props.app_state.beacon_node_enabled
+        var line_setting = this.props.app_state.line_setting
+        if(beacon_node_enabled == true && line_setting == true){
+            return true
+        }
+        return false
+    }
+
+    render_line_if_enabled(){
+        if(this.should_show_line()){
+            var data = this.props.app_state.beacon_data['color_metrics']
+            var g = data['g'] == null ? 0 : data['g']
+            var r = data['r'] == null ? 0 : data['r']
+            var b = data['b'] == null ? 0 : data['b']
+            var y = data['y'] == null ? 0 : data['y']
+            var p = data['p'] == null ? 0 : data['p']
+            var o = data['o'] == null ? 0 : data['o']
+
+            var total = g+r+b+y+p+o
+            if(total > 0){
+                var arr = [
+                    {'c':'g', 'v':((g*100)/total)},
+                    {'c':'r', 'v':((r*100)/total)},
+                    {'c':'b', 'v':((b*100)/total)},
+                    {'c':'y', 'v':((y*100)/total)},
+                    {'c':'p', 'v':((p*100)/total)},
+                    {'c':'o', 'v':((o*100)/total)},
+                ]
+                var sorted = this.sortByAttributeDescending(arr, 'v')
+                return(
+                    <div>
+                        <div style={{ height: 3, 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '5px 15px 5px 15px' }}>
+                            <div className="progress" style={{ height: 3, 'background-color': this.props.theme['linebar_background_color'] }}>
+                                {sorted.map((item, index) => (
+                                    <div className="progress-bar" role="progressbar" style={{ width: item['v']+'%', 'background-image': 'none','background-color': this.get_color_item(item['c']), 'border-radius': '0px 0px 0px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+
+    get_color_item(c){
+        var obj = {
+            'g':this.props.get_theme_data(this.props.app_state.loc['2741']/* green */)['chart_color'], 
+            'r':this.props.get_theme_data(this.props.app_state.loc['3057']/* 'red' */)['chart_color'], 
+            'b':this.props.get_theme_data(this.props.app_state.loc['3059']/* 'blue' */)['chart_color'], 
+            'y':this.props.get_theme_data(this.props.app_state.loc['3061']/* 'yellow' */)['chart_color'], 
+            'p':this.props.get_theme_data(this.props.app_state.loc['3063']/* 'pink' */)['chart_color'], 
+            'o':this.props.get_theme_data(this.props.app_state.loc['3065']/* 'orange' */)['chart_color']
+        }
+        
+        var arr = [
+            this.props.app_state.loc['3056']/* 'light-green' */, 
+            this.props.app_state.loc['3058']/* 'light-red' */, 
+            this.props.app_state.loc['3060']/* 'light-blue' */, 
+            this.props.app_state.loc['3062']/* 'light-yellow' */, 
+            this.props.app_state.loc['3064']/* 'light-pink' */, 
+            this.props.app_state.loc['3066']/* 'light-orange' */,
+            this.props.app_state.loc['1417']/* 'light' */
+        ]
+        if(arr.includes(this.props.theme['name']) || (this.props.theme['name'] == this.props.app_state.loc['1593a']/* 'auto' */ && this.props.theme['markdown_theme'] == 'light')){
+            obj = {
+                'g':this.props.get_theme_data(this.props.app_state.loc['3056']/* 'light-green' */)['chart_color'], 
+                'r':this.props.get_theme_data(this.props.app_state.loc['3058']/* 'light-red' */)['chart_color'], 
+                'b':this.props.get_theme_data(this.props.app_state.loc['3060']/* 'light-blue' */)['chart_color'], 
+                'y':this.props.get_theme_data(this.props.app_state.loc['3062']/* 'light-yellow' */)['chart_color'], 
+                'p':this.props.get_theme_data(this.props.app_state.loc['3064']/* 'light-pink' */)['chart_color'], 
+                'o':this.props.get_theme_data(this.props.app_state.loc['3066']/* 'light-orange' */)['chart_color']
+            }
+        }
+        return obj[c]
     }
 
     render_search_tags_views(){
@@ -2943,6 +3024,7 @@ class home_page extends Component {
     }
 
     is_page_valid(){
+        if(this.props.app_state.my_preferred_nitro == '') return false;
         if(this.state.page == '?'){
             var selected_item = this.state.work_page_tags_object['i'].active
             if(selected_item == 'e'){

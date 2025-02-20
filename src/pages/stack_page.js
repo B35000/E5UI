@@ -3821,7 +3821,7 @@ class StackPage extends Component {
     }
 
     get_ipfs_index_object = async (txs, now, calculate_gas) => {
-        const ipfs_index_object = {'version':this.props.app_state.version, 'c':this.get_device_color()}
+        const ipfs_index_object = {'version':this.props.app_state.version, 'color':this.get_device_color()}
         const ipfs_index_array = []
         console.log('stack_page_ipfs', 'initial object data', ipfs_index_object)
         const pushed_txs = []
@@ -4170,7 +4170,7 @@ class StackPage extends Component {
         }
 
 
-        const obj = {'version':this.props.app_state.version, 'c':this.get_device_color()}
+        const obj = {'version':this.props.app_state.version, 'color':this.get_device_color()}
         ipfs_index_array.forEach(item => {
             obj[item['id']] = item['data']
         });
