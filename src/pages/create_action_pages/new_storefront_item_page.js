@@ -912,6 +912,10 @@ class NewStorefrontItemPage extends Component {
         )
     }
 
+    componentDidMount(){
+        this.setState({screen_width: this.screen.current?.offsetWidth})
+    }
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -952,7 +956,7 @@ class NewStorefrontItemPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 10px 0px 10px'}}>
+            <div ref={this.screen} style={{'padding':'0px 10px 0px 10px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['494']/* 'Set a title for your new Storefront Item' */})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['495']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -2089,8 +2093,7 @@ class NewStorefrontItemPage extends Component {
 
     render_image_part(){
         var background_color = this.props.theme['card_background_color']
-        var size = this.props.size
-        var col = Math.round(400 / 100)
+        var col = Math.round((this.state.screen_width-25) / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
@@ -3087,6 +3090,7 @@ class NewStorefrontItemPage extends Component {
         this.amount_picker = React.createRef();
         this.amount_picker2 = React.createRef();
         this.amount_picker3 = React.createRef();
+        this.screen = React.createRef()
     }
 
     when_exchange_id_input_field_changed(text){

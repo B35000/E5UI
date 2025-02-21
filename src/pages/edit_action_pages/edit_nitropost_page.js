@@ -258,6 +258,10 @@ class EditNitroPage extends Component {
 
 
 
+    componentDidMount(){
+        this.setState({screen_width: this.screen.current?.offsetWidth})
+    }
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -298,7 +302,7 @@ class EditNitroPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>
+            <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['301']})}
                 <div style={{height:10}}/>
                 
@@ -1039,10 +1043,14 @@ class EditNitroPage extends Component {
         this.props.notify('items removed!',600)
     }
 
+    constructor(props) {
+        super(props);
+        this.screen = React.createRef()
+    }
+
     render_image_part(){
         var background_color = this.props.theme['card_background_color']
-        var size = this.props.size
-        var col = Math.round(400 / 100)
+        var col = Math.round((this.state.screen_width-25) / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){

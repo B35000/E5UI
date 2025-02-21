@@ -228,6 +228,15 @@ class NewSubscriptionPage extends Component {
         )
     }
 
+
+
+
+
+
+    componentDidMount(){
+        this.setState({screen_width: this.screen.current?.offsetWidth})
+    }
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -268,7 +277,7 @@ class NewSubscriptionPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>
+            <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['546']/* 'Set a name for your new Subscription' */})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['547']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
