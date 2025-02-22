@@ -505,7 +505,10 @@ class NewContractorPage extends Component {
     }
 
     when_city_selected(tag, pos){
-        if(tag != 'e') this.setState({selected_device_city: tag, device_city:''})
+        if(tag != 'e'){
+            if(this.state.selected_device_city == tag) this.setState({selected_device_city: ''});
+            else this.setState({selected_device_city: tag, device_city:''})
+        } 
     }
 
 

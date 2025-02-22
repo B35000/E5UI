@@ -4200,6 +4200,7 @@ class App extends Component {
 
   get_theme_data(theme){
     //this.props.theme['']
+    //🔴🟠🟡🟢🔵🟣
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
