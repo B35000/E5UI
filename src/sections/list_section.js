@@ -898,8 +898,9 @@ class PostListSection extends Component {
                 </div>
             )
         }
+        var opacity = object['hidden'] == true ? 0.6 : 1.0
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -932,6 +933,10 @@ class PostListSection extends Component {
     }
 
     when_contract_item_clicked(index, object){
+        if(object['hidden'] == true){
+            this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
+            return;
+        }
         this.props.when_contract_item_clicked(index, object['id'], object['e5'], object)
     }
 
@@ -1220,8 +1225,9 @@ class PostListSection extends Component {
                 </div>
             )
         }
+        var opacity = object['hidden'] == true ? 0.6 : 1.0
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1238,6 +1244,10 @@ class PostListSection extends Component {
     }
 
     when_subscription_item_clicked(index, object){
+        if(object['hidden'] == true){
+            this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
+            return;
+        }
         this.props.when_subscription_item_clicked(index, object['id'], object['e5'])
     }
 
@@ -2048,8 +2058,9 @@ class PostListSection extends Component {
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+            var opacity = object['hidden'] == true ? 0.6 : 1.0
             return(
-                <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'padding': '0px 0px 0px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
@@ -2099,6 +2110,11 @@ class PostListSection extends Component {
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
+
+        if(object['hidden'] == true){
+            this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
+            return;
+        }
 
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
             this.props.when_channel_item_clicked(index, object['id'], object['e5'], object)
@@ -3466,8 +3482,9 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        return ( 
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+        var opacity = object['hidden'] == true ? 0.6 : 1.0
+        return (
+            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -3481,9 +3498,6 @@ class PostListSection extends Component {
                     
                 </div>         
             </div>
-            // <div style={{'padding': '1px 5px 1px 5px'}} onClick={() => this.when_ends_object_clicked(index, object)}>
-            //     {this.render_detail_item('8', item['label'])}
-            // </div>
         );
     }
 
@@ -3612,8 +3626,9 @@ class PostListSection extends Component {
                 </div>
             )
         }
+        var opacity = object['hidden'] == true ? 0.6 : 1.0
         return (
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', opacity: opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -3626,13 +3641,11 @@ class PostListSection extends Component {
                     </div>
                 </div>         
             </div>
-            // <div style={{'padding': '1px 5px 1px 5px'}}>
-            //     {this.render_detail_item('8', item['label'])}
-            // </div>
         );
     }
 
     when_spends_object_item_clicked(index, item){
+        
         this.props.when_spends_object_clicked(index, item['id'], item['e5'])
     }
 

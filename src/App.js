@@ -1256,11 +1256,11 @@ class App extends Component {
       this.get_token('mADA', 'Milkomeda', 'E265'),
       this.get_token('FTM', 'Fantom Opera', 'E275', true),
       this.get_token('BRISE', 'Bitgert', 'E285'),
-      this.get_token('SYS', 'Syscoin EVM', 'E295'),
+      this.get_token('SYS', 'Syscoin EVM', 'E295', true),
       this.get_token('AVAX', 'Avalanche C-Chain', 'E305'),
       this.get_token('FRA', 'Findora', 'E315'),
       this.get_token('FDX', '5Dax', 'E325'),
-      this.get_token('ROSE', 'Oasis Emerald', 'E335'),
+      this.get_token('ROSE', 'Oasis Emerald', 'E335', true),
       this.get_token('OZO', 'Ozone Chain', 'E345'),
       this.get_token('PIX', 'Pixie', 'E355'),
       this.get_token('REI', 'Rei Network', 'E365'),
@@ -1293,7 +1293,7 @@ class App extends Component {
       this.get_token('BTT', 'BitTorrent Chain', 'E635'),
       this.get_token('AAC', 'Double-A Chain', 'E645'),
       this.get_token('KAR', 'Karura EVM', 'E655'),
-      this.get_token('ACA', 'Acala EVM', 'E665'),
+      this.get_token('ACA', 'Acala EVM', 'E665', true),
       this.get_token('EDG', 'Edgeware EVM', 'E675', true),
       this.get_token('BERG', 'Bloxberg', 'E685', true),
       this.get_token('PHOENIX', 'Phoenix', 'E695'),
@@ -20870,14 +20870,18 @@ class App extends Component {
       var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
       var last_expiration_time = this.get_last_expiration_time(payment_history_events, created_subscriptions[i], time_unit, my_payment/* [0] */[0] )
 
-      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment/* [0] */[0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3, 'last_expiration_time':last_expiration_time}
+      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment/* [0] */[0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3, 'last_expiration_time':last_expiration_time, 'hidden':false}
 
-      if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){}
-      else if(my_blocked_time_value/* [0] */[0] > Date.now()/1000){}
-      else{
-        if(created_subscription_object_mapping[created_subscriptions[i]+e5] == null)created_subscription_object_data.push(subscription_object)
+      if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){
+        subscription_object['hidden'] = true;
       }
-
+      else if(my_blocked_time_value/* [0] */[0] > Date.now()/1000){
+        subscription_object['hidden'] = true;
+      }
+      else{
+        subscription_object['hidden'] = false;
+      }
+      created_subscription_object_data.push(subscription_object)
       created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
 
       if(is_first_time){
@@ -21035,16 +21039,18 @@ class App extends Component {
 
       var timestamp = event == null ? 0 : parseInt(event.returnValues.p4)
       var author = event == null ? 0 : event.returnValues.p3
-      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'participant_times':entered_account_times_data, 'archive_accounts':archive_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i], 'my_interactable_time_value':my_interactable_time_value[i][0], 'my_blocked_time_value':my_blocked_time_value[i][0], 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
+      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'participant_times':entered_account_times_data, 'archive_accounts':archive_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i], 'my_interactable_time_value':my_interactable_time_value[i][0], 'my_blocked_time_value':my_blocked_time_value[i][0], 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5, 'hidden':false }
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
+        contract_obj['hidden'] = true
       }
       else if(my_blocked_time_value[i][0] > Date.now()/1000){
-
+        contract_obj['hidden'] = true
       }
       else{
-        created_contract_object_data.push(contract_obj)
+        contract_obj['hidden'] = false
       }
+      created_contract_object_data.push(contract_obj)
       created_contract_mapping[created_contracts[i]] = contract_obj
 
       
@@ -21348,19 +21354,19 @@ class App extends Component {
       if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false)
 
       var token_obj = {
-        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5, 
-        'token_balances_data':token_balance_data
+        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':false 
       }
 
       if(interactible_checker_status_values[i] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
-
+        token_obj['hidden'] = true
       }
       else if(my_blocked_time_value[i][0] > Date.now()/1000){
-
+        token_obj['hidden'] = true
       }
       else{
-        created_token_object_data.push(token_obj)
+        token_obj['hidden'] = false
       }
+      created_token_object_data.push(token_obj)
       created_token_object_mapping[created_tokens[i]] = token_obj
 
       var token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
@@ -21557,15 +21563,18 @@ class App extends Component {
 
         var my_blocked_time_value = await E52contractInstance.methods.f256([id], [[account]], 0,3).call((error, result) => {});
 
-        if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 || !moderators.includes(account))){
+        var channel_obj = {'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0],'e5':e5, 'timestamp':parseInt(created_channel_events[i].returnValues.p6), 'author':created_channel_events[i].returnValues.p5, 'e5_id':id+e5, 'hidden':false }
 
+        if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 || !moderators.includes(account))){
+          channel_obj['hidden'] = true
         }
         else if(my_blocked_time_value[0][0] > Date.now()/1000){
-
+          channel_obj['hidden'] = true
         }
         else{
-          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0],'e5':e5, 'timestamp':parseInt(created_channel_events[i].returnValues.p6), 'author':created_channel_events[i].returnValues.p5, 'e5_id':id+e5 });
+          channel_obj['hidden'] = false
         }
+        created_channel.push(channel_obj);
       }
 
       if(is_first_time){

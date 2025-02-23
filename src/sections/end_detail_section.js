@@ -394,20 +394,14 @@ class EndDetailSection extends Component {
                     {this.render_last_swap_transaction_count(selected_object)}
                     {this.render_last_entered_contracts_count(selected_object)}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2344']/* 'Buy or Sell the token for a specified account' */, 'title':this.props.app_state.loc['2345']/* 'Buy/Sell' */})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_mint_burn_token_ui(selected_object)}>
-                        {this.render_detail_item('5', item['mint_burn_button'])}
-                    </div>
-                    {this.render_detail_item('0')}
+                    {this.render_buy_sell_token_button(selected_object, item)}
+                    
                     
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2346']/* 'Transfer some tokens to  a specified account' */, 'title':this.props.app_state.loc['2347']/* 'Transfer' */})}
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'number':selected_object['balance'], 'relativepower':symbol})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
                     </div>
-
-                    <div style={{height:10}}/>
 
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_end_transfer_ui(selected_object)}>
@@ -432,6 +426,22 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    render_buy_sell_token_button(selected_object, item){
+        if(selected_object['hidden'] == true){
+            return;
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2344']/* 'Buy or Sell the token for a specified account' */, 'title':this.props.app_state.loc['2345']/* 'Buy/Sell' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.open_mint_burn_token_ui(selected_object)}>
+                    {this.render_detail_item('5', item['mint_burn_button'])}
+                </div>
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -882,8 +892,9 @@ class EndDetailSection extends Component {
     }
 
     calculate_maximum_supply(object){
-        if(object['id'] == 3) return bigInt('1e72')
-        var set_max_supply = bigInt(object['ipfs'].token_exchange_liquidity_total_supply)
+        if(object['id'] == 3) return bigInt('1e72');
+        var total = object['ipfs'].token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : object['ipfs'].token_exchange_liquidity_total_supply
+        var set_max_supply = bigInt(total)
         var items = [].concat(this.get_item_logs(object, 'depth_mint'))
         var depthminted_amount = 0;
         items.forEach(item => {
@@ -897,7 +908,7 @@ class EndDetailSection extends Component {
 
     render_token_cap(selected_object){
         var max_supply = this.calculate_maximum_supply(selected_object)
-        
+        console.log('max_supply', selected_object)
         var input_amount = 1
         var input_reserve_ratio = selected_object['data'][2][0]
         var output_reserve_ratio = selected_object['data'][2][1]

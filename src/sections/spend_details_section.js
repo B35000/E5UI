@@ -415,7 +415,6 @@ class SpendDetailSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_mint_dump_token_button(selected_object, item)}
 
-                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2562']/* 'Make a token transfer to a specified account' */, 'title':this.props.app_state.loc['2563']/* 'Send/Transfer' */})}
 
                     <div style={{height:10}}/>
@@ -450,6 +449,10 @@ class SpendDetailSection extends Component {
     render_mint_dump_token_button(object, item){
         var user_country = this.props.app_state.device_country
         if(object['id'] == 5 && this.props.app_state.e5s[object['e5']].spend_access != null && !this.props.app_state.e5s[object['e5']].spend_access.includes(user_country)) return;
+        
+        if(object['hidden'] == true){
+            return;
+        }
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2560']/* 'Mint or Dump the token for a specified account' */, 'title':this.props.app_state.loc['2561']/* 'Mint/Dump' */})}
@@ -457,6 +460,7 @@ class SpendDetailSection extends Component {
                 <div onClick={()=>this.open_mint_burn_spend_token_ui(object)}>
                     {this.render_detail_item('5', item['mint_burn_button'])}
                 </div>
+                {this.render_detail_item('0')}
             </div>
         )
     }
