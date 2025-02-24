@@ -1222,13 +1222,114 @@ class EndDetailSection extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2390']/* 'Y-Axis: Y-aggregate' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    {this.render_chart_changes(exchange_ratio_events, selected_object)}
                 </div>
             )
         }
     }
 
+    render_chart_changes(event_data, selected_object){
+        var data = this.get_chart_change(event_data, selected_object)
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['2447m']/* 'Price Change over time.' */}</p>
+                    
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(data['1h'] < 0 ? data['1h']* -1 : data['1h'])+'%', 'number':(data['1h']+'%'), 'relativepower':'1h', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(data['24h'] < 0 ? data['24h']* -1 : data['24h'])+'%', 'number':(data['24h']+'%'), 'relativepower':'24h', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(data['7d'] < 0 ? data['7d']* -1 : data['7d'])+'%', 'number':(data['7d']+'%'), 'relativepower':'7d', })}
+                </div>
+            </div>
+        )
+    }
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
+    }
+
     when_y_aggregate_chart_tags_object_updated(tag_obj){
         this.setState({y_aggregate_chart_tags_object: tag_obj})
+    }
+
+    get_chart_change(event_data, selected_object){
+        var events = []
+        var cutoff_time = Date.now()/1000 - (60*60*24*7)
+        event_data.forEach(event => {
+            if(event.returnValues.p9 > cutoff_time){
+                events.push(event)
+            }
+        });
+
+        if(events.length == 0 && event_data.length != 0){
+            events.push(event_data[event_data.length-1])
+        }
+
+        var data = []
+        var times = []
+        for(var i=0; i<events.length; i++){
+            var input_amount = 1
+            var input_reserve_ratio = events[i].returnValues.p5/* exchange_ratio_x */
+            var output_reserve_ratio = events[i].returnValues.p6/* exchange_ratio_y */
+            var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, selected_object)
+            if(price < 1){
+                data.push(Math.round(price * 100000) / 100000)
+            }else{
+                data.push(parseInt(price))
+            }
+            times.push(parseInt(events[i].returnValues.p9))
+
+            if(i==events.length-1){
+                var diff = Date.now()/1000 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1]) 
+                    times.push(parseInt(events[i].returnValues.p9)+t)     
+                }
+            }
+            else{
+                var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])
+                    times.push(parseInt(events[i].returnValues.p9)+t)     
+                }
+            } 
+        }
+
+        const now = Math.floor(Date.now() / 1000); // Current time in seconds
+        const target_1h = now - (60*60);
+        const target_24h = now - (60*60*24);
+        const target_7d = now - (60*60*24*7);
+        const record_age = times[0] - now
+
+        var pos_1h = record_age > target_1h ? this.find_valid_timestamp_for_selected_age(data, target_1h) : 0;
+        var pos_24h = record_age > target_24h ? this.find_valid_timestamp_for_selected_age(data, target_24h) : 0;
+        var pos_7d = record_age > target_7d ? this.find_valid_timestamp_for_selected_age(data, target_7d) : 0;
+
+        const current_price = data[data.length - 1]
+        var p_1h  = ((current_price - data[pos_1h]) / current_price) * 100
+        var p_24h  = ((current_price - data[pos_24h]) / current_price) * 100
+        var p_7d  = ((current_price - data[pos_7d]) / current_price) * 100
+
+        return {'1h': this.round_off(p_1h), '24h':this.round_off(p_24h), '7d':this.round_off(p_7d)}
+    }
+
+    find_valid_timestamp_for_selected_age(timestamps, target) {
+        let left = 0, right = timestamps.length - 1;
+        let result = -1;
+
+        while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            if (timestamps[mid] <= target) {
+                result = mid; // Store candidate
+                left = mid + 1; // Search for a later timestamp
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return result !== -1 ? result : 0; // Return found timestamp or null if none
     }
 
     get_exchange_ratio_data_points(event_data, selected_object){
