@@ -588,6 +588,9 @@ class CoinsDetailsSection extends Component {
         else if(item['symbol'] == 'AR'){
             return `https://viewblock.io/arweave/address/${hash}`
         }
+        else if(item['symbol'] == 'SUI'){
+            return `https://suiscan.xyz/mainnet/account/${hash}`
+        }
     }
 
 

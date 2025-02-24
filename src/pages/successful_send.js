@@ -377,6 +377,13 @@ class SuccessfulSend extends Component {
         }else if(e5 == 'E815'){
             return `https://berascan.com/tx/${hash}`
         }
+        else{
+            var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
+            if(blockexplorer_link != null){
+                var link = blockexplorer_link.replace('{hash}', hash)
+                return link
+            }
+        }
     }
 
     render_gas_or_priority_figure(){
@@ -621,6 +628,9 @@ class SuccessfulSend extends Component {
         }
         else if(item['symbol'] == 'AR'){
             return `https://viewblock.io/arweave/tx/${hash}`
+        }
+        else if(item['symbol'] == 'SUI'){
+            return `https://suiscan.xyz/mainnet/tx/${hash}`
         }
     }
 

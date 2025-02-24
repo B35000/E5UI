@@ -76,7 +76,7 @@ class DialerPage extends Component {
         typed_spend_country_name: '', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_dialer_address:'',
 
         get_theme_images_tags_object:this.get_theme_images_tags_object(), typed_image_link:'',
-        get_line_setting_object:this.get_line_setting_object()
+        get_line_setting_object:this.get_line_setting_object(), typed_blockexplorer_link:''
     };
 
 
@@ -1055,6 +1055,14 @@ class DialerPage extends Component {
 
 
 
+                {this.render_detail_item('4', {'text':'Set the ethers blockexplorer link. Set {hash} where the transaction hash is to be placed', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={'Enter link'} when_text_input_field_changed={this.when_blockexplorer_input_field_changed.bind(this)} text={this.state.typed_blockexplorer_link} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
+
                 {this.render_detail_item('4', {'text':'Add or remove rpc urls for the ether', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
 
@@ -1121,6 +1129,9 @@ class DialerPage extends Component {
 
                 <TextInput height={30} placeholder={'Enter iteration'} when_text_input_field_changed={this.when_iteration_input_field_changed.bind(this)} text={this.state.typed_iteration} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
+
+
+
 
 
                 {this.render_detail_item('4', {'text':'Tap active to set the new E5 as active.', 'textsize':'14px', 'font':this.props.app_state.font})}
@@ -1318,7 +1329,7 @@ class DialerPage extends Component {
     edit_selected_e5(item){
         if(this.state.editing_e5_item == item){
             this.setState({editing_e5_item: '',
-                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false),
+                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_blockexplorer_link:''
             })
         }else{
             const obj = this.state.data['e5s'][item]
@@ -1337,8 +1348,9 @@ class DialerPage extends Component {
             const iteration = obj.iteration
             const spend_access = obj.spend_access == null ? []: obj.spend_access
             const public_enabled = obj.public_enabled == null ? false: obj.public_enabled
+            const typed_blockexplorer_link = obj.blockexplorer_link == null ? '':obj.blockexplorer_link
             this.setState({editing_e5_item: item, 
-                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString(), spend_exchange_allowed_countries: spend_access, get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(public_enabled)
+                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString(), spend_exchange_allowed_countries: spend_access, get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(public_enabled), typed_blockexplorer_link: typed_blockexplorer_link
             })
         }
     }
@@ -1588,6 +1600,10 @@ class DialerPage extends Component {
         this.setState({get_e5_public_enabled_tags_object: tag_obj})
     }
 
+    when_blockexplorer_input_field_changed(text){
+        this.setState({typed_blockexplorer_link: text})
+    }
+
 
 
     add_or_edit_ether_e5(){
@@ -1602,6 +1618,7 @@ class DialerPage extends Component {
         const ether_image = this.state.ether_image
         const first_block = parseInt(this.state.typed_first_block)
         const iteration = parseInt(this.state.typed_iteration)
+        const typed_blockexplorer_link = this.state.typed_blockexplorer_link
         const spend_exchange_allowed_countries = this.state.spend_exchange_allowed_countries
         const e5_active = this.get_selected_item(this.state.get_e5_active_setting_object, 'e') == 'active' ? true : false
         const power_limit = parseInt(this.state.power_limit)
@@ -1634,6 +1651,10 @@ class DialerPage extends Component {
         }
         else if(power_limit < 72){
             this.props.notify('The power limit cant be less than 72', 5000)
+            return;
+        }
+        else if(typed_blockexplorer_link == '' || typed_blockexplorer_link.includes('{hash}')){
+            this.props.notify('You need to specify a valid blockexplorer link', 5000)
             return;
         }
         else if(e5_address != ''){
@@ -1701,12 +1722,13 @@ class DialerPage extends Component {
             first_block:first_block, end_image:end_image, spend_image:spend_image, ether_image:ether_image, 
             iteration:iteration, url:0, active:e5_active, e5_img:e5_image,
             end_token_power_limit: power_limit, spend_access:spend_exchange_allowed_countries, public_enabled: public_enabled,
+            blockexplorer_link:typed_blockexplorer_link,
         }
         clone['e5s'][e5] = e5_data
         if(editing_e5_item == '') clone['e5s']['data'].push(e5)
         this.setState({data: clone,
             editing_e5_item: '',
-            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false)
+            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_blockexplorer_link:'',
         });
     }
 

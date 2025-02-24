@@ -302,6 +302,9 @@ import { STACKS_MAINNET } from '@stacks/network'
 import { makeSTXTokenTransfer, broadcastTransaction, getAddressFromPrivateKey, validateStacksAddress } from '@stacks/transactions';
 import Arweave from 'arweave';
 import { getKeyFromMnemonic } from 'arweave-mnemonic-keys';
+import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
+import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
+import { Transaction as SuiTransaction } from '@mysten/sui/transactions';
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -1358,6 +1361,8 @@ class App extends Component {
         'STX': this.get_coin_info('STX', 'Stacks', 'https://bafkreigcxeejba4qmk33ecsmlzzpmfxlihwtqmwje4cyjxiu6fg3wfmcrm.ipfs.w3s.link/', 'microSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
 
         'AR': this.get_coin_info('AR', 'Arweave', 'https://bafkreidyyzdm2fp7bz6wwv7eyyxpzll4djv4pal74x4wcfheyh6qiqd75a.ipfs.w3s.link/', 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
+
+        'SUI': this.get_coin_info('SUI', 'Sui', 'https://bafkreigttgkydkngvfgv2uflanuizda2us3o3qfslfnppmrdxyxwgogfii.ipfs.w3s.link/', 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~'),
     }
     return list
   }
@@ -1402,6 +1407,7 @@ class App extends Component {
         '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d',
         'SPDDSC21KS91Y9FANB2X4T6NDRX0HRPD401EDRV2',
         'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U',
+        '0x9abd642fd75a4dfd26bbc3c3d39d38776336df5adb204355864caebd17e169d3'
     ]
     return default_addresses
   }
@@ -5603,6 +5609,9 @@ class App extends Component {
     else if(item['symbol'] == 'AR'){
       return this.validate_arweave_address(address)
     }
+    else if(item['symbol'] == 'SUI'){
+      return this.validate_sui_address(address)
+    }
 
 
     return true;
@@ -5758,6 +5767,11 @@ class App extends Component {
     }
   }
 
+  validate_sui_address(address){
+    const suiAddressRegex = /^0x[a-fA-F0-9]{64}$/;
+    return suiAddressRegex.test(address);
+  }
+
 
 
 
@@ -5816,6 +5830,9 @@ class App extends Component {
     }
     else if(item['symbol'] == 'AR'){
       await this.create_and_broadcast_arweave_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'SUI'){
+      await this.create_and_broadcast_sui_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -6481,6 +6498,25 @@ class App extends Component {
       }, sync_time);
     }catch(e){
       console.log('arweave', e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_sui_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    const wallet = data['wallet']
+    try{
+      const rpcUrl = getFullnodeUrl('mainnet');
+      const client = new SuiClient({ url: rpcUrl });
+      const tx = new SuiTransaction();
+      const [coin] = tx.splitCoins(tx.gas, [parseInt(transfer_amount)]);
+      tx.transferObjects([coin], recipient_address);
+
+      var result = await client.signAndExecuteTransaction({ signer: wallet.keypair, transaction: tx });
+      var hash = await client.waitForTransaction({ digest: result.digest });
+      const transaction_hash = hash.digest
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash})
+    }catch(e){
+      console.log('sui', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
@@ -16496,7 +16532,7 @@ class App extends Component {
     coin_data['STX'] = await this.get_and_set_stacks_wallet_info(seed)
     // console.log('coin', 'stacks...')
     // console.log('coin', this.state.coin_data)
-
+    coin_data['SUI'] = await this.get_and_set_sui_wallet_info(seed)
 
     //should be last
     coin_data['AR'] = await this.get_and_set_arweave_wallet_info(seed)
@@ -16553,6 +16589,7 @@ class App extends Component {
     if(coin == 'APT' || should_update_all) coin_data = await this.update_aptos_balance(coin_data);
     if(coin == 'ADA' || should_update_all) coin_data = await this.update_ada_balance(coin_data);
     if(coin == 'STX' || should_update_all) coin_data = await this.update_stacks_balance(coin_data);
+    if(coin == 'SUI' || should_update_all) coin_data = await this.update_sui_balance(coin_data)
     
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
@@ -17914,6 +17951,54 @@ class App extends Component {
     const fees = await this.estimate_arweave_network_fees('-zdLm14FOLtTWxTEVzhh2N9AGCnW_-O_6DIcLxgk-W0')
     clone['AR']['balance'] = balance;
     clone['AR']['fee']['fee'] = fees;
+    return clone
+  }
+
+
+
+
+
+
+  
+
+
+  get_and_set_sui_wallet_info = async (seed) => {
+    try{
+      const wallet = await this.generate_sui_wallet(seed)
+      const address = wallet.address
+      const balance = await this.fetch_sui_balance(wallet.address)
+      const fees = await this.fetch_sui_network_fees()
+
+      var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
+      var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
+      return data
+    }catch(e){
+      console.log('coin',e)
+    }
+  }
+
+  generate_sui_wallet = async (mnemonic) => {
+    var entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const keyPair = Ed25519Keypair.deriveKeypair(entropic_mnemonic);
+    const address = keyPair.getPublicKey().toSuiAddress()
+    return {keypair: keyPair, address:address}
+  }
+
+  fetch_sui_balance = async (address) => {
+    const rpcUrl = getFullnodeUrl('mainnet');
+    const client = new SuiClient({ url: rpcUrl });
+    const balances = await client.getBalance({ owner: address, });
+    return bigInt(balances.totalBalance)
+  }
+
+  fetch_sui_network_fees(){
+    return (0.001846037 * 1_000_000_000)
+  }
+
+  update_sui_balance = async (clone) => {
+    var address = clone['SUI']['address']
+    const balance = await this.fetch_sui_balance(address)
+    clone['SUI']['balance'] = balance;
     return clone
   }
 

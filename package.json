@@ -17,6 +17,7 @@
     "@lucid-evolution/lucid": "^0.4.21",
     "@mui/material": "^6.1.1",
     "@mui/x-date-pickers": "^7.17.0",
+    "@mysten/sui": "^1.21.2",
     "@polkadot/api": "^14.0.1",
     "@polkadot/util-crypto": "^13.1.1",
     "@polkadot/wasm-crypto": "^7.3.2",
