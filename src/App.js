@@ -15125,7 +15125,7 @@ class App extends Component {
 
 
   when_zip_file_opened = async (item) => {
-    this.prompt_top_notification(this.getLocale()['2738f']/* 'Downloading Zip file.' */, 1500)
+    this.prompt_top_notification(this.getLocale()['2738f']/* 'Downloading Zip file.' */, 5500)
     var zip_file_name = this.get_name_of_file(item)
     var img = this.get_zip_from_file(item)
     try {

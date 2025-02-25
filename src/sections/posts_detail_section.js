@@ -371,7 +371,7 @@ class PostsDetailsSection extends Component {
         var ecid_obj = this.get_cid_split(item)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        //
+        if(data == null) return;
         var formatted_size = this.format_data_size(data['size'])
         var fs = formatted_size['size']+' '+formatted_size['unit']
         var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
