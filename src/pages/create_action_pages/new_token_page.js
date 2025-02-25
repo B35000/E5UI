@@ -667,20 +667,23 @@ class NewTokenPage extends Component {
         var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['614']/* 'fixed' */, this.props.app_state.loc['615']/* 'spread' */], [1] ], };
         var price = [{'id':'5', 'amount':bigInt('1')}]
 
+        var spend_exchange = this.get_item_in_array(5, this.props.app_state.created_tokens[this.state.e5])
+        var spend_exchange_mint_limit = spend_exchange == null ? 72_000_000 : spend_exchange['data'][1][0/* <0>default_exchange_amount_buy_limit */]
 
-        this.setState({ 
+
+        this.setState({
             new_token_type_tags_object: type, 
-            token_exchange_liquidity_total_supply: bigInt('1e10'),
-            default_exchange_amount_buy_limit: bigInt('1e10'),
-            default_exchange_amount_sell_limit: bigInt('1e7'),
-            trust_fee_proportion: bigInt('35e15'),/* 3.5% */
+            token_exchange_liquidity_total_supply: bigInt(spend_exchange_mint_limit*1000),
+            default_exchange_amount_buy_limit: bigInt(spend_exchange_mint_limit*300),
+            default_exchange_amount_sell_limit: bigInt(spend_exchange_mint_limit*100),
+            trust_fee_proportion: bigInt('25e15'),/* 2.5% */
 
             new_token_unlocked_liquidity_tags_object: unlocked_liquidity,
             new_token_unlocked_supply_tags_object: unlocked_supply,
             new_token_fully_custom_tags_object: fully_custom,
             
-            token_exchange_ratio_x: bigInt('1e10'),
-            token_exchange_ratio_y: bigInt('1e7'),
+            token_exchange_ratio_x: bigInt(spend_exchange_mint_limit*1000),
+            token_exchange_ratio_y: bigInt(spend_exchange_mint_limit),
             price_data: price,
 
             minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0,
@@ -689,6 +692,11 @@ class NewTokenPage extends Component {
         });
 
         this.props.notify(this.props.app_state.loc['637']/* 'e-token preset has been applied' */, 2500)
+    }
+
+    get_item_in_array(id, object_array){
+        var object = object_array.find(x => x['id'] === id);
+        return object
     }
 
 
