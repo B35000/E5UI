@@ -3615,6 +3615,7 @@ class home_page extends Component {
                 when_discography_audio_item_clicked={this.when_discography_audio_item_clicked.bind(this)} when_discography_video_item_clicked={this.when_discography_video_item_clicked.bind(this)}
 
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
+                connect_to_node={this.props.connect_to_node.bind(this)}
                 />
             </div>
         )

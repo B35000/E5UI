@@ -674,7 +674,7 @@ class App extends Component {
     
     calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
-    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false,
+    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[]
   };
 
   get_static_assets(){
@@ -2696,6 +2696,7 @@ class App extends Component {
       preferred_currency: this.state.preferred_currency,
       all_locales: this.state.all_locales,
       theme_image: this.state.theme_image,
+      subscribed_nitros: this.state.subscribed_nitros
     }
   }
 
@@ -2811,6 +2812,7 @@ class App extends Component {
       var cupcake_preferred_currency = cupcake_state.preferred_currency
       var cupcake_all_locales = cupcake_state.all_locales
       var cupcake_theme_image = cupcake_state.theme_image
+      var cupcake_subscribed_nitros = cupcake_state.subscribed_nitros
       
       if(cupcake_theme != null){
         this.setState({theme: cupcake_theme})
@@ -3054,6 +3056,10 @@ class App extends Component {
 
       if(cupcake_theme_image != null){
         this.setState({theme_image: cupcake_theme_image})
+      }
+
+      if(cupcake_subscribed_nitros != null){
+        this.setState({subscribed_nitros: cupcake_subscribed_nitros})
       }
     }
 
@@ -4998,7 +5004,7 @@ class App extends Component {
         
           play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
-          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_theme_data={this.get_theme_data.bind(this)}
+          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_theme_data={this.get_theme_data.bind(this)} connect_to_node={this.connect_to_node.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -5274,6 +5280,18 @@ class App extends Component {
       this.setState({followed_accounts: clone, should_update_followed_accounts: true})
       this.prompt_top_notification(this.getLocale()['a2527bs']/* 'You are now following that account.' */, 2300)
     }
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  connect_to_node(object){
+    var clone = this.state.subscribed_nitros.slice()
+    clone.push(object['e5_id'])
+
+    this.setState({my_preferred_nitro: object['e5_id'], subscribed_nitros: clone})
+    this.prompt_top_notification(this.getLocale()['c2527bu']/* 'Connected to Nitro node.' */, 2500)
     var me = this;
     setTimeout(function() {
       me.set_cookies()

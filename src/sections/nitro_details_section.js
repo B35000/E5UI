@@ -265,6 +265,8 @@ class NitroDetailsSection extends Component {
                     {this.render_buy_storage_button(object)}
 
                     {this.render_configure_nitro_node(object)}
+
+                    {this.render_subscribe_to_nitro_button(object)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -604,7 +606,22 @@ class NitroDetailsSection extends Component {
 
 
 
+    render_subscribe_to_nitro_button(object){
+        var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        if(node_details != null && node_details != 'unavailable'){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
 
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527br']/* Connect with Node.' */, 'details':this.props.app_state.loc['c2527bs']/* 'Load all your content via this node.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.props.connect_to_node(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
 
 
 
