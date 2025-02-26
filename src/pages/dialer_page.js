@@ -92,34 +92,43 @@ class DialerPage extends Component {
     }
 
     get_logo_title_tags_object(){
+        const logo_title = this.props.app_state.logo_title
+        var pos = ['e', 'start-white', 'crack-stage-0', 'crack-stage-1', 'crack-stage-2', 'crack-stage-3', 'crack-stage-4', 'crack-stage-5', 'E5'].indexOf(logo_title)
+        if(pos == -1) pos = 1
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'start-white', 'crack-stage-0', 'crack-stage-1', 'crack-stage-2', 'crack-stage-3', 'crack-stage-4', 'crack-stage-5', 'E5'], [1]
+                ['xor','',0], ['e', 'start-white', 'crack-stage-0', 'crack-stage-1', 'crack-stage-2', 'crack-stage-3', 'crack-stage-4', 'crack-stage-5', 'E5'], [pos]
             ],
         };
     }
 
     get_theme_stage_tags_object(){
+        const get_theme_stage_tags_object = this.props.app_state.get_theme_stage_tags_object
+        var pos = ['e', 'none', 'darkcolor-available', 'lightcolor-available', 'all-available'].indexOf(get_theme_stage_tags_object)
+        if(pos == -1) pos = 1
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'none', 'darkcolor-available', 'lightcolor-available', 'all-available'], [1]
+                ['xor','',0], ['e', 'none', 'darkcolor-available', 'lightcolor-available', 'all-available'], [pos]
             ],
         };
     }
 
     get_content_channeling_tags_object(){
+        const get_content_channeling_tags_object = this.props.app_state.get_content_channeling_tags_object
+        var pos = ['e', 'local-only', 'local-language', 'all'].indexOf(get_content_channeling_tags_object)
+        if(pos == -1) pos = 1
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'local-only', 'local-language', 'all'], [1]
+                ['xor','',0], ['e', 'local-only', 'local-language', 'all'], [pos]
             ],
         };
     }

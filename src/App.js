@@ -600,7 +600,7 @@ class App extends Component {
   // }
 
   state = {
-    version:'1',
+    version:'3.0',
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -2607,7 +2607,7 @@ class App extends Component {
         this.homepage.current?.set_cookies()
       }
     }
-
+    localStorage.setItem('language', this.get_language())
     this.set_cookies2(size);
   }
 
@@ -2717,354 +2717,164 @@ class App extends Component {
   }
 
   load_cookies2 = async () => {
-    var cupcake_state = await this.load_data_from_indexdb('5000')
+    var state = await this.load_data_from_indexdb('5000')
     
-    if(cupcake_state != null){
-      this.setState({index_db_size: this.state.index_db_size + this.lengthInUtf8Bytes(cupcake_state)})
-      cupcake_state = this.fetch_data(cupcake_state)
+    if(state != null){
+      this.setState({index_db_size: this.state.index_db_size + this.lengthInUtf8Bytes(state)})
+      state = this.fetch_data(state)
     }
 
-    if(cupcake_state != null){
-      var cupcake_cached_tracks = cupcake_state.cached_tracks
-      var cupcake_cached_files = cupcake_state.cached_files
+    if(state != null){
+      var cached_tracks = state.cached_tracks
+      var cached_files = state.cached_files
 
-      if(cupcake_cached_tracks != null){
-        this.set_cached_tracks_data(cupcake_cached_tracks)
+      if(cached_tracks != null){
+        this.set_cached_tracks_data(cached_tracks)
       }
 
-      if(cupcake_cached_files != null){
-        this.load_cached_files_into_memory(cupcake_cached_files)
+      if(cached_files != null){
+        this.load_cached_files_into_memory(cached_files)
       }
     }
   }
 
   load_cookies = async () => {
-    // var cupcake_state = localStorage.getItem("state");
-    var cupcake_state = await this.load_data_from_indexdb('123')
+    var state_language = localStorage.getItem("language");
+    var state = await this.load_data_from_indexdb('123')
+    const my_language = this.get_language()
 
-    if(cupcake_state != null){
-      this.setState({index_db_size: this.state.index_db_size + this.lengthInUtf8Bytes(cupcake_state)})
-      cupcake_state = this.fetch_data(cupcake_state)
+    if(state != null){
+      this.setState({index_db_size: this.state.index_db_size + this.lengthInUtf8Bytes(state)})
+      state = this.fetch_data(state)
     }
-    if(cupcake_state != null){
-      var cupcake_theme = cupcake_state.theme;
-      var cupcake_stack_items = cupcake_state.stack_items
-      var cupcake_storage_option = cupcake_state.storage_option
-      var cupcake_selected_e5 = cupcake_state.selected_e5_item
-      var cupcake_contacts = cupcake_state.contacts
-      var cupcake_should_update_contacts_onchain = cupcake_state.should_update_contacts_onchain
-      var cupcake_refresh_speed = cupcake_state.refresh_speed
-      var cupcake_masked_content = cupcake_state.masked_content
-      var cupcake_blocked_accounts = cupcake_state.blocked_accounts
-      var cupcake_should_update_blocked_accounts_onchain = cupcake_state.should_update_blocked_accounts_onchain
-      var cupcake_content_channeling = cupcake_state.content_channeling
-      var cupcake_device_language = cupcake_state.device_language
-      var cupcake_job_section_tags = cupcake_state.job_section_tags
-      var cupcake_explore_section_tags = cupcake_state.explore_section_tags
-      var cupcake_should_update_section_tags_onchain = cupcake_state.should_update_section_tags_onchain
-      var cupcake_section_tags_setting = cupcake_state.section_tags_setting
-      var cupcake_visible_tabs = cupcake_state.visible_tabs
-      var cupcake_storage_permissions = cupcake_state.storage_permissions
-      var cupcake_added_providers = cupcake_state.added_providers
-      var cupcake_selected_providers = cupcake_state.selected_providers
+    if(state != null && state_language == my_language){
+      var theme = state.theme;
+      var stack_items = state.stack_items
+      var storage_option = state.storage_option
       
-      var cupcake_from = cupcake_state.from
-      var cupcake_e5_events = cupcake_state.e5_events
-      var cupcake_e52_events = cupcake_state.e52_events
-      var cupcake_f5_events = cupcake_state.f5_events
-      var cupcake_g5_events = cupcake_state.g5_events
-      var cupcake_g52_events = cupcake_state.g52_events
-      var cupcake_h5_events = cupcake_state.h5_events
-      var cupcake_h52_events = cupcake_state.h52_events
+      var selected_e5 = state.selected_e5_item
+      var contacts = state.contacts
+      var should_update_contacts_onchain = state.should_update_contacts_onchain
+      var refresh_speed = state.refresh_speed
+      var masked_content = state.masked_content
+      var blocked_accounts = state.blocked_accounts
+      var should_update_blocked_accounts_onchain = state.should_update_blocked_accounts_onchain
+      var content_channeling = state.content_channeling
+      var device_language = state.device_language
+      var job_section_tags = state.job_section_tags
+      var explore_section_tags = state.explore_section_tags
+      var should_update_section_tags_onchain = state.should_update_section_tags_onchain
+      var section_tags_setting = state.section_tags_setting
+      var visible_tabs = state.visible_tabs
+      var storage_permissions = state.storage_permissions
+      var added_providers = state.added_providers
+      var selected_providers = state.selected_providers
 
-      var cupcake_stack_optimizer = cupcake_state.stack_optimizer
-      var cupcake_homepage_tags_position = cupcake_state.homepage_tags_position
-      var cupcake_font = cupcake_state.font
-      var cupcake_auto_skip_nsfw_warning = cupcake_state.auto_skip_nsfw_warning
-      var cupcake_graph_type = cupcake_state.graph_type
-      var cupcake_remember_account = cupcake_state.remember_account
-      var cupcake_account_data = cupcake_state.account_data
+      var stack_optimizer = state.stack_optimizer
+      var homepage_tags_position = state.homepage_tags_position
+      var font = state.font
+      var auto_skip_nsfw_warning = state.auto_skip_nsfw_warning
+      var graph_type = state.graph_type
+      var remember_account = state.remember_account
+      var account_data = state.account_data
 
-      var cupcake_coin_data = cupcake_state.coin_data
-      var cupcake_web3_account_email = cupcake_state.web3_account_email
-      var cupcake_update_data_in_E5 = cupcake_state.update_data_in_E5
-      var cupcake_uploaded_data_cids = cupcake_state.uploaded_data_cids
-      var cupcake_audio_timestamp_data = cupcake_state.audio_timestamp_data
-      var cupcake_my_playlists = cupcake_state.my_playlists
-      var cupcake_should_update_playlists_in_E5 = cupcake_state.should_update_playlists_in_E5
+      var coin_data = state.coin_data
+      var web3_account_email = state.web3_account_email
+      var update_data_in_E5 = state.update_data_in_E5
+      var uploaded_data_cids = state.uploaded_data_cids
+      var audio_timestamp_data = state.audio_timestamp_data
+      var my_playlists = state.my_playlists
+      var should_update_playlists_in_E5 = state.should_update_playlists_in_E5
 
-      var cupcake_song_plays = cupcake_state.song_plays
-      var cupcake_should_update_song_plays = cupcake_state.should_update_song_plays
-      var cupcake_albums_to_stash = cupcake_state.albums_to_stash
-      var cupcake_custom_gateway = cupcake_state.custom_gateway
-      var cupcake_pdf_bookmarks = cupcake_state.pdf_bookmarks;
-      var cupcake_video_timestamp_data = cupcake_state.video_timestamp_data
-      var cupcake_my_preferred_nitro = cupcake_state.my_preferred_nitro
+      var song_plays = state.song_plays
+      var should_update_song_plays = state.should_update_song_plays
+      var albums_to_stash = state.albums_to_stash
+      var custom_gateway = state.custom_gateway
+      var pdf_bookmarks = state.pdf_bookmarks;
+      var video_timestamp_data = state.video_timestamp_data
+      var my_preferred_nitro = state.my_preferred_nitro
 
-      var cupcake_followed_accounts = cupcake_state.followed_accounts 
-      var cupcake_should_update_followed_accounts = cupcake_state.should_update_followed_accounts
-      var cupcake_posts_blocked_by_me = cupcake_state.posts_blocked_by_me
-      var cupcake_should_update_posts_blocked_by_me = cupcake_state.should_update_posts_blocked_by_me
-      var cupcake_censored_keyword_phrases =  cupcake_state.censored_keyword_phrases 
-      var cupcake_should_update_censored_keyword_phrases = cupcake_state.should_update_censored_keyword_phrases
+      var followed_accounts = state.followed_accounts 
+      var should_update_followed_accounts = state.should_update_followed_accounts
+      var posts_blocked_by_me = state.posts_blocked_by_me
+      var should_update_posts_blocked_by_me = state.should_update_posts_blocked_by_me
+      var censored_keyword_phrases =  state.censored_keyword_phrases 
+      var should_update_censored_keyword_phrases = state.should_update_censored_keyword_phrases
 
-      var cupcake_hide_pip = cupcake_state.hide_pip
-      var cupcake_preferred_currency = cupcake_state.preferred_currency
-      var cupcake_all_locales = cupcake_state.all_locales
-      var cupcake_theme_image = cupcake_state.theme_image
-      var cupcake_subscribed_nitros = cupcake_state.subscribed_nitros
+      var hide_pip = state.hide_pip
+      var preferred_currency = state.preferred_currency
+      var all_locales = state.all_locales
+      var theme_image = state.theme_image
+      var subscribed_nitros = state.subscribed_nitros
       
-      if(cupcake_theme != null){
-        this.setState({theme: cupcake_theme})
-        var me = this;
-        setTimeout(function() {
-          me.reset_theme()
-        }, (1 * 500));
-      }
+      
 
-      if(cupcake_stack_items != null){
-        this.setState({stack_items:cupcake_stack_items})
-      }
-
-      if(cupcake_storage_option != null){
-        this.setState({storage_option:cupcake_storage_option})
-      }
-
-      if(cupcake_selected_e5 != null){
-        this.setState({selected_e5: cupcake_selected_e5})
-      }
-
-      if(cupcake_contacts != null){
-        this.setState({contacts: cupcake_contacts})
-      }
-
-      if(cupcake_should_update_contacts_onchain != null){
-        this.setState({should_update_contacts_onchain: cupcake_should_update_contacts_onchain})
-      }
-
-      if(cupcake_masked_content != null){
-        this.setState({masked_content: cupcake_masked_content})
-      }
-
-      if(cupcake_refresh_speed != null){
-        this.setState({refresh_speed: cupcake_refresh_speed})
-      }
-
-      if(cupcake_blocked_accounts != null){
-        this.setState({blocked_accounts: cupcake_blocked_accounts})
-      }
-
-      if(cupcake_should_update_blocked_accounts_onchain != null){
-        this.setState({should_update_blocked_accounts_onchain: cupcake_should_update_blocked_accounts_onchain})
-      }
-
-      if(cupcake_content_channeling != null){
-        this.setState({content_channeling: cupcake_content_channeling})
-      }
-
-      if(cupcake_device_language != null){
-        this.setState({device_language: cupcake_device_language})
-      }
-
-      if(cupcake_job_section_tags != null){
-        this.setState({job_section_tags: cupcake_job_section_tags})
-      }
-
-      if(cupcake_explore_section_tags != null){
-        this.setState({explore_section_tags: cupcake_explore_section_tags})
-      }
-
-      if(cupcake_should_update_section_tags_onchain != null){
-        this.setState({should_update_section_tags_onchain: cupcake_should_update_section_tags_onchain})
-      }
-
-      if(cupcake_section_tags_setting != null){
-        this.setState({section_tags_setting: cupcake_section_tags_setting})
-      }
-
-      if(cupcake_visible_tabs != null){
-        this.setState({visible_tabs: cupcake_visible_tabs})
-      }
-
-      if(cupcake_storage_permissions != null){
-        this.setState({storage_permissions: cupcake_storage_permissions})
-      }
-
-      if(cupcake_selected_providers != null && cupcake_added_providers != null){
-        this.setState({added_providers: cupcake_added_providers})
-        var me = this;
-        setTimeout(function() {
-          me.set_providers(cupcake_selected_providers, cupcake_added_providers)
-        }, (1 * 800));
-      }
-
-      if(cupcake_from != null){
-        this.from = cupcake_from
-      }
-
-      if(cupcake_e5_events != null){
-        this.e5_events = cupcake_e5_events
-      }
-
-      if(cupcake_e52_events != null){
-        this.e52_events = cupcake_e52_events
-      }
-
-      if(cupcake_f5_events != null){
-        this.f5_events = cupcake_f5_events
-      }
-
-      if(cupcake_g5_events != null){
-        this.g5_events = cupcake_g5_events
-      }
-
-      if(cupcake_g52_events != null){
-        this.g52_events = cupcake_g52_events
-      }
-
-      if(cupcake_h5_events != null){
-        this.h5_events = cupcake_h5_events
-      }
-
-      if(cupcake_h52_events != null){
-        this.h52_events = cupcake_h52_events
-        console.log('---------------------------cupcake_from--------------------------')
-        console.log(this.h52_events)
-      }
-
-      if(cupcake_stack_optimizer != null){
-        this.setState({stack_optimizer: cupcake_stack_optimizer})
-      }
-
-      if(cupcake_homepage_tags_position != null){
-        this.setState({homepage_tags_position: cupcake_homepage_tags_position})
-      }
-
-      if(cupcake_font != null){
-        this.setState({font: cupcake_font})
-      }
-
-      if(cupcake_auto_skip_nsfw_warning != null){
-        this.setState({auto_skip_nsfw_warning: cupcake_auto_skip_nsfw_warning})
-      }
-
-      if(cupcake_graph_type != null){
-        this.setState({graph_type: cupcake_graph_type})
-      }
-
-      if(cupcake_remember_account != null){
-        this.setState({remember_account: cupcake_remember_account})
-        if(cupcake_remember_account != 'e' && cupcake_account_data != null){
-          this.load_accounts_data_from_store(cupcake_account_data)
+      this.setState({
+        theme: theme,
+        stack_items: stack_items,
+        storage_option: storage_option,
+        selected_e5: selected_e5,
+        contacts: contacts,
+        should_update_contacts_onchain: should_update_contacts_onchain,
+        masked_content: masked_content,
+        refresh_speed: refresh_speed,
+        blocked_accounts: blocked_accounts,
+        should_update_blocked_accounts_onchain: should_update_blocked_accounts_onchain,
+        content_channeling: content_channeling,
+        device_language: device_language,
+        job_section_tags: job_section_tags,
+        explore_section_tags: explore_section_tags,
+        should_update_section_tags_onchain: should_update_section_tags_onchain,
+        section_tags_setting: section_tags_setting,
+        visible_tabs: visible_tabs,
+        storage_permissions: storage_permissions,
+        added_providers: added_providers,
+        stack_optimizer: stack_optimizer,
+        homepage_tags_position: homepage_tags_position,
+        font: font,
+        auto_skip_nsfw_warning: auto_skip_nsfw_warning,
+        graph_type: graph_type,
+        remember_account: remember_account,
+        coin_data: coin_data,
+        web3_account_email: web3_account_email,
+        update_data_in_E5: update_data_in_E5,
+        uploaded_data_cids: uploaded_data_cids,
+        audio_timestamp_data: audio_timestamp_data,
+        my_playlists: my_playlists,
+        should_update_playlists_in_E5: should_update_playlists_in_E5,
+        song_plays: song_plays,
+        should_update_song_plays: should_update_song_plays,
+        custom_gateway: custom_gateway,
+        pdf_bookmarks: pdf_bookmarks,
+        video_timestamp_data: video_timestamp_data,
+        my_preferred_nitro: my_preferred_nitro,
+        followed_accounts: followed_accounts,
+        should_update_followed_accounts: should_update_followed_accounts,
+        posts_blocked_by_me: posts_blocked_by_me,
+        should_update_posts_blocked_by_me: should_update_posts_blocked_by_me,
+        censored_keyword_phrases: censored_keyword_phrases,
+        should_update_censored_keyword_phrases: should_update_censored_keyword_phrases,
+        hide_pip: hide_pip,
+        preferred_currency: preferred_currency,
+        all_locales: all_locales, 
+        loc: (all_locales[my_language] == null ? this.state.loc : all_locales[my_language]),
+        theme_image: theme_image,
+        subscribed_nitros: subscribed_nitros,
+      })
+      var me = this;
+      setTimeout(function() {
+        me.reset_theme()
+        if(selected_providers != null && added_providers != null) me.set_providers(selected_providers, added_providers);
+        if(remember_account != null && remember_account != 'e' && account_data != null){
+          me.load_accounts_data_from_store(account_data)
         }
-      }
-
-      if(cupcake_coin_data != null){
-        this.setState({coin_data: cupcake_coin_data})
-      }
-
-      if(cupcake_web3_account_email != null){
-        this.setState({web3_account_email: cupcake_web3_account_email})
-      }
-
-      if(cupcake_update_data_in_E5 != null){
-        this.setState({update_data_in_E5: cupcake_update_data_in_E5})
-      }
-
-      if(cupcake_uploaded_data_cids != null){
-        // console.log('app_page', 'setting uploaded cids', cupcake_uploaded_data_cids)
-        this.setState({uploaded_data_cids: cupcake_uploaded_data_cids})
-      }
-
-      if(cupcake_audio_timestamp_data != null){
-        this.setState({audio_timestamp_data: cupcake_audio_timestamp_data})
-      }
-
-      if(cupcake_my_playlists != null){
-        this.setState({my_playlists: cupcake_my_playlists})
-      }
-
-      if(cupcake_should_update_playlists_in_E5 != null){
-        this.setState({should_update_playlists_in_E5: cupcake_should_update_playlists_in_E5})
-      }
-
-      if(cupcake_song_plays != null){
-        this.setState({song_plays: cupcake_song_plays})
-      }
-
-      if(cupcake_should_update_song_plays != null){
-        this.setState({should_update_song_plays: cupcake_should_update_song_plays})
-      }
-
-      if(cupcake_albums_to_stash != null){
-        this.load_albums_to_stash_to_state(cupcake_albums_to_stash)
-      }
-
-      if(cupcake_custom_gateway != null){
-        this.setState({custom_gateway: cupcake_custom_gateway})
-      }
-
-      if(cupcake_pdf_bookmarks != null){
-        this.setState({pdf_bookmarks: cupcake_pdf_bookmarks})
-      }
-
-      if(cupcake_video_timestamp_data != null){
-        this.setState({video_timestamp_data: cupcake_video_timestamp_data})
-      }
-
-      if(cupcake_my_preferred_nitro != null){
-        this.setState({my_preferred_nitro: cupcake_my_preferred_nitro})
-      }
-
-      if(cupcake_followed_accounts != null){
-        this.setState({followed_accounts: cupcake_followed_accounts})
-      }
-
-      if(cupcake_should_update_followed_accounts != null){
-        this.setState({should_update_followed_accounts: cupcake_should_update_followed_accounts})
-      }
-
-      if(cupcake_posts_blocked_by_me != null){
-        this.setState({posts_blocked_by_me: cupcake_posts_blocked_by_me})
-      }
-
-      if(cupcake_should_update_posts_blocked_by_me != null){
-        this.setState({should_update_posts_blocked_by_me: cupcake_should_update_posts_blocked_by_me})
-      }
-
-      if(cupcake_censored_keyword_phrases != null){
-        this.setState({censored_keyword_phrases: cupcake_censored_keyword_phrases})
-      }
-
-      if(cupcake_should_update_censored_keyword_phrases != null){
-        this.setState({should_update_censored_keyword_phrases: cupcake_should_update_censored_keyword_phrases})
-      }
-
-      if(cupcake_hide_pip != null){
-        this.setState({hide_pip: cupcake_hide_pip})
-      }
-
-      if(cupcake_preferred_currency != null){
-        this.setState({preferred_currency: cupcake_preferred_currency})
-      }
-
-      if(cupcake_all_locales != null){
-        const my_language = this.get_language()
-        this.setState({all_locales: cupcake_all_locales, loc: (cupcake_all_locales[my_language] == null ? this.state.loc : cupcake_all_locales[my_language])})
-        this.reset_locale_settings()
-      }
-
-      if(cupcake_theme_image != null){
-        this.setState({theme_image: cupcake_theme_image})
-      }
-
-      if(cupcake_subscribed_nitros != null){
-        this.setState({subscribed_nitros: cupcake_subscribed_nitros})
-      }
+        if(albums_to_stash != null){
+          me.load_albums_to_stash_to_state(albums_to_stash)
+        }
+        me.reset_locale_settings()
+      }, (1 * 500));
     }
-
-    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
-    this.setState({beacon_chain_url: beacon_node})
+    this.setState({beacon_chain_url: `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`})
     this.set_stack_page_data()
   }
 
@@ -3091,6 +2901,7 @@ class App extends Component {
       me.stack_page.current?.set_my_preferred_nitro()
       me.stack_page.current?.set_selected_hide_pip_type_tag()
       me.stack_page.current?.set_selected_preferred_currency_type_tag()
+      
     }, (1 * 1000));
   }
 
@@ -3229,9 +3040,9 @@ class App extends Component {
 
 
 
-  set_providers(cupcake_selected_providers, cached_providers){
+  set_providers(selected_providers, cached_providers){
     var clone = structuredClone(this.state.e5s)
-    cupcake_selected_providers.forEach(provider => {
+    selected_providers.forEach(provider => {
       clone[provider[0]].url = provider[1]
     })
     cached_providers.forEach(provider => {
@@ -3240,9 +3051,9 @@ class App extends Component {
     this.setState({e5s:clone})
   }
 
-  fetch_data(cupcake_state){
+  fetch_data(state){
     try{
-      var ce = JSON.parse(cupcake_state)
+      var ce = JSON.parse(state)
       return ce
     }catch(e){
       console.log(e)
@@ -6613,10 +6424,10 @@ class App extends Component {
         if(me.state != null){
           me.setState({stack_bottomsheet: !me.state.stack_bottomsheet});
 
-          if(me.stack_bottomsheet != null){
-            me.stack_page.current?.setState(me.stack_bottomsheet)
-          }
-          me.set_stack_page_data()
+          // if(me.stack_bottomsheet != null){
+          //   me.stack_page.current?.setState(me.stack_bottomsheet)
+          // }
+          // me.set_stack_page_data()
           me.stack_page.current?.run_transactions(true)
         }
       }, (1 * 200));
@@ -18568,7 +18379,6 @@ class App extends Component {
         var clone = structuredClone(all_locales)
         clone[my_language] = language_obj
         this.setState({loc: language_obj, all_locales: clone})
-        this.reset_locale_settings()
       }
 
       this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images, line_setting:line_setting})
@@ -18598,13 +18408,6 @@ class App extends Component {
     catch(e){
       console.log('something went wrong:', e)
     }
-  }
-
-  reset_locale_settings(){
-    var me = this;
-    setTimeout(function() {
-      me.setState({theme: me.get_theme_data(me.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, arweave */, details_orientation: me.getLocale()['1419']/* 'right' */, refresh_speed:me.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:me.getLocale()['1233']/* 'international' */, device_language:me.get_language(), section_tags_setting:me.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:me.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:me.getLocale()['1593ef']/* 'USD' */,})
-    }, (1 * 500));
   }
 
 
