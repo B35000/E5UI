@@ -18358,7 +18358,8 @@ class App extends Component {
       const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
       const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
       const beacon_chain_url = root_data.data['beacon_chain_url']
-      const e5s = root_data.data['e5s']
+      const e5s = this.update_e5_images(root_data.data['e5s'])
+
       const ether_data = root_data.data['ether_data']
       const all_locales = root_data.data['all_locales']
       const dialer_addresses = root_data.data['dialer_addresses']
@@ -18408,6 +18409,27 @@ class App extends Component {
     catch(e){
       console.log('something went wrong:', e)
     }
+  }
+
+  update_e5_images(loaded_e5s){
+    var hardcoded_e5s = this.state.e5s['data']
+    var clone = structuredClone(loaded_e5s)
+    console.log('loaded_e5s',loaded_e5s)
+    hardcoded_e5s.forEach(e5 => {
+      if(clone[e5].end_image != null && clone[e5].end_image.toString().includes('E5UI')){
+        clone[e5].end_image = this.state.e5s[e5].end_image
+      }
+      if(clone[e5].spend_image != null && clone[e5].spend_image.toString().includes('E5UI')){
+        clone[e5].spend_image = this.state.e5s[e5].spend_image
+      }
+      if(clone[e5].ether_image != null && clone[e5].ether_image.toString().includes('E5UI')){
+        clone[e5].ether_image = this.state.e5s[e5].ether_image
+      }
+      if( clone[e5].e5_img != null && clone[e5].e5_img.toString().includes('E5UI')){
+        clone[e5].e5_img = this.state.e5s[e5].e5_img
+      }
+    });
+    return clone
   }
 
 
@@ -22130,6 +22152,8 @@ class App extends Component {
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events), web3, e5, contract_addresses)
 
+    var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
+
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -22138,14 +22162,15 @@ class App extends Component {
         
         if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false)
 
-        var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21, p3/* context */:id})
         var album_sales = 0
         var song_sales = 0
         requests.forEach(event => {
-          if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
-            album_sales++
-          }else{
-            song_sales++
+          if(event.returnValues.p3/* context */ == id){
+            if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+              album_sales++
+            }else{
+              song_sales++
+            }
           }
         });
 
@@ -22219,6 +22244,8 @@ class App extends Component {
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events), web3, e5, contract_addresses)
 
+    var sales_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
+
     for(var i=0; i<created_video_events.length; i++){
       var id = created_video_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -22230,14 +22257,15 @@ class App extends Component {
             this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
           }
 
-          var sales_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21, p3/* context */:id})
           var videopost_sales = 0
           var video_sales = 0
           sales_events.forEach(event => {
-            if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
-              videopost_sales++
-            }else{
-              video_sales++
+            if(event.returnValues.p3/* context */ == id){
+              if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+                videopost_sales++
+              }else{
+                video_sales++
+              }
             }
           });
 
