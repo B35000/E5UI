@@ -943,6 +943,7 @@ class NewMintActionPage extends Component {
 
     check_if_liquidity_is_available_for_sell(price){
         var selected_object = this.state.token_item
+        if(selected_object['id'] == 3) return true;
         var buy_tokens = [].concat(selected_object['data'][3])
         var exchanges_balance_amounts = [].concat(selected_object['exchanges_balances'])
         var buy_amounts = [].concat(selected_object['data'][4])

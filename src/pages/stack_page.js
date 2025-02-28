@@ -4244,7 +4244,7 @@ class StackPage extends Component {
     }
 
     get_object_ipfs_index = async (tx, calculate_gas, ipfs_index, data_index) => {
-        if(Object.keys(tx).length <= 2){
+        if(Object.keys(tx).length <= 2 && ipfs_index == null){
             return null
         }
         if(calculate_gas != null && calculate_gas == true){

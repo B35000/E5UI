@@ -76,7 +76,9 @@ class DialerPage extends Component {
         typed_spend_country_name: '', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_dialer_address:'',
 
         get_theme_images_tags_object:this.get_theme_images_tags_object(), typed_image_link:'',
-        get_line_setting_object:this.get_line_setting_object(), typed_blockexplorer_link:''
+        get_line_setting_object:this.get_line_setting_object(), typed_blockexplorer_link:'',
+
+        get_available_for_all_tags_object:this.get_available_for_all_tags_object()
     };
 
 
@@ -209,6 +211,20 @@ class DialerPage extends Component {
             },
             'e':[
                 ['or','',0], ['e', 'enabled'], [0]
+            ],
+        };
+    }
+
+    get_available_for_all_tags_object(){
+        const get_available_for_all_tags_object = this.props.app_state.get_available_for_all_tags_object
+        var pos = ['e', 'enabled'].indexOf(get_available_for_all_tags_object)
+        if(pos == -1) pos = 1
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', 'enabled'], [pos]
             ],
         };
     }
@@ -465,6 +481,13 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_line_setting_object} tag_size={'l'} when_tags_updated={this.when_get_line_setting_object_updated.bind(this)} theme={this.props.theme}/>
                 
+
+
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Enable access for all countries.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_available_for_all_tags_object} tag_size={'l'} when_tags_updated={this.when_get_available_for_all_tags_object.bind(this)} theme={this.props.theme}/>
             </div>
         )
     }
@@ -978,9 +1001,13 @@ class DialerPage extends Component {
     }
 
 
-
     when_get_line_setting_object_updated(tag_obj){
         this.setState({get_line_setting_object: tag_obj})
+    }
+
+
+    when_get_available_for_all_tags_object(tag_obj){
+        this.setState({get_available_for_all_tags_object: tag_obj})
     }
 
 

@@ -908,7 +908,6 @@ class EndDetailSection extends Component {
 
     render_token_cap(selected_object){
         var max_supply = this.calculate_maximum_supply(selected_object)
-        console.log('max_supply', selected_object)
         var input_amount = 1
         var input_reserve_ratio = selected_object['data'][2][0]
         var output_reserve_ratio = selected_object['data'][2][1]

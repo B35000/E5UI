@@ -674,7 +674,7 @@ class App extends Component {
     
     calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
-    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[]
+    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled',
   };
 
   get_static_assets(){
@@ -3703,7 +3703,7 @@ class App extends Component {
   }
 
   is_allowed_in_e5(){
-    // return true
+    if(this.state.get_available_for_all_tags_object == 'enabled') return true
     var obj = this.state.allowed_countries
     var user_country = this.get_location_info().userCountry
 
@@ -18365,6 +18365,7 @@ class App extends Component {
       const dialer_addresses = root_data.data['dialer_addresses']
       const theme_images = root_data.data['theme_images']
       const line_setting = this.get_selected_item(root_data.get_line_setting_object, 'e') == 'enabled' ? true : false
+      const get_available_for_all_tags_object = root_data.get_available_for_all_tags_object == null ? 'enabled': this.get_selected_item(root_data.get_available_for_all_tags_object, 'e')
 
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
@@ -18382,7 +18383,7 @@ class App extends Component {
         this.setState({loc: language_obj, all_locales: clone})
       }
 
-      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images, line_setting:line_setting})
+      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images, line_setting:line_setting, get_available_for_all_tags_object: get_available_for_all_tags_object})
 
       localStorage.setItem("logo_title", logo_title);
       localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
