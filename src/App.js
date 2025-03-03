@@ -18383,10 +18383,14 @@ class App extends Component {
         this.setState({loc: language_obj, all_locales: clone})
       }
 
+      console.log('apppage', 'theme', get_theme_stage_tags_object)
+
       this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images, line_setting:line_setting, get_available_for_all_tags_object: get_available_for_all_tags_object})
 
       localStorage.setItem("logo_title", logo_title);
       localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
+
+      this.set_stack_page_data()
     }
   }
 

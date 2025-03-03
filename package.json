@@ -1,7 +1,7 @@
 {
   "name": "old_e5",
-  "hmepage": "https://b35000.github.io/E5UI/",
-  "homepage": ".",
+  "homepage": "https://b35000.github.io/E5UI/",
+  "hmepage": ".",
   "version": "3.0",
   "private": true,
   "dependencies": {
