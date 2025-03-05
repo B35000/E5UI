@@ -674,7 +674,7 @@ class App extends Component {
     
     calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
-    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled',
+    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[]
   };
 
   get_static_assets(){
@@ -6399,7 +6399,7 @@ class App extends Component {
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} upload_file_to_arweave={this.upload_file_to_arweave.bind(this)}
       
       />
     )
@@ -6795,18 +6795,23 @@ class App extends Component {
     this.update_web3_time = Date.now()
 
     this.web3_email_verification_sent = false;
+    var is_client_verified = false;
     const client = await createW3UpClient()
     const space = await client.createSpace('E5')
     const myAccount = await client.login(email)
+
+    setTimeout(function() {
+      if(!this.web3_email_verification_sent && !is_client_verified){
+        this.web3_email_verification_sent = true
+        this.prompt_top_notification(this.getLocale()['1593bi']/* Verification email sent. */, 5000)
+      }
+    }, (1 * 1000));
+
     while (true) {
       const res = await myAccount.plan.get()
       if (res.ok){
-        break
-      }else{
-        if(!this.web3_email_verification_sent){
-          this.web3_email_verification_sent = true
-          this.prompt_top_notification(this.getLocale()['1593bi']/* Verification email sent. */, 5000)
-        }
+        is_client_verified = true
+        break;
       }
       await new Promise(resolve => setTimeout(resolve, 1000))
     }
@@ -7047,7 +7052,18 @@ class App extends Component {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           var clone = structuredClone(me.state.is_running)
           clone[e5] = false
-          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false, update_data_in_E5:false, should_update_playlists_in_E5:false, should_update_followed_accounts:false, should_update_posts_blocked_by_me: false, should_update_censored_keyword_phrases:false})
+          me.setState({
+            should_update_contacts_onchain: false, 
+            is_running: clone, 
+            should_update_section_tags_onchain: false, 
+            should_update_blocked_accounts_onchain: false, 
+            update_data_in_E5:false, 
+            should_update_playlists_in_E5:false, 
+            should_update_followed_accounts:false, 
+            should_update_posts_blocked_by_me: false, 
+            should_update_censored_keyword_phrases:false, 
+            uncommitted_upload_cids:[]
+          })
           me.delete_stack_items(delete_pos_array)
           me.reset_gas_calculation_figure(me)
           me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
@@ -13341,7 +13357,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)}
         
         />
       </div>
@@ -13377,7 +13393,7 @@ class App extends Component {
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700 };
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':600};
     var size = obj[id]
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
@@ -13583,6 +13599,17 @@ class App extends Component {
       me.prompt_top_notification(me.getLocale()['a2527ba']/* Done. */, 1300)
     }, (1 * 1000));
   }
+
+  upload_file_to_arweave_confirmed(data){
+    if(data['balance'] < data['reward']){
+      this.prompt_top_notification(this.getLocale()['3055l']/* 'You do not have enough Arweave to pay for the upload.' */, 14000)
+      return
+    }
+    this.open_dialog_bottomsheet()
+    this.upload_file_to_arweave(data['data'])
+  }
+
+
 
 
 
@@ -17767,7 +17794,8 @@ class App extends Component {
     try{
       const wallet = await this.generate_arweave_wallet(seed)
       const address = wallet.address
-      const balance = await arweave.wallets.getBalance(wallet.address)
+      // const balance = await arweave.wallets.getBalance(wallet.address)
+      const balance = await this.fetch_arweave_balance(wallet.address)
       const fees = await this.estimate_arweave_network_fees('-zdLm14FOLtTWxTEVzhh2N9AGCnW_-O_6DIcLxgk-W0')
 
       var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
@@ -17801,6 +17829,17 @@ class App extends Component {
     clone['AR']['balance'] = balance;
     clone['AR']['fee']['fee'] = fees;
     return clone
+  }
+
+  fetch_arweave_balance = async (address) => {
+    try{
+      const response = await fetch(`https://arweave.net/wallet/${address}/balance`);
+      const winstonBalance = await response.text();
+      return bigInt(winstonBalance)
+    }catch(e){
+      console.log('coin', e)
+      return 0
+    }
   }
 
 
@@ -23772,7 +23811,7 @@ class App extends Component {
           await uploader.uploadChunk();
         }
 
-        this.prompt_top_notification(this.getLocale()['2738g']/* 'Arweave uploade complete, waiting for 5 network confirmations...' */, 15000)
+        this.prompt_top_notification(this.getLocale()['2738g']/* 'Arweave uploade complete, waiting for 1 network confirmations...' */, 15000)
 
         this.is_uploading_arweave_file = true
         while (this.is_uploading_arweave_file == true) {
@@ -23782,11 +23821,7 @@ class App extends Component {
           await new Promise(resolve => setTimeout(resolve, 15_000))
         }
 
-        var me = this;
-        setTimeout(function() {
-          me.update_coin_balances('AR', false)
-        }, (7 * 60_000));
-
+        this.update_coin_balances('AR', false)
         this.prompt_top_notification(this.getLocale()['2738i']/* 'Arweave transaction confirmed! proceeding with run...' */, 5000)
 
         const encoded = Buffer.from(transaction_hash).toString('base64')
@@ -24310,7 +24345,6 @@ class App extends Component {
 
   upload_multiple_files_to_web3_or_chainsafe = async (datas, type) => {
     this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
-    // console.log('stackpage',datas)
     if(this.state.web3_account_email != ''){
       //upload to web3
       const client = await createW3UpClient()
@@ -24351,7 +24385,7 @@ class App extends Component {
         cids.push(cid)
       }
       this.when_uploading_multiple_files_complete(e_cids, cids, datas)
-      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
+      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
     }else{
       //upload to chainsasfe
       var e_cids = []
@@ -24369,7 +24403,7 @@ class App extends Component {
         }
       }
       this.when_uploading_multiple_files_complete(e_cids, cids, datas)
-      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
+      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
       
       this.setState({storage_permissions:this.getLocale()['1428']/* 'enabled' */})
       var me = this;
@@ -24429,6 +24463,120 @@ class App extends Component {
       me.set_cookies()
     }, (1 * 1000));
 
+  }
+
+
+
+
+  prompt_confirmation_for_arweave_upload = async (data, type) => {
+    var wallet_data = this.state.coin_data['AR']
+    if(wallet_data != null){
+      const wallet = wallet_data['wallet']
+      const balance = wallet_data['balance']
+      const balance_in_ar = arweave.ar.winstonToAr(balance.toString())
+      try{
+        var transaction = await arweave.createTransaction({
+          data: data['data']
+        }, wallet.key);
+        transaction.addTag('Content-Type', this.get_file_mimetype(this.get_file_extension(data['name'])));
+        transaction.addTag('Client', 'E5')
+        transaction.addTag('Version', this.state.version)
+        await arweave.transactions.sign(transaction, wallet.key);
+        const transaction_hash = transaction['id']
+        const transaction_reward = transaction.reward
+        const transaction_reward_in_ar = arweave.ar.winstonToAr(transaction_reward.toString())
+
+        const dialog_data = {'hash':transaction_hash, 'reward':transaction_reward, 'data':data, 'type':type, 'address':wallet.address, 'balance':balance, 'balance_in_ar':balance_in_ar, 'transaction_reward_in_ar':transaction_reward_in_ar}
+        this.show_dialog_bottomsheet(dialog_data, 'confirm_upload_file_to_arweave')
+      }catch(e){
+        console.log('Error uploading data: ', e)
+        this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      }
+    }
+  }
+
+  upload_file_to_arweave = async (data, type) => {
+    this.setState({is_uploading_to_arweave: true})
+    this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
+    var wallet_data = this.state.coin_data['AR']
+    if(wallet_data != null){
+      const wallet = wallet_data['wallet']
+      try{
+        var transaction = await arweave.createTransaction({
+          data: data['data']
+        }, wallet.key);
+        transaction.addTag('Content-Type', this.get_file_mimetype(this.get_file_extension(data['name'])));
+        transaction.addTag('Client', 'E5')
+        transaction.addTag('Version', this.state.version)
+        await arweave.transactions.sign(transaction, wallet.key);
+
+        const transaction_hash = transaction['id']
+        const transaction_reward = transaction.reward
+        const transaction_reward_in_ar = arweave.ar.winstonToAr(transaction_reward.toString())
+
+        this.setState({current_upload_data: data, current_upload_transaction_reward: {transaction_reward: transaction_reward, transaction_reward_in_ar: transaction_reward_in_ar, transaction_hash: transaction_hash}})
+        var uploader = await arweave.transactions.getUploader(transaction);
+        this.setState({uploader_percentage: 0})
+        while (!uploader.isComplete) {
+          await uploader.uploadChunk();
+          this.setState({uploader_percentage: uploader.pctComplete})
+        }
+
+        this.prompt_top_notification(this.getLocale()['2738g']/* 'Arweave uploade complete, waiting for 1 network confirmation...' */, 15000)
+
+        this.is_uploading_arweave_file2 = true
+        while (this.is_uploading_arweave_file2 == true) {
+          if (this.is_uploading_arweave_file2 == false) break
+          console.log('appdata','Waiting for data to be uploaded')
+          this.check_if_required_confirmations2(transaction_hash)
+          await new Promise(resolve => setTimeout(resolve, 15_000))
+        }
+        this.update_coin_balances('AR', false)
+
+        var e_cids = []
+        var cids = []
+        var _data = structuredClone(data)
+        _data['data'] = `https://arweave.net/${transaction_hash}`
+        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data))
+        if(cid == ''){
+          this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
+          this.setState({is_uploading_to_arweave: false})
+          return;
+        }else{
+          var e_cid = _data['type']+'_'+cid+'.ch'
+          e_cids.push(e_cid)
+          cids.push(cid)
+        }
+        this.when_uploading_multiple_files_complete(e_cids, cids, [data])
+        this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
+        
+        this.setState({storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+        var me = this;
+        setTimeout(function() {
+          me.set_cookies()
+        }, (1 * 1000));
+        this.setState({is_uploading_to_arweave: false})
+      }catch(e){
+        console.log('Error uploading data: ', e)
+        this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+        this.setState({is_uploading_to_arweave: false})
+      }
+    }
+  }
+
+  check_if_required_confirmations2 = async (transaction_hash) => {
+    const pending_status = await arweave.transactions.getStatus(transaction_hash)
+    if(pending_status.confirmed != null && pending_status.confirmed.number_of_confirmations != null && pending_status.confirmed.number_of_confirmations > 1){
+      this.is_uploading_arweave_file2 = false
+    }
+    console.log(pending_status)
+  }
+
+
+
+  get_file_mimetype(extension){
+    const mime = require("mime-types");
+    return mime.lookup(extension)
   }
 
   get_file_extension(fileName) {
@@ -24573,14 +24721,16 @@ class App extends Component {
     // console.log('datas', datas)
     var clone = structuredClone(this.state.uploaded_data)
     var cid_clone = this.state.uploaded_data_cids.slice()
+    var cid_clone_2 = this.state.uncommitted_upload_cids.slice()
     for(var i=0; i<datas.length; i++){
       var _data = datas[i]
       if(clone[_data['type']] == null) clone[_data['type']] = {}
       clone[_data['type']][e_cids[i]] = _data
       cid_clone.push(e_cids[i])
+      cid_clone_2.push(e_cids[i])
     }
 
-    this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true})
+    this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true, uncommitted_upload_cids: cid_clone_2})
     var me = this;
     setTimeout(function() {
       me.set_cookies()

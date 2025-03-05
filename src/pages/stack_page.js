@@ -819,7 +819,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1593cv']/* web3.storage */, this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */,], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1593cv']/* web3.storage */, this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['1593ew']/* arweave */], [1]
             ],
         };
     }
@@ -10546,6 +10546,64 @@ class StackPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            return(
+                <div>
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1593fa']/* 'The status of your current or last Arweave upload will be shown below.' */})}
+                    
+                    {this.show_last_transaction_data()}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1593fb']/* 'Note: Arweave usually takes 10 to 20 minuts to finialize uploads.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
+    show_last_transaction_data(){
+        var data = this.props.app_state.current_upload_transaction_reward
+        if(data == null) {
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        var reward = data.transaction_reward
+        var transaction_reward_in_ar = data.transaction_reward_in_ar
+        var transaction_hash = data.transaction_hash
+        var formatted_size = this.format_data_size(this.props.app_state.current_upload_data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var uploader_percentage = this.props.app_state.uploader_percentage
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['1593fc']/* 'Upload progress.' */, 'subtitle':'', 'barwidth':uploader_percentage+'%', 'number':uploader_percentage+'%', 'relativepower':this.props.app_state.loc['3055k']/* 'proportion' */})}
+                </div>
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055d']/* 'Upload fee in winston.' */, 'subtitle':this.format_power_figure(reward), 'barwidth':this.calculate_bar_width(reward), 'number':this.format_account_balance_figure(reward), 'relativepower':'winston'})}
+
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055e']/* 'Upload fee in Arweave.' */, 'subtitle':this.format_power_figure(transaction_reward_in_ar), 'barwidth':this.calculate_bar_width(transaction_reward_in_ar), 'number':(transaction_reward_in_ar), 'relativepower':'Arweave'})}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055f']/* 'Upload File type.' */, 'title':this.props.app_state.current_upload_data['name'], 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055m']/* 'Upload File size.' */, 'title':fs, 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                <div onClick={() => this.copy_hash_to_clipboard(transaction_hash)}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055g']/* 'Upload file Hash' */, 'details':transaction_hash, 'size':'s'})}
+                </div>
+            </div>
+        )
+    }
+
+    copy_hash_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify(this.props.app_state.loc['3055h']/* 'Copied Hash to Clipboard.' */, 1600)
     }
 
 
@@ -10736,6 +10794,9 @@ class StackPage extends Component {
                 }
             }
         }
+        else if(selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            max_size = (1.5*1024*1024*1024)
+        }
         
         return max_size
     }
@@ -10801,6 +10862,67 @@ class StackPage extends Component {
     render_upload_button(){
         var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
         var icon = this.props.theme['close']
+
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            if(selected_item == this.props.app_state.loc['1593bk']/* all */ || selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
+            return(
+                <div>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg" onChange ={this.when_image_gif_picked.bind(this)}/>
+                    </div>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593bm']/* 'audio' */){
+            return(
+                <div>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)}/>
+                    </div>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593bn']/* 'video' */){
+            return(
+                <div>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)}/>
+                    </div>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
+            return(
+                <div>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)}/>
+                    </div>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
+           return(
+                <div>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)}/>
+                    </div>
+                </div>
+            ) 
+        }
+        }
+
         if(selected_item == this.props.app_state.loc['1593bk']/* all */ || selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
             return(
                 <div>
@@ -10861,62 +10983,24 @@ class StackPage extends Component {
 
     /* called when images have been picked from picker */
     when_image_gif_picked = (e) => {
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            this.when_file_picked_for_arweave(e, 'image')
+            return;
+        }
         this.when_file_picked(e, 'image')
         return;
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                this.file = e.target.files[i]
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    if(ev.total < this.get_upload_file_size_limit()){
-                        this.upload_file(ev.target.result, ev.total, Date.now(), 'image', this.file['name'], '', null)
-                    }else{
-                        this.props.notify(this.props.app_state.loc['1593bw']/* 'That file exceeds the current limit of 700kb.' */, 6000)
-                    }
-                }.bind(this);
-                var imageFile = e.target.files[i];
-                if(this.get_upload_file_size_limit() == this.state.default_upload_limit){
-                    imageCompression(imageFile, { maxSizeMB: (this.state.default_upload_limit /(1024*1024)), maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
-                        reader.readAsDataURL(compressedFile);
-                    })
-                    .catch(function (error) {
-                        console.log(error.message);
-                    });
-                }else{
-                    reader.readAsDataURL(imageFile);
-                }
-            }
-        }
     }
 
     /* called when audio files have been picked from picker */
     when_audio_picked = (e) => {
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            this.when_file_picked_for_arweave(e, 'audio')
+            return;
+        }
         this.when_file_picked(e, 'audio')
         return;
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                this.file = e.target.files[i]
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    if(ev.total < this.get_upload_file_size_limit()){
-                        this.upload_file(ev.target.result, ev.total, Date.now(), 'audio', this.file['name'], this.audio_file_image, this.audio_file_metadata)
-                    }else{
-                        this.props.notify(this.props.app_state.loc['1593bw']/* 'That file exceeds the current limit of 700kb.' */, 6000)
-                    }
-                }.bind(this);
-                var audioFile = e.target.files[i];
-                var me = this
-                parseBlob(audioFile).then(metadata => {
-                    this.audio_file_image = me.get_audio_file_image(metadata)
-                    this.audio_file_metadata = metadata
-                    this.audio_file_metadata.common.picture = null
-                    reader.readAsDataURL(audioFile);
-                }).catch(err => {
-                    console.error('Error parsing metadata:', err);
-                    reader.readAsDataURL(audioFile);
-                });
-            }
-        }
     }
 
     get_audio_file_image(metadata){
@@ -10936,31 +11020,31 @@ class StackPage extends Component {
 
     /* called when videos have been picked from picker */
     when_video_picked = (e) => {
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            this.when_file_picked_for_arweave(e, 'video')
+            return;
+        }
         this.when_file_picked(e, 'video')
         return;
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                this.file = e.target.files[i]
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    if(ev.total < this.get_upload_file_size_limit()){
-                        this.upload_file(ev.target.result, ev.total, Date.now(), 'video', this.file['name'], '', null)
-                    }else{
-                        this.props.notify(this.props.app_state.loc['1593bw']/* 'That file exceeds the current limit of 700kb.' */, 6000)
-                    }
-                }.bind(this);
-                var imageFile = e.target.files[i];
-                reader.readAsDataURL(imageFile);
-            }
-        }
     }
 
     when_pdf_picked = (e) => {
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            this.when_file_picked_for_arweave(e, 'pdf')
+            return;
+        }
         this.when_file_picked(e, 'pdf')
         return;
     }
 
     when_zip_picked = (e) => {
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            this.when_file_picked_for_arweave(e, 'zip')
+            return;
+        }
         this.when_file_picked(e, 'zip')
         return;
     }
@@ -11058,6 +11142,73 @@ class StackPage extends Component {
         }
     }
 
+    when_file_picked_for_arweave = async (e, type) => {
+        if(e.target.files && e.target.files[0]){
+            this.props.notify(this.props.app_state.loc['1593ex']/* 'Preparing File...' */, 2000)
+            this.selected_file_type = type
+            let reader = new FileReader();
+            reader.onload = function(ev){
+                this.file = {'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'thumbnail':'', 'data_type':type, 'metadata':''}
+
+                if(ev.total < this.get_upload_file_size_limit()){
+                    this.upload_file_to_arweave()
+                }else{
+                    this.props.notify(this.props.app_state.loc['1593ey']/* 'The file size exceeds the current upload limit.' */, 9000)
+                }
+            }.bind(this);
+            
+            this.file_name = e.target.files[0]['name'];
+            if(type == 'image'){
+                var imageFile = e.target.files[0];
+                reader.readAsArrayBuffer(imageFile);
+            }
+            else if(type == 'audio'){
+                var audioFile = e.target.files[0];
+                var me = this
+                parseBlob(audioFile).then(metadata => {
+                    this.audio_file_image = (me.get_audio_file_image(metadata))
+                    this.audio_file_metadata = (metadata)
+                    this.audio_file_metadata.common.picture = null
+                    reader.readAsArrayBuffer(audioFile);
+                }).catch(err => {
+                    console.error('Error parsing metadata:', err);
+                    this.audio_file_image = (this.props.app_state.static_assets['music_label'])
+                    this.audio_file_metadatas = {}
+                    reader.readAsArrayBuffer(audioFile);
+                });
+            }
+            else if(type == 'video'){
+                var videoFile = e.target.files[0];
+                reader.readAsArrayBuffer(videoFile);
+            }
+            else if(type == 'pdf'){
+                var pdfFile = e.target.files[0];
+                this.pdf_file_image = await this.get_pdf_image_from_file(pdfFile)
+                reader.readAsArrayBuffer(pdfFile)
+            }
+            else if(type == 'zip'){
+                var zipFile = e.target.files[0];
+                reader.readAsArrayBuffer(zipFile);
+            }
+        }
+    }
+
+    get_pdf_image_from_file = async (file) => {
+        let reader = new FileReader();
+        this.is_loading_file = true
+        reader.onload = function(ev){
+            this.pdf_file_image = ev.target.result
+            this.is_loading_file = false
+        }.bind(this);
+        reader.readAsDataURL(file)
+        while (this.is_loading_file == true) {
+            if (this.is_loading_file == false) break
+            console.log('stackdata','Waiting for pdf file image data to be loaded')
+            await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+        return await this.get_pdf_image(this.pdf_file_image)
+    }
+
     get_pdf_image = async (pdfDataUrl) => {
         const pdf = await pdfjsLib.getDocument(pdfDataUrl).promise;
         const firstPage = await pdf.getPage(1);
@@ -11124,6 +11275,40 @@ class StackPage extends Component {
         else{
             this.props.upload_multiple_files_to_web3_or_chainsafe(this.files, this.selected_files_type)
         }
+    }
+
+    upload_file_to_arweave = async () => {
+        this.file['name'] = this.file_name
+        if(this.selected_files_type == 'audio'){
+            this.file['thumbnail'] = this.audio_file_image;
+            this.file['metadata'] = this.audio_file_metadata;
+        }
+        else if(this.selected_files_type == 'pdf'){
+            this.file['thumbnail'] = this.pdf_file_image
+        }
+
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
+            return;
+        }
+
+        var wallet_data = this.props.app_state.coin_data['AR']
+        var wallet_address = wallet_data != null ? wallet_data['address'] : 'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U'
+        var my_arweave_balance = wallet_data != null ? wallet_data['balance'] : 0
+        if(wallet_address == 'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U'){
+            this.props.notify(this.props.app_state.loc['2738h']/* 'Please wait for your Arweave wallet to finish loading first.' */, 9000)
+            return;
+        }
+        else if(my_arweave_balance == 0){
+            this.props.notify(this.props.app_state.loc['1593er']/* 'Your Arweave balance is insufficient to make the transaction.' */, 9000)
+            return;
+        }
+        else if(this.props.app_state.is_uploading_to_arweave == true){
+            this.props.notify(this.props.app_state.loc['1593ez']/* 'Please wait for arweave to finish uploading your previous file.' */, 11000)
+            return;
+        }
+        
+        this.props.upload_file_to_arweave(this.file, this.selected_files_type)
     }
 
     get_item_in_array2(e5_id, object_array){
@@ -11210,6 +11395,7 @@ class StackPage extends Component {
         var background_color = this.props.theme['view_group_card_item_background'];
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        var opacity = this.props.app_state.uncommitted_upload_cids.includes(ecid_obj['full']) ? 0.6 : 1.0
         if(data != null){
             if(data['type'] == 'image'){
                 var img = data['data']
@@ -11218,7 +11404,7 @@ class StackPage extends Component {
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var details = data['name']
                 return(
-                    <div>
+                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'15%', 'image_width':50})}
                     </div>
                 )
@@ -11230,7 +11416,7 @@ class StackPage extends Component {
                 var details = data['name']
                 var thumbnail = data['thumbnail']
                 return(
-                    <div>
+                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
                     </div>
                 )
@@ -11243,7 +11429,7 @@ class StackPage extends Component {
                 var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var title = data['name']
                 return(
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
                                 <video height="50" style={{'border-radius':'7px'}}>
@@ -11268,7 +11454,7 @@ class StackPage extends Component {
                 var details = data['name']
                 var thumbnail = data['thumbnail']
                 return(
-                    <div>
+                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
@@ -11280,11 +11466,17 @@ class StackPage extends Component {
                 var details = data['name']
                 var thumbnail = this.props.app_state.static_assets['zip_file']
                 return(
-                    <div>
+                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
             }
+        }
+    }
+
+    prompt_message_if_translucent(opacity){
+        if(opacity != 1.0){
+            this.props.notify(this.props.app_state.loc['1593fd']/* 'You havent recorded this upload on E5 yet.' */,4500)
         }
     }
 

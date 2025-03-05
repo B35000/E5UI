@@ -71,25 +71,29 @@ class DialogPage extends Component {
                     {this.render_issue_with_run_dialog()}
                 </div>
             )
-        }else if(option == 'confirm_clear_stack_dialog'){
+        }
+        else if(option == 'confirm_clear_stack_dialog'){
             return(
                 <div>
                     {this.render_confirm_clear_dialog()}
                 </div>
             )
-        }else if(option == 'confirm_send_ether_dialog'){
+        }
+        else if(option == 'confirm_send_ether_dialog'){
             return(
                 <div>
                     {this.render_confirm_send_ether_dialog()}
                 </div>
             )
-        }else if(option == 'confirm_delete_dialog_box'){
+        }
+        else if(option == 'confirm_delete_dialog_box'){
             return(
                 <div>
                     {this.render_confirm_delete_transaction_dialog()}
                 </div>
             )
-        }else if(option == 'confirm_withdraw_ether'){
+        }
+        else if(option == 'confirm_withdraw_ether'){
             return(
                 <div>
                     {this.render_confirm_withdraw_ether_dialog()}
@@ -110,7 +114,17 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'confirm_upload_file_to_arweave'){
+            return(
+                <div>
+                    {this.render_confirm_arweave_upload()}
+                </div>
+            )
+        }
     }
+
+
+
 
 
     render_issue_with_run_dialog(){
@@ -500,7 +514,7 @@ class DialogPage extends Component {
         var e5 = this.state.data['e5']//this.state.e5
         var recipient_address = this.state.data['recipient_address']//this.state.recipient_address
         return(
-            <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+            <div style={{'padding': '10px'}}>
                     <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2027c']/* Confirmation */}</h3>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2018']/* 'Withdraw Ether Confirmation' */, 'details':this.props.app_state.loc['2019']/* 'Confirm that you want to withdraw Ether to the set address' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -518,7 +532,7 @@ class DialogPage extends Component {
                     <div onClick={() => this.props.when_withdraw_ether_confirmation_received()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2023']/* 'Withdraw Ether' */, 'action':''})}
                     </div>
-                </div>
+            </div>
         )
     }
 
@@ -947,6 +961,8 @@ class DialogPage extends Component {
 
     
 
+
+
     render_audio_details_section_song_option_items3(){
         return(
             <div>
@@ -1051,6 +1067,127 @@ class DialogPage extends Component {
     when_delete_playlist_clicked(){
         var playlist = this.state.data['object']
         this.props.delete_playlist(playlist)
+    }
+
+
+
+
+
+
+
+
+
+    render_confirm_arweave_upload(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_arweave()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_arweave()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_arweave()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_confirm_arweave(){
+        var hash = this.state.data['hash']
+        var address = this.state.data['address']
+        var type = this.state.data['type']
+        var reward = this.state.data['reward']
+        var balance = this.state.data['balance']
+        var balance_in_ar = this.state.data['balance_in_ar']
+        var transaction_reward_in_ar = this.state.data['transaction_reward_in_ar']
+        var impact = reward > balance ? 100 : this.round_off((reward / balance) * 100)
+        var opacity = reward > balance ? 0.55 : 1.0
+        var formatted_size = this.format_data_size(this.state.data['data']['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+
+        return(
+            <div style={{'padding': '10px'}}>
+                <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2027c']/* Confirmation */}</h3>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055']/* 'Upload File Confirmation.' */, 'details':this.props.app_state.loc['3055a']/* 'Confirm that you want to upload the file to Arweave.' */, 'size':'s'})}
+                <div style={{height: 10}}/>
+                
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055d']/* 'Upload fee in winston.' */, 'subtitle':this.format_power_figure(reward), 'barwidth':this.calculate_bar_width(reward), 'number':this.format_account_balance_figure(reward), 'relativepower':'winston'})}
+
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055e']/* 'Upload fee in Arweave.' */, 'subtitle':this.format_power_figure(transaction_reward_in_ar), 'barwidth':this.calculate_bar_width(transaction_reward_in_ar), 'number':(transaction_reward_in_ar), 'relativepower':'Arweave'})}
+
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055j']/* 'Transaction Impact on your Wallet.' */, 'subtitle':'', 'barwidth':impact+'%', 'number':impact+'%', 'relativepower':this.props.app_state.loc['3055k']/* 'proportion' */})}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055b']/* 'Wallet Balance in Winston.' */, 'subtitle':this.format_power_figure(balance), 'barwidth':this.calculate_bar_width(balance), 'number':this.format_account_balance_figure(balance), 'relativepower':'winston'})}
+
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055c']/* 'Wallet Balance in Arweave.' */, 'subtitle':this.format_power_figure(balance_in_ar), 'barwidth':this.calculate_bar_width(balance_in_ar), 'number':(balance_in_ar), 'relativepower':'Arweave'})}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055f']/* 'Upload File type.' */, 'title':type+' : '+this.state.data['data']['name'], 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055m']/* 'Upload File size.' */, 'title':fs, 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2022']/* 'Target Wallet Address' */, 'details':address, 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                <div style={{opacity:opacity}} onClick={() => this.props.upload_file_to_arweave_confirmed(this.state.data)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055i']/* 'Upload File.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    copy_hash_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify(this.props.app_state.loc['3055h']/* 'Copied Hash to Clipboard.' */, 1600)
+    }
+
+    round_off(number){
+        return (Math.round(number * 100) / 100)
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
     }
 
 
