@@ -1139,7 +1139,7 @@ class AudioDetailSection extends Component {
         var text_color = this.props.theme['secondary_text_color']
         if(this.is_song_playing(item)){
             song_length = '▶ '+song_length
-            text_color = 'green'
+            text_color = this.props.theme['primary_text_color']
         }
         return(
             <div onClick={() => this.when_song_item_clicked_selector(item, object, type)}>

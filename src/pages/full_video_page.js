@@ -223,7 +223,7 @@ class FullVideoPage extends Component {
                 <div style={{height: 350, width: this.state.screen_width, 'background-color':this.props.theme['view_group_card_item_background'], 'border-radius':'10px', 'display': 'flex', 'align-items':'center','justify-content':'center' }}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 4px', 'color': 'white', 'font-size':'11px'}}>{this.props.app_state.loc['3028'/* 'Loading...' */]}</p>
+                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 4px', 'color': this.props.app_state.theme['primary_text_color'], 'font-size':'11px'}}>{this.props.app_state.loc['3028'/* 'Loading...' */]}</p>
                     </div>
                 </div>
             )

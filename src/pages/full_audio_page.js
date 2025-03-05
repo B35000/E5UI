@@ -56,7 +56,8 @@ class FullAudioPage extends Component {
         get_full_audio_tags_object:this.get_full_audio_tags_object(), active_lyric: -1,
         has_scrolled:false, is_shuffling:false, is_repeating:false, original_song_list:[],
 
-        get_next_or_previous_songs_tags_object:this.get_next_or_previous_songs_tags_object()
+        get_next_or_previous_songs_tags_object:this.get_next_or_previous_songs_tags_object(),
+        buffer:0
     };
 
     get_full_audio_tags_object(){
@@ -81,8 +82,8 @@ class FullAudioPage extends Component {
         };
     }
 
-    set_data(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list){
-        this.setState({songs: queue, original_song_list: original_song_list, pos:pos, play_pause_state: play_pause_state, value: value, is_repeating: is_repeating, is_shuffling: is_shuffling})
+    set_data(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list, buffer){
+        this.setState({songs: queue, original_song_list: original_song_list, pos:pos, play_pause_state: play_pause_state, value: value, is_repeating: is_repeating, is_shuffling: is_shuffling, buffer:buffer})
     }
 
     constructor(props) {
@@ -275,12 +276,15 @@ class FullAudioPage extends Component {
 
     render_seek_bar(){
         var value = this.get_bar_length()
+        var buffer = this.state.buffer
         var height = 4
         return(
-            <div style={{ height: height, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px #CECDCD', 'margin': '0px 0px 0px 0px' , 'position': 'relative'}}>
+            <div style={{ height: height, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 0px 0px' , 'position': 'relative'}}>
                 
                 <div className="progress" style={{ height: height, width: '100%', 'background-color': this.props.theme['bar_background_color'] , 'z-index':'1' , 'border-radius': '17px', 'position': 'absolute'}}>
                     <div className="progress-bar" role="progressbar" style={{ width: (value)+"%", 'background-image': 'none','background-color': this.props.theme['bar_color'] }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>
+
+                    <div className="progress-bar" role="progressbar" style={{ width: (buffer - value)+"%", 'background-image': 'none','background-color': '#b3b3b3' }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>
                 </div>
                 <input type="range" value={value} min="0" max="99" className="form-range" onChange={this.handleNumber} style={{opacity: 0, width: '100%', height: height, 'position': 'absolute', 'z-index':'10'}}/>
             </div>
@@ -293,6 +297,10 @@ class FullAudioPage extends Component {
         var current_song_length = current_song['basic_data']['metadata']['format']['duration']
 
         return ((current_time * 100) / current_song_length)
+    }
+
+    when_buffer_updated(buffer){
+        this.setState({buffer: buffer})
     }
 
     get_current_time(){
@@ -498,13 +506,13 @@ class FullAudioPage extends Component {
                 {this.render_detail_item('3', {'title':fs, 'details':this.props.app_state.loc['2978']/* File size */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':metadata['common']['composer'][0], 'details':this.props.app_state.loc['2979']/* Composers */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':(metadata['common']['composer'] == null ? '':(metadata['common']['composer'].length > 0 ? metadata['common']['composer'][0]: '')), 'details':this.props.app_state.loc['2979']/* Composers */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':metadata['format']['bitrate'], 'details':this.props.app_state.loc['2980']/* Bitrate */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':(metadata['format']['bitrate'] == null ? '':metadata['format']['bitrate']), 'details':this.props.app_state.loc['2980']/* Bitrate */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':metadata['format']['codec'], 'details':this.props.app_state.loc['2981']/* Codec */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':(metadata['format']['codec'] == null ? '':metadata['format']['codec']), 'details':this.props.app_state.loc['2981']/* Codec */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':metadata['format']['codecProfile'], 'details':this.props.app_state.loc['2982']/* Codec Profile */, 'size':'l'})}

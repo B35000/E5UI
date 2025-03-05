@@ -15228,17 +15228,18 @@ class App extends Component {
     return(
       <div style={{width:player_size, height:player_size}}>
         <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} player_size={player_size} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
-        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)}
+        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)}
         />
       </div>
     )
   }
 
   play_song(item, object, audio_items, is_page_my_collection_page, should_shuffle){
-    this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */, 800)
+    this.prompt_top_notification(this.getLocale()['2976']/* 'Loading...' */, 5800)
     this.setState({is_audio_pip_showing: true})
     var queue = this.get_queue(item, object, audio_items, is_page_my_collection_page, should_shuffle)
     var unshuffled_queue = this.get_queue(item, object, audio_items, is_page_my_collection_page, false)
+    this.setState({current_playing_song: queue[0], current_playing_time: 0.0})
     
     var me = this;
     setTimeout(function() { 
@@ -15250,11 +15251,11 @@ class App extends Component {
   }
 
   play_song_in_playlist(item, playlist, should_shuffle){
-    this.prompt_top_notification(this.getLocale()['2976']/* 'Playing ' */, 800)
+    this.prompt_top_notification(this.getLocale()['2976']/* 'loading... ' */, 5800)
     this.setState({is_audio_pip_showing: true})
     var queue = this.get_playlist_queue(item, playlist, should_shuffle)
     var unshuffled_queue = this.get_playlist_queue(item, playlist, false)
-
+    this.setState({current_playing_song: queue[0], current_playing_time: 0.0})
     var me = this;
     setTimeout(function() {
       me.audio_pip_page.current?.set_data(queue, 0, unshuffled_queue, should_shuffle)
@@ -15330,28 +15331,40 @@ class App extends Component {
     var index_of_obj = audio_items.indexOf(object)
 
     for(var i=(index_of_obj+1); i<audio_items.length; i++){
-      var extra_objects_songs = audio_items[i]['ipfs'].songs
-      extra_objects_songs.forEach(song => {
-        if(!song_ids.includes(song['song_id'])){
-          song['album_art'] = object['ipfs'].album_art
-          song['object'] = object
+      if(!this.is_post_taken_down_for_sender(audio_items[i])){
+        var extra_objects_songs = audio_items[i]['ipfs'].songs
+        extra_objects_songs.forEach(song => {
+          if(!song_ids.includes(song['song_id']) ){
+            song['album_art'] = audio_items[i]['ipfs'].album_art
+            song['object'] = audio_items[i]
 
-          if(is_page_my_collection_page == true){
-            if(this.is_song_available_for_adding_to_playlist(song)){
-              //if im playing from my collection, only play the songs ive bought
+            if(is_page_my_collection_page == true){
+              if(this.is_song_available_for_adding_to_playlist(song)){
+                //if im playing from my collection, only play the songs ive bought
+                songs.push(song)
+                song_ids.push(song['song_id'])
+              }
+            }else{
               songs.push(song)
               song_ids.push(song['song_id'])
             }
-          }else{
-            songs.push(song)
-            song_ids.push(song['song_id'])
           }
-        }
-      });
+        });
+      }
     }
 
 
     return songs
+  }
+
+  is_post_taken_down_for_sender(object){
+    if(object['ipfs'].get_take_down_option == null) return false
+    var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+    if(selected_take_down_option == 1) return true
+  }
+
+  get_selected_item2(object, option){
+    return object[option][2][0]
   }
 
   load_queue = async (queue, pos) => {
@@ -15376,8 +15389,8 @@ class App extends Component {
     }
   }
 
-  open_full_player(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list){
-    this.show_full_audio_bottomsheet(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list)
+  open_full_player(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list, buffer){
+    this.show_full_audio_bottomsheet(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list, buffer)
   }
 
   when_time_updated(time, current_song){
@@ -15387,6 +15400,13 @@ class App extends Component {
     }
     this.update_time_for_future_reference(time, current_song)
     this.when_playing(current_song, time)
+  }
+
+  when_buffer_updated(buffer){
+    var me = this;
+    if(me.full_audio_page.current != null){
+      me.full_audio_page.current.when_buffer_updated(buffer)
+    }
   }
 
   when_next_track_reached(){
@@ -15509,12 +15529,12 @@ class App extends Component {
     }
   }
 
-  show_full_audio_bottomsheet(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list){
+  show_full_audio_bottomsheet(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list, buffer){
     this.open_full_audio_bottomsheet()
     var me = this;
     setTimeout(function() {
       if(me.full_audio_page.current != null){
-        me.full_audio_page.current.set_data(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list)
+        me.full_audio_page.current.set_data(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list, buffer)
       }
     }, (1 * 500));
   }

@@ -37,7 +37,7 @@ class AudioPip extends Component {
     state = {
         selected: 0, songs:[], pos:0, value:0,
         play_pause_state:0, is_full_screen_open:false, is_repeating:false, is_shuffling:false,
-        original_song_list:[], isloading:false
+        original_song_list:[], isloading:false, buffer:0
     };
 
     set_data(songs, pos, unshuffled_songs, is_shuffling){
@@ -139,12 +139,16 @@ class AudioPip extends Component {
 
     render_seek_bar(){
         var value = this.get_bar_length()
+        var buffer = this.state.buffer
         var height = 3
         return(
-            <div style={{ height: height, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px #CECDCD', 'margin': '0px 0px 0px 0px' , 'position': 'relative'}}>
+            <div style={{ height: height, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 0px 0px' , 'position': 'relative'}}>
                 
-                <div className="progress" style={{ height: height, width: '100%', 'background-color': this.props.theme['bar_background_color'] , 'z-index':'1' , 'border-radius': '17px', 'position': 'absolute'}}>
+                <div className="progress" style={{ height: height, width: '100%', 'background-color': this.props.theme['bar_background_color'] , 'z-index':'5' , 'border-radius': '17px', 'position': 'absolute'}}>
                     <div className="progress-bar" role="progressbar" style={{ width: (value)+"%", 'background-image': 'none','background-color': 'white' }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>
+
+                    <div className="progress-bar" role="progressbar" style={{ width: (buffer - value)+"%", 'background-image': 'none','background-color': '#b3b3b3' }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>
+
                 </div>
                 <input type="range" value={value} min="0" max="99" className="form-range" onChange={this.handleNumber} style={{opacity: 0, width: '100%', height: height, 'position': 'absolute', 'z-index':'10'}}/>
             </div>
@@ -157,6 +161,17 @@ class AudioPip extends Component {
         var current_song_length = current_song['basic_data']['metadata']['format']['duration']
 
         return ((current_time * 100) / current_song_length)
+    }
+
+    onProgress = () => {
+        if (this.audio.current?.buffered.length > 0) {
+            const loaded = this.audio.current?.buffered.end(this.audio.current?.buffered.length - 1); // Last buffered time
+            var current_song = this.state.songs[this.state.pos]
+            var current_song_length = current_song['basic_data']['metadata']['format']['duration']
+            var buffer = (loaded / current_song_length) * 100
+            this.setState({buffer: buffer});
+            this.props.when_buffer_updated(buffer)
+        }
     }
 
     get_current_time(){
@@ -203,6 +218,7 @@ class AudioPip extends Component {
         var ecid_obj = this.get_cid_split(audio_file)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null) return false
         if(data['data'] == null) return false
         return true
     }
@@ -211,7 +227,7 @@ class AudioPip extends Component {
     expand_player(){
         if(!this.has_file_loaded()) return;
         this.setState({is_full_screen_open: true})
-        this.props.open_full_player(this.state.songs, this.state.pos, this.state.play_pause_state, this.state.value, this.state.is_repeating, this.state.is_shuffling, this.state.original_song_list)
+        this.props.open_full_player(this.state.songs, this.state.pos, this.state.play_pause_state, this.state.value, this.state.is_repeating, this.state.is_shuffling, this.state.original_song_list, this.state.buffer)
     }
 
     when_expanded_player_closed(){
@@ -230,7 +246,7 @@ class AudioPip extends Component {
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data != null && data['data'] == null) return null
-        return data['data']
+        return encodeURI(data['data'])
     }
 
     render_audio(){
@@ -240,7 +256,7 @@ class AudioPip extends Component {
                 <div style={{'position': 'relative'}}>
                     <div style={{width:this.props.player_size, height:40, 'margin':'0px 0px 0px 0px', 'z-index':'3', 'position': 'absolute'}}/>
                     <div style={{width:2, height:2, 'margin':'px 0px 0px 0px', 'z-index':'2', 'position': 'absolute'}}>
-                        <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} controls ref={this.audio}>
+                        <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} onProgress={this.onProgress} controls ref={this.audio}>
                             <source src={this.get_audio_file()} type="audio/ogg"></source>
                             <source src={this.get_audio_file()} type="audio/mpeg"></source>
                             <source src={this.get_audio_file()} type="audio/wav"></source>

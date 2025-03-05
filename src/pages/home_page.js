@@ -4229,7 +4229,7 @@ class home_page extends Component {
                 return object['ipfs'].entered_title_text
             }
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['contracts']/* 'contracts' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1197']/* 'contracts' */){
             var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_contracts))
             if(object != null && object['ipfs'] != null){
                 return object['ipfs'].entered_title_text
