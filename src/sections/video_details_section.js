@@ -1060,6 +1060,18 @@ class VideoDetailsSection extends Component {
         return selected_objects
     }
 
+    filter_for_bought_posts(objects){
+        var recommended_videopost_threshold = this.props.app_state.recommended_videopost_threshold
+        var recommended_video_threshold = this.props.app_state.recommended_video_threshold
+        var recommended_objs = objects.filter(function (object) {
+            var video_sales = object['video_sales']
+            var videopost_sales = object['videopost_sales']
+            return (video_sales > recommended_video_threshold || videopost_sales > recommended_videopost_threshold)
+        });
+
+        return recommended_objs
+    }
+
 
 
 

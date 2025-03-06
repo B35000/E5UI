@@ -3059,7 +3059,7 @@ class PostListSection extends Component {
         if(sender == this.props.app_state.user_account_id[object['e5']]){
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
-            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
         }
     }

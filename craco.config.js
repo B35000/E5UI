@@ -24,7 +24,8 @@ module.exports = {
           https: require.resolve("https-browserify"),
           http: require.resolve("stream-http"),
           querystring: require.resolve("querystring-es3"),
-          url: require.resolve("url/")
+          url: require.resolve("url/"),
+          path: require.resolve("path-browserify")
         },
       };
 

@@ -1527,7 +1527,7 @@ class AudioDetailSection extends Component {
     }
 
     get_similar_posts(object){
-        return this.filter_for_taken_down_posts(this.sort_feed_based_on_my_section_tags(this.props.get_audio_items('discography'), object))
+        return this.filter_for_bought_posts(this.filter_for_taken_down_posts(this.sort_feed_based_on_my_section_tags(this.props.get_audio_items('discography'), object)))
     }
 
     sort_feed_based_on_my_section_tags(objects, current_album){
@@ -1556,6 +1556,18 @@ class AudioDetailSection extends Component {
 
 
         return selected_objects
+    }
+
+    filter_for_bought_posts(objects){
+        var recommended_audiopost_threshold = this.props.app_state.recommended_audiopost_threshold
+        var recommended_audio_threshold = this.props.app_state.recommended_audio_threshold
+        var recommended_objs = objects.filter(function (object) {
+            var song_sales = object['song_sales']
+            var album_sales = object['album_sales']
+            return (song_sales > recommended_audio_threshold || album_sales > recommended_audiopost_threshold)
+        });
+
+        return recommended_objs
     }
 
 

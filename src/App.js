@@ -674,7 +674,9 @@ class App extends Component {
     
     calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
-    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[]
+    language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
+    
+    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, 
   };
 
   get_static_assets(){
@@ -2517,7 +2519,7 @@ class App extends Component {
 
     var me = this;
     setTimeout(function() {
-      if(me.state.syncronizing_progress < 5){
+      if(me.state.syncronizing_progress < 5 && me.is_allowed_in_e5()){
         me.prompt_top_notification(me.getLocale()['2738c']/* 'Bad Connection.' */, 15000)
       }
     }, (40 * 1000));
@@ -2696,7 +2698,9 @@ class App extends Component {
       preferred_currency: this.state.preferred_currency,
       all_locales: this.state.all_locales,
       theme_image: this.state.theme_image,
-      subscribed_nitros: this.state.subscribed_nitros
+      subscribed_nitros: this.state.subscribed_nitros,
+
+      uncommitted_upload_cids: this.state.uncommitted_upload_cids,
     }
   }
 
@@ -2806,7 +2810,7 @@ class App extends Component {
       var all_locales = state.all_locales
       var theme_image = state.theme_image
       var subscribed_nitros = state.subscribed_nitros
-      
+      var uncommitted_upload_cids = state.uncommitted_upload_cids
       
 
       this.setState({
@@ -2860,6 +2864,7 @@ class App extends Component {
         loc: (all_locales[my_language] == null ? this.state.loc : all_locales[my_language]),
         theme_image: theme_image,
         subscribed_nitros: subscribed_nitros,
+        uncommitted_upload_cids: uncommitted_upload_cids
       })
       var me = this;
       setTimeout(function() {
@@ -3370,7 +3375,7 @@ class App extends Component {
   }
 
   get_language(){
-    var lang = navigator.language || navigator.userLanguage;
+    var lang = navigator.language || navigator.userLanguage || 'en';
     var language = lang.toString().toLowerCase()
     if(language.includes('-')){
       var ln = language.split('-')
@@ -6399,7 +6404,7 @@ class App extends Component {
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} upload_file_to_arweave={this.upload_file_to_arweave.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)}
       
       />
     )
@@ -6918,6 +6923,11 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+  }
+
+  when_file_tapped(ecid_obj){
+    var data = {'ecid_obj':ecid_obj}
+    this.show_dialog_bottomsheet(data, 'view_uploaded_file')
   }
 
 
@@ -7528,7 +7538,7 @@ class App extends Component {
     }
     else if(target == '11'/* videoport */){
       return(
-        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)}/>
       )
     }
     else if(target == '12'/* nitro */){
@@ -13357,7 +13367,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)}
         
         />
       </div>
@@ -13393,7 +13403,7 @@ class App extends Component {
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':600};
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450};
     var size = obj[id]
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
@@ -13606,7 +13616,20 @@ class App extends Component {
       return
     }
     this.open_dialog_bottomsheet()
-    this.upload_file_to_arweave(data['data'])
+    this.upload_file_to_arweave(data['data'], )
+  }
+
+  delete_file(ecid){
+    this.open_dialog_bottomsheet()
+    var cid_clone = this.state.uploaded_data_cids.slice()
+    var index = cid_clone.indexOf(ecid['full'])
+    if(index != -1) cid_clone.splice(index, 1)
+    this.setState({ uploaded_data_cids: cid_clone, update_data_in_E5: true})
+    this.prompt_top_notification(this.getLocale()['3055u']/* File forgotten. Run a transaction on E5 to make it permanent. */, 7000)
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
 
@@ -18428,6 +18451,7 @@ class App extends Component {
 
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
+        // this.prompt_top_notification('language: '+my_language, 5000)
         const language_obj = await this.load_json_object_from_url(all_locales[my_language])
         const language_override = root_data.override_object
         if(language_override[my_language] != null){
@@ -18439,7 +18463,7 @@ class App extends Component {
         }
         var clone = structuredClone(all_locales)
         clone[my_language] = language_obj
-        this.setState({loc: language_obj, all_locales: clone})
+        // this.setState({loc: language_obj, all_locales: clone})
       }
 
       console.log('apppage', 'theme', get_theme_stage_tags_object)
@@ -24495,7 +24519,7 @@ class App extends Component {
     }
   }
 
-  upload_file_to_arweave = async (data, type) => {
+  upload_file_to_arweave = async (data) => {
     this.setState({is_uploading_to_arweave: true})
     this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
     var wallet_data = this.state.coin_data['AR']
@@ -24547,7 +24571,7 @@ class App extends Component {
           e_cids.push(e_cid)
           cids.push(cid)
         }
-        this.when_uploading_multiple_files_complete(e_cids, cids, [data])
+        this.when_uploading_multiple_files_complete(e_cids, cids, [_data])
         this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
         
         this.setState({storage_permissions:this.getLocale()['1428']/* 'enabled' */})

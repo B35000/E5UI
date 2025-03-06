@@ -661,15 +661,21 @@ class ViewGroups extends Component {
 
 
     get_image_from_file(ecid){
-        if(ecid == null) return empty_image
-        if(!ecid.startsWith('image')) return ecid
-        var ecid_obj = this.get_cid_split(ecid)
-        if(this.props.uploaded_data[ecid_obj['filetype']] == null) return empty_image
-        var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-
-        if(data == null) return empty_image
-
-        return data['data']
+        try{
+            if(ecid == null) return empty_image
+            if(!ecid.startsWith('image')) return ecid
+            var ecid_obj = this.get_cid_split(ecid)
+            if(this.props.uploaded_data[ecid_obj['filetype']] == null) return empty_image
+            var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+            if(data == null) return empty_image
+            return data['data']
+        }catch(e){
+            console.log(e)
+            console.log('view_groups',ecid)
+            return empty_image
+        }
+        
+        
     }
 
     get_cid_split(ecid){

@@ -121,6 +121,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'view_uploaded_file'){
+            return(
+                <div>
+                    {this.render_view_uploaded_file()}
+                </div>
+            )
+        }
     }
 
 
@@ -1093,7 +1100,7 @@ class DialogPage extends Component {
                         {this.render_confirm_arweave()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(2)}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -1106,14 +1113,13 @@ class DialogPage extends Component {
                         {this.render_confirm_arweave()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(2)}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
             )
         }
     }
-
 
     render_confirm_arweave(){
         var hash = this.state.data['hash']
@@ -1129,9 +1135,9 @@ class DialogPage extends Component {
         var fs = formatted_size['size']+' '+formatted_size['unit']
 
         return(
-            <div style={{'padding': '10px'}}>
+            <div style={{'padding': '0px'}}>
                 <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2027c']/* Confirmation */}</h3>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055']/* 'Upload File Confirmation.' */, 'details':this.props.app_state.loc['3055a']/* 'Confirm that you want to upload the file to Arweave.' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055']/* 'Upload File Confirmation.' */, 'details':this.props.app_state.loc['3055a']/* 'Confirm that you want to upload the file to Arweave.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -1150,13 +1156,13 @@ class DialogPage extends Component {
                 </div>
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055f']/* 'Upload File type.' */, 'title':type+' : '+this.state.data['data']['name'], 'size':'s'})}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055f']/* 'Upload File type.' */, 'title':type+' : '+this.state.data['data']['name'], 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055m']/* 'Upload File size.' */, 'title':fs, 'size':'s'})}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055m']/* 'Upload File size.' */, 'title':fs, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2022']/* 'Target Wallet Address' */, 'details':address, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2022']/* 'Target Wallet Address' */, 'details':address, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div style={{opacity:opacity}} onClick={() => this.props.upload_file_to_arweave_confirmed(this.state.data)}>
@@ -1189,6 +1195,161 @@ class DialogPage extends Component {
             return {'size':size, 'unit':'bytes'}
         }
     }
+
+
+
+
+
+
+
+    render_view_uploaded_file(){
+       var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_file_image()}
+                    {this.render_file_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div style={{height: 60}}/>
+                        {this.render_file_image()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_file_data()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div style={{height: 60}}/>
+                        {this.render_file_image()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_file_data()}
+                    </div>
+                </div>
+                
+            )
+        } 
+    }
+
+    render_file_image(){
+        var ecid_obj = this.state.data['ecid_obj']
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data != null){
+            var wh = '240px'
+            if(data['type'] == 'image'){
+                var img = data['data']
+                return(
+                    <div>
+                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'audio'){
+                var img = data['thumbnail']
+                return(
+                    <div>
+                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = data['data']
+                return(
+                    <div style={{'display': 'flex', 'align-items':'center','justify-content':'center','padding': '0px 0px 0px 5px', width: '99%'}}>
+                        <div>
+                            <video height="240" style={{'border-radius':'7px'}}>
+                                <source src={video} type="video/mp4"/>
+                                <source src={video} type="video/ogg"/>
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                )
+            }
+            else if(data['type'] == 'pdf'){
+                var img = data['thumbnail']
+                return(
+                    <div>
+                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var img = this.props.app_state.static_assets['zip_file']
+                return(
+                    <div>
+                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
+                    </div>
+                )
+            }
+        }
+    }
+
+    render_file_data(){
+        var ecid_obj = this.state.data['ecid_obj']
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data != null){
+            var formatted_size = this.format_data_size(data['size'])
+            var size = formatted_size['size']+' '+formatted_size['unit']
+            var age = this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+            var name = data['name']
+            return(
+                <div>
+                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3055x']/* File Details. */}</h4>
+
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['3055n']/* 'File Name.' */, 'title':name, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['3055o']/* 'File Age.' */, 'title':age, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['3055p']/* 'File Size.' */, 'title':size, 'size':'l'})}
+
+                    {this.render_detail_item('0')}
+                    {this.render_not_on_e5_message(ecid_obj)}
+
+                    <div onClick={() => this.props.delete_file(ecid_obj)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r']/* 'Forget File.' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    render_not_on_e5_message(ecid_obj){
+        if(this.props.app_state.uncommitted_upload_cids.includes(ecid_obj['full'])){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055s']/* 'Not On Chain.' */, 'details':this.props.app_state.loc['3055t']/* 'You need to make an E5 run to record this file on E5.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055v']/* 'On Chain.' */, 'details':this.props.app_state.loc['3055w']/* 'A link to the file is permanently stored on chain.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
 
 
 

@@ -1753,13 +1753,13 @@ class StackPage extends Component {
 
     format_data_size(size){
         if(size > 1_000_000_000){
-            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+            return {'size':this.round_off(size/1_000_000_000), 'unit':'GBs'}
         }
         else if(size > 1_000_000){
-            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+            return {'size':this.round_off(size/1_000_000), 'unit':'MBs'}
         }
         else if(size > 1_000){
-            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+            return {'size':this.round_off(size/1_000), 'unit':'KBs'}
         }
         else{
             return {'size':size, 'unit':'bytes'}
@@ -8715,7 +8715,7 @@ class StackPage extends Component {
                         {coin_items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div onClick={() => this.props.view_number({'title':item['title'], 'number':item['balance'], 'relativepower':item['base_unit']})}>
-                                    {this.render_coin_item({'title':item['title'], 'image':item['image'], 'details':this.format_account_balance_figure(item['balance']) + ' '+item['base_unit']+'s', 'size':'s', 'img_size':30})}
+                                    {this.render_coin_item({'title':item['title'], 'image':item['image'], 'details':this.format_account_balance_figure(item['balance']) + ' '+item['base_unit'], 'size':'s', 'img_size':30})}
                                 </div>
                             </li>
                         ))}
@@ -10549,7 +10549,6 @@ class StackPage extends Component {
         else if(selected_item == this.props.app_state.loc['1593ew']/* arweave */){
             return(
                 <div>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1593fa']/* 'The status of your current or last Arweave upload will be shown below.' */})}
                     
                     {this.show_last_transaction_data()}
 
@@ -10588,14 +10587,14 @@ class StackPage extends Component {
                 </div>
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055f']/* 'Upload File type.' */, 'title':this.props.app_state.current_upload_data['name'], 'size':'s'})}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055f']/* 'Upload File type.' */, 'title':this.props.app_state.current_upload_data['name'], 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055m']/* 'Upload File size.' */, 'title':fs, 'size':'s'})}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055m']/* 'Upload File size.' */, 'title':fs, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div onClick={() => this.copy_hash_to_clipboard(transaction_hash)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055g']/* 'Upload file Hash' */, 'details':transaction_hash, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055g']/* 'Upload file Hash' */, 'details':transaction_hash, 'size':'l'})}
                 </div>
             </div>
         )
@@ -11308,7 +11307,7 @@ class StackPage extends Component {
             return;
         }
         
-        this.props.upload_file_to_arweave(this.file, this.selected_files_type)
+        this.props.prompt_confirmation_for_arweave_upload(this.file, this.selected_file_type)
     }
 
     get_item_in_array2(e5_id, object_array){
@@ -11404,7 +11403,7 @@ class StackPage extends Component {
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var details = data['name']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'15%', 'image_width':50})}
                     </div>
                 )
@@ -11416,7 +11415,7 @@ class StackPage extends Component {
                 var details = data['name']
                 var thumbnail = data['thumbnail']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
                     </div>
                 )
@@ -11429,7 +11428,7 @@ class StackPage extends Component {
                 var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var title = data['name']
                 return(
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
                                 <video height="50" style={{'border-radius':'7px'}}>
@@ -11454,7 +11453,7 @@ class StackPage extends Component {
                 var details = data['name']
                 var thumbnail = data['thumbnail']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
@@ -11466,7 +11465,7 @@ class StackPage extends Component {
                 var details = data['name']
                 var thumbnail = this.props.app_state.static_assets['zip_file']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.prompt_message_if_translucent(opacity)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
@@ -11474,10 +11473,8 @@ class StackPage extends Component {
         }
     }
 
-    prompt_message_if_translucent(opacity){
-        if(opacity != 1.0){
-            this.props.notify(this.props.app_state.loc['1593fd']/* 'You havent recorded this upload on E5 yet.' */,4500)
-        }
+    when_file_tapped(ecid_obj){
+        this.props.when_file_tapped(ecid_obj)
     }
 
 

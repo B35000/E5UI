@@ -29,6 +29,12 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
 
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -88,7 +94,9 @@ class NewVideoPage extends Component {
         videos:[], edit_video_item_pos:-1,
 
         album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
-        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
+        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+
+        video_availability_timestamp:(Date.now()/1000)
     };
 
 
@@ -2369,8 +2377,28 @@ class NewVideoPage extends Component {
 
                 <div style={{height:10}}/>
                 {this.render_my_subtitles()}
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311aj']/* 'Scheduled Release.' */, 'details':this.props.app_state.loc['b311ai']/* 'Schedule a time after which the video will be available for viewing.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+                <div style={{height:15}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.video_availability_timestamp - Date.now()/1000), 'details':''+(new Date(this.state.video_availability_timestamp*1000)), 'size':'l'})}
+
             </div>
         )
+    }
+
+    when_new_dat_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({video_availability_timestamp: timeInSeconds})
     }
 
     when_video_title_input_field_changed(text){
@@ -2668,6 +2696,7 @@ class NewVideoPage extends Component {
         var price_data2 = this.state.price_data2
         var video_file = this.state.video_file
         var subtitles = this.state.subtitles
+        var video_availability_timestamp = this.state.video_availability_timestamp
 
         if(video_title == ''){
             this.props.notify(this.props.app_state.loc['b311t']/* 'You need to set a title for the video track.' */, 3800)
@@ -2679,7 +2708,7 @@ class NewVideoPage extends Component {
             this.props.notify(this.props.app_state.loc['b311v']/* 'You need to add a video track.' */, 3800)
         }
         else{
-            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles}
+            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles, 'release_time':video_availability_timestamp}
 
             var clone = this.state.videos.slice()
             if(this.state.edit_video_item_pos != -1){
@@ -2689,7 +2718,7 @@ class NewVideoPage extends Component {
                 clone.push(video)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({videos: clone, video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null, subtitles:[]})
+            this.setState({videos: clone, video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null, subtitles:[], video_availability_timestamp: Date.now()/1000})
             
         }
     }
@@ -2803,7 +2832,7 @@ class NewVideoPage extends Component {
 
     set_focused_video_data(item_pos){
         var video = this.state.videos[item_pos]
-        this.setState({video_title: video['video_title'], video_composer: video['video_composer'], price_data2: video['price_data'], video_file: video['video'], edit_video_item_pos: item_pos, subtitles: (video['subtitles'] == null ? [] : video['subtitles']) });
+        this.setState({video_title: video['video_title'], video_composer: video['video_composer'], price_data2: video['price_data'], video_file: video['video'], edit_video_item_pos: item_pos, subtitles: (video['subtitles'] == null ? [] : video['subtitles']), video_availability_timestamp:(video['release_time'] == null ? (Date.now()/1000) : video['release_time']) });
     }
 
 

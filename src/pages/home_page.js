@@ -5084,15 +5084,10 @@ class home_page extends Component {
                         {coin_items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div onClick={() => this.props.view_number({'title':item['title'], 'number':item['balance'], 'relativepower':item['base_unit']})}>
-                                    {this.render_coin_item({'title':item['title'], 'image':item['image'], 'details':this.format_account_balance_figure(item['balance']) + ' '+item['base_unit']+'s', 'size':'s', 'img_size':30})}
+                                    {this.render_coin_item({'title':item['title'], 'image':item['image'], 'details':this.format_account_balance_figure(item['balance']) + ' '+item['base_unit'], 'size':'s', 'img_size':30})}
                                 </div>
                             </li>
                         ))}
-                        {/* {items2.map(() => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_empty_horizontal_list_item2()}
-                            </li>
-                        ))} */}
                     </ul>
                 </div>
             )

@@ -227,10 +227,21 @@ class FullVideoPage extends Component {
                     </div>
                 </div>
             )
-        }else{
+        }
+        else{
             var video = this.get_video_file()
             var current_video = this.state.videos[this.state.pos]
             var subtitles = current_video['subtitles'] == null ? [] : current_video['subtitles']
+            if(current_video['release_time'] != null && current_video['release_time'] > (Date.now()/1000)){
+                return(
+                    <div style={{height: 350, width: this.state.screen_width, 'background-color':this.props.theme['view_group_card_item_background'], 'border-radius':'10px', 'display': 'flex', 'align-items':'center','justify-content':'center' }}>
+                        <div style={{'margin':'10px 20px 0px 0px'}}>
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:60,width:'auto'}}/>
+                            <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 4px', 'color': this.props.app_state.theme['primary_text_color'], 'font-size':'11px'}}>{''+(new Date(current_video['release_time']*1000))}</p>
+                        </div>
+                    </div>
+                )
+            }
             return(
                 <div style={{}}>
                     <video ref={this.video_player} width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
