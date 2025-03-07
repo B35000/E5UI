@@ -78,7 +78,8 @@ class DialerPage extends Component {
         get_theme_images_tags_object:this.get_theme_images_tags_object(), typed_image_link:'',
         get_line_setting_object:this.get_line_setting_object(), typed_blockexplorer_link:'',
 
-        get_available_for_all_tags_object:this.get_available_for_all_tags_object()
+        get_available_for_all_tags_object:this.get_available_for_all_tags_object(),
+        get_audio_video_recommendation_threshold_setting_object:this.get_audio_video_recommendation_threshold_setting_object(),
     };
 
 
@@ -225,6 +226,17 @@ class DialerPage extends Component {
             },
             'e':[
                 ['or','',0], ['e', 'enabled'], [pos]
+            ],
+        };
+    }
+
+    get_audio_video_recommendation_threshold_setting_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', 'videopost_threshold', 'video_threshold', 'audiopost_threshold', 'audio_threshold'], [1]
             ],
         };
     }
@@ -385,6 +397,16 @@ class DialerPage extends Component {
                 </div>
                 <div style={{height:10}}/>
                 {this.render_dialer_addresses_horizontal()}
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Set the threshold for each recommendation instance.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audio_video_recommendation_threshold_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audio_video_recommendation_threshold_setting_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={'Enter value here...'} when_text_input_field_changed={this.when_audio_video_threshold_value_changed.bind(this)} text={this.get_audio_video_threshold_value()} theme={this.props.theme}/>
             </div>
         )
     }
@@ -1010,6 +1032,51 @@ class DialerPage extends Component {
         this.setState({get_available_for_all_tags_object: tag_obj})
     }
 
+
+    when_get_audio_video_recommendation_threshold_setting_object_updated(tag_obj){
+        this.setState({get_audio_video_recommendation_threshold_setting_object: tag_obj})
+    }
+
+    get_audio_video_threshold_value(){
+        var selected_item = this.get_selected_item(this.state.get_audio_video_recommendation_threshold_setting_object, 'e')
+
+        if(selected_item == 'videopost_threshold'){
+            return this.state.data['recommended_videopost_threshold']
+        }
+        else if(selected_item == 'video_threshold'){
+            return this.state.data['recommended_video_threshold']
+        }
+        else if(selected_item == 'audiopost_threshold'){
+            return this.state.data['recommended_audiopost_threshold']
+        }
+        else if(selected_item == 'audio_threshold'){
+            return this.state.data['recommended_audio_threshold']
+        }
+    }
+
+    when_audio_video_threshold_value_changed(text){
+        if(!isNaN(text)){
+            var value = parseInt(text)
+            var clone = structuredClone(this.state.data)
+
+            var selected_item = this.get_selected_item(this.state.get_audio_video_recommendation_threshold_setting_object, 'e')
+
+            if(selected_item == 'videopost_threshold'){
+                clone['recommended_videopost_threshold'] = value
+            }
+            else if(selected_item == 'video_threshold'){
+                clone['recommended_video_threshold'] = value
+            }
+            else if(selected_item == 'audiopost_threshold'){
+                clone['recommended_audiopost_threshold'] = value
+            }
+            else if(selected_item == 'audio_threshold'){
+                clone['recommended_audio_threshold'] = value
+            }
+
+            this.setState({data: clone})
+        }
+    }
 
 
 

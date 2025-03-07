@@ -16003,7 +16003,21 @@ class App extends Component {
     }
     this.open_dialer_bottomsheet()
     var me = this;
-    var data = {'country_data':this.state.country_data, 'allowed_countries':this.state.allowed_countries, 'beacon_chain_url':this.state.beacon_chain_url, 'e5s':this.state.e5s, 'ether_data':this.state.ether_data, 'all_locales':this.state.all_locales, 'dialer_addresses':this.state.dialer_addresses, 'theme_images':this.state.theme_images}
+
+    var data = {
+      'country_data':this.state.country_data, 
+      'allowed_countries':this.state.allowed_countries, 
+      'beacon_chain_url':this.state.beacon_chain_url, 
+      'e5s':this.state.e5s, 
+      'ether_data':this.state.ether_data, 
+      'all_locales':this.state.all_locales, 
+      'dialer_addresses':this.state.dialer_addresses, 
+      'theme_images':this.state.theme_images, 
+      'recommended_videopost_threshold':this.state.recommended_videopost_threshold, 
+      'recommended_video_threshold':this.state.recommended_video_threshold, 
+      'recommended_audiopost_threshold':this.state.recommended_audiopost_threshold, 
+      'recommended_audio_threshold':this.state.recommended_audio_threshold, 
+    }
     setTimeout(function() {
       if(me.dialer_page.current != null){
         me.dialer_page.current.set_data(data)
@@ -18449,6 +18463,11 @@ class App extends Component {
       const line_setting = this.get_selected_item(root_data.get_line_setting_object, 'e') == 'enabled' ? true : false
       const get_available_for_all_tags_object = root_data.get_available_for_all_tags_object == null ? 'enabled': this.get_selected_item(root_data.get_available_for_all_tags_object, 'e')
 
+      const recommended_videopost_threshold = root_data.data['recommended_videopost_threshold'] || 10
+      const recommended_video_threshold = root_data.data['recommended_video_threshold'] || 20
+      const recommended_audiopost_threshold = root_data.data['recommended_audiopost_threshold'] || 10
+      const recommended_audio_threshold = root_data.data['recommended_audio_threshold'] || 20
+
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
         // this.prompt_top_notification('language: '+my_language, 5000)
@@ -18468,7 +18487,24 @@ class App extends Component {
 
       console.log('apppage', 'theme', get_theme_stage_tags_object)
 
-      this.setState({allowed_countries: allowed_countries, logo_title: logo_title, selected_dark_emblem_country: selected_dark_emblem_country, get_theme_stage_tags_object: get_theme_stage_tags_object, get_content_channeling_tags_object: get_content_channeling_tags_object, beacon_chain_url: beacon_chain_url, e5s: e5s, ether_data: ether_data, dialer_addresses:dialer_addresses, theme_images:theme_images, line_setting:line_setting, get_available_for_all_tags_object: get_available_for_all_tags_object})
+      this.setState({
+        allowed_countries: allowed_countries, 
+        logo_title: logo_title, 
+        selected_dark_emblem_country: selected_dark_emblem_country, 
+        get_theme_stage_tags_object: get_theme_stage_tags_object, 
+        get_content_channeling_tags_object: get_content_channeling_tags_object, 
+        beacon_chain_url: beacon_chain_url, 
+        e5s: e5s, 
+        ether_data: ether_data, 
+        dialer_addresses:dialer_addresses, 
+        theme_images:theme_images, 
+        line_setting:line_setting, 
+        get_available_for_all_tags_object: get_available_for_all_tags_object, 
+        recommended_videopost_threshold:recommended_videopost_threshold, 
+        recommended_video_threshold:recommended_video_threshold, 
+        recommended_audiopost_threshold:recommended_audiopost_threshold, 
+        recommended_audio_threshold:recommended_audio_threshold,
+      })
 
       localStorage.setItem("logo_title", logo_title);
       localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
