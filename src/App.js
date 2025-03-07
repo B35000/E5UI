@@ -17831,7 +17831,6 @@ class App extends Component {
     try{
       const wallet = await this.generate_arweave_wallet(seed)
       const address = wallet.address
-      // const balance = await arweave.wallets.getBalance(wallet.address)
       const balance = await this.fetch_arweave_balance(wallet.address)
       const fees = await this.estimate_arweave_network_fees('-zdLm14FOLtTWxTEVzhh2N9AGCnW_-O_6DIcLxgk-W0')
 
@@ -17851,12 +17850,21 @@ class App extends Component {
   }
 
   estimate_arweave_network_fees = async (target) => {
-    const key = await arweave.wallets.generate();
-    const tx = await arweave.createTransaction({
-      target: target,
-      quantity: arweave.ar.arToWinston('1')
-    }, key);
-    return tx.reward
+    //https://arweave.net/price/{bytes}/{target}
+    try{
+      const response = await fetch(`https://arweave.net/price/0/${target}`);
+      const winstonBalance = await response.text();
+      return bigInt(winstonBalance)
+    }catch(e){
+      console.log('coin', e)
+      return 0
+    }
+    // const key = await arweave.wallets.generate();
+    // const tx = await arweave.createTransaction({
+    //   target: target,
+    //   quantity: arweave.ar.arToWinston('1')
+    // }, key);
+    // return tx.reward
   }
 
   update_arweave_balance = async (clone) => {
