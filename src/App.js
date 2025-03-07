@@ -18587,13 +18587,24 @@ class App extends Component {
 
     this.load_rpc_times(e5)
 
-    var clone = structuredClone(this.state.account_balance)
+    var s = JSON.stringify(this.state.account_balance, (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value
+    )
+    var clone = JSON.parse(s)
     clone[e5] = 0
     if(clone[e5] == null)this.setState({account_balance: clone});
 
     var balance = await web3.eth.getBalance(address_account.address)
-    var clone = structuredClone(this.state.account_balance)
-    clone[e5] = parseInt(balance)
+    var t = JSON.stringify(this.state.account_balance, (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value
+    )
+    var clone = JSON.parse(t)
+    console.log('bal', balance)
+    clone[e5] = bigInt(balance.toString())
     this.setState({account_balance: clone});
     if(is_syncing)this.inc_synch_progress()
    
