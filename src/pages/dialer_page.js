@@ -80,6 +80,7 @@ class DialerPage extends Component {
 
         get_available_for_all_tags_object:this.get_available_for_all_tags_object(),
         get_audio_video_recommendation_threshold_setting_object:this.get_audio_video_recommendation_threshold_setting_object(),
+        get_custom_background_images_object:this.get_custom_background_images_object(),
     };
 
 
@@ -206,12 +207,15 @@ class DialerPage extends Component {
     }
 
     get_line_setting_object(){
+        const line_setting = this.props.app_state.line_setting
+        var pos = ['e', 'enabled'].indexOf(line_setting)
+        if(pos == -1) pos = 0
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'enabled'], [0]
+                ['or','',0], ['e', 'enabled'], [pos]
             ],
         };
     }
@@ -237,6 +241,20 @@ class DialerPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e', 'videopost_threshold', 'video_threshold', 'audiopost_threshold', 'audio_threshold'], [1]
+            ],
+        };
+    }
+
+    get_custom_background_images_object(){
+        const theme_images_enabled = this.props.app_state.theme_images_enabled
+        var pos = ['e', 'enabled'].indexOf(theme_images_enabled)
+        if(pos == -1) pos = 0
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', 'enabled'], [0]
             ],
         };
     }
@@ -510,6 +528,13 @@ class DialerPage extends Component {
                 {this.render_detail_item('4', {'text':'Enable access for all countries.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_available_for_all_tags_object} tag_size={'l'} when_tags_updated={this.when_get_available_for_all_tags_object.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Enable custom theme image background settings.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_custom_background_images_object} tag_size={'l'} when_tags_updated={this.when_get_custom_background_images_object.bind(this)} theme={this.props.theme}/>
+                
             </div>
         )
     }
@@ -1076,6 +1101,10 @@ class DialerPage extends Component {
 
             this.setState({data: clone})
         }
+    }
+
+    when_get_custom_background_images_object(tag_obj){
+        this.setState({get_custom_background_images_object: tag_obj})
     }
 
 

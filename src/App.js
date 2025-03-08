@@ -175,6 +175,91 @@ import shuffle_icon_darkyellow from './assets/shuffle_icon_darkyellow.png'
 import repeat_icon_darkyellow from './assets/repeat_icon_darkyellow.png'
 import letter_darkyellow from './assets/letter_darkyellow.png'
 
+import alert_icon_darkgreen from './assets/alert_icon_darkgreen.png'
+import add_icon_darkgreen from './assets/add_icon_darkgreen.png'
+import background_darkgreen from './assets/background_green.png'
+import job_icon_darkgreen from './assets/job_icon_darkgreen.png'
+import explore_icon_darkgreen from './assets/explore_icon_darkgreen.png'
+import wallet_icon_darkgreen from './assets/wallet_icon_darkgreen.png'
+import stack_icon_darkgreen from './assets/stack_icon_darkgreen.png'
+import close_icon_darkgreen from './assets/close_icon_darkgreen.png'
+import add_text_icon_darkgreen from './assets/add_text_darkgreen.png'
+import play_icon_darkgreen from './assets/play_icon_darkgreen.png'
+import pause_icon_darkgreen from './assets/pause_icon_darkgreen.png'
+import previous_icon_darkgreen from './assets/previous_icon_darkgreen.png'
+import next_icon_darkgreen from './assets/next_icon_darkgreen.png'
+import shuffle_icon_darkgreen from './assets/shuffle_icon_darkgreen.png'
+import repeat_icon_darkgreen from './assets/repeat_icon_darkgreen.png'
+import letter_darkgreen from './assets/letter_darkgreen.png'
+
+import alert_icon_darkred from './assets/alert_icon_darkred.png'
+import add_icon_darkred from './assets/add_icon_darkred.png'
+import background_darkred from './assets/background_red.png'
+import job_icon_darkred from './assets/job_icon_darkred.png'
+import explore_icon_darkred from './assets/explore_icon_darkred.png'
+import wallet_icon_darkred from './assets/wallet_icon_darkred.png'
+import stack_icon_darkred from './assets/stack_icon_darkred.png'
+import close_icon_darkred from './assets/close_icon_darkred.png'
+import add_text_icon_darkred from './assets/add_text_darkred.png'
+import play_icon_darkred from './assets/play_icon_darkred.png'
+import pause_icon_darkred from './assets/pause_icon_darkred.png'
+import previous_icon_darkred from './assets/previous_icon_darkred.png'
+import next_icon_darkred from './assets/next_icon_darkred.png'
+import shuffle_icon_darkred from './assets/shuffle_icon_darkred.png'
+import repeat_icon_darkred from './assets/repeat_icon_darkred.png'
+import letter_darkred from './assets/letter_darkred.png'
+
+import alert_icon_darkblue from './assets/alert_icon_darkblue.png'
+import add_icon_darkblue from './assets/add_icon_darkblue.png'
+import background_darkblue from './assets/background_blue.png'
+import job_icon_darkblue from './assets/job_icon_darkblue.png'
+import explore_icon_darkblue from './assets/explore_icon_darkblue.png'
+import wallet_icon_darkblue from './assets/wallet_icon_darkblue.png'
+import stack_icon_darkblue from './assets/stack_icon_darkblue.png'
+import close_icon_darkblue from './assets/close_icon_darkblue.png'
+import add_text_icon_darkblue from './assets/add_text_darkblue.png'
+import play_icon_darkblue from './assets/play_icon_darkblue.png'
+import pause_icon_darkblue from './assets/pause_icon_darkblue.png'
+import previous_icon_darkblue from './assets/previous_icon_darkblue.png'
+import next_icon_darkblue from './assets/next_icon_darkblue.png'
+import shuffle_icon_darkblue from './assets/shuffle_icon_darkblue.png'
+import repeat_icon_darkblue from './assets/repeat_icon_darkblue.png'
+import letter_darkblue from './assets/letter_darkblue.png'
+
+import alert_icon_darkpink from './assets/alert_icon_darkpink.png'
+import add_icon_darkpink from './assets/add_icon_darkpink.png'
+import background_darkpink from './assets/background_pink.png'
+import job_icon_darkpink from './assets/job_icon_darkpink.png'
+import explore_icon_darkpink from './assets/explore_icon_darkpink.png'
+import wallet_icon_darkpink from './assets/wallet_icon_darkpink.png'
+import stack_icon_darkpink from './assets/stack_icon_darkpink.png'
+import close_icon_darkpink from './assets/close_icon_darkpink.png'
+import add_text_icon_darkpink from './assets/add_text_darkpink.png'
+import play_icon_darkpink from './assets/play_icon_darkpink.png'
+import pause_icon_darkpink from './assets/pause_icon_darkpink.png'
+import previous_icon_darkpink from './assets/previous_icon_darkpink.png'
+import next_icon_darkpink from './assets/next_icon_darkpink.png'
+import shuffle_icon_darkpink from './assets/shuffle_icon_darkpink.png'
+import repeat_icon_darkpink from './assets/repeat_icon_darkpink.png'
+import letter_darkpink from './assets/letter_darkpink.png'
+
+import alert_icon_darkorange from './assets/alert_icon_darkorange.png'
+import add_icon_darkorange from './assets/add_icon_darkorange.png'
+import background_darkorange from './assets/background_orange.png'
+import job_icon_darkorange from './assets/job_icon_darkorange.png'
+import explore_icon_darkorange from './assets/explore_icon_darkorange.png'
+import wallet_icon_darkorange from './assets/wallet_icon_darkorange.png'
+import stack_icon_darkorange from './assets/stack_icon_darkorange.png'
+import close_icon_darkorange from './assets/close_icon_darkorange.png'
+import add_text_icon_darkorange from './assets/add_text_darkorange.png'
+import play_icon_darkorange from './assets/play_icon_darkorange.png'
+import pause_icon_darkorange from './assets/pause_icon_darkorange.png'
+import previous_icon_darkorange from './assets/previous_icon_darkorange.png'
+import next_icon_darkorange from './assets/next_icon_darkorange.png'
+import shuffle_icon_darkorange from './assets/shuffle_icon_darkorange.png'
+import repeat_icon_darkorange from './assets/repeat_icon_darkorange.png'
+import letter_darkorange from './assets/letter_darkorange.png'
+
 import e5_logo_light from './assets/e5_logo_light.png'
 import e5_logo_dark from './assets/e5_logo_dark.png'
 import e5_logo_green from './assets/e5_logo_green.png'
@@ -189,6 +274,69 @@ import e5_logo_pink from './assets/e5_logo_pink.png'
 import e5_logo_darkpink from './assets/e5_logo_darkpurple.png'
 import e5_logo_orange from './assets/e5_logo_orange.png'
 import e5_logo_darkorange from './assets/e5_logo_darkorange.png'
+
+import darkblue1 from './assets/darkblue1.jpg'
+import darkblue2 from './assets/darkblue2.jpg'
+import darkblue3 from './assets/darkblue3.jpg'
+import darkblue4 from './assets/darkblue4.jpg'
+import darkblue5 from './assets/darkblue5.jpg'
+import darkgreen1 from './assets/darkgreen1.jpg'
+import darkgreen2 from './assets/darkgreen2.jpg'
+import darkgreen3 from './assets/darkgreen3.jpg'
+import darkgreen4 from './assets/darkgreen4.jpg'
+import darkgreen5 from './assets/darkgreen5.jpg'
+import darkorange1 from './assets/darkorange1.jpg'
+import darkorange2 from './assets/darkorange2.jpg'
+import darkorange3 from './assets/darkorange3.jpg'
+import darkorange4 from './assets/darkorange4.jpg'
+import darkorange5 from './assets/darkorange5.jpg'
+import darkpink1 from './assets/darkpink1.jpg'
+import darkpink2 from './assets/darkpink2.jpg'
+import darkpink3 from './assets/darkpink3.jpg'
+import darkpink4 from './assets/darkpink4.jpg'
+import darkpink5 from './assets/darkpink5.jpg'
+import darkred1 from './assets/darkred1.jpg'
+import darkred2 from './assets/darkred2.jpg'
+import darkred3 from './assets/darkred3.jpg'
+import darkred4 from './assets/darkred4.jpg'
+import darkred5 from './assets/darkred5.jpg'
+import darkyellow1 from './assets/darkyellow1.jpg'
+import darkyellow2 from './assets/darkyellow2.jpg'
+import darkyellow3 from './assets/darkyellow3.jpg'
+import darkyellow4 from './assets/darkyellow4.jpg'
+import darkyellow5 from './assets/darkyellow5.jpg'
+import lightblue1 from './assets/lightblue1.jpg'
+import lightblue2 from './assets/lightblue2.jpg'
+import lightblue3 from './assets/lightblue3.jpg'
+import lightblue4 from './assets/lightblue4.jpg'
+import lightblue5 from './assets/lightblue5.jpg'
+import lightgreen1 from './assets/lightgreen1.jpg'
+import lightgreen2 from './assets/lightgreen2.jpg'
+import lightgreen3 from './assets/lightgreen3.jpg'
+import lightgreen4 from './assets/lightgreen4.jpg'
+import lightgreen5 from './assets/lightgreen5.jpg'
+import lightorange1 from './assets/lightorange1.jpg'
+import lightorange2 from './assets/lightorange2.jpg'
+import lightorange3 from './assets/lightorange3.jpg'
+import lightorange4 from './assets/lightorange4.jpg'
+import lightorange5 from './assets/lightorange5.jpg'
+import lightpink1 from './assets/lightpink1.jpg'
+import lightpink2 from './assets/lightpink2.jpg'
+import lightpink3 from './assets/lightpink3.jpg'
+import lightpink4 from './assets/lightpink4.jpg'
+import lightpink5 from './assets/lightpink5.jpg'
+import lightred1 from './assets/lightred1.jpg'
+import lightred2 from './assets/lightred2.jpg'
+import lightred3 from './assets/lightred3.jpg'
+import lightred4 from './assets/lightred4.jpg'
+import lightred5 from './assets/lightred5.jpg'
+import lightyellow1 from './assets/lightyellow1.jpg'
+import lightyellow2 from './assets/lightyellow2.jpg'
+import lightyellow3 from './assets/lightyellow3.jpg'
+import lightyellow4 from './assets/lightyellow4.jpg'
+import lightyellow5 from './assets/lightyellow5.jpg'
+// import  from './assets/'
+// import  from './assets/'
 // import  from './assets/'
 // import  from './assets/'
 
@@ -676,7 +824,7 @@ class App extends Component {
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
-    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, 
+    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false
   };
 
   get_static_assets(){
@@ -4065,6 +4213,7 @@ class App extends Component {
 
         'letter':letter,
         'e5_logo':e5_logo_light,
+        'backgrounds':[]
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
@@ -4103,6 +4252,7 @@ class App extends Component {
 
         'letter':letter,
         'e5_logo':e5_logo_dark,
+        'backgrounds':[]
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -4142,6 +4292,7 @@ class App extends Component {
 
         'letter':letter,
         'e5_logo':e5_logo_dark,
+        'backgrounds':[]
       }
     }
 
@@ -4183,6 +4334,7 @@ class App extends Component {
 
         'letter':letter_green,
         'e5_logo':e5_logo_green,
+        'backgrounds':[darkgreen1, darkgreen2, darkgreen3, darkgreen4, darkgreen5],
       }
     }
     if(theme == this.getLocale()['3056']/* 'light-green' */){
@@ -4204,23 +4356,24 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#c5e8d6','number_picker_label_text_color':'#01c601', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#c6e0b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkgreen, 'add_icon':add_icon_darkgreen, 'text_input_background':'#c6e0b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
-        'background':background_green, 'JobIcon':job_icon_green, 'ExploreIcon': explore_icon_green, 'WalletIcon':wallet_icon_green, 'StackIcon': stack_icon_green,
+        'background':background_darkgreen, 'JobIcon':job_icon_darkgreen, 'ExploreIcon': explore_icon_darkgreen, 'WalletIcon':wallet_icon_darkgreen, 'StackIcon': stack_icon_darkgreen,
 
-        'close':close_icon_green,
+        'close':close_icon_darkgreen,
         'clear':'',
-        'add_text':add_text_icon_green,
+        'add_text':add_text_icon_darkgreen,
 
-        'play':play_icon_green,
-        'pause':pause_icon_green,
-        'previous':previous_icon_green,
-        'next':next_icon_green,
-        'shuffle':shuffle_icon_green,
-        'repeat':repeat_icon_green,
+        'play':play_icon_darkgreen,
+        'pause':pause_icon_darkgreen,
+        'previous':previous_icon_darkgreen,
+        'next':next_icon_darkgreen,
+        'shuffle':shuffle_icon_darkgreen,
+        'repeat':repeat_icon_darkgreen,
 
-        'letter':letter_green,
+        'letter':letter_darkgreen,
         'e5_logo':e5_logo_darkgreen,
+        'backgrounds':[lightgreen1, lightgreen2, lightgreen3, lightgreen4, lightgreen5]
       }
     }
 
@@ -4262,6 +4415,7 @@ class App extends Component {
 
         'letter':letter_red,
         'e5_logo':e5_logo_red,
+        'backgrounds':[darkred1, darkred2, darkred3, darkred4, darkred5]
       }
     }
     if(theme == this.getLocale()['3058']/* 'light-red' */){
@@ -4283,23 +4437,24 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9d1d1','number_picker_label_text_color':'#c60b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#e0b8b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkred, 'add_icon':add_icon_darkred, 'text_input_background':'#e0b8b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
-        'background':background_red, 'JobIcon':job_icon_red, 'ExploreIcon': explore_icon_red, 'WalletIcon':wallet_icon_red, 'StackIcon': stack_icon_red,
+        'background':background_darkred, 'JobIcon':job_icon_darkred, 'ExploreIcon': explore_icon_darkred, 'WalletIcon':wallet_icon_darkred, 'StackIcon': stack_icon_darkred,
 
-        'close':close_icon_red,
+        'close':close_icon_darkred,
         'clear':'',
-        'add_text':add_text_icon_red,
+        'add_text':add_text_icon_darkred,
 
-        'play':play_icon_red,
-        'pause':pause_icon_red,
-        'previous':previous_icon_red,
-        'next':next_icon_red,
-        'shuffle':shuffle_icon_red,
-        'repeat':repeat_icon_red,
+        'play':play_icon_darkred,
+        'pause':pause_icon_darkred,
+        'previous':previous_icon_darkred,
+        'next':next_icon_darkred,
+        'shuffle':shuffle_icon_darkred,
+        'repeat':repeat_icon_darkred,
 
-        'letter':letter_red,
+        'letter':letter_darkred,
         'e5_logo':e5_logo_darkred,
+        'backgrounds':[lightred1, lightred2, lightred3, lightred4, lightred5]
       }
     }
 
@@ -4341,6 +4496,7 @@ class App extends Component {
 
         'letter':letter_blue,
         'e5_logo':e5_logo_blue,
+        'backgrounds':[darkblue1, darkblue2, darkblue3, darkblue4, darkblue5]
       }
     }
     if(theme == this.getLocale()['3060']/* 'light-blue' */){
@@ -4362,23 +4518,24 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#d1ebf9','number_picker_label_text_color':'#0181c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#b8d2e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkblue, 'add_icon':add_icon_darkblue, 'text_input_background':'#b8d2e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
-        'background':background_blue, 'JobIcon':job_icon_blue, 'ExploreIcon': explore_icon_blue, 'WalletIcon':wallet_icon_blue, 'StackIcon': stack_icon_blue,
+        'background':background_darkblue, 'JobIcon':job_icon_darkblue, 'ExploreIcon': explore_icon_darkblue, 'WalletIcon':wallet_icon_darkblue, 'StackIcon': stack_icon_darkblue,
 
-        'close':close_icon_blue,
+        'close':close_icon_darkblue,
         'clear':'',
-        'add_text':add_text_icon_blue,
+        'add_text':add_text_icon_darkblue,
 
-        'play':play_icon_blue,
-        'pause':pause_icon_blue,
-        'previous':previous_icon_blue,
-        'next':next_icon_blue,
-        'shuffle':shuffle_icon_blue,
-        'repeat':repeat_icon_blue,
+        'play':play_icon_darkblue,
+        'pause':pause_icon_darkblue,
+        'previous':previous_icon_darkblue,
+        'next':next_icon_darkblue,
+        'shuffle':shuffle_icon_darkblue,
+        'repeat':repeat_icon_darkblue,
 
-        'letter':letter_blue,
+        'letter':letter_darkblue,
         'e5_logo':e5_logo_darkblue,
+        'backgrounds':[lightblue1, lightblue2, lightblue3, lightblue4, lightblue5]
       }
     }
 
@@ -4420,6 +4577,7 @@ class App extends Component {
 
         'letter':letter_yellow,
         'e5_logo':e5_logo_yellow,
+        'backgrounds':[darkyellow1, darkyellow2, darkyellow3, darkyellow4, darkyellow5]
       }
     }
     if(theme == this.getLocale()['3062']/* 'light-yellow' */){
@@ -4458,6 +4616,7 @@ class App extends Component {
 
         'letter':letter_darkyellow,
         'e5_logo':e5_logo_darkyellow,
+        'backgrounds':[lightyellow1, lightyellow2, lightyellow3, lightyellow4, lightyellow5]
       }
     }
 
@@ -4499,6 +4658,7 @@ class App extends Component {
 
         'letter':letter_pink,
         'e5_logo':e5_logo_pink,
+        'backgrounds':[darkpink1, darkpink2, darkpink3, darkpink4, darkpink5]
       }
     }
     if(theme == this.getLocale()['3064']/* 'light-pink' */){
@@ -4520,23 +4680,24 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f2d1f9','number_picker_label_text_color':'#af01c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#d9b8e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkpink, 'add_icon':add_icon_darkpink, 'text_input_background':'#d9b8e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
-        'background':background_pink, 'JobIcon':job_icon_pink, 'ExploreIcon': explore_icon_pink, 'WalletIcon':wallet_icon_pink, 'StackIcon': stack_icon_pink,
+        'background':background_darkpink, 'JobIcon':job_icon_darkpink, 'ExploreIcon': explore_icon_darkpink, 'WalletIcon':wallet_icon_darkpink, 'StackIcon': stack_icon_darkpink,
 
-        'close':close_icon_pink,
+        'close':close_icon_darkpink,
         'clear':'',
-        'add_text':add_text_icon_pink,
+        'add_text':add_text_icon_darkpink,
 
-        'play':play_icon_pink,
-        'pause':pause_icon_pink,
-        'previous':previous_icon_pink,
-        'next':next_icon_pink,
-        'shuffle':shuffle_icon_pink,
-        'repeat':repeat_icon_pink,
+        'play':play_icon_darkpink,
+        'pause':pause_icon_darkpink,
+        'previous':previous_icon_darkpink,
+        'next':next_icon_darkpink,
+        'shuffle':shuffle_icon_darkpink,
+        'repeat':repeat_icon_darkpink,
 
-        'letter':letter_pink,
+        'letter':letter_darkpink,
         'e5_logo':e5_logo_darkpink,
+        'backgrounds':[lightpink1, lightpink2, lightpink3, lightpink4, lightpink5]
       }
     }
 
@@ -4578,6 +4739,7 @@ class App extends Component {
 
         'letter':letter_orange,
         'e5_logo':e5_logo_orange,
+        'backgrounds':[darkorange1, darkorange2, darkorange3, darkorange4, darkorange5]
       }
     }
     if(theme == this.getLocale()['3066']/* 'light-orange' */){
@@ -4599,23 +4761,24 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9ebd1','number_picker_label_text_color':'#c67b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#e0d3b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkorange, 'add_icon':add_icon_darkorange, 'text_input_background':'#e0d3b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
-        'background':background_orange, 'JobIcon':job_icon_orange, 'ExploreIcon': explore_icon_orange, 'WalletIcon':wallet_icon_orange, 'StackIcon': stack_icon_orange,
+        'background':background_darkorange, 'JobIcon':job_icon_darkorange, 'ExploreIcon': explore_icon_darkorange, 'WalletIcon':wallet_icon_darkorange, 'StackIcon': stack_icon_darkorange,
 
-        'close':close_icon_orange,
+        'close':close_icon_darkorange,
         'clear':'',
-        'add_text':add_text_icon_orange,
+        'add_text':add_text_icon_darkorange,
 
-        'play':play_icon_orange,
-        'pause':pause_icon_orange,
-        'previous':previous_icon_orange,
-        'next':next_icon_orange,
-        'shuffle':shuffle_icon_orange,
-        'repeat':repeat_icon_orange,
+        'play':play_icon_darkorange,
+        'pause':pause_icon_darkorange,
+        'previous':previous_icon_darkorange,
+        'next':next_icon_darkorange,
+        'shuffle':shuffle_icon_darkorange,
+        'repeat':repeat_icon_darkorange,
 
-        'letter':letter_orange,
+        'letter':letter_darkorange,
         'e5_logo':e5_logo_darkorange,
+        'backgrounds':[lightorange1, lightorange2, lightorange3, lightorange4, lightorange5]
       }
     }
 
@@ -6441,7 +6604,7 @@ class App extends Component {
 
 
   when_device_theme_changed(theme){
-    this.setState({theme: this.get_theme_data(theme)})
+    this.setState({theme: this.get_theme_data(theme), theme_image:''})
     var me = this;
     setTimeout(function() {
         me.set_cookies()
@@ -6918,7 +7081,7 @@ class App extends Component {
   }
 
   when_device_theme_image_changed(item){
-    this.setState({theme_image: item})
+    this.setState({theme_image: (this.state.theme_image == item ? '' : item)})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -18476,6 +18639,8 @@ class App extends Component {
       const recommended_audiopost_threshold = root_data.data['recommended_audiopost_threshold'] || 10
       const recommended_audio_threshold = root_data.data['recommended_audio_threshold'] || 20
 
+      const theme_images_enabled = root_data.get_custom_background_images_object == null ? false: (this.get_selected_item(root_data.get_custom_background_images_object, 'e') == 'enabled' ? true: false)
+
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
         // this.prompt_top_notification('language: '+my_language, 5000)
@@ -18512,6 +18677,7 @@ class App extends Component {
         recommended_video_threshold:recommended_video_threshold, 
         recommended_audiopost_threshold:recommended_audiopost_threshold, 
         recommended_audio_threshold:recommended_audio_threshold,
+        theme_images_enabled:theme_images_enabled
       })
 
       localStorage.setItem("logo_title", logo_title);

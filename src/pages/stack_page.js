@@ -183,7 +183,7 @@ class StackPage extends Component {
 
 
     get_theme_tags_object(){
-        const theme_stage = this.props.app_state.get_theme_stage_tags_object
+        var theme_stage = this.props.app_state.get_theme_stage_tags_object
         const my_state_color = this.get_my_state_color('dark');
         const my_state_color_light = this.get_my_state_color('light');
         const my_state_code = this.props.app_state.device_country_code
@@ -203,6 +203,7 @@ class StackPage extends Component {
             obj['lightcolor-available'] = light;
         }
 
+        // var theme_stage = 'all-available'
         var final_array = obj[theme_stage]
         return{
             'i':{
@@ -8299,6 +8300,7 @@ class StackPage extends Component {
     }
 
     render_theme_image_setting_if_any(){
+        if(this.props.app_state.theme_images_enabled == false) return;
         var selected_theme = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
 
         const findKeyByValue = (obj, value) => {
@@ -8308,8 +8310,11 @@ class StackPage extends Component {
         var name_key = findKeyByValue(this.props.app_state.loc, selected_theme)
         var english_theme_name = this.props.app_state.all_locales['en'][name_key]
 
-        if(this.props.app_state.theme_images[english_theme_name] != null && this.props.app_state.theme_images[english_theme_name].length > 0){
+        var default_items = this.props.app_state.theme['backgrounds']
+
+        if(default_items.length > 0 || (this.props.app_state.theme_images[english_theme_name] != null && this.props.app_state.theme_images[english_theme_name].length > 0)){
             var items = this.props.app_state.theme_images[english_theme_name]
+            items = items == null ? default_items : items.concat(default_items)
             return(
                 <div>
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593eu']/* 'Background Theme' */, 'details':this.props.app_state.loc['1593ev']/* 'Set the background theme image for the webapp. */, 'size':'l'})}
@@ -8332,14 +8337,14 @@ class StackPage extends Component {
         if(this.props.app_state.theme_image == item){
             return(
                 <div>
-                    <img alt="" src={item} style={{height:50 ,width:'auto', 'border-radius':'8px'}} />
+                    <img alt="" src={item} style={{height:100 ,width:100, 'border-radius':'8px'}} />
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '4px 5px 0px 5px'}}/>
                 </div>
             )
         }else{
             return(
                 <div>
-                    <img alt="" src={item} style={{height:50 ,width:'auto', 'border-radius':'8px'}} />
+                    <img alt="" src={item} style={{height:100 ,width:100, 'border-radius':'8px'}} />
                 </div>
             )
         }
@@ -10871,7 +10876,7 @@ class StackPage extends Component {
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg" onChange ={this.when_image_gif_picked.bind(this)}/>
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)}/>
                     </div>
                 </div>
             )
@@ -10928,7 +10933,7 @@ class StackPage extends Component {
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
                     </div>
                 </div>
             )
@@ -11093,16 +11098,7 @@ class StackPage extends Component {
 
                 if(type == 'image'){
                     var imageFile = e.target.files[i];
-                    if(this.get_upload_file_size_limit() == this.state.default_upload_limit){
-                        imageCompression(imageFile, { maxSizeMB: (this.state.default_upload_limit /(1024*1024)), maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
-                            reader.readAsDataURL(compressedFile);
-                        })
-                        .catch(function (error) {
-                            console.log(error.message);
-                        });
-                    }else{
-                        reader.readAsDataURL(imageFile);
-                    }
+                    reader.readAsDataURL(imageFile);
                 }
                 else if(type == 'audio'){
                     var audioFile = e.target.files[i];

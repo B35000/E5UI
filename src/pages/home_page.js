@@ -389,10 +389,10 @@ class home_page extends Component {
             var middle = this.props.height-112;
             return (
                 <div style={{}}>
-                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px'}}>
+                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         {this.render_side_bar()}
 
-                        <div className="col-11" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}} >
+                        <div className="col-11" style={{}} >
                             <div style={{height:top_bar, 'padding':'9px 0px 0px 5px'}}>
                                 {this.render_top_tag_bar(size)}
                             </div>
@@ -412,10 +412,10 @@ class home_page extends Component {
             var middle = this.props.height-113;
             return(
                 <div style={{}}>
-                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px'}}>
+                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         {this.render_side_bar()}
 
-                        <div className="col-11" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}} >
+                        <div className="col-11" style={{}} >
                             <div style={{height:top_bar, width:'99%', 'padding':'9px 0px 0px 5px'}}>
                                 {this.render_top_tag_bar(size)}
                             </div>
@@ -619,10 +619,10 @@ class home_page extends Component {
         var bar_width = 77
         return(
             <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
-                <div style={{height:15, width:bar_width, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid'}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.2}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.4}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.6}}/>
+                <div style={{height:15, width:bar_width, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid', opacity:0.15}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.3}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.5}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.7}}/>
                 <div style={{height:(this.props.height-89), width:bar_width, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px'}}>
                     {this.render_navbar_button_group(size)}
                 </div>
