@@ -491,7 +491,8 @@ class NewMailPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_content()}
+                        {this.render_text_part()}
+                        {this.render_entered_texts()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}

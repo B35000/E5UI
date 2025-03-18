@@ -4887,16 +4887,16 @@ class StackPage extends Component {
 
     format_enter_contract_object(t){
         var obj = [/* enter a contract */
-        [30000, 3, 0],
-        [], [],/* contract ids */
-        []/* expiry time (seconds) */
-      ];
+            [30000, 3, 0],
+            [], [],/* contract ids */
+            []/* expiry time (seconds) */
+        ];
 
-      obj[1].push(t.contract_item['id'])
-      obj[2].push(23)
-      obj[3].push(t.interactible_timestamp)
+        obj[1].push(t.contract_item['id'])
+        obj[2].push(23)
+        obj[3].push(t.interactible_timestamp.toString().toLocaleString('fullwide', {useGrouping:false}))
 
-      return obj
+        return obj
     }
 
     format_extend_contract_object(t){
