@@ -1435,7 +1435,7 @@ class AudioDetailSection extends Component {
             <div style={{width:100, height:'auto'}}>
                 <img src={this.get_image_from_file(image)} alt="" style={{height:'auto' ,width:100,'border-radius': '10px'}}/>
                 <div style={{height:5}}/>
-                <p style={{'color': this.props.theme['primary_text_color'], width:100, 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
+                <p style={{'color': this.props.theme['primary_text_color'], width:100, 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 15)}</p>
             </div>
         )
     }
@@ -1529,7 +1529,7 @@ class AudioDetailSection extends Component {
                 <img src={this.get_image_from_file(image)} alt="" style={{height:'auto' ,width:100,'border-radius': '10px'}}/>
                 <div style={{height:5}}/>
                 <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
-                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>
+                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 15)}</p>
             </div>
         )
     }
@@ -1656,7 +1656,7 @@ class AudioDetailSection extends Component {
             <div style={{width:w, height:'auto'}}>
                 <img src={this.get_image_from_file(image)} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
                 <div style={{height:5}}/>
-                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
+                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 15)}</p>
                 <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>
             </div>
         )

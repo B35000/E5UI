@@ -15534,8 +15534,10 @@ class App extends Component {
             song_ids.push(song['song_id'])
           }
         }else{
-          songs.push(song)
-          song_ids.push(song['song_id'])
+          if(this.is_song_available_for_playing(song)){
+            songs.push(song)
+            song_ids.push(song['song_id'])
+          }
         }
       }
       if(!should_start_adding && song['song_id'] == item['song_id']){
@@ -15564,8 +15566,10 @@ class App extends Component {
                 song_ids.push(song['song_id'])
               }
             }else{
-              songs.push(song)
-              song_ids.push(song['song_id'])
+              if(this.is_song_available_for_playing(song)){
+                songs.push(song)
+                song_ids.push(song['song_id'])
+              }
             }
           }
         });
@@ -15574,6 +15578,14 @@ class App extends Component {
 
 
     return songs
+  }
+
+  is_song_available_for_playing(song){
+    var plays = this.state.song_plays[song['song_id']] == null ? 0 : this.state.song_plays[song['song_id']].length
+    if(!this.is_song_available_for_adding_to_playlist(song) && plays >= song['songs_free_plays_count']){
+        return false
+    }
+    return true
   }
 
   is_post_taken_down_for_sender(object){
