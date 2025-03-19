@@ -1266,7 +1266,8 @@ class DialogPage extends Component {
                 )
             }
             else if(data['type'] == 'video'){
-                var video = data['data']
+                var video = encodeURI(data['data'])
+                console.log('videoimage', ''+video)
                 return(
                     <div style={{'display': 'flex', 'align-items':'center','justify-content':'center','padding': '0px 0px 0px 5px', width: '99%'}}>
                         <div>

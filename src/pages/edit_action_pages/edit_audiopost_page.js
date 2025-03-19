@@ -547,11 +547,7 @@ class EditAudioPage extends Component {
 
 
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ai']/* 'Post Comment Section.' */, 'details':this.props.app_state.loc['a311aj']/* 'If set to disabled, senders cannot add comments in the post.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                
 
 
 

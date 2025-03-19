@@ -11417,7 +11417,7 @@ class StackPage extends Component {
                 )
             }
             else if(data['type'] == 'video'){
-                var video = data['data']
+                var video = encodeURI(data['data'])
                 var font_size = ['15px', '12px', 19];
                 var formatted_size = this.format_data_size(data['size'])
                 var fs = formatted_size['size']+' '+formatted_size['unit']

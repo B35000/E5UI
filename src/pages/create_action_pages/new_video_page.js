@@ -2421,7 +2421,6 @@ class NewVideoPage extends Component {
                         <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('video', 'create_video_pick_video_file', 1)}/>
                     </div>
                 </div>
-                
             </div>
         )
     }

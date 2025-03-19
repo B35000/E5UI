@@ -824,7 +824,7 @@ class App extends Component {
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
-    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false
+    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[]
   };
 
   get_static_assets(){
@@ -2849,6 +2849,7 @@ class App extends Component {
       subscribed_nitros: this.state.subscribed_nitros,
 
       uncommitted_upload_cids: this.state.uncommitted_upload_cids,
+      deleted_files:this.state.deleted_files,
     }
   }
 
@@ -2959,6 +2960,8 @@ class App extends Component {
       var theme_image = state.theme_image
       var subscribed_nitros = state.subscribed_nitros
       var uncommitted_upload_cids = state.uncommitted_upload_cids
+
+      var deleted_files = state.deleted_files
       
 
       this.setState({
@@ -3012,7 +3015,8 @@ class App extends Component {
         loc: (all_locales[my_language] == null ? this.state.loc : all_locales[my_language]),
         theme_image: theme_image,
         subscribed_nitros: subscribed_nitros,
-        uncommitted_upload_cids: uncommitted_upload_cids
+        uncommitted_upload_cids: uncommitted_upload_cids,
+        deleted_files:deleted_files
       })
       var me = this;
       setTimeout(function() {
@@ -13785,9 +13789,11 @@ class App extends Component {
   delete_file(ecid){
     this.open_dialog_bottomsheet()
     var cid_clone = this.state.uploaded_data_cids.slice()
+    var deleted_files_clone = this.state.deleted_files.slice()
     var index = cid_clone.indexOf(ecid['full'])
-    if(index != -1) cid_clone.splice(index, 1)
-    this.setState({ uploaded_data_cids: cid_clone, update_data_in_E5: true})
+    if(index != -1) cid_clone.splice(index, 1);
+    deleted_files_clone.push(ecid['full'])
+    this.setState({ uploaded_data_cids: cid_clone, deleted_files: deleted_files_clone, update_data_in_E5: true})
     this.prompt_top_notification(this.getLocale()['3055u']/* File forgotten. Run a transaction on E5 to make it permanent. */, 7000)
     var me = this;
     setTimeout(function() {
@@ -14085,7 +14091,7 @@ class App extends Component {
     }
     else if(function_name == 'create_video_pick_video_file'){
       this.new_video_page.current?.when_video_file_picked(picked_files)
-      this.new_video_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_videopost_page.current?.when_video_file_picked(picked_files)
     }
 
     
@@ -16040,7 +16046,7 @@ class App extends Component {
       await this.fetch_uploaded_data_from_ipfs([video], false)
       if(i == 0){
         //if its the video thats to be played
-        await this.wait(150)
+        await this.wait(750)
         this.full_video_page.current?.start_playing()
       }
     }
@@ -19521,9 +19527,10 @@ class App extends Component {
       var section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
       var cids = section_cid_data['cids'];
 
-      var clone = this.state.uploaded_data_cids.slice();
+      // var clone = this.state.uploaded_data_cids.slice();
+      var clone = []
       cids.forEach(cid => {
-        if(!clone.includes(cid)){
+        if(!clone.includes(cid) && !this.state.deleted_files.includes(cid)){
           clone.push(cid)
         }
       });

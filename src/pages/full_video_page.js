@@ -31,6 +31,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class FullVideoPage extends Component {
     
     state = {
@@ -186,7 +193,7 @@ class FullVideoPage extends Component {
         var ecid_obj = this.get_cid_split(video_file)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false;
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        if(data['data'] == null) return false
+        if(data == null || data['data'] == null) return false
         return true
     }
 
@@ -197,7 +204,7 @@ class FullVideoPage extends Component {
         var ecid_obj = this.get_cid_split(video_file)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return null;
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        return data['data']
+        return encodeURI(data['data'])
     }
 
 
@@ -218,6 +225,7 @@ class FullVideoPage extends Component {
 
 
     video_object(){
+        // console.log('full_video_page', this.has_file_loaded(), this.state.is_player_resetting)
         if(!this.has_file_loaded() || this.state.is_player_resetting == true){
             return(
                 <div style={{height: 350, width: this.state.screen_width, 'background-color':this.props.theme['view_group_card_item_background'], 'border-radius':'10px', 'display': 'flex', 'align-items':'center','justify-content':'center' }}>
@@ -266,6 +274,7 @@ class FullVideoPage extends Component {
     }
 
     start_playing(){
+        console.log('full_video_page', 'started playing')
         this.setState({is_player_resetting:false})
         var me = this;
         setTimeout(function() {
@@ -520,6 +529,40 @@ class FullVideoPage extends Component {
         )
     }
 
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end(data['name'])
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
     when_uploaded_pdf_item_clicked(item){
         this.props.when_pdf_file_opened(item)
     }
@@ -608,7 +651,7 @@ class FullVideoPage extends Component {
         var object_item = this.get_post_details_data(object)
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
-                <div style={{padding:'10px 10px 5px 10px'}}>
+                <div style={{padding:'0px 10px 5px 10px'}}>
                     {this.render_detail_item('8', object_item['id2'])}
                     {this.render_detail_item('0')}
                     <div>
