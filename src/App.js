@@ -15601,7 +15601,7 @@ class App extends Component {
       await this.fetch_uploaded_data_from_ipfs([song], false)
       if(i == 0){
         //if its the song thats to be played
-        await this.wait(150)
+        await this.wait(750)
         this.audio_pip_page.current?.start_playing()
         this.setState({play_pause_state: 1/* playing */})
       }
@@ -19129,7 +19129,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ALBUM COLLECTION DATA ------------------------------------------- */
-    await this.get_my_collection_data(web3, E52contractInstance, e5, account)
+    await this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address)
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -19140,7 +19140,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- PLAYLIST COLLECTION DATA ------------------------------------------- */
-    await this.get_my_playlists_data(web3, E52contractInstance, e5, account)
+    await this.get_my_playlists_data(web3, E52contractInstance, e5, account, address_account.address)
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -19173,7 +19173,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY VIDEOS DATA ------------------------------------------- */
-    await this.get_my_videos_data(web3, E52contractInstance, e5, account)
+    await this.get_my_videos_data(web3, E52contractInstance, e5, account, address_account.address)
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -19679,12 +19679,13 @@ class App extends Component {
     }
   }
 
-  get_my_collection_data = async (web3, E52contractInstance, e5, account) => {
+  get_my_collection_data = async (web3, E52contractInstance, e5, account, address_account) => {
     var my_acquired_album_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5})
 
     if(my_acquired_album_data_events.length > 0){
       var latest_event = my_acquired_album_data_events[my_acquired_album_data_events.length - 1];
-      var my_acquired_album_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      // console.log('my_collection_data', latest_event.returnValues.p4)
+      var my_acquired_album_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
       var my_albums = my_acquired_album_data['my_albums']
       var my_tracks = my_acquired_album_data['my_tracks']
       var timestamp = my_acquired_album_data['time']
@@ -19693,7 +19694,7 @@ class App extends Component {
         this.my_collection_timestamp = 0
       }
 
-      if(this.my_collection_account != account && this.my_collection_account != 1 && this.my_collection_account != null){
+      if(this.my_collection_account != address_account && this.my_collection_account != null){
         this.my_collection_timestamp = 0
       }
 
@@ -19704,10 +19705,10 @@ class App extends Component {
       }
     }
 
-    this.my_collection_account = account
+    this.my_collection_account = address_account
   }
 
-  get_my_playlists_data = async (web3, E52contractInstance, e5, account) => {
+  get_my_playlists_data = async (web3, E52contractInstance, e5, account, address_account) => {
     var playlists_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6})
 
     if(playlists_event_data.length > 0){
@@ -19716,14 +19717,14 @@ class App extends Component {
       var loaded_playlists = playlists_data['playlists']
       
       var clone = structuredClone(this.state.my_playlists)
-      if(this.my_playlist_account != account && this.my_playlist_account != 1 && this.my_playlist_account != null){
+      if(this.my_playlist_account != address_account && this.my_playlist_account != null){
         clone = []
       }
       var new_playlist = this.combine_playlists(loaded_playlists, clone)
       this.setState({my_playlists: new_playlist})
     }
 
-    this.my_playlist_account = account
+    this.my_playlist_account = address_account
   }
 
   combine_playlists(loaded_playlists, clone){
@@ -19772,12 +19773,12 @@ class App extends Component {
     this.my_plays_account = account
   }
 
-  get_my_videos_data = async (web3, E52contractInstance, e5, account) => {
-    var my_acquired_videos_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:8})
+  get_my_videos_data = async (web3, E52contractInstance, e5, account, address_account) => {
+    var my_acquired_videos_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:11})
 
     if(my_acquired_videos_data_events.length > 0){
       var latest_event = my_acquired_videos_data_events[my_acquired_videos_data_events.length - 1];
-      var my_acquired_video_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var my_acquired_video_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
       var my_videoposts = my_acquired_video_data['my_videoposts']
       var my_videos = my_acquired_video_data['my_videos']
       var timestamp = my_acquired_video_data['time']
@@ -19786,7 +19787,7 @@ class App extends Component {
         this.my_video_collection_timestamp = 0
       }
 
-      if(this.my_video_collection_account != account && this.my_video_collection_account != 1 && this.my_video_collection_account != null){
+      if(this.my_video_collection_account != address_account && this.my_video_collection_account != null){
         this.my_video_collection_timestamp = 0
       }
 
@@ -19796,7 +19797,7 @@ class App extends Component {
       }
     }
 
-    this.my_video_collection_account = account
+    this.my_video_collection_account = address_account
   }
 
   get_my_nitro_link_data = async (web3, E52contractInstance, e5, account) => {

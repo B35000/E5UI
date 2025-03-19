@@ -407,15 +407,7 @@ class FullAudioPage extends Component {
 
 
 
-    has_file_loaded(){
-        var current_song = this.state.songs[this.state.pos]
-        var audio_file = current_song['track']
-        var ecid_obj = this.get_cid_split(audio_file)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
-        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        if(data['data'] == null) return false
-        return true
-    }
+
 
     play_pause(){
         this.props.play_pause()
@@ -479,7 +471,30 @@ class FullAudioPage extends Component {
     }
 
 
+    get_audio_file(){
+        var current_song = this.state.songs[this.state.pos]
+        var audio_file = current_song['track']
+        var ecid_obj = this.get_cid_split(audio_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data != null && data['data'] == null) return null
+        return encodeURI(data['data'])
+    }
 
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
 
     render_track_details(){
         var song = this.state.songs[this.state.pos]
@@ -498,6 +513,7 @@ class FullAudioPage extends Component {
         if(metadata['format'] == null){
            metadata['format'] = {} 
         }
+        var track_url = this.get_audio_file()
         return(
             <div>
                 {this.render_detail_item('3', {'title':object['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2977']/* Taken from */, 'size':'l'})}
@@ -535,6 +551,8 @@ class FullAudioPage extends Component {
 
                 {this.render_detail_item('3', {'details':(song['credits'] == null ? '': song['credits']), 'title':this.props.app_state.loc['a311bz']/* Credits */, 'size':'l'})}
                 <div style={{height:10}}/>
+
+                {this.render_detail_item('4', {'text':track_url, 'textsize':'13px', 'font':'Sans-serif'})}
             </div>
         )
     }
@@ -665,7 +683,7 @@ class FullAudioPage extends Component {
         var font_size = ['15px', '12px', 19, 50];
         var explicit_selection = item['explicit'] == null ? 0 : this.get_selected_item2(item['explicit'], 'e')
         var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
-        var song_title = explicit_text + item['song_title']
+        var song_title = explicit_text + item['song_title'] + ( this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
         var song_details = item['song_composer']
         var song_length = '▶ '+this.get_song_duration(item['basic_data'])
         return(
@@ -688,6 +706,14 @@ class FullAudioPage extends Component {
                     </div>
             </div>
         )
+    }
+
+    is_song_available_for_adding_to_playlist(song){
+        var my_songs = this.props.app_state.my_tracks
+        if(my_songs.includes(song['song_id'])){
+            return true
+        }
+        return false
     }
 
     render_upcoming_songs(){
@@ -715,7 +741,7 @@ class FullAudioPage extends Component {
         if(items.length == 0){
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_empty_views(4)}
+                    {this.render_empty_views(3)}
                 </div>
             )
         }
@@ -738,7 +764,7 @@ class FullAudioPage extends Component {
         if(items2.length == 0){
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_empty_views(4)}
+                    {this.render_empty_views(3)}
                 </div>
             )
         }
@@ -786,7 +812,7 @@ class FullAudioPage extends Component {
     }
 
     render_song(item){
-        var song_title = item['song_title']
+        var song_title = item['song_title'] + (this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
         var song_details = item['song_composer']
         var image = item['album_art']
         return(

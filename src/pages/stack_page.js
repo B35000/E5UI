@@ -3739,7 +3739,7 @@ class StackPage extends Component {
             var transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
-                [8], /* contexts */
+                [11], /* contexts */
                 [0] /* int_data */
             ]
 
@@ -4060,7 +4060,7 @@ class StackPage extends Component {
             var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
             var data = {'contacts':contacts_clone, 'time':Date.now()}
             ipfs_index_object['contacts'] = data
-            // ipfs_index_array.push({'id':'contacts', 'data':data})
+            ipfs_index_array.push({'id':'contacts', 'data':data})
         }
 
         if(this.props.app_state.should_update_blocked_accounts_onchain){
@@ -4107,7 +4107,7 @@ class StackPage extends Component {
 
             var data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
             ipfs_index_object['myaudio'] = data
-            // ipfs_index_array.push({'id':'myaudio', 'data':data})
+            ipfs_index_array.push({'id':'myaudio', 'data':data})
         }
 
         if(this.props.app_state.should_update_playlists_in_E5 == true){

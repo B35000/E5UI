@@ -364,12 +364,12 @@ class AudioDetailSection extends Component {
 
                     {this.render_discography(object)}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527x']/* 'Download Audiopost.' */, 'details':this.props.app_state.loc['a2527y']/* 'Download all the tracks in the audiopost for faster load times.' */})}
+                    {/* {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527x']'Download Audiopost.' , 'details':this.props.app_state.loc['a2527y'] 'Download all the tracks in the audiopost for faster load times.' })}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.download_album(object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527x']/* 'Download Audiopost.' */, 'action':''},)}
-                    </div>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527x'] 'Download Audiopost.' , 'action':''},)}
+                    </div> */}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'details':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
@@ -1133,7 +1133,7 @@ class AudioDetailSection extends Component {
         var explicit_selection = item['explicit'] == null ? 0 : this.get_selected_item2(item['explicit'], 'e')
         var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
 
-        var song_title = explicit_text + item['song_title']
+        var song_title = explicit_text + item['song_title'] + ( this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
         var song_details = item['song_composer']
         var song_length = this.get_song_duration(item['basic_data'])
         var text_color = this.props.theme['secondary_text_color']
@@ -1162,6 +1162,14 @@ class AudioDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    is_song_available_for_adding_to_playlist(song){
+        var my_songs = this.props.app_state.my_tracks
+        if(my_songs.includes(song['song_id'])){
+            return true
+        }
+        return false
     }
 
     render_image_if_playlist_item(item, type){

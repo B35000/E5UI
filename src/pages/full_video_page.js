@@ -670,7 +670,7 @@ class FullVideoPage extends Component {
     render_video(item, object, index){
         return(
             <div onClick={() => this.when_video_item_clicked(item, object, index)}>
-                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title'], 'size':'l'})}
+                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
     }
@@ -678,6 +678,10 @@ class FullVideoPage extends Component {
     when_video_item_clicked(video, object, index){
         if(index == this.state.pos){
             this.props.notify(this.props.app_state.loc['3029']/* e is already playing the video. */, 1500)
+            return;
+        }
+        else if(!this.is_video_available_for_viewing(video)){
+            this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
             return;
         }
         this.setState({
@@ -689,6 +693,15 @@ class FullVideoPage extends Component {
         setTimeout(function() {
             me.props.load_video_queue(me.state.videos, me.state.pos)
         }, (1 * 500));
+    }
+
+    is_video_available_for_viewing(video){
+        if(video['price_data'].length == 0) return true;
+        var my_video = this.props.app_state.my_videos
+        if(my_video.includes(video['video_id'])){
+            return true
+        }
+        return false
     }
 
 

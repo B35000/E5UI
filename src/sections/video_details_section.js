@@ -833,7 +833,7 @@ class VideoDetailsSection extends Component {
     render_video(item, object, index){
         return(
             <div onClick={() => this.when_video_item_clicked(item, object)}>
-                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title'], 'size':'l'})}
+                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
     }
@@ -855,7 +855,7 @@ class VideoDetailsSection extends Component {
         if(video['price_data'].length == 0) return true;
         var my_video = this.props.app_state.my_videos
         if(my_video.includes(video['video_id'])){
-        return true
+            return true
         }
         return false
     }

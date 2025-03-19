@@ -126,7 +126,7 @@ class AudioPip extends Component {
     }
 
     render_backgorund_image(image){
-        if(this.state.play_pause_state == 0/* paused */){
+        if(this.state.play_pause_state == 0/* paused */ || this.state.buffer == 0){
             return(
                 <img alt="" src={image} style={{height:this.props.player_size ,width:this.props.player_size, 'border-radius': '15px', 'position': 'absolute', 'z-index':'1', 'filter': 'blur(8px)', '-webkit-filter': 'blur(8px)'}}/>
             )
@@ -197,8 +197,8 @@ class AudioPip extends Component {
     }
 
     pause_button(){
-        var play_pause_text = this.has_file_loaded() ? '▐▐' : '⚬⚬⚬⚬'
-        var opacity = this.state.play_pause_state == 0/* paused */ ? 1.0 : 0.0
+        var play_pause_text = (this.has_file_loaded() && this.state.buffer != 0) ? '▐▐' : '⚬⚬⚬⚬'
+        var opacity = (this.state.play_pause_state == 0/* paused */ || this.state.buffer == 0) ? 1.0 : 0.0
         return(
             <p onClick={()=>this.play_pause()} style={{'font-size': '30px', width:50,'opacity':opacity}}>{play_pause_text}</p>
         )
