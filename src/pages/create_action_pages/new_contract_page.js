@@ -565,10 +565,10 @@ class NewContractPage extends Component {
         this.setState({
             new_contract_type_tags_object: contract_type,
             default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
-            max_extend_enter_contract_limit: (60*60*12),/* 1/2 day */
+            max_extend_enter_contract_limit: (60*60*24*120),/* 4m0 */
             default_minimum_end_vote_bounty_amount: bigInt('0'),
-            default_proposal_expiry_duration_limit: (3*60*60), /* 5 hr */
-            max_enter_contract_duration: (60*60*24*7),/* 1 wk */
+            default_proposal_expiry_duration_limit: (60*60*9), /* 5 hr */
+            max_enter_contract_duration: (60*60*24*120),/* 4 mo */
 
             auto_wait_tags_object:auto_wait,
             default_minimum_spend_vote_bounty_amount:bigInt('0'),

@@ -491,8 +491,22 @@ class ViewGroups extends Component {
             var theme = this.props.theme['markdown_theme']
             var padding = '10px 15px 10px 15px'
             return(
-                <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':'#F1F1F1'}}>
-                    <Markdown>{source}</Markdown>
+                <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
+                    <Markdown
+                    components={{
+                            p: ({ node, ...props }) => <p style={{ color: this.props.theme['secondary_text_color'],  'word-wrap': 'break-word' }} {...props} />,
+                            h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'] }} {...props} />,
+                            h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+                            h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+                            h4: ({ node, ...props }) => <h4 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+                            h5: ({ node, ...props }) => <h5 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+                            h6: ({ node, ...props }) => <h6 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+                            li: ({ node, ...props }) => <li style={{ color: this.props.theme['secondary_text_color'] }} {...props} />,
+                            a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'] }} {...props} target="_blank" rel="noopener noreferrer" />,
+                            hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
+                            br: ({ node, ...props }) => <br style={{ color: this.props.theme['line_color'] }} {...props} />,
+                        }}
+                    >{source}</Markdown>
                 </div>
             )
         }

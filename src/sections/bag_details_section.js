@@ -238,6 +238,9 @@ class BagDetailsSection extends Component {
 
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['delivery'])}
+                    <div style={{height: 10}}/>
+
+                    {this.render_bag_frequency_setting_in_days(object)}
 
                     {this.render_detail_item('0')}
 
@@ -355,6 +358,23 @@ class BagDetailsSection extends Component {
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':delivery_location, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
+        }
+    }
+
+    render_bag_frequency_setting_in_days(object){
+        var transaction_item = object['ipfs'];
+        if(transaction_item['frequency_enabled'] == true){
+            var time_in_days = Math.round(transaction_item['delivery_frequency_time'] / (60*60*24))
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058w']/* '♺ Reocurring Bag' */, 'details':this.props.app_state.loc['1058x']/* 'The bags is to be fulfilled periodically.' */, 'size':'l'})}
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item['delivery_frequency_time']), 'details':this.props.app_state.loc['1058u']/* 'Estimated time between deliveries.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':time_in_days+this.props.app_state.loc['32']+(time_in_days > 1 ? 's':''), 'details':this.props.app_state.loc['1058v']/* 'Estimated time in Days.' */, 'size':'l'})}
+                </div>
+            )
         }
     }
 

@@ -280,14 +280,14 @@ class home_page extends Component {
         };
 
         obj[this.props.app_state.loc['1196']/* 'jobs' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1205']/* 'applied' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1205']/* 'applied' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */], [1],[1]
           ];
 
         obj[this.props.app_state.loc['1197']/* 'contracts' */] = [
               ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1332e']/* 'main' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264d'] *//* 'contract-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1198']/* 'contractors' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264e'] *//* 'contractor-notifications' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264e'] *//* 'contractor-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1199']/* 'proposals' */] = [
               ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1264aa']/* 'main-contract' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
@@ -339,22 +339,22 @@ class home_page extends Component {
               ['xor','',0], [this.props.app_state.loc['1212']/* 'E5s' */,this.props.app_state.loc['1220']/* 'info ℹ️' */,this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1213']/* 'posts' */] = [
-              ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1214']/* 'channels' */] = [
-              ['xor','',0], [this.props.app_state.loc['1214']/* 'channels' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1214']/* 'channels' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1215']/* 'storefront' */] = [
-              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1216']/* 'bags' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264ae']/* 'my-responses' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264ae']/* 'my-responses' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1264k']/* 'audioport' */] = [
-              ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264l']/* 'acquired' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
         ]
 
         return obj
@@ -371,6 +371,9 @@ class home_page extends Component {
       }
       
     }
+
+    
+
 
     
 
@@ -1690,6 +1693,9 @@ class home_page extends Component {
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bags))))
+        }
         else {
             var my_bags = []
             var all_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
@@ -1748,6 +1754,9 @@ class home_page extends Component {
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_channels))))
+        }
         else {
             var my_channels = []
             var created_channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
@@ -1805,6 +1814,9 @@ class home_page extends Component {
                 }
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_contractors))))
         }
         else {
             var my_contractors = []
@@ -1938,6 +1950,9 @@ class home_page extends Component {
                 }
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_jobs))))
         }
         else {
             var my_jobs = []
@@ -2143,6 +2158,9 @@ class home_page extends Component {
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_posts))))
+        }
         else {
             var my_posts = []
             var all_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
@@ -2257,6 +2275,9 @@ class home_page extends Component {
                 }
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_stores))))
         }
         else {
             var my_stores = []
@@ -2418,6 +2439,9 @@ class home_page extends Component {
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios))))
+        }
         else {
             var my_audios = []
             var all_audios = this.get_all_sorted_objects(this.props.app_state.created_audios)
@@ -2491,6 +2515,9 @@ class home_page extends Component {
                 }
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_videos))))
         }
         else {
             var my_videos = []
@@ -2724,6 +2751,38 @@ class home_page extends Component {
     }
 
 
+
+    sort_feed_based_on_my_section_tags2(objects){
+        var feed_objs = []
+
+        var section_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
+
+        objects.forEach(object => {
+            //first add the objects with the tags i follow
+            if(object['ipfs'] != null){
+                var object_tags = [].concat(object['ipfs'].entered_indexing_tags)
+                if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+                    object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
+                }
+                if(object['ipfs']['tags'] != null){
+                    object_tags = object_tags.concat(object['ipfs']['tags'])
+                }
+                if(object['ipfs'].device_city != null){
+                    object_tags = [object['ipfs'].device_city].concat(object_tags)
+                }
+                if(object['ipfs'].audio_type != null){
+                    object_tags = [object['ipfs'].audio_type].concat(object_tags)
+                }
+                var includes = section_tags.some(r=> object_tags.includes(r))
+                if(includes && !feed_objs.includes(object)){
+                    feed_objs.push(object)
+                }
+            }
+        });
+
+        return feed_objs
+    }
+
     sort_feed_based_on_my_section_tags(objects){
         var feed_objs = []
         var like_tags = []
@@ -2737,7 +2796,7 @@ class home_page extends Component {
         objects.forEach(object => {
             //first add the objects with the tags i follow
             if(object['ipfs'] != null){
-                var object_tags = object['ipfs'].entered_indexing_tags
+                var object_tags = [].concat(object['ipfs'].entered_indexing_tags)
                 if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
                     object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
                 }
@@ -2761,7 +2820,7 @@ class home_page extends Component {
         objects.forEach(object => {
             //then add the objects with the tags closely associated to the tags i follow
             if(object['ipfs'] != null){
-                var object_tags = object['ipfs'].entered_indexing_tags
+                var object_tags = [].concat(object['ipfs'].entered_indexing_tags)
                 if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
                     object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
                 }

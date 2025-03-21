@@ -4239,7 +4239,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#2e2e2e', 'text_input_color':'white', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
         
@@ -4278,7 +4278,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#1a1a1a', 'text_input_color':'white', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
@@ -4320,7 +4320,7 @@ class App extends Component {
         'number_picker_power_color':'rgb(185, 247, 198,.9)','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#02f902', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'rgb(185, 247, 198,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#13190c', 'text_input_color':'#04e504', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':background_green, 'JobIcon':job_icon_green, 'ExploreIcon': explore_icon_green, 'WalletIcon':wallet_icon_green, 'StackIcon': stack_icon_green,
@@ -4360,7 +4360,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#c5e8d6','number_picker_label_text_color':'#01c601', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkgreen, 'add_icon':add_icon_darkgreen, 'text_input_background':'#c6e0b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkgreen, 'add_icon':add_icon_darkgreen, 'text_input_background':'#d4e2cc', 'text_input_color':'#029302', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
         'background':background_darkgreen, 'JobIcon':job_icon_darkgreen, 'ExploreIcon': explore_icon_darkgreen, 'WalletIcon':wallet_icon_darkgreen, 'StackIcon': stack_icon_darkgreen,
 
@@ -4401,7 +4401,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#3f0101','number_picker_label_text_color':'#f90202', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'rgb(249, 202, 202,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#190c0c', 'text_input_color':'#f70404', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':background_red, 'JobIcon':job_icon_red, 'ExploreIcon': explore_icon_red, 'WalletIcon':wallet_icon_red, 'StackIcon': stack_icon_red,
@@ -4441,7 +4441,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9d1d1','number_picker_label_text_color':'#c60b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkred, 'add_icon':add_icon_darkred, 'text_input_background':'#e0b8b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkred, 'add_icon':add_icon_darkred, 'text_input_background':'#e2cdcc', 'text_input_color':'#930101', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
         'background':background_darkred, 'JobIcon':job_icon_darkred, 'ExploreIcon': explore_icon_darkred, 'WalletIcon':wallet_icon_darkred, 'StackIcon': stack_icon_darkred,
 
@@ -4482,7 +4482,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#183651','number_picker_label_text_color':'#0079ff', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'rgb(202, 203, 249,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#0d0c19', 'text_input_color':'#0079ff', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':background_blue, 'JobIcon':job_icon_blue, 'ExploreIcon': explore_icon_blue, 'WalletIcon':wallet_icon_blue, 'StackIcon': stack_icon_blue,
@@ -4522,7 +4522,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#d1ebf9','number_picker_label_text_color':'#0181c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkblue, 'add_icon':add_icon_darkblue, 'text_input_background':'#b8d2e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkblue, 'add_icon':add_icon_darkblue, 'text_input_background':'#ccdce2', 'text_input_color':'#017493', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
         'background':background_darkblue, 'JobIcon':job_icon_darkblue, 'ExploreIcon': explore_icon_darkblue, 'WalletIcon':wallet_icon_darkblue, 'StackIcon': stack_icon_darkblue,
 
@@ -4563,7 +4563,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#505118','number_picker_label_text_color':'#efec4c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'rgb(246, 249, 204,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'#19190c', 'text_input_color':'#efec4c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':background_yellow, 'JobIcon':job_icon_yellow, 'ExploreIcon': explore_icon_yellow, 'WalletIcon':wallet_icon_yellow, 'StackIcon': stack_icon_yellow,
@@ -4603,7 +4603,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#DCDCDC','number_picker_label_text_color':'#9ba003', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#9ba003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkyellow, 'add_icon':add_icon_darkyellow, 'text_input_background':'#dfe0b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#9ba003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkyellow, 'add_icon':add_icon_darkyellow, 'text_input_background':'#e2e2cc', 'text_input_color':'#757701', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
         'background':background_darkyellow, 'JobIcon':job_icon_darkyellow, 'ExploreIcon': explore_icon_darkyellow, 'WalletIcon':wallet_icon_darkyellow, 'StackIcon': stack_icon_darkyellow,
 
@@ -4644,7 +4644,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#491851','number_picker_label_text_color':'#dc4cef', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'rgb(245, 204, 249,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#160c19', 'text_input_color':'#c94cef', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':background_pink, 'JobIcon':job_icon_pink, 'ExploreIcon': explore_icon_pink, 'WalletIcon':wallet_icon_pink, 'StackIcon': stack_icon_pink,
@@ -4684,7 +4684,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f2d1f9','number_picker_label_text_color':'#af01c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkpink, 'add_icon':add_icon_darkpink, 'text_input_background':'#d9b8e0', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkpink, 'add_icon':add_icon_darkpink, 'text_input_background':'#decce2', 'text_input_color':'#930191', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
         'background':background_darkpink, 'JobIcon':job_icon_darkpink, 'ExploreIcon': explore_icon_darkpink, 'WalletIcon':wallet_icon_darkpink, 'StackIcon': stack_icon_darkpink,
 
@@ -4725,7 +4725,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#513a18','number_picker_label_text_color':'#ef964c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'rgb(249, 225, 204,.7)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#19130c', 'text_input_color':'#efa04c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
 
 
         'background':background_orange, 'JobIcon':job_icon_orange, 'ExploreIcon': explore_icon_orange, 'WalletIcon':wallet_icon_orange, 'StackIcon': stack_icon_orange,
@@ -4765,7 +4765,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9ebd1','number_picker_label_text_color':'#c67b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkorange, 'add_icon':add_icon_darkorange, 'text_input_background':'#e0d3b8', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkorange, 'add_icon':add_icon_darkorange, 'text_input_background':'#e2d7cc', 'text_input_color':'#935b01', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
 
         'background':background_darkorange, 'JobIcon':job_icon_darkorange, 'ExploreIcon': explore_icon_darkorange, 'WalletIcon':wallet_icon_darkorange, 'StackIcon': stack_icon_darkorange,
 
@@ -11536,7 +11536,9 @@ class App extends Component {
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1516']/* 'storefront-bag' */, entered_indexing_tags:[this.getLocale()['1215']/* 'storefront' */, this.getLocale()['1045']/* 'bag' */, this.getLocale()['2716']/* 'cart' */], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country, selected_device_city: state_obj.selected_device_city, delivery_location: state_obj.delivery_location}
+      var frequency = this.get_selected_item(state_obj.get_frequency_bag_object, 'e') == this.getLocale()['1058o']/* 'enabled' */
+
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1516']/* 'storefront-bag' */, entered_indexing_tags:[this.getLocale()['1215']/* 'storefront' */, this.getLocale()['1045']/* 'bag' */, this.getLocale()['2716']/* 'cart' */], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country, selected_device_city: state_obj.selected_device_city, delivery_location: state_obj.delivery_location, frequency_enabled:frequency, delivery_frequency_time: state_obj.delivery_frequency_time}
       
       tx.items_to_deliver.push(state_obj)
       stack.push(tx)
@@ -18685,7 +18687,7 @@ class App extends Component {
         get_theme_stage_tags_object: get_theme_stage_tags_object, 
         get_content_channeling_tags_object: get_content_channeling_tags_object, 
         beacon_chain_url: beacon_chain_url, 
-        e5s: e5s, 
+        e5s: e5s,
         ether_data: ether_data, 
         dialer_addresses:dialer_addresses, 
         theme_images:theme_images, 
@@ -18700,6 +18702,7 @@ class App extends Component {
 
       localStorage.setItem("logo_title", logo_title);
       localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
+      localStorage.setItem("is_country_allowed", allowed_countries)
 
       this.set_stack_page_data()
     }
@@ -22195,19 +22198,21 @@ class App extends Component {
     var created_bag_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */})
     created_bag_events = created_bag_events.reverse();
     if(prioritized_accounts && prioritized_accounts.length > 0){
-      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:25/* bag_object */ , p2/* item */: prioritized_accounts})
+      var prioritized_object_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* item_type */:25/* bag_object */ , p3/* sender_account_id */: prioritized_accounts})
 
       prioritized_object_events = prioritized_object_events.reverse()
+
+      console.log('bag_data', 'events', prioritized_object_events)
 
       var final_object_events = []
       var added_ids = []
       prioritized_object_events.forEach(element => {
-        added_ids.push(element.returnValues.p2)
+        added_ids.push(element.returnValues.p1)
         final_object_events.push(element)
       });
       created_bag_events.forEach(element => {
-        if(!added_ids.includes(element.returnValues.p2)){
-          added_ids.push(element.returnValues.p2)
+        if(!added_ids.includes(element.returnValues.p1)){
+          added_ids.push(element.returnValues.p1)
           final_object_events.push(element)
         }
       });
@@ -22215,7 +22220,7 @@ class App extends Component {
     }
 
     this.record_number_of_items(e5, 'bags', created_bag_events.length)
-    var created_bags = []
+    const my_created_bags = []
     var my_created_bag_ids = []
     var is_first_time = this.state.created_bags[e5] == null
 
@@ -22224,11 +22229,12 @@ class App extends Component {
     var response_count_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
 
     var my_bag_responses = []
+    console.log('bag_data', 'events', created_bag_events)
 
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
       var data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
-      // var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
+      console.log('bag_data', 'id', id, data)
       var response_count = []
       var responded_to = false;
       response_count_data.forEach(event => {
@@ -22242,11 +22248,12 @@ class App extends Component {
       });
 
       // console.log('all_data2', 'loaded data for ', id)
-
+      
       if(data != null && id != 1523 && id != 1538){
-        // console.log('all_data2', 'loaded data successfully ', data)
-        var bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':parseInt(created_bag_events[i].returnValues.p4), 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length, 'responded_to':responded_to}
-        created_bags.push(bag)
+        
+        const bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':parseInt(created_bag_events[i].returnValues.p4), 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length, 'responded_to':responded_to}
+        
+        my_created_bags.push(bag)
 
         var images = this.get_bag_images(bag)
         // console.log('all_data2', 'staged images for bag ', bag, images)
@@ -22264,7 +22271,7 @@ class App extends Component {
       }
       if(is_first_time){
         var created_bags_clone = structuredClone(this.state.created_bags)
-        created_bags_clone[e5] = created_bags
+        created_bags_clone[e5] = my_created_bags
         this.setState({created_bags: created_bags_clone})
       }
     }
@@ -22343,7 +22350,7 @@ class App extends Component {
 
 
     var created_bags_clone = structuredClone(this.state.created_bags)
-    created_bags_clone[e5] = created_bags
+    created_bags_clone[e5] = my_created_bags
 
     // var my_received_applications_clone = structuredClone(this.state.my_bag_responses_notifications)
     // my_received_applications_clone[e5] = notifications
@@ -22356,7 +22363,8 @@ class App extends Component {
 
     this.setState({created_bags: created_bags_clone, /* my_bag_responses_notifications: my_received_applications_clone, my_bag_applications: my_applications_clone, my_bag_application_responses_notifications: my_job_application_responses_clone */})
 
-    console.log(e5, ' bag count: '+created_bags.length)
+    console.log('bag_data', ' bag count: '+my_created_bags.length)
+    console.log('bag_data', my_created_bags)
   }
 
   get_bag_images(object){
@@ -22405,6 +22413,8 @@ class App extends Component {
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events), web3, e5, contract_addresses)
 
+    var all_requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:38})
+    var all_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:39})
     for(var i=0; i<created_contractor_events.length; i++){
       var id = created_contractor_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -22412,9 +22422,25 @@ class App extends Component {
         var contractor_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
         if(contractor_data != null){
-          var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:38})
+          // var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:38})
+          var requests = []
+          var clients = []
+          all_requests.forEach(request => {
+            if(request.returnValues.p1 == id){
+              requests.push(request)
+              if(!clients.includes(request.returnValues.p2)){
+                clients.push(request.returnValues.p2)
+              }
+            }
+          });
+          var responses = []
+          all_responses.forEach(response => {
+            if(response.returnValues.p1 == id){
+              responses.push(response)
+            }
+          });
 
-          var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':parseInt(created_contractor_events[i].returnValues.p6), 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5, 'requests':requests.length}
+          var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':parseInt(created_contractor_events[i].returnValues.p6), 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5, 'requests':requests.length, 'responses': responses.length, 'clients': clients.length}
           created_contractor.push(post)
 
           if(post['author'] == account){

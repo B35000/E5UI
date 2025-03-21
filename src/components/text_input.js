@@ -17,7 +17,6 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { Component } from 'react';
-
 function getOS() {
   if(iOS()) return 'iOS'
   const userAgent = window.navigator.userAgent,
@@ -80,7 +79,15 @@ class TextInput extends Component {
         <div style={{'padding': '0px 0px 0px 0px'}}>
             <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'],'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
                     <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
-                       <textarea className="form-control"  rows="3" style={{height:height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+                      <style>
+                        {`
+                          .form-control::placeholder {
+                            color: ${this.props.theme['text_input_color']};
+                            opacity: 1; /* Ensures visibility in some browsers */
+                          }
+                        `}
+                      </style>
+                       <textarea className="form-control"  rows="1" style={{height:height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
                     </div> 
             </div>
         </div>

@@ -21,6 +21,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
+import DurationPicker from './../components/duration_picker';
 
 // import Letter from './../assets/letter.png';
 import SwipeableViews from 'react-swipeable-views';
@@ -55,7 +56,7 @@ class AddToBagPage extends Component {
         entered_indexing_tags:[this.props.app_state.loc['1044']/* 'add' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1046']/* 'storefront-item' */], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
         purchase_unit_count:1, selected_variant:null, device_city: '', selected_device_city:'', delivery_location:'', order_specifications:'',
 
-        purchase_option_tags_array:[]
+        purchase_option_tags_array:[], get_frequency_bag_object: this.get_frequency_bag_object(), delivery_frequency_time:0
     };
 
     get_add_to_bag_tags_object(){
@@ -65,6 +66,17 @@ class AddToBagPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['1043']/* 'add-to-bag' */], [1]
+            ],
+        };
+    }
+
+    get_frequency_bag_object(){
+        return{
+            'i':{
+                active:'e',
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['1058o']/* 'enabled' */], [0]
             ],
         };
     }
@@ -239,8 +251,29 @@ class AddToBagPage extends Component {
                 <TextInput height={60} placeholder={this.props.app_state.loc['1058d']/* 'Delivery Location' */} when_text_input_field_changed={this.when_delivery_location_input_field_changed.bind(this)} text={this.state.delivery_location} theme={this.props.theme}/>
                 
                 {this.render_button_if_location_exists()}
+
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058p']/* 'Frequency Bag.' */, 'details':this.props.app_state.loc['1058q']/* 'If set to enabled, you will be requiring the contractor to deliver the items in your new bag cyclically.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_frequency_bag_object} tag_size={'l'} when_tags_updated={this.when_get_frequency_bag_object_updated.bind(this)} theme={this.props.theme}/>
+                
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058r']/* 'Delivery Frequency Duration.' */, 'details':this.props.app_state.loc['1058s']/* 'If frequency bag is enabled, you are required to set the frequency period for the delivery of your bag items.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.delivery_frequency_time), 'details':this.props.app_state.loc['1058u']/* 'Estimated time between deliveries.' */, 'size':'l'})}
+
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_delivery_frequency_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
             </div>
         )
+    }
+
+    when_get_frequency_bag_object_updated(tag_obj){
+        this.setState({get_frequency_bag_object: tag_obj})
+    }
+
+    when_delivery_frequency_time_set(time){
+        this.setState({delivery_frequency_time: time})
     }
 
 
@@ -665,10 +698,13 @@ class AddToBagPage extends Component {
             this.props.notify(this.props.app_state.loc['1055']/* 'The most you can add is ' */+this.format_account_balance_figure(this.get_variant_supply())+' '+this.get_composition_type())
         }
         else if(this.state.selected_device_city == '' && this.should_render_city_settings()){
-            this.props.notify(this.props.app_state.loc['1058c']/* 'You need to set your city for contractors.' */, 4400)
+            this.props.notify(this.props.app_state.loc['1058c']/* 'You need to set your city for contractors.' */, 6400)
         }
         else if(this.state.delivery_location == '' && this.should_render_city_settings()){
-            this.props.notify(this.props.app_state.loc['1058g']/* 'You need to specify a pick up location for your new bag.' */, 4400)
+            this.props.notify(this.props.app_state.loc['1058g']/* 'You need to specify a pick up location for your new bag.' */, 6400)
+        }
+        else if(this.get_selected_item(this.state.get_frequency_bag_object, 'e') == this.props.app_state.loc['1058o']/* 'enabled' */ && this.should_render_city_settings() && this.state.delivery_frequency_time == 0){
+            this.props.notify(this.props.app_state.loc['1058t']/* 'You need to specify a valid time frequency if frequency bag is enabled.' */, 6400)
         }
         else{
             if(this.state.delivery_location != ''){

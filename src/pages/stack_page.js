@@ -1535,9 +1535,10 @@ class StackPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var op = this.props.app_state.hidden.includes(item) ? 0.5 : 1.0
         var txt = this.props.app_state.hidden.includes(item) ? 'show' : 'hide'
+        var e5_img = this.props.app_state.e5s[item.e5].e5_img
         return(
             <div style={{'margin': '2px 0px 2px 0px', opacity: op}} onClick={() => this.props.view_transaction(item, index)}>
-                {this.render_detail_item('3',{'title':item.e5+' • '+item.type, 'details':this.props.app_state.loc['1446']/* 'Stack ID: ' */+item.id,'size':'l'})}
+                {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1446']/* 'Stack ID: ' */+item.id,'size':'l', 'title_image':e5_img})}
             </div>
         )
     }
@@ -3903,7 +3904,7 @@ class StackPage extends Component {
                         bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications, 'options':item.purchase_option_tags_array, 'storefront_options':(item.storefront_item['ipfs'].option_groups == null ? [] : item.storefront_item['ipfs'].option_groups)})
                     });
 
-                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location }
+                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time }
 
                     ipfs_index_object[t.id] = final_bag_object
                     ipfs_index_array.push({'id':t.id, 'data':final_bag_object})
@@ -8280,12 +8281,12 @@ class StackPage extends Component {
 
 
                 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1541']/* 'Content Filter' */, 'details':this.props.app_state.loc['1542']/* 'If set to filtered, the content including the tags you follow will be prioritized in your feed.' */, 'size':'l'})}
+                {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1541']'Content Filter', 'details':this.props.app_state.loc['1542']'If set to filtered, the content including the tags you follow will be prioritized in your feed.', 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                {this.render_detail_item('0')}
+                {this.render_detail_item('0')} */}
 
 
                 
@@ -8885,7 +8886,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <div className="row" style={{width:'100%'}}>
+                <div className="row" style={{width:'100%', 'margin':'0px 0px 0px 3px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>

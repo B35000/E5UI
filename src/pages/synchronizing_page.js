@@ -111,7 +111,7 @@ class synchronizing_page extends Component {
             return this.props.app_state.loc['1594']/* 'Synchronized.' */
         }
         else if(this.props.sync_progress == 0){
-            if(this.props.app_state.is_allowed == true){
+            if(this.is_allowed_in_e5() == true){
                 return this.props.app_state.loc['1598a']/* 'Initializing...' */
             }
             return this.props.app_state.loc['1595']/* 'Unsynchronized.' */
@@ -119,6 +119,16 @@ class synchronizing_page extends Component {
         else{
             return this.props.app_state.loc['1596']/* 'Synchronizing...' */
         }
+    }
+
+    is_allowed_in_e5(){
+        if(this.state.get_available_for_all_tags_object == 'enabled') return true
+        var obj = localStorage.getItem('is_country_allowed') == null ? this.props.app_state.allowed_countries : localStorage.getItem('is_country_allowed')
+        var device_country = this.props.app_state.device_country
+        if(!obj.includes(device_country)){
+            return false
+        }
+        return true
     }
 
     render_synch_bar(){

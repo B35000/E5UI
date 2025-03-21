@@ -180,8 +180,16 @@ class ContractorDetailsSection extends Component {
                     {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' }, )}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('4', {'text':object['requests']+this.props.app_state.loc['2231a']/* ' requests received.' */, 'textsize':'14px', 'font':'Sans-serif'})} 
+                    {this.render_detail_item('4', {'text':number_with_commas(object['requests'])+this.props.app_state.loc['2231a']/* ' requests received.' */, 'textsize':'14px', 'font':'Sans-serif'})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('4', {'text':number_with_commas(object['responses'])+this.props.app_state.loc['2231b']/* ' requests processed.' */, 'textsize':'14px', 'font':'Sans-serif'})} 
+                    <div style={{height: 10}}/>
+
+
+                    {this.render_detail_item('4', {'text':number_with_commas(object['clients'])+this.props.app_state.loc['2231c']/* ' clients handled.' */, 'textsize':'14px', 'font':'Sans-serif'})} 
+                    <div style={{height: 10}}/>
+                    
 
                     {this.render_taken_down_message_if_post_is_down(object)}
                     <div style={{height: 10}}/>
@@ -208,13 +216,7 @@ class ContractorDetailsSection extends Component {
                     {this.render_detail_item('0')}
 
                     {this.render_edit_object_button(object)}
-                    <div style={{height: 20}}/>
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2219']/* 'Send Job Request' */, 'details':this.props.app_state.loc['2220']/* 'Send a job request to the contractor to do a job for you' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_send_job_request_ui(object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2221']/* 'Send Request' */, 'action':''})}
-                    </div>
+                    {this.render_send_job_button(object)}
 
                     {this.render_pin_contractor_button(object)}
                     {this.render_block_post_button(object)}
@@ -226,6 +228,23 @@ class ContractorDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_send_job_button(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+
+        if(object['event'].returnValues.p5 != my_account){
+            return(
+                <div>
+                    <div style={{height: 20}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2219']/* 'Send Job Request' */, 'details':this.props.app_state.loc['2220']/* 'Send a job request to the contractor to do a job for you' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_send_job_request_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2221']/* 'Send Request' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_follow_unfollow_author_button(object){
@@ -515,7 +534,7 @@ class ContractorDetailsSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return this.props.app_state.loc['']/* 'You' */
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias

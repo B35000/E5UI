@@ -1785,10 +1785,10 @@ class DialerPage extends Component {
             this.props.notify('The power limit cant be less than 72', 5000)
             return;
         }
-        else if(typed_blockexplorer_link == '' || typed_blockexplorer_link.includes('{hash}')){
-            this.props.notify('You need to specify a valid blockexplorer link', 5000)
-            return;
-        }
+        // else if(typed_blockexplorer_link == '' || !typed_blockexplorer_link.includes('{hash}')){
+        //     this.props.notify('You need to specify a valid blockexplorer link', 5000)
+        //     return;
+        // }
         else if(e5_address != ''){
             if(end_image == ''){
                 this.props.notify('You need to speficy a valid end image', 5000)
