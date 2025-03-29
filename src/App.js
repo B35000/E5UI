@@ -824,7 +824,7 @@ class App extends Component {
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
-    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[]
+    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{},
   };
 
   get_static_assets(){
@@ -862,13 +862,13 @@ class App extends Component {
   get_e5s(){
     var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815']
     return{
-      'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
+      'data':['E15','E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
-        e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0', 
-        first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
-        end_token_power_limit: 990, type:'1559'
+        e5_address:'0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82', 
+        first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:true, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
+        end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true
       },
       'E25':{
         web3:['https://etc.etcdesktop.com'], 
@@ -1381,7 +1381,7 @@ class App extends Component {
 
   get_ether_data(){
     var list = [
-      // this.get_token('ETHT', 'Ethereum Testnet', 'E15'),
+      this.get_token('ETHT', 'Ethereum Testnet', 'E15'),
       this.get_token('ETC', 'Ethereum Classic', 'E35'),
       this.get_token('ONE', 'Harmony', 'E45'),
       this.get_token('CELO', 'Celo', 'E55'),
@@ -2668,7 +2668,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       if(me.state.syncronizing_progress < 5 && me.is_allowed_in_e5()){
-        me.prompt_top_notification(me.getLocale()['2738c']/* 'Bad Connection.' */, 15000)
+        // me.prompt_top_notification(me.getLocale()['2738c']/* 'Bad Connection.' */, 15000)
       }
     }, (40 * 1000));
 
@@ -4987,7 +4987,7 @@ class App extends Component {
         
           play_song_in_playlist={this.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.download_playlist.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} open_purchase_video_ui={this.show_buy_video_bottomsheet.bind(this)} play_video={this.play_video.bind(this)}
         
-          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_theme_data={this.get_theme_data.bind(this)} connect_to_node={this.connect_to_node.bind(this)}
+          load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} show_buy_nitro_storage_bottomsheet={this.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.show_configure_nitro_node_bottomsheet.bind(this)} block_post={this.block_post.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_theme_data={this.get_theme_data.bind(this)} connect_to_node={this.connect_to_node.bind(this)} get_mail_messages={this.get_mail_messages.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -5026,13 +5026,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == this.getLocale()['1509']/* 'mail-messages' */ && stack[i].e5 == message['e5']){
+      if(stack[i].type == this.getLocale()['1509']/* 'mail-messages' */ && stack[i].e5 == this.state.selected_e5/* message['e5'] */){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1509']/* 'mail-messages' */, entered_indexing_tags:[this.getLocale()['1369']/* 'send' */, this.getLocale()['1201']/* 'mail' */], messages_to_deliver:[], e5:message['e5']}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1509']/* 'mail-messages' */, entered_indexing_tags:[this.getLocale()['1369']/* 'send' */, this.getLocale()['1201']/* 'mail' */], messages_to_deliver:[], e5: this.state.selected_e5/* message['e5'] */}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -6571,7 +6571,7 @@ class App extends Component {
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)}
       
       />
     )
@@ -7201,16 +7201,16 @@ class App extends Component {
         gasPrice: run_gas_price.toString(),
     }
 
-    if(this.state.e5s[this.state.selected_e5].type == '1559'){
-      tx = {
-        gas: gasLimit,
-        value: wei,
-        to: contractAddress,
-        data: encoded,
-        maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
-        maxFeePerGas: set_max_fee_per_gas.toString(),
-      }
-    }
+    // if(this.state.e5s[this.state.selected_e5].type == '1559'){
+    //   tx = {
+    //     gas: gasLimit,
+    //     value: wei,
+    //     to: contractAddress,
+    //     data: encoded,
+    //     maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
+    //     maxFeePerGas: set_max_fee_per_gas.toString(),
+    //   }
+    // }
 
     var os = getOS()
     if(os == 'iOS'){
@@ -12557,7 +12557,6 @@ class App extends Component {
       setTimeout(function() {
         if(me.state != null){
           me.setState({add_comment_bottomsheet: !me.state.add_comment_bottomsheet});
-
           if(me.add_comment_bottomsheet != null){
             me.add_comment_page.current?.setState(me.add_comment_bottomsheet)
           }
@@ -12566,7 +12565,7 @@ class App extends Component {
     }
   }
 
-  show_add_comment_bottomsheet(object, focused_message_id, page, contractor_object){
+  show_add_comment_bottomsheet = async (object, focused_message_id, page, contractor_object) => {
     this.set_comment_bottomsheet_size(focused_message_id)
     this.open_add_comment_bottomsheet()
     var me = this;
@@ -12576,18 +12575,30 @@ class App extends Component {
       }
     }, (1 * 500));
     
+    if(focused_message_id != 0){
+      console.log('apppage', focused_message_id)
+      const focused_message_sender = focused_message_id['sender'] == null ? focused_message_id['ipfs']['sender'] : focused_message_id['sender'];
+      const focused_message_sender_e5 = focused_message_id['sender_e5'] == null ? focused_message_id['ipfs']['my_preferred_e5'] : focused_message_id['sender_e5']
+      
+      if(this.state.selected_e5 != focused_message_sender_e5){
+        const their_account_data = await this.get_senders_account_on_my_e5(focused_message_sender, focused_message_sender_e5)
+        if(their_account_data.their_account_on_my_e5 == 0){
+          //they dont have an account, so well need to create one for them in the stack run
+          this.add_comment_page.current.set_focused_message_target_account(their_account_data.their_address)
+        }else{
+          this.add_comment_page.current.set_focused_message_target_account(their_account_data.their_address)
+        }
+      }else{
+        this.add_comment_page.current.set_focused_message_target_account(focused_message_sender)
+      }
+    }
   }
 
   set_comment_bottomsheet_size(focused_message_id){
     var size = this.getScreenSize();
-    if(focused_message_id != 0 && focused_message_id['e5'] != this.state.selected_e5){
+    if(focused_message_id != 0){
       if(size == 's'){
-        this.setState({comment_size: this.state.height})
-        // if(this.state.height < 980){
-        //   this.setState({comment_size: this.state.height})
-        // }else{
-        //   this.setState({comment_size: 980})
-        // }
+        this.setState({comment_size: this.state.height-50})
       }else{
          if(this.state.height < 890){
           this.setState({comment_size: this.state.height})
@@ -12635,6 +12646,23 @@ class App extends Component {
       this.add_nitro_reply_to_stack(tx)
     }
     this.open_add_comment_bottomsheet()
+  }
+
+  get_senders_account_on_my_e5 = async (their_account, their_e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(their_e5));
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_contract_from_e5(their_e5)
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+    const their_address = await contractInstance.methods.f289(their_account).call((error, result) => {});
+    
+    const my_e5 = this.state.selected_e5
+    const my_web3 = new Web3(this.get_web3_url_from_e5(my_e5));
+    const my_contractArtifact = require('./contract_abis/E5.json');
+    const my_contractAddress = this.get_contract_from_e5(my_e5)
+    const my_contractInstance = new my_web3.eth.Contract(my_contractArtifact.abi, my_contractAddress);
+    const their_account_on_my_e5 = await my_contractInstance.methods.f167([],[their_address], 2).call((error, result) => {});
+
+    return {their_account_on_my_e5: their_account_on_my_e5[0], their_address: their_address}
   }
 
 
@@ -16401,7 +16429,8 @@ class App extends Component {
     // const node = await IPFS.create()
     // var data = node.cat(cid)
     // console.log(data)
-    await this.load_root_config()
+
+    // await this.load_root_config()
 
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
@@ -16448,16 +16477,16 @@ class App extends Component {
       gasPrice: gas_price.toString()
     }
 
-    if(this.state.e5s[e5].type == '1559'){
-      tx = {
-        from: state.accounts[e5].address,
-        to: recipientAddress,
-        value: amount.toString(),
-        gas: 23000,
-        maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
-        maxFeePerGas: set_max_fee_per_gas.toString()
-      }
-    }
+    // if(this.state.e5s[e5].type == '1559'){
+    //   tx = {
+    //     from: state.accounts[e5].address,
+    //     to: recipientAddress,
+    //     value: amount.toString(),
+    //     gas: 23000,
+    //     maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
+    //     maxFeePerGas: set_max_fee_per_gas.toString()
+    //   }
+    // }
 
     web3.eth.sendTransaction(tx)
     .on('transactionHash', function (hash) {
@@ -16489,7 +16518,7 @@ class App extends Component {
     var seed = added_tags.join(' | ') + set_salt + selected_item;
     this.generate_one_account_for_all_e5s(seed)
     this.generate_account_data_for_each_coin(seed)
-    this.setState({account_balance: {}, account_seed: seed});
+    this.setState({account_balance: {}, account_seed: seed, mail_message_events:{}, all_mail:{}, account_balance:{}, });
     
     var me = this
     setTimeout(function() {
@@ -16528,8 +16557,9 @@ class App extends Component {
       this.generate_account_data_for_each_coin(seed)
     }
     var me = this
-    setTimeout(function() {
+    setTimeout(async function() {
         me.start_get_accounts_data(is_synching, false)
+        me.setState({my_pub_key: await me.get_my_entire_public_key()})
     }, (3 * 1000));
 
     if(selected_item != ''){
@@ -18771,83 +18801,85 @@ class App extends Component {
     wallet_status_clone[e5] = 'synchronizing'
     this.setState({wallet_status: wallet_status_clone})
 
+    try{
+      this.load_rpc_times(e5)
 
-    this.load_rpc_times(e5)
+      var s = JSON.stringify(this.state.account_balance, (key, value) =>
+              typeof value === 'bigint'
+                  ? value.toString()
+                  : value
+      )
+      var clone = JSON.parse(s)
+      clone[e5] = 0
+      if(clone[e5] == null)this.setState({account_balance: clone});
 
-    var s = JSON.stringify(this.state.account_balance, (key, value) =>
-            typeof value === 'bigint'
-                ? value.toString()
-                : value
-    )
-    var clone = JSON.parse(s)
-    clone[e5] = 0
-    if(clone[e5] == null)this.setState({account_balance: clone});
+      var balance = await web3.eth.getBalance(address_account.address)
+      var t = JSON.stringify(this.state.account_balance, (key, value) =>
+              typeof value === 'bigint'
+                  ? value.toString()
+                  : value
+      )
+      var clone = JSON.parse(t)
+      // console.log('bal', balance)
+      clone[e5] = bigInt(balance.toString())
+      this.setState({account_balance: clone});
+      if(is_syncing)this.inc_synch_progress()
+    
 
-    var balance = await web3.eth.getBalance(address_account.address)
-    var t = JSON.stringify(this.state.account_balance, (key, value) =>
-            typeof value === 'bigint'
-                ? value.toString()
-                : value
-    )
-    var clone = JSON.parse(t)
-    console.log('bal', balance)
-    clone[e5] = bigInt(balance.toString())
-    this.setState({account_balance: clone});
-    if(is_syncing)this.inc_synch_progress()
-   
+      // this.load_ether_history(e5, address_account.address)
 
-    // this.load_ether_history(e5, address_account.address)
+      var gasPrice = await web3.eth.getGasPrice();
+      var clone = structuredClone(this.state.gas_price)
+      clone[e5] = parseInt(gasPrice)
+      this.setState({gas_price: clone})
+      if(is_syncing)this.inc_synch_progress()
 
-    var gasPrice = await web3.eth.getGasPrice();
-    var clone = structuredClone(this.state.gas_price)
-    clone[e5] = parseInt(gasPrice)
-    this.setState({gas_price: clone})
-    if(is_syncing)this.inc_synch_progress()
-
-    var id = await web3.eth.net.getId()
-    var clone = structuredClone(this.state.chain_id)
-    clone[e5] = id
-    this.setState({chain_id: clone});
-    if(is_syncing)this.inc_synch_progress()
-    await this.wait(this.state.web3_delay)
-
-
-    // var peers = await web3.eth.net.getPeerCount()
-    // var clone = structuredClone(this.state.number_of_peers)
-    // clone[e5] = parseInt(peers)
-    // this.setState({ number_of_peers: clone});
-    // console.log('number of peers: ', peers)
-    // this.inc_synch_progress()
-
-    var blockNumber = await web3.eth.getBlockNumber()
-    await this.wait(this.state.web3_delay)
-    var last_blocks = [];
-    var count = 5
-    var start = parseInt(blockNumber)-count;
-    if(blockNumber < count){
-      start = 0;
-    }
-    for (let i = start; i <= blockNumber; i++) {
+      var id = await web3.eth.net.getId()
+      var clone = structuredClone(this.state.chain_id)
+      clone[e5] = id
+      this.setState({chain_id: clone});
+      if(is_syncing)this.inc_synch_progress()
       await this.wait(this.state.web3_delay)
-      var block = await web3.eth.getBlock(i)
-      last_blocks.push(block)
+
+
+      // var peers = await web3.eth.net.getPeerCount()
+      // var clone = structuredClone(this.state.number_of_peers)
+      // clone[e5] = parseInt(peers)
+      // this.setState({ number_of_peers: clone});
+      // console.log('number of peers: ', peers)
+      // this.inc_synch_progress()
+
+      var blockNumber = await web3.eth.getBlockNumber()
+      await this.wait(this.state.web3_delay)
+      var last_blocks = [];
+      var count = 5
+      var start = parseInt(blockNumber)-count;
+      if(blockNumber < count){
+        start = 0;
+      }
+      for (let i = start; i <= blockNumber; i++) {
+        await this.wait(this.state.web3_delay)
+        var block = await web3.eth.getBlock(i)
+        last_blocks.push(block)
+      }
+
+      var last_blocks_clone = structuredClone(this.state.last_blocks)
+      last_blocks_clone[e5] = last_blocks
+
+      var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
+      number_of_blocks_clone[e5] = blockNumber
+      this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
+      if(is_syncing)this.inc_synch_progress()
+
+
+
+      // var mempool = await web3.eth.getPendingTransactions()
+      // var mempool_clone = structuredClone(this.state.mempool)
+      // mempool_clone[e5] = mempool
+      // this.setState({mempool: mempool_clone})
+    }catch(e){
+
     }
-
-    var last_blocks_clone = structuredClone(this.state.last_blocks)
-    last_blocks_clone[e5] = last_blocks
-
-    var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
-    number_of_blocks_clone[e5] = blockNumber
-    this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
-    if(is_syncing)this.inc_synch_progress()
-
-
-
-    // var mempool = await web3.eth.getPendingTransactions()
-    // var mempool_clone = structuredClone(this.state.mempool)
-    // mempool_clone[e5] = mempool
-    // this.setState({mempool: mempool_clone})
-
 
 
     var wallet_status_clone = structuredClone(this.state.wallet_status)
@@ -21993,119 +22025,357 @@ class App extends Component {
     // }
   }
 
-  get_sent_mail_data = async (E52contractInstance, e5, account, web3) => {
+  // get_sent_mail_data = async (E52contractInstance, e5, account, web3) => {
+  //   if(this.state.accounts[e5].privateKey == '') return;
+    
+  //   const my_created_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:30})
+  //   const my_created_mail_events_for_other_e5s = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */: 31})
+
+  //   if(this.mail_for_other_e5_convos == null){
+  //     this.mail_for_other_e5_convos = {}
+  //   }
+
+  //   const my_final_created_mail_events = my_created_mail_events.concat(my_created_mail_events_for_other_e5s)
+  //   // console.log('apppage', 'all created mail events', e5, my_final_created_mail_events)
+
+  //   this.record_number_of_items(e5, 'sent_mail',my_final_created_mail_events.length)
+
+  //   const created_mail = []
+  //   const sent_mail_activity = {}
+  //   const is_first_time = this.state.created_mail[e5] == null
+
+  //   if(this.state.beacon_node_enabled == true) await this.fetch_multiple_cids_from_nitro(my_final_created_mail_events, 0, 'p4');
+
+  //   for(var i=0; i<my_final_created_mail_events.length; i++){
+  //     const event = my_final_created_mail_events[i]
+  //     const convo_id = event.returnValues.p5
+  //     const cid = event.returnValues.p4
+      
+  //     const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+  //     const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5, 'sender')
+      
+  //     if(ipfs_obj != null && ipfs != ipfs_obj){
+  //       if(!created_mail.includes(convo_id) && event.returnValues.p3 == 30){
+  //         created_mail.push(convo_id)
+  //         if(sent_mail_activity[convo_id] == null){
+  //           sent_mail_activity[convo_id] = []
+  //         }
+  //       }
+  //       // console.log('apppage', 'gotten ipfs object', ipfs_obj)
+  //       if(ipfs_obj['time'] != null){
+  //         ipfs_obj['time'] = event.returnValues.p6
+  //       }else{
+  //         console.log('ipfs data thats null: ', ipfs_obj)
+  //       }
+        
+  //       const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
+  //       event.returnValues.p1 = (recipient)
+  //       const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
+  //       const data = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':'sent', 'time':event.returnValues.p6, 'convo_with':recipient, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
+
+        
+  //       if(event.returnValues.p3 == 30){
+  //         const includes = sent_mail_activity[convo_id].find(e => e['id'] === data['id'])
+  //         if(includes == null){
+  //           sent_mail_activity[convo_id].push(data);
+  //         }
+  //       }else{
+  //         if(this.mail_for_other_e5_convos[convo_id] == null){
+  //           this.mail_for_other_e5_convos[convo_id] = []
+  //         }
+  //         const includes2 = this.mail_for_other_e5_convos[convo_id].find(e => e['id'] === data['id'])
+  //         if(includes2 == null){
+  //           this.mail_for_other_e5_convos[convo_id].push(data)
+  //         }
+  //       }
+        
+  //       this.fetch_uploaded_files_for_object(ipfs_obj)
+        
+  //       if(is_first_time){
+  //         const created_mail_clone = structuredClone(this.state.created_mail)
+  //         created_mail_clone[e5] = {'created_mail':created_mail, 'mail_activity':sent_mail_activity}
+  //         this.setState({created_mail: created_mail_clone})
+  //       }
+  //     }
+  //   }
+
+  //   const created_mail_clone = structuredClone(this.state.created_mail)
+  //   created_mail_clone[e5] = {'created_mail':created_mail, 'mail_activity':sent_mail_activity}
+
+  //   for (const convo_id in this.mail_for_other_e5_convos) {
+  //     if (this.mail_for_other_e5_convos.hasOwnProperty(convo_id)) {
+  //       var convo_mail = this.mail_for_other_e5_convos[convo_id]
+  //       convo_mail.forEach(mail_element => {
+  //         if(!created_mail_clone[mail_element['e5']]['created_mail'].includes(convo_id)){
+  //           created_mail_clone[mail_element['e5']]['created_mail'].push(convo_id)
+  //           created_mail_clone[mail_element['e5']]['mail_activity'][convo_id] = []
+  //         }  
+  //         const includes3 = created_mail_clone[mail_element['e5']]['mail_activity'][convo_id].find(e => e['id'] === mail_element['id'])      
+  //         if(includes3 == null){
+  //           created_mail_clone[mail_element['e5']]['mail_activity'][convo_id].push(mail_element)
+  //         }
+  //       });
+  //     }
+  //   }
+  //   //sort the convo elements
+  //   for(const mail_e5 in created_mail_clone){
+  //     if(created_mail_clone.hasOwnProperty(mail_e5)){
+  //       created_mail_clone[mail_e5]['created_mail'].forEach(convo_id => {
+  //         created_mail_clone[mail_e5]['mail_activity'][convo_id] = this.sortByAttributeDescending(created_mail_clone[mail_e5]['mail_activity'][convo_id], 'timestamp').reverse()
+  //       });
+  //     }
+  //   }
+  //   this.setState({created_mail: created_mail_clone})
+
+
+  //   // console.log('apppage','sent', 'e5', e5)
+  //   // console.log('apppage', 'mail for other convos', this.mail_for_other_e5_convos)
+  //   // console.log('apppage','sent','created mail activity: ', sent_mail_activity)
+  //   // console.log('apppage','sent', 'the entire object', created_mail_clone)
+  //   // console.log('apppage','sent','created mail count: ',created_mail.length)
+  // }
+
+  // get_received_mail_data = async (E52contractInstance, e5, account, web3) => {
+  //   if(this.state.accounts[e5].privateKey == '') return;
+   
+  //   const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+
+  //   const my_received_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:30})
+    
+  //   const my_received_mail_events_for_other_e5s = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:31})
+
+  //   if(this.mail_received_for_other_e5_convos == null){
+  //     this.mail_received_for_other_e5_convos = {}
+  //   }
+
+  //   const my_final_received_mail_events = my_received_mail_events.concat(my_received_mail_events_for_other_e5s)
+
+  //   this.record_number_of_items(e5, 'received_mail', my_received_mail_events.length)
+    
+    
+  //   const received_mail_array = []
+  //   const mail_activity_object = {}
+    
+  //   const is_first_time = this.state.received_mail[e5] == null
+  //   const received_mail_notifications = []
+
+  //   if(this.state.beacon_node_enabled == true){
+  //     await this.fetch_multiple_cids_from_nitro(my_final_received_mail_events, 0, 'p4')
+  //   }
+
+  //   for(var i=0; i<my_final_received_mail_events.length; i++){
+  //     const event = my_final_received_mail_events[i]
+  //     const convo_id = event.returnValues.p5
+  //     const cid = event.returnValues.p4
+  //     const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+  //     const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5, 'receiver')
+  //     console.log('apppage', 'received mail item', ipfs_obj)
+      
+  //     if(ipfs_obj != null && ipfs != ipfs_obj){
+  //       if(!received_mail_array.includes(convo_id) && event.returnValues.p3 == 30){
+  //         received_mail_array.push(convo_id)
+  //         if(mail_activity_object[convo_id] == null){
+  //           mail_activity_object[convo_id] = []
+  //         }
+  //       }
+  //       ipfs_obj['time'] = event.returnValues.p6
+        
+  //       const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
+  //       event.returnValues.p1 = (recipient)
+  //       const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
+  //       const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':'received', 'time':event.returnValues.p6, 'convo_with':event.returnValues.p2, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
+        
+  //       if(ipfs_obj['message'] != null){
+  //         received_mail_notifications.push({'type':'mail_message_notification', 'event':event, 'e5':recipient_e5, 'timestamp':event.returnValues.p6, 'ipfs':ipfs_obj, 'convo_id':convo_id,'id':cid})
+  //       }
+
+        
+  //       if(event.returnValues.p3 == 30){
+  //         const includes = mail_activity_object[convo_id].find(e => e['id'] === obj['id'])
+  //         if(includes == null){
+  //           mail_activity_object[convo_id].push(obj);
+  //         }
+  //       }else{
+  //         if(this.mail_received_for_other_e5_convos[convo_id] == null){
+  //           this.mail_received_for_other_e5_convos[convo_id] = []
+  //         }
+  //         const includes2 = this.mail_received_for_other_e5_convos[convo_id].find(e => e['id'] === obj['id'])
+  //         if(includes2 == null){
+  //           this.mail_received_for_other_e5_convos[convo_id].push(obj)
+  //         }
+  //       }
+
+  //       this.fetch_uploaded_files_for_object(ipfs_obj)
+
+  //       if(is_first_time){
+  //         const received_mail_clone2 = structuredClone(this.state.received_mail)
+  //         received_mail_clone2[e5] = {'received_mail':received_mail_array, 'mail_activity':mail_activity_object}
+
+  //         const received_mail_notifications_clone = structuredClone(this.state.received_mail_notifications)
+  //         received_mail_notifications_clone[e5] = received_mail_notifications
+
+  //         this.setState({received_mail: received_mail_clone2, received_mail_notifications: received_mail_notifications_clone})
+  //       }
+  //     }
+  //   }
+
+  //   const received_mail_clone = structuredClone(this.state.received_mail)
+  //   received_mail_clone[e5] = {'received_mail':received_mail_array, 'mail_activity':mail_activity_object}
+
+  //   for (const convo_id in this.mail_received_for_other_e5_convos) {
+  //     if (this.mail_received_for_other_e5_convos.hasOwnProperty(convo_id)) {
+  //       const convo_mail = this.mail_received_for_other_e5_convos[convo_id]
+  //       convo_mail.forEach(mail_element => {
+  //         if(!received_mail_clone[mail_element['e5']]['received_mail'].includes(convo_id)){
+  //           received_mail_clone[mail_element['e5']]['received_mail'].push(convo_id)
+  //           received_mail_clone[mail_element['e5']]['mail_activity'][convo_id] = []
+  //         }
+  //         const includes3 = received_mail_clone[mail_element['e5']]['mail_activity'][convo_id].find(e => e['id'] === mail_element['id'])
+  //         if(includes3 == null){
+  //           received_mail_clone[mail_element['e5']]['mail_activity'][convo_id].push(mail_element)
+  //         }
+  //       });
+  //     }
+  //   }
+
+  //   //sort the convo elements
+  //   for(const mail_e5 in received_mail_clone){
+  //     if(received_mail_clone.hasOwnProperty(mail_e5)){
+  //       received_mail_clone[mail_e5]['received_mail'].forEach(convo_id => {
+  //         received_mail_clone[mail_e5]['mail_activity'][convo_id] = this.sortByAttributeDescending(received_mail_clone[mail_e5]['mail_activity'][convo_id], 'timestamp').reverse()
+  //       });
+  //     }
+  //   }
+
+  //   const received_mail_notifications_clone = structuredClone(this.state.received_mail_notifications)
+  //   received_mail_notifications_clone[e5] = received_mail_notifications
+
+  //   this.setState({received_mail: received_mail_clone, received_mail_notifications: received_mail_notifications_clone})
+
+  //   console.log('apppage', 'received e5', e5)
+  //   console.log('apppage','received mail count: '+received_mail_array.length)
+  //   console.log('apppage','recived mail activity: ', mail_activity_object)
+  //   console.log('apppage', 'received items for other e5s', this.mail_received_for_other_e5_convos)
+  //   console.log('apppage', 'received mail entire thing: ', received_mail_clone)
+  // }
+
+  get_all_mail_data = async (E52contractInstance, e5, account, web3) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var my_created_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:30})
-    my_created_mail_events = my_created_mail_events
+    
+    const all_events = await this.load_mail_events(E52contractInstance, e5, account, web3)
+    const my_received_mail_events = all_events.my_received_mail_events;
+    const my_created_mail_events = all_events.my_created_mail_events;
+    const my_received_message_events = all_events.my_received_message_events;
+    const my_created_message_events = all_events.my_created_message_events;
 
-    this.record_number_of_items(e5, 'sent_mail',my_created_mail_events.length)
-    var created_mail = []
-    var mail_activity = {}
-    var is_first_time = this.state.created_mail[e5] == null
+    const e5_mail_messages_data = this.structuredClone(this.state.mail_message_events)
+    const all_my_mail_message_events = my_received_message_events.concat(my_created_message_events)
+    e5_mail_messages_data[e5] = all_my_mail_message_events.slice()
+    this.setState({mail_message_events: e5_mail_messages_data})
+    // console.log('apppage', 'mail message events', e5, all_my_mail_message_events)
 
-    await this.fetch_multiple_cids_from_nitro(my_created_mail_events, 0, 'p4')
+    const all_my_mail_events = my_received_mail_events.concat(my_created_mail_events)
+    // console.log('apppage', 'all_my_mail_events', all_my_mail_events)
 
-    for(var i=0; i<my_created_mail_events.length; i++){
-      var convo_id = my_created_mail_events[i].returnValues.p5
-      var cid = my_created_mail_events[i].returnValues.p4
-      
-      var ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(all_my_mail_events, 0, 'p4')
+    }
+    
+    for(var i=0; i<all_my_mail_events.length; i++){
+      const event = all_my_mail_events[i]
+      const convo_id = event.returnValues.p5
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
 
-      if(!created_mail.includes(convo_id)){
-        created_mail.push(convo_id)
-        if(mail_activity[convo_id] == null){
-          mail_activity[convo_id] = []
+      if(ipfs_obj != null && ipfs != ipfs_obj && ipfs_obj.entered_title_text != null){
+        const all_mail_clone = structuredClone(this.state.all_mail)
+        if(all_mail_clone[convo_id] == null){
+          all_mail_clone[convo_id] = []
         }
-      }
-      var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
-      if(ipfs_obj != null && ipfs_obj['time'] != null){
-        ipfs_obj['time'] = my_created_mail_events[i].returnValues.p6
-      }else{
-        console.log('ipfs data thats null: ', ipfs)
-      } 
-
-      mail_activity[convo_id].push({'convo_id':convo_id,'id':cid, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':parseInt(my_created_mail_events[i].returnValues.p6), 'author':my_created_mail_events[i].returnValues.p2, 'e5_id':cid})
-
-      if(mail_activity[convo_id].length > 1){
-        this.fetch_uploaded_files_for_object(ipfs_obj)
-      }
+        ipfs_obj['time'] = event.returnValues.p6
       
-      if(is_first_time){
-        var created_mail_clone = structuredClone(this.state.created_mail)
-        created_mail_clone[e5] = {'created_mail':created_mail, 'mail_activity':mail_activity}
-        this.setState({created_mail: created_mail_clone})
+        const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
+        event.returnValues.p1 = (recipient)
+        const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
+        const type  = event.returnValues.p2 == account ? 'sent': 'received'
+        const convo_with = event.returnValues.p2 == account ? recipient : event.returnValues.p2
+        
+        const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':type, 'time':event.returnValues.p6, 'convo_with':convo_with, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
+        // console.log('apppage', 'loaded', obj)
+        const includes = all_mail_clone[convo_id].find(e => e['id'] === obj['id'])
+        if(includes == null){
+          // console.log('apppage', 'includes is null, pushing it')
+          all_mail_clone[convo_id].push(obj);
+          this.setState({all_mail: all_mail_clone})
+          this.fetch_uploaded_files_for_object(ipfs_obj)
+        }
+        await this.wait(150)
       }
     }
 
-    var created_mail_clone = structuredClone(this.state.created_mail)
-    created_mail_clone[e5] = {'created_mail':created_mail, 'mail_activity':mail_activity}
-    this.setState({created_mail: created_mail_clone})
-    
-    console.log('aactivity: ', mail_activity)
-    console.log('created mail count: ',created_mail.length)
+    console.log('apppage', 'all_mail', this.state.all_mail)
   }
 
-  get_received_mail_data = async (E52contractInstance, e5, account, web3) => {
-    if(this.state.accounts[e5].privateKey == '') return;
-    var my_received_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:30})
-    this.record_number_of_items(e5, 'received_mail', my_received_mail_events.length)
+  load_mail_events = async (E52contractInstance, e5, account, web3) => {
+    const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:30}],
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:31}],
+        [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:30}],
+        [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:31}],
 
-    var received_mail = []
-    var mail_activity = {}
-    var parent_mail_id = {}
-    var is_first_time = this.state.received_mail[e5] == null
-    var received_mail_notifications = []
-
-    await this.fetch_multiple_cids_from_nitro(my_received_mail_events, 0, 'p4')
-
-    for(var i=0; i<my_received_mail_events.length; i++){
-      var convo_id = my_received_mail_events[i].returnValues.p5
-      var cid = my_received_mail_events[i].returnValues.p4
-      var ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
-
-      if(!received_mail.includes(convo_id)){
-        received_mail.push(convo_id)
-        if(mail_activity[convo_id] == null){
-          mail_activity[convo_id] = []
-        }
-      }
-      var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
-      ipfs_obj['time'] = my_received_mail_events[i].returnValues.p6
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:32}],
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:33}],
+        [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:32}],
+        [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:33}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      const my_received_mail_events = (all_events[0]).concat(all_events[1])
+      const my_created_mail_events = (all_events[2]).concat(all_events[3])
+      const my_received_message_events = (all_events[4]).concat(all_events[5])
+      const my_created_message_events = (all_events[6]).concat(all_events[7])
       
-      var obj = {'convo_id':convo_id,'id':cid, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':parseInt(my_received_mail_events[i].returnValues.p6), 'author':my_received_mail_events[i].returnValues.p2, 'e5_id':cid}
-      
-      if(ipfs_obj['message'] != null){
-        received_mail_notifications.push({'type':'mail_message_notification', 'event':my_received_mail_events[i], 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6, 'ipfs':ipfs_obj, 'convo_id':convo_id,'id':cid})
-      }
+      return {my_received_mail_events: my_received_mail_events, my_created_mail_events: my_created_mail_events, my_received_message_events: my_received_message_events, my_created_message_events: my_created_message_events}
+    }else{
+      const f30received = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:30})
+      const f31received = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:31})
+      const my_received_mail_events = f30received.concat(f31received)
+    
+      const f30created = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:30})
+      const f31created = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:31})
+      const my_created_mail_events = f30created.concat(f31created)
 
-      mail_activity[convo_id].push(obj)
+      console.log('apppage', e5, 'mail created', f30created, f31created)
+      console.log('apppage', e5, 'mail received', f30received, f31received)
 
-      if(mail_activity[convo_id].length > 1){
-        this.fetch_uploaded_files_for_object(ipfs_obj)
-      }
+      const e32received = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:32})
+      const e33received = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:33})
+      const my_received_message_events = e32received.concat(e33received)
 
-      if(is_first_time){
-        var received_mail_clone = structuredClone(this.state.received_mail)
-        received_mail_clone[e5] = {'received_mail':received_mail, 'mail_activity':mail_activity}
+      const e32created = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:32})
+      const e33created = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:33})
+      const my_created_message_events = e32created.concat(e33created)
 
-        var received_mail_notifications_clone = structuredClone(this.state.received_mail_notifications)
-        received_mail_notifications_clone[e5] = received_mail_notifications
+      console.log('apppage', e5, 'messages created', e32created, e33created)
+      console.log('apppage', e5, 'messages received', e32received, e33received)
 
-        this.setState({received_mail: received_mail_clone, received_mail_notifications: received_mail_notifications_clone})
-      }
-
+      return {my_received_mail_events: my_received_mail_events, my_created_mail_events: my_created_mail_events, my_received_message_events: my_received_message_events, my_created_message_events: my_created_message_events}
     }
+  }
 
-    var received_mail_clone = structuredClone(this.state.received_mail)
-    received_mail_clone[e5] = {'received_mail':received_mail, 'mail_activity':mail_activity}
+  
 
-    var received_mail_notifications_clone = structuredClone(this.state.received_mail_notifications)
-    received_mail_notifications_clone[e5] = received_mail_notifications
-
-    this.setState({received_mail: received_mail_clone, received_mail_notifications: received_mail_notifications_clone})
-
-    console.log('received mail count: '+received_mail.length)
-    console.log('mail activity: ', mail_activity)
+  get_my_unique_crosschain_identifier_number = async () => {
+    var uint8array_string = await this.get_my_entire_public_key()
+    var uint8array = Uint8Array.from(uint8array_string.split(',').map(x=>parseInt(x,10)));
+    var arr = uint8array.toString().replaceAll(',','')
+    if(arr.length > 36){
+      arr = arr.slice(0, 36);
+    }
+    var final = bigInt(arr)
+    return final
   }
 
   get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts, load_prioritized_accounts_exclusively) => {
@@ -23139,14 +23409,16 @@ class App extends Component {
 
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
-        console.log('contract_addresses: ', e5, contract_addresses)
+        // console.log('contract_addresses: ', e5, contract_addresses)
 
         const E52contractArtifact = require('./contract_abis/E52.json');
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.get_received_mail_data(E52contractInstance, e5, account, web3);
-        this.get_sent_mail_data(E52contractInstance, e5, account, web3)
+        // this.get_received_mail_data(E52contractInstance, e5, account, web3);
+        // this.get_sent_mail_data(E52contractInstance, e5, account, web3)
+
+        await this.get_all_mail_data(E52contractInstance, e5, account, web3)
       }
     }
   }
@@ -24950,7 +25222,7 @@ class App extends Component {
       const currentBlock = await web3.eth.getBlock(blockNumber - 1);
       const previousBlock = await web3.eth.getBlock(blockNumber - 2);
       const miningTime = currentBlock.timestamp - previousBlock.timestamp;
-      return Math.round(1 / (miningTime / 120))
+      return Math.round(1 / (miningTime / 12000))
     }
     catch(e){
       console.log(e)
@@ -25252,6 +25524,15 @@ class App extends Component {
     return obj_cid
   }
 
+  get_my_entire_public_key = async () => {
+    const web3 = new Web3(this.get_selected_web3_url());
+    const privateKey = this.state.accounts[this.state.selected_e5].privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    var private_key_to_use = Buffer.from(hash)
+    const publicKeyA = await ecies.getPublic(private_key_to_use);
+    return (new Uint8Array(publicKeyA)).toString()
+  }
+
   get_account_raw_public_key = async () => {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
@@ -25270,8 +25551,6 @@ class App extends Component {
   get_accounts_public_key = async (account, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
-    console.log(this.state.addresses)
-    console.log(e5)
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:'0'})
@@ -25303,9 +25582,12 @@ class App extends Component {
     }
 
     try{
-      var encrypted_key = encrypted_ipfs_obj['recipient_data'][this.state.user_account_id[e5]]
+      var my_uniquie_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+      var encrypted_key = encrypted_ipfs_obj['recipient_data'][my_uniquie_crosschain_identifier]
+      if(encrypted_key == null){
+        return null;
+      }
       var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
-    
       var my_key = await ecies.decrypt(private_key_to_use, uint8array)
       var encrypted_object = encrypted_ipfs_obj['obj']
     
@@ -25391,7 +25673,7 @@ class App extends Component {
     this.setState({object_messages: clone})
   }
 
-  get_job_objects_responses = async (id, e5) =>{
+  get_job_objects_responses = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
@@ -25517,7 +25799,7 @@ class App extends Component {
     this.setState({direct_purchase_fulfilments: fulfilment_clone})
   }
 
-  get_contractor_applications = async (id, E5) =>{
+  get_contractor_applications = async (id, E5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(E5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[E5][1];
@@ -25586,8 +25868,7 @@ class App extends Component {
         return all_objects
   }
 
-
-  load_job_request_messages = async (contractor_id, request_id, e5) =>{
+  load_job_request_messages = async (contractor_id, request_id, e5) => {
     var messages = []
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var focused_e5 = this.state.e5s['data'][i]
@@ -25653,6 +25934,77 @@ class App extends Component {
     var clone = JSON.parse(JSON.stringify(this.state.award_data))
     clone[id] = award_events
     this.setState({award_data: clone})
+  }
+
+  get_mail_messages = async (mail) => {
+    var convo_id = mail['convo_id']
+    var all_my_mail_events = this.get_sorted_convo_message_events(convo_id)
+    console.log('apppage', 'all events to load', all_my_mail_events)
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(all_my_mail_events, 0, 'p4')
+    }
+    
+    for(var i=0; i<all_my_mail_events.length; i++){
+      const event = all_my_mail_events[i]
+      const convo_id = event.returnValues.p5
+      const cid = event.returnValues.p4
+      const e5 = event['e5']
+      const account = this.state.user_account_id[e5];
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
+
+      if(ipfs_obj != null && ipfs != ipfs_obj){
+        ipfs_obj['time'] = event.returnValues.p6
+        
+        const mail_messages_clone = structuredClone(this.state.mail_messages)
+        if(mail_messages_clone[convo_id] == null){
+          mail_messages_clone[convo_id] = []
+        }
+      
+        const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
+        event.returnValues.p1 = (recipient)
+        const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
+        const type  = event.returnValues.p2 == account ? 'sent': 'received'
+        const convo_with = event.returnValues.p2 == account ? recipient : event.returnValues.p2
+        
+        const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':type, 'time':parseInt(event.returnValues.p6), 'convo_with':convo_with, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
+        // console.log('apppage', 'loaded', obj)
+        
+        const includes = mail_messages_clone[convo_id].find(e => e['id'] === obj['id'])
+        if(includes == null){
+          console.log('apppage', 'includes is null, pushing it')
+          mail_messages_clone[convo_id].push(obj);
+          this.setState({mail_messages: mail_messages_clone})
+          this.fetch_uploaded_files_for_object(ipfs_obj)
+        }
+        await this.wait(150)
+      }
+    }
+  }
+
+  get_sorted_convo_message_events(convo_id){
+    var all_mail_data = this.state.mail_message_events
+    console.log('apppage', 'all events to load', all_mail_data)
+    var unsorted_message_object_events = []
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const e5 = this.state.e5s['data'][i]
+      const messages = all_mail_data[e5] == null ? [] : all_mail_data[e5]
+      if(messages != null & messages.length > 0){
+        messages.forEach(message => {
+          if(message.returnValues.p5 == convo_id){
+            message['e5'] = e5
+            unsorted_message_object_events.push({'time':message.returnValues.p6, 'event':message})
+          }
+        });
+      }
+    }
+    var sorted_message_object_events = this.sortByAttributeDescending(unsorted_message_object_events, 'time')
+    var events = []
+    sorted_message_object_events.forEach(object => {
+      events.push(object['event'])
+    });
+
+    return events
   }
 
 

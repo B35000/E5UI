@@ -1138,22 +1138,27 @@ class ChannelDetailsSection extends Component {
         }
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
+
+        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['view_group_card_item_background']
         return(
             <div>
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                            <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text2(item, object)}</p>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                            <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text2(item, object)}</p>
+                                    </div>
+                                    <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                                </div>
                             </div>
-                            <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                            </div>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                            {this.render_markdown_in_message_if_any(item)}
+                            {this.render_images_if_any(item)}
+                            {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['2064']}</p> */}
+                        </div>
                     </div>
-                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
-                    {this.render_markdown_in_message_if_any(item)}
-                    {this.render_images_if_any(item)}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['2064']}</p>
                 </div>
                 {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item, object)}
@@ -1254,7 +1259,7 @@ class ChannelDetailsSection extends Component {
 
     get_sender_title_text2(item, object){
         // var object = this.get_channel_items()[this.props.selected_channel_item];
-        if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
+        if(item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]){
             return 'You'
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
@@ -1425,14 +1430,14 @@ class ChannelDetailsSection extends Component {
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 1600)
         }
-        else if(this.props.app_state.user_account_id[object['e5']] == 1){
+        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else if(!this.is_object_interactable(object)){
             return
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5}
 
             this.props.add_channel_message_to_stack_object(tx)
 

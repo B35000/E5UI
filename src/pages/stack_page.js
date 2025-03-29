@@ -1073,7 +1073,7 @@ class StackPage extends Component {
 
                 {this.show_gas_price_or_eip_options()}
 
-                {this.render_detail_item('0')}
+                
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1437']/* 'Run Expiry Duration' */, 'details':this.props.app_state.loc['1438']/* 'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.' */, 'size':'l'})}
                 <div style={{height:20}}/>
@@ -1089,6 +1089,7 @@ class StackPage extends Component {
     show_gas_price_or_eip_options(){
         var e5 = this.props.app_state.selected_e5
         if(this.props.app_state.e5s[e5].type == '1559'){
+            return;
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'details':this.props.app_state.loc['1593r']/* 'The max priority fee per gas(miner tip) for your next run with E5.' */, 'size':'l'})}
@@ -1119,6 +1120,7 @@ class StackPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_gas_price_options()}
 
+                    {this.render_detail_item('0')}
                 </div>
             )
         }else{
@@ -1137,6 +1139,8 @@ class StackPage extends Component {
                     
                     <div style={{height:10}}/>
                     {this.render_gas_price_options()}
+
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -1628,7 +1632,7 @@ class StackPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'number':gas_price, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1455']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1455']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
 
                 {this.render_arweave_network_fee_if_selected()}
@@ -2956,11 +2960,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int) 
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1510']/* 'channel-messages' */){
@@ -2970,11 +2979,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)    
 
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
@@ -2984,11 +2998,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
@@ -3019,11 +3038,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)  
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
@@ -3033,11 +3057,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int) 
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
@@ -3125,11 +3154,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int) 
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
@@ -3139,11 +3173,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
 
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1503']/* 'contractor' */){
@@ -3181,11 +3220,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
 
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1506']/* 'alias' */){
@@ -3303,11 +3347,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
@@ -3349,11 +3398,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
@@ -3411,11 +3465,16 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
                     
-                    var message_transfers = this.get_message_transfers(txs[i]);
-                    if(message_transfers[1].length != 0){
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
                         strs.push([])
                         adds.push([])
-                        ints.push(message_transfers);
+                        ints.push(message_transfers.transfers_obj);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['3031']/* 'buy-storage' */){
@@ -5396,16 +5455,17 @@ class StackPage extends Component {
 
         var string_obj = [[]]
         var string_data = ''
-        if(calculate_gas) string_data = await this.get_object_ipfs_index('', calculate_gas)
+        if(calculate_gas) string_data = await this.get_object_ipfs_index('', calculate_gas, ipfs_index)
         else string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t, t.target_recipient), calculate_gas, ipfs_index, t.id);
 
-        var recipient_account = t.target_recipient
-        var context = 30
-        var int_data = Date.now()
+        // var recipient_account = t.target_recipient
+        console.log('object',t)
+        var recipient_account = (await this.get_unique_crosschain_identifier_number(t.target_recipient, t, t.recipients_e5))
+        var context = this.props.app_state.selected_e5 == t.recipients_e5 ? 30 : 31
+        var int_data = t.convo_id
 
         obj[1].push(recipient_account)
-        if(recipient_account == 53) obj[2].push(53)
-        else obj[2].push(23)
+        obj[2].push(23)
         obj[3].push(context)
         obj[4].push(int_data)
 
@@ -5416,21 +5476,36 @@ class StackPage extends Component {
 
     get_encrypted_mail_message = async (t, recip) =>{
         var key = makeid(35)
+        // t.my_pub_key = this.props.app_state.my_pub_key
+        // console.log('stackpage', 'message', t)
         var encrypted_obj = this.props.encrypt_data_object(t, key)
         var recipent_data = {}
         var recipient = recip
-        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, t.e5)
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, t['recipients_e5'])
 
         if(recipients_pub_key_hash != ''){
             var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
-            recipent_data[parseInt(recipient)] = encrypted_key
+            // recipent_data[parseInt(recipient)] = encrypted_key
+            recipent_data[await this.get_unique_crosschain_identifier_number(recipient, t, t['recipients_e5'])] = encrypted_key
         }
 
         var uint8array = await this.props.get_account_raw_public_key() 
         var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
-        recipent_data[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] = my_encrypted_key
+        // recipent_data[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] = my_encrypted_key
+        recipent_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
 
         return {'obj':encrypted_obj, 'recipient_data':recipent_data}
+    }
+
+    get_my_unique_crosschain_identifier_number = async () => {
+        var uint8array_string = await this.props.get_my_entire_public_key() 
+        var uint8array = Uint8Array.from(uint8array_string.split(',').map(x=>parseInt(x,10)));
+        var arr = uint8array.toString().replaceAll(',','')
+        if(arr.length > 36){
+            arr = arr.slice(0, 36);
+        }
+        console.log('stackpage', 'arr', arr)        
+        return arr
     }
 
     format_message_object = async (t, calculate_gas, ipfs_index) =>{
@@ -5444,8 +5519,10 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var recipient_account = t.messages_to_deliver[i]['recipient']
-            var context = 30
+            // var recipient_account = t.messages_to_deliver[i]['recipient']
+            var recipient_account = (await this.get_unique_crosschain_identifier_number(t.messages_to_deliver[i]['recipient'], t.messages_to_deliver[i], t.messages_to_deliver[i]['recipients_e5']))
+            
+            var context = this.props.app_state.selected_e5 == t.messages_to_deliver[i]['e5'] ? 32 : 33
             var int_data = t.messages_to_deliver[i].convo_id
 
             var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t.messages_to_deliver[i], t.messages_to_deliver[i]['recipient']), calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
@@ -5459,6 +5536,17 @@ class StackPage extends Component {
         }
 
         return {int: obj, str: string_obj}
+    }
+
+    get_unique_crosschain_identifier_number = async (recipient, t, default_e5) => {
+        var arr = null;
+        var hash = await this.props.get_accounts_public_key(recipient, default_e5)
+        arr = hash.toString().replaceAll(',','')
+        if(arr.length > 36){
+            arr = arr.slice(0, 36);
+        }
+        console.log('stackpage', 'crosschain identifier for ',recipient, arr)
+        return arr
     }
 
     format_channel_message_object = async (t, calculate_gas, ipfs_index) =>{
@@ -6352,7 +6440,7 @@ class StackPage extends Component {
         return bigInt(total_amount_of_token_being_distributed).multiply(bigInt(shareholder_amount)).divide(total_shares)
     }
 
-    get_message_transfers(t){
+    get_message_transfers(t, ints){
         var transfers_obj = [/* send tokens to another account */
             [30000, 1, 0],
             [], [],/* exchanges */
@@ -6360,19 +6448,40 @@ class StackPage extends Component {
             [],/* amounts */
             []/* depths */
         ]
+        const create_account_array = []
+        const create_address_array = []
+        var create_account_pos = ints.length
         for(var i=0; i<t.messages_to_deliver.length; i++){
             if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
                 var award_receiver = t.messages_to_deliver[i]['award_receiver'].toString().toLocaleString('fullwide', {useGrouping:false})
                 var award_amount = t.messages_to_deliver[i]['award_amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+
                 transfers_obj[1].push('5')
                 transfers_obj[2].push(23)
-                transfers_obj[3].push(award_receiver)
-                transfers_obj[4].push(23)
+
+                const isEthereumAddress = (input) => /^0x[a-fA-F0-9]{40}$/.test(input);
+
+                if(isEthereumAddress(award_receiver)){
+                    //receiver doesnt have an account in my e5, so I need to create one for them
+                    var obj = [/* custom object */
+                        [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 29 /* 29(account_obj_id) */, 0]
+                    ]
+                    create_account_array.push(obj)
+                    create_address_array.push(award_receiver)
+
+                    transfers_obj[3].push(create_account_pos)
+                    transfers_obj[4].push(35)
+                    create_account_pos++
+                }else{
+                    transfers_obj[3].push(award_receiver)
+                    transfers_obj[4].push(23)
+                }
                 transfers_obj[5].push(award_amount)
                 transfers_obj[6].push(0)
             }
         }
-        return transfers_obj
+        var transfers_included = (transfers_obj[1].length > 0)
+        return {transfers_obj, create_account_array, create_address_array, transfers_included}
     }
 
     format_pay_upcoming_subscriptions(t){

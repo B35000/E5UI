@@ -1982,66 +1982,78 @@ class home_page extends Component {
             var all_mail = []
             var received_mail = this.get_combined_created_mail('received_mail')
 
-            for(var i=0; i<received_mail['received_mail'].length; i++){
-                var convo_id = received_mail['received_mail'][i]
-                var context_object = received_mail['mail_activity'][convo_id][0]
-                if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-                    all_mail.push(context_object)
-                }
-            }
-            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
+            // for(var i=0; i<received_mail['received_mail'].length; i++){
+            //     var convo_id = received_mail['received_mail'][i]
+            //     var context_object = received_mail['mail_activity'][convo_id][0]
+            //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+            //         all_mail.push(context_object)
+            //     }
+            // }
+            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(received_mail, 'time')))
         }
-        else if(selected_option_name == this.props.app_state.loc['1210']/* 'active' */){
-            var all_mail = []
-            
-            var received_mail = this.get_combined_created_mail('received_mail')
-            for(var i=0; i<received_mail['received_mail'].length; i++){
-                var convo_id = received_mail['received_mail'][i]
-                var context_object = received_mail['mail_activity'][convo_id][0]
-                var is_active = this.is_active(convo_id)
-                if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-                    if(is_active) all_mail.push(context_object)
-                }
-            }
+        // else if(selected_option_name == this.props.app_state.loc['1210']/* 'active' */){
+        //     var all_mail = []
+        //     var received_mail = this.get_combined_created_mail('received_mail')
+        //     for(var i=0; i<received_mail['received_mail'].length; i++){
+        //         var convo_id = received_mail['received_mail'][i]
+        //         var context_object = received_mail['mail_activity'][convo_id][0]
+        //         var is_active = this.is_active(convo_id)
+        //         if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+        //             if(is_active) all_mail.push(context_object)
+        //         }
+        //     }
 
-            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
-        }
+        //     return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
+        // }
         else {
             //sent
             var all_mail = []
             var created_mail = this.get_combined_created_mail('created_mail')
-            for(var i=0; i<created_mail['created_mail'].length; i++){
-                var convo_id = created_mail['created_mail'][i]
-                var context_object = created_mail['mail_activity'][convo_id][0]
-                if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-                    all_mail.push(context_object)
-                }
-            }
-            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
+            // for(var i=0; i<created_mail['created_mail'].length; i++){
+            //     var convo_id = created_mail['created_mail'][i]
+            //     var context_object = created_mail['mail_activity'][convo_id][0]
+            //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+            //         all_mail.push(context_object)
+            //     }
+            // }
+            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(created_mail, 'time')))
         }
     }
 
     get_all_mail(){
-        var all_mail = []
-        var received_mail = this.get_combined_created_mail('received_mail')
-        var created_mail = this.get_combined_created_mail('created_mail')
-
-        for(var i=0; i<received_mail['received_mail'].length; i++){
-            var convo_id = received_mail['received_mail'][i]
-            var context_object = received_mail['mail_activity'][convo_id][0]
-            if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-                all_mail.push(context_object)
+        var mail_objects = []
+        var all_messages = this.props.app_state.all_mail
+        for(const convo_id in all_messages){
+            if(all_messages.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages[convo_id]
+                convo_messages.forEach(message => {
+                    if(message['ipfs'] != null && message['ipfs'].entered_title_text != null){
+                        mail_objects.push(message)
+                    }
+                });
             }
         }
+        return mail_objects
+        // var all_mail = []
+        // var received_mail = this.get_combined_created_mail('received_mail')
+        // var created_mail = this.get_combined_created_mail('created_mail')
 
-        for(var i=0; i<created_mail['created_mail'].length; i++){
-            var convo_id = created_mail['created_mail'][i]
-            var context_object = created_mail['mail_activity'][convo_id][0]
-            if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-                all_mail.push(context_object)
-            }
-        }
-        return all_mail
+        // for(var i=0; i<received_mail['received_mail'].length; i++){
+        //     var convo_id = received_mail['received_mail'][i]
+        //     var context_object = received_mail['mail_activity'][convo_id][0]
+        //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+        //         all_mail.push(context_object)
+        //     }
+        // }
+
+        // for(var i=0; i<created_mail['created_mail'].length; i++){
+        //     var convo_id = created_mail['created_mail'][i]
+        //     var context_object = created_mail['mail_activity'][convo_id][0]
+        //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+        //         all_mail.push(context_object)
+        //     }
+        // }
+        // return all_mail
     }
 
     is_active(convo_id){
@@ -2052,7 +2064,7 @@ class home_page extends Component {
             var message_sender = message['ipfs']
             if(message_sender != null){
                 message_sender = message_sender['sender']
-                var myid = this.props.app_state.user_account_id[message['e5']]
+                var myid = message['my_preferred_account_id']
                 if(message_sender == myid){
                     is_active = true
                     break;
@@ -2092,27 +2104,42 @@ class home_page extends Component {
     }
 
     get_combined_created_mail(created_or_received){
-        var created_mail = []
-        var mail_activity = {}
-        var created_mail_obj = created_or_received == 'created_mail' ? this.props.app_state.created_mail : this.props.app_state.received_mail
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_data = created_mail_obj[e5]
-
-            if(e5_data != null){
-                if(e5_data[created_or_received] != null){
-                    created_mail = created_mail.concat(e5_data[created_or_received])
-                }
-                var mail_activity_clone = structuredClone(mail_activity)
-                mail_activity = { ...mail_activity_clone, ...e5_data['mail_activity']}
-            } 
+        var mail_objects = []
+        var all_messages = this.props.app_state.all_mail
+        var created_mail_obj = created_or_received == 'created_mail' ? 'sent' : 'received'
+        for(const convo_id in all_messages){
+            if(all_messages.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages[convo_id]
+                convo_messages.forEach(message => {
+                    if(message['type'] == created_mail_obj && message['ipfs'] != null &&  message['ipfs'].entered_title_text != null){
+                        mail_objects.push(message)
+                    }
+                });
+            }
         }
+        return mail_objects
 
-        if(created_or_received == 'created_mail'){
-            return {'created_mail':created_mail, 'mail_activity':mail_activity}
-        }else{
-            return {'received_mail':created_mail, 'mail_activity':mail_activity}
-        }
+        // var created_mail = []
+        // var mail_activity = {}
+        // var created_mail_obj = created_or_received == 'created_mail' ? this.props.app_state.created_mail : this.props.app_state.received_mail
+        // for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+        //     var e5 = this.props.app_state.e5s['data'][i]
+        //     var e5_data = created_mail_obj[e5]
+
+        //     if(e5_data != null){
+        //         if(e5_data[created_or_received] != null){
+        //             created_mail = created_mail.concat(e5_data[created_or_received])
+        //         }
+        //         var mail_activity_clone = structuredClone(mail_activity)
+        //         mail_activity = { ...mail_activity_clone, ...e5_data['mail_activity']}
+        //     } 
+        // }
+
+        // if(created_or_received == 'created_mail'){
+        //     return {'created_mail':created_mail, 'mail_activity':mail_activity}
+        // }else{
+        //     return {'received_mail':created_mail, 'mail_activity':mail_activity}
+        // }
     }
     
 
@@ -3345,6 +3372,7 @@ class home_page extends Component {
         this.setState({selected_mail_item: id})
         this.set_detail_data()
         this.props.fetch_uploaded_files_for_object(object)
+        this.props.get_mail_messages(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3674,7 +3702,7 @@ class home_page extends Component {
                 when_discography_audio_item_clicked={this.when_discography_audio_item_clicked.bind(this)} when_discography_video_item_clicked={this.when_discography_video_item_clicked.bind(this)}
 
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
-                connect_to_node={this.props.connect_to_node.bind(this)}
+                connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)}
                 />
             </div>
         )

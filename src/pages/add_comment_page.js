@@ -349,7 +349,7 @@ class AddCommentPage extends Component {
         this.setState({markdown: text})
     }
 
-     render_markdown_shortcut_list(){
+    render_markdown_shortcut_list(){
         var items = [
             {'title':this.props.app_state.loc['a311ca']/* 'Headings' */, 'details':'# H1 \n## H2 \n### H3', 'size':'l'},
             {'title':this.props.app_state.loc['a311cd']/* 'Bold' */, 'details':'**bold text**', 'size':'l'},
@@ -651,7 +651,10 @@ class AddCommentPage extends Component {
 
     render_focused_message(){
         var item = this.state.focused_message_id;
-        if(item != 0){
+        if(item != null && item != 0 && item['ipfs'] != null){
+            item = item['ipfs']
+        }
+        if(item != 0 && item != null){
             return(
                 <div>
                     {this.render_space_if_small_screen()}
@@ -699,11 +702,9 @@ class AddCommentPage extends Component {
         return all_objects
     }
 
-
     truncate(source, size) {
         return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
-
 
     render_space_if_small_screen(){
         var size = this.props.app_state.size
@@ -724,7 +725,8 @@ class AddCommentPage extends Component {
     render_award_ui(){
         var focused_message_id = this.state.focused_message_id;
         if(focused_message_id == 0) return;
-        if(focused_message_id['e5'] != this.props.app_state.selected_e5) return;
+        // if(focused_message_id['e5'] != this.props.app_state.selected_e5) return;
+        if(this.state.award_target_account_or_address_on_my_e5 == null) return;
         var award_amount = this.state.award_amount
         var my_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 5)
         return(
@@ -830,10 +832,14 @@ class AddCommentPage extends Component {
         this.setState({object: object, focused_message_id: focused_message_id, page: page, contractor_object: contractor_object})
     }
 
+    set_focused_message_target_account(account_or_address){
+        this.setState({award_target_account_or_address_on_my_e5: account_or_address})
+    }
+
 
     finish(){
         var object = this.state.object
-        if(this.props.app_state.user_account_id[object['e5']] == 1){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
             this.props.notify(this.props.app_state.loc['1040']/* 'You need to make at least 1 transaction to participate.' */, 1200)
             return
         }
@@ -851,10 +857,11 @@ class AddCommentPage extends Component {
 
         var award_tier = this.state.selected_tier_object == null ? '' : this.state.selected_tier_object;
         var award_amount = this.state.award_amount
-        var award_receiver = this.state.focused_message_id != 0 ? this.state.focused_message_id['sender'] : 0
+        // var award_receiver = this.state.focused_message_id != 0 ? this.state.focused_message_id['sender'] : 0
+        var award_receiver = this.state.award_target_account_or_address_on_my_e5 == null ? 0 : this.state.award_target_account_or_address_on_my_e5
 
         if(award_amount != 0){
-            if(this.props.calculate_actual_balance(object['e5'], 5) < award_amount){
+            if(this.props.calculate_actual_balance(this.props.app_state.selected_e5, 5) < award_amount){
                 this.props.notify(this.props.app_state.loc['2909a']/* 'You dont have enough spend to include that award.' */, 4000)
                 return;
             }
@@ -869,39 +876,41 @@ class AddCommentPage extends Component {
         }
 
         if(page == 'channel'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'job'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'mail'){
             var mail = object;
             var convo_id = mail['convo_id']
-            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            var recipients_e5 = mail['author'] == this.props.app_state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
+
+            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5 }
         }
         else if(page == 'post'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'proposal'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'storefront'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'bag'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'request'){
-            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'audio'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'video'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'nitro'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
 
         this.props.add_comment_to_respective_forum_page(tx, page)

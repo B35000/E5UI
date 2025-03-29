@@ -1472,53 +1472,6 @@ class ProposalDetailsSection extends Component {
                     </SwipeableList>
             </div>
         )
-        var focused_message = this.get_focused_message(object)
-
-        if(item == focused_message){
-            return(
-                <div>
-                    <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>Focus</div>,
-                            action: () => console.log()
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message(object)
-                            }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>Focus</div>,
-                            action: () => this.focus_message(item, object)
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message(object)
-                            }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
-
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                </div>
-            )
-        }
     }
 
     when_message_clicked = (event, item, focused_message) => {
@@ -1562,24 +1515,29 @@ class ProposalDetailsSection extends Component {
         }
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
+
+        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['view_group_card_item_background']
         return(
             <div>
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
-                        </div>
-                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                            <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                                </div>
+                            </div>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                            {this.render_markdown_in_message_if_any(item)}
+
+                            {this.render_images_if_any(item)}
+                            {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p> */}
                         </div>
                     </div>
-                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
-                    {this.render_markdown_in_message_if_any(item)}
-
-                    {this.render_images_if_any(item)}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p>
-                </div>
+                </div>   
                 {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item, object)}
             </div>
@@ -1678,7 +1636,7 @@ class ProposalDetailsSection extends Component {
 
     get_sender_title_text(item, object){
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
-        if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
+        if(item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]){
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
@@ -1812,11 +1770,11 @@ class ProposalDetailsSection extends Component {
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 600)
         }
-        else if(this.props.app_state.user_account_id[object['e5']] == 1){
+        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 5200)
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5}
 
             this.props.add_proposal_message_to_stack_object(tx)
 

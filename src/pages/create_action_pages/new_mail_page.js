@@ -74,7 +74,9 @@ class NewMailPage extends Component {
         edit_text_item_pos:-1,
 
         get_sort_links_tags_object:this.get_sort_links_tags_object(), entered_pdf_objects:[],
-        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
+        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], 
+
+        /* my_pub_key:this.props.app_state.my_pub_key, */ convo_id:Date.now(), recipients_e5: this.props.app_state.selected_e5
     };
 
     get_new_job_page_tags_object(){
@@ -1279,10 +1281,10 @@ class NewMailPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div> */}
 
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-            </div>
+            </div> */}
 
             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_image', 10**16)}/>
@@ -2064,8 +2066,22 @@ class NewMailPage extends Component {
 
     get_recipient_id(recipient){
         var id = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[recipient] == null ? recipient : this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[recipient])
-
         return id
+    }
+
+    get_recipient_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
     }
 
 
@@ -2075,8 +2091,10 @@ class NewMailPage extends Component {
         var recipient = this.state.target_recipient.trim()
 
         if(isNaN(recipient)){
+            var recipients_e5 = this.get_recipient_e5(recipient)
             recipient = this.get_recipient_id(recipient)
-            this.setState({target_recipient: recipient})
+            console.log('recipients e5', recipients_e5)
+            this.setState({target_recipient: recipient, recipients_e5: recipients_e5})
         }
 
         if(index_tags.length < 1){
@@ -2091,7 +2109,7 @@ class NewMailPage extends Component {
         // else if(recipients.length == 0){
         //     this.props.notify('set at least one recipient', 700)
         // }
-        else if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
+        else if(isNaN(recipient) || parseInt(recipient) < 1000 || recipient == '' || recipient.includes('.')){
             this.props.notify(this.props.app_state.loc['296'], 2700)
         }
         else{ 

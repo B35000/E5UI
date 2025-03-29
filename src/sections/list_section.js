@@ -1374,8 +1374,9 @@ class PostListSection extends Component {
     }
 
     format_mail_item(object){
-        var tags_to_use = [object['type']];
-        var tags = object['ipfs'] == null ? ['Mail'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        // var tags_to_use = [object['type']];
+        var tags_to_use = []
+        var tags = object['ipfs'] == null ? ['Mail'] : [].concat(object['ipfs'].entered_indexing_tags)
         var final_tags = tags_to_use.concat(tags)
         var details = object['ipfs'] == null ? 'Mail ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7

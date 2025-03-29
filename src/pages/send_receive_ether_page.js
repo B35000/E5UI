@@ -306,6 +306,7 @@ class SendReceiveEtherPage extends Component {
     show_gas_price_or_eip_options(e5){
         var picked_gas_price_in_gwei = (this.state.picked_wei_gas_price / (10**9))
         if(this.props.app_state.e5s[e5].type == '1559'){
+            return;
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1407a']/* 'Max Priority Fee per Gas.' */, 'details':this.props.app_state.loc['1407b']/* 'Set the max prioryt fee per gas for your transaction below.' */, 'size':'l'})}
