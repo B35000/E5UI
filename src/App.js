@@ -12465,7 +12465,7 @@ class App extends Component {
     }
   }
 
-  show_give_award_bottomsheet(item){
+  show_give_award_bottomsheet = async (item) => {
     this.open_give_award_bottomsheet()
     var me = this;
     setTimeout(function() {
@@ -12474,6 +12474,21 @@ class App extends Component {
       }
     }, (1 * 500));
     
+    const object_e5 = item['e5']
+    const object_sender = item['event'].returnValues.p5
+
+    if(this.state.selected_e5 != object_e5){
+      const their_account_data = await this.get_senders_account_on_my_e5(object_sender, object_e5)
+      if(their_account_data.their_account_on_my_e5 == 0){
+          //they dont have an account, so well need to create one for them in the stack run
+          this.give_award_page.current?.set_award_target(their_account_data.their_address)
+        }else{
+          this.give_award_page.current?.set_award_target(their_account_data.their_account_on_my_e5)
+        }
+    }else{
+      await this.wait(300)
+      this.give_award_page.current?.set_award_target(object_sender)
+    }
   }
 
   add_award_transaction_to_stack(state_obj){
@@ -12576,7 +12591,6 @@ class App extends Component {
     }, (1 * 500));
     
     if(focused_message_id != 0){
-      console.log('apppage', focused_message_id)
       const focused_message_sender = focused_message_id['sender'] == null ? focused_message_id['ipfs']['sender'] : focused_message_id['sender'];
       const focused_message_sender_e5 = focused_message_id['sender_e5'] == null ? focused_message_id['ipfs']['my_preferred_e5'] : focused_message_id['sender_e5']
       
@@ -12586,9 +12600,10 @@ class App extends Component {
           //they dont have an account, so well need to create one for them in the stack run
           this.add_comment_page.current.set_focused_message_target_account(their_account_data.their_address)
         }else{
-          this.add_comment_page.current.set_focused_message_target_account(their_account_data.their_address)
+          this.add_comment_page.current.set_focused_message_target_account(their_account_data.their_account_on_my_e5)
         }
       }else{
+        await this.wait(300)
         this.add_comment_page.current.set_focused_message_target_account(focused_message_sender)
       }
     }
@@ -25905,12 +25920,12 @@ class App extends Component {
   }
 
   get_post_award_data = async (id, e5) => {
-    const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    const H52contractArtifact = require('./contract_abis/H52.json');
-    const H52_address = this.state.addresses[e5][6];
-    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
-
-    var created_awward_data = (await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})).reverse()
+    // const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    // const H52contractArtifact = require('./contract_abis/H52.json');
+    // const H52_address = this.state.addresses[e5][6];
+    // const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    // var created_awward_data = (await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})).reverse()
+    var created_awward_data = await this.get_and_sort_all_award_events(id)
 
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       await this.fetch_multiple_cids_from_nitro(created_awward_data, 0, 'p4')
@@ -25920,7 +25935,8 @@ class App extends Component {
     var is_first_time = this.state.award_data[id] == null ? true: false
     for(var j=0; j<created_awward_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_awward_data[j].returnValues.p4)
-      if(ipfs_message != null){
+      var e5_id = created_awward_data[j].returnValues.p3 + created_awward_data[j]['e5']
+      if(ipfs_message != null && (ipfs_message['e5_id'] == e5_id || ipfs_message['e5_id'] == null)){
         award_events.push(ipfs_message)
       }
 
@@ -25934,6 +25950,57 @@ class App extends Component {
     var clone = JSON.parse(JSON.stringify(this.state.award_data))
     clone[id] = award_events
     this.setState({award_data: clone})
+  }
+
+  get_and_sort_all_award_events = async (id) => {
+    var all_unsorted_events = []
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params = []
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const focused_e5 = this.state.e5s['data'][i]
+        if(this.state.addresses[focused_e5] != null){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const H52contractArtifact = require('./contract_abis/H52.json');
+          const H52_address = this.state.addresses[focused_e5][6];
+          const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+          event_params.push([web3, H52contractInstance, 'e5', focused_e5, {p3/* awward_context */: id}])
+        }
+      }
+      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      all_events.forEach((event_array, index)=> {
+        var focused_e5 = this.state.e5s['data'][index]
+        for(var l=0; l<event_array.length; l++){
+          var event = event_array[l]
+          event['e5'] = focused_e5
+          all_unsorted_events.push({'time':event.returnValues.p5/* timestamp */, 'event':event})
+        }
+      });
+    }else{
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const focused_e5 = this.state.e5s['data'][i]
+        if(this.state.addresses[focused_e5] != null){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const H52contractArtifact = require('./contract_abis/H52.json');
+          const H52_address = this.state.addresses[focused_e5][6];
+          const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+          
+          const created_award_data = (await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p3/* awward_context */: id}))
+          for(var k=0; k<created_award_data.length; k++){
+            var event = created_award_data[k]
+            event['e5'] = focused_e5
+            all_unsorted_events.push({'time':event.returnValues.p5/* timestamp */, 'event':event})
+          }
+        }
+      }
+    }
+
+    var sorted_object_events = this.sortByAttributeDescending(all_unsorted_events, 'time')
+    var events = []
+    sorted_object_events.forEach(object => {
+      events.push(object['event'])
+    });
+
+    return events
   }
 
   get_mail_messages = async (mail) => {

@@ -71,10 +71,15 @@ class GiveAwardPage extends Component {
     }
 
     set_post(item){
-        this.setState({post_item: item, e5: item['e5'], id:makeid(8)})
+        this.setState({post_item: item, e5: this.props.app_state.selected_e5, id:makeid(8)})
+    }
+
+    set_award_target(account_or_address){
+        this.setState({award_target_account_or_address_on_my_e5: account_or_address})
     }
 
     render(){
+        var h = this.state.award_target_account_or_address_on_my_e5 == null ? 0 : 36
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
 
@@ -84,7 +89,7 @@ class GiveAwardPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:h, width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -148,7 +153,7 @@ class GiveAwardPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -297,8 +302,7 @@ class GiveAwardPage extends Component {
 
     render_amounts_data(){
         var award_amount = this.state.award_amount
-        // var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
-        var spend_token_balance = this.props.calculate_actual_balance(this.state.e5, 5)
+        var spend_token_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 5)
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1164']/* 'Award Tiers' */, 'details':this.props.app_state.loc['1165']/* 'Pick an award tier you wish to send to the post author' */, 'size':'l'})}
@@ -372,7 +376,7 @@ class GiveAwardPage extends Component {
     }
 
     get_award_amount(tier){
-        var spend_exchange = this.props.app_state.created_token_object_mapping[this.state.post_item['e5']][5]
+        var spend_exchange = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]
         var min_amount = bigInt(spend_exchange['data'][1][0]).divide(bigInt(10000))
         var obj = {'1':5000, '2':1000, '3':600, '4':300, '5':100, '6':50, '7':10, '8':5, '9':1}
         return bigInt(obj[tier]).multiply(min_amount).multiply(this.state.multiplier)
@@ -545,13 +549,13 @@ class GiveAwardPage extends Component {
         if(!isNaN(typed_search)){
             return typed_search
         }
-        var id = this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()]
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
 
         return id
     }
 
     does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
             return false
         }
         return true
@@ -575,7 +579,7 @@ class GiveAwardPage extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -681,7 +685,7 @@ class GiveAwardPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['1188']/* 'Account 3' */, 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['1189']/* 'Account 5' */, 'size':'s'}},
         ];
-        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
@@ -746,7 +750,7 @@ class GiveAwardPage extends Component {
     check_if_sender_has_enough_for_award(){
         var award_amount = this.state.award_amount
         // var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
-        var spend_token_balance = this.props.calculate_actual_balance(this.state.e5, 5)
+        var spend_token_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 5)
 
         if(spend_token_balance < award_amount){
             return false
@@ -762,8 +766,8 @@ class GiveAwardPage extends Component {
             var bounty_item_amount = price_data[i]['amount']
             // var my_balance = this.props.app_state.created_token_object_mapping[this.state.post_item['e5']][bounty_item_exchange]
             // my_balance = my_balance == null ? 0 : my_balance['balance']
-            var my_balance = this.props.calculate_actual_balance(this.state.post_item['e5'], bounty_item_exchange)
-            my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(bounty_item_exchange, this.state.post_item['e5']))
+            var my_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, bounty_item_exchange)
+            my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(bounty_item_exchange, this.props.app_state.selected_e5))
             if(bigInt(my_balance).lesser(bigInt(bounty_item_amount))){
                 has_enough = false
             }

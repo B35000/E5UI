@@ -2201,7 +2201,7 @@ class AudioDetailSection extends Component {
                             {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p> */}
                         </div>
                     </div>
-                </div>  
+                </div>
                 {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item, object)}
             </div>

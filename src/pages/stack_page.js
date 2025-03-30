@@ -192,9 +192,9 @@ class StackPage extends Component {
             
             'darkcolor-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, my_state_color, this.props.app_state.loc['1593a']/* 'auto' */], 
             
-            'lightcolor-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, my_state_color, my_state_color_light, this.props.app_state.loc['1593a']/* 'auto' */],
+            'lightcolor-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['2740']/* midnight */, my_state_color, my_state_color_light, this.props.app_state.loc['1593a']/* 'auto' */],
             
-            'all-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['2741']/* green */,this.props.app_state.loc['3056']/* 'light-green' */, this.props.app_state.loc['3057']/* 'red' */,this.props.app_state.loc['3058']/* 'light-red' */, this.props.app_state.loc['3059']/* 'blue' */,this.props.app_state.loc['3060']/* 'light-blue' */, this.props.app_state.loc['3061']/* 'yellow' */,this.props.app_state.loc['3062']/* 'light-yellow' */,  this.props.app_state.loc['3063']/* 'pink' */,this.props.app_state.loc['3064']/* 'light-pink' */,  this.props.app_state.loc['3065']/* 'orange' */, this.props.app_state.loc['3066']/* 'light-orange' */, this.props.app_state.loc['1593a']/* 'auto' */]
+            'all-available':['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['2740']/* midnight */, this.props.app_state.loc['2741']/* green */,this.props.app_state.loc['3056']/* 'light-green' */, this.props.app_state.loc['3057']/* 'red' */,this.props.app_state.loc['3058']/* 'light-red' */, this.props.app_state.loc['3059']/* 'blue' */,this.props.app_state.loc['3060']/* 'light-blue' */, this.props.app_state.loc['3061']/* 'yellow' */,this.props.app_state.loc['3062']/* 'light-yellow' */,  this.props.app_state.loc['3063']/* 'pink' */,this.props.app_state.loc['3064']/* 'light-pink' */,  this.props.app_state.loc['3065']/* 'orange' */, this.props.app_state.loc['3066']/* 'light-orange' */, this.props.app_state.loc['1593a']/* 'auto' */]
         }
         if(my_state_code === '254'){
             var dark = this.get_254_state_colors('dark')
@@ -3289,7 +3289,12 @@ class StackPage extends Component {
                     if(format_object.depth[1].length > 0){
                         strs.push([])
                         adds.push([])
-                        ints.push(transfer_object.depth)
+                        ints.push(format_object.depth)
+                    }
+                    if(format_object.should_include_create_recipient == true){
+                        strs.push([])
+                        adds.push([format_object.final_receiver_string])
+                        ints.push(format_object.create_account_obj)
                     }
                     strs.push(format_object.str)
                     adds.push([])
@@ -6252,8 +6257,10 @@ class StackPage extends Component {
 
     format_award_object = async (t, calculate_gas, ints, ipfs_index) => {
         var ints_clone = ints.slice()
-        var author = t.post_item['event'].returnValues.p5
+        // var author = t.post_item['event'].returnValues.p5
+        var author = t.award_target_account_or_address_on_my_e5
         var post_id = t.post_item['id'];
+        var post_e5 = t.post_item['e5']
 
         if(t.post_item['ipfs'].purchase_recipient != null){
             author = t.post_item['ipfs'].purchase_recipient
@@ -6268,6 +6275,12 @@ class StackPage extends Component {
             []/* amount */
         ]
 
+        var create_account_obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 29 /* 29(account_obj_id) */, 0]
+        ]
+
+        const isEthereumAddress = (input) => /^0x[a-fA-F0-9]{40}$/.test(input);
+        const final_receiver_string = author.toString().toLocaleString('fullwide', {useGrouping:false})
         var obj = [/* send awwards */
             [30000, 7, 0],
             [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
@@ -6277,6 +6290,20 @@ class StackPage extends Component {
             [t.award_amount.toString().toLocaleString('fullwide', {useGrouping:false})],/* amounts for first target receiver */
             [0],/* depths for the first targeted receiver*/
         ]
+        var should_include_create_recipient = false;
+        if(isEthereumAddress(final_receiver_string)){
+            ints_clone.push(create_account_obj)
+            obj = [/* send awwards */
+                [30000, 7, 0],
+                [ints_clone.length-1], [35],/* target receivers */
+                [post_id.toString().toLocaleString('fullwide', {useGrouping:false})],/* awward contexts */
+                
+                [5], [23],/* exchange ids for first target receiver */
+                [t.award_amount.toString().toLocaleString('fullwide', {useGrouping:false})],/* amounts for first target receiver */
+                [0],/* depths for the first targeted receiver*/
+            ]
+            should_include_create_recipient = true
+        }
         var string_obj = [[]]
 
         for(var i=0; i<t.price_data.length; i++){
@@ -6295,7 +6322,6 @@ class StackPage extends Component {
                 depth_swap_obj[7].push('1')
             }
 
-
             var transfer_actions = this.get_exchange_transfer_actions(amount)
             for(var t=0; t<transfer_actions.length; t++){
                 obj[4].push(exchange)
@@ -6303,15 +6329,14 @@ class StackPage extends Component {
                 obj[6].push(transfer_actions[t]['amount'])
                 obj[7].push(transfer_actions[t]['depth'])
             }
-
         }
 
-        var award_object = {'selected_tier_object':t.selected_tier_object, 'post_id':post_id, 'multiplier':t.multiplier, 'custom_amounts':t.price_data, 'entered_message':t.entered_message_text}
+        var award_object = {'selected_tier_object':t.selected_tier_object, 'post_id':post_id, 'multiplier':t.multiplier, 'custom_amounts':t.price_data, 'entered_message':t.entered_message_text, 'e5_id':post_id+post_e5}
         
         var string_data = await this.get_object_ipfs_index(award_object, calculate_gas, ipfs_index, t.id);
         string_obj[0].push(string_data)
 
-        return {int: obj, str: string_obj, depth: depth_swap_obj}
+        return {int: obj, str: string_obj, depth: depth_swap_obj, should_include_create_recipient, final_receiver_string, create_account_obj}
     }
 
     format_depthmint_object(t){
