@@ -109,9 +109,9 @@ class ChannelDetailsSection extends Component {
         if(this.props.selected_channel_item != null){
             var object = this.get_item_in_array(this.get_channel_items(), this.props.selected_channel_item);
             if(object == null) return;
-            this.props.get_objects_messages(object['id'], object['e5'])
+            this.props.get_objects_messages(object['id'], object['e5'], object)
             this.props.get_channel_event_data(object['id'], object['e5'])
-            this.props.get_moderator_event_data(object['id'], object['e5'])
+            // this.props.get_moderator_event_data(object['id'], object['e5'])
         }
     }
 
@@ -121,7 +121,7 @@ class ChannelDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2065']/* 'e.moderator-events' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' *//* , 'e.'+this.props.app_state.loc['2065']'e.moderator-events' */],[1]
           ],
           'moderator-events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2065']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
@@ -277,10 +277,10 @@ class ChannelDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.show_channel_transaction_count_chart(object)}
 
-                    {this.render_revoke_author_privelages_event(object)}
-                    <div style={{height: 10}}/>
-                    {this.render_moderator_button(object)}
-                    <div style={{height: 10}}/>
+                    {/* {this.render_revoke_author_privelages_event(object)} */}
+                    {/* <div style={{height: 10}}/> */}
+                    {/* {this.render_moderator_button(object)} */}
+                    {/* <div style={{height: 10}}/> */}
                     {this.render_edit_object_button(object)}
                     {this.render_pin_channel_button(object)}
 
@@ -493,7 +493,8 @@ class ChannelDetailsSection extends Component {
     }
 
     truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+        var firstLine = source.includes("\n") ? source.split("\n")[0] : source;
+        return firstLine.length > size ? firstLine.slice(0, size - 1) + "…" : firstLine;
     }
 
     get_title(item){
@@ -1437,7 +1438,14 @@ class ChannelDetailsSection extends Component {
             return
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5}
+            var unencrypted_keys = object['ipfs']['unencrypted_keys']
+            var key_to_use = ''
+            var key_index = 0
+            if(unencrypted_keys != null && unencrypted_keys.length > 0){
+                key_to_use = unencrypted_keys[unencrypted_keys.length-1]
+                key_index = unencrypted_keys.length-1
+            }
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'key_to_use':key_to_use, 'key_index':key_index}
 
             this.props.add_channel_message_to_stack_object(tx)
 

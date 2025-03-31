@@ -3167,7 +3167,7 @@ class home_page extends Component {
 
             show_pay_upcoming_subscriptions_bottomsheet={this.props.show_pay_upcoming_subscriptions_bottomsheet.bind(this)}
 
-            when_coin_object_clicked={this.when_coin_object_clicked.bind(this)} when_playlist_selected={this.when_playlist_selected.bind(this)}
+            when_coin_object_clicked={this.when_coin_object_clicked.bind(this)} when_playlist_selected={this.when_playlist_selected.bind(this)} get_my_entire_public_key={this.props.get_my_entire_public_key.bind(this)}
             />
         )
     }
@@ -3338,7 +3338,7 @@ class home_page extends Component {
         }
 
         this.props.fetch_uploaded_files_for_object(object)
-        this.props.get_objects_messages(id, e5)
+        this.props.get_objects_messages(id, e5, object)
         this.props.get_channel_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
 

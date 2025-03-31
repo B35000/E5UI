@@ -1728,7 +1728,8 @@ class VideoDetailsSection extends Component {
     }
 
     truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+        var firstLine = source.includes("\n") ? source.split("\n")[0] : source;
+        return firstLine.length > size ? firstLine.slice(0, size - 1) + "…" : firstLine;
     }
 
     render_award_object_if_any(item){

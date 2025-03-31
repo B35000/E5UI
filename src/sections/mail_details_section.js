@@ -363,7 +363,8 @@ class MailDetailsSection extends Component {
     }
 
     truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+        var firstLine = source.includes("\n") ? source.split("\n")[0] : source;
+        return firstLine.length > size ? firstLine.slice(0, size - 1) + "…" : firstLine;
     }
 
     get_title(item){
@@ -472,7 +473,7 @@ class MailDetailsSection extends Component {
 
     render_mail_responses(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-150
+        if(this.get_focused_message(object) != null) he = this.props.height-165
         var size = this.props.screensize
         var ww = '80%'
         if(size == 'l') ww = '90%'
@@ -643,7 +644,7 @@ class MailDetailsSection extends Component {
         }
         else{
             return(
-                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
@@ -837,11 +838,13 @@ class MailDetailsSection extends Component {
 
     render_response_if_any(_item, object){
         // console.log(_item)
-        if(_item['focused_message_id'] == 0) return;
+        const focused_message_id = _item['ipfs'] != null ? _item['ipfs']['focused_message_id'] : _item['focused_message_id']
+        // console.log('mail_details_section','message', _item)
+        if(focused_message_id == 0 || focused_message_id == null) return;
         // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
-        var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
-        // console.log(item)
+        var item = this.get_item_in_message_array(focused_message_id, message_items)
+        // console.log('mail_details_section','focused message', focused_message_id, item)
         if(item == null) return;
         if(item['ipfs'] != null){
             item = item['ipfs']
@@ -1130,13 +1133,14 @@ class MailDetailsSection extends Component {
         var message_id = Date.now()
 
         console.log('-------------------add_message_to_stack----------------------')
-        console.log(this.get_focused_message(mail))
+        const focused_message = this.get_focused_message(mail)
+        console.log(focused_message)
         console.log('mail objects e5', mail['ipfs']['recipients_e5'])
-        var focused_message_id = this.get_focused_message(mail) != null ? this.get_focused_message(mail)['message_id'] : 0
-        if(focused_message_id == null){
-            focused_message_id = this.get_focused_message(mail)['ipfs']['message_id']
-        }
-        console.log(focused_message_id)
+        var focused_message_id = focused_message != null ? focused_message['ipfs']['message_id'] : 0
+        // if(focused_message_id == null){
+        //     focused_message_id = focused_message['ipfs']['message_id']
+        // }
+        console.log('mail_details_section','focused message id',focused_message_id)
         
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 3600)

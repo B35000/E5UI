@@ -67,7 +67,7 @@ class NewChannelPage extends Component {
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], e5: this.props.app_state.selected_e5, get_channel_locked_tag_setting_object: this.get_channel_locked_tag_setting_object(), edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'', entered_zip_objects:[]
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'', entered_zip_objects:[], participant_id:'', participants:[], channel_keys:[], blocked_participant_id:'', blocked_participants:[]
     };
 
     get_new_job_page_tags_object(){
@@ -76,7 +76,7 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['162s']/* participants */,this.props.app_state.loc['162t']/* blocked */, this.props.app_state.loc['298']], [0]
             ],
             'authorities':[
               ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
@@ -205,6 +205,9 @@ class NewChannelPage extends Component {
         if(this.state.get_markdown_preview_or_editor_object == null){
             this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
         }
+        if(this.state.participants == null){
+            this.setState({participant_id:'', participants:[], channel_keys:[], blocked_participant_id:'', blocked_participants:[]})
+        }
     }
 
 
@@ -302,6 +305,20 @@ class NewChannelPage extends Component {
             return(
                 <div>
                     {this.render_enter_zip_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162s']/* participants */){
+            return(
+                <div>
+                    {this.render_contract_access_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162t']/* blocked */){
+            return(
+                <div>
+                    {this.render_blocked_accounts_part()}
                 </div>
             )
         }
@@ -1930,6 +1947,334 @@ class NewChannelPage extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+    render_contract_access_part(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_participants_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_participants_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_participants_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_participants_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['162u']/* 'Add Participants.' */, 'details':this.props.app_state.loc['162v']/* Set the accounts you wish to be able to participate in this channel. */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['162ag']} when_text_input_field_changed={this.when_participant_id_input_field_changed.bind(this)} text={this.state.participant_id} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('participants')}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_participant_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['162w']/* Add Participant. */, 'action':''})}
+                </div>
+
+                <div style={{height: 10}}/>
+                {this.render_added_participants()}
+            </div>
+        )
+    }
+
+    when_participant_id_input_field_changed(text){
+        this.setState({participant_id: text})
+    }
+
+    when_add_participant_tapped(){
+        var participant_data = this.get_alias_id(this.state.participant_id.trim())
+        var participants_clone = this.state.participants.slice()
+        const includes = participants_clone.find(e => (e['id'] === participant_data['id'] && e['e5'] === participant_data['e5']))
+        if(isNaN(participant_data.id) || parseInt(participant_data.id) < 0){
+            this.props.notify(this.props.app_state.loc['162x']/* That participant alias or id is invalid. */, 3600)
+        }
+        else if(includes != null){
+            this.props.notify(this.props.app_state.loc['162y']/* 'Youve already included that participant.' */, 4600)
+        }
+        else if(this.is_my_account(participant_data)){
+            this.props.notify(this.props.app_state.loc['162ai']/* Youre the default participant. */, 3600)
+        }
+        else{
+            participants_clone.push(participant_data)
+            this.setState({participants: participants_clone});
+            this.props.notify(this.props.app_state.loc['162z']/* Participant Added. */, 1400)
+        }
+    }
+
+    get_alias_id(alias){
+        if(!isNaN(alias)){
+            var e5 = this.props.app_state.selected_e5
+            return {id: alias, e5: e5}
+        }
+        
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            const focused_e5 = this.props.app_state.e5s['data'][i]
+            var id = this.props.app_state.alias_owners[focused_e5][alias]
+            if(id != null){
+                return {id: id, e5: focused_e5}
+            }
+        }
+
+        var e5 = this.props.app_state.selected_e5
+        return {id: alias, e5: e5}
+    }
+
+    render_added_participants(){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.participants)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_participant_accounnt_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            {this.render_detail_item('3', {'title':this.get_accounts_name(item), 'details':this.props.app_state.loc['153'], 'size':'l'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_accounts_name(participant_data){
+        var alias = (this.props.app_state.alias_bucket[participant_data.e5][participant_data.id] == null ? participant_data.id : this.props.app_state.alias_bucket[participant_data.e5][participant_data.id])
+        return alias
+    }
+
+    when_participant_accounnt_clicked(item, index){
+        var participants_clone = this.state.participants.slice()
+        participants_clone.splice(index, 1)
+        this.setState({participants: participants_clone});
+    }
+
+
+
+
+
+
+
+
+
+
+    render_blocked_accounts_part(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_blocked_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_blocked_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_blocked_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_blocked_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['162aa']/* 'Block Accounts.' */, 'details':this.props.app_state.loc['162ab']/* Set an account you wish to not be able to access the channel. */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['162ag']} when_text_input_field_changed={this.when_blocked_participant_id_input_field_changed.bind(this)} text={this.state.blocked_participant_id} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('blocked_participants')}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_blocked_account_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['162ac']/* Block Account. */, 'action':''})}
+                </div>
+
+                <div style={{height: 10}}/>
+                {this.render_blocked_participants()}
+            </div>
+        )
+    }
+
+    when_blocked_participant_id_input_field_changed(text){
+        this.setState({blocked_participant_id: text})
+    }
+
+    when_add_blocked_account_tapped(){
+        var participant_data = this.get_alias_id(this.state.participant_id.trim())
+        var participants_clone = this.state.blocked_participants.slice()
+        const includes = participants_clone.find(e => (e['id'] === participant_data['id'] && e['e5'] === participant_data['e5']))
+
+        if(isNaN(participant_data.id) || parseInt(participant_data.id) < 0){
+            this.props.notify(this.props.app_state.loc['162ad']/* That account alias or id is invalid. */, 3600)
+        }
+        else if(includes != null){
+            this.props.notify(this.props.app_state.loc['162ae']/* 'You already blocked that account.' */, 4600)
+        }
+        else if(this.is_my_account(participant_data)){
+            this.props.notify(this.props.app_state.loc['162ah']/* You cant block yourself. */, 3600)
+        }
+        else{
+            participants_clone.push(participant_data)
+            this.setState({blocked_participants: participants_clone});
+            this.props.notify(this.props.app_state.loc['162af']/* Account Blocked. */, 1400)
+        }
+    }
+
+    is_my_account(participant_data){
+        const my_acc_on_that_e5 = this.props.app_state.user_account_id[participant_data.e5]
+        return my_acc_on_that_e5 == participant_data.id
+    }
+
+    render_blocked_participants(){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.blocked_participants)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_blocked_accounnt_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            {this.render_detail_item('3', {'title':this.get_accounts_name(item), 'details':this.props.app_state.loc['153'], 'size':'l'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_blocked_accounnt_clicked(item, index){
+        var participants_clone = this.state.blocked_participants.slice()
+        participants_clone.splice(index, 1)
+        this.setState({blocked_participants: participants_clone});
+    }
+
+
+
     
 
 
@@ -2309,9 +2654,7 @@ class NewChannelPage extends Component {
     }
 
     get_suggested_accounts(target_type){
-        return[
-            {'id':'53', 'label':{'title':this.props.app_state.loc['107'], 'details':this.props.app_state.loc['108'], 'size':'s'}},
-        ].concat(this.get_account_suggestions(target_type))
+        return [].concat(this.get_account_suggestions(target_type))
     }
 
     get_account_suggestions(target_type){
@@ -2328,6 +2671,20 @@ class NewChannelPage extends Component {
         else if(target_type == 'interactible_id'){
             contacts.forEach(contact => {
                 if(contact['id'].toString().includes(this.state.interactible_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'participants'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.participant_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'blocked_participants'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.blocked_participant_id)){
                     return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
                 }
             });
@@ -2359,7 +2716,12 @@ class NewChannelPage extends Component {
         else if(target_type == 'interactible_id'){
             this.setState({interactible_id: item['id']})
         }
-
+        else if(target_type == 'participants'){
+            this.setState({participant_id: item['id']})
+        }
+        else if(target_type == 'blocked_participants'){
+            this.setState({blocked_participant_id: item['id']})
+        }
     }
 
 

@@ -3913,6 +3913,13 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1510']/* 'channel-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        var message_obj = t.messages_to_deliver[m]
+                        if(message_obj['key_to_use'] != ''){
+                            const key = message_obj['key_to_use']
+                            const key_index = message_obj['key_index']
+                            var encrypted_obj = this.props.encrypt_data_object(JSON.stringify(message_obj), key)
+                            message_obj = {'encrypted_data':encrypted_obj, 'key_index':key_index}
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
                     }  
@@ -4046,6 +4053,9 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
                     var t = txs[i]
+                    if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
+                        t = await this.process_channel_object(txs[i])
+                    }
                     ipfs_index_object[t.id] = t
                     ipfs_index_array.push({'id':t.id, 'data':t})
                 }
@@ -4107,8 +4117,12 @@ class StackPage extends Component {
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || txs[i].type == this.props.app_state.loc['601']/* 'token' */ || txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || txs[i].type == this.props.app_state.loc['297']/* 'post' */ || txs[i].type == this.props.app_state.loc['760']/* 'job' */ || txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */|| txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
-                    ipfs_index_object[txs[i].id] = txs[i]
-                    ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
+                    var data = txs[i]
+                    if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
+                        data = await this.process_channel_object(txs[i])
+                    }
+                    ipfs_index_object[data.id] = data
+                    ipfs_index_array.push({'id':data.id, 'data':data})
                 }
                 else if(txs[i].type == 'admin'){
                     ipfs_index_object[txs[i].id] = txs[i]
@@ -4145,7 +4159,11 @@ class StackPage extends Component {
 
         if(this.props.app_state.update_data_in_E5){
             var uploaded_data = this.props.app_state.uploaded_data_cids
-            var data = {'cids': uploaded_data, 'time':Date.now()}
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'data':uploaded_data})
+            var encrypted_obj = this.props.encrypt_data_object(data, key)
+
+            var data = {'cids': encrypted_obj, 'time':Date.now(), 'encrypted':true}
             ipfs_index_object['ciddata'] = data
             ipfs_index_array.push({'id':'ciddata', 'data':data})
         }
@@ -5479,6 +5497,49 @@ class StackPage extends Component {
       return {int: obj, str: string_obj}
     }
 
+    process_channel_object = async (t) => {
+        var data = structuredClone(t)
+        var channel_keys_obj = {}
+        if(data.participants.length > 0 || (data.channel_keys.length > 0 && t.type == this.props.app_state.loc['753']/* 'edit-channel' */)){
+            //channel is private
+            var key = makeid(35)
+            for(var i=0; i<data.participants.length; i++){
+                var participant_account = data.participants[i].id
+                var participant_e5 = data.participants[i].e5
+                var recipients_pub_key_hash = await this.props.get_accounts_public_key(participant_account, participant_e5)
+                if(recipients_pub_key_hash != ''){
+                    var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+                    channel_keys_obj[this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+                }
+            }
+            var uint8array = await this.props.get_account_raw_public_key() 
+            var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+            channel_keys_obj[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+        }
+        data.channel_keys.push(channel_keys_obj)
+
+        var blocked_object = {'identifiers':{}, 'e5_ids':{}}
+        if(data.blocked_participants.length > 0){
+            for(var i=0; i<data.blocked_participants.length; i++){
+                const blocked_account = data.blocked_participants[i]
+                const blocked_account_e5_id = blocked_account.id+blocked_account.e5
+                if(data.blocked_data != null && data.blocked_data['e5_ids'][blocked_account_e5_id] != null){
+                    const existing_identifier = data.blocked_data['e5_ids'][blocked_account_e5_id];
+                    blocked_object['identifiers'][existing_identifier] = blocked_account_e5_id;
+                    blocked_object['e5_ids'][blocked_account_e5_id] = existing_identifier;
+                }else{
+                    var recipients_pub_key_hash = await this.props.get_accounts_public_key(blocked_account.id, blocked_account.e5)
+                    var identifier = this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)
+                    blocked_object['identifiers'][identifier] = blocked_account_e5_id
+                    blocked_object['e5_ids'][blocked_account_e5_id] = identifier
+                }
+            }
+        }
+        data.blocked_data = blocked_object
+
+        return data
+    }
+
     get_encrypted_mail_message = async (t, recip) =>{
         var key = makeid(35)
         // t.my_pub_key = this.props.app_state.my_pub_key
@@ -5491,7 +5552,7 @@ class StackPage extends Component {
         if(recipients_pub_key_hash != ''){
             var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
             // recipent_data[parseInt(recipient)] = encrypted_key
-            recipent_data[await this.get_unique_crosschain_identifier_number(recipient, t, t['recipients_e5'])] = encrypted_key
+            recipent_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
         }
 
         var uint8array = await this.props.get_account_raw_public_key() 
@@ -5551,6 +5612,15 @@ class StackPage extends Component {
             arr = arr.slice(0, 36);
         }
         console.log('stackpage', 'crosschain identifier for ',recipient, arr)
+        return arr
+    }
+
+    calculate_unique_crosschain_identifier_number(hash){
+        var arr = null;
+        arr = hash.toString().replaceAll(',','')
+        if(arr.length > 36){
+            arr = arr.slice(0, 36);
+        }
         return arr
     }
 

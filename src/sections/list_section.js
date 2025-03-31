@@ -2075,6 +2075,12 @@ class PostListSection extends Component {
                     </div>         
                 </div>
             )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
         }
     }
 
@@ -2106,13 +2112,22 @@ class PostListSection extends Component {
         }
     }
 
-    when_channel_item_clicked(index, object){
+    when_channel_item_clicked = async (index, object) => {
         var required_subscriptions = object['ipfs'].selected_subscriptions == null ? [] : object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
 
-        if(object['hidden'] == true){
+        var is_blocked = false
+        if(object['ipfs']['blocked_data'] != null){
+            var my_identifier = await this.get_my_unique_crosschain_identifier_number()
+            if(object['ipfs']['blocked_data']['identifiers'][my_identifier] != null){
+                //ive been blocked
+                is_blocked = true
+            }
+        }
+
+        if(object['hidden'] == true || is_blocked == true){
             this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
             return;
         }
@@ -2123,6 +2138,16 @@ class PostListSection extends Component {
             this.props.show_post_item_preview_with_subscription(object, 'channel')
         }
         
+    }
+
+    get_my_unique_crosschain_identifier_number = async () => {
+        var uint8array_string = await this.props.get_my_entire_public_key() 
+        var uint8array = Uint8Array.from(uint8array_string.split(',').map(x=>parseInt(x,10)));
+        var arr = uint8array.toString().replaceAll(',','')
+        if(arr.length > 36){
+            arr = arr.slice(0, 36);
+        }
+        return arr
     }
 
 
