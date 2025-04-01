@@ -128,6 +128,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'view_item_purchase'){
+            return(
+                <div>
+                    {this.render_view_item_purchase()}
+                </div>
+            )
+        }
     }
 
 
@@ -1332,7 +1339,6 @@ class DialogPage extends Component {
         }
     }
 
-
     render_not_on_e5_message(ecid_obj){
         if(this.props.app_state.uncommitted_upload_cids.includes(ecid_obj['full'])){
             return(
@@ -1349,6 +1355,149 @@ class DialogPage extends Component {
                 </div>
             )
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_view_item_purchase(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_purchase_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_purchase_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_purchase_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        } 
+    }
+
+    render_view_purchase_data(){
+        var item = this.state.data['item']
+        var sender_type = this.state.data['sender_type']
+        var object = this.state.data['object']
+
+        return(
+            <div>
+                <div>
+                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1979a']/* Order Details. */}</h4>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':item['shipping_detail']})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1114c']/* 'custom_specifications ' */, 'details':item['custom_specifications']})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'details':this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account'] })}
+                    <div style={{height:10}}/>
+                    {this.render_purchase_options_if_any(item)}
+                    {this.render_fulfilment_signature_if_any(item, object)}
+                    <div style={{height:10}}/>
+                </div>
+                {this.render_clear_purchase_button(item, object, sender_type)}
+            </div>
+        )
+    }
+
+    get_variant_from_id(variant_id, object){
+        for(var i=0; i<object['ipfs'].variants.length; i++){
+            if(object['ipfs'].variants[i]['variant_id'] == variant_id){
+                return object['ipfs'].variants[i]
+            }
+        }
+    }
+
+    render_purchase_options_if_any(item){
+        var items = item['options']
+        if(items == null || items.length == 0) return;
+        var storefront_options = item['storefront_options']
+        if(storefront_options == null || storefront_options.length == 0) return;
+        return(
+                <div>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {/* {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
+                            <div style={{height:3}}/> */}
+                            <Tags font={this.props.app_state.font} page_tags_object={item} tag_size={'l'} when_tags_updated={this.when_purchase_option_tag_selected.bind(this)} theme={this.props.theme} locked={true}/>
+                            <div style={{height:3}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+    }
+
+    when_purchase_option_tag_selected(tag_item){
+        //do nothing
+    }
+
+    render_fulfilment_signature_if_any(item, object){
+        var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
+        if(signature != null && signature[item['signature_data']] != null){
+            signature = signature[item['signature_data']]
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2639']/* 'Fulfilment Signature: ' */, 'details':start_and_end(signature['signature']) })}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2640']/* 'Signature Data: ' */, 'details':start_and_end(signature['signature_data']) })}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2641']/* 'Signature Address: ' */, 'details':start_and_end(signature['sender_address']) })}
+                </div>
+            )
+        }
+    }
+
+    render_clear_purchase_button(item, object, sender_type){
+        var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
+        if(signature == null || signature[item['signature_data']] == null){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642b']/* 'Clear purchase.' */, 'details':this.props.app_state.loc['2642c']/* 'Clear the purchase to finalize its fulfilment.' */})}
+                    <div style={{height:10}}/>
+                    <div style={{'padding': '1px'}} onClick={() => this.clear_purchase(item, sender_type, object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2638']/* 'Clear Purchase' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    clear_purchase(item, sender_type, object){
+        this.props.open_dialog_bottomsheet()
+        this.props.open_clear_purchase(item, sender_type, object)
     }
 
 

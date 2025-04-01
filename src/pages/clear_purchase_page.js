@@ -223,10 +223,10 @@ class ClearPurchasePage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1061']/* 'Generate Fulfilment Signature' */, 'details':this.props.app_state.loc['1062']/* 'Create a signature to finalize the fulfilment transaction.' */ })}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id'], 'details':variant_description})}
+                {this.render_detail_item('3', {'size':'l', 'title':'Variant ID: '+item['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'s', 'details':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account']})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account']})}
                 
                 {this.render_detail_item('0')}
 
@@ -240,7 +240,7 @@ class ClearPurchasePage extends Component {
                 <div style={{height:5}}/>
                 <p style={{'margin':'5% 0% 0% 44%', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1078a']/* Qr Code */}</p>
                 <div style={{height:5}}/>
-                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1065']/* 'Signature' */, 'details':start_and_end(this.state.signature_data) })}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1065']/* 'Signature' */, 'details':start_and_end(this.state.signature_data) })}
                 
                 <div style={{'padding': '5px'}} onClick={()=>this.copy_to_clipboard(this.state.signature_data)}>
                     {this.render_detail_item('5',{'text':this.props.app_state.loc['1066']/* 'Copy to Clipboard' */, 'action':''})}
@@ -312,20 +312,20 @@ class ClearPurchasePage extends Component {
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
         return(
             <div>
-                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1068']/* 'Receive Fulfilment Signature' */, 'details':this.props.app_state.loc['1069']/* 'receive a fulfilment signature to verify the items delivery' */ })}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1068']/* 'Receive Fulfilment Signature' */, 'details':this.props.app_state.loc['1069']/* 'receive a fulfilment signature to verify the items delivery' */ })}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id'], 'details':variant_description})}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'s', 'details':this.props.app_state.loc['1071']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1072']/* 'Sender Account ID: ' */+item['sender_account']})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1071']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1072']/* 'Sender Account ID: ' */+item['sender_account']})}
                 <div style={{height:5}}/>
                 
                 {this.render_detail_item('0')}
                 {/* {this.render_qr_code_scanner()}
                 {this.render_detail_item('0')} */}
 
-                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1073']/* 'Paste Signature' */, 'details':this.props.app_state.loc['1074']/* 'Alternatively, you can paste the signature in the input field below' */ })}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1073']/* 'Paste Signature' */, 'details':this.props.app_state.loc['1074']/* 'Alternatively, you can paste the signature in the input field below' */ })}
                 <div style={{height:5}}/>
 
                 <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1073']/* 'Paste Signature' */} when_text_input_field_changed={this.when_received_signature_changed.bind(this)} text={this.state.received_signature} theme={this.props.theme}/>
@@ -345,7 +345,7 @@ class ClearPurchasePage extends Component {
     render_qr_code_scanner(){
         return(
             <div>
-                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1075']/* 'Open Scanner' */, 'details':this.props.app_state.loc['1076']/* 'Scan for the signature using a built in scanner' */})}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1075']/* 'Open Scanner' */, 'details':this.props.app_state.loc['1076']/* 'Scan for the signature using a built in scanner' */})}
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.start_scan()}>
                     {this.render_detail_item('5',{'text':this.props.app_state.loc['1075']/* 'Scan' */, 'action':''})}

@@ -184,6 +184,7 @@ class ViewGroups extends Component {
             var image_border_radius = '50%'
             var text_align = 'left'
             var title_image = ''
+            var word_wrap_value = 'normal'
             
             if(object_data != null){
                 title = object_data['title']
@@ -192,6 +193,7 @@ class ViewGroups extends Component {
                 padding = object_data['padding'] == null ? '10px 15px 10px 15px' : object_data['padding']
                 text_align = object_data['text_align'] == null ? 'left' : object_data['text_align']
                 title_image = object_data['title_image'] == null ? '' : object_data['title_image']
+                word_wrap_value = this.longest_word_length(object_data['details']) > 53 ? 'break-all' : 'normal'
             }
             var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px', 17];
             if(size == 'l'){
@@ -221,7 +223,7 @@ class ViewGroups extends Component {
                             <div style={{'margin':'0px 0px 0px 10px'}}>
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
                                 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>
@@ -236,7 +238,7 @@ class ViewGroups extends Component {
                                     <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all','text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
                                 </div>
 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', /* 'overflow-wrap':'break-word', */ 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>
@@ -249,11 +251,12 @@ class ViewGroups extends Component {
             var textsize = '15px';
             var text = 'some random text';
             var color = this.props.theme['primary_text_color'];
-
+            var word_wrap_value = 'normal'
             if(object_data!=null){
               font = object_data['font'];
               textsize = object_data['textsize'];
               text = object_data['text'];
+              word_wrap_value = this.longest_word_length(object_data['text']) > 53 ? 'break-all' : 'normal'
             }
 
             return(
@@ -261,7 +264,7 @@ class ViewGroups extends Component {
                     <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
                       <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 5px 5px 10px','border-radius': '8px' }}>
                           
-                            <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
+                            <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
 
                           {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} />
                            */}
@@ -412,22 +415,22 @@ class ViewGroups extends Component {
             var textsize = '15px';
             var text = 'some random text';
             var color = this.props.theme['primary_text_color'];
-
+            var word_wrap_value = 'normal'
             if(object_data!=null){
               font = object_data['font'];
               textsize = object_data['textsize'];
               text = object_data['text'];
+              word_wrap_value = this.longest_word_length(object_data['text']) > 53 ? 'break-all' : 'normal'
             }
 
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
-                        <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
+                        <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
 
                         {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} /> */}
                     </div>
                 </div>
-                
             );
         }
         else if(item_id=='11'){/* banner */
@@ -490,11 +493,12 @@ class ViewGroups extends Component {
             var source = object_data == null ? '' : object_data['source']
             var theme = this.props.theme['markdown_theme']
             var padding = '10px 15px 10px 15px'
+            var word_wrap_value = this.longest_word_length(source) > 53 ? 'break-all' : 'normal'
             return(
                 <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
                     <Markdown
                     components={{
-                            p: ({ node, ...props }) => <p style={{ color: this.props.theme['secondary_text_color'],  'word-wrap': 'break-word' }} {...props} />,
+                            p: ({ node, ...props }) => <p style={{ color: this.props.theme['secondary_text_color'],  'word-wrap': word_wrap_value }} {...props} />,
                             h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'] }} {...props} />,
                             h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
                             h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
@@ -554,6 +558,12 @@ class ViewGroups extends Component {
         }
         this.last_all_click_time = Date.now();
         // navigator.clipboard.writeText(text)
+    }
+
+    longest_word_length(text) {
+        return text
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
 
 

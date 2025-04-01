@@ -432,8 +432,8 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
-                {this.render_detail_item('0')}
-                {this.render_subscription_authority_target()}
+                {/* {this.render_detail_item('0')} */}
+                {/* {this.render_subscription_authority_target()} */}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['125']})}

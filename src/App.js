@@ -13580,7 +13580,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)}
         
         />
       </div>
@@ -13616,7 +13616,7 @@ class App extends Component {
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450};
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450, 'view_item_purchase':550};
     var size = obj[id]
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
@@ -21956,6 +21956,7 @@ class App extends Component {
         //   channel_obj['hidden'] = false
         // }
 
+        // console.log('apppage', 'channel keys',channel_data.entered_title_text, channel_data['channel_keys'])
         if(channel_data['channel_keys'] != null && channel_data['channel_keys'].length > 0){
           var active_key = channel_data['channel_keys'].length - 1;
           var encrypted_key = channel_data['channel_keys'][active_key][my_unique_crosschain_identifier]
@@ -21966,12 +21967,13 @@ class App extends Component {
             if(focused_encrypted_key != null){
               var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
               var my_key = await ecies.decrypt(private_key_to_use, uint8array)
-              unencrypted_keys.push(my_key)
+              unencrypted_keys.push(my_key.toString())
             }else{
               unencrypted_keys.push('')
             }
           }
           channel_obj['unencrypted_keys'] = unencrypted_keys
+          console.log('apppage', 'channel keys',channel_data.entered_title_text, unencrypted_keys)
         }
         created_channel.push(channel_obj);
       }
@@ -25734,7 +25736,6 @@ class App extends Component {
 
 
   get_objects_messages = async (id, e5, object) => {
-    var messages = []
     // for(var i=0; i<this.state.e5s['data'].length; i++){
     //   var focused_e5 = this.state.e5s['data'][i]
     //   const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
@@ -25774,44 +25775,42 @@ class App extends Component {
     //   }
     // }
 
-    const all_object_comment_events = await this.get_object_comment_events(id)
+    const messages_clone = structuredClone(this.state.object_messages)
+    const all_object_comment_events = await this.get_object_comment_events(id, e5)
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       await this.fetch_multiple_cids_from_nitro(all_object_comment_events, 0, 'p4')
     }
 
-    var is_first_time = this.state.object_messages[id] == null ? true: false
     for(var j=0; j<all_object_comment_events.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
+      console.log('apppage', 'ipfs message', ipfs_message)
       if(ipfs_message != null){
         if(ipfs_message['encrypted_data'] != null){
           //channel message was encrypted
+          console.log('apppage', 'comment is encrypted, decrypting...')
           const key_used = object['unencrypted_keys'][parseInt(ipfs_message['key_index'])]
+          console.log('apppage', 'key used: ', key_used)
           var bytes = CryptoJS.AES.decrypt(ipfs_message['encrypted_data'], key_used.toString());
           var originalText = bytes.toString(CryptoJS.enc.Utf8);
-          ipfs_message = JSON.parse(originalText);
+          ipfs_message = JSON.parse(JSON.parse(originalText));
+          console.log('apppage', 'parsed object: ', ipfs_message)
         }
         ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
 
-        const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
-        if(includes == null){
-          messages = messages.push(ipfs_message)
+        if(messages_clone[id] == null){
+          messages_clone[id] = []
         }
-        if(is_first_time){
-          var clone = JSON.parse(JSON.stringify(this.state.object_messages))
-          clone[id] = messages
-          this.setState({object_messages: clone})
+        const includes = messages_clone[id].find(e => e['message_id'] === ipfs_message['message_id'])
+        if(includes == null){
+          messages_clone[id].push(ipfs_message)
+          this.setState({object_messages: messages_clone})
         }
       }
     }
-
-
-    var clone = JSON.parse(JSON.stringify(this.state.object_messages))
-    clone[id] = messages
-    this.setState({object_messages: clone})
   }
 
-  get_object_comment_events = async (id) => {
+  get_object_comment_events = async (id, e5) => {
     var all_unsorted_events = []
     const cutoff_timestamp = Math.round(Date.now()/1000) - (60*60*24*400)
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
@@ -25825,7 +25824,7 @@ class App extends Component {
           const E52contractArtifact = require('./contract_abis/E52.json');
           const E52_address = this.state.addresses[focused_e5][1];
           const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-          var e5_id = parseInt(focused_e5.replace('E',''))
+          var e5_id = parseInt(e5.replace('E',''))
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id,}])
         }
       }
@@ -25849,11 +25848,12 @@ class App extends Component {
           const E52contractArtifact = require('./contract_abis/E52.json');
           const E52_address = this.state.addresses[focused_e5][1];
           const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-          var e5_id = parseInt(focused_e5.replace('E',''))
+          const e5_id = parseInt(e5.replace('E',''))
           
-          const created_award_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id,}))
-          for(var k=0; k<created_award_data.length; k++){
-            var event = created_award_data[k]
+          const created_comment_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id,}))
+          console.log('apppage', 'loaded_events for e5',focused_e5, created_comment_data)
+          for(var k=0; k<created_comment_data.length; k++){
+            const event = created_comment_data[k]
             event['e5'] = 'E'+event.returnValues.p5
             if(parseInt(event.returnValues.p6) > cutoff_timestamp){
               all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
@@ -25866,9 +25866,13 @@ class App extends Component {
     var sorted_object_events = this.sortByAttributeDescending(all_unsorted_events, 'time')
     var events = []
     sorted_object_events.forEach(object => {
-      events.push(object['event'])
+      const includes = events.find(e => e.returnValues.p4 === object['event'].returnValues.p4)
+      if(includes == null){
+        events.push(object['event'])
+      }
     });
 
+    console.log('apppage', 'comment events', events)
     return events
   }
 
@@ -25950,25 +25954,23 @@ class App extends Component {
       await this.fetch_multiple_cids_from_nitro(created_awward_data, 0, 'p4')
     }
 
-    var direct_purchases = []
+    var direct_purchases = structuredClone(this.state.direct_purchases)
     var is_first_time_for_direct_purchases = this.state.direct_purchases[id] == null ? true: false
     for(var j=0; j<created_awward_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_awward_data[j].returnValues.p4)
       if(ipfs_message != null){
         console.log('direct_purchase', ipfs_message)
-        direct_purchases.push(ipfs_message)
-      }
-
-      if(is_first_time_for_direct_purchases){
-        var clone = JSON.parse(JSON.stringify(this.state.direct_purchases))
-        clone[id] = direct_purchases
-        this.setState({direct_purchases: clone})
+        ipfs_message['purchase_id'] = created_awward_data[j].returnValues.p4
+        if(direct_purchases[id] == null){
+          direct_purchases[id] = []
+        }
+        const includes = direct_purchases[id].find(e => e['purchase_id'] === ipfs_message['purchase_id'])
+        if(includes == null){
+          direct_purchases[id].push(ipfs_message)
+          this.setState({direct_purchases: direct_purchases})
+        }
       }
     }
-
-    var clone = JSON.parse(JSON.stringify(this.state.direct_purchases))
-    clone[id] = direct_purchases
-    this.setState({direct_purchases: clone})
 
 
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -26068,39 +26070,119 @@ class App extends Component {
   }
 
   load_job_request_messages = async (contractor_id, request_id, e5) => {
-    var messages = []
-    for(var i=0; i<this.state.e5s['data'].length; i++){
-      var focused_e5 = this.state.e5s['data'][i]
-      const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
-      const E52contractArtifact = require('./contract_abis/E52.json');
+    // var messages = []
+    // for(var i=0; i<this.state.e5s['data'].length; i++){
+    //   var focused_e5 = this.state.e5s['data'][i]
+    //   const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+    //   const E52contractArtifact = require('./contract_abis/E52.json');
       
-      if(this.state.addresses[focused_e5] != null){
-        const E52_address = this.state.addresses[focused_e5][1];
-        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    //   if(this.state.addresses[focused_e5] != null){
+    //     const E52_address = this.state.addresses[focused_e5][1];
+    //     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17/* shadow_object_container */, p3/* context */:contractor_id, p5/* int_data */:request_id})
-        if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-          await this.fetch_multiple_cids_from_nitro(created_channel_data, 0, 'p4')
+    //     var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17/* shadow_object_container */, p3/* context */:contractor_id, p5/* int_data */:request_id})
+    //     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+    //       await this.fetch_multiple_cids_from_nitro(created_channel_data, 0, 'p4')
+    //     }
+    //     var is_first_time = this.state.object_messages[request_id] == null ? true: false
+    //     for(var j=0; j<created_channel_data.length; j++){
+    //       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
+    //       if(ipfs_message != null && ipfs_message['e5'] == e5){
+    //         this.fetch_uploaded_files_for_object(ipfs_message)
+    //         messages.push(ipfs_message)
+    //       }
+    //       if(is_first_time){
+    //         var clone = JSON.parse(JSON.stringify(this.state.object_messages))
+    //         clone[request_id] = messages
+    //         this.setState({object_messages: clone})
+    //       }
+    //     }
+    //   }
+    // }
+
+    const messages_clone = structuredClone(this.state.object_messages)
+    var all_object_comment_events = await this.get_job_request_comment_events(contractor_id, request_id)
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(all_object_comment_events, 0, 'p4')
+    }
+
+    for(var j=0; j<all_object_comment_events.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
+      console.log('apppage', 'ipfs message', ipfs_message)
+      if(ipfs_message != null){
+        this.fetch_uploaded_files_for_object(ipfs_message)
+
+        if(messages_clone[request_id] == null){
+          messages_clone[request_id] = []
         }
-        var is_first_time = this.state.object_messages[request_id] == null ? true: false
-        for(var j=0; j<created_channel_data.length; j++){
-          var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
-          if(ipfs_message != null && ipfs_message['e5'] == e5){
-            this.fetch_uploaded_files_for_object(ipfs_message)
-            messages.push(ipfs_message)
-          }
-          if(is_first_time){
-            var clone = JSON.parse(JSON.stringify(this.state.object_messages))
-            clone[request_id] = messages
-            this.setState({object_messages: clone})
+        const includes = messages_clone[request_id].find(e => e['message_id'] === ipfs_message['message_id'])
+        if(includes == null){
+          messages_clone[request_id].push(ipfs_message)
+          this.setState({object_messages: messages_clone})
+        }
+      }
+    }
+
+    // var clone = JSON.parse(JSON.stringify(this.state.object_messages))
+    // clone[request_id] = messages
+    // this.setState({object_messages: clone})
+  }
+
+  get_job_request_comment_events = async (contractor_id, request_id) => {
+    var all_unsorted_events = []
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params = []
+      const used_e5s = []
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const focused_e5 = this.state.e5s['data'][i]
+        if(this.state.addresses[focused_e5] != null){
+          used_e5s.push(focused_e5)
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = this.state.addresses[focused_e5][1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+          event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17/* shadow_object_container */, p3/* context */:contractor_id, p5/* int_data */:request_id}])
+        }
+      }
+      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      all_events.forEach((event_array, index)=> {
+        var focused_e5 = used_e5s[index]
+        for(var l=0; l<event_array.length; l++){
+          var event = event_array[l]
+          event['e5'] = focused_e5
+          all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+        }
+      });
+    }else{
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const focused_e5 = this.state.e5s['data'][i]
+        if(this.state.addresses[focused_e5] != null){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = this.state.addresses[focused_e5][1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+          
+          const created_comment_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17/* shadow_object_container */, p3/* context */:contractor_id, p5/* int_data */:request_id}))
+          for(var k=0; k<created_comment_data.length; k++){
+            const event = created_comment_data[k]
+            event['e5'] = focused_e5
+            all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
           }
         }
       }
     }
 
-    var clone = JSON.parse(JSON.stringify(this.state.object_messages))
-    clone[request_id] = messages
-    this.setState({object_messages: clone})
+    var sorted_object_events = this.sortByAttributeDescending(all_unsorted_events, 'time')
+    var events = []
+    sorted_object_events.forEach(object => {
+      const includes = events.find(e => e.returnValues.p4 === object['event'].returnValues.p4)
+      if(includes == null){
+        events.push(object['event'])
+      }
+    });
+
+    console.log('apppage', 'job_request message comment events', events)
+    return events
   }
 
   get_post_award_data = async (id, e5) => {

@@ -876,7 +876,7 @@ class AddCommentPage extends Component {
         }
 
         if(page == 'channel'){
-            var unencrypted_keys = object['ipfs']['unencrypted_keys']
+            var unencrypted_keys = object['unencrypted_keys']
             var key_to_use = ''
             var key_index = 0
             if(unencrypted_keys != null && unencrypted_keys.length > 0){

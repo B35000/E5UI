@@ -2059,7 +2059,7 @@ class PostListSection extends Component {
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
-            var opacity = object['hidden'] == true ? 0.6 : 1.0
+            var opacity = 1.0
             return(
                 <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -2095,12 +2095,18 @@ class PostListSection extends Component {
         }
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var extra = ''
+        if(object['ipfs']['blocked_data'] != null){
+            extra = extra+'🗝️'
+        }
         var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
-            extra = extra+'🔏 '
+            extra = extra+'🔏'
+        }
+        if(extra != ''){
+            extra = extra+' '
         }
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6

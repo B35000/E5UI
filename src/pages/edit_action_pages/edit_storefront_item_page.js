@@ -3286,10 +3286,11 @@ class NewStorefrontItemPage extends Component {
         else if(available_unit_count == 0){
             this.props.notify(this.props.app_state.loc['523']/* 'You need to specify how many units are available first' */, 4900)
         }else{
-            var variant = {'variant_id':makeid(8),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
+            var variant = {'variant_id':makeid(3),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
 
             var clone = this.state.variants.slice()
             if(this.state.edit_variant_item_pos != -1){
+                variant['variant_id'] = clone[this.state.edit_variant_item_pos]['variant_id']
                 clone[this.state.edit_variant_item_pos] = variant
             }else{
                 clone.push(variant)

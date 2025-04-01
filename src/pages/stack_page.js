@@ -3920,15 +3920,15 @@ class StackPage extends Component {
                             var encrypted_obj = this.props.encrypt_data_object(JSON.stringify(message_obj), key)
                             message_obj = {'encrypted_data':encrypted_obj, 'key_index':key_index}
                         }
-                        ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_object[t.messages_to_deliver[m]['message_id']] = message_obj
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':message_obj})
                     }  
                 }
                 else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['1513']/* 'accept-job-application' */){
@@ -3955,7 +3955,7 @@ class StackPage extends Component {
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }  
                 }
                 else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
@@ -4020,14 +4020,14 @@ class StackPage extends Component {
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
@@ -4048,7 +4048,7 @@ class StackPage extends Component {
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
@@ -4085,7 +4085,7 @@ class StackPage extends Component {
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
@@ -4099,7 +4099,7 @@ class StackPage extends Component {
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
@@ -4113,7 +4113,7 @@ class StackPage extends Component {
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':data})
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
                 else if(txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || txs[i].type == this.props.app_state.loc['601']/* 'token' */ || txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || txs[i].type == this.props.app_state.loc['297']/* 'post' */ || txs[i].type == this.props.app_state.loc['760']/* 'job' */ || txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */|| txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
@@ -9090,7 +9090,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <div className="row" style={{width:'100%', 'margin':'0px 0px 0px 3px'}}>
+                <div className="row" style={{width:'99%', 'margin':'0px 0px 0px 1px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>

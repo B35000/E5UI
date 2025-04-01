@@ -1158,7 +1158,7 @@ class NitroDetailsSection extends Component {
         }else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.reverse().map((item, index) => (
+                    {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
                                 {this.render_message_as_focused_if_so(item, object)}
@@ -1276,7 +1276,7 @@ class NitroDetailsSection extends Component {
         }
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
-
+        var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
         var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['view_group_card_item_background']
         return(
             <div>
@@ -1291,7 +1291,7 @@ class NitroDetailsSection extends Component {
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                                 </div>
                             </div>
-                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
                             {this.render_images_if_any(item)}
                             
@@ -1305,6 +1305,12 @@ class NitroDetailsSection extends Component {
             </div>
         )
         
+    }
+
+    longest_word_length(text) {
+        return text
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
 
     render_response_if_any(_item, object){

@@ -676,7 +676,9 @@ class StorefrontDetailsSection extends Component {
 
         var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1/* 'in-stock' */ : this.get_selected_item2(object['ipfs'].get_storefront_item_in_stock_option, 'e')
 
-        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */){
+        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+
+        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */ && object['event'].returnValues.p5 != my_account.toString()){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -693,7 +695,7 @@ class StorefrontDetailsSection extends Component {
 
     render_edit_object_button(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item];
-        var my_account = this.props.app_state.user_account_id[object['e5']]
+        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
         if(object['event'].returnValues.p5 == my_account.toString()){
             return(
                 <div>
@@ -944,6 +946,7 @@ class StorefrontDetailsSection extends Component {
                 filtered_purchases.push(purchases[i])
             }
         }
+        // console.log('direct_purchase', 'filtered_purchases', filtered_purchases)
         return this.filter_using_bottom_tags(filtered_purchases, object)
     }
 
@@ -991,25 +994,26 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_compressed_purchase_item(item, sender_type, index, object){
-        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
-        // console.log('-----------------------render_compressed_purchase_item-----------------------------')
-        // console.log(object['id'])
-        // console.log(this.props.app_state.direct_purchase_fulfilments)
+        return(
+            <div onClick={()=> this.when_item_clicked_2(item, sender_type, object)}>
+                {this.render_detail_item('3', {'size':'l', 'title':this.get_senders_name(item['sender_account'], object), 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
+            </div>
+        )
         var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
-        if(signature != null && signature[item['signature_data']] != null){
-            signature = signature[item['signature_data']]
-            return(
-                <div onClick={()=> this.when_item_clicked(index)}>
-                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id']+this.props.app_state.loc['2635']/* ', Sender Account ID: ' */+item['sender_account'], 'details':this.props.app_state.loc['2636']/* 'Fulfilent Signature: ' */+start_and_end(signature['signature']) })}
-                </div>
-            )
-        }else{
-            return(
-                <div onClick={()=> this.when_item_clicked(index)}>
-                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id']+this.props.app_state.loc['2637']/* ' , Client ID: ' */+item['sender_account'], 'details':item['shipping_detail'] })}
-                </div>
-            )
-        }
+        // if(signature != null && signature[item['signature_data']] != null){
+        //     signature = signature[item['signature_data']]
+        //     return(
+        //         <div onClick={()=> this.when_item_clicked_2(item, sender_type, object)}>
+        //             {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id']+this.props.app_state.loc['2635']/* ', Sender Account ID: ' */+item['sender_account'], 'details':this.props.app_state.loc['2636']/* 'Fulfilent Signature: ' */+start_and_end(signature['signature']) })}
+        //         </div>
+        //     )
+        // }else{
+        //     return(
+        //         <div onClick={()=> this.when_item_clicked_2(item, sender_type, object)}>
+        //             {this.render_detail_item('3', {'size':'s', 'title':this.get_senders_name(item['sender_account'], object), 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
+        //         </div>
+        //     )
+        // }
     }
 
     when_item_clicked(index){
@@ -1018,6 +1022,10 @@ class StorefrontDetailsSection extends Component {
         }else{
             this.setState({selected_purchase_item: index})
         }
+    }
+
+    when_item_clicked_2(item, sender_type, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'sender_type':sender_type, 'object':object}, 'view_item_purchase')
     }
 
 
@@ -1090,10 +1098,6 @@ class StorefrontDetailsSection extends Component {
                 return object['ipfs'].variants[i]
             }
         }
-    }
-
-    open_clear_purchase(item, client_type, storefront){
-        this.props.open_clear_purchase(item, client_type, storefront)
     }
 
 
@@ -1338,7 +1342,7 @@ class StorefrontDetailsSection extends Component {
         }else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.reverse().map((item, index) => (
+                    {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
                                 {this.render_message_as_focused_if_so(item, object)}
@@ -1521,7 +1525,7 @@ class StorefrontDetailsSection extends Component {
         }
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
-
+        var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
         var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['view_group_card_item_background']
         return(
             <div>
@@ -1536,7 +1540,7 @@ class StorefrontDetailsSection extends Component {
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                                 </div>
                             </div>
-                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
                             {this.render_images_if_any(item)}
                             {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p> */}
@@ -1548,6 +1552,12 @@ class StorefrontDetailsSection extends Component {
             </div>
         )
         
+    }
+
+    longest_word_length(text) {
+        return text
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
 
     render_response_if_any(_item, object){
