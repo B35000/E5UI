@@ -81,6 +81,8 @@ class DialerPage extends Component {
         get_available_for_all_tags_object:this.get_available_for_all_tags_object(),
         get_audio_video_recommendation_threshold_setting_object:this.get_audio_video_recommendation_threshold_setting_object(),
         get_custom_background_images_object:this.get_custom_background_images_object(),
+
+        typed_moderator_country:'', selected_typed_moderator_country:'', typed_moderator_account_id:'', selected_moderator_e5:'E25'
     };
 
 
@@ -425,6 +427,29 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
 
                 <TextInput height={30} placeholder={'Enter value here...'} when_text_input_field_changed={this.when_audio_video_threshold_value_changed.bind(this)} text={this.get_audio_video_threshold_value()} theme={this.props.theme}/>
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Set a moderator account for each state. First set the state then the E5 and finally the account id then click add.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Search filter country'} when_text_input_field_changed={this.when_typed_moderator_country_input_field_changed.bind(this)} text={this.state.typed_moderator_country} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_typed_moderator_countries_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_typed_moderator_country_selected'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('4', {'text':this.state.selected_typed_moderator_country, 'textsize':'14px', 'font':this.props.app_state.font})}
+
+                <div style={{height:20}}/>
+                <TextInput height={30} placeholder={'Enter account id or alias'} when_text_input_field_changed={this.when_typed_moderator_account_id_input_field_changed.bind(this)} text={this.state.typed_moderator_account_id} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                {this.load_moderator_account_e5_selector_ui()}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.add_moderator_account_to_state()}>
+                    {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
+                </div>
+                <div style={{height:20}}/>
+                {this.render_moderators_for_country()}
             </div>
         )
     }
@@ -1048,14 +1073,17 @@ class DialerPage extends Component {
     }
 
 
+
     when_get_line_setting_object_updated(tag_obj){
         this.setState({get_line_setting_object: tag_obj})
     }
 
 
+
     when_get_available_for_all_tags_object(tag_obj){
         this.setState({get_available_for_all_tags_object: tag_obj})
     }
+
 
 
     when_get_audio_video_recommendation_threshold_setting_object_updated(tag_obj){
@@ -1106,6 +1134,223 @@ class DialerPage extends Component {
     when_get_custom_background_images_object(tag_obj){
         this.setState({get_custom_background_images_object: tag_obj})
     }
+
+
+
+    when_typed_moderator_country_input_field_changed(text){
+        this.setState({typed_moderator_country: text})
+    }
+
+    get_typed_moderator_countries_from_typed_text(){
+        var selected_countries = []
+        var all_countries = this.state.data['country_data']
+        var typed_text = this.state.typed_moderator_country
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el['name'].toLowerCase().startsWith(typed_text.toLowerCase()) || el['code'] == typed_text.toUpperCase())
+            });
+        }else{
+            selected_countries = all_countries.filter(function (el) {
+                return (true)
+            });
+        }
+
+        var selected = []
+        var l = selected_countries.length > 7 ? 7 : selected_countries.length
+        for(var i=0; i<l; i++){
+            selected.push(selected_countries[i]['name'])
+        }
+        return selected;
+    }
+
+    when_typed_moderator_country_selected(tag, pos){
+        if(tag != 'e'){
+            if(this.state.selected_typed_moderator_country == tag){
+                this.setState({selected_typed_moderator_country: ''})
+            }else{
+                this.setState({selected_typed_moderator_country: tag, typed_moderator_country:''})
+            }   
+        }
+    }
+
+    when_typed_moderator_account_id_input_field_changed(text){
+        this.setState({typed_moderator_account_id: text})
+    }
+
+    load_moderator_account_e5_selector_ui(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        if(this.state.selected_moderator_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked(item){
+        this.setState({selected_moderator_e5: item})
+    }
+
+    add_moderator_account_to_state(){
+        const state = this.state.selected_typed_moderator_country == '' ? 'all' :this.state.selected_typed_moderator_country
+        var account_or_alias = this.state.typed_moderator_account_id.trim()
+        var account_id = this.get_typed_alias_id(account_or_alias)
+        var account_e5 = isNaN(account_or_alias) ? this.get_alias_e5(account_or_alias) : this.state.selected_moderator_e5
+        
+        if(isNaN(account_id) || parseInt(account_id) < 0 || account_id == ''){
+            this.props.notify('that account is invalid', 2700)
+        }else{
+            var country_moderators_clone = structuredClone(this.state.data)
+            if(country_moderators_clone['country_moderators'][state] == null){
+                country_moderators_clone['country_moderators'][state] = []
+            }
+            var id = account_e5+':'+account_id
+            country_moderators_clone['country_moderators'][state].push(id)
+            this.setState({data: country_moderators_clone})
+            this.props.notify('new moderator added', 2700)
+        }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        const obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = obj[alias] == null ? alias : obj[alias]
+
+        return id
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+    get_alias_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    render_moderators_for_country(){
+        const state = this.state.selected_typed_moderator_country == '' ? 'all' :this.state.selected_typed_moderator_country
+        const items = this.state.data['country_moderators'][state] == null ? [] : this.state.data['country_moderators'][state]
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_moderator_clicked(item, index)}>
+                            {this.render_moderator_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_moderator_item(item){
+        var data = item.split(':')
+        var e5 = data[0]
+        var account = data[1]
+        var e5_img = this.props.app_state.e5s[e5].e5_img
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':' • '+account, 'details':this.get_alias(e5, account), 'size':'l', 'title_image':e5_img})}
+            </div>
+        )
+    }
+
+    get_alias(e5, account){
+        var name = this.props.app_state.alias_bucket[e5][account]
+        var alias = name == null ? 'Account' : name
+        return alias
+    }
+
+    when_moderator_clicked(item, index){
+        const state = this.state.selected_typed_moderator_country == '' ? 'all' :this.state.selected_typed_moderator_country
+        var country_moderators_clone = structuredClone(this.state.data)
+        country_moderators_clone['country_moderators'][state].splice(index, 1)
+        this.setState({data: country_moderators_clone})
+    }
+
+
 
 
 
@@ -1911,6 +2156,8 @@ class DialerPage extends Component {
             <div>
                 <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_dialer_country_selected={this.when_dialer_country_selected.bind(this)}
                 when_dialer_included_country_selected={this.when_dialer_included_country_selected.bind(this)} when_dialer_dark_emblem_country_selected={this.when_dialer_dark_emblem_country_selected.bind(this)} when_add_translation_language_tapped={this.when_add_translation_language_tapped.bind(this)} when_spend_country_selected={this.when_spend_country_selected.bind(this)} when_spend_included_country_selected={this.when_spend_included_country_selected.bind(this)}
+                when_typed_moderator_country_selected={this.when_typed_moderator_country_selected.bind(this)}
+
                 />
             </div>
         )

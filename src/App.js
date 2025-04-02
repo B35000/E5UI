@@ -595,7 +595,7 @@ const arweave = Arweave.init();
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 var bigInt = require("big-integer");
-var primary_following = ['E25:1002']
+var primary_following = []
 const root_e5 = 'E25'
 const root_account = 1002
 
@@ -824,7 +824,7 @@ class App extends Component {
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
-    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{},
+    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{},
   };
 
   get_static_assets(){
@@ -16244,6 +16244,7 @@ class App extends Component {
       'recommended_video_threshold':this.state.recommended_video_threshold, 
       'recommended_audiopost_threshold':this.state.recommended_audiopost_threshold, 
       'recommended_audio_threshold':this.state.recommended_audio_threshold, 
+      'country_moderators':this.state.country_moderators,
     }
     setTimeout(function() {
       if(me.dialer_page.current != null){
@@ -16446,7 +16447,7 @@ class App extends Component {
     // var data = node.cat(cid)
     // console.log(data)
 
-    // await this.load_root_config()
+    await this.load_root_config()
 
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
@@ -18707,6 +18708,11 @@ class App extends Component {
 
       const theme_images_enabled = root_data.get_custom_background_images_object == null ? false: (this.get_selected_item(root_data.get_custom_background_images_object, 'e') == 'enabled' ? true: false)
 
+      const country_moderators = root_data.data['country_moderators'] == null ? {} : root_data.data['country_moderators']
+      const my_states_moderators = country_moderators[this.state.device_country] == null ? [] : country_moderators[this.state.device_country]
+      const default_moderators = country_moderators['all'] == null ? [] : country_moderators['all']
+      const my_moderators = default_moderators.concat(my_states_moderators)
+
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
         // this.prompt_top_notification('language: '+my_language, 5000)
@@ -18725,6 +18731,7 @@ class App extends Component {
       }
 
       console.log('apppage', 'theme', get_theme_stage_tags_object)
+      console.log('apppage', 'mymods', my_moderators)
 
       this.setState({
         allowed_countries: allowed_countries, 
@@ -18735,16 +18742,19 @@ class App extends Component {
         beacon_chain_url: beacon_chain_url, 
         e5s: e5s,
         ether_data: ether_data, 
-        dialer_addresses:dialer_addresses, 
-        theme_images:theme_images, 
-        line_setting:line_setting, 
+        dialer_addresses: dialer_addresses, 
+        theme_images: theme_images, 
+        line_setting: line_setting, 
         get_available_for_all_tags_object: get_available_for_all_tags_object, 
-        recommended_videopost_threshold:recommended_videopost_threshold, 
-        recommended_video_threshold:recommended_video_threshold, 
-        recommended_audiopost_threshold:recommended_audiopost_threshold, 
-        recommended_audio_threshold:recommended_audio_threshold,
-        theme_images_enabled:theme_images_enabled
+        recommended_videopost_threshold: recommended_videopost_threshold, 
+        recommended_video_threshold: recommended_video_threshold, 
+        recommended_audiopost_threshold: recommended_audiopost_threshold, 
+        recommended_audio_threshold: recommended_audio_threshold,
+        theme_images_enabled: theme_images_enabled,
+        followed_accounts: my_moderators,
+        country_moderators: country_moderators,
       })
+      primary_following = primary_following.concat(my_moderators)
 
       localStorage.setItem("logo_title", logo_title);
       localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);

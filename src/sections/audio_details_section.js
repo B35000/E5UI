@@ -1281,13 +1281,13 @@ class AudioDetailSection extends Component {
         }
     }
 
-    is_song_available_for_adding_to_playlist(song){
-        var my_songs = this.props.app_state.my_tracks
-        if(my_songs.includes(song['song_id'])){
-        return true
-        }
-        return false
-    }
+    // is_song_available_for_adding_to_playlist(song){
+    //     var my_songs = this.props.app_state.my_tracks
+    //     if(my_songs.includes(song['song_id'])){
+    //     return true
+    //     }
+    //     return false
+    // }
 
     is_page_my_collection_page(){
         var page_id = this.props.get_page_id()

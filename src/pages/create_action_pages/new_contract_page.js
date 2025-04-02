@@ -1437,15 +1437,15 @@ class NewContractPage extends Component {
         return has_been_added
     }
 
-    get_typed_alias_id(alias){
-        if(!isNaN(alias)){
-            return alias
-        }
-        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+    // get_typed_alias_id(alias){
+    //     if(!isNaN(alias)){
+    //         return alias
+    //     }
+    //     var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+    //         alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
-        return id
-    }
+    //     return id
+    // }
 
     render_set_interactible_accounts(){
         var middle = this.props.height-500;
