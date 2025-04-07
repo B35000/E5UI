@@ -69,7 +69,7 @@ function makeid(length) {
 class NewTokenPage extends Component {
     
     state = {
-        id: makeid(8), type:this.props.app_state.loc['601']/* 'token' */, e5:this.props.app_state.selected_e5,
+        id: makeid(8), object_type:31, type:this.props.app_state.loc['601']/* 'token' */, e5:this.props.app_state.selected_e5,
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:null,
 

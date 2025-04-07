@@ -2033,7 +2033,7 @@ class home_page extends Component {
                 });
             }
         }
-        return mail_objects
+        return mail_objects.reverse()
         // var all_mail = []
         // var received_mail = this.get_combined_created_mail('received_mail')
         // var created_mail = this.get_combined_created_mail('created_mail')
@@ -2117,7 +2117,7 @@ class home_page extends Component {
                 });
             }
         }
-        return mail_objects
+        return mail_objects.reverse()
 
         // var created_mail = []
         // var mail_activity = {}

@@ -61,7 +61,7 @@ function makeid(length) {
 class NewContractPage extends Component {
     
     state = {
-        id: makeid(8), type:this.props.app_state.loc['66'], e5:this.props.app_state.selected_e5,
+        id: makeid(8), object_type:30, type:this.props.app_state.loc['66'], e5:this.props.app_state.selected_e5,
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_contract_tags_object: this.get_new_contract_tags_object(), 
         

@@ -3888,6 +3888,7 @@ class StackPage extends Component {
 
     get_ipfs_index_object = async (txs, now, calculate_gas) => {
         const ipfs_index_object = {'version':this.props.app_state.version, 'color':this.get_device_color()}
+        const obj = {'version':this.props.app_state.version, 'color':this.get_device_color(), 'tags':{'color':this.get_device_color()}}
         const ipfs_index_array = []
         console.log('stack_page_ipfs', 'initial object data', ipfs_index_object)
         const pushed_txs = []
@@ -4056,7 +4057,31 @@ class StackPage extends Component {
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
                         t = await this.process_channel_object(txs[i])
                     }
+                    var extra_tags = [].concat(t.entered_title_text)
+                    if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+                        var songs = t.songs
+                        songs.forEach(song => {
+                            extra_tags.push(song['song_title'].toLowerCase())
+                            if(!extra_tags.includes(song['song_composer'].toLowerCase())){
+                                extra_tags.push(song['song_composer'].toLowerCase())
+                            }
+                        });
+                        extra_tags.push(t.entered_author_text.toLowerCase())
+                    }
+                    if(txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                        var videos = t.videos
+                        videos.forEach(video => {
+                            extra_tags.push(video['video_title'].toLowerCase())
+                            if(!extra_tags.includes(video['video_composer'].toLowerCase())){
+                                extra_tags.push(video['video_composer'].toLowerCase())
+                            }
+                        });
+                    }
+                    
                     ipfs_index_object[t.id] = t
+                    var all_elements = extra_tags.concat(t.entered_indexing_tags)
+                    const all_final_elements = all_elements.map(word => word.toLowerCase());
+                    obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type}
                     ipfs_index_array.push({'id':t.id, 'data':t})
                 }
                 else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
@@ -4116,12 +4141,35 @@ class StackPage extends Component {
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
-                else if(txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || txs[i].type == this.props.app_state.loc['601']/* 'token' */ || txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || txs[i].type == this.props.app_state.loc['297']/* 'post' */ || txs[i].type == this.props.app_state.loc['760']/* 'job' */ || txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */|| txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+                else if(txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || txs[i].type == this.props.app_state.loc['601']/* 'token' */ || txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || txs[i].type == this.props.app_state.loc['297']/* 'post' */ || txs[i].type == this.props.app_state.loc['760']/* 'job' */ || txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */|| txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
                     var data = txs[i]
                     if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
                         data = await this.process_channel_object(txs[i])
                     }
                     ipfs_index_object[data.id] = data
+                    var extra_tags = [].concat(data.entered_title_text)
+                    if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+                        var songs = data.songs
+                        songs.forEach(song => {
+                            extra_tags.push(song['song_title'].toLowerCase())
+                            if(!extra_tags.includes(song['song_composer'].toLowerCase())){
+                                extra_tags.push(song['song_composer'].toLowerCase())
+                            }
+                        });
+                        extra_tags.push(data.entered_author_text.toLowerCase())
+                    }
+                    if(txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                        var videos = data.videos
+                        videos.forEach(video => {
+                            extra_tags.push(video['video_title'].toLowerCase())
+                            if(!extra_tags.includes(video['video_composer'].toLowerCase())){
+                                extra_tags.push(video['video_composer'].toLowerCase())
+                            }
+                        });
+                    }
+                    var all_elements = extra_tags.concat(data.entered_indexing_tags)
+                    const all_final_elements = all_elements.map(word => word.toLowerCase());
+                    obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type}
                     ipfs_index_array.push({'id':data.id, 'data':data})
                 }
                 else if(txs[i].type == 'admin'){
@@ -4254,7 +4302,7 @@ class StackPage extends Component {
         }
 
 
-        const obj = {'version':this.props.app_state.version, 'color':this.get_device_color()}
+        
         ipfs_index_array.forEach(item => {
             obj[item['id']] = item['data']
         });
@@ -4328,7 +4376,7 @@ class StackPage extends Component {
     }
 
     get_object_ipfs_index = async (tx, calculate_gas, ipfs_index, data_index) => {
-        if(Object.keys(tx).length <= 2 && ipfs_index == null){
+        if(Object.keys(tx).length <= 3 && ipfs_index == null){
             return null
         }
         if(calculate_gas != null && calculate_gas == true){
@@ -4344,7 +4392,7 @@ class StackPage extends Component {
                 ? value.toString()
                 : value // return everything else unchanged));
         )
-        var obj_cid = await this.props.store_objects_data_in_ipfs_using_option(object_as_string)
+        var obj_cid = await this.props.store_objects_data_in_ipfs_using_option(object_as_string, null, null, tx['tags'])
         return obj_cid
     }
 
@@ -10749,10 +10797,11 @@ class StackPage extends Component {
                 <div>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1593cx']/* ''To see a nitro option here, first purchase storage from it in the nitro section.' */})}
                     <div style={{height: 10}}/>
-
                     {this.load_my_nitro_objects_to_select()}
                     <div style={{height: 10}}/>
                     {this.render_node_account_storage_details()}
+                    <div style={{height: 10}}/>
+                    {this.show_nitro_upload_progress_if_any()}
                 </div>
             )
         }
@@ -10767,6 +10816,36 @@ class StackPage extends Component {
                 </div>
             )
         }
+    }
+
+    show_nitro_upload_progress_if_any(){
+        var data = this.props.app_state.nitro_upload_progress_data
+        if(data == null) {
+            return(
+                <div>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }
+        var percentage = data['percentage'];
+        var file_number = data['file_number']
+        var file_count = data['file_count']
+        var total_size = data['total_size']
+        var formatted_size = this.format_data_size(total_size)
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['1593fc']/* 'Upload progress.' */, 'subtitle':'', 'barwidth':percentage+'%', 'number':percentage+'%', 'relativepower':this.props.app_state.loc['3055k']/* 'proportion' */})}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['1593fe']/* 'File Upload Number' */, 'title':file_number+'/'+file_count, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['1593ff']/* 'Total Upload Size' */, 'title':fs, 'size':'l'})}
+            </div>
+        )
     }
 
     show_last_transaction_data(){

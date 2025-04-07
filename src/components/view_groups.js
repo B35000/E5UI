@@ -329,7 +329,19 @@ class ViewGroups extends Component {
                   gridThickness: 0.3,
                   gridColor: this.props.theme['line_color'],//"#767676"
                   lineColor: "rgb(210, 210, 210,.0)",
-                  labelFontColor: this.props.theme['primary_text_color']//#292929 #DEDEDE
+                  labelFontColor: this.props.theme['primary_text_color'],//#292929 #DEDEDE
+                //   stripLines: [{
+                //         startValue:45,
+				//         endValue:55, // The Y value for the line
+                //         label: "Gucci",
+                //         color: "red",
+                //         labelFontColor: "red",
+                //         labelPlacement: "inside",
+                //         thickness: 0.9,
+                //         labelBackgroundColor:'transparent',
+                //         opacity:0.2,
+                //         showOnTop: true,
+                //     }],
               },
               toolTip:{
                   enabled: false   //enable here

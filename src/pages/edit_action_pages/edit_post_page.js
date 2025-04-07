@@ -49,7 +49,7 @@ function makeid(length) {
 class EditPostPage extends Component {
     
      state = {
-        id: makeid(8), type:this.props.app_state.loc['765']/* 'edit-post' */,
+        id: makeid(8), object_type:18, type:this.props.app_state.loc['765']/* 'edit-post' */,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_take_down_option: this.get_take_down_option(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',

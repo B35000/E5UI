@@ -534,8 +534,8 @@ class ConfigureNitroNodePage extends Component {
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3051']/* 'Boot the node to begin the syncronization process.' */})}
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3052']/* 'App Key...' */} when_text_input_field_changed={this.when_app_key_text_input_field_changed.bind(this)} text={this.state.entered_app_key_text} theme={this.props.theme}/> 
-                <div style={{height:10}}/>
+                {/* <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3052']'App Key...'} when_text_input_field_changed={this.when_app_key_text_input_field_changed.bind(this)} text={this.state.entered_app_key_text} theme={this.props.theme}/> 
+                <div style={{height:10}}/> */}
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3053']/* 'Backup key (Optional)...' */} when_text_input_field_changed={this.when_backup_key_text_input_field_changed.bind(this)} text={this.state.entered_backup_text} theme={this.props.theme}/> 
 
@@ -559,11 +559,11 @@ class ConfigureNitroNodePage extends Component {
         var entered_app_key_text = this.state.entered_app_key_text
         var entered_backup_text = this.state.entered_backup_text
 
-        if(entered_app_key_text == ''){
-            this.props.notify(this.props.app_state.loc['3054i']/* 'An app key is required to boot the node.' */, 4000)
-        }else{
-            this.props.boot_nitro_node(entered_app_key_text, entered_backup_text, this.state.nitro_object)
-        }
+        // if(entered_app_key_text == ''){
+        //     this.props.notify(this.props.app_state.loc['3054i']/* 'An app key is required to boot the node.' */, 4000)
+        // }else{
+        // }
+        this.props.boot_nitro_node('', entered_backup_text, this.state.nitro_object)
     }
 
 

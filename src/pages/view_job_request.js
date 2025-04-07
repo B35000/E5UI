@@ -781,7 +781,7 @@ class ViewJobRequestPage extends Component {
 
     render_messages_parts(){
         var he = this.props.height-180
-        if(this.get_focused_message() != null) he = this.props.height-240
+        if(this.get_focused_message() != null) he = this.props.height-250
         var size = this.props.screensize
         var ww = '80%'
         if(size == 'l') ww = '90%'
@@ -912,7 +912,8 @@ class ViewJobRequestPage extends Component {
         //     middle = this.props.height-100;
         // }
         var items = [].concat(this.get_convo_messages())
-        var stacked_items = this.get_stacked_items()
+        var stacked_items = [].concat(this.get_stacked_items()).reverse()
+        var final_items = stacked_items.concat(items)
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -940,7 +941,7 @@ class ViewJobRequestPage extends Component {
                 return(
                 <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items.concat(stacked_items))}
+                        {this.render_messages(final_items)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -1178,7 +1179,7 @@ class ViewJobRequestPage extends Component {
                     <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'])}</Linkify></p>
                     {this.render_markdown_in_message_if_any(item)}
                     {this.render_images_if_any(item)}
-
+                    {this.get_then_render_my_awards(item)}
                     {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} {this.props.app_state.loc['1693']} </p> */}
                 </div>
                 {this.render_pdfs_if_any(item)}
@@ -1215,7 +1216,8 @@ class ViewJobRequestPage extends Component {
                 </div>
                 <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
 
-                {this.render_award_object_if_any(_item)}
+                {/* {this.render_award_object_if_any(_item)} */}
+                {this.get_then_render_my_awards(item)}
             </div>
         )
     }
@@ -1225,6 +1227,42 @@ class ViewJobRequestPage extends Component {
             return(
                 <div style={{'font-size': '8px'}}>
                     <p>{item['award_tier']['label']['title']}</p>
+                </div>
+            )
+        }
+    }
+
+    get_then_render_my_awards(item){
+        var message_items = this.get_convo_messages().concat(this.get_stacked_items())
+        var award_obj = {}
+        message_items.forEach(message => {
+            if(message['focused_message_id'] == item['message_id']){
+                if(message['award_tier'] != null && message['award_tier'] != ''){
+                    if(award_obj[message['award_tier']['label']['title']] == null){
+                       award_obj[message['award_tier']['label']['title']] = 0
+                    }
+                    award_obj[message['award_tier']['label']['title']]++
+                }
+            }
+        });
+        if(Object.keys(award_obj).length > 0){
+            var text = ''
+            for(const award in award_obj){
+                if(award_obj.hasOwnProperty(award)){
+                    if(text != ''){
+                        text = text + ' '
+                    }
+                    if(award_obj[award] > 1){
+                        text = `${text}${award}x${award_obj[award]}`
+                    }else{
+                        text = `${text}${award}`
+                    }
+                }
+            }
+            var font = item['font'] == null ? this.props.app_state.font : item['font']
+            return(
+                <div>
+                    <p style={{'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'font-size': '8px'}}>{text}</p>
                 </div>
             )
         }

@@ -802,7 +802,7 @@ class PostsDetailsSection extends Component {
 
     render_post_responses(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-150
+        if(this.get_focused_message(object) != null) he = this.props.height-165
         var size = this.props.screensize
         var ww = '80%'
         if(size == 'l') ww = '90%'
@@ -939,7 +939,8 @@ class PostsDetailsSection extends Component {
         var middle = this.props.height-240;
         if(this.get_focused_message(object) != null) middle = this.props.height-290
         var items = [].concat(this.get_convo_messages(object))
-        var stacked_items = [].concat(this.get_stacked_items(object))
+        var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
+        var final_items = stacked_items.concat(items)
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -965,13 +966,13 @@ class PostsDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items.concat(stacked_items), object)}
-                        <div ref={this.messagesEnd}/>
-                    </ul>
-                </div>
-            )
+                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {this.render_messages(final_items, object)}
+                            <div ref={this.messagesEnd}/>
+                        </ul>
+                    </div>
+                )
             }else{
                 return(
                     <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
@@ -1009,7 +1010,7 @@ class PostsDetailsSection extends Component {
         }else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.reverse().map((item, index) => (
+                    {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
                                 {this.render_message_as_focused_if_so(item, object)}
@@ -1208,6 +1209,7 @@ class PostsDetailsSection extends Component {
                             {this.render_markdown_in_message_if_any(item)}
 
                             {this.render_images_if_any(item)}
+                            {this.get_then_render_my_awards(item, object)}
                             {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p> */}
                         </div>
                     </div>
@@ -1241,7 +1243,8 @@ class PostsDetailsSection extends Component {
                 </div>
                 <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
 
-                {this.render_award_object_if_any(_item)}
+                {/* {this.render_award_object_if_any(_item)} */}
+                {this.get_then_render_my_awards(item, object)}
             </div>
         )
     }
@@ -1251,6 +1254,42 @@ class PostsDetailsSection extends Component {
             return(
                 <div style={{}}>
                     <p style={{'margin': '0px 0px 0px 0px', 'font-size': '8px'}}>{item['award_tier']['label']['title']}</p>
+                </div>
+            )
+        }
+    }
+
+    get_then_render_my_awards(item, object){
+        var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
+        var award_obj = {}
+        message_items.forEach(message => {
+            if(message['focused_message_id'] == item['message_id']){
+                if(message['award_tier'] != null && message['award_tier'] != ''){
+                    if(award_obj[message['award_tier']['label']['title']] == null){
+                       award_obj[message['award_tier']['label']['title']] = 0
+                    }
+                    award_obj[message['award_tier']['label']['title']]++
+                }
+            }
+        });
+        if(Object.keys(award_obj).length > 0){
+            var text = ''
+            for(const award in award_obj){
+                if(award_obj.hasOwnProperty(award)){
+                    if(text != ''){
+                        text = text + ' '
+                    }
+                    if(award_obj[award] > 1){
+                        text = `${text}${award}x${award_obj[award]}`
+                    }else{
+                        text = `${text}${award}`
+                    }
+                }
+            }
+            var font = item['font'] == null ? this.props.app_state.font : item['font']
+            return(
+                <div>
+                    <p style={{'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'font-size': '8px'}}>{text}</p>
                 </div>
             )
         }

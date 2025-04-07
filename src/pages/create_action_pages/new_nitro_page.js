@@ -56,7 +56,7 @@ function makeid(length) {
 class NewNitroPage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), type:this.props.app_state.loc['a273a']/* 'nitro' */, e5:this.props.app_state.selected_e5,
+        selected: 0, id: makeid(8), object_type:21, type:this.props.app_state.loc['a273a']/* 'nitro' */, e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],

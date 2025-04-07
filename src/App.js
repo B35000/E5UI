@@ -824,7 +824,7 @@ class App extends Component {
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
-    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{},
+    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'disabled'
   };
 
   get_static_assets(){
@@ -862,12 +862,12 @@ class App extends Component {
   get_e5s(){
     var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815']
     return{
-      'data':['E15','E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
+      'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
         e5_address:'0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82', 
-        first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:true, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
+        first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
         end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true
       },
       'E25':{
@@ -1381,7 +1381,7 @@ class App extends Component {
 
   get_ether_data(){
     var list = [
-      this.get_token('ETHT', 'Ethereum Testnet', 'E15'),
+      // this.get_token('ETHT', 'Ethereum Testnet', 'E15'),
       this.get_token('ETC', 'Ethereum Classic', 'E35'),
       this.get_token('ONE', 'Harmony', 'E45'),
       this.get_token('CELO', 'Celo', 'E55'),
@@ -2676,6 +2676,7 @@ class App extends Component {
   }
 
   start_everything = async () => {
+    // this.test_beacon_node()
     await this.load_cookies();
     this.load_cookies2()
     var me = this;
@@ -2686,6 +2687,47 @@ class App extends Component {
       me.get_key()
       me.init_db()
     }, (1 * 1000));
+  }
+
+  test_beacon_node = async () => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var arg_obj = {title: 'faucet', target_type: 17}
+    const params = new URLSearchParams({
+      arg_string: JSON.stringify(arg_obj)
+    });
+    var request = `${beacon_node}/title?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('apppage', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      console.log('apppage', 'title search result', obj)
+    }
+    catch(e){
+      console.log('apppage', e)
+    }
+
+    var arg_obj2 = {tags: ['repair'], target_type: 17}
+    const params2 = new URLSearchParams({
+      arg_string: JSON.stringify(arg_obj2)
+    });
+    var request2 = `${beacon_node}/tags?${params2.toString()}`
+    try{
+      const response = await fetch(request2);
+      if (!response.ok) {
+        console.log('apppage', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      console.log('apppage', 'tags search result', obj)
+    }
+    catch(e){
+      console.log('apppage', e)
+    }
   }
 
   test_nft_storage = async () => {
@@ -5471,6 +5513,52 @@ class App extends Component {
     
   }
 
+  send_ether_to_target(recipientAddress, amount, gasPrice, state, e5, set_max_priority_per_gas, set_max_fee_per_gas, ether){
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const me = this;
+
+    web3.eth.accounts.wallet.add(state.accounts[e5].privateKey);
+    var gas_price = (gasPrice == null || gasPrice == 0 || gasPrice > 100**18) ? 10**9 : gasPrice
+
+    var tx = {
+      from: state.accounts[e5].address,
+      to: recipientAddress,
+      value: amount.toString(),
+      gas: 23000,
+      gasPrice: gas_price.toString()
+    }
+
+    // if(this.state.e5s[e5].type == '1559'){
+    //   tx = {
+    //     from: state.accounts[e5].address,
+    //     to: recipientAddress,
+    //     value: amount.toString(),
+    //     gas: 23000,
+    //     maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
+    //     maxFeePerGas: set_max_fee_per_gas.toString()
+    //   }
+    // }
+
+    web3.eth.sendTransaction(tx)
+    .on('transactionHash', function (hash) {
+      me.start_get_accounts_data(false)
+      console.log('send_result: ',hash)
+      me.show_successful_send_bottomsheet({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether, 'type':'ether'}, )
+      // me.get_transaction_receipt({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether}, hash, web3)
+    })
+    .on('error', function (error) {
+      console.error('Failed to send transaction:', error);
+      if(error == 'Error: Invalid JSON RPC response: {}'){
+        me.start_get_accounts_data(false)
+        // me.prompt_top_notification(me.getLocale()['2728']/* 'send complete!' */, 15600)
+        me.show_successful_send_bottomsheet({'tx':tx, 'hash':'', 'e5':e5, 'ether':ether, 'type':'ether'})
+      }else{
+        me.prompt_top_notification(me.getLocale()['2729']/* 'send failed, ' */+error, 16000)
+      }
+    });
+
+  }
+
 
 
 
@@ -7130,7 +7218,7 @@ class App extends Component {
               ? value.toString()
               : value
       )
-      var final_data = this.encrypt_storage_data(object_as_string)
+      var final_data = this.encrypt_storage_object(object_as_string, tx['tags'])
       let test_wallet_key = await arweave.wallets.generate();
       var transaction = await arweave.createTransaction({
         data: final_data
@@ -12593,7 +12681,7 @@ class App extends Component {
     
     if(focused_message_id != 0){
       const focused_message_sender = focused_message_id['sender'] == null ? focused_message_id['ipfs']['sender'] : focused_message_id['sender'];
-      const focused_message_sender_e5 = focused_message_id['sender_e5'] == null ? focused_message_id['ipfs']['my_preferred_e5'] : focused_message_id['sender_e5']
+      const focused_message_sender_e5 = focused_message_id['sender_e5'] == null ? (focused_message_id['ipfs'] == null ? 'E25' : focused_message_id['ipfs']['my_preferred_e5']) : focused_message_id['sender_e5']
       
       if(this.state.selected_e5 != focused_message_sender_e5){
         const their_account_data = await this.get_senders_account_on_my_e5(focused_message_sender, focused_message_sender_e5)
@@ -14526,9 +14614,10 @@ class App extends Component {
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
     var node_url = nitro_object['ipfs'].node_url
 
+    var beacon_chain_link = this.state.beacon_chain_url
     const params = new URLSearchParams({
       backup_key: final_backup_key,
-      app_key: entered_app_key_text
+      beacon_chain_link: beacon_chain_link
     });
     var request = `${node_url}/boot?${params.toString()}`
     var body = {
@@ -16452,7 +16541,9 @@ class App extends Component {
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
-      // await this.check_if_beacon_node_is_online()
+      if(this.state.manual_beacon_node_disabled == 'e'){
+        await this.check_if_beacon_node_is_online()
+      }
       if(this.state.accounts[this.state.selected_e5] != null){
         var me = this
         setTimeout(function() {
@@ -16476,52 +16567,6 @@ class App extends Component {
       this.setState({should_keep_synchronizing_bottomsheet_open: false})
     }
     this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
-
-  }
-
-  send_ether_to_target(recipientAddress, amount, gasPrice, state, e5, set_max_priority_per_gas, set_max_fee_per_gas, ether){
-    const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    const me = this;
-
-    web3.eth.accounts.wallet.add(state.accounts[e5].privateKey);
-    var gas_price = (gasPrice == null || gasPrice == 0 || gasPrice > 100**18) ? 10**9 : gasPrice
-
-    var tx = {
-      from: state.accounts[e5].address,
-      to: recipientAddress,
-      value: amount.toString(),
-      gas: 23000,
-      gasPrice: gas_price.toString()
-    }
-
-    // if(this.state.e5s[e5].type == '1559'){
-    //   tx = {
-    //     from: state.accounts[e5].address,
-    //     to: recipientAddress,
-    //     value: amount.toString(),
-    //     gas: 23000,
-    //     maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
-    //     maxFeePerGas: set_max_fee_per_gas.toString()
-    //   }
-    // }
-
-    web3.eth.sendTransaction(tx)
-    .on('transactionHash', function (hash) {
-      me.start_get_accounts_data(false)
-      console.log('send_result: ',hash)
-      me.show_successful_send_bottomsheet({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether, 'type':'ether'}, )
-      // me.get_transaction_receipt({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether}, hash, web3)
-    })
-    .on('error', function (error) {
-      console.error('Failed to send transaction:', error);
-      if(error == 'Error: Invalid JSON RPC response: {}'){
-        me.start_get_accounts_data(false)
-        // me.prompt_top_notification(me.getLocale()['2728']/* 'send complete!' */, 15600)
-        me.show_successful_send_bottomsheet({'tx':tx, 'hash':'', 'e5':e5, 'ether':ether, 'type':'ether'})
-      }else{
-        me.prompt_top_notification(me.getLocale()['2729']/* 'send failed, ' */+error, 16000)
-      }
-    });
 
   }
 
@@ -18540,6 +18585,9 @@ class App extends Component {
     var contract_addresses = contract_addresses_events[0].returnValues.p5
     if(this.e5_contract_addresses == null) this.e5_contract_addresses = {}
     this.e5_contract_addresses[e5] = contract_addresses
+    var addresses_clone = structuredClone(this.state.addresses)
+    addresses_clone[e5] = contract_addresses
+    this.setState({addresses: addresses_clone})
 
     // await this.get_accounts_data(_account, is_syncing, web3_url, e5_address, e5)
     // return;
@@ -18691,7 +18739,7 @@ class App extends Component {
       const selected_dark_emblem_country = root_data.selected_dark_emblem_country
       const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
       const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
-      const beacon_chain_url = root_data.data['beacon_chain_url']
+      const beacon_chain_url = /* root_data.data['beacon_chain_url'] */ 'http://localhost:4000'
       const e5s = this.update_e5_images(root_data.data['e5s'])
 
       const ether_data = root_data.data['ether_data']
@@ -18712,6 +18760,8 @@ class App extends Component {
       const my_states_moderators = country_moderators[this.state.device_country] == null ? [] : country_moderators[this.state.device_country]
       const default_moderators = country_moderators['all'] == null ? [] : country_moderators['all']
       const my_moderators = default_moderators.concat(my_states_moderators)
+
+      const manual_beacon_node_disabled = root_data.get_manual_disable_beacon_node_override_object == null ? 'e': this.get_selected_item(root_data.get_manual_disable_beacon_node_override_object, 'e')
 
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
@@ -18753,6 +18803,7 @@ class App extends Component {
         theme_images_enabled: theme_images_enabled,
         followed_accounts: my_moderators,
         country_moderators: country_moderators,
+        manual_beacon_node_disabled: manual_beacon_node_disabled
       })
       primary_following = primary_following.concat(my_moderators)
 
@@ -19064,7 +19115,6 @@ class App extends Component {
     var addresses_clone = structuredClone(this.state.addresses)
     addresses_clone[e5] = contract_addresses
     this.setState({addresses: addresses_clone})
-    console.log('contract_addresses', addresses_clone)
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -21603,7 +21653,7 @@ class App extends Component {
 
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
     // var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
-    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, created_token_depths)
+    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, created_token_depths, e5)
     var token_balances = token_balances_and_data['bal']
     var token_balances_data = token_balances_and_data['bal_data']
 
@@ -21687,7 +21737,7 @@ class App extends Component {
       }
 
       if(exchanges_depth > 13){
-        var token_balances_and_data2 = await this.get_balance_from_multiple_exchanges([created_tokens[i]], account, H52contractInstance, [exchanges_depth])
+        var token_balances_and_data2 = await this.get_balance_from_multiple_exchanges([created_tokens[i]], account, H52contractInstance, [exchanges_depth], e5)
         balance = token_balances_and_data2['bal'][0]
         token_balance_data = token_balances_and_data2['bal_data'][0]
       }
@@ -22143,240 +22193,6 @@ class App extends Component {
     //   this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, loop_count+1)
     // }
   }
-
-  // get_sent_mail_data = async (E52contractInstance, e5, account, web3) => {
-  //   if(this.state.accounts[e5].privateKey == '') return;
-    
-  //   const my_created_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:30})
-  //   const my_created_mail_events_for_other_e5s = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */: 31})
-
-  //   if(this.mail_for_other_e5_convos == null){
-  //     this.mail_for_other_e5_convos = {}
-  //   }
-
-  //   const my_final_created_mail_events = my_created_mail_events.concat(my_created_mail_events_for_other_e5s)
-  //   // console.log('apppage', 'all created mail events', e5, my_final_created_mail_events)
-
-  //   this.record_number_of_items(e5, 'sent_mail',my_final_created_mail_events.length)
-
-  //   const created_mail = []
-  //   const sent_mail_activity = {}
-  //   const is_first_time = this.state.created_mail[e5] == null
-
-  //   if(this.state.beacon_node_enabled == true) await this.fetch_multiple_cids_from_nitro(my_final_created_mail_events, 0, 'p4');
-
-  //   for(var i=0; i<my_final_created_mail_events.length; i++){
-  //     const event = my_final_created_mail_events[i]
-  //     const convo_id = event.returnValues.p5
-  //     const cid = event.returnValues.p4
-      
-  //     const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
-  //     const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5, 'sender')
-      
-  //     if(ipfs_obj != null && ipfs != ipfs_obj){
-  //       if(!created_mail.includes(convo_id) && event.returnValues.p3 == 30){
-  //         created_mail.push(convo_id)
-  //         if(sent_mail_activity[convo_id] == null){
-  //           sent_mail_activity[convo_id] = []
-  //         }
-  //       }
-  //       // console.log('apppage', 'gotten ipfs object', ipfs_obj)
-  //       if(ipfs_obj['time'] != null){
-  //         ipfs_obj['time'] = event.returnValues.p6
-  //       }else{
-  //         console.log('ipfs data thats null: ', ipfs_obj)
-  //       }
-        
-  //       const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
-  //       event.returnValues.p1 = (recipient)
-  //       const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
-  //       const data = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':'sent', 'time':event.returnValues.p6, 'convo_with':recipient, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
-
-        
-  //       if(event.returnValues.p3 == 30){
-  //         const includes = sent_mail_activity[convo_id].find(e => e['id'] === data['id'])
-  //         if(includes == null){
-  //           sent_mail_activity[convo_id].push(data);
-  //         }
-  //       }else{
-  //         if(this.mail_for_other_e5_convos[convo_id] == null){
-  //           this.mail_for_other_e5_convos[convo_id] = []
-  //         }
-  //         const includes2 = this.mail_for_other_e5_convos[convo_id].find(e => e['id'] === data['id'])
-  //         if(includes2 == null){
-  //           this.mail_for_other_e5_convos[convo_id].push(data)
-  //         }
-  //       }
-        
-  //       this.fetch_uploaded_files_for_object(ipfs_obj)
-        
-  //       if(is_first_time){
-  //         const created_mail_clone = structuredClone(this.state.created_mail)
-  //         created_mail_clone[e5] = {'created_mail':created_mail, 'mail_activity':sent_mail_activity}
-  //         this.setState({created_mail: created_mail_clone})
-  //       }
-  //     }
-  //   }
-
-  //   const created_mail_clone = structuredClone(this.state.created_mail)
-  //   created_mail_clone[e5] = {'created_mail':created_mail, 'mail_activity':sent_mail_activity}
-
-  //   for (const convo_id in this.mail_for_other_e5_convos) {
-  //     if (this.mail_for_other_e5_convos.hasOwnProperty(convo_id)) {
-  //       var convo_mail = this.mail_for_other_e5_convos[convo_id]
-  //       convo_mail.forEach(mail_element => {
-  //         if(!created_mail_clone[mail_element['e5']]['created_mail'].includes(convo_id)){
-  //           created_mail_clone[mail_element['e5']]['created_mail'].push(convo_id)
-  //           created_mail_clone[mail_element['e5']]['mail_activity'][convo_id] = []
-  //         }  
-  //         const includes3 = created_mail_clone[mail_element['e5']]['mail_activity'][convo_id].find(e => e['id'] === mail_element['id'])      
-  //         if(includes3 == null){
-  //           created_mail_clone[mail_element['e5']]['mail_activity'][convo_id].push(mail_element)
-  //         }
-  //       });
-  //     }
-  //   }
-  //   //sort the convo elements
-  //   for(const mail_e5 in created_mail_clone){
-  //     if(created_mail_clone.hasOwnProperty(mail_e5)){
-  //       created_mail_clone[mail_e5]['created_mail'].forEach(convo_id => {
-  //         created_mail_clone[mail_e5]['mail_activity'][convo_id] = this.sortByAttributeDescending(created_mail_clone[mail_e5]['mail_activity'][convo_id], 'timestamp').reverse()
-  //       });
-  //     }
-  //   }
-  //   this.setState({created_mail: created_mail_clone})
-
-
-  //   // console.log('apppage','sent', 'e5', e5)
-  //   // console.log('apppage', 'mail for other convos', this.mail_for_other_e5_convos)
-  //   // console.log('apppage','sent','created mail activity: ', sent_mail_activity)
-  //   // console.log('apppage','sent', 'the entire object', created_mail_clone)
-  //   // console.log('apppage','sent','created mail count: ',created_mail.length)
-  // }
-
-  // get_received_mail_data = async (E52contractInstance, e5, account, web3) => {
-  //   if(this.state.accounts[e5].privateKey == '') return;
-   
-  //   const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
-
-  //   const my_received_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:30})
-    
-  //   const my_received_mail_events_for_other_e5s = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: crosschain_identifier, p3/* context */:31})
-
-  //   if(this.mail_received_for_other_e5_convos == null){
-  //     this.mail_received_for_other_e5_convos = {}
-  //   }
-
-  //   const my_final_received_mail_events = my_received_mail_events.concat(my_received_mail_events_for_other_e5s)
-
-  //   this.record_number_of_items(e5, 'received_mail', my_received_mail_events.length)
-    
-    
-  //   const received_mail_array = []
-  //   const mail_activity_object = {}
-    
-  //   const is_first_time = this.state.received_mail[e5] == null
-  //   const received_mail_notifications = []
-
-  //   if(this.state.beacon_node_enabled == true){
-  //     await this.fetch_multiple_cids_from_nitro(my_final_received_mail_events, 0, 'p4')
-  //   }
-
-  //   for(var i=0; i<my_final_received_mail_events.length; i++){
-  //     const event = my_final_received_mail_events[i]
-  //     const convo_id = event.returnValues.p5
-  //     const cid = event.returnValues.p4
-  //     const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
-  //     const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5, 'receiver')
-  //     console.log('apppage', 'received mail item', ipfs_obj)
-      
-  //     if(ipfs_obj != null && ipfs != ipfs_obj){
-  //       if(!received_mail_array.includes(convo_id) && event.returnValues.p3 == 30){
-  //         received_mail_array.push(convo_id)
-  //         if(mail_activity_object[convo_id] == null){
-  //           mail_activity_object[convo_id] = []
-  //         }
-  //       }
-  //       ipfs_obj['time'] = event.returnValues.p6
-        
-  //       const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
-  //       event.returnValues.p1 = (recipient)
-  //       const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
-  //       const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':'received', 'time':event.returnValues.p6, 'convo_with':event.returnValues.p2, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
-        
-  //       if(ipfs_obj['message'] != null){
-  //         received_mail_notifications.push({'type':'mail_message_notification', 'event':event, 'e5':recipient_e5, 'timestamp':event.returnValues.p6, 'ipfs':ipfs_obj, 'convo_id':convo_id,'id':cid})
-  //       }
-
-        
-  //       if(event.returnValues.p3 == 30){
-  //         const includes = mail_activity_object[convo_id].find(e => e['id'] === obj['id'])
-  //         if(includes == null){
-  //           mail_activity_object[convo_id].push(obj);
-  //         }
-  //       }else{
-  //         if(this.mail_received_for_other_e5_convos[convo_id] == null){
-  //           this.mail_received_for_other_e5_convos[convo_id] = []
-  //         }
-  //         const includes2 = this.mail_received_for_other_e5_convos[convo_id].find(e => e['id'] === obj['id'])
-  //         if(includes2 == null){
-  //           this.mail_received_for_other_e5_convos[convo_id].push(obj)
-  //         }
-  //       }
-
-  //       this.fetch_uploaded_files_for_object(ipfs_obj)
-
-  //       if(is_first_time){
-  //         const received_mail_clone2 = structuredClone(this.state.received_mail)
-  //         received_mail_clone2[e5] = {'received_mail':received_mail_array, 'mail_activity':mail_activity_object}
-
-  //         const received_mail_notifications_clone = structuredClone(this.state.received_mail_notifications)
-  //         received_mail_notifications_clone[e5] = received_mail_notifications
-
-  //         this.setState({received_mail: received_mail_clone2, received_mail_notifications: received_mail_notifications_clone})
-  //       }
-  //     }
-  //   }
-
-  //   const received_mail_clone = structuredClone(this.state.received_mail)
-  //   received_mail_clone[e5] = {'received_mail':received_mail_array, 'mail_activity':mail_activity_object}
-
-  //   for (const convo_id in this.mail_received_for_other_e5_convos) {
-  //     if (this.mail_received_for_other_e5_convos.hasOwnProperty(convo_id)) {
-  //       const convo_mail = this.mail_received_for_other_e5_convos[convo_id]
-  //       convo_mail.forEach(mail_element => {
-  //         if(!received_mail_clone[mail_element['e5']]['received_mail'].includes(convo_id)){
-  //           received_mail_clone[mail_element['e5']]['received_mail'].push(convo_id)
-  //           received_mail_clone[mail_element['e5']]['mail_activity'][convo_id] = []
-  //         }
-  //         const includes3 = received_mail_clone[mail_element['e5']]['mail_activity'][convo_id].find(e => e['id'] === mail_element['id'])
-  //         if(includes3 == null){
-  //           received_mail_clone[mail_element['e5']]['mail_activity'][convo_id].push(mail_element)
-  //         }
-  //       });
-  //     }
-  //   }
-
-  //   //sort the convo elements
-  //   for(const mail_e5 in received_mail_clone){
-  //     if(received_mail_clone.hasOwnProperty(mail_e5)){
-  //       received_mail_clone[mail_e5]['received_mail'].forEach(convo_id => {
-  //         received_mail_clone[mail_e5]['mail_activity'][convo_id] = this.sortByAttributeDescending(received_mail_clone[mail_e5]['mail_activity'][convo_id], 'timestamp').reverse()
-  //       });
-  //     }
-  //   }
-
-  //   const received_mail_notifications_clone = structuredClone(this.state.received_mail_notifications)
-  //   received_mail_notifications_clone[e5] = received_mail_notifications
-
-  //   this.setState({received_mail: received_mail_clone, received_mail_notifications: received_mail_notifications_clone})
-
-  //   console.log('apppage', 'received e5', e5)
-  //   console.log('apppage','received mail count: '+received_mail_array.length)
-  //   console.log('apppage','recived mail activity: ', mail_activity_object)
-  //   console.log('apppage', 'received items for other e5s', this.mail_received_for_other_e5_convos)
-  //   console.log('apppage', 'received mail entire thing: ', received_mail_clone)
-  // }
 
   get_all_mail_data = async (E52contractInstance, e5, account, web3) => {
     if(this.state.accounts[e5].privateKey == '') return;
@@ -24296,7 +24112,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = JSON.parse(this.decrypt_storage_object(data));
       var object_data = obj['data']
       console.log('all_data', 'data', obj)
       for(var i=0; i<hashes.length; i++){
@@ -24339,6 +24155,7 @@ class App extends Component {
     var cid = events[events.length - 1].returnValues.p4
     if(cid == 'e3' || cid == 'e2' || cid == 'e1' || cid == 'e') return;
 
+    // console.log('apppage','cid to fetch',id, cid)
     return await this.fetch_objects_data_from_ipfs_using_option(cid)
   }
 
@@ -24432,18 +24249,18 @@ class App extends Component {
     return `https://nftstorage.link/ipfs/${cid}`
   }
 
-  store_objects_data_in_ipfs_using_option = async (data, unappend_identifier, unencrypt_image) => {
+  store_objects_data_in_ipfs_using_option = async (data, unappend_identifier, unencrypt_image, tags) => {
     var set_storage_option = this.state.storage_option
     var my_preferred_nitro = this.state.my_preferred_nitro
 
     if(my_preferred_nitro != ''){
       //upload to nitro storage
-      var cid = await this.store_data_in_nitro(data, unencrypt_image, my_preferred_nitro)
+      var cid = await this.store_data_in_nitro(data, unencrypt_image, my_preferred_nitro, tags)
       if(unappend_identifier == true) return cid
       return 'ni.'+cid;
     }
     if(set_storage_option == 'infura'){
-      var cid = await this.store_data_in_infura(data, unencrypt_image)
+      var cid = await this.store_data_in_infura(data, unencrypt_image, tags)
       if(unappend_identifier == true) return cid
       return 'in.'+cid;
     }
@@ -24458,12 +24275,12 @@ class App extends Component {
       return 'nf.'+cid;
     }
     else if(set_storage_option == 'chainsafe'){
-      var cid = await this.store_data_in_chainsafe_storage(data, unencrypt_image)
+      var cid = await this.store_data_in_chainsafe_storage(data, unencrypt_image, tags)
       if(unappend_identifier == true) return cid
       return 'ch.'+cid;
     }
     else if(set_storage_option == 'arweave'){
-      var cid = await this.store_data_in_arweave_storage(data, unencrypt_image)
+      var cid = await this.store_data_in_arweave_storage(data, unencrypt_image, tags)
       if(unappend_identifier == true) return cid
       return 'ar.'+cid;
     }
@@ -24473,8 +24290,8 @@ class App extends Component {
 
 
 
-  store_data_in_arweave_storage = async (_data, unencrypt_image) => {
-    var final_data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
+  store_data_in_arweave_storage = async (_data, unencrypt_image, tags_obj) => {
+    var final_data = unencrypt_image ? _data: this.encrypt_storage_object(_data, tags_obj)
     var wallet_data = this.state.coin_data['AR']
     if(wallet_data != null){
       const wallet = wallet_data['wallet']
@@ -24532,7 +24349,7 @@ class App extends Component {
       var return_data = await fetch(`https://arweave.net/${decoded}`)
       var data = await return_data.text()
       // console.log('appdata', data)
-      var decrypted_data = this.decrypt_storage_data(data)
+      var decrypted_data = this.decrypt_storage_object(data)
       // console.log('appdata', decrypted_data)
       var obj = JSON.parse(decrypted_data)
       // console.log('appdata', obj)
@@ -24547,13 +24364,13 @@ class App extends Component {
 
 
 
-  store_data_in_nitro = async (_data, unencrypt_image, my_preferred_nitro) => {
+  store_data_in_nitro = async (_data, unencrypt_image, my_preferred_nitro, tags_obj) => {
     var node_details = this.state.nitro_node_details[my_preferred_nitro]
     if(node_details == null){
       this.prompt_top_notification(this.getLocale()['1593db']/* 'Please wait a few moments for your selected node to come online.' */, 5000)
       return '';
     }
-    var data = _data
+    var data = this.encrypt_storage_object(_data, tags_obj)
     var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
     if(block_hash_and_signature == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
@@ -24617,9 +24434,9 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = JSON.parse(this.decrypt_storage_object(data));
       var object_data = obj['data']
-      var cid_data = JSON.parse(object_data[nitro_cid])
+      var cid_data = object_data[nitro_cid]
       
       return cid_data
     }
@@ -24633,8 +24450,8 @@ class App extends Component {
 
 
 
-  store_data_in_infura = async (_data, unencrypt_image) => {
-    var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
+  store_data_in_infura = async (_data, unencrypt_image, tags_obj) => {
+    var data = unencrypt_image ? _data: this.encrypt_storage_object(_data, tags_obj)
     const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
     const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
     const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
@@ -24678,14 +24495,17 @@ class App extends Component {
     ]
 
     var gateways = [
-      // `https://ipfs.io/ipfs/${cid}`,
       //https://ipfs.algonode.xyz/ipfs/${cid}
-      `https://gateway.pinata.cloud/ipfs/${cid}`
+      `https://gateway.pinata.cloud/ipfs/${cid}`,
+      `https://ipfs.io/ipfs/${cid}`,
     ]
     
     await this.wait(this.state.ipfs_delay)
     // var selected_gateway = gateways[Math.round(Math.random() * 12)]
     var selected_gateway = gateways[0]
+    if(depth > 2){
+      selected_gateway = gateways[1]
+    }
     selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
     try {
       const response = await fetch(selected_gateway);
@@ -24693,7 +24513,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
       var data = await response.text();
-      data = this.decrypt_storage_data(data)
+      data = this.decrypt_storage_object(data)
       return JSON.parse(data);
       // Do something with the retrieved data
     } catch (error) {
@@ -24722,7 +24542,6 @@ class App extends Component {
     return null;
     // var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
     // const client = new Web3Storage({ token: `${process.env.REACT_APP_WEB3_STORAGE_ACCESS_TOKEN}` })
-
     // var file = this.makeFileObjects(data);
     // const cid = await client.put(file)
     // return cid
@@ -24788,7 +24607,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
       var data = await response.text();
-      data = this.decrypt_storage_data(data)
+      data = this.decrypt_storage_object(data)
       var json = JSON.parse((JSON.parse(data)).data);
       return json
       // Do something with the retrieved data
@@ -24806,14 +24625,14 @@ class App extends Component {
 
 
   store_data_in_nft_storage = async (_data, unencrypt_image) => {
-    var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
-    const NFT_STORAGE_TOKEN = `${process.env.REACT_APP_NFT_STORAGE_ACCESS_TOKEN}`
-    const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
+    // var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
+    // const NFT_STORAGE_TOKEN = `${process.env.REACT_APP_NFT_STORAGE_ACCESS_TOKEN}`
+    // const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
 
-    const someData = new Blob([data])
-    const cid = await client.storeBlob(someData)
+    // const someData = new Blob([data])
+    // const cid = await client.storeBlob(someData)
 
-    return cid;
+    // return cid;
   }
 
   fetch_objects_data_from_nft_storage = async (cid, depth) => {
@@ -24850,7 +24669,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
       var data = await response.text();
-      data = this.decrypt_storage_data(data)
+      data = this.decrypt_storage_object(data)
       return JSON.parse(data);
       // Do something with the retrieved data
     } catch (error) {
@@ -24866,8 +24685,8 @@ class App extends Component {
 
 
 
-  store_data_in_chainsafe_storage = async(_data, unencrypt_image) => {
-    var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
+  store_data_in_chainsafe_storage = async(_data, unencrypt_image, tags_obj) => {
+    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) :this.encrypt_storage_data(_data))
     const CHAINSAFE_STORAGE_KEY = `${process.env.REACT_APP_CHAINSAFE_API_KEY}`
     const CHAINSAFE_STORAGE_BUCKET_ID = `${process.env.REACT_APP_CHAINSAFE_BUCKET_ID}`
    
@@ -24936,7 +24755,7 @@ class App extends Component {
       var data = await response.text();
       var encrypted_data = (JSON.parse(data)).data
       // console.log('stackdata','encrypted data', encrypted_data)
-      var unencrypted_data = this.decrypt_storage_data(encrypted_data)
+      var unencrypted_data = this.decrypt_storage_object(encrypted_data)
       // console.log('stackdata','decrypted data', unencrypted_data)
       var json = JSON.parse(unencrypted_data);
       // console.log('stackdata','decrypted data', json)
@@ -25074,7 +24893,7 @@ class App extends Component {
       var cids = []
       for(var i=0; i<datas.length; i++){
         var _data = datas[i]
-        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data))
+        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data), null, null)
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
           return;
@@ -25095,17 +24914,21 @@ class App extends Component {
     }
   }
 
-  upload_multiple_files_to_nitro_node = async(datas, type, nitro_object, node_details) => {
+  upload_multiple_files_to_nitro_node = async (datas, type, nitro_object, node_details) => {
     this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
     var file_datas = []
     var file_types = []
+    var total_size = 0
+    var file_sizes = []
     for(var i=0; i<datas.length; i++){
       var data = datas[i]
       file_datas.push(data['data'])
       file_types.push(this.get_file_extension(data['name']))
+      total_size += data['size']
+      file_sizes.push(data['size'])
     }
 
-    var file_names = await this.upload_multiple_datas_to_nitro_node(file_datas, file_types, nitro_object, node_details)
+    var file_names = await this.upload_multiple_datas_to_nitro_node(file_datas, file_types, nitro_object, node_details, total_size, file_sizes)
     if(file_names == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return;
@@ -25219,7 +25042,7 @@ class App extends Component {
         var cids = []
         var _data = structuredClone(data)
         _data['data'] = `https://arweave.net/${transaction_hash}`
-        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data))
+        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data), null, null)
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
           this.setState({is_uploading_to_arweave: false})
@@ -25269,46 +25092,199 @@ class App extends Component {
     return fileName.substring(lastDotIndex + 1);
   }
 
-  upload_multiple_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details) =>{
+  upload_multiple_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details, total_size, file_sizes) => {
     var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
     if(block_hash_and_signature == null){
-      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
-      return;
+      return null;
     }
 
-    var node_url = nitro_object['ipfs'].node_url
-    var arg_obj = {
-      signature_data: block_hash_and_signature.data,
-      signature:block_hash_and_signature.signature,
-      file_datas: file_datas,
-      file_types: file_types,
-    }
-
-    var body = {
-      method: "POST", // Specify the HTTP method
-      headers: {
-        "Content-Type": "application/json" // Set content type to JSON
-      },
-      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
-    }
-
-    var request = `${node_url}/store_files`
-    try{
-      const response = await fetch(request, body);
-      if (!response.ok) {
-        console.log(response)
-        throw new Error(`Failed to retrieve data. Status: ${response}`);
+    if(total_size < (1 * 1024 * 1024)){
+      var node_url = nitro_object['ipfs'].node_url
+      var arg_obj = {
+        signature_data: block_hash_and_signature.data,
+        signature:block_hash_and_signature.signature,
+        file_datas: file_datas,
+        file_types: file_types,
       }
-      var data = await response.text();
-      var obj = JSON.parse(data);
-      if(obj.success == false){
+
+      var body = {
+        method: "POST", // Specify the HTTP method
+        headers: {
+          "Content-Type": "application/json" // Set content type to JSON
+        },
+        body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+      }
+
+      var request = `${node_url}/store_files`
+      try{
+        const response = await fetch(request, body);
+        if (!response.ok) {
+          console.log(response)
+          throw new Error(`Failed to retrieve data. Status: ${response}`);
+        }
+        var data = await response.text();
+        var obj = JSON.parse(data);
+        if(obj.success == false){
+          return null
+        }else{
+          return obj.files
+        }
+      }
+      catch(e){
         return null
-      }else{
-        return obj.files
       }
-    }
-    catch(e){
-      return null
+    }else{
+      const files = []
+      for(var e=0; e<file_datas.length; e++){
+        const block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
+        if(block_hash_and_signature == null){
+          return null;
+        }
+
+        const focused_data = file_datas[e]
+        const base64Data = focused_data.split(",")[1];
+        const encoded_data = Buffer.from(base64Data, "base64");
+        // const encoder = new TextEncoder();
+        // const encoded_data = encoder.encode(focused_data);
+        const totalSize = encoded_data.length;
+
+        const node_url = nitro_object['ipfs'].node_url
+        const arg_obj = {
+          signature_data: block_hash_and_signature.data,
+          signature: block_hash_and_signature.signature,
+          file_length: totalSize + (5 * 1024 * 1024),
+          file_type: file_types[e],
+        }
+
+        const body = {
+          method: "POST", // Specify the HTTP method
+          headers: {
+            "Content-Type": "application/json" // Set content type to JSON
+          },
+          body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+        }
+        var extension = ''
+        const request = `${node_url}/reserve_upload`
+        try{
+          const response = await fetch(request, body);
+          if (!response.ok) {
+            console.log('apppage', response)
+            throw new Error(`Failed to retrieve data. Status: ${response}`);
+          }
+          var data = await response.text();
+          var obj = JSON.parse(data);
+          if(obj.success == false){
+            console.log('apppage','error', obj.message)
+            return null
+          }else{
+            extension = obj.extension
+          }
+        }
+        catch(e){
+          console.log('apppage','error', e)
+          return null
+        }
+
+        const xhr = new XMLHttpRequest();
+        const url = `${node_url}/upload/${extension}`;
+        xhr.open("POST", url);
+        const me = this;
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = ((event.loaded / event.total) * 100).toFixed(2);
+            me.setState({nitro_upload_progress_data:{'percentage':percent, 'file_number':e, 'file_count':file_datas.length ,'total_size':total_size}})
+          }
+        };
+        
+        var success = true;
+        xhr.onload = () => {
+          console.log('apppage',"Upload complete! Server said:", xhr.responseText);
+          var obj = JSON.parse(data)
+          if(obj.success == false){
+            console.log('apppage','error during upload', obj.message)
+            success = false
+            this.is_uploading_file = false
+          }else{
+            files.push(extension)
+          }
+        };
+
+        xhr.onerror = () => {
+          console.error('apppage',"Upload failed!");
+          success = false
+          this.is_uploading_file = false
+        };
+
+        xhr.setRequestHeader("Content-Type", "text/plain");
+        xhr.send(encoded_data);
+
+        while (this.is_uploading_file == true) {
+          if (this.is_uploading_file == false) break
+          await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+
+        if(success == false){
+          return null
+        }
+        
+        // const url = `${node_url}/upload/${extension}`; 
+        // const chunkSize = (1024 * 1024);
+        // let uploadedBytes = 0;
+        // var me = this;
+        // const stream = new ReadableStream({
+        //   start(controller) {
+        //     let offset = 0;
+
+        //     function push() {
+        //       if (offset >= totalSize) {
+        //         controller.close(); // End the stream
+        //         return;
+        //       }
+
+        //       const chunk = encoded_data.slice(offset, offset + chunkSize);
+        //       uploadedBytes += chunk.length;
+        //       const progress_percentage = ((uploadedBytes / totalSize) * 100).toFixed(2)
+        //       // console.log(`Uploaded: ${progress_percentage}%`);
+        //       me.setState({nitro_upload_progress_data:{'percentage':progress_percentage, 'file_number':e, 'file_count':file_datas.length ,'total_size':total_size}})
+
+        //       controller.enqueue(chunk);
+        //       offset += chunkSize;
+
+        //       setTimeout(push, 35); // Simulate network delay (optional)
+        //     }
+        //     push();
+        //   },
+        // });
+        
+        // const stream_body = {
+        //   method: "POST",
+        //   headers: { 
+        //     "Content-Type": "application/json" 
+        //   },
+        //   body: new ReadableStream(),
+        //   duplex: "half",
+        // }
+
+        // try{
+        //   const response = await fetch(url, stream_body);
+        //   if (!response.ok) {
+        //     console.log('apppage',response)
+        //     throw new Error(`Failed to retrieve data. Status: ${response}`);
+        //   }
+        //   var data = await response.text();
+        //   var obj = JSON.parse(data);
+        //   if(obj.success == false){
+        //     console.log('apppage','error during upload', obj.message)
+        //     return null
+        //   }else{
+        //     files.push(extension)
+        //   }
+        // }catch(e){
+        //   console.log('apppage', e)
+        //   return null
+        // }
+      }
+      return files
     }
   }
 
@@ -25442,7 +25418,31 @@ class App extends Component {
 
 
 
+  encrypt_storage_object(data, tags_obj){
+    const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
+    var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
+    var final_obj = {'ciphertext':ciphertext, 'tags':tags_obj}
+    return JSON.stringify(final_obj)
+  }
 
+  decrypt_storage_object(data){
+    const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
+    var cipher_text = data
+    try{
+      var json_object = JSON.parse(data)
+      cipher_text = json_object['ciphertext']
+      // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
+    }catch(f){
+      console.log(f)
+    }
+    try{
+      var bytes  = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
+      var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      return originalText
+    }catch(e){
+      return data
+    }
+  }
 
   encrypt_storage_data(data){
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
@@ -25450,17 +25450,6 @@ class App extends Component {
     return ciphertext
   }
 
-  decrypt_storage_data(data){
-    const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
-    try{
-      var bytes  = CryptoJS.AES.decrypt(data, APP_KEY);
-      var originalText = bytes.toString(CryptoJS.enc.Utf8);
-      return originalText
-    }catch(e){
-      console.log('stackdata', e)
-      return data
-    }
-  }
 
 
 
@@ -25488,26 +25477,29 @@ class App extends Component {
 
 
 
-  get_balance_from_multiple_exchanges = async (exchanges, account, H52contractInstance, exchanges_depth) => {
+
+
+  get_balance_from_multiple_exchanges = async (exchanges, account, H52contractInstance, exchanges_depth, e5) => {
+    var interacted_exchange_depth_data = await this.load_accounts_exchange_depth_interactions_data(account, e5)
     var exchange_ids = []
     var depths = []
     var positions = []
     for(var j=0; j<exchanges.length; j++){
       var exchange_depth = exchanges_depth[j]
       for(var i=exchange_depth; i>=0; i--){
-        exchange_ids.push(exchanges[j])
-        depths.push(i)
-        positions.push(j)
+        if((interacted_exchange_depth_data[exchanges[j]] != null && interacted_exchange_depth_data[exchanges[j]].includes(i)) || i == 0){
+          exchange_ids.push(exchanges[j])
+          depths.push(i)
+          positions.push(j)
+        }
       }
     }
     
     var token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
 
     var bal = [];
-    var balance_data = []
-    // console.log('positions: ', positions)
+    var balance_data = [];
     for(var i=0; i<token_balances.length; i++){
-      // var bal_pos = Math.floor(i/(exchanges_depth+1))
       var bal_pos = positions[i]
       if(bal_pos == bal.length){
         bal.push(0)
@@ -25518,8 +25510,16 @@ class App extends Component {
       
       balance = bigInt(balance).add(balance_at_depth)
       bal[bal_pos] = balance.toString().toLocaleString('fullwide', {useGrouping:false})
-      // console.log('balance data pos: ',bal_pos, 'balance_data: ',balance_data)
       balance_data[bal_pos][depths[i]] = token_balances[i].toString().toLocaleString('fullwide', {useGrouping:false})
+    }
+
+    for(var k=0; k<exchanges.length; k++){
+      var exchange_depth = exchanges_depth[j]
+      for(var l=exchange_depth; l>=0; l--){
+        if(interacted_exchange_depth_data[exchanges[k]] == null || !interacted_exchange_depth_data[exchanges[k]].includes(l)){
+          balance_data[k][l] = '0'
+        }
+      }
     }
 
 
@@ -25528,34 +25528,86 @@ class App extends Component {
     return { 'bal':bal, 'bal_data':balance_data }
   }
 
-  get_balance_in_exchange = async (exchange_id, account, e5, addresses) => {
-      const web3 = new Web3(this.get_web3_url_from_e5(e5));
-      const H52contractArtifact = require('./contract_abis/H52.json');
-      const H52_address = addresses[6];
-      const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+  load_accounts_exchange_depth_interactions_data = async (account_id, e5) => {
+    if(account_id < 1000) return {};
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-      var exchange = this.state.created_token_object_mapping[e5] == null ? null : this.state.created_token_object_mapping[e5][exchange_id];
-      var exchanges_depth = 0
-      if(exchange != null && exchange['ipfs'] != null){
-        exchanges_depth = exchange['ipfs'].default_depth == null ? 0 : exchange['ipfs'].default_depth
+    var received_tokens_event_data = null
+    var stack_depth_swap_event_data = null
+
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id}],
+        [web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      received_tokens_event_data = all_events[0]
+      stack_depth_swap_event_data = all_events[1]
+    }else{
+      received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
+      stack_depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id})
+
+    }
+
+    var all_event_data = {}
+    for(var i=0; i<stack_depth_swap_event_data.length; i++){
+      var exchange = stack_depth_swap_event_data[i].returnValues.p1/* exchange */
+      var depth = stack_depth_swap_event_data[i].returnValues.p4/* depth_val */
+      if(all_event_data[exchange] == null){
+        all_event_data[exchange] = []
       }
-      var exchange_ids = []
-      var depths = []
-      for(var i=exchanges_depth; i>=0; i--){
+      if(!all_event_data[exchange].includes(depth)){
+        all_event_data[exchange].push(depth)
+      }
+    }
+    for(var i=0; i<received_tokens_event_data.length; i++){
+      var exchange = received_tokens_event_data[i].returnValues.p1/* exchange */
+      var depth = received_tokens_event_data[i].returnValues.p7/* depth */
+      if(all_event_data[exchange] == null){
+        all_event_data[exchange] = []
+      }
+      if(!all_event_data[exchange].includes(depth)){
+        all_event_data[exchange].push(depth)
+      }
+    }
+
+    return all_event_data
+  }
+
+  get_balance_in_exchange = async (exchange_id, account, e5, addresses) => {
+    var interacted_exchange_depth_data = await this.load_accounts_exchange_depth_interactions_data(account, e5)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var exchange = this.state.created_token_object_mapping[e5] == null ? null : this.state.created_token_object_mapping[e5][exchange_id];
+    var exchanges_depth = 0
+    if(exchange != null && exchange['ipfs'] != null){
+      exchanges_depth = exchange['ipfs'].default_depth == null ? 0 : exchange['ipfs'].default_depth
+    }
+    var exchange_ids = []
+    var depths = []
+    for(var i=exchanges_depth; i>=0; i--){
+      if((interacted_exchange_depth_data[exchange_id] != null && interacted_exchange_depth_data[exchange_id].includes(i)) || i == 0){
         exchange_ids.push(exchange_id)
         depths.push(i)
       }
-      
-      var token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
+    }
+    
+    var token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
 
-      var bal = 0;
-      for(var i=0; i<token_balances.length; i++){
-        var balance_at_depth = bigInt(this.get_actual_number(token_balances[i], depths[i]))
-        bal = bigInt(bal).add(balance_at_depth)
-      }
+    var bal = bigInt('0');
+    for(var i=0; i<token_balances.length; i++){
+      var balance_at_depth = bigInt(this.get_actual_number(token_balances[i], depths[i]))
+      bal = bigInt(bal).add(balance_at_depth)
+    }
 
 
-      return bal
+    return bal
   }
 
   get_balance_in_exchange_for_multiple_accounts = async (exchange_ids, accounts, e5, addresses, depths, action) => {
@@ -26992,7 +27044,7 @@ class App extends Component {
           var interacted_exchanges = interacted_exchanges_data['exchanges']
           var interacted_exchanges_depths = interacted_exchanges_data['depths']
 
-          var token_balances_and_data = await this.get_balance_from_multiple_exchanges(interacted_exchanges, id, H52contractInstance, interacted_exchanges_depths)
+          var token_balances_and_data = await this.get_balance_from_multiple_exchanges(interacted_exchanges, id, H52contractInstance, interacted_exchanges_depths, e5)
           var token_balances = token_balances_and_data['bal']
 
           var searched_accounts_exchange_interactions_data = await this.load_searched_accounts_exchange_interactions_data(id, e5)
@@ -27498,7 +27550,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = JSON.parse(this.decrypt_storage_object(data));
       // console.log('appdataa',obj)
       var object_data = obj['data']
       var count = 0

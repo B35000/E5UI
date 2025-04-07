@@ -361,15 +361,15 @@ class GiveAwardPage extends Component {
 
     get_award_tiers(){
         var tiers = [
-            {'id':'1', 'label':{'title':'🌕🌕🌕', 'details':this.props.app_state.loc['1171']/* 'Gold' */, 'size':'l'}},
-            {'id':'2', 'label':{'title':'💎💎💎', 'details':this.props.app_state.loc['1172']/* 'Diamond' */, 'size':'l'}},
-            {'id':'3', 'label':{'title':'🪙🪙🪙', 'details':this.props.app_state.loc['1173']/* 'Silver' */, 'size':'l'}},
-            {'id':'4', 'label':{'title':'🛢️🛢️🛢️', 'details':this.props.app_state.loc['1174']/* 'Oil' */, 'size':'l'}},
-            {'id':'5', 'label':{'title':'🪵🪵🪵', 'details':this.props.app_state.loc['1175']/* 'Wood' */, 'size':'l'}},
-            {'id':'6', 'label':{'title':'🍺🍺🍺', 'details':this.props.app_state.loc['1176']/* 'Beer' */, 'size':'l'}},
-            {'id':'7', 'label':{'title':'🌽🌽🌽', 'details':this.props.app_state.loc['1177']/* 'Corn' */, 'size':'l'}},
-            {'id':'8', 'label':{'title':'🥩🥩🥩', 'details':this.props.app_state.loc['1178']/* 'Beef' */, 'size':'l'}},
-            {'id':'9', 'label':{'title':'🍫🍫🍫', 'details':this.props.app_state.loc['1179']/* 'Chocolate' */, 'size':'l'}},
+            {'id':'1', 'label':{'title':'🌕', 'details':this.props.app_state.loc['1171']/* 'Gold' */, 'size':'l'}},
+            {'id':'2', 'label':{'title':'💎', 'details':this.props.app_state.loc['1172']/* 'Diamond' */, 'size':'l'}},
+            {'id':'3', 'label':{'title':'🪙', 'details':this.props.app_state.loc['1173']/* 'Silver' */, 'size':'l'}},
+            {'id':'4', 'label':{'title':'🛢️', 'details':this.props.app_state.loc['1174']/* 'Oil' */, 'size':'l'}},
+            {'id':'5', 'label':{'title':'🪵', 'details':this.props.app_state.loc['1175']/* 'Wood' */, 'size':'l'}},
+            {'id':'6', 'label':{'title':'🍺', 'details':this.props.app_state.loc['1176']/* 'Beer' */, 'size':'l'}},
+            {'id':'7', 'label':{'title':'🌽', 'details':this.props.app_state.loc['1177']/* 'Corn' */, 'size':'l'}},
+            {'id':'8', 'label':{'title':'🥩', 'details':this.props.app_state.loc['1178']/* 'Beef' */, 'size':'l'}},
+            {'id':'9', 'label':{'title':'🍫', 'details':this.props.app_state.loc['1179']/* 'Chocolate' */, 'size':'l'}},
         ]
 
         return tiers

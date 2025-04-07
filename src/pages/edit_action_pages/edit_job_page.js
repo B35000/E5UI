@@ -56,7 +56,7 @@ function makeid(length) {
 class NewJobPage extends Component {
     
     state = {
-        id: makeid(8), type:this.props.app_state.loc['764']/* 'edit-job' */, action:'create',
+        id: makeid(8), object_type:17, type:this.props.app_state.loc['764']/* 'edit-job' */, action:'create',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_take_down_option: this.get_take_down_option(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',

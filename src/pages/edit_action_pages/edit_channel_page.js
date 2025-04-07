@@ -56,7 +56,7 @@ function makeid(length) {
 class NewChannelPage extends Component {
     
     state = {
-        id: makeid(8), type:this.props.app_state.loc['762']/* 'edit-channel' */,
+        id: makeid(8), object_type:36, type:this.props.app_state.loc['762']/* 'edit-channel' */,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',

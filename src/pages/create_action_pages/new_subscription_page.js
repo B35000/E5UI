@@ -63,7 +63,7 @@ function makeid(length) {
 class NewSubscriptionPage extends Component {
     
     state = {
-        id: makeid(8), type:this.props.app_state.loc['536']/* 'subscription' */, e5:this.props.app_state.selected_e5,
+        id: makeid(8), object_type:33, type:this.props.app_state.loc['536']/* 'subscription' */, e5:this.props.app_state.selected_e5,
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_subscription_tags_object: this.get_new_subscription_tags_object(),
         authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(),

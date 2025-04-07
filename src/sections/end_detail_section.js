@@ -40,7 +40,7 @@ function number_with_commas(x) {
 class EndDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(), y_aggregate_chart_tags_object: this.y_aggregate_chart_tags_object(), trading_volume_chart_tags_object: this.y_aggregate_chart_tags_object()
+        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(), y_aggregate_chart_tags_object: this.y_aggregate_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object()
     };
 
     y_aggregate_chart_tags_object(){
@@ -50,6 +50,17 @@ class EndDetailSection extends Component {
             },
             'e':[
                 ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+            ],
+        };
+    }
+
+    trading_volume_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
             ],
         };
     }
@@ -1230,19 +1241,28 @@ class EndDetailSection extends Component {
 
     render_chart_changes(event_data, selected_object){
         var data = this.get_chart_change(event_data, selected_object)
+        if(data['1h'] == 0 && data['24h'] == 0 && data['7d'] == 0) return;
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['2447m']/* 'Price Change over time.' */}</p>
-                    
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(data['1h'] < 0 ? data['1h']* -1 : data['1h'])+'%', 'number':(data['1h']+'%'), 'relativepower':'1h', })}
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(data['24h'] < 0 ? data['24h']* -1 : data['24h'])+'%', 'number':(data['24h']+'%'), 'relativepower':'24h', })}
-
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(data['7d'] < 0 ? data['7d']* -1 : data['7d'])+'%', 'number':(data['7d']+'%'), 'relativepower':'7d', })}
+                    {this.render_chart_item(data, '1h')}
+                    {this.render_chart_item(data, '24h')}
+                    {this.render_chart_item(data, '7d')}
                 </div>
             </div>
         )
+    }
+
+    render_chart_item(data, identifier){
+        if(data[identifier] != 0){
+            return(
+                <div>
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(data[identifier] < 0 ? data[identifier]* -1 : data[identifier])+'%', 'number':(data[identifier]+'%'), 'relativepower':identifier, })}
+                </div>
+            )
+        }
     }
 
     round_off(float_number){

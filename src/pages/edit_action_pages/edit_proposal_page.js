@@ -62,7 +62,7 @@ function makeid(length) {
 class EditProposalPage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), type:this.props.app_state.loc['312'], e5:this.props.app_state.selected_e5,
+        selected: 0, id: makeid(8), object_type:32, type:this.props.app_state.loc['312'], e5:this.props.app_state.selected_e5,
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 

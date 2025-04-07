@@ -82,7 +82,9 @@ class DialerPage extends Component {
         get_audio_video_recommendation_threshold_setting_object:this.get_audio_video_recommendation_threshold_setting_object(),
         get_custom_background_images_object:this.get_custom_background_images_object(),
 
-        typed_moderator_country:'', selected_typed_moderator_country:'', typed_moderator_account_id:'', selected_moderator_e5:'E25'
+        typed_moderator_country:'', selected_typed_moderator_country:'', typed_moderator_account_id:'', selected_moderator_e5:'E25',
+
+        get_manual_disable_beacon_node_override_object:this.get_manual_disable_beacon_node_override_object(),
     };
 
 
@@ -257,6 +259,20 @@ class DialerPage extends Component {
             },
             'e':[
                 ['or','',0], ['e', 'enabled'], [0]
+            ],
+        };
+    }
+
+    get_manual_disable_beacon_node_override_object(){
+        const manual_beacon_node_disabled = this.props.app_state.manual_beacon_node_disabled
+        var pos = ['e', 'disabled'].indexOf(manual_beacon_node_disabled)
+        if(pos == -1) pos = 0
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', 'disabled'], [0]
             ],
         };
     }
@@ -559,6 +575,13 @@ class DialerPage extends Component {
                 {this.render_detail_item('4', {'text':'Enable custom theme image background settings.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_custom_background_images_object} tag_size={'l'} when_tags_updated={this.when_get_custom_background_images_object.bind(this)} theme={this.props.theme}/>
+
+
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Manually disable nitro beacon node and set it to offline.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_manual_disable_beacon_node_override_object} tag_size={'l'} when_tags_updated={this.when_get_manual_disable_beacon_node_override_object.bind(this)} theme={this.props.theme}/>
                 
             </div>
         )
@@ -1348,6 +1371,11 @@ class DialerPage extends Component {
         var country_moderators_clone = structuredClone(this.state.data)
         country_moderators_clone['country_moderators'][state].splice(index, 1)
         this.setState({data: country_moderators_clone})
+    }
+
+
+    when_get_manual_disable_beacon_node_override_object(tag_obj){
+        this.setState({get_manual_disable_beacon_node_override_object: tag_obj})
     }
 
 
