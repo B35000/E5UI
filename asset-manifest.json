@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/E5UI/static/css/main.4ed95b94.css",
-    "main.js": "/E5UI/static/js/main.6ee5348e.js",
+    "main.js": "/E5UI/static/js/main.890421f8.js",
     "static/js/345.e4054ec5.chunk.js": "/E5UI/static/js/345.e4054ec5.chunk.js",
     "static/js/723.dc298572.chunk.js": "/E5UI/static/js/723.dc298572.chunk.js",
     "static/js/643.e94e321c.chunk.js": "/E5UI/static/js/643.e94e321c.chunk.js",
@@ -405,7 +405,7 @@
     "static/media/shuffle_icon_dark.png": "/E5UI/static/media/shuffle_icon_dark.960d3786befb8f51dc13.png",
     "index.html": "/E5UI/index.html",
     "main.4ed95b94.css.map": "/E5UI/static/css/main.4ed95b94.css.map",
-    "main.6ee5348e.js.map": "/E5UI/static/js/main.6ee5348e.js.map",
+    "main.890421f8.js.map": "/E5UI/static/js/main.890421f8.js.map",
     "345.e4054ec5.chunk.js.map": "/E5UI/static/js/345.e4054ec5.chunk.js.map",
     "723.dc298572.chunk.js.map": "/E5UI/static/js/723.dc298572.chunk.js.map",
     "643.e94e321c.chunk.js.map": "/E5UI/static/js/643.e94e321c.chunk.js.map",
@@ -423,6 +423,6 @@
   },
   "entrypoints": [
     "static/css/main.4ed95b94.css",
-    "static/js/main.6ee5348e.js"
+    "static/js/main.890421f8.js"
   ]
 }
