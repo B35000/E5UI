@@ -696,6 +696,10 @@ function shuffle(array) {
   }
 }
 
+function isJsonObject(data) {
+  return typeof data === "object" && data !== null && !Array.isArray(data);
+}
+
 const PDFViewerWrapper  = forwardRef(({ fileUrl, theme /* , record_page, current_page */ }, ref) => {
   const zoomPluginInstance = zoomPlugin();  
   const zoomLevels = [0.5, 1.0, 1.5, 2.0, 3.0];
@@ -824,7 +828,7 @@ class App extends Component {
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
-    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'disabled'
+    recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e'
   };
 
   get_static_assets(){
@@ -16537,7 +16541,7 @@ class App extends Component {
     // console.log(data)
 
     await this.load_root_config()
-
+    await this.wait(500)
     if(this.is_allowed_in_e5()){
       this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
@@ -18329,6 +18333,7 @@ class App extends Component {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
     var request = `${beacon_node}/marco`
+    console.log('apppage', 'check_if_beacon_node_is_online', request)
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -18338,12 +18343,12 @@ class App extends Component {
       var data = await response.text();
       var obj = JSON.parse(data);
       if(obj.success == true){
-        console.log('beacon node online!')
+        console.log('apppage', 'beacon node online!')
         this.setState({beacon_node_enabled: true, beacon_data: obj})
       }
     }
     catch(e){
-      // console.log(e)
+      console.log(e)
     }
   }
 
@@ -18739,7 +18744,8 @@ class App extends Component {
       const selected_dark_emblem_country = root_data.selected_dark_emblem_country
       const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
       const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
-      const beacon_chain_url = /* root_data.data['beacon_chain_url'] */ 'http://localhost:4000'
+      const beacon_chain_url = root_data.data['beacon_chain_url']/* 'http://localhost:4000' */
+      console.log('apppage', 'resetting beacon_chain_url to', beacon_chain_url)
       const e5s = this.update_e5_images(root_data.data['e5s'])
 
       const ether_data = root_data.data['ether_data']
@@ -18761,7 +18767,7 @@ class App extends Component {
       const default_moderators = country_moderators['all'] == null ? [] : country_moderators['all']
       const my_moderators = default_moderators.concat(my_states_moderators)
 
-      const manual_beacon_node_disabled = root_data.get_manual_disable_beacon_node_override_object == null ? 'e': this.get_selected_item(root_data.get_manual_disable_beacon_node_override_object, 'e')
+      const manual_beacon_node_disabled = root_data.get_manual_disable_beacon_node_override_object == null ? 'e': this.get_selected_item(root_data.get_manual_disable_beacon_node_override_object, 'e')/* 'e' */
 
       const my_language = this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
@@ -24069,7 +24075,7 @@ class App extends Component {
     var hashes = []
     var valid_ids = []
 
-    console.log('all_data', 'all events length', all_events.length)
+    console.log('apppage', 'all events length', all_events.length)
 
     for(var i=0; i<all_events.length; i++){
       var objects_event = all_events[i]
@@ -24095,7 +24101,7 @@ class App extends Component {
       }
     }
 
-    console.log('all_data', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
+    console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes: hashes}),
     });
@@ -24112,17 +24118,20 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(this.decrypt_storage_object(data));
+      var obj = JSON.parse(data);
       var object_data = obj['data']
-      console.log('all_data', 'data', obj)
+      console.log('apppage', 'data', obj)
       for(var i=0; i<hashes.length; i++){
         var cid_data = object_data[hashes[i]]
         if(cid_data != null){
-          this.store_in_local_storage(hashes[i], cid_data)
+          var decrypted_data = this.decrypt_storage_object2(cid_data)
+          // console.log('apppage', 'decrypted object', decrypted_data)
+          this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
         }
       }
     }
     catch(e){
+      console.log('apppage', e)
       return {}
     }
 
@@ -24141,7 +24150,7 @@ class App extends Component {
       }
     }
 
-    console.log('all_data', 'return', data)
+    console.log('apppage', 'return', data)
     return data
   }
 
@@ -24434,11 +24443,11 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(this.decrypt_storage_object(data));
+      var obj = JSON.parse(data);
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
-      
-      return cid_data
+      var decrypted_data = this.decrypt_storage_object2(cid_data)
+      return JSON.parse(decrypted_data)
     }
     catch(e){
       if(depth < 3){
@@ -25098,7 +25107,7 @@ class App extends Component {
       return null;
     }
 
-    if(total_size < (1 * 1024 * 1024)){
+    if(total_size < (53 * 1024 * 1024)){
       var node_url = nitro_object['ipfs'].node_url
       var arg_obj = {
         signature_data: block_hash_and_signature.data,
@@ -25440,6 +25449,27 @@ class App extends Component {
       var originalText = bytes.toString(CryptoJS.enc.Utf8);
       return originalText
     }catch(e){
+      return data
+    }
+  }
+
+  decrypt_storage_object2(data){
+    const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
+    var cipher_text = data
+    if(isJsonObject(data)){
+      try{
+        cipher_text = data['ciphertext']
+        // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
+      }catch(f){
+        console.log('apppage',f)
+      }
+    }
+    try{
+      var bytes  = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
+      var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      return originalText
+    }catch(e){
+      console.log('apppage', e)
       return data
     }
   }
@@ -27550,15 +27580,16 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(this.decrypt_storage_object(data));
+      var obj = JSON.parse(data);
       // console.log('appdataa',obj)
       var object_data = obj['data']
       var count = 0
       for(var i=0; i<hashes.length; i++){
         var cid_data = object_data[hashes[i]]
         if(cid_data != null){
+          var decrypted_data = this.decrypt_storage_object2(cid_data)
           count++
-          this.store_in_local_storage(hashes[i], cid_data)
+          this.store_in_local_storage(hashes[i], JSON.parse(cid_data))
         }
       }
       // this.prompt_top_notification('loaded '+count+' hashes', 3000)
