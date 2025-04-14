@@ -136,6 +136,7 @@ class ViewJobRequestPage extends Component {
     }
 
     render(){
+        if(this.state.request_item['title_description'] == null) return;
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 {this.render_accept_button()}
@@ -151,7 +152,8 @@ class ViewJobRequestPage extends Component {
 
     render_accept_button(){
         if(this.state.request_item['job_request_id'] != 0){
-            if(!this.state.request_item['is_response_accepted']){
+            var object = this.state.contractor_object
+            if(!this.state.request_item['is_response_accepted'] && object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
                 return(
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
@@ -286,7 +288,7 @@ class ViewJobRequestPage extends Component {
 
     render_job_response_item(item){
         var is_application_accepted = item['is_response_accepted'];
-        if(is_application_accepted){
+        if(is_application_accepted == true){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
@@ -294,21 +296,21 @@ class ViewJobRequestPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1679']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
                     {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'details':this.get_senders_name_or_you(item['applicant_id'], this.state.contractor_object['e5']), 'title':item['applicant_id'], 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_part_of_contract_message(item)}
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1680']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:10}}/>
-
-                    {this.render_detail_item('3', {'details':this.props.app_state.loc['1681']/* 'Sender ID' */, 'title':item['applicant_id'], 'size':'l'})}
-                    <div style={{height:10}}/>
+                    
                     {this.render_pdf_files_if_any(item)}
                     <div style={{height:10}}/>
                     {this.render_image_part([].concat(item['entered_images']))}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1682']/* 'Accepted' */, 'details':this.props.app_state.loc['1698']/* 'The contractor Accepted the job request.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_contract(item['contract'])}>
-                        {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
-                    </div>
+                    {this.render_view_contract_button(item)}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1683']/* 'Set Pay' */, 'details':this.props.app_state.loc['1684']/* 'The requested pay for the job' */, 'size':'l'})}
                     {this.render_set_prices_list_part(item)}
@@ -323,8 +325,10 @@ class ViewJobRequestPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1686']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'details':this.props.app_state.loc['1687']/* 'Sender ID' */, 'title':item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'details':this.get_senders_name_or_you(item['applicant_id'], this.state.contractor_object['e5']), 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:10}}/>
+
+                    {this.render_part_of_contract_message(item)}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1688']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:10}}/>
@@ -341,6 +345,75 @@ class ViewJobRequestPage extends Component {
             )
         }
         
+    }
+
+    get_senders_name_or_you(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? this.props.app_state.loc['1681']/* 'Sender ID' */  : bucket[sender])
+        return alias
+    }
+
+    get_senders_name_or_you2(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null? sender : bucket[sender])
+        return alias
+    }
+    
+    render_part_of_contract_message(item){
+        if(item['contract'] == null) return;
+        var contract_and_proposals = this.props.app_state.loaded_contract_and_proposal_data[item['contract']]
+        if(contract_and_proposals == null) return;
+
+        var account_id = item['applicant_id']
+        var object = this.state.contractor_object
+        var alias = this.get_senders_name_or_you2(account_id, object['e5'])
+        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
+            //if its my contractor post
+            var contract = contract_and_proposals['contract']
+            if(contract['participant_times'][account_id] > (Date.now()/1000)){
+                var title = this.props.app_state.loc['1698d']/* '$ is part of your selected contract' */.replace('$', alias)
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['1698e']/* 'Expiry: ' */+this.get_expiry_time(item), 'size':'l'})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }else{
+                var title = this.props.app_state.loc['1698f']/* '$ is not part of your selected contract' */.replace('$', alias)
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':title, 'details':'...', 'size':'l'})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+        }
+    }
+
+    render_view_contract_button(item){
+        if(item['contract'] == null) return;
+        var contract_and_proposals = this.props.app_state.loaded_contract_and_proposal_data[item['contract']]
+        if(contract_and_proposals == null) return;
+        var contract = contract_and_proposals['contract']
+        var proposals = contract_and_proposals['proposals']
+        return(
+            <div>
+                <div style={{height:10}}/>
+                <div onClick={()=>this.open_contract(contract, proposals)}>
+                    {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    open_contract(contract, proposals){
+        this.props.open_view_contract_ui(contract, proposals)
     }
 
     render_pdf_files_if_any(item){
@@ -434,16 +507,10 @@ class ViewJobRequestPage extends Component {
         return t
     }
 
-    open_contract(contract){
-        this.props.open_view_contract_ui(contract)
-    }
-
     render_image_part(item_images){
         var items = [].concat(item_images)
         var col = Math.round(this.props.app_state.width / 100)
         var rowHeight = 100;
-        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        // var items = transaction_item.entered_image_objects
 
         if(items.length == 0){
             var items = ['1','1','1']
@@ -603,8 +670,31 @@ class ViewJobRequestPage extends Component {
 
 
     render_select_contract_parts(){
-        var items = this.get_contract_items()
+        var background_color = this.props.theme['card_background_color']
+        var object = this.state.contractor_object
+        var request_item = this.state.request_item
+        if(object == null || request_item == null) return;
 
+        if(object['event'].returnValues.p5 != this.props.app_state.user_account_id[object['e5']] || request_item['is_response_accepted'] == true){
+            //if its the client or the job has been accepted, show nothing.
+            var items = ['0','1'];
+            return (
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1691']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
@@ -883,9 +973,10 @@ class ViewJobRequestPage extends Component {
 
     render_top_title(){
         var object = this.state.request_item;
+        var contractor_post = this.state.contractor_object
         return(
             <div style={{padding:'0px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'ID: '+object['job_request_id'], 'details':this.truncate(object['title_description'], 40), 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.truncate(contractor_post['ipfs'].entered_title_text, 40), 'details':this.truncate(object['title_description'], 40), 'size':'l'})} 
             </div>
         )
     }
@@ -1165,23 +1256,29 @@ class ViewJobRequestPage extends Component {
         var size = item['size'] == null ? '11px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
+        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
         return(
             <div>
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} > {this.get_sender_title_text(item)}</p>
-                        </div>
-                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                            <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} > {this.get_sender_title_text(item)}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                                </div>
+                            </div>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'])}</Linkify></p>
+                            {this.render_markdown_in_message_if_any(item)}
+                            {this.render_images_if_any(item)}
+                            {this.get_then_render_my_awards(item)}
+                            {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} {this.props.app_state.loc['1693']} </p> */}
                         </div>
                     </div>
-                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'])}</Linkify></p>
-                    {this.render_markdown_in_message_if_any(item)}
-                    {this.render_images_if_any(item)}
-                    {this.get_then_render_my_awards(item)}
-                    {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} {this.props.app_state.loc['1693']} </p> */}
                 </div>
+                    
                 {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item)}
             </div>

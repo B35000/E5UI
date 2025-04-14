@@ -1481,7 +1481,7 @@ class VideoDetailsSection extends Component {
     render_sent_received_messages(object){
         var middle = this.props.height-240;
         if(this.get_focused_message(object) != null) middle = this.props.height-290
-        var items = [].concat(this.get_convo_messages(object))
+        var items = [].concat(this.get_convo_messages(object)).reverse()
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
         var final_items = stacked_items.concat(items)
 
@@ -1672,11 +1672,11 @@ class VideoDetailsSection extends Component {
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
-        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['view_group_card_item_background']
+        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}> 
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 

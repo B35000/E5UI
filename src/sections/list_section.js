@@ -490,9 +490,9 @@ class PostListSection extends Component {
 
     get_senders_name_or_you(sender, e5){
         if(sender == this.props.app_state.user_account_id[e5]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* You. */
         }
-         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
     }
 
@@ -898,7 +898,7 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        var opacity = object['hidden'] == true ? 0.6 : 1.0
+        var opacity =  1.0
         return(
             <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -933,11 +933,11 @@ class PostListSection extends Component {
     }
 
     when_contract_item_clicked(index, object){
-        if(object['hidden'] == true){
-            this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
-            return;
-        }
-        this.props.when_contract_item_clicked(index, object['id'], object['e5'], object)
+        // if(object['hidden'] == true){
+        //     this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
+        //     return;
+        // }
+        this.props.when_contract_item_clicked(index, object['id'], object['e5'], null, object)
     }
 
 
@@ -1225,7 +1225,7 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        var opacity = object['hidden'] == true ? 0.6 : 1.0
+        var opacity = 1.0
         return(
             <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -1244,11 +1244,11 @@ class PostListSection extends Component {
     }
 
     when_subscription_item_clicked(index, object){
-        if(object['hidden'] == true){
-            this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
-            return;
-        }
-        this.props.when_subscription_item_clicked(index, object['id'], object['e5'])
+        // if(object['hidden'] == true){
+        //     this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
+        //     return;
+        // }
+        this.props.when_subscription_item_clicked(index, object['id'], object['e5'], object)
     }
 
     format_subscription_item(object){
@@ -1385,10 +1385,13 @@ class PostListSection extends Component {
         if(myid == null) myid = 1;
         var sender = object['event'].returnValues.p2
         var recipient = object['event'].returnValues.p1
-        var title = 'From '+ this.get_sender_title_text(sender, object)
+        var title = this.props.app_state.loc['2738ab']/* 'From $' */
+        title = title.replace('$', this.get_sender_title_text(sender, object))
         if(myid == sender){
-            title = 'To '+ this.get_sender_title_text(recipient, object)
+            title = this.props.app_state.loc['2738ac']/* 'To $' */
+            title = title.replace('$',this.get_sender_title_text(recipient, object))
         }
+        
         return {
             'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'textsize':'14px', 'text':details, 'font':this.props.app_state.font},
@@ -3514,7 +3517,7 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        var opacity = object['hidden'] == true ? 0.6 : 1.0
+        var opacity = 1.0
         return (
             <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -3534,7 +3537,7 @@ class PostListSection extends Component {
     }
 
     when_ends_object_clicked(index, item){
-        this.props.when_ends_object_clicked(index, item['id'], item['e5'])
+        this.props.when_ends_object_clicked(index, item['id'], item['e5'], item)
     }
 
     get_exchanges_data(object_array, token_id, img, item){
@@ -3658,7 +3661,7 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        var opacity = object['hidden'] == true ? 0.6 : 1.0
+        var opacity = 1.0
         return (
             <div style={{height:'auto', opacity: opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -3677,8 +3680,7 @@ class PostListSection extends Component {
     }
 
     when_spends_object_item_clicked(index, item){
-        
-        this.props.when_spends_object_clicked(index, item['id'], item['e5'])
+        this.props.when_spends_object_clicked(index, item['id'], item['e5'], item)
     }
 
 

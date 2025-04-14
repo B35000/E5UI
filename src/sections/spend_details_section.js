@@ -422,10 +422,7 @@ class SpendDetailSection extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1849']/* 'Your Balance' */, 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
                     </div>
 
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_transfer_ui(selected_object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2347']/* 'Transfer' */, 'action':''},)}
-                    </div>
+                    {this.render_transfer_button(selected_object)}
                     
                     {this.render_auth_modify_button(selected_object)}
 
@@ -441,6 +438,18 @@ class SpendDetailSection extends Component {
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_transfer_button(selected_object){
+        if(bigInt(selected_object['balance']).equals(bigInt('0'))) return;
+        return(
+            <div>
+                <div style={{height:10}}/>
+                <div onClick={()=>this.open_transfer_ui(selected_object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2347']/* 'Transfer' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -711,7 +720,7 @@ class SpendDetailSection extends Component {
         // var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
         var contract_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
-        if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
+        if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account && object['hidden'] == false){
             return(
                 <div>
                     {this.render_detail_item('0')}         

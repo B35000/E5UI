@@ -282,11 +282,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('3', item['payment_amount'])}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2648']/* 'Pay Subscription' */, 'details':this.props.app_state.loc['2649']/* 'Pay for the subscription for your account' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_pay_subscription_ui(object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2648']/* 'Pay Subscription' */, 'action':''})}
-                    </div>
+                    {this.render_pay_subscription_button(object)}
 
                     {this.render_cancel_button(object)}
 
@@ -301,6 +297,19 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    render_pay_subscription_button(object){
+        if(object['hidden'] == true) return;
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2648']/* 'Pay Subscription' */, 'details':this.props.app_state.loc['2649']/* 'Pay for the subscription for your account' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_pay_subscription_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2648']/* 'Pay Subscription' */, 'action':''})}
+                    </div>
             </div>
         )
     }
@@ -389,6 +398,8 @@ class SubscriptionDetailsSection extends Component {
         var subscription_config = object['data'][1]
         var minimum_cancellable_balance_amount = subscription_config[4/* minimum_cancellable_balance_amount */]
         var time_unit = subscription_config[5/* time_unit */]
+
+        if(object['hidden'] == true) return;
 
         if(subscription_config[2] == 1/* cancellable */ && object['payment'] > bigInt(minimum_cancellable_balance_amount).multiply(bigInt(time_unit))){
             return(

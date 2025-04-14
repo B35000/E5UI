@@ -770,9 +770,9 @@ class ContractorDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'auto'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
                                 <div key={index}>
                                     {this.render_job_response_item(item, object)}
@@ -788,13 +788,13 @@ class ContractorDetailsSection extends Component {
     get_job_details_responses(object){
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
+            // console.log('contractor job requests',this.props.app_state.contractor_applications)
             if(this.props.app_state.contractor_applications[object['id']] == null) return [];
             return this.props.app_state.contractor_applications[object['id']]
         }else{
             var filtered_responses = []
             var all_responses = this.props.app_state.contractor_applications[object['id']] == null ? [] : this.props.app_state.contractor_applications[object['id']]
-            console.log('all_responses??: ',all_responses)
-            console.log(this.props.app_state.contractor_applications)
+            // console.log('contractor job requests',this.props.app_state.contractor_applications)
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
@@ -818,7 +818,7 @@ class ContractorDetailsSection extends Component {
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'s'})}
                         <div style={{height:3}}/>
 
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2230']/* 'Accepted' */, 'details':'The contractor Accepted the job request', 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2230']/* 'Accepted' */, 'details':this.props.app_state.loc['2231d']/* 'The contractor Accepted the job request' */, 'size':'s'})}
                     </div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                 </div>
@@ -851,10 +851,10 @@ class ContractorDetailsSection extends Component {
     }
 
     view_contract(item, object){
-        // var object = this.get_contractor_items()[this.props.selected_contractor_item];
-        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
-            this.props.open_view_job_request_ui(item, object)
-        }
+        // if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
+        //     this.props.open_view_job_request_ui(item, object)
+        // }
+        this.props.open_view_job_request_ui(item, object)
     }
 
 

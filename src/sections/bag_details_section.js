@@ -368,6 +368,7 @@ class BagDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1058w']/* '♺ Reocurring Bag' */, 'details':this.props.app_state.loc['1058x']/* 'The bags is to be fulfilled periodically.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item['delivery_frequency_time']), 'details':this.props.app_state.loc['1058u']/* 'Estimated time between deliveries.' */, 'size':'l'})}
                     <div style={{height:10}}/>
@@ -405,7 +406,8 @@ class BagDetailsSection extends Component {
         var obj = {}
         items_to_deliver.forEach(item => {
             // var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
-            var storefront = this.get_storefront(item['storefront_item_id'])
+            var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+            var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
             if(variant_in_store == null) return null
             var price_items = variant_in_store['price_data']
@@ -457,11 +459,12 @@ class BagDetailsSection extends Component {
         return arr
     }
 
-    get_storefront(storefront_id){
-        var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
-        // console.log('all_stores', all_stores)
-        var store = this.get_item_in_array_using_id(storefront_id, all_stores)
-        return store
+    get_storefront(storefront_id, e5){
+        // var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
+        // var store = this.get_item_in_array_using_id(storefront_id, all_stores)
+        // return store
+        var item = this.props.app_state.created_store_mappings[e5] == null ? null : this.props.app_state.created_store_mappings[e5][storefront_id]
+        return item
     }
 
     get_item_in_array_using_id(id, object_array){
@@ -506,7 +509,8 @@ class BagDetailsSection extends Component {
 
     render_variant_item_if_selected(item, object){
         // var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
-        var storefront = this.get_storefront(item['storefront_item_id'])
+        var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+        var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
         if(storefront == null){
             return(
                 <div>
@@ -567,9 +571,8 @@ class BagDetailsSection extends Component {
     render_variant_details(object){
         var item = this.state.selected_variant[object['id']]
         if(item != null){
-            // var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
-            var storefront = this.get_storefront(item['storefront_item_id'])
-            
+            var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+            var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
             if(variant_in_store == null) return null
             var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
@@ -1276,11 +1279,11 @@ class BagDetailsSection extends Component {
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
-        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['view_group_card_item_background']
+        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 

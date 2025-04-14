@@ -4893,6 +4893,10 @@ class ViewTransactionPage extends Component {
         return return_array
     }
 
+    get_amounts_to_be_paid(amount){
+        return bigInt(amount).multiply(bigInt(this.state.purchase_unit_count))
+    }
+
 
 
 

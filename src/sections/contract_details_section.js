@@ -469,7 +469,7 @@ class ContractDetailsSection extends Component {
 
     show_normal_contract_buttons(object) {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
-        if (object['id'] != 2) {
+        if (object['id'] != 2 && object['hidden'] == false) {
             return (
                 <div>
                     {this.show_enter_contract_button(object)}
@@ -545,7 +545,7 @@ class ContractDetailsSection extends Component {
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2) {
+        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2 && object['hidden'] == false) {
             return (
                 <div>
                     {this.render_detail_item('0')}
@@ -561,7 +561,7 @@ class ContractDetailsSection extends Component {
     }
 
     show_send_main_contract_proposal(object){
-        if(object['id'] == 2){
+        if(object['id'] == 2 && object['hidden'] == false){
             var e5 = object['e5']
             
             var entered_contracts_count = this.props.app_state.basic_transaction_data[e5] == null ? 0 : this.props.app_state.basic_transaction_data[e5][2]
@@ -1032,6 +1032,7 @@ class ContractDetailsSection extends Component {
             console.log(e)
         }
 
+        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
         
 
         var xVal = 1, yVal = 0;

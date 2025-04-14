@@ -83,7 +83,7 @@ class SendJobRequestPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['1311']/* 'contract' */, this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [0]
+                ['or','',0], ['e'/* , this.props.app_state.loc['1311'] *//* 'contract' */, this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [0]
             ],
         };
     }

@@ -121,6 +121,8 @@ class ViewApplicationContractPage extends Component {
                 <div>
                     {this.render_contract_part()}
                     {this.render_expiry_time_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -157,17 +159,38 @@ class ViewApplicationContractPage extends Component {
     }
 
     render_contract_part(){
-        if(this.state.application_item['contract'] != null){
-            var item = this.state.application_item
+        var item = this.state.application_item
+        var contract_proposal_data = this.props.app_state.loaded_contract_and_proposal_data[item['picked_contract_id']]
+        if(contract_proposal_data != null){
+            var contract = contract_proposal_data['contract']
             return(
                 <div>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['1603']/* 'The contract they applied with is shown below.' */})}
                     <div style={{height:10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_contracts_or_proposals_tags_object} tag_size={'l'} when_tags_updated={this.when_get_contracts_or_proposals_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height:10}}/>
-                    {this.render_contract_data_or_proposals()}
+                    {this.render_contract_data_or_proposals(contract)}
                 </div>
             )
+        }else{
+            var items = ['0','1'];
+            var background_color = this.props.theme['card_background_color']
+            return (
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
         }
     }
 
@@ -175,13 +198,13 @@ class ViewApplicationContractPage extends Component {
         this.setState({get_contracts_or_proposals_tags_object: tag_obj})
     }
 
-    render_contract_data_or_proposals(){
+    render_contract_data_or_proposals(contract){
         var selected_item = this.get_selected_item(this.state.get_contracts_or_proposals_tags_object, this.state.get_contracts_or_proposals_tags_object['i'].active)
 
         if(selected_item == this.props.app_state.loc['1632b']/* 'contract-data' */){
             return(
                 <div>
-                    {this.render_contracts_data()}
+                    {this.render_contracts_data(contract)}
                 </div>
             )
         }
@@ -242,7 +265,8 @@ class ViewApplicationContractPage extends Component {
     }
 
     render_accept_enter_button(item){
-        if(this.props.app_state.user_account_id[item['e5']] != item['applicant_id'] && !item['is_response_accepted']){
+        var contract_proposal_data = this.props.app_state.loaded_contract_and_proposal_data[item['picked_contract_id']]
+        if(this.props.app_state.user_account_id[item['e5']] != item['applicant_id'] && !item['is_response_accepted'] && contract_proposal_data != null){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1607']/* 'Accept application' */, 'details':this.props.app_state.loc['1608']/* 'Accept the job application and enter their contract(This action cant be undone)' */, 'size':'l'})}
@@ -253,6 +277,15 @@ class ViewApplicationContractPage extends Component {
                     </div>
                 </div>
             )
+        }
+    }
+
+    accept_job_application(){
+        var item = this.state.application_item
+        if(item['application_expiry_time'] > (Date.now()/1000)){
+            this.props.add_job_acceptance_action_to_stack(this.state)
+        }else{
+            this.props.notify(this.props.app_state.loc['1632']/* 'The application has already expired.' */, 4900)
         }
     }
 
@@ -337,10 +370,10 @@ class ViewApplicationContractPage extends Component {
         return all_objects
     }
 
-    render_contracts_data(){
+    render_contracts_data(contract){
         var background_color = this.props.theme['card_background_color']
-        var item = this.get_contract_details_data()
-        var object = this.state.application_item['contract']
+        var item = this.get_contract_details_data(contract)
+        var object = contract
 
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px'}}>
@@ -422,8 +455,8 @@ class ViewApplicationContractPage extends Component {
         )
     }
 
-    get_contract_details_data(){
-        var object = this.state.application_item['contract']
+    get_contract_details_data(contract){
+        var object = contract
         var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
@@ -542,14 +575,7 @@ class ViewApplicationContractPage extends Component {
     }
 
 
-    accept_job_application(){
-        var item = this.state.application_item
-        if(item['application_expiry_time'] > (Date.now()/1000)){
-            this.props.add_job_acceptance_action_to_stack(this.state)
-        }else{
-            this.props.notify(this.props.app_state.loc['1632']/* 'The application has already expired.' */, 4900)
-        }
-    }
+    
 
 
 
@@ -559,7 +585,8 @@ class ViewApplicationContractPage extends Component {
     render_proposals_data(){
         var background_color = this.props.theme['card_background_color']
         var application_item = this.state.application_item
-        var items = application_item['proposals']
+        // var items = application_item['proposals']
+        var items = this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']] == null ? [] : this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']]['proposals']
         var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){

@@ -290,7 +290,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264e'] *//* 'contractor-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1199']/* 'proposals' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1264aa']/* 'main-contract' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */, this.props.app_state.loc['1264aa']/* 'main-contract' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1200']/* 'subscriptions' */] = [
               ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
@@ -1855,7 +1855,7 @@ class home_page extends Component {
 
             if(type == exchange_type){
                 token_exchanges.push(
-                    {'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'e5_id':exchange_id, 'E5': exchanges_from_sync[i]['e5'], 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'], 'exchange_ratio_data':exchanges_from_sync[i]['exchange_ratio_data'], 'proportion_ratio_data':exchanges_from_sync[i]['proportion_ratio_data'], 'token_balances_data':exchanges_from_sync[i]['token_balances_data'], 'hidden':exchanges_from_sync[i]['hidden'] }
+                    {'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'e5_id':exchange_id, 'E5': exchanges_from_sync[i]['e5'], 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'], 'exchange_ratio_data':exchanges_from_sync[i]['exchange_ratio_data'], 'proportion_ratio_data':exchanges_from_sync[i]['proportion_ratio_data'], 'token_balances_data':exchanges_from_sync[i]['token_balances_data'], 'hidden':exchanges_from_sync[i]['hidden'], 'pos':exchanges_from_sync[i]['pos']}
                 )
             }
         }
@@ -1975,48 +1975,21 @@ class home_page extends Component {
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1201']/* 'mail' */|| all != null){
             var all_mail = this.get_all_mail()
-            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
+            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'newest_message_time')))
         }
 
         else if(selected_option_name == this.props.app_state.loc['1208']/* 'received' */){
-            var all_mail = []
             var received_mail = this.get_combined_created_mail('received_mail')
-
-            // for(var i=0; i<received_mail['received_mail'].length; i++){
-            //     var convo_id = received_mail['received_mail'][i]
-            //     var context_object = received_mail['mail_activity'][convo_id][0]
-            //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-            //         all_mail.push(context_object)
-            //     }
-            // }
-            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(received_mail, 'time')))
+            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(received_mail, 'newest_message_time')))
         }
         // else if(selected_option_name == this.props.app_state.loc['1210']/* 'active' */){
-        //     var all_mail = []
-        //     var received_mail = this.get_combined_created_mail('received_mail')
-        //     for(var i=0; i<received_mail['received_mail'].length; i++){
-        //         var convo_id = received_mail['received_mail'][i]
-        //         var context_object = received_mail['mail_activity'][convo_id][0]
-        //         var is_active = this.is_active(convo_id)
-        //         if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-        //             if(is_active) all_mail.push(context_object)
-        //         }
-        //     }
-
-        //     return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
+        //     var all_mail = this.get_all_mail()
+        //     return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'newest_message_time')))
         // }
         else {
             //sent
-            var all_mail = []
             var created_mail = this.get_combined_created_mail('created_mail')
-            // for(var i=0; i<created_mail['created_mail'].length; i++){
-            //     var convo_id = created_mail['created_mail'][i]
-            //     var context_object = created_mail['mail_activity'][convo_id][0]
-            //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-            //         all_mail.push(context_object)
-            //     }
-            // }
-            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(created_mail, 'time')))
+            return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(created_mail, 'newest_message_time')))
         }
     }
 
@@ -2034,44 +2007,6 @@ class home_page extends Component {
             }
         }
         return mail_objects.reverse()
-        // var all_mail = []
-        // var received_mail = this.get_combined_created_mail('received_mail')
-        // var created_mail = this.get_combined_created_mail('created_mail')
-
-        // for(var i=0; i<received_mail['received_mail'].length; i++){
-        //     var convo_id = received_mail['received_mail'][i]
-        //     var context_object = received_mail['mail_activity'][convo_id][0]
-        //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-        //         all_mail.push(context_object)
-        //     }
-        // }
-
-        // for(var i=0; i<created_mail['created_mail'].length; i++){
-        //     var convo_id = created_mail['created_mail'][i]
-        //     var context_object = created_mail['mail_activity'][convo_id][0]
-        //     if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-        //         all_mail.push(context_object)
-        //     }
-        // }
-        // return all_mail
-    }
-
-    is_active(convo_id){
-        var is_active = false
-        var convo_messages = this.get_convo_messages(convo_id)
-        for(var j=0; j<convo_messages.length; j++){
-            var message = convo_messages[j]
-            var message_sender = message['ipfs']
-            if(message_sender != null){
-                message_sender = message_sender['sender']
-                var myid = message['my_preferred_account_id']
-                if(message_sender == myid){
-                    is_active = true
-                    break;
-                }
-            }
-        }
-        return is_active
     }
 
     get_convo_messages(convo_id){
@@ -2212,7 +2147,15 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1211']/* 'my-proposals' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.get_all_sorted_objects(this.props.app_state.my_proposals)))
+            var all_proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
+            var main_contract_proposals = []
+            for(var i=0; i<all_proposals.length; i++){
+                var proposal_target_contract_authority = all_proposals[i]['data'][1/* config */][5/* <5>target_contract_authority */]
+                if(proposal_target_contract_authority > 1000){
+                    main_contract_proposals.push(all_proposals[i])
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(main_contract_proposals))
         }
         else if(selected_option_name == this.props.app_state.loc['1264aa']/* 'main-contract' */){
             var all_proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
@@ -3189,9 +3132,10 @@ class home_page extends Component {
     }
 
 
-    when_ends_object_clicked(index, id, e5){
+    when_ends_object_clicked(index, id, e5, object){
         this.setState({selected_end_item: id+e5})
         this.set_detail_data()
+        this.props.load_extra_token_data(object)
         this.add_to_tab(id+e5, id)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -3203,9 +3147,10 @@ class home_page extends Component {
         this.props.load_exchanges_royalty_payout_event_data(id, e5)
     }
 
-    when_spends_object_clicked(index, id, e5){
+    when_spends_object_clicked(index, id, e5, object){
         this.setState({selected_spend_item: id+e5})
         this.set_detail_data()
+        this.props.load_extra_token_data(object)
         this.add_to_tab(id+e5, id)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -3230,9 +3175,9 @@ class home_page extends Component {
         }, (1 * 1000));
     }
 
-    when_job_post_item_clicked(index, id, e5, object){
+    when_job_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_job_post_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
         var viewed_jobs_clone = this.state.viewed_jobs.slice()
         var pos = viewed_jobs_clone.indexOf(id)
@@ -3251,9 +3196,10 @@ class home_page extends Component {
         }
     }
 
-    when_contract_item_clicked(index, id, e5){
+    when_contract_item_clicked(index, id, e5, ignore_set_details_data, object){
         this.setState({selected_contract_item: id+e5})
-        this.set_detail_data()
+        this.props.set_extra_contract_data(object)
+        if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
         var viewed_contracts_clone = this.state.viewed_contracts.slice()
         var pos = viewed_contracts_clone.indexOf(id)
@@ -3272,7 +3218,8 @@ class home_page extends Component {
         }
     }
 
-    when_subscription_item_clicked(index, id, e5){
+    when_subscription_item_clicked(index, id, e5, object){
+        this.props.set_extra_subsctiption_data(object)
         this.setState({selected_subscription_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -3350,6 +3297,7 @@ class home_page extends Component {
     when_proposal_item_clicked(index, id, e5, object){
         this.setState({selected_proposal_item: id+e5})
         this.set_detail_data()
+        this.props.load_extra_proposal_data(object)
         this.add_to_tab(id+e5, id)
         var viewed_proposals_clone = this.state.viewed_proposals.slice()
         var pos = viewed_proposals_clone.indexOf(id)
@@ -3368,9 +3316,9 @@ class home_page extends Component {
         }
     }
 
-    when_mail_item_clicked(index, id, object){
+    when_mail_item_clicked(index, id, object, ignore_set_details_data){
         this.setState({selected_mail_item: id})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_mail_messages(object)
         if(this.props.screensize == 's'){
@@ -3378,9 +3326,9 @@ class home_page extends Component {
         }
     }
 
-    when_storefront_post_item_clicked(index, id, e5, object){
+    when_storefront_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_storefront_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
         var viewed_storefront_clone = this.state.viewed_stores.slice()
         var pos = viewed_storefront_clone.indexOf(id)
@@ -3399,9 +3347,9 @@ class home_page extends Component {
         }
     }
 
-    when_bag_post_item_clicked(index, id, e5, object){
+    when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_bag_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
         var viewed_bag_clone = this.state.viewed_bags.slice()
         var pos = viewed_bag_clone.indexOf(id)
@@ -3410,8 +3358,7 @@ class home_page extends Component {
             this.setState({viewed_bags: viewed_bag_clone})
             this.update_cookies()
         }
-
-        this.props.load_bags_stores(e5, this.get_bag_stores(object))
+        this.props.load_bag_storefront_items(object)
         this.props.get_job_objects_responses(id, e5)
         this.props.get_objects_messages(id, e5)
         if(this.props.screensize == 's'){
@@ -3429,9 +3376,9 @@ class home_page extends Component {
         return stores
     }
 
-    when_contractor_post_item_clicked(index, id, e5, object){
+    when_contractor_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_contractor_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
         var viewed_contractors_clone = this.state.viewed_contractors.slice()
         var pos = viewed_contractors_clone.indexOf(id)
@@ -4598,15 +4545,23 @@ class home_page extends Component {
             this.setState({detail_page: tem['selected_page'], detail_selected_tag: tem['selected_tag'], selected_job_post_item:  tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1197']/* 'contracts' */){
+            var object = this.get_item_in_array2(tem['e5_id'], this.get_all_sorted_objects(this.props.app_state.created_contracts))
+            if(object != null ) this.props.set_extra_contract_data(object);
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_contract_item: tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1198']/* 'contractors' */){
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_contractor_item: tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1199']/* 'proposals' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.my_proposals))
+            if(object != null){
+                this.props.load_extra_proposal_data(object)
+            }
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_proposal_item: tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1200']/* 'subscriptions' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_subscriptions))
+            if(object != null) this.props.set_extra_subsctiption_data(object);
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_subscription_item: tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1213']/* 'posts' */){
@@ -4622,9 +4577,15 @@ class home_page extends Component {
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_bag_item: tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends ☝️' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
+            if(object != null) this.props.load_extra_token_data(object);
+
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_end_item: tem['e5_id'] })
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1219']/* 'spends 🫰' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
+            if(object != null) this.props.load_extra_token_data(object);
+
            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_spend_item: tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1264k']/* 'audioport' */){

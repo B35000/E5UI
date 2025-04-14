@@ -80,6 +80,7 @@ class ViewGroups extends Component {
             var tag_shadow = this.props.theme['tag_shadow'];
             var when_tapped = 'null'
             var selected_tags = []
+            var masked = false;
             if(object_data != null || object_data['active_tags'] != null){
               active_tags = object_data['active_tags']
               if(object_data['index_option'] == 'indexed'){
@@ -95,7 +96,9 @@ class ViewGroups extends Component {
               if(object_data['selected_tags'] != null && object_data['selected_tags'].length != 0){
                 selected_tags = object_data['selected_tags']
               }
-              
+              if(object_data['masked'] != null){
+                masked = object_data['masked']
+              }
             }
             return (
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'40px'}}>
@@ -103,7 +106,7 @@ class ViewGroups extends Component {
                       {active_tags.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
                               <div style={{'background-color': this.get_tag_color(item, selected_tags, tag_background_color), 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
-                                <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{item}</p>
+                                <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{this.mask_item_if_enabled(masked, item)}</p>
                             </div>
                           </li>
                       ))}
@@ -526,7 +529,15 @@ class ViewGroups extends Component {
                 </div>
             )
         }
+    }
 
+    mask_item_if_enabled(masked, item){
+        if(masked == true){
+            if (item == null || item.length <= 1) return item; // nothing to mask
+            return item[0] + '*'.repeat(item.length - 1);
+        }else{
+            return item
+        }
     }
 
     render_text_image(title_image, font_size){

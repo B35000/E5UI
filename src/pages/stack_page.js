@@ -2322,7 +2322,7 @@ class StackPage extends Component {
     }
 
     run_transactions = async (calculate_gas) => {
-        var txs = this.props.app_state.stack_items
+        const txs = this.props.app_state.stack_items
         if(!calculate_gas){
             var is_running = this.props.app_state.is_running[this.props.app_state.selected_e5]
             if(is_running == null) is_running = false
@@ -3973,7 +3973,7 @@ class StackPage extends Component {
                             bag_tags.push(tag)
                         })
                         
-                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications, 'options':item.purchase_option_tags_array, 'storefront_options':(item.storefront_item['ipfs'].option_groups == null ? [] : item.storefront_item['ipfs'].option_groups)})
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_item_e5':item.storefront_item['e5'],'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications, 'options':item.purchase_option_tags_array, 'storefront_options':(item.storefront_item['ipfs'].option_groups == null ? [] : item.storefront_item['ipfs'].option_groups)})
                     });
 
                     var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time }
@@ -5777,9 +5777,9 @@ class StackPage extends Component {
         var context = 37
         var int_data = t.application_item['id']
 
-        var application_obj = {'accepted':true}
-
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
+        // var application_obj = {'accepted':true}
+        // var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
+        var string_data = 'true'
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -6233,9 +6233,10 @@ class StackPage extends Component {
         var context = 39
         var int_data = t.request_item['job_request_id']
 
-        var application_obj = {'accepted':true, 'contract_id':t.picked_contract['id']}
+        var application_obj = t.picked_contract['id'].toString()
 
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
+        // var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
+        var string_data = application_obj
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -9149,7 +9150,7 @@ class StackPage extends Component {
                     </div>
                 </div>
 
-                {this.render_detail_item('1',{'active_tags':this.state.added_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_seed_word'})}
+                {this.render_detail_item('1',{'active_tags':this.state.added_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_seed_word', 'masked':true})}
 
                 {this.render_detail_item('0')}
 
@@ -10225,7 +10226,7 @@ class StackPage extends Component {
     render_watched_account_ui_data(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593v']/* 'Watch Account.' */, 'details':this.props.app_state.loc['1593w']/* 'Track send and receive transactions for a specified account from here.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593v']/* 'Watch Account.' */, 'details':this.props.app_state.loc['1593w']/* 'Track receive transactions for a specified account from here.' */, 'size':'l'})}
 
                 <div style={{ 'margin': '10px 5px 10px 5px'}}>
                     <div className="row" style={{width:'100%'}}>
@@ -10242,7 +10243,49 @@ class StackPage extends Component {
                     </div>
                 </div>
 
-                {this.render_transfers_item_logs()}
+                {/* {this.render_transfers_item_logs()} */}
+                {this.render_incoming_transactions_data()}
+            </div>
+        )
+    }
+
+    render_incoming_transactions_data(){
+        var items = this.props.app_state.watched_account_data
+        if(items == null){
+            items = []
+        }
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                                {this.render_notification_item(item, index)}
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_notification_item(item, index){
+        var sender = item.returnValues.p2
+        var amount = item.returnValues.p4
+        var depth = item.returnValues.p7
+        var exchange = item.returnValues.p1
+        var timestamp = item.returnValues.p5
+        var e5 = item['e5']
+        return(
+            <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
+                {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
             </div>
         )
     }
