@@ -158,17 +158,38 @@ class ViewBagApplicationContractPage extends Component {
     
 
     render_contract_part(){
-        if(this.state.application_item['contract'] != null){
-            var item = this.state.application_item
+        var item = this.state.application_item
+        var contract_proposal_data = this.props.app_state.loaded_contract_and_proposal_data[item['picked_contract_id']]
+        if(contract_proposal_data != null){
+            var contract = contract_proposal_data['contract']
             return(
                 <div>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1638']/* 'The contract they applied with is shown below.' */})}
                     <div style={{height:10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_contracts_or_proposals_tags_object} tag_size={'l'} when_tags_updated={this.when_get_contracts_or_proposals_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height:10}}/>
-                    {this.render_contract_data_or_proposals()}
+                    {this.render_contract_data_or_proposals(contract)}
                 </div>
             )
+        }else{
+            var items = ['0','1'];
+            var background_color = this.props.theme['card_background_color']
+            return (
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
         }
         
     }
@@ -178,13 +199,13 @@ class ViewBagApplicationContractPage extends Component {
         this.setState({get_contracts_or_proposals_tags_object: tag_obj})
     }
 
-    render_contract_data_or_proposals(){
+    render_contract_data_or_proposals(contract){
         var selected_item = this.get_selected_item(this.state.get_contracts_or_proposals_tags_object, this.state.get_contracts_or_proposals_tags_object['i'].active)
 
         if(selected_item == this.props.app_state.loc['1632b']/* 'contract-data' */){
             return(
                 <div>
-                    {this.render_contracts_data()}
+                    {this.render_contracts_data(contract)}
                 </div>
             )
         }
@@ -337,15 +358,15 @@ class ViewBagApplicationContractPage extends Component {
         return all_objects
     }
 
-    render_contracts_data(){
+    render_contracts_data(contract){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-150
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var item = this.get_contract_details_data()
-        var object = this.state.application_item['contract']
+        var item = this.get_contract_details_data(contract)
+        var object = contract
 
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px'}}>
@@ -427,8 +448,8 @@ class ViewBagApplicationContractPage extends Component {
         )
     }
 
-    get_contract_details_data(){
-        var object = this.state.application_item['contract']
+    get_contract_details_data(contract){
+        var object = contract
         var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
@@ -542,7 +563,7 @@ class ViewBagApplicationContractPage extends Component {
                 entered_indexing_tags:[this.props.app_state.loc['1634']/* 'accept' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1635']/* 'fulfilment' */, this.props.app_state.loc['1636']/* 'application' */], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }
-        this.setState({application_item:item, e5: item['contract']['e5']})
+        this.setState({application_item:item, e5: item['e5']})
     }
 
 
@@ -569,7 +590,7 @@ class ViewBagApplicationContractPage extends Component {
     render_proposals_data(){
         var background_color = this.props.theme['card_background_color']
         var application_item = this.state.application_item
-        var items = application_item['proposals']
+        var items = this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']] == null ? [] : this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']]['proposals']
         var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){

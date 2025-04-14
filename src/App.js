@@ -11835,6 +11835,7 @@ class App extends Component {
     setTimeout(function() {
       if(me.view_bag_application_contract_page.current != null){
         me.view_bag_application_contract_page.current.set_object(item)
+        me.load_contract_item(item['e5'], item['picked_contract_id'])
       }
     }, (1 * 500));
     
