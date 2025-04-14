@@ -826,12 +826,30 @@ class home_page extends Component {
             this.open_view_stack_bottomsheet();
         }
         else {
-            this.setState({page: item});
-            var me = this;
-            setTimeout(function() {
-                me.update_scroll_position()
-            }, (1 * 10));
+            let me = this;
+            if(Date.now() - this.last_all_click_time2 < 200){
+                clearTimeout(this.all_timeout);
+                //double tap
+                me.props.show_view_notification_log_bottomsheet(item)
+            }else{
+                this.all_timeout = setTimeout(function() {
+                    clearTimeout(this.all_timeout);
+                    // single tap
+                    me.normal_bottom_navbar_item_click(item)
+                }, 200);
+            }
+            this.last_all_click_time2 = Date.now();
+            
+            
         }
+    }
+
+    normal_bottom_navbar_item_click(item){
+        this.setState({page: item});
+        var me = this;
+        setTimeout(function() {
+            me.update_scroll_position()
+        }, (1 * 10));
     }
 
     render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
@@ -3294,9 +3312,9 @@ class home_page extends Component {
         }
     }
 
-    when_proposal_item_clicked(index, id, e5, object){
+    when_proposal_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_proposal_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
         this.props.load_extra_proposal_data(object)
         this.add_to_tab(id+e5, id)
         var viewed_proposals_clone = this.state.viewed_proposals.slice()

@@ -557,6 +557,7 @@ import FullVideoPage from './pages/full_video_page'
 import BuyNitroPage from './pages/buy_nitro_storage'
 import ConfigureNitroNodePage from './pages/configure_nitro_node'
 import DialerPage from './pages/dialer_page'
+import ViewNotificationLogPage from './pages/view_notification_log_page'
 
 import english from "./texts/english";
 
@@ -756,7 +757,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -830,7 +831,7 @@ class App extends Component {
     
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
-    loaded_contract_and_proposal_data:{},
+    loaded_contract_and_proposal_data:{}, notification_object:{},
   };
 
   get_static_assets(){
@@ -882,7 +883,7 @@ class App extends Component {
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
         iteration:400_000, url:0, active:true, e5_img:E5_E25_image/* 'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu' */,
-        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true
+        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
@@ -2645,6 +2646,7 @@ class App extends Component {
     this.configure_nitro_node_page = React.createRef();
     this.remoteStream = React.createRef();
     this.dialer_page = React.createRef();
+    this.view_notification_log_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4954,6 +4956,7 @@ class App extends Component {
           {this.render_buy_nitro_storage_bottomsheet()}
           {this.render_configure_nitro_node_bottomsheet()}
           {this.render_dialer_bottomsheet()}
+          {this.render_view_notification_log_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -5044,7 +5047,7 @@ class App extends Component {
           load_extra_token_data={this.load_extra_token_data.bind(this)}
           load_extra_proposal_data={this.load_extra_proposal_data.bind(this)}
 
-          load_bag_storefront_items={this.load_bag_storefront_items.bind(this)}
+          load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -13742,7 +13745,11 @@ class App extends Component {
       if(data['from'] == 'audio_details_section') size = 550
       if(data['from'] == 'audio_details_section3') size = 350
     }
-    this.open_dialog_bottomsheet(size)
+    if(this.state.dialog_bottomsheet == false){
+      this.open_dialog_bottomsheet(size);
+    }else{
+      this.setState({dialog_size: size})
+    }
     var me = this;
     setTimeout(function() {
       if(me.dialog_page.current != null){
@@ -14005,7 +14012,12 @@ class App extends Component {
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1201']/* 'mail' */})
       this.homepage.current?.when_mail_item_clicked(index, object['id'], object, 'ignore')
     }
+    else if(type == 'proposal'){
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1199']/* 'proposals' */})
+      this.homepage.current?.when_proposal_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+    }
     this.open_dialog_bottomsheet()
+    if(this.state.view_notification_log_bottomsheet == true) this.open_view_notification_log_bottomsheet();
   }
 
 
@@ -16491,6 +16503,135 @@ class App extends Component {
     catch (e) {
       return false
     }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_view_notification_log_bottomsheet(){
+    if(this.state.view_notification_log_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_notification_log_bottomsheet} onClose={this.open_view_notification_log_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_view_notification_log_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_notification_log_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_notification_log_bottomsheet.bind(this)} open={this.state.view_notification_log_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_view_notification_log_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_notification_log_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <ViewNotificationLogPage ref={this.view_notification_log_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)}
+        
+        />
+      </div>
+    )
+  }
+
+  open_view_notification_log_bottomsheet(){
+    if(this.state.view_notification_log_bottomsheet == true){
+      //closing
+      this.view_notification_log_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_notification_log_bottomsheet: !this.state.view_notification_log_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_notification_log_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_notification_log_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_notification_log_bottomsheet: !me.state.view_notification_log_bottomsheet});
+
+          if(me.view_notification_log_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.view_notification_log_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_notification_log_bottomsheet(item){
+    this.open_view_notification_log_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_notification_log_page.current != null){
+        me.view_notification_log_page.current.set_data(item)
+      }
+    }, (1 * 500));
+  }
+
+  when_event_clicked(event){
+    var event_type = event['event_type']
+    var events = [event]
+    var obj = event['view']
+    obj['events'] = events
+
+    if(event_type == 'mail'){
+      this.load_specific_incoming_message_mail_item(events)
+    }
+    else if(event_type == 'message'){
+      this.load_specific_incoming_message_mail_item(events)
+    }
+    else if(event_type == ''){
+      this.load_specific_notification_proposals(events)
+    }
+    else if(event_type == 'job_application'){
+      this.load_specific_job_application_jobs(events)
+    }
+    else if(event_type == 'job_request'){
+      this.load_specific_contractor_objects(events)
+    }
+    else if(event_type == 'job_application_response'){
+      this.load_specific_job_application_jobs(events)
+    }
+    else if(event_type == 'job_request_response'){
+      this.load_specific_contractor_objects(events)
+    }
+    else if(event_type == 'contract'){
+      this.load_specific_contract_objects(events)
+    }
+    else if(event_type == 'bag'){
+      this.load_specific_bag_items(events)
+    }
+    else if(event_type == 'bag_application_response'){
+      this.load_specific_bag_items(events)
+    }
+    else if(event_type == 'storefront'){
+      this.load_specific_storefront_items(events)
+    }
+
+    var id = obj['notification_id']
+    this.show_dialog_bottomsheet(obj, id)
   }
 
 
@@ -21883,7 +22024,7 @@ class App extends Component {
 
   }
 
-  get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account) => {
+  get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, accounts_to_load) => {
     var contracts_ive_entered_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */})
     
     var created_contracts = []
@@ -21946,6 +22087,23 @@ class App extends Component {
     my_proposal_ids = my_proposal_ids.reverse()
     my_proposals_events = my_proposals_events.reverse()
 
+    var sorted_proposal_ids = []
+    var sorted_proposal_events = []
+    for(var k=0; k<my_proposal_ids.length; k++){
+      if(accounts_to_load.includes(my_proposal_ids[k])){
+        sorted_proposal_ids.push(my_proposal_ids[k])
+        sorted_proposal_events.push(my_proposals_events[k])
+      }
+    }
+    for(var k=0; k<my_proposal_ids.length; k++){
+      if(!sorted_proposal_ids.includes(my_proposal_ids[k])){
+        sorted_proposal_ids.push(my_proposal_ids[k])
+        sorted_proposal_events.push(my_proposals_events[k])
+      }
+    }
+
+    my_proposal_ids = sorted_proposal_ids
+    my_proposals_events = sorted_proposal_events
     // var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:2})
     // for(var i=contracts_proposals.length-1; i>=0; i--){
     //   my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p2))//<--------issue! should be p4
@@ -24216,7 +24374,7 @@ class App extends Component {
         const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
 
-        this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account)
+        this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts)
       }
     }
   }
@@ -24883,7 +25041,9 @@ class App extends Component {
     this.load_and_notify_user_of_incoming_job_request_responses()
     this.load_and_notify_user_of_incoming_entered_contracts()
     this.load_and_notify_user_of_incoming_bag_application()
+    this.load_and_nofity_user_of_incoming_bag_application_responses()
     this.load_and_notify_user_of_incoming_storefront_direct_order()
+
     this.update_watched_account_data()
   }
 
@@ -24902,7 +25062,9 @@ class App extends Component {
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         var all_received_events = await H52contractInstance.getPastEvents('e1', { filter: { p3/* receiver */: account }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
@@ -24920,6 +25082,7 @@ class App extends Component {
 
     var notifs = []
     var previous_notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times[e5] == null){
@@ -24931,11 +25094,21 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
-          else if(event_block > (current_blocks[e5]-1024)){
+          else if(event_block > (current_blocks[e5]-10000)){
             //if its a recent event
             event['e5'] = e5
             previous_notifs.push(event)
           }
+
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p5
+          event['block'] = event.returnValues.p6
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'token'
+          event['event_type'] = 'token'
+          event['view'] = {}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times[e5] = block_stamp[e5]
       }
@@ -24945,6 +25118,10 @@ class App extends Component {
       console.log('notifier', 'found one object to nofity', notifs)
       this.handle_money_receipt_notifications(notifs, previous_notifs.reverse())
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['token'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   handle_money_receipt_notifications(events, previous_notifs){
@@ -24985,7 +25162,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:30}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
@@ -25003,6 +25182,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_mail[e5] == null){
@@ -25014,6 +25194,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p5
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'message'
+          event['event_type'] = 'mail'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'message', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times_mail[e5] = block_stamp[e5]
       }
@@ -25023,6 +25212,9 @@ class App extends Component {
       console.log('notifier', 'found one mail object to nofity', notifs)
       this.handle_mail_notifications(notifs)
     }
+    var clone = structuredClone(this.state.notification_object)
+    clone['mail'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   handle_mail_notifications(events){
@@ -25053,7 +25245,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:32}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
@@ -25071,6 +25265,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_messages[e5] == null){
@@ -25082,6 +25277,16 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+
+          event['e5'] = e5
+          event['p'] = event.returnValues.p5
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'message'
+          event['event_type'] = 'message'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'message', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times_messages[e5] = block_stamp[e5]
       }
@@ -25091,6 +25296,9 @@ class App extends Component {
       console.log('notifier', 'found one message object to nofity', notifs)
       this.handle_messages_notifications(notifs)
     }
+    var clone = structuredClone(this.state.notification_object)
+    clone['message'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   handle_messages_notifications(events){
@@ -25150,11 +25358,14 @@ class App extends Component {
         const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         if(ids.length == 0){
           ids.push(0)
         }
+        ids.push(2)
 
 
 
@@ -25171,6 +25382,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_proposals[e5] == null){
@@ -25184,6 +25396,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p2
+          event['time'] = event.returnValues.p5
+          event['block'] = event.returnValues.p6
+          event['sender'] = event.returnValues.p4
+          event['type'] = 'proposal'
+          event['event_type'] = 'proposal'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'proposal', 'p':'p2', 'time':'p5','block':'p6', 'sender':'p4'}
+          if(account != proposal_sender) all_notifications.push(event)
         });
         this.load_and_notify_user_times_proposals[e5] = block_stamp[e5]
       }
@@ -25193,6 +25414,10 @@ class App extends Component {
       console.log('notifier', 'found one proposal object to nofity', notifs)
       this.handle_proposal_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['proposal'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   get_my_created_contract_ids_in_e5 = async (e5, account) => {
@@ -25215,12 +25440,49 @@ class App extends Component {
   handle_proposal_notifications(events){
     var senders = []
     events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p3/* proposer_account_id */, event['e5'])
+      var alias = this.get_sender_title_text(event.returnValues.p4/* proposer_account_id */, event['e5'])
       senders.push(alias)
     });
     var prompt = this.getLocale()['2738o']/* 'Incoming proposals from $' */
     prompt = prompt.replace('$', senders.toString())
     this.prompt_top_notification(prompt, 15000)
+  }
+
+  load_specific_notification_proposals(events){
+    var e5_data = {}
+    events.forEach(event => {
+      if(e5_data[event['e5']] == null){
+        e5_data[event['e5']] = []
+      }
+      e5_data[event['e5']].push(event.returnValues.p2)
+    });
+    const keys = Object.keys(e5_data)
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.get_web3_url_from_e5(e5)
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != '' && keys.includes(e5)){
+        const web3 = new Web3(web3_url);
+
+        var account = this.state.user_account_id[e5]
+        var contract_addresses = this.state.addresses[e5]
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        const G5contractArtifact = require('./contract_abis/G5.json');
+        const G5_address = contract_addresses[3];
+        const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+        const G52contractArtifact = require('./contract_abis/G52.json');
+        const G52_address = contract_addresses[4];
+        const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+
+
+        this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, e5_data[e5])
+      }
+    }
   }
 
 
@@ -25240,7 +25502,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         if(ids.length == 0){
           ids.push(0)
@@ -25259,6 +25523,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_job_applications[e5] == null){
@@ -25271,6 +25536,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'job'
+          event['event_type'] = 'job_application'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times_job_applications[e5] = block_stamp[e5]
       }
@@ -25280,6 +25554,10 @@ class App extends Component {
       console.log('notifier', 'found one job application to nofity', notifs)
       this.handle_job_application_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['job_application'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   get_my_job_ids(e5){
@@ -25351,7 +25629,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         var my_contractor_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account});
 
@@ -25381,6 +25661,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_job_requests[e5] == null){
@@ -25393,6 +25674,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'contractor'
+          event['event_type'] = 'job_request'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times_job_requests[e5] = block_stamp[e5]
       }
@@ -25402,6 +25692,10 @@ class App extends Component {
       console.log('notifier', 'found one job request to nofity', notifs)
       this.handle_job_request_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['job_request'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   handle_job_request_notifications(events){
@@ -25427,19 +25721,22 @@ class App extends Component {
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const all_bag_ids = await this.get_all_bags_ids(focused_e5)
         const E52contractArtifact = require('./contract_abis/E52.json');
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
 
         var ids = []
         my_created_job_respnse_data.forEach(event => {
           var id = event.returnValues.p1/* target_id */
-          if(!ids.includes(id)){
+          if(!ids.includes(id) && !all_bag_ids.includes(id)){
             ids.push(id)
           }
         });
@@ -25457,6 +25754,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_job_application_responses[e5] == null){
@@ -25470,6 +25768,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'job'
+          event['event_type'] = 'job_application_response'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          if(event_emitter != account) all_notifications.push(event);
         });
         this.load_and_notify_user_times_job_application_responses[e5] = block_stamp[e5]
       }
@@ -25479,6 +25786,28 @@ class App extends Component {
       console.log('notifier', 'found one job application response to nofity', notifs)
       this.handle_job_application_response_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['job_application_response'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+  }
+
+  get_all_bags_ids = async (focused_e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+    const E5contractArtifact = require('./contract_abis/E5.json');
+    const E5_address = this.state.addresses[focused_e5][0];
+    const contractInstance = new web3.eth.Contract(E5contractArtifact.abi, E5_address);
+    var created_bag_events = await this.load_event_data(web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:25/* 25(storefront_bag_object) */})
+
+    var my_bags = []
+    created_bag_events.forEach(event => {
+      var id = event.returnValues.p1/* object_id */
+      if(!my_bags.includes(id)){
+        my_bags.push(id)
+      }
+    });
+
+    return my_bags
   }
 
   handle_job_application_response_notifications(events){
@@ -25487,7 +25816,7 @@ class App extends Component {
       var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
       senders.push(alias)
     });
-    var prompt = this.getLocale()['2738r']/* 'Youre applications for jobs/bags posted by $ have been accepted.' */
+    var prompt = this.getLocale()['2738r']/* 'Youre applications for jobs posted by $ have been accepted.' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_job_application_jobs(events)
     this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
@@ -25509,7 +25838,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         var my_job_request_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:38})
 
@@ -25534,6 +25865,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_job_request_responses[e5] == null){
@@ -25547,6 +25879,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'contractor'
+          event['event_type'] = 'job_request_response'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          if(event_emitter != account) all_notifications.push(event);
         });
         this.load_and_notify_user_times_job_request_responses[e5] = block_stamp[e5]
       }
@@ -25556,6 +25897,10 @@ class App extends Component {
       console.log('notifier', 'found one job request response to nofity', notifs)
       this.handle_job_request_response_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['job_request_response'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   handle_job_request_response_notifications(events){
@@ -25615,7 +25960,9 @@ class App extends Component {
         const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         var all_received_on_chain_events = await G52contractInstance.getPastEvents('e2', { filter: {p1/* contract_id */: ids, p3/* action */: 3/* enters_a_contract */}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
@@ -25632,6 +25979,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_enter_contract[e5] == null){
@@ -25643,6 +25991,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'contract'
+          event['event_type'] = 'contract'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'contract', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times_enter_contract[e5] = block_stamp[e5]
       }
@@ -25652,6 +26009,10 @@ class App extends Component {
       console.log('notifier', 'found one enter contract event to nofity', notifs)
       this.handle_enter_contract_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['contract'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   handle_enter_contract_notifications(events){
@@ -25723,7 +26084,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         if(ids.length == 0){
           ids.push(0)
@@ -25743,6 +26106,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_bag_applications[e5] == null){
@@ -25755,6 +26119,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'bag'
+          event['event_type'] = 'bag'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'bag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times_bag_applications[e5] = block_stamp[e5]
       }
@@ -25764,6 +26137,10 @@ class App extends Component {
       console.log('notifier', 'found one bag application response to nofity', notifs)
       this.handle_incoming_bag_application_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['bag'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   load_my_bag_ids = async (e5, account) =>{
@@ -25829,6 +26206,103 @@ class App extends Component {
 
 
 
+
+  load_and_nofity_user_of_incoming_bag_application_responses = async() => {
+    var all_unsorted_events = {}
+    var block_stamp = {}
+    var current_blocks = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      var account = this.state.user_account_id[focused_e5]
+      if(this.state.addresses[focused_e5] != null && account > 1000){
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const all_bag_ids = await this.get_all_bags_ids(focused_e5)
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = this.state.addresses[focused_e5][1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var current_block_number = await web3.eth.getBlockNumber()
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
+
+        var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
+
+        var ids = []
+        my_created_job_respnse_data.forEach(event => {
+          var id = event.returnValues.p1/* target_id */
+          if(!ids.includes(id) && all_bag_ids.includes(id)){
+            ids.push(id)
+          }
+        });
+
+        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:37}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+        all_unsorted_events[focused_e5] = all_received_on_chain_events
+        block_stamp[focused_e5] = current_block_number
+        current_blocks[focused_e5] = current_block_number
+      }
+    }
+
+    if(this.load_and_notify_user_times_bag_application_responses == null){
+      this.load_and_notify_user_times_bag_application_responses = {}
+    }
+
+    var notifs = []
+    var all_notifications = []
+    for(const e5 in all_unsorted_events){
+      if(all_unsorted_events.hasOwnProperty(e5)){
+        if(this.load_and_notify_user_times_bag_application_responses[e5] == null){
+          this.load_and_notify_user_times_bag_application_responses[e5] = block_stamp[e5]
+        }
+        var account = this.state.user_account_id[e5]
+        all_unsorted_events[e5].forEach(event => {
+          var event_block = event.returnValues.p7/* block_number */
+          var event_emitter = event.returnValues.p2/* sender_acc_id */
+          if(event_block > this.load_and_notify_user_times_bag_application_responses[e5] && event_emitter != account){
+            event['e5'] = e5
+            notifs.push(event)
+          }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'bag'
+          event['event_type'] = 'bag_application_response'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'bag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          if(event_emitter != account) all_notifications.push(event);
+        });
+        this.load_and_notify_user_times_bag_application_responses[e5] = block_stamp[e5]
+      }
+    }
+
+    if(notifs.length > 0){
+      console.log('notifier', 'found one bag application response to nofity', notifs)
+      this.handle_bag_application_response_notifications(notifs)
+    }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['bag_application_response'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+  }
+
+  handle_bag_application_response_notifications(events){
+    var senders = []
+    events.forEach(event => {
+      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
+      senders.push(alias)
+    });
+    var prompt = this.getLocale()['2738ad']/* 'Youre applications for bags posted by $ have been accepted.' */
+    prompt = prompt.replace('$', senders.toString())
+    this.load_specific_bag_items(events)
+    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'bag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+  }
+
+
+
+
+
   load_and_notify_user_of_incoming_storefront_direct_order = async () => {
     var all_unsorted_events = {}
     var block_stamp = {}
@@ -25848,7 +26322,9 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var current_block_number = await web3.eth.getBlockNumber()
-        var start = current_block_number == 0 ? 0 : current_block_number - 1024
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
 
         if(ids.length == 0){
           ids.push(0)
@@ -25867,6 +26343,7 @@ class App extends Component {
     }
 
     var notifs = []
+    var all_notifications = []
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         if(this.load_and_notify_user_times_direct_storefront_order[e5] == null){
@@ -25879,6 +26356,15 @@ class App extends Component {
             event['e5'] = e5
             notifs.push(event)
           }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p3
+          event['time'] = event.returnValues.p5
+          event['block'] = event.returnValues.p6
+          event['sender'] = event.returnValues.p1
+          event['type'] = 'storefront'
+          event['event_type'] = 'storefront'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'}
+          all_notifications.push(event)
         });
         this.load_and_notify_user_times_direct_storefront_order[e5] = block_stamp[e5]
       }
@@ -25888,6 +26374,10 @@ class App extends Component {
       console.log('notifier', 'found one storefront purchase response to nofity', notifs)
       this.handle_incoming_storefront_direct_purchase_notifications(notifs)
     }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['storefront'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
   }
 
   load_my_storefront_ids = async (e5, account) => {
@@ -29318,8 +29808,7 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     var current_block_number = await web3.eth.getBlockNumber()
-    var difference = this.state.e5s[e5].iteration
-    if(difference > 10000) difference = 10000;
+    var difference = this.state.e5s[e5].notification_blocks == null ? 10_000 : this.state.e5s[e5].notification_blocks
     var start = current_block_number == 0 ? 0 : current_block_number - difference
     if(start < 0) start = 0;
     var all_received_events = await H52contractInstance.getPastEvents('e1', { filter: { p3/* receiver */: id }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})

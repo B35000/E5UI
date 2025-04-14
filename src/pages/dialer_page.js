@@ -84,7 +84,7 @@ class DialerPage extends Component {
 
         typed_moderator_country:'', selected_typed_moderator_country:'', typed_moderator_account_id:'', selected_moderator_e5:'E25',
 
-        get_manual_disable_beacon_node_override_object:this.get_manual_disable_beacon_node_override_object(),
+        get_manual_disable_beacon_node_override_object:this.get_manual_disable_beacon_node_override_object(), typed_notification_blocks_input:''
     };
 
 
@@ -1508,6 +1508,14 @@ class DialerPage extends Component {
                         </div>
                     </div>
                 </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('4', {'text':'Set the maximum number of blocks checked for events while loading notifications.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={'Count'} when_text_input_field_changed={this.when_notification_block_input_changed.bind(this)} text={this.state.typed_notification_blocks_input} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -1731,10 +1739,16 @@ class DialerPage extends Component {
         ); 
     }
 
+    when_notification_block_input_changed(text){
+        if(!isNaN(text)){
+            this.setState({typed_notification_blocks_input: text})
+        }
+    }
+
     edit_selected_e5(item){
         if(this.state.editing_e5_item == item){
             this.setState({editing_e5_item: '',
-                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_blockexplorer_link:''
+                typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_blockexplorer_link:'', typed_notification_blocks_input:''
             })
         }else{
             const obj = this.state.data['e5s'][item]
@@ -1754,8 +1768,9 @@ class DialerPage extends Component {
             const spend_access = obj.spend_access == null ? []: obj.spend_access
             const public_enabled = obj.public_enabled == null ? false: obj.public_enabled
             const typed_blockexplorer_link = obj.blockexplorer_link == null ? '':obj.blockexplorer_link
+            const typed_notification_blocks_input = obj.typed_notification_blocks_input == null ? '': obj.typed_notification_blocks_input
             this.setState({editing_e5_item: item, 
-                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString(), spend_exchange_allowed_countries: spend_access, get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(public_enabled), typed_blockexplorer_link: typed_blockexplorer_link
+                typed_e5_id:item, typed_symbol_id: symbol, typed_token_name:name, typed_rpc_url:'', added_rpc_urls:rpcs, typed_e5_address:e5_address, end_image:end_image, spend_image:spend_image, e5_image:e5_image, ether_image:ether_image, get_e5_active_setting_object:this.get_e5_active_setting_object(obj.active), power_limit:obj.end_token_power_limit, get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(ether_disabled), typed_first_block: first_block.toString(), typed_iteration: iteration.toString(), spend_exchange_allowed_countries: spend_access, get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(public_enabled), typed_blockexplorer_link: typed_blockexplorer_link, typed_notification_blocks_input: typed_notification_blocks_input
             })
         }
     }
@@ -2030,6 +2045,7 @@ class DialerPage extends Component {
         const ether_disabled = this.get_selected_item(this.state.get_ether_disabled_setting_object, 'e') == 'disabled' ? true : false
         const public_enabled = this.get_selected_item(this.state.get_e5_public_enabled_tags_object, 'e') == 'public-enabled' ? true : false
         const editing_e5_item = this.state.editing_e5_item
+        const typed_notification_blocks_input = this.state.typed_notification_blocks_input == '' ? 10_000 : parseInt(this.state.typed_notification_blocks_input)
         
         var clone = structuredClone(this.state.data)
         //this.props.notify('', 5000)
@@ -2128,12 +2144,13 @@ class DialerPage extends Component {
             iteration:iteration, url:0, active:e5_active, e5_img:e5_image,
             end_token_power_limit: power_limit, spend_access:spend_exchange_allowed_countries, public_enabled: public_enabled,
             blockexplorer_link:typed_blockexplorer_link,
+            notification_blocks: typed_notification_blocks_input
         }
         clone['e5s'][e5] = e5_data
         if(editing_e5_item == '') clone['e5s']['data'].push(e5)
         this.setState({data: clone,
             editing_e5_item: '',
-            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_blockexplorer_link:'',
+            typed_e5_id:'', typed_symbol_id:'', typed_token_name:'', typed_rpc_url:'', added_rpc_urls:[], typed_e5_address:'', get_e5_image_setting_tags_object:this.get_e5_image_setting_tags_object(), end_image:'', spend_image:'', e5_image:'', ether_image:'', get_e5_active_setting_object:this.get_e5_active_setting_object(false), power_limit:'', get_ether_disabled_setting_object:this.get_ether_disabled_setting_object(false), typed_first_block:'', typed_iteration:'', spend_exchange_allowed_countries:[], get_e5_public_enabled_tags_object:this.get_e5_public_enabled_tags_object(false), typed_blockexplorer_link:'', typed_notification_blocks_input:'',
         });
     }
 

@@ -1761,6 +1761,10 @@ class DialogPage extends Component {
             items = this.get_all_mail()
             return items.find(e => e['convo_id'] === id)
         }
+        else if(type == 'proposal'){
+            items = this.props.app_state.my_proposals[e5]
+        }
+        console.log('when_event_clicked', items)
         if(items == null) items = [];
 
         return items.find(e => e['id'] === id)
