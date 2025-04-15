@@ -262,12 +262,34 @@ class ViewGroups extends Component {
               word_wrap_value = this.longest_word_length(object_data['text']) > 53 ? 'break-all' : 'normal'
             }
 
+            text = this.format_text_if_empty_or_null(text)
+            const parts = text.split(/(\d+)/g);
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
                       <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 5px 5px 10px','border-radius': '8px' }}>
                           
-                            <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
+                            <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}>
+                                <Linkify options={{target: '_blank'}}>
+                                    {
+                                        parts.map((part, index) => {
+                                            const num = parseInt(part, 10);
+                                            const isId = !isNaN(num) && num > 1000;
+                                            if (isId) {
+                                                return (
+                                                    <span
+                                                        key={index}
+                                                        style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
+                                                        onClick={() => this.when_e5_link_tapped(num)}>
+                                                            {part}
+                                                    </span>
+                                                );
+                                            }
+                                            return <span key={index}>{part}</span>;
+                                        })
+                                    }
+                                </Linkify>
+                            </p>
 
                           {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} />
                            */}
@@ -529,6 +551,10 @@ class ViewGroups extends Component {
                 </div>
             )
         }
+    }
+
+    when_e5_link_tapped(id){
+        this.props.when_e5_link_tapped(id)
     }
 
     mask_item_if_enabled(masked, item){

@@ -831,7 +831,7 @@ class App extends Component {
     
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
-    loaded_contract_and_proposal_data:{}, notification_object:{},
+    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{},
   };
 
   get_static_assets(){
@@ -5047,7 +5047,7 @@ class App extends Component {
           load_extra_token_data={this.load_extra_token_data.bind(this)}
           load_extra_proposal_data={this.load_extra_proposal_data.bind(this)}
 
-          load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)}
+          load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -12188,7 +12188,9 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}/>
+                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}
+                          when_e5_link_tapped={this.when_e5_link_tapped.bind(this)}
+                          />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -12200,7 +12202,9 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} />
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)}
+            
+            />
           </div>
       </SwipeableBottomSheet>
     )
@@ -13704,7 +13708,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
         
         />
       </div>
@@ -13740,7 +13744,7 @@ class App extends Component {
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450, 'view_item_purchase':550, 'view_incoming_receipts':250, 'view_incoming_transactions':300};
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450, 'view_item_purchase':550, 'view_incoming_receipts':250, 'view_incoming_transactions':300, 'view_e5_link':300};
     var size = obj[id]
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
@@ -13980,6 +13984,7 @@ class App extends Component {
     if(type == 'storefront'){
       this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1215']/* 'storefront' */})
       this.homepage.current?.when_storefront_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
     }
     else if(type == 'bag'){
       var items_to_deliver = object['ipfs']['bag_orders']
@@ -13992,6 +13997,7 @@ class App extends Component {
 
       this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1216']/* 'bags' */})
       this.homepage.current?.when_bag_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
     }
     else if(type == 'contract'){
       if(object['hidden'] == true){
@@ -14000,25 +14006,128 @@ class App extends Component {
       }
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1197']/* 'contracts' */})
       this.homepage.current?.when_contract_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
     }
     else if(type == 'contractor'){
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1198']/* 'contractors' */})
       this.homepage.current?.when_contractor_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
     }
     else if(type == 'job'){
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
       this.homepage.current?.when_job_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
     }
     else if(type == 'message'){
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1201']/* 'mail' */})
       this.homepage.current?.when_mail_item_clicked(index, object['id'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
     }
     else if(type == 'proposal'){
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1199']/* 'proposals' */})
       this.homepage.current?.when_proposal_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
     }
     this.open_dialog_bottomsheet()
     if(this.state.view_notification_log_bottomsheet == true) this.open_view_notification_log_bottomsheet();
+  }
+
+  when_link_object_clicked(object, object_type, post_nsfw){
+    var index = 0
+    if(object_type == 17/* jobs */){
+        this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
+        this.homepage.current?.when_job_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 30/* contracts */){
+      if(object['hidden'] == true){
+        this.props.notify(this.getLocale()['2509d']/* 'That object is not available for you to access.' */, 9000)
+        return;
+      }
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1197']/* 'contracts' */})
+      this.homepage.current?.when_contract_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 32/* proposal */){
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1199']/* 'proposals' */})
+      this.homepage.current?.when_proposal_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 26/* contractor */){
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1198']/* 'contractors' */})
+      this.homepage.current?.when_contractor_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 33/* subscription */){
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1200']/* 'subscriptions' */})
+      this.homepage.current?.when_subscription_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 18/* post */){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1213']/* 'posts' */})
+      this.homepage.current?.when_post_item_clicked(index, object['id'], object['e5'], post_nsfw, object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 36/* channel */){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1214']/* 'channels' */})
+      this.homepage.current?.when_channel_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 27/* storefront */){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1215']/* 'storefront' */})
+      this.homepage.current?.when_storefront_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 25/* bag */){
+      var items_to_deliver = object['ipfs']['bag_orders']
+      var storefronts_to_load = []
+      items_to_deliver.forEach(item => {
+        var storefront_id = item['storefront_item_id']
+        if(!storefronts_to_load.includes(storefront_id)) storefronts_to_load.push(storefront_id);
+      });
+      this.load_storefront_data(storefronts_to_load)
+
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1216']/* 'bags' */})
+      this.homepage.current?.when_bag_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 31/* token */){
+      const id = object['data'][0][3/* <3>token_type */]
+      if(id == 3/* capped(or type end) */){
+        this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1218']/* 'ends ☝️' */})
+        this.homepage.current?.when_ends_object_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }else{
+        //5 uncapped(or type spend)
+        this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1219']/* 'spends 🫰' */})
+        this.homepage.current?.when_spends_object_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+    }
+    else if(object_type == 19/* audioport */){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264k']/* 'audioport' */})
+      this.homepage.current?.when_audio_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 20/* videoport */){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264p']/* 'videoport' */})
+      this.homepage.current?.when_video_item_clicked(index, object['id'], object['e5'], post_nsfw, object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(object_type == 21/* nitro */){
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1264s']/* 'nitro' */})
+      this.homepage.current?.when_nitro_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+
+    this.open_dialog_bottomsheet()
+    if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
+  }
+
+  show_post_item_preview_with_subscription(object, type){
+    this.homepage.current?.show_post_item_preview_with_subscription(object, type)
+    this.open_dialog_bottomsheet()
+    if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
   }
 
 
@@ -24299,11 +24408,14 @@ class App extends Component {
     }
   }
 
-  load_jobs_data = async (prioritized_accounts) => {
+  load_jobs_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24318,10 +24430,13 @@ class App extends Component {
     }
   }
 
-  load_contract_data = async (prioritized_accounts) => {
+  load_contract_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         var web3_url = this.get_web3_url_from_e5(e5)
         const web3 = new Web3(web3_url);
@@ -24351,11 +24466,14 @@ class App extends Component {
     // this.has_gotten_contracts = true
   }
 
-  load_proposal_data = async (prioritized_accounts) => {
+  load_proposal_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24380,11 +24498,14 @@ class App extends Component {
     }
   }
 
-  load_contractor_data = async (prioritized_accounts) => {
+  load_contractor_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24400,11 +24521,14 @@ class App extends Component {
     }
   }
 
-  load_subscription_data = async (prioritized_accounts) => {
+  load_subscription_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24449,11 +24573,14 @@ class App extends Component {
     }
   }
 
-  load_post_data = async (prioritized_accounts) => {
+  load_post_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24469,11 +24596,14 @@ class App extends Component {
     }
   }
 
-  load_channel_data = async (prioritized_accounts) => {
+  load_channel_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24489,11 +24619,14 @@ class App extends Component {
     }
   }
 
-  load_storefront_data = async (prioritized_accounts) => {
+  load_storefront_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24513,11 +24646,14 @@ class App extends Component {
     }
   }
 
-  load_bag_data = async (prioritized_accounts) => {
+  load_bag_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24537,10 +24673,13 @@ class App extends Component {
     }
   }
 
-  load_token_data = async (prioritized_accounts) => {
+  load_token_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         var web3_url = this.get_web3_url_from_e5(e5)
         const web3 = new Web3(web3_url);
@@ -24948,11 +25087,14 @@ class App extends Component {
     }
   }
 
-  load_audio_data = async (prioritized_accounts) => {
+  load_audio_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24968,11 +25110,14 @@ class App extends Component {
     }
   }
 
-  load_video_data = async (prioritized_accounts) => {
+  load_video_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -24988,11 +25133,14 @@ class App extends Component {
     }
   }
 
-  load_nitro_data = async (prioritized_accounts) => {
+  load_nitro_data = async (prioritized_accounts, preferred_e5) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -25020,6 +25168,75 @@ class App extends Component {
       if(!storefronts_to_load.includes(storefront_id)) storefronts_to_load.push(storefront_id);
     });
     this.load_storefront_data(storefronts_to_load)
+  }
+
+  when_e5_link_tapped = async (id) => {
+    this.show_dialog_bottomsheet({'id':id}, 'view_e5_link')
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.get_web3_url_from_e5(e5)
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != ''){
+        const web3 = new Web3(web3_url);
+        var contract_addresses = this.state.addresses[e5]
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        this.load_id_type_then_object(id, E52contractInstance, e5) 
+      }
+    }
+  }
+
+  load_id_type_then_object = async (id, E52contractInstance, e5) => {
+    var object_type = await E52contractInstance.methods.f135(id).call((error, result) => {});
+    
+    var clone = structuredClone(this.state.link_type_data)
+    clone[e5] = object_type
+    this.setState({link_type_data: clone})
+
+    if(object_type != 0){
+      // its a real object, so we load it based on the reported datatype
+      if(object_type == 17/* jobs */){
+        this.load_jobs_data([id], e5)
+      }
+      else if(object_type == 30/* contracts */){
+        this.load_contract_data([id], e5)
+      }
+      else if(object_type == 32/* proposal */){
+        this.load_proposal_data([id], e5)
+      }
+      else if(object_type == 26/* contractor */){
+        this.load_contractor_data([id], e5)
+      }
+      else if(object_type == 33/* subscription */){
+        this.load_subscription_data([id], e5)
+      }
+      else if(object_type == 18/* post */){
+        this.load_post_data([id], e5)
+      }
+      else if(object_type == 36/* channel */){
+        this.load_channel_data([id], e5)
+      }
+      else if(object_type == 27/* storefront */){
+        this.load_storefront_data([id], e5)
+      }
+      else if(object_type == 25/* bag */){
+        this.load_bag_data([id], e5)
+      }
+      else if(object_type == 31/* token */){
+        this.load_token_data([id], e5)
+      }
+      else if(object_type == 19/* audioport */){
+        this.load_audio_data([id], e5)
+      }
+      else if(object_type == 20/* videoport */){
+        this.load_video_data([id], e5)
+      }
+      else if(object_type == 21/* nitro */){
+        this.load_nitro_data([id], e5)
+      }
+    }
   }
 
 

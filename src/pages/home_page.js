@@ -123,6 +123,7 @@ class home_page extends Component {
 
         this.details_container = React.createRef()
         this.posts_container = React.createRef()
+        this.detail_section = React.createRef();
     }
 
 
@@ -1320,25 +1321,25 @@ class home_page extends Component {
         }
     }
 
-    open_post_nsfw_section(index, id, e5, object, post_type){
+    open_post_nsfw_section(index, id, e5, object, post_type, ignore_set_details_data){
         this.open_post_nsfw_bottomsheet()
 
         var me = this;
         setTimeout(function() {
             if(me.post_nsfw_page.current != null){
-                me.post_nsfw_page.current?.set_data(index, id, e5, object, post_type) 
+                me.post_nsfw_page.current?.set_data(index, id, e5, object, post_type, ignore_set_details_data) 
             }
         }, (1 * 500));  
         
     }
 
-    when_warning_ignored(index, id, e5, object, type){
+    when_warning_ignored(index, id, e5, object, type, ignore_set_details_data){
         this.open_post_nsfw_bottomsheet()
         if(type == 'post'){
-            this.open_post(index, id, e5, object)
+            this.open_post(index, id, e5, object, ignore_set_details_data)
         }
         else if(type == 'video'){
-            this.open_video(index, id, e5, object)
+            this.open_video(index, id, e5, object, ignore_set_details_data)
         }
         
     }
@@ -2741,32 +2742,29 @@ class home_page extends Component {
 
 
     sort_feed_based_on_my_section_tags2(objects){
-        var feed_objs = []
+        const feed_objs = []
+        const section_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
 
-        var section_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
-
-        objects.forEach(object => {
-            //first add the objects with the tags i follow
+        for(var i=0; i<objects.length; i++){
+            const object = objects[i]
             if(object['ipfs'] != null){
-                var object_tags = [].concat(object['ipfs'].entered_indexing_tags)
-                if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
-                    object_tags = [object['ipfs'].selected_device_city].concat(object_tags)
-                }
-                if(object['ipfs']['tags'] != null){
-                    object_tags = object_tags.concat(object['ipfs']['tags'])
+                const other_tags = object['ipfs']['tags'] == null ? [] : object['ipfs']['tags']
+                const object_tags = [].concat( object['ipfs'].entered_indexing_tags, other_tags)
+                if(object['ipfs'].selected_device_city != null){
+                    object_tags.push(object['ipfs'].selected_device_city)
                 }
                 if(object['ipfs'].device_city != null){
-                    object_tags = [object['ipfs'].device_city].concat(object_tags)
+                    object_tags.push(object['ipfs'].device_city)
                 }
                 if(object['ipfs'].audio_type != null){
-                    object_tags = [object['ipfs'].audio_type].concat(object_tags)
+                    object_tags.push(object['ipfs'].audio_type)
                 }
-                var includes = section_tags.some(r=> object_tags.includes(r))
-                if(includes && !feed_objs.includes(object)){
+                const includes = section_tags.some(r=> object_tags.includes(r))
+                if(includes == true && !feed_objs.includes(object)){
                     feed_objs.push(object)
                 }
             }
-        });
+        }
 
         return feed_objs
     }
@@ -3150,10 +3148,11 @@ class home_page extends Component {
     }
 
 
-    when_ends_object_clicked(index, id, e5, object){
+    when_ends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_end_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.props.load_extra_token_data(object)
+        this.reset_post_detail_object()
         this.add_to_tab(id+e5, id)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -3165,11 +3164,12 @@ class home_page extends Component {
         this.props.load_exchanges_royalty_payout_event_data(id, e5)
     }
 
-    when_spends_object_clicked(index, id, e5, object){
+    when_spends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_spend_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.props.load_extra_token_data(object)
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3197,6 +3197,7 @@ class home_page extends Component {
         this.setState({selected_job_post_item: id+e5})
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_jobs_clone = this.state.viewed_jobs.slice()
         var pos = viewed_jobs_clone.indexOf(id)
         if(pos == -1){
@@ -3219,6 +3220,7 @@ class home_page extends Component {
         this.props.set_extra_contract_data(object)
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_contracts_clone = this.state.viewed_contracts.slice()
         var pos = viewed_contracts_clone.indexOf(id)
         if(pos == -1){
@@ -3236,11 +3238,12 @@ class home_page extends Component {
         }
     }
 
-    when_subscription_item_clicked(index, id, e5, object){
+    when_subscription_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.props.set_extra_subsctiption_data(object)
         this.setState({selected_subscription_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_subscriptions_clone = this.state.viewed_subscriptions.slice()
         var pos = viewed_subscriptions_clone.indexOf(id)
         if(pos == -1){
@@ -3257,22 +3260,23 @@ class home_page extends Component {
         }
     }
 
-    when_post_item_clicked(index, id, e5, is_post_nsfw, object){
+    when_post_item_clicked(index, id, e5, is_post_nsfw, object, ignore_set_details_data){
         if(is_post_nsfw){
             if(this.props.app_state.auto_skip_nsfw_warning == 'e'){
-                this.open_post_nsfw_section(index, id, e5, object, 'post')
+                this.open_post_nsfw_section(index, id, e5, object, 'post', ignore_set_details_data)
             }else{
-                this.open_post(index, id, e5, object)
+                this.open_post(index, id, e5, object, ignore_set_details_data)
             }
         }else{
-            this.open_post(index, id, e5, object)
+            this.open_post(index, id, e5, object, ignore_set_details_data)
         }
     }
 
-    open_post(index, id, e5, object){
+    open_post(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_post_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_posts_clone = this.state.viewed_posts.slice()
         var pos = viewed_posts_clone.indexOf(id)
         if(pos == -1){
@@ -3290,10 +3294,11 @@ class home_page extends Component {
         }
     }
 
-    when_channel_item_clicked(index, id, e5, object){
+    when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_channel_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_channel_clone = this.state.viewed_channels.slice()
         var pos = viewed_channel_clone.indexOf(id)
         if(pos == -1){
@@ -3317,6 +3322,7 @@ class home_page extends Component {
         if(ignore_set_details_data == null) this.set_detail_data();
         this.props.load_extra_proposal_data(object)
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_proposals_clone = this.state.viewed_proposals.slice()
         var pos = viewed_proposals_clone.indexOf(id)
         if(pos == -1){
@@ -3338,6 +3344,7 @@ class home_page extends Component {
         this.setState({selected_mail_item: id})
         if(ignore_set_details_data == null) this.set_detail_data();
         this.props.fetch_uploaded_files_for_object(object)
+        this.reset_post_detail_object()
         this.props.get_mail_messages(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -3348,6 +3355,7 @@ class home_page extends Component {
         this.setState({selected_storefront_item: id+e5})
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_storefront_clone = this.state.viewed_stores.slice()
         var pos = viewed_storefront_clone.indexOf(id)
         if(pos == -1){
@@ -3369,6 +3377,7 @@ class home_page extends Component {
         this.setState({selected_bag_item: id+e5})
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_bag_clone = this.state.viewed_bags.slice()
         var pos = viewed_bag_clone.indexOf(id)
         if(pos == -1){
@@ -3398,6 +3407,7 @@ class home_page extends Component {
         this.setState({selected_contractor_item: id+e5})
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_contractors_clone = this.state.viewed_contractors.slice()
         var pos = viewed_contractors_clone.indexOf(id)
         if(pos == -1){
@@ -3414,10 +3424,11 @@ class home_page extends Component {
         }
     }
 
-    when_audio_item_clicked(index, id, e5, object){
+    when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_audio_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_audios_clone = this.state.viewed_audios.slice()
         var pos = viewed_audios_clone.indexOf(id)
         if(pos == -1){
@@ -3440,29 +3451,29 @@ class home_page extends Component {
     when_playlist_selected(song, index){
         this.setState({selected_audio_item: song['song_id']})
         this.set_detail_data()
-
+        this.reset_post_detail_object()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
-    when_video_item_clicked(index, id, e5, is_post_nsfw, object){
+    when_video_item_clicked(index, id, e5, is_post_nsfw, object, ignore_set_details_data){
         if(is_post_nsfw){
             if(this.props.app_state.auto_skip_nsfw_warning == 'e'){
-                this.open_post_nsfw_section(index, id, e5, object, 'video')
+                this.open_post_nsfw_section(index, id, e5, object, 'video', ignore_set_details_data)
             }else{
-                this.open_video(index, id, e5, object)
+                this.open_video(index, id, e5, object, ignore_set_details_data)
             }
         }else{
-            this.open_video(index, id, e5, object)
+            this.open_video(index, id, e5, object, ignore_set_details_data)
         }
     }
 
-    open_video(index, id, e5, object){
+    open_video(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_video_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id)
-
+        this.reset_post_detail_object()
         var viewed_videos_clone = this.state.viewed_videos.slice()
         var pos = viewed_videos_clone.indexOf(id)
         if(pos == -1){
@@ -3482,11 +3493,11 @@ class home_page extends Component {
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
     }
 
-    when_nitro_item_clicked(index, id, e5, object){
+    when_nitro_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_nitro_item: id+e5})
-        this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id)
-
+        this.reset_post_detail_object()
         var viewed_nitros_clone = this.state.viewed_nitros.slice()
         var pos = viewed_nitros_clone.indexOf(id)
         if(pos == -1){
@@ -3621,7 +3632,7 @@ class home_page extends Component {
         return(
             <div>
                 {this.render_page_tabs()}
-                <PostDetailSection page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} detail_page={this.state.detail_page} detail_selected_tag={this.state.detail_selected_tag}
+                <PostDetailSection ref={this.detail_section} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} detail_page={this.state.detail_page} detail_selected_tag={this.state.detail_selected_tag}
 
                 selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item} selected_audio_item={this.state.selected_audio_item} selected_video_item={this.state.selected_video_item} selected_nitro_item={this.state.selected_nitro_item}
 
@@ -3667,11 +3678,19 @@ class home_page extends Component {
                 when_discography_audio_item_clicked={this.when_discography_audio_item_clicked.bind(this)} when_discography_video_item_clicked={this.when_discography_video_item_clicked.bind(this)}
 
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
-                connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)}
+                connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)}
                 />
             </div>
         )
     }
+
+    reset_post_detail_object(){
+        var me = this;
+        setTimeout(function() {
+            me.detail_section.current?.reset_detail_section_tags()
+        }, (1 * 300));
+    }
+
 
     render_top_notification(data, duration){
         var os = getOS()
@@ -3844,6 +3863,7 @@ class home_page extends Component {
         this.setState({selected_audio_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
+        this.reset_post_detail_object()
         var viewed_audios_clone = this.state.viewed_audios.slice()
         var pos = viewed_audios_clone.indexOf(id)
         if(pos == -1){
@@ -3866,7 +3886,7 @@ class home_page extends Component {
         this.setState({selected_video_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
-
+        this.reset_post_detail_object()
         var viewed_videos_clone = this.state.viewed_videos.slice()
         var pos = viewed_videos_clone.indexOf(id)
         if(pos == -1){

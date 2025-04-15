@@ -20,6 +20,8 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import { from } from "@iotexproject/iotex-address-ts";
+import EndImg from './../assets/end_token_icon.png';
+import SpendImg from './../assets/spend_token_icon.png';
 
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -146,6 +148,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_view_event_objects()}
+                </div>
+            )
+        }
+        else if(option == 'view_e5_link'){
+            return(
+                <div>
+                    {this.render_view_e5_link_objects()}
                 </div>
             )
         }
@@ -1850,6 +1859,645 @@ class DialogPage extends Component {
         this.props.when_notification_object_clicked(index, object, this.state.data)
     }
 
+
+
+
+
+
+
+
+
+
+    render_view_e5_link_objects(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_e5_link_objects()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_e5_link_objects()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_e5_link_objects()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_e5_link_objects(){
+        var data = this.get_e5_link_items()
+        var items = data.link_items
+        var item_types = data.link_item_types
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few.' */})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few.' */})}
+                <div style={{height:10}}/>
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                                {this.render_link_object_item(item, index, item_types[index])}
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    get_e5_link_items(){
+        const id = this.state.data['id']
+        const link_items = []
+        const link_item_types = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            const e5 = this.props.app_state.e5s['data'][i]
+            const object_type = this.props.app_state.link_type_data[e5]
+            if(object_type != null && object_type != 0){
+                const obj = {
+                    17/* jobs */: this.props.app_state.created_jobs[e5],
+                    30/* contracts */: this.props.app_state.created_contracts[e5],
+                    32/* proposal */: this.props.app_state.my_proposals[e5],
+                    26/* contractor */: this.props.app_state.created_contractors[e5],
+                    33/* subscription */: this.props.app_state.created_subscriptions[e5],
+                    18/* post */: this.props.app_state.created_posts[e5],
+                    36/* channel */: this.props.app_state.created_channels[e5],
+                    27/* storefront */: this.props.app_state.created_stores[e5],
+                    25/* bag */: this.props.app_state.created_bags[e5],
+                    31/* token */: this.props.app_state.created_tokens[e5],
+                    19/* audioport */: this.props.app_state.created_audios[e5],
+                    20/* videoport */: this.props.app_state.created_videos[e5],
+                    21/* nitro */: this.props.app_state.created_nitros[e5]
+                }
+                const items = obj[object_type]
+                const e5_object = items.find(e => e['id'] == id)
+                if(e5_object != null && object_type != null && object_type != 0){
+                    //found an object
+                    link_items.push(e5_object)
+                    link_item_types.push(object_type)
+                }
+            }
+        }
+        return { link_items, link_item_types }
+    }
+
+    render_link_object_item(object, index, type){
+        const item = this.format_link_item(object, type)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+            return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+    }
+
+    when_link_object_clicked = async (index, object, object_type) => {
+        if(object_type == 17/* jobs */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 30/* contracts */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 32/* proposal */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 26/* contractor */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 33/* subscription */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 18/* post */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'post')
+            }
+        }
+        else if(object_type == 36/* channel */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+
+            var is_blocked = false
+            if(object['ipfs']['blocked_data'] != null){
+                var my_identifier = await this.get_my_unique_crosschain_identifier_number()
+                if(object['ipfs']['blocked_data']['identifiers'][my_identifier] != null){
+                    //ive been blocked
+                    is_blocked = true
+                }
+            }
+
+            if(object['hidden'] == true || is_blocked == true){
+                this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
+                return;
+            }
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type)
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'channel')
+            }
+        }
+        else if(object_type == 27/* storefront */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 25/* bag */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 31/* token */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 19/* audioport */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type)
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'audio')
+            }
+        }
+        else if(object_type == 20/* videoport */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'video')
+            }
+        }
+        else if(object_type == 21/* nitro */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+    }
+
+    get_my_unique_crosschain_identifier_number = async () => {
+        var uint8array_string = await this.props.get_my_entire_public_key() 
+        var uint8array = Uint8Array.from(uint8array_string.split(',').map(x=>parseInt(x,10)));
+        var arr = uint8array.toString().replaceAll(',','')
+        if(arr.length > 36){
+            arr = arr.slice(0, 36);
+        }
+        return arr
+    }
+
+    format_link_item(object, object_type){
+        if(object_type == 17/* jobs */){
+            return this.format_job_item(object)
+        }
+        else if(object_type == 30/* contracts */){
+            return this.format_contract_item(object)
+        }
+        else if(object_type == 32/* proposal */){
+            return this.format_proposal_item(object)
+        }
+        else if(object_type == 26/* contractor */){
+            return this.format_contractor_item(object)
+        }
+        else if(object_type == 33/* subscription */){
+            return this.format_subscription_item(object)
+        }
+        else if(object_type == 18/* post */){
+            return this.format_post_item(object)
+        }
+        else if(object_type == 36/* channel */){
+            return this.format_channel_item(object)
+        }
+        else if(object_type == 27/* storefront */){
+            return this.format_storefront_item(object)
+        }
+        else if(object_type == 25/* bag */){
+            return this.format_bag_item(object)
+        }
+        else if(object_type == 31/* token */){
+            return this.format_token_item(object)
+        }
+        else if(object_type == 19/* audioport */){
+            return this.format_audio_item(object)
+        }
+        else if(object_type == 20/* videoport */){
+            return this.format_video_item(object)
+        }
+        else if(object_type == 21/* nitro */){
+            return this.format_nitro_item(object)
+        }
+    }
+
+    format_job_item(object){
+        var tags = object['ipfs'] == null ? ['Job'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_contract_item(object){
+        var main_contract_tags = ['Contract', 'main', object['e5'] ]
+        var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var id_text = ' • '+object['id']
+        if(object['id'] == 2) id_text = ' • '+'Main Contract'
+        var sender = object['event'] == null ? '' : this.get_senders_name(object['event'].returnValues.p3, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), }
+        }
+    }
+
+    format_proposal_item(object){
+        var tags = object['ipfs'] == null ? ['Proposal'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var sender = this.get_senders_name(object['event'].returnValues.p4, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (obj[sender] == null ? '' : ' • '+obj[sender])
+            return alias
+        }
+    }
+
+    format_nitro_item(object){
+        var tags = object['ipfs'] == null ? ['NitroPost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'NitroPost ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
+        var author = sender
+        var default_image = EndImg
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_subscription_item(object){
+        var tags = object['ipfs'] == null ? ['Subscription'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var sender = this.get_senders_name(object['event'].returnValues.p3, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_contractor_item(object){
+        var tags = object['ipfs'] == null ? ['Contractor'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_post_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        var extra = ''
+        if(this.is_post_nsfw(object)){
+            extra = extra+'🔞'
+        }
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            extra = extra+'🔏'
+        }
+        if(extra != '') extra = extra + ' '
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        if(this.is_post_anonymous(object)){
+            sender = ''
+        }
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    is_post_nsfw(object){
+        if(object['ipfs'].get_post_nsfw_option == null) return false
+        var selected_nsfw_option = this.get_selected_item2(object['ipfs'].get_post_nsfw_option, 'e')
+        if(selected_nsfw_option == 1) return true
+    }
+
+    check_if_sender_has_paid_subscriptions(required_subscriptions){
+        var has_sender_paid_all_subs = true
+        if(required_subscriptions == null) return true
+        required_subscriptions.forEach(subscription_id => {
+            if(!this.has_paid_subscription(parseInt(subscription_id))){
+                has_sender_paid_all_subs=  false
+            }
+        });
+
+        return has_sender_paid_all_subs
+    }
+
+    has_paid_subscription(required_subscription_set){
+        var my_payment = this.get_all_sorted_objects_mappings(this.props.app_state.my_subscription_payment_mappings)[required_subscription_set]
+        if(my_payment == null || my_payment == 0) return false;
+        return true
+    }
+
+    is_post_preview_enabled(object){
+        if(object['ipfs'] == null || object['ipfs'].get_post_preview_option == null) return false
+        var selected_post_preview_option = this.get_selected_item2(object['ipfs'].get_post_preview_option, 'e')
+        if(selected_post_preview_option == 2) return true
+        return false
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
+    is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = this.get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
+    }
+
+    format_channel_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var extra = ''
+        if(object['ipfs']['blocked_data'] != null){
+            extra = extra+'🗝️'
+        }
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            extra = extra+'🔏'
+        }
+        if(extra != ''){
+            extra = extra+' '
+        }
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_storefront_item(object){
+        var tags = object['ipfs'] == null ? ['Storefront'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_bag_item(object){
+        var tags = [object['event'].returnValues.p3]
+        if(object['ipfs']['tags'] != null){
+            tags = object['ipfs']['tags']
+        }
+        if(object['ipfs'].device_city != null){
+            tags = [object['ipfs'].device_city].concat(tags)
+        }
+        var sender = this.get_senders_name(object['event'].returnValues.p3, object);
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        // var item_images = this.get_bag_images(object)
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
+            // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
+        }
+    }
+
+    format_audio_item(object){
+        var tags = object['ipfs'] == null ? ['Audiopost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].audio_type != null){
+            tags = [object['ipfs'].audio_type].concat(tags)
+        }
+        var extra = ''
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            extra = extra+'🔏'
+        }
+        if(extra != '') extra = extra + ' '
+        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        if(this.is_post_anonymous(object)){
+            author = ''
+        }
+        var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_video_item(object){
+        var tags = object['ipfs'] == null ? ['Videopost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].video_type != null){
+            tags = [object['ipfs'].video_type].concat(tags)
+        }
+        var extra = ''
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            extra = extra+'🔏'
+        }
+        if(extra != '') extra = extra + ' '
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
+        var author = sender
+        if(this.is_post_anonymous(object)){
+            author = ''
+        }
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (obj[sender] == null ? sender : obj[sender])
+            return alias
+        }
+    }
+
+    format_token_item(object){
+        var object_array = object['data']
+        var token_id = object['id']
+        var item = object
+        var type = object_array[0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
+        var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
+        var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
+        var img = EndImg
+        if(token_id == 3){
+            name = item['e5']
+        } else if(token_id == 5){
+            name = item['e5'].replace('E','3')
+            img = SpendImg
+        }
+        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
+        var image = img
+        if(item['ipfs']!= null){
+            if(item['ipfs'].token_image!= null){
+                image = item['ipfs'].token_image
+            }
+        }
+
+        var balance = item['balance']
+        var age = item['event'] == null ? 0 : item['event'].returnValues.p5
+        var time = item['event'] == null ? 0 : item['event'].returnValues.p4
+        return{
+            'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
+            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
+            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
 
 
 

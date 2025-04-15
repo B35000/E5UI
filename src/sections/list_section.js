@@ -1799,7 +1799,7 @@ class PostListSection extends Component {
         var post_author = item['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[item['e5']]
         if(me == null) me = 1
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author==me){
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author == me){
             return this.render_post_object(item, index)
         }
         else{
@@ -2404,47 +2404,6 @@ class PostListSection extends Component {
             )
         }
     }
-
-    // render_bag_data(object, item, index){
-    //     var images = this.get_bag_images(object)
-
-    //     return(
-    //         <div>
-    //             <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-    //                 {this.render_detail_item('3', item['id'])}
-    //             </div>
-    //         </div>
-    //     )
-    //     if(images.length == 0){
-    //         return(
-    //             <div>
-    //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-    //                     {this.render_detail_item('3', item['id'])}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    //     else if(images.length == 1){
-    //         return(
-    //             <div>
-    //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-    //                     {this.render_detail_item('8', item['id_with_image'])}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }else{
-    //         return(
-    //             <div>
-    //                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
-    //                     {this.render_detail_item('3', item['id'])}
-    //                 </div>
-    //                 <div style={{padding:'0px 0px 0px 0px'}}>
-    //                     {this.render_images(object)}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    // }
 
     render_bag_images(items){
         if(items.length == 0){

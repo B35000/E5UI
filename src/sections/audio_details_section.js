@@ -89,6 +89,10 @@ class AudioDetailSection extends Component {
         screen_width:0,
     };
 
+    reset_tags(){
+        this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags()})
+    }
+
     get_comment_structure_tags(){
         return{
             'i':{
@@ -2182,6 +2186,8 @@ class AudioDetailSection extends Component {
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
         var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
+        var text = this.format_message(item['message'], object)
+        const parts = text.split(/(\d+)/g);
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
@@ -2195,7 +2201,23 @@ class AudioDetailSection extends Component {
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                                 </div>
                             </div>
-                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{
+                                parts.map((part, index) => {
+                                    const num = parseInt(part, 10);
+                                    const isId = !isNaN(num) && num > 1000;
+                                    if (isId) {
+                                        return (
+                                            <span
+                                                key={index}
+                                                style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
+                                                onClick={() => this.when_e5_link_tapped(num)}>
+                                                    {part}
+                                            </span>
+                                        );
+                                    }
+                                    return <span key={index}>{part}</span>;
+                                })
+                            }</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
                             {this.render_images_if_any(item)}
                             
@@ -2209,6 +2231,10 @@ class AudioDetailSection extends Component {
             </div>
         )
         
+    }
+
+    when_e5_link_tapped(id){
+        this.props.when_e5_link_tapped(id)
     }
 
     longest_word_length(text) {
@@ -2670,7 +2696,7 @@ class AudioDetailSection extends Component {
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)}/>
             </div>
         )
 

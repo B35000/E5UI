@@ -35,12 +35,12 @@ function number_with_commas(x) {
 class NsfwPage extends Component {
     
     state = {
-        selected: 0, index: null, id: null, e5: null, type:null, 
+        selected: 0, index: null, id: null, e5: null, type:null, ignore_set_details_data:null,
     };
 
 
-    set_data(index, id, e5, object, type){
-        this.setState({index: index, id: id, e5: e5, object: object, type:type})
+    set_data(index, id, e5, object, type, ignore_set_details_data){
+        this.setState({index: index, id: id, e5: e5, object: object, type:type, ignore_set_details_data:ignore_set_details_data})
     }
 
     render(){
@@ -109,7 +109,7 @@ class NsfwPage extends Component {
 
 
     ignore_warning(){
-        this.props.when_warning_ignored(this.state.index, this.state.id, this.state.e5, this.state.object, this.state.type)
+        this.props.when_warning_ignored(this.state.index, this.state.id, this.state.e5, this.state.object, this.state.type, this.state.ignore_set_details_data)
     }
 
 
