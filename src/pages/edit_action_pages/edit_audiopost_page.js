@@ -23,7 +23,7 @@ import TextInput from '../../components/text_input';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import NumberPicker from '../../components/number_picker';
-
+import empty_image from '../../assets/default_image_background.png'
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
@@ -1581,10 +1581,12 @@ class EditAudioPage extends Component {
     }
 
     get_image_from_file(ecid){
+        if(ecid == null) return empty_image
         if(!ecid.startsWith('image')) return ecid
         var ecid_obj = this.get_cid_split(ecid)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return empty_image
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null) return empty_image
         return data['data']
     }
 

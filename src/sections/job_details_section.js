@@ -586,7 +586,7 @@ class JobDetailsSection extends Component {
             items = [0, 1, 2]
             return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -673,7 +673,7 @@ class JobDetailsSection extends Component {
             items = [0, 1, 2]
             return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -849,7 +849,7 @@ class JobDetailsSection extends Component {
             items = [0,1]
             return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -866,7 +866,7 @@ class JobDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'auto', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>

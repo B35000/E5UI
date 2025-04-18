@@ -3583,14 +3583,14 @@ class StackPage extends Component {
 
         if(runs.length == 0){
             //if its the first time running a transaction
-            var obj = [ /* set data */
+            const obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [0], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             string_obj[0].push(await this.get_account_public_key())
             
             strs.push(string_obj)
@@ -3599,17 +3599,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_contacts_onchain){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [1], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
-            var data = {'contacts':contacts_clone, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'contacts');
+            const data = {'contacts':contacts_clone, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'contacts');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -3618,17 +3618,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_blocked_accounts_onchain){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [2], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
-            var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blocked');
+            const data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blocked');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -3637,18 +3637,18 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_section_tags_onchain){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [3], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var job_section_tags = this.props.app_state.job_section_tags
             var explore_section_tags = this.props.app_state.explore_section_tags
-            var data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'tags');
+            const data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'tags');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -3657,17 +3657,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.update_data_in_E5){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [4], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var uploaded_data = this.props.app_state.uploaded_data_cids
-            var data = {'cids': uploaded_data, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'ciddata');
+            const data = {'cids': uploaded_data, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'ciddata');
             string_obj[0].push(string_data)
 
             strs.push(string_obj)
@@ -3677,14 +3677,14 @@ class StackPage extends Component {
 
         var added_song_album_data = this.get_songs_and_albums_to_add(pushed_txs);
         if(added_song_album_data.tracks.length != 0){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [5], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var my_albums = this.props.app_state.my_albums.slice()
             var my_tracks = this.props.app_state.my_tracks.slice()
 
@@ -3695,8 +3695,8 @@ class StackPage extends Component {
                 my_tracks.push(track)
             });
 
-            var data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myaudio');
+            const data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myaudio');
             string_obj[0].push(string_data)
 
             strs.push(string_obj)
@@ -3705,17 +3705,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_playlists_in_E5 == true){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [6], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var my_playlists = this.props.app_state.my_playlists
-            var data = {'playlists': my_playlists, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplaylists');
+            const data = {'playlists': my_playlists, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplaylists');
             string_obj[0].push(string_data)
 
             strs.push(string_obj)
@@ -3724,17 +3724,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_song_plays == true){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [7], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var song_plays = this.props.app_state.song_plays
-            var data = {'plays': song_plays, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplays');
+            const data = {'plays': song_plays, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplays');
             string_obj[0].push(string_data)
 
             strs.push(string_obj)
@@ -3743,17 +3743,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_followed_accounts == true){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [8], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var followed_accounts = this.props.app_state.followed_accounts
-            var data = {'followed_accounts': followed_accounts, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'following');
+            const data = {'followed_accounts': followed_accounts, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'following');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -3762,17 +3762,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_posts_blocked_by_me == true){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [9], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var posts_blocked_by_me = this.props.app_state.posts_blocked_by_me
-            var data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blockedposts');
+            const data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blockedposts');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -3781,17 +3781,17 @@ class StackPage extends Component {
         }
 
         if(this.props.app_state.should_update_censored_keyword_phrases == true){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [10], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var censored_keyword_phrases = this.props.app_state.censored_keyword_phrases
-            var data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'censoredkeywords');
+            const data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'censoredkeywords');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -3801,14 +3801,14 @@ class StackPage extends Component {
 
         var added_video_data = this.get_videos_to_add(pushed_txs);
         if(added_video_data.videos.length != 0){
-            var transaction_obj = [ /* set data */
+            const transaction_obj = [ /* set data */
                 [20000, 13, 0],
                 [0], [53],/* target objects */
                 [11], /* contexts */
                 [0] /* int_data */
             ]
 
-            var string_obj = [[]]
+            const string_obj = [[]]
             var my_videoposts = this.props.app_state.my_videoposts.slice()
             var my_videos = this.props.app_state.my_videos.slice()
 
@@ -3819,8 +3819,8 @@ class StackPage extends Component {
                 my_videos.push(video)
             });
 
-            var data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myvideo');
+            const data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myvideo');
             string_obj[0].push(string_data)
 
             strs.push(string_obj)
@@ -3869,7 +3869,7 @@ class StackPage extends Component {
                     this.props.lock_run(false)
                 }
                 else if(estimated_gas_to_be_consumed > run_gas_limit){
-                    this.props.notify(this.props.app_state.loc['1519']/* 'Set a gas limit above ' */+estimated_gas_to_be_consumed+this.props.app_state.loc['1520']/* ' gas' */,3900)
+                    this.props.notify(this.props.app_state.loc['1519']/* 'Set a gas limit above ' */+number_with_commas(estimated_gas_to_be_consumed)+this.props.app_state.loc['1520']/* ' gas' */,3900)
                     this.props.lock_run(false)
                 }
                 else{
@@ -4052,7 +4052,7 @@ class StackPage extends Component {
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */|| txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */ || txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
                     var t = txs[i]
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
                         t = await this.process_channel_object(txs[i])
@@ -9134,12 +9134,14 @@ class StackPage extends Component {
 
 
     render_wallet_settings_part(){
+        var size = this.props.size
+        var w = size == 's' ? '97%' : '99%'
         return(
             <div>
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <div className="row" style={{width:'99%', 'margin':'0px 0px 0px 1px'}}>
+                <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>
@@ -10855,7 +10857,7 @@ class StackPage extends Component {
                     {this.show_last_transaction_data()}
 
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1593fb']/* 'Note: Arweave usually takes 10 to 20 minuts to finialize uploads.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1593fb']/* 'Note: Arweave usually takes 10 to 20 minutes to finialize uploads.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                 </div>
             )
         }

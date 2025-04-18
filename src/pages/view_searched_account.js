@@ -144,6 +144,14 @@ class SearchedAccountPage extends Component {
         if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e' || selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
             f = 90
         }
+
+        if(this.state.searched_account == null){
+            return(
+                <div>
+                    {this.render_empty_everything()}
+                </div>
+            )
+        }
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -161,6 +169,45 @@ class SearchedAccountPage extends Component {
         setTimeout(function() {
             me.update_scroll_position()
         }, (1 * 10));
+    }
+
+
+    render_empty_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
     }
 
 
@@ -2551,7 +2598,6 @@ class SearchedAccountPage extends Component {
     render_transfers_event_item(item, index){
         var searched_account = this.state.searched_account
         var e5 = item['e5']
-
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
@@ -2588,7 +2634,7 @@ class SearchedAccountPage extends Component {
 
     get_sender_title_text(sender) {
         if (sender == this.props.app_state.user_account_id[this.state.searched_account['e5']]) {
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         } else {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias

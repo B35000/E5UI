@@ -771,9 +771,10 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var responses_text = object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender+' • '+responses_text, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1403,7 +1404,7 @@ class PostListSection extends Component {
     get_sender_title_text(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -1636,6 +1637,7 @@ class PostListSection extends Component {
                 </div>
                 <div style={{height: 10}}/>
                 {this.render_search_results()}
+                {this.render_searched_object_results()}
             </div>
         )
     }
@@ -1661,7 +1663,8 @@ class PostListSection extends Component {
         }else{
             this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 1000)
             this.setState({searched_account: typed_account})
-            this.props.get_searched_account_data(typed_account, typed_search)
+            // this.props.get_searched_account_data(typed_account, typed_search)
+            this.props.get_searched_account_data_trimmed(typed_account, typed_search)
         }
     }
 
@@ -1680,6 +1683,44 @@ class PostListSection extends Component {
         return this.remove_duplicates(data)
     }
 
+    get_searched_object_results(){
+        var data = this.props.app_state.searched_objects_data[this.state.searched_account]
+        const link_items = []
+        const link_item_types = []
+        if(data == null) return { link_items, link_item_types }
+        var data_without_duplicates = this.remove_duplicates(data)
+        for(var i=0; i<data_without_duplicates.length; i++){
+            const id = data_without_duplicates[i]['id']
+            const e5 = data_without_duplicates[i]['e5']
+            const object_type = data_without_duplicates[i]['object_type']
+            if(object_type != null && object_type != 0){
+                const obj = {
+                    17/* jobs */: this.props.app_state.created_jobs[e5],
+                    30/* contracts */: this.props.app_state.created_contracts[e5],
+                    32/* proposal */: this.props.app_state.my_proposals[e5],
+                    26/* contractor */: this.props.app_state.created_contractors[e5],
+                    33/* subscription */: this.props.app_state.created_subscriptions[e5],
+                    18/* post */: this.props.app_state.created_posts[e5],
+                    36/* channel */: this.props.app_state.created_channels[e5],
+                    27/* storefront */: this.props.app_state.created_stores[e5],
+                    25/* bag */: this.props.app_state.created_bags[e5],
+                    31/* token */: this.props.app_state.created_tokens[e5],
+                    19/* audioport */: this.props.app_state.created_audios[e5],
+                    20/* videoport */: this.props.app_state.created_videos[e5],
+                    21/* nitro */: this.props.app_state.created_nitros[e5]
+                }
+                const items = obj[object_type]
+                const e5_object = items.find(e => e['id'] == id)
+                if(e5_object != null && object_type != null && object_type != 0){
+                    //found an object
+                    link_items.push(e5_object)
+                    link_item_types.push(object_type)
+                }
+            }
+        }
+        return { link_items, link_item_types }
+    }
+
     render_search_results(){
         var middle = this.props.height-153;
         var size = this.props.size;
@@ -1687,7 +1728,13 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_search_results()
-        if(items.length == 0){
+        var object_data = this.props.app_state.searched_objects_data[this.state.searched_account]
+        var objects_available = true
+        if(object_data == null || object_data.length == 0){
+            objects_available = false
+        }
+
+        if(items.length == 0 && !objects_available){
             items = ['0','1'];
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
@@ -1727,6 +1774,193 @@ class PostListSection extends Component {
                 {this.render_detail_item('3', {'title':' • '+alias+' • '+this.state.searched_account, 'details':start_and_end(address), 'size':'l','title_image':e5_img})}
             </div>
         )
+    }
+
+    render_searched_object_results(){
+        var data = this.get_searched_object_results()
+        var items = data.link_items
+        var item_types = data.link_item_types
+        return(
+            <div>
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                                {this.render_link_object_item(item, index, item_types[index])}
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_link_object_item(object, index, type){
+        const item = this.format_link_item(object, type)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+            return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+    }
+
+    format_link_item(object, object_type){
+        if(object_type == 17/* jobs */){
+            return this.format_job_item(object)
+        }
+        else if(object_type == 30/* contracts */){
+            return this.format_contract_item(object)
+        }
+        else if(object_type == 32/* proposal */){
+            return this.format_proposal_item(object)
+        }
+        else if(object_type == 26/* contractor */){
+            return this.format_contractor_item(object)
+        }
+        else if(object_type == 33/* subscription */){
+            return this.format_subscription_item(object)
+        }
+        else if(object_type == 18/* post */){
+            return this.format_post_item(object)
+        }
+        else if(object_type == 36/* channel */){
+            return this.format_channel_item(object)
+        }
+        else if(object_type == 27/* storefront */){
+            return this.format_storefront_item(object)
+        }
+        else if(object_type == 25/* bag */){
+            return this.format_bag_item(object)
+        }
+        else if(object_type == 31/* token */){
+            return this.format_token_item(object)
+        }
+        else if(object_type == 19/* audioport */){
+            return this.format_audio_item(object)
+        }
+        else if(object_type == 20/* videoport */){
+            return this.format_video_item(object)
+        }
+        else if(object_type == 21/* nitro */){
+            return this.format_nitro_item(object)
+        }
+    }
+
+    when_link_object_clicked = async (index, object, object_type) => {
+        if(object_type == 17/* jobs */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 30/* contracts */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 32/* proposal */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 26/* contractor */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 33/* subscription */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 18/* post */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'post')
+            }
+        }
+        else if(object_type == 36/* channel */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+
+            var is_blocked = false
+            if(object['ipfs']['blocked_data'] != null){
+                var my_identifier = await this.get_my_unique_crosschain_identifier_number()
+                if(object['ipfs']['blocked_data']['identifiers'][my_identifier] != null){
+                    //ive been blocked
+                    is_blocked = true
+                }
+            }
+
+            if(object['hidden'] == true || is_blocked == true){
+                this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
+                return;
+            }
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type)
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'channel')
+            }
+        }
+        else if(object_type == 27/* storefront */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 25/* bag */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 31/* token */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
+        else if(object_type == 19/* audioport */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type)
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'audio')
+            }
+        }
+        else if(object_type == 20/* videoport */){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'video')
+            }
+        }
+        else if(object_type == 21/* nitro */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
     }
 
 

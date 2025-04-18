@@ -831,7 +831,7 @@ class App extends Component {
     
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
-    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{},
+    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{},
   };
 
   get_static_assets(){
@@ -3065,7 +3065,7 @@ class App extends Component {
         hide_pip: hide_pip,
         preferred_currency: preferred_currency,
         all_locales: all_locales, 
-        loc: (all_locales[my_language] == null ? this.state.loc : all_locales[my_language]),
+        // loc: (all_locales[my_language] == null ? this.state.loc : all_locales[my_language]),
         theme_image: theme_image,
         subscribed_nitros: subscribed_nitros,
         uncommitted_upload_cids: uncommitted_upload_cids,
@@ -3081,7 +3081,6 @@ class App extends Component {
         if(albums_to_stash != null){
           me.load_albums_to_stash_to_state(albums_to_stash)
         }
-        me.reset_locale_settings()
       }, (1 * 500));
     }
     this.setState({beacon_chain_url: `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`})
@@ -4957,14 +4956,14 @@ class App extends Component {
           {this.render_configure_nitro_node_bottomsheet()}
           {this.render_dialer_bottomsheet()}
           {this.render_view_notification_log_bottomsheet()}
+          {this.render_edit_videopost_object_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
           {this.render_pick_file_bottomsheet()}
+          {this.render_full_video_bottomsheet()}
           {this.render_dialog_bottomsheet()}
           {this.render_view_number_bottomsheet()}
-          {this.render_edit_videopost_object_bottomsheet()}
-          {this.render_full_video_bottomsheet()}
           
           {this.render_toast_container()}
           <audio ref={this.remoteStream} autoPlay />
@@ -5047,7 +5046,12 @@ class App extends Component {
           load_extra_token_data={this.load_extra_token_data.bind(this)}
           load_extra_proposal_data={this.load_extra_proposal_data.bind(this)}
 
-          load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)}
+          load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} get_searched_account_data_trimmed={this.get_searched_account_data_trimmed.bind(this)}
+
+          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
+
+
+
         />
         {this.render_homepage_toast()}
       </div>
@@ -13181,13 +13185,18 @@ class App extends Component {
     }
   }
 
-  when_searched_account_clicked(item, searched_id){
+  when_searched_account_clicked = async (item, searched_id) => {
     this.open_searched_account_bottomsheet()
+
+    await this.get_searched_account_data(item['id'], item['typed_search'], item['e5'])
+    await this.wait(300)
+    var data = this.state.searched_accounts_data[item['id']] == null ? [] : this.state.searched_accounts_data[item['id']]
+    const object = data.find(e => e['address'] === item['address'])
 
     var me = this;
     setTimeout(function() {
       if(me.searched_account_page.current != null){
-        me.searched_account_page.current?.set_searched_item(item, searched_id)
+        me.searched_account_page.current?.set_searched_item(object, searched_id)
       }
     }, (1 * 500));
     
@@ -14120,13 +14129,13 @@ class App extends Component {
       this.homepage.current?.reset_post_detail_object()
     }
 
-    this.open_dialog_bottomsheet()
+    if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet()
     if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
   }
 
   show_post_item_preview_with_subscription(object, type){
     this.homepage.current?.show_post_item_preview_with_subscription(object, type)
-    this.open_dialog_bottomsheet()
+    if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet()
     if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
   }
 
@@ -18668,7 +18677,7 @@ class App extends Component {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
     var request = `${beacon_node}/marco`
-    console.log('apppage', 'check_if_beacon_node_is_online', request)
+    // console.log('apppage', 'check_if_beacon_node_is_online', request)
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -19102,7 +19111,7 @@ class App extends Component {
 
       const manual_beacon_node_disabled = root_data.get_manual_disable_beacon_node_override_object == null ? 'e': this.get_selected_item(root_data.get_manual_disable_beacon_node_override_object, 'e')/* 'e' */
 
-      const my_language = this.get_language()
+      const my_language = this.get_language() == null ? 'en' : this.get_language()
       if(my_language != 'en' && all_locales[my_language] != null){
         // this.prompt_top_notification('language: '+my_language, 5000)
         const language_obj = await this.load_json_object_from_url(all_locales[my_language])
@@ -19985,22 +19994,52 @@ class App extends Component {
     // console.log('get_e5_uploaded_cid_data', section_cid_data_events)
 
     if(section_cid_data_events.length != 0){
-      var latest_event = section_cid_data_events[section_cid_data_events.length - 1];
-      var section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
-      
-      var cids = [];
-      if(section_cid_data['encrypted'] != null && section_cid_data['encrypted'] == true){
-        var key = this.state.accounts['E25'].privateKey.toString()
-        var bytes = CryptoJS.AES.decrypt(section_cid_data['cids'], key);
-        var originalText = bytes.toString(CryptoJS.enc.Utf8);
-        var decrypted_data_object = JSON.parse(originalText);
-        cids = decrypted_data_object['data']
-      }else{
-        cids = section_cid_data['cids'];
+      const cids = [];
+      const latest_events = section_cid_data_events.slice(-3) 
+      if(this.state.beacon_node_enabled == true){
+        await this.fetch_multiple_cids_from_nitro(latest_events, 0, 'p4')
       }
+      for(var c = latest_events.length - 1; c >= 0; c--){
+        const latest_event = latest_events[c];
+        const section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+        console.log('data', 'section_cid_data', latest_event.returnValues.p4, section_cid_data)
+        if(section_cid_data != null){
+          if(section_cid_data['encrypted'] != null && section_cid_data['encrypted'] == true){
+            const key = this.state.accounts['E25'].privateKey.toString()
+            const bytes = CryptoJS.AES.decrypt(section_cid_data['cids'], key);
+            const originalText = bytes.toString(CryptoJS.enc.Utf8);
+            const decrypted_data_object = JSON.parse(JSON.parse(originalText));
+            console.log('data', 'decrypted_data_object', decrypted_data_object)
+            decrypted_data_object['data'].forEach(item => {
+              if(item != null && !cids.includes(item)){
+                cids.push(item)
+              }
+            });
+          }else{
+            section_cid_data['cids'].forEach(item => {
+              if(item != null && !cids.includes(item)){
+                cids.push(item)
+              }
+            });
+          }
+        }
+      }
+      // var latest_event = section_cid_data_events[section_cid_data_events.length - 1];
+      // var section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      
+      
+      // if(section_cid_data['encrypted'] != null && section_cid_data['encrypted'] == true){
+      //   var key = this.state.accounts['E25'].privateKey.toString()
+      //   var bytes = CryptoJS.AES.decrypt(section_cid_data['cids'], key);
+      //   var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      //   var decrypted_data_object = JSON.parse(originalText);
+      //   cids = decrypted_data_object['data']
+      // }else{
+      //   cids = section_cid_data['cids'];
+      // }
 
       // var clone = this.state.uploaded_data_cids.slice();
-      var clone = []
+      const clone = []
       cids.forEach(cid => {
         if(!clone.includes(cid) && !this.state.deleted_files.includes(cid)){
           clone.push(cid)
@@ -20022,7 +20061,7 @@ class App extends Component {
   }
 
   fetch_uploaded_data_from_ipfs = async (cids, is_my_cids) => {
-    var clone = structuredClone(this.state.uploaded_data) 
+    // console.log('datas', 'all cids', cids)
     for(var i=0; i<cids.length; i++){
       // console.log('datas', 'fetching', cids[i])
       var ecid_obj = this.get_cid_split(cids[i])
@@ -20034,18 +20073,24 @@ class App extends Component {
       var data = this.fetch_from_storage(cids[i])
       if(data == null){
         data = await this.fetch_file_data_from_respective_storage(id, storage_id, file_name, 0)
-        this.store_in_local_storage(cids[i], data)
+        // console.log('datas', 'loaded:', data)
+        if(data != null) this.store_in_local_storage(cids[i], data);
       }
       if(data != null){
         // console.log('datas', 'obtained object', data)
-        if(clone[filetype] == null) clone[filetype] = {}
-        clone[filetype][cids[i]] = data
-        if(is_my_cids){
-          var cid_clone = this.state.uploaded_data_cids.slice()
-          cid_clone.push(cids[i])
-          this.setState({uploaded_data_cids: cids, uploaded_data: clone})
-        }else{
-          this.setState({uploaded_data: clone})
+        var clone = structuredClone(this.state.uploaded_data)
+        try{
+          if(clone[filetype] == null) clone[filetype] = {}
+          clone[filetype][cids[i]] = data
+          if(is_my_cids){
+            var cid_clone = this.state.uploaded_data_cids.slice()
+            cid_clone.push(cids[i])
+            this.setState({uploaded_data_cids: cids, uploaded_data: clone})
+          }else{
+            this.setState({uploaded_data: clone})
+          }
+        }catch(e){
+          console.log('datas', e)
         }
       }
     }
@@ -20063,6 +20108,7 @@ class App extends Component {
       var split_cid_array2 = cid_with_storage.split('.')
       cid = split_cid_array2[0]
       storage_with_filename = split_cid_array2[1]
+      storage = storage_with_filename
       if(storage_with_filename.includes(',')){
         var split_cid_array3 = storage_with_filename.split(',')
         storage = split_cid_array3[0]
@@ -20304,16 +20350,18 @@ class App extends Component {
       var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var loaded_followed_accounts = followed_account_data['followed_accounts']
 
-      var clone = []
-      for(var i=0; i<loaded_followed_accounts.length; i++){
-        var account = loaded_followed_accounts[i]
-        if(!clone.includes(account)){
-          clone.push(account)
+      if(loaded_followed_accounts != null){
+        var clone = []
+        for(var i=0; i<loaded_followed_accounts.length; i++){
+          var account = loaded_followed_accounts[i]
+          if(!clone.includes(account)){
+            clone.push(account)
+          }
         }
-      }
-      if(this.has_my_followed_accounts_loaded[e5] != account){
-        this.setState({followed_accounts: clone})
-        this.has_my_followed_accounts_loaded[e5] = account
+        if(this.has_my_followed_accounts_loaded[e5] != account){
+          this.setState({followed_accounts: clone})
+          this.has_my_followed_accounts_loaded[e5] = account
+        }
       }
     }
 
@@ -23066,6 +23114,29 @@ class App extends Component {
     });
     created_job_events = my_posted_events
 
+
+    var page = this.homepage.current?.get_selected_tag_name()
+    if(page == this.getLocale()['1205']/* 'applied' */){
+      //if were in the applied section, prioritize my applied jobs first
+      var my_applied_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account ,p3/* context */:36})
+      var my_applied_jobs = []
+      my_applied_responses.forEach(event => {
+        if(!my_applied_jobs.includes(event.returnValues.p1)){
+          my_applied_jobs.push(event.returnValues.p1)
+        }
+      });
+
+      var my_applied_events = created_job_events.filter(function (event) {
+        return (my_applied_jobs.includes(event.returnValues.p2/* item */))
+      })
+      created_job_events.forEach(event => {
+        if(my_applied_events.find(e => e.returnValues.p2/* item */ === event.returnValues.p2/* item */) == null){
+          my_applied_events.push(event)
+        }
+      });
+      created_job_events = my_applied_events
+    }
+
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:17/* job_object */ , p2/* item */: prioritized_accounts})
 
@@ -23117,7 +23188,6 @@ class App extends Component {
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
         var job_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(job_data != null){
-          // var response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
           var response_count = []
           all_response_count.forEach(event => {
             if(event.returnValues.p1/* target_id */ == id){
@@ -23498,6 +23568,28 @@ class App extends Component {
       }
     });
     created_bag_events = my_posted_events
+
+    var page = this.homepage.current?.get_selected_tag_name()
+    if(page == this.getLocale()['1264ae']/* 'my-responses' */){
+      //if were in the applied section, prioritize my applied jobs first
+      var my_applied_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account ,p3/* context */:36})
+      var my_applied_bags = []
+      my_applied_responses.forEach(event => {
+        if(!my_applied_bags.includes(event.returnValues.p1)){
+          my_applied_bags.push(event.returnValues.p1)
+        }
+      });
+
+      var my_applied_events = created_bag_events.filter(function (event) {
+        return (my_applied_bags.includes(event.returnValues.p2/* item */))
+      })
+      created_bag_events.forEach(event => {
+        if(my_applied_events.find(e => e.returnValues.p1/* item */ === event.returnValues.p1/* item */) == null){
+          my_applied_events.push(event)
+        }
+      });
+      created_bag_events = my_applied_events
+    }
 
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* item_type */:25/* bag_object */ , p3/* sender_account_id */: prioritized_accounts})
@@ -24883,7 +24975,7 @@ class App extends Component {
 
   load_contract_item = async (e5, contract_id) => {
     var e5_address = this.state.e5s[e5].e5_address;
-    console.log('load_contract_item','contract data to load', e5, contract_id)
+    // console.log('load_contract_item','contract data to load', e5, contract_id)
     
     if(e5_address != ''){
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -24932,6 +25024,8 @@ class App extends Component {
 
         var entered_accounts = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]})
 
+        var force_exit_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:18/* force_exit(18) */,p1/* contract_id */:created_contracts[i]})
+
         var contract_entered_accounts = []
         var archive_accounts = []
         for(var e=0; e<entered_accounts.length; e++){
@@ -24977,7 +25071,7 @@ class App extends Component {
 
         var timestamp = event == null ? 0 : event.returnValues.p4
         var author = event == null ? 0 : event.returnValues.p3
-        var contract_obj = {'id':created_contracts[i], 'entry_expiry':entered_timestamp_data[i][0], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
+        var contract_obj = {'id':created_contracts[i], 'entry_expiry':entered_timestamp_data[i][0], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5, 'force_exit_events':force_exit_events}
 
         contract_obj['participants'] = contract_entered_accounts
         contract_obj['participant_times'] = entered_account_times_data
@@ -24999,7 +25093,7 @@ class App extends Component {
       var proposal_ids = []
       var proposal_ids_events = []
       contracts_proposals.forEach(proposal_event => {
-        proposal_ids.push(parseInt(proposal_event.returnValues.p2))//<--------issue! should be p4
+        proposal_ids.push(parseInt(proposal_event.returnValues.p2))
         proposal_ids_events.push(proposal_event)
       });
 
@@ -25237,6 +25331,8 @@ class App extends Component {
         this.load_nitro_data([id], e5)
       }
     }
+
+    return object_type
   }
 
 
@@ -25569,7 +25665,7 @@ class App extends Component {
       const focused_e5 = this.state.e5s['data'][i]
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
-        var ids = this.get_my_created_contract_ids_in_e5(focused_e5, account)
+        var ids = await this.get_my_created_contract_ids_in_e5(focused_e5, account)
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
         const G5contractArtifact = require('./contract_abis/G5.json');
         const G5_address = this.state.addresses[focused_e5][3];
@@ -27231,6 +27327,8 @@ class App extends Component {
 
   store_data_in_infura = async (_data, unencrypt_image, tags_obj) => {
     var data = unencrypt_image ? _data: this.encrypt_storage_object(_data, tags_obj)
+    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) :this.encrypt_storage_data(_data))
+
     const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
     const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
     const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
@@ -27246,6 +27344,34 @@ class App extends Component {
 
     try {
       const added = await client.add(data)
+      return added.path.toString()
+    } catch (error) {
+      console.log('Error uploading file: ', error)
+      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      return '';
+    }
+  }
+
+  store_data_in_infura2 = async (_data, unencrypt_image, tags_obj) => {
+    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) :this.encrypt_storage_data(_data))
+    
+    const obj = { data: data }
+    const final_data = JSON.stringify(obj)
+    const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
+    const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
+    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    const client = create({
+      host: 'ipfs.infura.io',
+      port: 5001,
+      protocol: 'https',
+      apiPath: '/api/v0',
+      headers: {
+        authorization: auth,
+      }
+    })
+
+    try {
+      const added = await client.add(final_data)
       return added.path.toString()
     } catch (error) {
       console.log('Error uploading file: ', error)
@@ -27465,41 +27591,41 @@ class App extends Component {
 
 
   store_data_in_chainsafe_storage = async(_data, unencrypt_image, tags_obj) => {
-    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) :this.encrypt_storage_data(_data))
-    const CHAINSAFE_STORAGE_KEY = `${process.env.REACT_APP_CHAINSAFE_API_KEY}`
-    const CHAINSAFE_STORAGE_BUCKET_ID = `${process.env.REACT_APP_CHAINSAFE_BUCKET_ID}`
+    // var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) :this.encrypt_storage_data(_data))
+    // const CHAINSAFE_STORAGE_KEY = `${process.env.REACT_APP_CHAINSAFE_API_KEY}`
+    // const CHAINSAFE_STORAGE_BUCKET_ID = `${process.env.REACT_APP_CHAINSAFE_BUCKET_ID}`
    
-    const form = new FormData();
-    const now = Date.now()
-    const file_data = this.make_file(data, (makeid(32)+now))
-    form.append('file', file_data);
-    form.append('path', '/');
+    // const form = new FormData();
+    // const now = Date.now()
+    // const file_data = this.make_file(data, (makeid(32)+now))
+    // form.append('file', file_data);
+    // form.append('path', '/');
 
-    var request = `https://api.chainsafe.io/api/v1/bucket/${CHAINSAFE_STORAGE_BUCKET_ID}/upload`
-    var request_data = {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${CHAINSAFE_STORAGE_KEY}`
-      },
-      body: form
-    }
+    // var request = `https://api.chainsafe.io/api/v1/bucket/${CHAINSAFE_STORAGE_BUCKET_ID}/upload`
+    // var request_data = {
+    //   method: 'POST',
+    //   headers: {
+    //     'Authorization': `Bearer ${CHAINSAFE_STORAGE_KEY}`
+    //   },
+    //   body: form
+    // }
 
-    try{
-      const response = await fetch(request, request_data);
-      if (!response.ok) {
-        console.log(response)
-        // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return '';
-      }
-      var data = await response.text();
-      var parsed_obj = JSON.parse(data);
-      var cid = parsed_obj['files_details'][0]['cid']
-      return cid
-    }
-    catch(e){
-      console.log(e)
-      return ''
-    }
+    // try{
+    //   const response = await fetch(request, request_data);
+    //   if (!response.ok) {
+    //     console.log(response)
+    //     // throw new Error(`Failed to retrieve data. Status: ${response}`);
+    //     return '';
+    //   }
+    //   var data = await response.text();
+    //   var parsed_obj = JSON.parse(data);
+    //   var cid = parsed_obj['files_details'][0]['cid']
+    //   return cid
+    // }
+    // catch(e){
+    //   console.log(e)
+    //   return ''
+    // }
   }
 
   make_file(data, file_name){
@@ -27517,15 +27643,18 @@ class App extends Component {
     await this.wait(this.state.ipfs_delay)
     var gateways = [
       `https://ipfs.chainsafe.io/ipfs/${cid}`,
-      `https://${cid}.ipfs.w3s.link/${file_name}.json`
+      `https://${cid}.ipfs.w3s.link/${file_name}.json`,
+      `https://ipfs.io/ipfs/${cid}`,
     ]
     await this.wait(this.state.ipfs_delay)
-    var selected_gateway = storage_id == 'ch' ? gateways[0] : gateways[1]
-    if(storage_id == 'ch'){
+    var obje = {'ch':gateways[0], 'w3':gateways[1], 'in':gateways[2]}
+    var selected_gateway = obje[storage_id]
+    if(storage_id == 'ch' || storage_id == 'in'){
       selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
     }else{
       selected_gateway = this.get_selected_gateway_if_custom_set2(cid, selected_gateway, file_name)
     }
+    // console.log('datas', cid, storage_id)
     try {
       const response = await fetch(selected_gateway);
       if (!response.ok) {
@@ -27541,7 +27670,7 @@ class App extends Component {
       return json
       // Do something with the retrieved data
     } catch (error) {
-      console.log('stackdata','Error fetching web3.storage file: ', error)
+      // console.log('datas', error)
       if(depth<2){
         return this.fetch_file_data_from_respective_storage(cid, storage_id, file_name, depth+1)
       }
@@ -27672,12 +27801,12 @@ class App extends Component {
       var cids = []
       for(var i=0; i<datas.length; i++){
         var _data = datas[i]
-        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data), null, null)
+        var cid = await this.store_data_in_infura2(JSON.stringify(_data), null, null)
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
           return;
         }else{
-          var e_cid = _data['type']+'_'+cid+'.ch'
+          var e_cid = _data['type']+'_'+cid+'.in'
           e_cids.push(e_cid)
           cids.push(cid)
         }
@@ -27821,13 +27950,13 @@ class App extends Component {
         var cids = []
         var _data = structuredClone(data)
         _data['data'] = `https://arweave.net/${transaction_hash}`
-        var cid = await this.store_data_in_chainsafe_storage(JSON.stringify(_data), null, null)
+        var cid = await this.store_data_in_infura2(JSON.stringify(_data), null, null)
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
           this.setState({is_uploading_to_arweave: false})
           return;
         }else{
-          var e_cid = _data['type']+'_'+cid+'.ch'
+          var e_cid = _data['type']+'_'+cid+'.in'
           e_cids.push(e_cid)
           cids.push(cid)
         }
@@ -29495,10 +29624,10 @@ class App extends Component {
 
     var all_events = [];
     for(var i=0; i<send_tokens_event_data.length; i++){
-      all_events.push({'event':send_tokens_event_data[i], 'action':'Sent', 'timestamp':send_tokens_event_data[i].returnValues.p5})
+      all_events.push({'event':send_tokens_event_data[i], 'action':'Sent', 'timestamp':send_tokens_event_data[i].returnValues.p5, 'e5':e5})
     }
     for(var i=0; i<received_tokens_event_data.length; i++){
-      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
+      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5, 'e5':e5})
     }
     var sorted_events = this.sortByAttributeDescending(all_events, 'timestamp');
 
@@ -29753,12 +29882,65 @@ class App extends Component {
     }
   }
 
-  get_searched_account_data = async (id, typed_search) => {
+  get_searched_account_data_trimmed = async (id, typed_search) => {
+    var data = []
+    var data2 = []
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      if(this.state.e5s[e5].active == true){
+        const web3 = new Web3(this.get_web3_url_from_e5(e5));
+        const contractArtifact = require('./contract_abis/E5.json');
+        const contractAddress = this.get_contract_from_e5(e5)
+        const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+       
+        var contract_addresses = this.state.addresses[e5]
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var object_type = await this.load_id_type_then_object(id, E52contractInstance, e5) 
+
+        if(object_type != 0){
+          var obj = {'e5': e5, 'id':id, 'object_type': object_type, 'typed_search':typed_search}
+          data2.push(obj)
+        }
+        else{
+          var account_address = await contractInstance.methods.f289(id).call((error, result) => {});
+          var alias = this.state.alias_bucket[e5][id] == null ? 'Unknown' : this.state.alias_bucket[e5][id]
+          var should_include_id = true;
+          if(id != typed_search){
+            if(alias != typed_search){
+              should_include_id = false
+            }
+          }
+          if(account_address.toString() != '0x0000000000000000000000000000000000000000' && should_include_id){
+            var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'typed_search': typed_search}
+            data.push(obj)
+          }
+        }
+      }
+    }
+
+    if(data.length == 0 && data2.length == 0){
+      this.prompt_top_notification(this.getLocale()['2737']/* 'Search complete, no account data found' */, 5000)
+      return;
+    }
+
+    var clone = structuredClone(this.state.searched_accounts_data)
+    clone[id] = data
+    this.setState({searched_accounts_data: clone})
+
+    var clone = structuredClone(this.state.searched_objects_data)
+    clone[id] = data2
+    this.setState({searched_objects_data: clone})
+  }
+
+  get_searched_account_data = async (id, typed_search, e5_to_focus_on) => {
     var data = []
     var data_found = false;
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
-      if(this.state.e5s[e5].active == true){
+      if(this.state.e5s[e5].active == true && e5_to_focus_on == e5){
         const web3 = new Web3(this.get_web3_url_from_e5(e5));
         const contractArtifact = require('./contract_abis/E5.json');
         const contractAddress = this.get_contract_from_e5(e5)
@@ -29883,7 +30065,6 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2737']/* 'Search complete, no account data found' */, 5000)
       return;
     }
-    console.log('data: ,', this.state.searched_accounts_data)
     var clone = structuredClone(this.state.searched_accounts_data)
     clone[id] = data
     this.setState({searched_accounts_data: clone})

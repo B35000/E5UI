@@ -1907,10 +1907,13 @@ class DialogPage extends Component {
         var data = this.get_e5_link_items()
         var items = data.link_items
         var item_types = data.link_item_types
+        var entry_text = this.props.app_state.loc['3067v']/* '$ entries found.' */
+        entry_text = entry_text.replace('$', items.length)
         if(items.length == 0){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few.' */})}
+                    {this.render_detail_item('10', {'text':entry_text, 'textsize':'9px', 'font':this.props.app_state.font})}
                     <div style={{height:10}}/>
                     {this.render_empty_object()}
                 </div>
@@ -1919,6 +1922,7 @@ class DialogPage extends Component {
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few.' */})}
+                {this.render_detail_item('10', {'text':entry_text, 'textsize':'9px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <div style={{overflow: 'auto'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
@@ -2155,9 +2159,10 @@ class DialogPage extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var responses_text = object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender+' • '+responses_text, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }

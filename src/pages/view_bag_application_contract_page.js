@@ -69,7 +69,7 @@ class ViewBagApplicationContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1632b']/* 'contract-data' */, this.props.app_state.loc['1632c']/* 'proposals' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1632b']/* 'contract-data' */, this.props.app_state.loc['1632c']/* 'proposals' */, this.props.app_state.loc['1632h']/* 'participants' */, this.props.app_state.loc['1632k']/* 'force-exits' */], [1]
             ],
         };
     }
@@ -213,6 +213,20 @@ class ViewBagApplicationContractPage extends Component {
             return(
                 <div>
                     {this.render_proposals_data()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1632h']/* 'participants' */){
+            return(
+                <div>
+                    {this.render_participants_data()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1632k']/* 'force-exits' */){
+            return(
+                <div>
+                    {this.render_force_exit_events()}
                 </div>
             )
         }
@@ -737,6 +751,171 @@ class ViewBagApplicationContractPage extends Component {
             return 0
         }
         return prop
+    }
+
+
+
+
+
+
+
+    render_participants_data(){
+        var application_item = this.state.application_item
+        var object = this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']] == null ? [] : this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']]['contract']
+
+        var participans_data = this.get_active_participants(object)
+        var active_participants = participans_data.active_participants
+        var inactive_participants = participans_data.inactive_participants
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1666a']/* 'Participant Accounts' */, 'details':this.props.app_state.loc['1666b']/* 'Below are the accounts that have entered the contract before.' */})}
+                <div style={{height:10}}/>
+                {this.render_active_participants(object, active_participants, inactive_participants)}
+                {this.render_inactive_participants(object, inactive_participants)}
+                {this.render_empty_views_if_no_participants(active_participants, inactive_participants)}
+            </div>
+        )
+    }
+
+    get_active_participants(object){
+        var active_participants = []
+        var inactive_participants = []
+        object['participants'].forEach(participant => {
+            if(object['participant_times'][participant] > (Date.now()/1000)){
+                active_participants.push(participant)
+            }else{
+                inactive_participants.push(participant)
+            }
+        });
+        return {active_participants: active_participants, inactive_participants: inactive_participants}
+    }
+
+    render_active_participants(object, active_participants, inactive_participants){
+        if(active_participants.length == 0) return;
+        return(
+            <div>
+                {active_participants.map((item, index) => (
+                    <div key={index}>
+                        {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.get_account_time(item, object), 'size':'l'})}
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+                {this.render_line_if_inactive_participants_present(inactive_participants)}
+            </div>
+        )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    get_account_time(participant, object){
+        var expiry_time = object['participant_times'][participant]
+        var now = (Date.now()/1000)
+        if(expiry_time > now){
+            //account can still vote in contract
+            return '+'+this.get_time_diff(expiry_time - now)
+        }else{
+            //account can no longer vote
+            return '-'+this.get_time_difference(expiry_time)
+        }
+    }
+
+    render_inactive_participants(object, inactive_participants){
+        if(inactive_participants.length == 0) return;
+        return(
+            <div>
+                {inactive_participants.map((item, index) => (
+                    <div key={index}>
+                        {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.get_account_time(item, object), 'size':'l'})}
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_line_if_inactive_participants_present(inactive_participants){
+        if(inactive_participants.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    render_empty_views_if_no_participants(active_participants, inactive_participants){
+        if(inactive_participants.length == 0 && active_participants.length == 0){
+            var items = ['0','1','2'];
+            return ( 
+                <div>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_small_empty_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    render_small_empty_object(){
+        return(
+            <div>
+                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+
+
+    render_force_exit_events(){
+        var application_item = this.state.application_item
+        var object = this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']] == null ? [] : this.props.app_state.loaded_contract_and_proposal_data[application_item['picked_contract_id']]['contract']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1632i']/* 'Force exit Events' */, 'details':this.props.app_state.loc['1632j']/* 'Below are all the accounts that were removed by the contract owner.' */})}
+                <div style={{height:10}}/>
+                {this.render_force_exit_data(object)}
+            </div>
+        )
+    }
+
+    render_force_exit_data(object){
+        var events = object['force_exit_events']
+        if(events == null || events.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {events.map((item, index) => (
+                        <div key={index}>
+                            {this.render_detail_item('3', {'title':this.get_senders_name(item.returnValues.p5/* force_exit_account */, object), 'details':this.get_time_difference(item.returnValues.p7/* timestamp */), 'size':'l'})}
+                            <div style={{height:5}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
     }
 
 
