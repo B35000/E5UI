@@ -1587,7 +1587,8 @@ class EditAudioPage extends Component {
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return empty_image
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data == null) return empty_image
-        return data['data']
+        if(data == null) return
+return data['data']
     }
 
     get_cid_split(ecid){

@@ -780,7 +780,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(48), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:35, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
+    sync_steps:(48), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -3904,7 +3904,8 @@ class App extends Component {
         data: 'id, data', // Primary key and indexed props
       });
       var data = await db.data.get({id: id})
-      return data['data']
+      if(data == null) return
+return data['data']
     }catch(e){
       console.log(`Failed : ${e}`);
       return null
@@ -15420,7 +15421,8 @@ class App extends Component {
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     console.log('datas', 'uploaded_data_obj', this.state.uploaded_data)
     if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
-    return data['data']
+    if(data == null) return
+return data['data']
   }
 
   get_cid_split2(ecid){
@@ -15530,7 +15532,8 @@ class App extends Component {
     
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return null
-    return data['data']
+    if(data == null) return
+return data['data']
   }
 
 
@@ -15657,7 +15660,8 @@ class App extends Component {
     var ecid_obj = this.get_cid_split2(ecid)
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bitcoin.org/bitcoin.pdf'
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-    return data['data']
+    if(data == null) return
+return data['data']
   }
 
   get_name_of_file(ecid){
@@ -16929,6 +16933,7 @@ class App extends Component {
     this.generate_one_account_for_all_e5s(seed)
     this.generate_account_data_for_each_coin(seed)
     this.setState({account_balance: {}, account_seed: seed, mail_message_events:{}, all_mail:{}, account_balance:{}, });
+    this.homepage.current?.reset_tags_sections()
     
     var me = this
     setTimeout(function() {

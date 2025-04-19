@@ -1073,7 +1073,9 @@ class NewNitroPage extends Component {
         var ecid_obj = this.get_cid_split(ecid)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        return data['data']
+        if(data == null) return
+        if(data == null) return
+return data['data']
     }
 
     get_cid_split(ecid){

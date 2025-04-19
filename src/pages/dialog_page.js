@@ -1083,7 +1083,8 @@ class DialogPage extends Component {
 
         if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
 
-        return data['data']
+        if(data == null) return
+return data['data']
     }
 
     get_cid_split(ecid){

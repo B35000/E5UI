@@ -2857,7 +2857,7 @@ class home_page extends Component {
     }
 
     get_job_section_tags(){
-        if(this.state.job_section_tags == null){
+        if(this.state.job_section_tags == null || this.state.job_section_tags.length == 0){
             this.setState({job_section_tags: this.props.app_state.job_section_tags})
             return this.props.app_state.job_section_tags;
         }else{
@@ -2866,12 +2866,16 @@ class home_page extends Component {
     }
 
     get_explore_section_tags(){
-        if(this.state.explore_section_tags == null){
+        if(this.state.explore_section_tags == null || this.state.explore_section_tags.length == 0){
             this.setState({explore_section_tags: this.props.app_state.explore_section_tags})
             return this.props.app_state.explore_section_tags
         }else{
             return this.state.explore_section_tags
         }
+    }
+
+    reset_tags_sections(){
+        this.setState({explore_section_tags: null, job_section_tags: null})
     }
 
 
