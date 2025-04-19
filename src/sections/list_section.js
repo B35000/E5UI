@@ -1655,12 +1655,13 @@ class PostListSection extends Component {
         if(typed_account == ''){
             this.props.notify(this.props.app_state.loc['1337']/* 'Type something.' */, 3800)
         }
-        else if(isNaN(typed_account)){
-            this.props.notify(this.props.app_state.loc['2508']/* 'That ID is not valid.' */, 3800)
-        }
-        else if(parseInt(typed_account) < 1001){
-            this.props.notify(this.props.app_state.loc['2508']/* 'That ID is not valid.' */, 3800)
-        }else{
+        // else if(isNaN(typed_account)){
+        //     this.props.notify(this.props.app_state.loc['2508']/* 'That ID is not valid.' */, 3800)
+        // }
+        // else if(parseInt(typed_account) < 1001){
+        //     this.props.notify(this.props.app_state.loc['2508']/* 'That ID is not valid.' */, 3800)
+        // }
+        else{
             this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 1000)
             this.setState({searched_account: typed_account})
             // this.props.get_searched_account_data(typed_account, typed_search)

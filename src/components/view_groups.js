@@ -224,7 +224,7 @@ class ViewGroups extends Component {
                                 <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}}/>
                             </div>
                             <div style={{'margin':'0px 0px 0px 10px'}}>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
                                 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
@@ -238,7 +238,7 @@ class ViewGroups extends Component {
                             <div>
                                 <div style={{'display': 'flex','flex-direction': 'row'}}>
                                     {this.render_text_image(title_image, font_size)}
-                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all','text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value,'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
                                 </div>
 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>

@@ -27415,7 +27415,7 @@ return data['data']
     
     await this.wait(this.state.ipfs_delay)
     // var selected_gateway = gateways[Math.round(Math.random() * 12)]
-    var selected_gateway = gateways[0]
+    var selected_gateway = gateways[1]
     if(depth > 2){
       selected_gateway = gateways[1]
     }
@@ -27436,6 +27436,7 @@ return data['data']
       console.log('Error fetching infura file: ', error)
 
       if(depth<5){
+        await this.wait(3000)
         return await this.fetch_object_data_from_infura(cid, depth+1)
       }
     }
@@ -29922,8 +29923,66 @@ return data['data']
   }
 
   get_searched_account_data_trimmed = async (id, typed_search) => {
-    var data = []
-    var data2 = []
+    const data = []
+    const data2 = []
+    const ids = []
+    if(isNaN(id)){
+      if(this.state.beacon_node_enabled == true){
+        var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+        if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
+        if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+          beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+        }
+
+        if(id.includes('"')){
+          //were searching tags
+          var searched_tags = this.extract_quoted_words(id)
+          var arg_obj = {tags: searched_tags, target_type: 0}
+          const params = new URLSearchParams({
+            arg_string: JSON.stringify(arg_obj)
+          });
+          var request = `${beacon_node}/tags?${params.toString()}`
+          try{
+            const response = await fetch(request);
+            if (!response.ok) {
+              console.log(response)
+              throw new Error(`Failed to retrieve data. Status: ${response}`);
+            }
+            const response_data = await response.text();
+            const response_obj = JSON.parse(response_data);
+            response_obj['data'].forEach(element => {
+              if(!ids.includes(parseInt(element))) ids.push(parseInt(element))
+            });
+          }
+          catch(e){
+            
+          }
+        }else{
+          var arg_obj = {title: id, target_type: 0}
+          const params2 = new URLSearchParams({
+            arg_string: JSON.stringify(arg_obj)
+          });
+          var request = `${beacon_node}/title?${params2.toString()}`
+          try{
+            const response = await fetch(request);
+            if (!response.ok) {
+              console.log(response)
+              throw new Error(`Failed to retrieve data. Status: ${response}`);
+            }
+            const response_data = await response.text();
+            const response_obj = JSON.parse(response_data);
+            response_obj['data'].forEach(element => {
+              if(!ids.includes(parseInt(element))) ids.push(parseInt(element))
+            });
+          }
+          catch(e){
+            console.log(e)
+          }
+        }
+      }
+    }else{
+      ids.push(id)
+    }
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       if(this.state.e5s[e5].active == true){
@@ -29931,37 +29990,40 @@ return data['data']
         const contractArtifact = require('./contract_abis/E5.json');
         const contractAddress = this.get_contract_from_e5(e5)
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
-       
+      
         var contract_addresses = this.state.addresses[e5]
         const E52contractArtifact = require('./contract_abis/E52.json');
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var object_type = await this.load_id_type_then_object(id, E52contractInstance, e5) 
-
-        if(object_type != 0){
-          var obj = {'e5': e5, 'id':id, 'object_type': object_type, 'typed_search':typed_search}
-          data2.push(obj)
-        }
-        else{
-          var account_address = await contractInstance.methods.f289(id).call((error, result) => {});
-          var alias = this.state.alias_bucket[e5][id] == null ? 'Unknown' : this.state.alias_bucket[e5][id]
-          var should_include_id = true;
-          if(id != typed_search){
-            if(alias != typed_search){
-              should_include_id = false
-            }
+        for(var e=0; e<ids.length; e++){
+          var focused_id = ids[e]
+          var object_type = await this.load_id_type_then_object(focused_id, E52contractInstance, e5) 
+          if(object_type != 0){
+            var obj = {'e5': e5, 'id':focused_id, 'object_type': object_type, 'typed_search':typed_search}
+            data2.push(obj)
           }
-          if(account_address.toString() != '0x0000000000000000000000000000000000000000' && should_include_id){
-            var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'typed_search': typed_search}
-            data.push(obj)
+          else{
+            var account_address = await contractInstance.methods.f289(focused_id).call((error, result) => {});
+            var alias = this.state.alias_bucket[e5][focused_id] == null ? 'Unknown' : this.state.alias_bucket[e5][focused_id]
+            var should_include_id = true;
+            if(focused_id != typed_search){
+              if(alias != typed_search){
+                should_include_id = false
+              }
+            }
+            if(account_address.toString() != '0x0000000000000000000000000000000000000000' && should_include_id){
+              var obj = {'e5':e5,'id':focused_id,'address':account_address,'alias':alias, 'typed_search': typed_search}
+              data.push(obj)
+            }
           }
         }
       }
     }
+    
 
     if(data.length == 0 && data2.length == 0){
-      this.prompt_top_notification(this.getLocale()['2737']/* 'Search complete, no account data found' */, 5000)
+      this.prompt_top_notification(this.getLocale()['2737']/* e didnt find anything matching your search. */, 5000)
       return;
     }
 
@@ -29972,6 +30034,10 @@ return data['data']
     var clone = structuredClone(this.state.searched_objects_data)
     clone[id] = data2
     this.setState({searched_objects_data: clone})
+  }
+
+  extract_quoted_words(str) {
+    return [...str.matchAll(/"([^"]+)"/g)].map(match => match[1]);
   }
 
   get_searched_account_data = async (id, typed_search, e5_to_focus_on) => {
