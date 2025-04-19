@@ -1705,11 +1705,11 @@ return data['data']
                                                     key={index}
                                                     style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
                                                     onClick={() => this.when_e5_link_tapped(num)}>
-                                                        {part}
+                                                        {part}{index == parts.length-1 ? '':' '}
                                                 </span>
                                             );
                                         }
-                                        return <span key={index}>{part}</span>;
+                                        return <span key={index}>{part}{index == parts.length-1 ? '':' '}</span>;
                                     })
                                 }
                             </Linkify></p>

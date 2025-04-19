@@ -28830,11 +28830,18 @@ return data['data']
       all_events.forEach((event_array, index)=> {
         // var focused_e5 = used_e5s[index]
         for(var l=0; l<event_array.length; l++){
-          var event = event_array[l]
-          var focused_e5 = 'E'+event.returnValues.p5
+          const event = event_array[l]
+          const focused_e5 = 'E'+event.returnValues.p5
           event['e5'] = focused_e5
           if(parseInt(event.returnValues.p6) > cutoff_timestamp){
-            all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+            var time = parseInt(event.returnValues.p6)/* timestamp */
+            if(l!=0){
+              const prev_event_object = all_unsorted_events[l-1]
+              if(prev_event_object['time'] == time){
+                time++
+              }
+            }
+            all_unsorted_events.push({'time':time, 'event':event})
           }
         }
       });
@@ -28854,6 +28861,13 @@ return data['data']
             const event = created_comment_data[k]
             event['e5'] = 'E'+event.returnValues.p5
             if(parseInt(event.returnValues.p6) > cutoff_timestamp){
+              var time = parseInt(event.returnValues.p6)/* timestamp */
+              if(k!=0){
+                var prev_event_object = all_unsorted_events[k-1]
+                if(prev_event_object['time'] == time){
+                  time++
+                }
+              }
               all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
             }
           }
@@ -29158,7 +29172,14 @@ return data['data']
         for(var l=0; l<event_array.length; l++){
           var event = event_array[l]
           event['e5'] = focused_e5
-          all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+          var time = parseInt(event.returnValues.p6)/* timestamp */
+          if(l!=0){
+            const prev_event_object = all_unsorted_events[l-1]
+            if(prev_event_object['time'] == time){
+              time++
+            }
+          }
+          all_unsorted_events.push({'time':time, 'event':event})
         }
       });
     }else{
@@ -29174,7 +29195,14 @@ return data['data']
           for(var k=0; k<created_comment_data.length; k++){
             const event = created_comment_data[k]
             event['e5'] = focused_e5
-            all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+            var time = parseInt(event.returnValues.p6)/* timestamp */
+            if(k!=0){
+              const prev_event_object = all_unsorted_events[k-1]
+              if(prev_event_object['time'] == time){
+                time++
+              }
+            }
+            all_unsorted_events.push({'time':time, 'event':event})
           }
         }
       }

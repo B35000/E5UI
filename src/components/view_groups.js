@@ -281,11 +281,11 @@ class ViewGroups extends Component {
                                                         key={index}
                                                         style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
                                                         onClick={() => this.when_e5_link_tapped(num)}>
-                                                            {part}
+                                                            {part}{index == parts.length-1 ? '':' '}
                                                     </span>
                                                 );
                                             }
-                                            return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{part}</span>;
+                                            return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{part}{index == parts.length-1 ? '':' '}</span>;
                                         })
                                     }
                                 </Linkify>
