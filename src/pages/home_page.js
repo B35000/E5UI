@@ -2874,8 +2874,8 @@ class home_page extends Component {
         }
     }
 
-    reset_tags_sections(){
-        this.setState({explore_section_tags: null, job_section_tags: null})
+    reset_tags_sections(explore_section_tags, job_section_tags){
+        this.setState({explore_section_tags: explore_section_tags, job_section_tags: job_section_tags})
     }
 
 

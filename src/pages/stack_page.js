@@ -9136,7 +9136,7 @@ return data['data']
 
     render_wallet_settings_part(){
         var size = this.props.size
-        var w = size == 's' ? '97%' : '99%'
+        var w = size == 's' ? '95%' : '99%'
         return(
             <div>
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}

@@ -16928,7 +16928,9 @@ return data['data']
     this.generate_one_account_for_all_e5s(seed)
     this.generate_account_data_for_each_coin(seed)
     this.setState({account_balance: {}, account_seed: seed, mail_message_events:{}, all_mail:{}, account_balance:{}, });
-    this.homepage.current?.reset_tags_sections()
+
+    this.get_blocked_accounts_data_e5_timestamp = 0
+    this.get_section_tags_data_e5_timestamp = 0
     
     var me = this
     setTimeout(function() {
@@ -19906,19 +19908,23 @@ return data['data']
       var latest_event = blocked_contacts_data[blocked_contacts_data.length - 1];
       var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var loaded_blocked_accounts = blocked_contacts_data['blocked_accounts']
+      var timestamp = blocked_contacts_data['time']
 
-      console.log('loaded blocked accounts for e5: ',e5,' : ',loaded_blocked_accounts.length)
-      console.log(loaded_blocked_accounts)
-      
-      var clone = structuredClone(this.state.blocked_accounts)
-      var existing_blocked_accounts = clone[e5]
-      if(existing_blocked_accounts == null){
-        existing_blocked_accounts = []
+      if(this.get_blocked_accounts_data_e5_timestamp == null){
+        this.get_blocked_accounts_data_e5_timestamp = 0
       }
-      clone[e5] = this.combine_contacts(existing_blocked_accounts, loaded_blocked_accounts)
-      if(!this.state.should_update_blocked_accounts_onchain){
-        this.setState({blocked_accounts: clone})
-        console.log('setting blocked accounts from chain')
+
+      if(timestamp > this.get_section_tags_data_e5_timestamp){
+        var clone = structuredClone(this.state.blocked_accounts)
+        var existing_blocked_accounts = clone[e5]
+        if(existing_blocked_accounts == null){
+          existing_blocked_accounts = []
+        }
+        clone[e5] = this.combine_contacts(existing_blocked_accounts, loaded_blocked_accounts)
+        if(!this.state.should_update_blocked_accounts_onchain){
+          this.setState({blocked_accounts: clone})
+          console.log('setting blocked accounts from chain')
+        }
       }
     }else{
       console.log('loaded no blocked accounts')
@@ -19945,12 +19951,13 @@ return data['data']
       var section_tag_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var job_section_tags = section_tag_data['job_section_tags']
       var explore_section_tags = section_tag_data['explore_section_tags']
+      var timestamp = section_tag_data['time']
 
-      // console.log('get_section_tags_data', section_tag_data)
-      
-      if(!this.state.should_update_section_tags_onchain){
-        this.setState({job_section_tags: job_section_tags, explore_section_tags: explore_section_tags})
-      }else{
+      if(this.get_section_tags_data_e5_timestamp == null){
+        this.get_section_tags_data_e5_timestamp = 0
+      }
+
+      if(timestamp > this.get_section_tags_data_e5_timestamp){
         var job_section_tags_clone = this.state.job_section_tags.slice()
         var explore_section_tags_clone = this.state.explore_section_tags.slice()
         
@@ -19967,7 +19974,8 @@ return data['data']
         });
 
         this.setState({job_section_tags: job_section_tags_clone, explore_section_tags: explore_section_tags_clone})
-        
+
+        this.homepage.current?.reset_tags_sections(explore_section_tags_clone, job_section_tags_clone)
       }
     }else{
       if(this.section_tags_data_user != account && this.section_tags_data_user != null && this.section_tags_data_user != 1){
@@ -27412,8 +27420,11 @@ return data['data']
       selected_gateway = gateways[1]
     }
     selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
+    // const controller = new AbortController();
+    // const id = setTimeout(() => controller.abort(), 12000);
     try {
-      const response = await fetch(selected_gateway);
+      const response = await fetch(selected_gateway /* ,{ signal: controller.signal } */);
+      // clearTimeout(id)
       if (!response.ok) {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
@@ -28341,7 +28352,7 @@ return data['data']
       cipher_text = json_object['ciphertext']
       // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
     }catch(f){
-      console.log(f)
+      // console.log(f)
     }
     try{
       var bytes  = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
