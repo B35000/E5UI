@@ -196,7 +196,7 @@ class ViewGroups extends Component {
                 padding = object_data['padding'] == null ? '10px 15px 10px 15px' : object_data['padding']
                 text_align = object_data['text_align'] == null ? 'left' : object_data['text_align']
                 title_image = object_data['title_image'] == null ? '' : object_data['title_image']
-                word_wrap_value = this.longest_word_length(object_data['details']) > 53 ? 'break-all' : 'normal'
+                word_wrap_value = this.longest_word_length(object_data['details']) > 53 ? 'break-word' : 'normal'
             }
             var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px', 17];
             if(size == 'l'){
@@ -259,11 +259,11 @@ class ViewGroups extends Component {
               font = object_data['font'];
               textsize = object_data['textsize'];
               text = object_data['text'];
-              word_wrap_value = this.longest_word_length(object_data['text']) > 53 ? 'break-all' : 'normal'
+              word_wrap_value = this.longest_word_length(object_data['text']) > 53 ? 'break-word' : 'normal'
             }
 
             text = this.format_text_if_empty_or_null(text)
-            const parts = text.split(/(\d+)/g);
+            const parts = text.split(' ');
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
@@ -285,7 +285,7 @@ class ViewGroups extends Component {
                                                     </span>
                                                 );
                                             }
-                                            return <span key={index}>{part}</span>;
+                                            return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{part}</span>;
                                         })
                                     }
                                 </Linkify>
@@ -530,7 +530,7 @@ class ViewGroups extends Component {
             var source = object_data == null ? '' : object_data['source']
             var theme = this.props.theme['markdown_theme']
             var padding = '10px 15px 10px 15px'
-            var word_wrap_value = this.longest_word_length(source) > 53 ? 'break-all' : 'normal'
+            var word_wrap_value = this.longest_word_length(source) > 53 ? 'break-word' : 'normal'
             return(
                 <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
                     <Markdown

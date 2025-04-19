@@ -1679,7 +1679,8 @@ return data['data']
         var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
         var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
         var text = this.format_message(item['message'], object)
-        const parts = text.split(/(\d+)/g);
+        // const parts = text.split(/(\d+)/g);
+        const parts = text.split(' ');
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>

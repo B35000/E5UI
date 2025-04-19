@@ -4872,11 +4872,6 @@ return data['data']
 
 
   render(){
-    // return(
-    //   <div>
-    //     {makeid(3)}
-    //   </div>
-    // )
     if(this.getScreenSize() == 'e'){
       return(
         <div>

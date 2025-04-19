@@ -2857,7 +2857,7 @@ class home_page extends Component {
     }
 
     get_job_section_tags(){
-        if(this.state.job_section_tags == null || this.state.job_section_tags.length == 0){
+        if(this.state.job_section_tags == null){
             this.setState({job_section_tags: this.props.app_state.job_section_tags})
             return this.props.app_state.job_section_tags;
         }else{
@@ -2866,7 +2866,7 @@ class home_page extends Component {
     }
 
     get_explore_section_tags(){
-        if(this.state.explore_section_tags == null || this.state.explore_section_tags.length == 0){
+        if(this.state.explore_section_tags == null){
             this.setState({explore_section_tags: this.props.app_state.explore_section_tags})
             return this.props.app_state.explore_section_tags
         }else{
@@ -4372,9 +4372,11 @@ class home_page extends Component {
             }
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1216']/* 'bags' */){
-            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_stores))
-            if(object != null){
-                return object['ipfs'].entered_title_text
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_bags))
+            if(object != null && object['ipfs'] != null){
+                return object['ipfs'].delivery_location
+            }else{
+                return tem['id']
             }
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends ☝️' */){
