@@ -27420,11 +27420,11 @@ return data['data']
       selected_gateway = gateways[1]
     }
     selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
-    // const controller = new AbortController();
-    // const id = setTimeout(() => controller.abort(), 12000);
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 3000);
     try {
-      const response = await fetch(selected_gateway /* ,{ signal: controller.signal } */);
-      // clearTimeout(id)
+      const response = await fetch(selected_gateway ,{ signal: controller.signal });
+      clearTimeout(id)
       if (!response.ok) {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
