@@ -926,7 +926,7 @@ class NitroDetailsSection extends Component {
     render_configure_nitro_node(object){
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
         var my_account = this.props.app_state.user_account_id[object['e5']]
-        if(node_details != null && node_details !== 'unavailable' && object['event'].returnValues.p5 == my_account){
+        if(node_details != null && node_details !== 'unavailable' && object['event'].returnValues.p5 == my_account && this.props.app_state.has_wallet_been_set == true){
             return(
                 <div>
                     {this.render_detail_item('0')}
