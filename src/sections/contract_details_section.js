@@ -38,7 +38,7 @@ function number_with_commas(x) {
 class ContractDetailsSection extends Component {
 
     state = {
-        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:'', selected_exchange:{},
+        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:'', selected_exchange:{}, typed_search_participant_id:''
     };
 
     componentDidMount() {
@@ -394,16 +394,42 @@ class ContractDetailsSection extends Component {
     get_active_participants(object){
         var active_participants = []
         var inactive_participants = []
+        var searched_text = this.state.typed_search_participant_id.trim()
         if(object['id'] != 2){
             object['participants'].forEach(participant => {
-                if(object['participant_times'][participant] > (Date.now()/1000)){
-                    active_participants.push(participant)
-                }else{
-                    inactive_participants.push(participant)
+                if(
+                    (searched_text != '' && 
+                        (
+                            participant.toString().includes(searched_text) || 
+                            searched_text == participant.toString() || 
+                            this.get_typed_alias_id(searched_text, object['e5']) == participant || 
+                            this.get_senders_name2(participant, object['e5']).includes(searched_text)
+                        )
+                    ) || searched_text == ''){
+                    if(object['participant_times'][participant] > (Date.now()/1000)){
+                        active_participants.push(participant)
+                    }else{
+                        inactive_participants.push(participant)
+                    }
                 }
+                
             });
         }
         return {active_participants: active_participants, inactive_participants: inactive_participants}
+    }
+
+    get_typed_alias_id(alias, e5){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[e5][alias] == null ? alias : this.props.app_state.alias_owners[e5][alias])
+
+        return id
+    }
+
+    get_senders_name2(sender, e5){
+        var alias = (this.props.app_state.alias_bucket[e5][sender] == null ? sender : this.props.app_state.alias_bucket[e5][sender])
+        return alias
     }
 
     render_pin_contract_button(object){
@@ -1082,6 +1108,9 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
                     {this.render_detail_item('3', object_item['id'])}
+                    <div style={{ 'margin': '10px 5px 5px 5px'}}>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509e']/* 'Account ID or Alias...' */} when_text_input_field_changed={this.when_search_participant_input_field_changed.bind(this)} text={this.state.typed_search_participant_id} theme={this.props.theme} />
+                    </div>
                     {this.render_detail_item('0')}
                     {this.render_active_participants(object, active_participants, inactive_participants)}
                     {this.render_inactive_participants(object, inactive_participants)}
@@ -1089,6 +1118,10 @@ class ContractDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    when_search_participant_input_field_changed(text){
+        this.setState({typed_search_participant_id: text})
     }
 
     render_empty_views_if_no_participants(active_participants, inactive_participants){

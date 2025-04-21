@@ -240,7 +240,7 @@ const english = {
     '2482':'Job Offers','2483':'The amounts they are offering for the job.','2484':'Apply for the job','2485':'Respond to the ad with a contract and apply for the job.','2486':'Apply','2487':'Pin the job to your feed.','2488':'Pin Job','2489':'Pin/Unpin Job','2490':'Edit Job Post','2491':'Change the basic details for your Job Post','2492':'Perform Action','2493':'Block Number','2494':'age','2495':'ago','2496':'In ','2497':'Job Responses','2498':'Expiry time from now: ','2499':'Contract ID: ','2500':'Sender ID: ','2501':'Accepted','2502':'The job owner picked this application','2503':'Expiry time from now: ','2504':'Contract ID: ','2505':'Sender ID: ','2506':'Copied message to clipboard','2507':'responses','2507a':'Reply',
     
     /* list section */
-    '2508':'That ID is not valid.','2509':'Searching...','2509a':'Enter Name or Symbol...','2509b':' items','2509c':' responses','2509d':'That object is not available for you to access.',
+    '2508':'That ID is not valid.','2509':'Searching...','2509a':'Enter Name or Symbol...','2509b':' items','2509c':' responses','2509d':'That object is not available for you to access.','2509e':'Account ID or Alias...',
     
     /* mail details section */
     '2510':'data','2512':' with ','2513':'Conversation.',
