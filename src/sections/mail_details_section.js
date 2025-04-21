@@ -27,6 +27,7 @@ import TextInput from './../components/text_input';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 var bigInt = require("big-integer");
 
@@ -680,14 +681,16 @@ class MailDetailsSection extends Component {
         else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                            <div>
-                                {this.render_message_as_focused_if_so(item, object)}
-                                <div style={{height:3}}/>
-                            </div>
-                        </li>
-                    ))}    
+                    <AnimatePresence initial={false}>
+                        {items.map((item, index) => (
+                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div>
+                                    {this.render_message_as_focused_if_so(item, object)}
+                                    <div style={{height:3}}/>
+                                </div>
+                            </motion.li>
+                        ))} 
+                    </AnimatePresence>   
                 </div>
             )
         }
@@ -838,7 +841,7 @@ class MailDetailsSection extends Component {
                                             </span>
                                         );
                                     }
-                                    return <span key={index}>{part}{index == parts.length-1 ? '':' '}</span>;
+                                    return <span key={index}>{this.mask_word_if_censored(part, object)}{index == parts.length-1 ? '':' '}</span>;
                                 })
                             }</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
@@ -855,6 +858,22 @@ class MailDetailsSection extends Component {
             </div>
         )
    
+    }
+
+    mask_word_if_censored(word, object){
+        var all_censored_phrases = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
+        const sender = object['author']
+        const sender_e5 = object['e5']
+        if(this.props.app_state.post_censored_data[sender+sender_e5] != null){
+            var censor_data = this.props.app_state.post_censored_data[sender+sender_e5]
+            all_censored_phrases = all_censored_phrases.concat(censor_data['censored_keywords'])
+        }
+        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ''))){
+            if (word == null || word.length <= 1) return word; // nothing to mask
+            return word[0] + '*'.repeat(word.length - 1);
+        }else{
+            return word
+        }
     }
 
     when_e5_link_tapped(id){
@@ -1313,9 +1332,11 @@ class MailDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+
+        var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list}/>
             </div>
         )
 

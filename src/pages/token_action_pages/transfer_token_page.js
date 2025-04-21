@@ -534,10 +534,12 @@ class TransferTokenPage extends Component {
     }
 
     get_suggested_accounts(){
-        return[
-            {'id':'53', 'label':{'title':this.props.app_state.loc['854']/* 'My Account' */, 'details':this.props.app_state.loc['857']/* 'Account' */, 'size':'s'}},
-            {'id':'2', 'label':{'title':this.props.app_state.loc['855']/* 'Main Contract' */, 'details':this.props.app_state.loc['858']/* 'Contract ID 2' */, 'size':'s'}},
-        ].concat(this.get_account_suggestions())
+        var memory_accounts = this.get_recipients_from_memory()
+        var defaults = []
+        memory_accounts.forEach(account => {
+            defaults.push({'id':account,'label':{'title':account, 'details':this.get_account_alias(account), 'size':'s'}})
+        });
+        return this.get_account_suggestions().concat(defaults)
     }
 
     get_account_suggestions(){
@@ -554,6 +556,11 @@ class TransferTokenPage extends Component {
 
     get_contact_alias(contact){
         return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
+    }
+
+    get_account_alias(account){
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        return obj[account] == null ? this.props.app_state.loc['1037a']/* 'Account' */: obj[account]
     }
 
     when_suggestion_clicked(item, pos){
@@ -677,9 +684,27 @@ class TransferTokenPage extends Component {
             this.props.notify(this.props.app_state.loc['2810']/* 'add a transaction first' */, 3700)
             return;
         }
+        this.add_recipients_to_memory(this.state.stack_items)
         this.props.add_transfer_transactions_to_stack(this.state)
         this.props.notify(this.props.app_state.loc['18']/* 'transactions added to stack!' */, 1600)
         this.setState({recipient_id:'', stack_items:[]})
+    }
+
+
+    add_recipients_to_memory(stack_items){
+        var recipient_acc_ids = this.get_recipients_from_memory()
+        stack_items.forEach(item => {
+            var recipient = item['recipient']
+            if(!recipient_acc_ids.includes(recipient)) recipient_acc_ids.push(recipient);
+        });
+
+        var trimmed = recipient_acc_ids.slice(-7)
+        var obj = {'data':trimmed}
+        localStorage.setItem("transfer_data", JSON.stringify(obj));
+    }
+
+    get_recipients_from_memory(){
+        return localStorage.getItem("transfer_data") == null ? [] : JSON.parse(localStorage.getItem("transfer_data"))['data']
     }
 
 

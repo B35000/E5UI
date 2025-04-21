@@ -209,6 +209,8 @@ class ViewGroups extends Component {
             if(details == ''){
                 details = '...'
             }
+            const parts = details.split(' ');
+            
             if(item_id == '8'){
                 var img = E5EmptyIcon;
                 if(object_data != null){
@@ -226,7 +228,11 @@ class ViewGroups extends Component {
                             <div style={{'margin':'0px 0px 0px 10px'}}>
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
                                 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                    parts.map((part, index) => {
+                                        return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                    })
+                                }</p>
                             </div>
                         </div>
                     </div>
@@ -241,7 +247,11 @@ class ViewGroups extends Component {
                                     <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value,'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
                                 </div>
 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                    parts.map((part, index) => {
+                                        return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                    })
+                                    }</p>
                             </div>
                         </div>
                     </div>
@@ -285,7 +295,7 @@ class ViewGroups extends Component {
                                                     </span>
                                                 );
                                             }
-                                            return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{part}{index == parts.length-1 ? '':' '}</span>;
+                                            return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
                                         })
                                     }
                                 </Linkify>
@@ -553,6 +563,17 @@ class ViewGroups extends Component {
         }
     }
 
+    mask_word_if_censored(word){
+        var all_censored_phrases = this.props.censored_keyword_phrases == null ? [] : this.props.censored_keyword_phrases
+        
+        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ''))){
+            if (word == null || word.length <= 1) return word; // nothing to mask
+            return word[0] + '*'.repeat(word.length - 1);
+        }else{
+            return word
+        }
+    }
+
     when_e5_link_tapped(id){
         this.props.when_e5_link_tapped(id)
     }
@@ -562,7 +583,7 @@ class ViewGroups extends Component {
             if (item == null || item.length <= 1) return item; // nothing to mask
             return item[0] + '*'.repeat(item.length - 1);
         }else{
-            return item
+            return this.mask_word_if_censored(item)
         }
     }
 

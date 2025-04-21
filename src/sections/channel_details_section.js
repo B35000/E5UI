@@ -27,6 +27,7 @@ import TextInput from './../components/text_input';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 var bigInt = require("big-integer");
 
@@ -83,7 +84,7 @@ function toTree(data) {
 class ChannelDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_channel_list_detail_tags: this.get_navigate_view_channel_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
+        selected: 0, navigate_view_channel_list_detail_tags: this.get_navigate_view_channel_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], visible_hidden_messages:[],
     };
 
     get_comment_structure_tags(){
@@ -1009,14 +1010,16 @@ class ChannelDetailsSection extends Component {
         }else{
             return(
                 <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                            <div>
-                                {this.render_message_as_focused_if_so(item, object)}
-                                <div style={{height:3}}/>
-                            </div>
-                        </li>
-                    ))}    
+                    <AnimatePresence initial={false}>
+                        {items.map((item, index) => (
+                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div>
+                                    {this.render_message_as_focused_if_so(item, object)}
+                                    <div style={{height:3}}/>
+                                </div>
+                            </motion.li>
+                        ))} 
+                    </AnimatePresence>    
                 </div>
             )
         }
@@ -1128,15 +1131,22 @@ class ChannelDetailsSection extends Component {
         this.props.notify('copied message to clipboard', 600)
     }
 
+    show_visible(item){
+        var clone = this.state.visible_hidden_messages.slice()
+        if(!clone.includes(item['message_id'])){
+            clone.push(item['message_id'])
+        }
+        this.setState({visible_hidden_messages: clone})
+    }
 
 
     render_stack_message_item(item, object){
-        if(this.is_sender_in_blocked_accounts(item)){
+        if(this.is_sender_in_blocked_accounts(item, object)){
             return(
-                <div>
+                <div onClick={()=>this.show_visible(item)}>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -1176,7 +1186,7 @@ class ChannelDetailsSection extends Component {
                                             </span>
                                         );
                                     }
-                                    return <span key={index}>{part}{index == parts.length-1 ? '':' '}</span>;
+                                    return <span key={index}>{this.mask_word_if_censored(part, object)}{index == parts.length-1 ? '':' '}</span>;
                                 })
                             }</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
@@ -1191,6 +1201,22 @@ class ChannelDetailsSection extends Component {
             </div>
         )
         
+    }
+
+    mask_word_if_censored(word, object){
+        var all_censored_phrases = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
+        const sender = object['author']
+        const sender_e5 = object['e5']
+        if(this.props.app_state.post_censored_data[sender+sender_e5] != null){
+            var censor_data = this.props.app_state.post_censored_data[sender+sender_e5]
+            all_censored_phrases = all_censored_phrases.concat(censor_data['censored_keywords'])
+        }
+        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ''))){
+            if (word == null || word.length <= 1) return word; // nothing to mask
+            return word[0] + '*'.repeat(word.length - 1);
+        }else{
+            return word
+        }
     }
 
     when_e5_link_tapped(id){
@@ -1282,7 +1308,8 @@ class ChannelDetailsSection extends Component {
         return object
     }
 
-    is_sender_in_blocked_accounts(item){
+    is_sender_in_blocked_accounts(item, object){
+        var value = false
         var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
         var blocked_accounts = []
         blocked_account_obj.forEach(account => {
@@ -1291,10 +1318,21 @@ class ChannelDetailsSection extends Component {
             }
         });
 
-        if(blocked_accounts.includes(item['sender'])){
-            return true
+        const sender = object['author']
+        const sender_e5 = object['e5']
+        if(this.props.app_state.post_censored_data[sender+sender_e5] != null){
+            var censor_data = this.props.app_state.post_censored_data[sender+sender_e5]
+            blocked_accounts = blocked_accounts.concat(censor_data['blocked_contacts'])
         }
-        return false
+
+        if(blocked_accounts.includes(item['sender'])){
+            value = true
+        }
+        if(this.state.visible_hidden_messages.includes(item['message_id'])){
+            value = false
+        }
+
+        return value
     }
 
     render_images_if_any(item){
@@ -1400,14 +1438,15 @@ class ChannelDetailsSection extends Component {
         var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
         var blocked_accounts = []
         blocked_account_obj.forEach(account => {
-            if(!blocked_accounts.includes(account['id'])){
-                blocked_accounts.push(account['id'])
+            var e5_id = account['id']+account['e5']
+            if(!blocked_accounts.includes(e5_id)){
+                blocked_accounts.push(e5_id)
             }
         });
         var filtered_objects = [];
-        
         objects.forEach(object => {
-            if(!blocked_accounts.includes(object['sender'])){
+            var e5_id = object['sender']+object['e5']
+            if(!blocked_accounts.includes(e5_id)){
                 filtered_objects.push(object)
             }
         })
@@ -2185,9 +2224,11 @@ class ChannelDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+
+        var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list}/>
             </div>
         )
 

@@ -3235,7 +3235,7 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_job_objects_responses(id, e5)
         this.props.get_objects_messages(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3258,7 +3258,7 @@ class home_page extends Component {
         this.props.get_contract_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
         this.props.load_contracts_exchange_interactions_data(id, e5)
-
+        
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3314,7 +3314,7 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_post_award_data(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3337,7 +3337,7 @@ class home_page extends Component {
         this.props.get_objects_messages(id, e5, object)
         this.props.get_channel_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3360,7 +3360,7 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_proposal_event_data(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3393,7 +3393,7 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_direct_purchase_events(id, e5)
         this.props.get_objects_messages(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3414,6 +3414,7 @@ class home_page extends Component {
         this.props.load_bag_storefront_items(object)
         this.props.get_job_objects_responses(id, e5)
         this.props.get_objects_messages(id, e5)
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3444,7 +3445,7 @@ class home_page extends Component {
 
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_contractor_applications(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3466,7 +3467,7 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_post_award_data(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3511,7 +3512,7 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_post_award_data(id, e5)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3536,7 +3537,7 @@ class home_page extends Component {
         this.props.get_objects_messages(id, e5)
         this.props.load_nitro_node_details(object, true)
         this.props.load_my_account_storage_info(object)
-
+        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -4246,6 +4247,7 @@ class home_page extends Component {
         // if(account_id != this.props.app_state.user_account_id[item['e5']]){
         //     this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
         // }
+        this.props.show_dialog_bottomsheet({'account':account_id, 'e5':item['e5']}, 'account_options')
     }
 
     render_dialog_ui(){

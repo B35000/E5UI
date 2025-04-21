@@ -3608,8 +3608,8 @@ return data['data']
             ]
 
             const string_obj = [[]]
-            var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
-            const data = {'contacts':contacts_clone, 'time':Date.now()}
+            var contacts_clone = structuredClone(this.props.app_state.contacts)
+            const data = {'all_contacts':contacts_clone, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'contacts');
             string_obj[0].push(string_data)
             
@@ -3627,8 +3627,8 @@ return data['data']
             ]
 
             const string_obj = [[]]
-            var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
-            const data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
+            var blocked_accounts = structuredClone(this.props.app_state.blocked_accounts)
+            const data = {'all_blocked_accounts':blocked_accounts, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blocked');
             string_obj[0].push(string_data)
             
@@ -4185,15 +4185,15 @@ return data['data']
 
         
         if(this.props.app_state.should_update_contacts_onchain){
-            var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
-            var data = {'contacts':contacts_clone, 'time':Date.now()}
+            var contacts_clone = structuredClone(this.props.app_state.contacts)
+            var data = {'all_contacts':contacts_clone, 'time':Date.now()}
             ipfs_index_object['contacts'] = data
             ipfs_index_array.push({'id':'contacts', 'data':data})
         }
 
         if(this.props.app_state.should_update_blocked_accounts_onchain){
-            var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
-            var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
+            var blocked_accounts = structuredClone(this.props.app_state.blocked_accounts)
+            var data = {'all_blocked_accounts':blocked_accounts, 'time':Date.now()}
             ipfs_index_object['blocked'] = data
             ipfs_index_array.push({'id':'blocked', 'data':data})
         }
@@ -5660,7 +5660,6 @@ return data['data']
         if(arr.length > 36){
             arr = arr.slice(0, 36);
         }
-        console.log('stackpage', 'crosschain identifier for ',recipient, arr)
         return arr
     }
 
@@ -9392,13 +9391,14 @@ return data['data']
             this.props.notify(this.props.app_state.loc['1571']/* 'Please set your wallet first.' */, 1200);
         }
         else{
-            this.props.add_account_to_contacts(parseInt(typed_contact))
+            this.props.add_account_to_contacts(parseInt(typed_contact), this.props.app_state.selected_e5)
             this.setState({typed_contact_word:''})
         }
     }
 
     render_users_contacts(){
-        var items = this.props.app_state.contacts[this.props.app_state.selected_e5];
+        // var items = this.props.app_state.contacts[this.props.app_state.selected_e5];
+        var items = this.get_all_sorted_objects_mappings(this.props.app_state.contacts)
         if(items == null){
             items = []
         }
@@ -9434,17 +9434,13 @@ return data['data']
                         {items.map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
-                                    swipeRight={{
-                                    content: <div></div>,
-                                    action: () => console.log()
-                                    }}
                                     swipeLeft={{
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.props.remove_account_from_contacts(item)
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
-                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id']), 'details':''+item['address'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id'], item['e5']), 'details':''+item['address'], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -9457,9 +9453,10 @@ return data['data']
         }
     }
 
-    get_senders_name(sender){
-        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
-            return alias
+    get_senders_name(sender, provided_e5){
+        var e5 = provided_e5 == null ? this.props.app_state.selected_e5 : provided_e5
+        var alias = (this.props.app_state.alias_bucket[e5][sender] == null ? sender : this.props.app_state.alias_bucket[e5][sender])
+        return alias
     }
 
 
@@ -9574,13 +9571,14 @@ return data['data']
             this.props.notify(this.props.app_state.loc['1577']/* 'Please set your wallet first.' */, 3200);
         }
         else{
-            this.props.add_account_to_blocked_list(parseInt(typed_contact))
+            this.props.add_account_to_blocked_list(parseInt(typed_contact), this.props.app_state.selected_e5)
             this.setState({typed_blocked_account_word:''})
         }
     }
 
     render_users_blocked_accounts(){
-        var items = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5];
+        // var items = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5];
+        var items = this.get_all_sorted_objects_mappings(this.props.app_state.blocked_accounts)
         if(items == null){
             items = []
         }
@@ -9621,7 +9619,7 @@ return data['data']
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
-                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id']), 'details':''+item['address'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id'], item['e5']), 'details':''+item['address'], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -9746,14 +9744,15 @@ return data['data']
     render_my_account_id(){
         var display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         
-        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':this.props.app_state.font})}
                     <div style={{'padding':'0px 0px 0px 5px'}}>
-                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1585']/* 'Alias: ' */+alias, 'textsize':'12px', 'font':this.props.app_state.font})} 
+                        {this.render_detail_item('10', {'text':alias, 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
                 </div>
             </div>

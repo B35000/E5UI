@@ -24,6 +24,7 @@ import EndImg from './../assets/end_token_icon.png';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import { motion, AnimatePresence } from "framer-motion";
 
 
 var bigInt = require("big-integer");
@@ -699,15 +700,17 @@ class PostListSection extends Component {
             return (
                 <div>
                     <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.show_load_metrics(items, 'jobs')}
-                            {items.map((item, index) => (
-                                <li style={{'padding': '5px'}}>
-                                    {this.render_job_object(item, index)}
-                                </li>
-                            ))}
-                            {this.render_loading_screen_card()}
-                        </ul>
+                        <AnimatePresence initial={false}>
+                            <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                                {this.show_load_metrics(items, 'jobs')}
+                                {items.map((item, index) => (
+                                    <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                    style={{'padding': '5px'}}>
+                                        {this.render_job_object(item, index)}
+                                    </motion.li>
+                                ))}
+                            </ul>
+                        </AnimatePresence>
                     </div>
                 </div>
             );
@@ -801,23 +804,23 @@ class PostListSection extends Component {
             is_object_blocked_for_sender = true
         }
 
-        var object_tags = object['ipfs'].entered_indexing_tags
-        var all_censored_phrases = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
-        var includes = all_censored_phrases.some(r=> object_tags.includes(r.toLowerCase()))
-        if(includes){
-           is_object_blocked_for_sender = true 
-        }
+        // var object_tags = object['ipfs'].entered_indexing_tags
+        // var all_censored_phrases = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
+        // var includes = all_censored_phrases.some(r=> object_tags.includes(r.toLowerCase()))
+        // if(includes){
+        //    is_object_blocked_for_sender = true 
+        // }
 
         var author = object['author']
-        if(all_censored_phrases.includes(author.toString())){
-            is_object_blocked_for_sender = true 
-        }
+        // if(all_censored_phrases.includes(author.toString())){
+        //     is_object_blocked_for_sender = true 
+        // }
 
-        var entered_title_text = object['ipfs'].entered_title_text
-        var includes2 = all_censored_phrases.some(r=> entered_title_text.toLowerCase().includes(r.toLowerCase()))
-        if(includes2){
-           is_object_blocked_for_sender = true 
-        }
+        // var entered_title_text = object['ipfs'].entered_title_text
+        // var includes2 = all_censored_phrases.some(r=> entered_title_text.toLowerCase().includes(r.toLowerCase()))
+        // if(includes2){
+        //    is_object_blocked_for_sender = true 
+        // }
     
         var myid = this.props.app_state.user_account_id[object['e5']]
         if(myid == null) myid = 1
@@ -869,15 +872,17 @@ class PostListSection extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'contracts')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_contract_item(item, index)}
-                            </li>
-                        ))}
-                    {this.render_loading_screen_card()}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'contracts')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_contract_item(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -979,15 +984,17 @@ class PostListSection extends Component {
         }else{
             return (
                 <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'proposals')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_proposal_object(item, index)}
-                            </li>
-                        ))}
-                    {this.render_loading_screen_card()}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'proposals')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_proposal_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -1076,16 +1083,17 @@ class PostListSection extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.nitro_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics([], 'nitro')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px 3px 5px 3px'}}>
-                                {this.render_nitro_object_if_locked(item, index)}
-                            </li>
-                        ))}
-                        {this.render_loading_screen_card()}
-                    </ul>
-                    
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics([], 'nitro')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_nitro_object_if_locked(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -1180,16 +1188,18 @@ class PostListSection extends Component {
         }else{
             return ( 
                 <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'subscriptions')}
-                        {this.render_pay_all_upcoming_subscriptions_button(items)}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_subscription_object(item, index)}
-                            </li>
-                        ))}
-                    {this.render_loading_screen_card()}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'subscriptions')}
+                            {this.render_pay_all_upcoming_subscriptions_button(items)}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_subscription_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -1309,14 +1319,17 @@ class PostListSection extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return (
                 <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, object_type)}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_mail_object_or_null(item, index)}
-                            </li>
-                        ))}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, object_type)}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_mail_object_or_null(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -1450,20 +1463,21 @@ class PostListSection extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'contractor')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_contractor_object(item, index)}
-                            </li>
-                        ))}
-                    {this.render_loading_screen_card()}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'contractor')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_contractor_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
     }
-
 
     get_contractor_items(){
         return this.remove_duplicates(this.props.get_contractor_items())
@@ -1627,7 +1641,7 @@ class PostListSection extends Component {
             <div>
                 <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={25} placeholder={'Enter ID or Alias...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3068']/* Object or Account ID, Alias, "tag" or title..' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
@@ -1642,11 +1656,9 @@ class PostListSection extends Component {
         )
     }
 
-
     when_text_input_field_changed(text){
         this.setState({typed_search_id: text})
     }
-
 
     perform_search(){
         var typed_search = this.state.typed_search_id.trim()
@@ -2009,16 +2021,17 @@ class PostListSection extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'posts')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px 3px 5px 3px'}}>
-                                {this.render_post_object_if_locked(item, index)}
-                            </li>
-                        ))}
-                        {this.render_loading_screen_card()}
-                    </ul>
-                    
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'posts')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_post_object_if_locked(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -2267,15 +2280,17 @@ class PostListSection extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'channels')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_channel_object(item, index)}
-                            </li>
-                        ))}
-                    {this.render_loading_screen_card()}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'channels')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_channel_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -2432,15 +2447,17 @@ class PostListSection extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'storefront')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_storefront_object(item, index)}
-                            </li>
-                        ))}
-                    {this.render_loading_screen_card()}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'storefront')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_storefront_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -2565,15 +2582,17 @@ class PostListSection extends Component {
         }else{
             return ( 
                 <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'bags')}
-                        {items.map((item, index) => (
-                            <li style={{'margin': '10px 2px 10px 2px'}}>
-                                {this.render_bag_object(item, index)}
-                            </li>
-                        ))}
-                    {/* {this.render_small_empty_object_loading_card()} */}
-                    </ul>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'bags')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_bag_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         } 
@@ -2772,20 +2791,19 @@ class PostListSection extends Component {
             );
         }
         else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.audio_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'audioport')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px 3px 5px 3px'}}>
-                                {this.render_audio_object_if_locked(item, index)}
-                            </li>
-                        ))}
-                        {this.render_loading_screen_card()}
-                    </ul>
-                    
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'audioport')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_audio_object_if_locked(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -3128,16 +3146,17 @@ return data['data']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div ref={this.video_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items, 'videoport')}
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px 3px 5px 3px'}}>
-                                {this.render_video_object_if_locked(item, index)}
-                            </li>
-                        ))}
-                        {this.render_loading_screen_card()}
-                    </ul>
-                    
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'videoport')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '5px'}}>
+                                    {this.render_video_object_if_locked(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
                 </div>
             );
         }
@@ -3523,17 +3542,6 @@ return data['data']
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
-            // <div onClick={() => this.when_ether_object_clicked(index, item)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-            //     <div style={{'padding': '0px 0px 0px 5px'}}>
-            //         {this.render_detail_item('1', item['tags'])}
-            //         <div style={{height: 10}}/>
-            //         <div style={{'padding': '0px 10px 0px 10px'}}>
-            //             {this.render_detail_item('8', item['label'])}
-            //         </div>
-            //         <div style={{height: 20}}/>
-            //         {this.render_detail_item('2', item['number_label'])}
-            //     </div>         
-            // </div>
             <div onClick={() => this.when_ether_object_clicked(index, item)}>
                 {this.render_detail_item('8', item['label'])}
             </div>
@@ -3674,17 +3682,17 @@ return data['data']
         }
         return ( 
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {this.show_load_metrics(items2, 'tokens')}
-                    {items.map((item, index) => (
-                        <div style={{'padding': '5px 3px 5px 3px'}}>
-                            {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
-                        </div>
-                    ))}
-                    <div style={{'padding': '5px 3px 5px 3px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                </ul>
+                <AnimatePresence initial={false}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                        {this.show_load_metrics(items2, 'tokens')}
+                        {items.map((item, index) => (
+                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                            style={{'padding': '5px 3px 5px 3px'}}>
+                                {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
+                            </motion.li>
+                        ))}
+                    </ul>
+                </AnimatePresence>
             </div>
         );
     }
@@ -3822,17 +3830,17 @@ return data['data']
 
         return ( 
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {this.show_load_metrics(items2, 'tokens')}
-                    {items.map((item, index) => (
-                        <div style={{'padding': '5px 3px 5px 3px'}}>
-                            {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
-                        </div>
-                    ))}
-                    <div style={{'padding': '5px 3px 5px 3px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                </ul>
+                <AnimatePresence initial={false}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                        {this.show_load_metrics(items2, 'tokens')}
+                        {items.map((item, index) => (
+                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                            style={{'padding': '5px 3px 5px 3px'}}>
+                                {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
+                            </motion.li>
+                        ))}
+                    </ul>
+                </AnimatePresence>
             </div>
         );
     }
@@ -3910,9 +3918,11 @@ return data['data']
     render_detail_item(item_id, object_data){
         var uploaded_data = {}
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        
+        var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} censored_keyword_phrases={censor_list}/>
             </div>
         )
 

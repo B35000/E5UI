@@ -158,6 +158,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'account_options'){
+            return(
+                <div>
+                    {this.render_account_options_data()}
+                </div>
+            )
+        }
     }
 
 
@@ -545,7 +552,6 @@ class DialogPage extends Component {
             )
         }
     }
-
 
     render_confirm_withdraw_ether(){
         var e5 = this.state.data['e5']//this.state.e5
@@ -1354,10 +1360,9 @@ return data['data']
 
                     {this.render_detail_item('0')}
                     {this.render_not_on_e5_message(ecid_obj)}
-
-                    <div onClick={() => this.props.delete_file(ecid_obj)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r']/* 'Forget File.' */, 'action':''})}
-                    </div>
+                    {/* <div onClick={() => this.props.delete_file(ecid_obj)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r'] 'Forget File.' , 'action':''})}
+                    </div> */}
                 </div>
             )
         }
@@ -2503,6 +2508,160 @@ return data['data']
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
+    }
+
+
+
+
+
+
+
+
+
+
+    render_account_options_data(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_account_option_items()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_account_option_items()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_account_option_items()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_account_option_items(){
+        var account_id = this.state.data['account']
+        var e5 = this.state.data['e5']
+        var alias = (this.props.app_state.alias_bucket[e5][account_id] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : this.props.app_state.alias_bucket[e5][account_id])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':account_id, 'details':alias, 'size':'l'})}
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'details':this.props.app_state.loc['3055z']/* 'Add the account to your contact list for easier access in the future.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_add_to_contacts_selected()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'details':this.props.app_state.loc['3055bb']/* 'Hide the acccounts content from your feed, your content and the feed of your followers.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_block_contact_selected()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                <div style={{height:5}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bc']/* 'View Account' */, 'details':this.props.app_state.loc['3055bd']/* 'View the accounts entire activity on e.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_view_account_selected()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bc']/* 'View Account' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055be']/* 'Copy Account' */, 'details':this.props.app_state.loc['3055bf']/* 'Copy the accounts ID to your clipboard' */, 'size':'l'})}
+                {this.render_copy_alias_if_exists()}
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_copy_alias_if_exists(){
+        var account_id = this.state.data['account']
+        var e5 = this.state.data['e5']
+        var alias = (this.props.app_state.alias_bucket[e5][account_id] == null ? null : this.props.app_state.alias_bucket[e5][account_id])
+        if(alias != null){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={() => this.when_copy_to_clipboard_selected(account_id)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055be']/* 'Copy Account' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={() => this.when_copy_to_clipboard_selected(alias)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bg']/* 'Copy Alias' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
+        return(
+            <div>
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_copy_to_clipboard_selected(account_id)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055be']/* 'Copy Account' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+            </div>
+        )
+    }
+
+    when_copy_to_clipboard_selected(data){
+        navigator.clipboard.writeText(data)
+        this.props.notify(this.props.app_state.loc['3055bh']/* 'Copied to Clipboard.' */, 1200)
+    }
+
+    when_block_contact_selected(){
+        var account_id = this.state.data['account']
+        var e5 = this.state.data['e5']
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['1577']/* 'Please set your wallet first.' */, 3200);
+            return;
+        }
+        this.props.when_block_contact_selected(account_id, e5)
+    }
+
+    when_add_to_contacts_selected(){
+        var account_id = this.state.data['account']
+        var e5 = this.state.data['e5']
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['1577']/* 'Please set your wallet first.' */, 3200);
+            return;
+        }
+        this.props.when_add_to_contact_selected(account_id, e5)
+    }
+
+    when_view_account_selected(){
+        var account_id = this.state.data['account']
+        var e5 = this.state.data['e5']
+        this.props.when_view_account_details_selected(account_id, e5)
     }
 
 

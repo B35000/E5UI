@@ -831,7 +831,7 @@ class App extends Component {
     
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
-    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{},
+    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{},
   };
 
   get_static_assets(){
@@ -5044,7 +5044,7 @@ return data['data']
 
           load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} get_searched_account_data_trimmed={this.get_searched_account_data_trimmed.bind(this)}
 
-          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
+          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)}
 
 
 
@@ -7446,10 +7446,10 @@ return data['data']
 
   remove_account_from_contacts(item){
     var clone = structuredClone(this.state.contacts)
-    // var clone_array = this.state.contacts.slice()
-    const index = this.index_of(clone[this.state.selected_e5], item);
+    const e5_to_use = item['e5'] == null ? this.state.selected_e5 : item['e5']
+    const index = this.index_of(clone[e5_to_use], item);
     if (index > -1) { // only splice array when item is found
-      clone[this.state.selected_e5].splice(index, 1); // 2nd parameter means remove one item only
+      clone[e5_to_use].splice(index, 1); // 2nd parameter means remove one item only
     }
     this.setState({contacts: clone, should_update_contacts_onchain: true})
     this.prompt_top_notification(this.getLocale()['2702']/* 'Contact Deleted' */, 1700)
@@ -7527,9 +7527,10 @@ return data['data']
 
   remove_account_from_blocked_accounts(item){
     var clone = structuredClone(this.state.blocked_accounts)
-    const index = this.index_of(clone[this.state.selected_e5], item);
+    const e5_to_use = item['e5'] == null ? this.state.selected_e5 : item['e5']
+    const index = this.index_of(clone[e5_to_use], item);
     if (index > -1) { // only splice array when item is found
-      clone[this.state.selected_e5].splice(index, 1); // 2nd parameter means remove one item only
+      clone[e5_to_use].splice(index, 1); // 2nd parameter means remove one item only
     }
     this.setState({blocked_accounts: clone, should_update_blocked_accounts_onchain: true})
     this.prompt_top_notification(this.getLocale()['2714']/* 'Blocked account removed' */, 1700)
@@ -13713,7 +13714,7 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)}
         
         />
       </div>
@@ -13749,7 +13750,7 @@ return data['data']
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450, 'view_item_purchase':550, 'view_incoming_receipts':250, 'view_incoming_transactions':300, 'view_e5_link':300};
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450, 'view_item_purchase':550, 'view_incoming_receipts':250, 'view_incoming_transactions':300, 'view_e5_link':300, 'account_options':600};
     var size = obj[id]
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
@@ -14134,6 +14135,35 @@ return data['data']
     if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet()
     if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
   }
+
+  when_block_contact_selected(account, e5){
+    this.open_dialog_bottomsheet()
+    this.add_account_to_blocked_list(account, e5)
+  }
+
+  when_add_to_contact_selected(account, e5){
+    this.open_dialog_bottomsheet()
+    this.add_account_to_contacts(account, e5)
+  }
+
+  when_view_account_details_selected = async (account, e5) => {
+    this.open_dialog_bottomsheet()
+    this.open_searched_account_bottomsheet()
+
+    await this.get_searched_account_data(account, account, e5)
+    await this.wait(300)
+    var data = this.state.searched_accounts_data[account] == null ? [] : this.state.searched_accounts_data[account]
+    const object = data.find(e => (e['id'] == account && e['e5'] == e5))
+
+    var me = this;
+    setTimeout(function() {
+      if(me.searched_account_page.current != null){
+        me.searched_account_page.current?.set_searched_item(object, account)
+      }
+    }, (1 * 500));
+  }
+
+
 
 
 
@@ -16931,6 +16961,8 @@ return data['data']
 
     this.get_blocked_accounts_data_e5_timestamp = 0
     this.get_section_tags_data_e5_timestamp = 0
+    this.my_contacts_timestamp = 0
+    this.my_collection_timestamp = 0
     
     var me = this
     setTimeout(function() {
@@ -19875,22 +19907,19 @@ return data['data']
     if(contacts_data.length > 0){
       var latest_event = contacts_data[contacts_data.length - 1];
       var contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var contacts = contacts_data['contacts']
+      var contacts = contacts_data['all_contacts']
+      var time = contacts_data['time']
+      if(contacts != null){
+        if(this.my_contacts_timestamp == null){
+          this.my_contacts_timestamp = 0
+        }
 
-      console.log('loaded contacts for e5: ',e5,' : ',contacts.length)
-      console.log(contacts)
-      
-      var clone = structuredClone(this.state.contacts)
-      var existing_contacts = clone[e5]
-      if(existing_contacts == null){
-        existing_contacts = []
-      }
-      clone[e5] = this.combine_contacts(existing_contacts, contacts)
-      if(!this.state.should_update_contacts_onchain){
-        this.setState({contacts: clone})
+        if(time > this.my_contacts_timestamp){
+          this.setState({contacts: contacts})
+          this.my_contacts_timestamp = time
+        }
       }
     }else{
-      console.log('loaded no contacts')
       var clone = structuredClone(this.state.contacts)
       var existing_contacts = clone[e5]
       if(existing_contacts == null){
@@ -19906,24 +19935,17 @@ return data['data']
 
     if(blocked_contacts_data.length > 0){
       var latest_event = blocked_contacts_data[blocked_contacts_data.length - 1];
-      var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var loaded_blocked_accounts = blocked_contacts_data['blocked_accounts']
+      var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      var loaded_blocked_accounts = blocked_contacts_data['all_blocked_accounts']
       var timestamp = blocked_contacts_data['time']
 
-      if(this.get_blocked_accounts_data_e5_timestamp == null){
-        this.get_blocked_accounts_data_e5_timestamp = 0
-      }
-
-      if(timestamp > this.get_section_tags_data_e5_timestamp){
-        var clone = structuredClone(this.state.blocked_accounts)
-        var existing_blocked_accounts = clone[e5]
-        if(existing_blocked_accounts == null){
-          existing_blocked_accounts = []
+      if(loaded_blocked_accounts != null){
+        if(this.get_blocked_accounts_data_e5_timestamp == null){
+          this.get_blocked_accounts_data_e5_timestamp = 0
         }
-        clone[e5] = this.combine_contacts(existing_blocked_accounts, loaded_blocked_accounts)
-        if(!this.state.should_update_blocked_accounts_onchain){
-          this.setState({blocked_accounts: clone})
-          console.log('setting blocked accounts from chain')
+        if(timestamp > this.get_section_tags_data_e5_timestamp){
+          this.setState({blocked_accounts: loaded_blocked_accounts})
+          this.get_section_tags_data_e5_timestamp = timestamp
         }
       }
     }else{
@@ -19999,8 +20021,6 @@ return data['data']
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
     var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
 
-    // console.log('get_e5_uploaded_cid_data', section_cid_data_events)
-
     if(section_cid_data_events.length != 0){
       const cids = [];
       const latest_events = section_cid_data_events.slice(-3) 
@@ -20032,21 +20052,6 @@ return data['data']
           }
         }
       }
-      // var latest_event = section_cid_data_events[section_cid_data_events.length - 1];
-      // var section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
-      
-      
-      // if(section_cid_data['encrypted'] != null && section_cid_data['encrypted'] == true){
-      //   var key = this.state.accounts['E25'].privateKey.toString()
-      //   var bytes = CryptoJS.AES.decrypt(section_cid_data['cids'], key);
-      //   var originalText = bytes.toString(CryptoJS.enc.Utf8);
-      //   var decrypted_data_object = JSON.parse(originalText);
-      //   cids = decrypted_data_object['data']
-      // }else{
-      //   cids = section_cid_data['cids'];
-      // }
-
-      // var clone = this.state.uploaded_data_cids.slice();
       const clone = []
       cids.forEach(cid => {
         if(!clone.includes(cid) && !this.state.deleted_files.includes(cid)){
@@ -21714,6 +21719,7 @@ return data['data']
         created_subscription_object_mapping_clone[e5] = created_subscription_object_mapping
 
         this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
+        await this.wait(150)
       }
     }
 
@@ -22068,6 +22074,7 @@ return data['data']
         
 
         this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone, enter_exit_accounts_notifications: enter_exit_accounts_notifications_clone})
+        await this.wait(150)
       }
     }
 
@@ -22344,6 +22351,7 @@ return data['data']
         var my_proposals_clone = structuredClone(this.state.my_proposals)
         my_proposals_clone[e5] = created_proposal_object_data
         this.setState({my_proposals: my_proposals_clone})
+        await this.wait(150)
       }
     }
 
@@ -22681,6 +22689,7 @@ return data['data']
         token_name_directory_clone[e5] = token_name_directory
 
         this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone,})
+        await this.wait(150)
       }
     }
 
@@ -22960,7 +22969,8 @@ return data['data']
       if(is_first_time){
         var created_posts_clone = structuredClone(this.state.created_posts)
         created_posts_clone[e5] = created_posts
-        this.setState({created_posts: created_posts_clone})        
+        this.setState({created_posts: created_posts_clone}) 
+        await this.wait(150)       
       }
     }
 
@@ -23097,6 +23107,7 @@ return data['data']
         var created_channels_clone = structuredClone(this.state.created_channels)
         created_channels_clone[e5] = created_channel
         this.setState({created_channels: created_channels_clone})
+        await this.wait(150)
       }
     }
 
@@ -23189,6 +23200,14 @@ return data['data']
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events), web3, e5, contract_addresses)
 
     var all_response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
+    var response_data = {}
+    all_response_count.forEach(event => {
+      var target_id = event.returnValues.p1/* target_id */
+      if(response_data[target_id] == null){
+        response_data[target_id] = []
+      }
+      response_data[target_id].push(event)
+    });
 
     for(var i=0; i<created_job_events.length; i++){
       var id = created_job_events[i].returnValues.p2
@@ -23196,13 +23215,7 @@ return data['data']
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
         var job_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(job_data != null){
-          var response_count = []
-          all_response_count.forEach(event => {
-            if(event.returnValues.p1/* target_id */ == id){
-              response_count.push(event)
-            }
-          });
-          await this.wait(90)
+          var response_count = response_data[id] == null ? [] : response_data[id]
           var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
           created_job.push(job)
           created_job_mappings[id] = job
@@ -23222,6 +23235,7 @@ return data['data']
         created_job_mappings_clone[e5] = created_job_mappings
 
         this.setState({created_jobs: created_jobs_clone, created_job_mappings:created_job_mappings_clone});
+        await this.wait(150)
       }
     }
 
@@ -23373,8 +23387,8 @@ return data['data']
           all_mail_clone[convo_id].push(obj);
           this.setState({all_mail: all_mail_clone})
           this.fetch_uploaded_files_for_object(ipfs_obj)
+          await this.wait(150)
         }
-        await this.wait(150)
       }
     }
 
@@ -23534,7 +23548,7 @@ return data['data']
         created_store_mappings_clone[e5] = created_store_mappings
         
         this.setState({created_stores: created_stores_clone, created_store_mappings:created_store_mappings_clone})
-        await this.wait(300)
+        await this.wait(150)
       }
     }
 
@@ -23643,23 +23657,37 @@ return data['data']
     var response_count_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
 
     var my_bag_responses = []
-    console.log('bag_data', 'events', created_bag_events)
+
+    var response_data = {}
+    var response_data2 = {}
+    response_count_data.forEach(event => {
+      var target_id = event.returnValues.p1/* target_id */
+      if(response_data[target_id] == null){
+        response_data[target_id] = []
+        response_data2[target_id] = false
+      }
+      response_data[target_id].push(event)
+      if(event.returnValues.p2/* sender_acc_id */ == account){
+        //sender is author of response
+        response_data2[target_id] = true
+      }
+    });
 
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
       var data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
       console.log('bag_data', 'id', id, data)
-      var response_count = []
-      var responded_to = false;
-      response_count_data.forEach(event => {
-        if(event.returnValues.p1 == id){
-          response_count.push(event)
-          if(event.returnValues.p2/* sender_acc_id */ == account){
-            //sender is author of response
-            responded_to = true
-          }
-        }
-      });
+      var response_count = response_data[id] == null ? [] : response_data[id]
+      var responded_to = response_data2[id] == null ? [] : response_data2[id]
+      // response_count_data.forEach(event => {
+      //   if(event.returnValues.p1 == id){
+      //     response_count.push(event)
+      //     if(event.returnValues.p2/* sender_acc_id */ == account){
+      //       //sender is author of response
+      //       responded_to = true
+      //     }
+      //   }
+      // });
 
       // console.log('all_data2', 'loaded data for ', id)
       
@@ -23687,6 +23715,7 @@ return data['data']
         var created_bags_clone = structuredClone(this.state.created_bags)
         created_bags_clone[e5] = my_created_bags
         this.setState({created_bags: created_bags_clone})
+        await this.wait(150)
       }
     }
     // console.log('all_data2', 'reached end of loading bag data')
@@ -23853,6 +23882,29 @@ return data['data']
 
     var all_requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:38})
     var all_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:39})
+
+    var request_data = {}
+    var clients_data = {}
+    all_requests.forEach(event => {
+      var target_id = event.returnValues.p1/* target_id */
+      if(request_data[target_id] == null){
+        request_data[target_id] = []
+        clients_data[target_id] = []
+      }
+      request_data[target_id].push(event)
+      if(!clients_data[target_id].includes(event.returnValues.p2)){
+        clients_data[target_id].push(event.returnValues.p2)
+      }
+    });
+    var response_data = {}
+    all_responses.forEach(event => {
+      var target_id = event.returnValues.p1/* target_id */
+      if(response_data[target_id] == null){
+        response_data[target_id] = []
+      }
+      response_data[target_id].push(event)
+    });
+
     for(var i=0; i<created_contractor_events.length; i++){
       var id = created_contractor_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -23861,22 +23913,22 @@ return data['data']
         
         if(contractor_data != null){
           // var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:38})
-          var requests = []
-          var clients = []
-          all_requests.forEach(request => {
-            if(request.returnValues.p1 == id){
-              requests.push(request)
-              if(!clients.includes(request.returnValues.p2)){
-                clients.push(request.returnValues.p2)
-              }
-            }
-          });
-          var responses = []
-          all_responses.forEach(response => {
-            if(response.returnValues.p1 == id){
-              responses.push(response)
-            }
-          });
+          var requests = request_data[id] == null ? [] : request_data[id]
+          var clients = clients_data[id] == null ? [] : clients_data[id]
+          // all_requests.forEach(request => {
+          //   if(request.returnValues.p1 == id){
+          //     requests.push(request)
+          //     if(!clients.includes(request.returnValues.p2)){
+          //       clients.push(request.returnValues.p2)
+          //     }
+          //   }
+          // });
+          var responses = response_data[id]
+          // all_responses.forEach(response => {
+          //   if(response.returnValues.p1 == id){
+          //     responses.push(response)
+          //   }
+          // });
 
           var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':parseInt(created_contractor_events[i].returnValues.p6), 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5, 'requests':requests.length, 'responses': responses.length, 'clients': clients.length}
           
@@ -23892,6 +23944,7 @@ return data['data']
         var created_contractors_clone = structuredClone(this.state.created_contractors)
         created_contractors_clone[e5] = created_contractor
         this.setState({created_contractors: created_contractors_clone,})
+        await this.wait(150)
       }
     }
 
@@ -23971,6 +24024,21 @@ return data['data']
 
     var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
+    var album_sale_data = {}
+    var song_sale_data = {}
+    requests.forEach(event => {
+      var context = event.returnValues.p3/* context */
+      if(album_sale_data[context] == null){
+        album_sale_data[context] = 0
+        song_sale_data[context] = 0
+      }
+      if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+        album_sale_data[context]++
+      }else{
+        song_sale_data[context]++
+      }
+    });
+
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -23979,17 +24047,17 @@ return data['data']
         
         if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false)
 
-        var album_sales = 0
-        var song_sales = 0
-        requests.forEach(event => {
-          if(event.returnValues.p3/* context */ == id){
-            if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
-              album_sales++
-            }else{
-              song_sales++
-            }
-          }
-        });
+        var album_sales = album_sale_data[id] == null ? 0 : album_sale_data[id]
+        var song_sales = song_sale_data[id] == null ? 0 : song_sale_data[id]
+        // requests.forEach(event => {
+        //   if(event.returnValues.p3/* context */ == id){
+        //     if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+        //       album_sales++
+        //     }else{
+        //       song_sales++
+        //     }
+        //   }
+        // });
 
         const data = {'id':id, 'ipfs':audio_data, 'event': created_audio_events[i], 'e5':e5, 'timestamp':parseInt(created_audio_events[i].returnValues.p6), 
         'author':created_audio_events[i].returnValues.p5, 'e5_id':id+e5, 'album_sales':album_sales, 'song_sales':song_sales
@@ -24015,7 +24083,8 @@ return data['data']
         var created_audio_mappings_clone = structuredClone(this.state.created_audio_mappings)
         created_audios_clone[e5] = created_audios
         created_audio_mappings_clone[e5] = created_audio_mappings
-        this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone, my_acquired_audios: my_acquired_audios})        
+        this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone, my_acquired_audios: my_acquired_audios}) 
+        await this.wait(150)       
       }
     }
 
@@ -24086,6 +24155,21 @@ return data['data']
 
     var sales_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
+    var videopost_sale_data = {}
+    var video_sale_data = {}
+    sales_events.forEach(event => {
+      var context = event.returnValues.p3/* context */
+      if(videopost_sale_data[context] == null){
+        videopost_sale_data[context] = 0
+        video_sale_data[context] = 0
+      }
+      if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+        videopost_sale_data[context]++
+      }else{
+        video_sale_data[context]++
+      }
+    });
+
     for(var i=0; i<created_video_events.length; i++){
       var id = created_video_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -24097,17 +24181,17 @@ return data['data']
             this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
           }
 
-          var videopost_sales = 0
-          var video_sales = 0
-          sales_events.forEach(event => {
-            if(event.returnValues.p3/* context */ == id){
-              if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
-                videopost_sales++
-              }else{
-                video_sales++
-              }
-            }
-          });
+          var videopost_sales = videopost_sale_data[id] == null ? 0 : videopost_sale_data[id]
+          var video_sales = video_sale_data[id] == null ? 0 : video_sale_data[id]
+          // sales_events.forEach(event => {
+          //   if(event.returnValues.p3/* context */ == id){
+          //     if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+          //       videopost_sales++
+          //     }else{
+          //       video_sales++
+          //     }
+          //   }
+          // });
 
           const data = {'id':id, 'ipfs':video_data, 'event': created_video_events[i], 'e5':e5, 'timestamp':parseInt(created_video_events[i].returnValues.p6), 
           'author':created_video_events[i].returnValues.p5, 'e5_id':id+e5, 'videopost_sales':videopost_sales, 'video_sales':video_sales,
@@ -24134,7 +24218,8 @@ return data['data']
         var created_video_mappings_clone = structuredClone(this.state.created_video_mappings)
         created_videos_clone[e5] = created_videos
         created_video_mappings_clone[e5] = created_video_mappings
-        this.setState({created_videos: created_videos_clone, created_video_mappings:created_video_mappings_clone, my_acquired_videos: my_acquired_videos})        
+        this.setState({created_videos: created_videos_clone, created_video_mappings: created_video_mappings_clone, my_acquired_videos: my_acquired_videos})   
+        await this.wait(150)     
       }
     }
 
@@ -24297,7 +24382,8 @@ return data['data']
         created_nitros_clone[e5] = created_nitros
         created_nitro_mappings_clone[e5] = created_nitro_mappings
         
-        this.setState({created_nitros: created_nitros_clone, created_nitro_mappings:created_nitro_mappings_clone})        
+        this.setState({created_nitros: created_nitros_clone, created_nitro_mappings:created_nitro_mappings_clone})   
+        await this.wait(150)     
       }
     }
 
@@ -27136,36 +27222,49 @@ return data['data']
     var set_storage_option = this.state.storage_option
     var my_preferred_nitro = this.state.my_preferred_nitro
 
-    if(my_preferred_nitro != ''){
+    if(my_preferred_nitro != '' && this.nitro_node_storage_enabled(my_preferred_nitro)){
       //upload to nitro storage
       var cid = await this.store_data_in_nitro(data, unencrypt_image, my_preferred_nitro, tags)
+      if(cid == '' || cid == null) return ''
       if(unappend_identifier == true) return cid
       return 'ni.'+cid;
     }
     if(set_storage_option == 'infura'){
       var cid = await this.store_data_in_infura(data, unencrypt_image, tags)
+      if(cid == '' || cid == null) return ''
       if(unappend_identifier == true) return cid
       return 'in.'+cid;
     }
-    else if(set_storage_option == 'web3-storage'){
-      var cid = await this.store_data_in_web3(data, unencrypt_image)
-      if(unappend_identifier == true) return cid
-      return 'we.'+cid;
-    }
-    else if(set_storage_option == 'nft-storage'){
-      var cid = await this.store_data_in_nft_storage(data, unencrypt_image)
-      if(unappend_identifier == true) return cid
-      return 'nf.'+cid;
-    }
-    else if(set_storage_option == 'chainsafe'){
-      var cid = await this.store_data_in_chainsafe_storage(data, unencrypt_image, tags)
-      if(unappend_identifier == true) return cid
-      return 'ch.'+cid;
-    }
+    // else if(set_storage_option == 'web3-storage'){
+    //   var cid = await this.store_data_in_web3(data, unencrypt_image)
+    //   if(unappend_identifier == true) return cid
+    //   return 'we.'+cid;
+    // }
+    // else if(set_storage_option == 'nft-storage'){
+    //   var cid = await this.store_data_in_nft_storage(data, unencrypt_image)
+    //   if(unappend_identifier == true) return cid
+    //   return 'nf.'+cid;
+    // }
+    // else if(set_storage_option == 'chainsafe'){
+    //   var cid = await this.store_data_in_chainsafe_storage(data, unencrypt_image, tags)
+    //   if(unappend_identifier == true) return cid
+    //   return 'ch.'+cid;
+    // }
     else if(set_storage_option == 'arweave'){
       var cid = await this.store_data_in_arweave_storage(data, unencrypt_image, tags)
+      if(cid == '' || cid == null) return ''
       if(unappend_identifier == true) return cid
       return 'ar.'+cid;
+    }
+  }
+
+  nitro_node_storage_enabled(my_preferred_nitro){
+    var node_details = this.state.nitro_node_details[my_preferred_nitro]
+    if(node_details == null){
+      return false
+    }
+    else{
+      return node_details['max_buyable_capacity'] != 0
     }
   }
 
@@ -27211,6 +27310,7 @@ return data['data']
       }catch(e){
         console.log('Error uploading data: ', e)
         this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+        this.lock_run(false)
         return '';
       }
     }
@@ -27293,6 +27393,7 @@ return data['data']
     }
     catch(e){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      this.lock_run(false)
       return '';
     }
 
@@ -27356,6 +27457,7 @@ return data['data']
     } catch (error) {
       console.log('Error uploading file: ', error)
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      this.lock_run(false)
       return '';
     }
   }
@@ -28811,6 +28913,7 @@ return data['data']
           const clone = structuredClone(this.state.object_messages)
           clone[id] = messages
           this.setState({object_messages: clone})
+          await this.wait(150)
         }
       }
     }
@@ -28841,19 +28944,21 @@ return data['data']
       const all_events = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index)=> {
         // var focused_e5 = used_e5s[index]
+        var m = 0
         for(var l=0; l<event_array.length; l++){
           const event = event_array[l]
           const focused_e5 = 'E'+event.returnValues.p5
           event['e5'] = focused_e5
           if(parseInt(event.returnValues.p6) > cutoff_timestamp){
             var time = parseInt(event.returnValues.p6)/* timestamp */
-            if(l!=0){
-              const prev_event_object = all_unsorted_events[l-1]
+            if(m!=0){
+              const prev_event_object = all_unsorted_events[m-1]
               if(prev_event_object['time'] == time){
                 time++
               }
             }
             all_unsorted_events.push({'time':time, 'event':event})
+            m++
           }
         }
       });
@@ -28869,18 +28974,20 @@ return data['data']
           
           const created_comment_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id,}))
           console.log('apppage', 'loaded_events for e5',focused_e5, created_comment_data)
+          var m = 0
           for(var k=0; k<created_comment_data.length; k++){
             const event = created_comment_data[k]
             event['e5'] = 'E'+event.returnValues.p5
             if(parseInt(event.returnValues.p6) > cutoff_timestamp){
               var time = parseInt(event.returnValues.p6)/* timestamp */
-              if(k!=0){
-                var prev_event_object = all_unsorted_events[k-1]
+              if(m!=0){
+                var prev_event_object = all_unsorted_events[m-1]
                 if(prev_event_object['time'] == time){
                   time++
                 }
               }
               all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+              m++
             }
           }
         }
@@ -29181,17 +29288,19 @@ return data['data']
       const all_events = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index)=> {
         var focused_e5 = used_e5s[index]
+        var m = 0
         for(var l=0; l<event_array.length; l++){
           var event = event_array[l]
           event['e5'] = focused_e5
           var time = parseInt(event.returnValues.p6)/* timestamp */
-          if(l!=0){
-            const prev_event_object = all_unsorted_events[l-1]
+          if(m!=0){
+            const prev_event_object = all_unsorted_events[m-1]
             if(prev_event_object['time'] == time){
               time++
             }
           }
           all_unsorted_events.push({'time':time, 'event':event})
+          m++
         }
       });
     }else{
@@ -29359,8 +29468,8 @@ return data['data']
           const mail_messages_clone = structuredClone(this.state.mail_messages)
           mail_messages_clone[convo_id] = messages
           this.setState({mail_messages: mail_messages_clone})
+          await this.wait(150)
         }
-        await this.wait(150)
       }
     }
     const mail_messages_clone = structuredClone(this.state.mail_messages)
@@ -29454,6 +29563,96 @@ return data['data']
     return events
   }
 
+  get_object_censored_keywords_and_accounts = async (object) => {
+    const sender = object['author']
+    const sender_e5 = object['e5']
+    const sender_address = await this.get_accounts_address(sender, sender_e5)
+    var accounts_blocked_contacts_data_time = 0
+    var accounts_censored_keywords_event_data_time = 0
+    var accounts_blocked_contacts_data_chosen_event = null
+    var accounts_censored_keywords_event_data_chosen_event = null
+    
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      if(this.state.e5s[e5].active == true){
+        const web3 = new Web3(this.get_web3_url_from_e5(e5));
+        const contractArtifact = require('./contract_abis/E5.json');
+        const contractAddress = this.get_contract_from_e5(e5)
+        const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+        var account = 0
+        if(e5 == sender_e5){
+          account = sender
+        }else{
+          var accounts = await contractInstance.methods.f167([],[sender_address], 2).call((error, result) => {});
+          account = accounts[0]
+        }
+        
+        if(account != 0){
+          var contract_addresses = this.state.addresses[e5]
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = contract_addresses[1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+          var accounts_blocked_contacts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2})
+          
+          var accounts_censored_keywords_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10})
+
+          if(accounts_blocked_contacts_data.length > 0){
+            var latest = accounts_blocked_contacts_data[accounts_blocked_contacts_data.length-1]
+            if(latest.returnValues.p6/* timestamp */ > accounts_blocked_contacts_data_time){
+              accounts_blocked_contacts_data_chosen_event = latest
+              accounts_blocked_contacts_data_time = latest.returnValues.p6/* timestamp */
+            }
+          }
+          if(accounts_censored_keywords_event_data.length > 0){
+            var latest = accounts_censored_keywords_event_data[accounts_censored_keywords_event_data.length-1]
+            if(latest.returnValues.p6/* timestamp */ > accounts_censored_keywords_event_data_time){
+              accounts_censored_keywords_event_data_chosen_event = latest
+              accounts_censored_keywords_event_data_time = latest.returnValues.p6/* timestamp */
+            }
+          }
+        }
+      }
+    }
+
+    var blocked_contacts = []
+    var censored_keywords = []
+    if(accounts_blocked_contacts_data_chosen_event != null){
+      var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(accounts_blocked_contacts_data_chosen_event.returnValues.p4)
+      var loaded_blocked_accounts = blocked_contacts_data['all_blocked_accounts']
+      if(loaded_blocked_accounts != null){
+        blocked_contacts = this.get_all_sorted_objects_mappings(loaded_blocked_accounts)
+      }
+    }
+
+    if(accounts_censored_keywords_event_data_chosen_event != null){
+      var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(accounts_censored_keywords_event_data_chosen_event.returnValues.p4)
+      censored_keywords = followed_account_data['censored_keywords'] == null ? [] : followed_account_data['censored_keywords']
+    }
+
+    var clone = structuredClone(this.state.post_censored_data);
+    clone[sender+sender_e5] = {'blocked_contacts':blocked_contacts, 'censored_keywords': censored_keywords}
+    this.setState({post_censored_data: clone})
+  }
+
+  get_accounts_address = async(account, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_contract_from_e5(e5)
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+    return await contractInstance.methods.f289(account).call((error, result) => {});
+  }
+
+  get_unique_crosschain_identifier_number = async (account, default_e5) => {
+    var arr = null;
+    var hash = await this.get_accounts_public_key(account, default_e5)
+    arr = hash.toString().replaceAll(',','')
+    if(arr.length > 36){
+      arr = arr.slice(0, 36);
+    }
+    return arr
+  }
+
 
 
 
@@ -29514,19 +29713,19 @@ return data['data']
 
 
 
-  add_account_to_contacts = async (account) => {
-    if(this.check_for_duplicates(account)){
+  add_account_to_contacts = async (account, e5) => {
+    if(this.check_for_duplicates(account, e5)){
       this.prompt_top_notification(this.getLocale()['2734']/* 'A matching contact was found' */, 3600)
       return
     }
 
-    var me = this.state.user_account_id[this.state.selected_e5]
+    var me = this.state.user_account_id[e5]
     if(account == me){
       this.prompt_top_notification(this.getLocale()['2735']/* 'You cant add yourself.' */, 3600)
       return
     }
 
-    this.prompt_top_notification(this.getLocale()['2736']/* 'Adding account ID to Contacts...' */, 3600)
+    this.prompt_top_notification(this.getLocale()['2736']/* 'Adding account ID to Contacts...' */, 2000)
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
@@ -29534,38 +29733,39 @@ return data['data']
 
     var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
     var contacts_object_clone = structuredClone(this.state.contacts)
-    if(contacts_object_clone[this.state.selected_e5] == null){
-      contacts_object_clone[this.state.selected_e5] = []
+    if(contacts_object_clone[e5] == null){
+      contacts_object_clone[e5] = []
     }
-    contacts_object_clone[this.state.selected_e5].push({'id':account.toString(), 'address':account_address.toString()})
+    contacts_object_clone[e5].push({'id':account.toString(), 'e5':e5, 'address':account_address.toString()})
 
     this.setState({contacts: contacts_object_clone, should_update_contacts_onchain: true})
 
     var me = this;
     setTimeout(function() {
         me.set_cookies()
+        me.prompt_top_notification(this.getLocale()['3055bj']/* 'Done' */, 1000)
     }, (1 * 1000));
   }
 
-  check_for_duplicates(account){
+  check_for_duplicates(account, e5){
     var do_duplicates_exist = false
-    if(this.state.contacts[this.state.selected_e5] == null){
+    if(this.state.contacts[e5] == null){
       return do_duplicates_exist;
     }
-    this.state.contacts[this.state.selected_e5].forEach(contact => {
-      if(contact['id'] == account){
+    this.state.contacts[e5].forEach(contact => {
+      if(contact['id'] == account && contact['e5'] == e5){
         do_duplicates_exist = true
       }
     });
     return do_duplicates_exist
   }
  
-  add_account_to_blocked_list = async (account) => {
-    if(this.check_for_blocked_duplicates(account)){
+  add_account_to_blocked_list = async (account, e5) => {
+    if(this.check_for_blocked_duplicates(account, e5)){
       this.prompt_top_notification(this.getLocale()['2731']/* 'A matching blocked account was found' */, 2600)
       return
     }
-    var me = this.state.user_account_id[this.state.selected_e5]
+    var me = this.state.user_account_id[e5]
     if(account == me){
       this.prompt_top_notification(this.getLocale()['2732']/* 'You cant block yourself!' */, 2600)
       return
@@ -29578,26 +29778,27 @@ return data['data']
 
     var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
     var blocked_object_clone = structuredClone(this.state.blocked_accounts)
-    if(blocked_object_clone[this.state.selected_e5] == null){
-      blocked_object_clone[this.state.selected_e5] = []
+    if(blocked_object_clone[e5] == null){
+      blocked_object_clone[e5] = []
     }
-    blocked_object_clone[this.state.selected_e5].push({'id':account.toString(), 'address':account_address.toString()})
+    blocked_object_clone[e5].push({'id':account.toString(), 'e5': e5, 'address':account_address.toString()})
 
     this.setState({blocked_accounts: blocked_object_clone, should_update_blocked_accounts_onchain: true})
 
     var me = this;
     setTimeout(function() {
       me.set_cookies()
+      me.prompt_top_notification(this.getLocale()['3055bj']/* 'Done' */, 1000)
     }, (1 * 1000));
   }
 
-  check_for_blocked_duplicates(account){
+  check_for_blocked_duplicates(account, e5){
     var do_duplicates_exist = false
-    if(this.state.blocked_accounts[this.state.selected_e5] == null){
+    if(this.state.blocked_accounts[e5] == null){
       return do_duplicates_exist
     }
-    this.state.blocked_accounts[this.state.selected_e5].forEach(contact => {
-      if(contact['id'] == account){
+    this.state.blocked_accounts[e5].forEach(contact => {
+      if(contact['id'] == account && contact['e5'] == e5){
         do_duplicates_exist = true
       }
     });
