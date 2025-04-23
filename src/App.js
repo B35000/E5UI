@@ -831,7 +831,7 @@ class App extends Component {
     
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
-    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{},
+    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{},
   };
 
   get_static_assets(){
@@ -7211,7 +7211,7 @@ return data['data']
 
   lock_run(value){
     var clone = structuredClone(this.state.is_running)
-    clone[this.state.selected_e5] = true
+    clone[this.state.selected_e5] = value
     this.setState({is_running: clone})
 
     var set_storage_option = this.state.storage_option
@@ -13750,7 +13750,7 @@ return data['data']
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':450, 'view_item_purchase':550, 'view_incoming_receipts':250, 'view_incoming_transactions':300, 'view_e5_link':300, 'account_options':600};
+    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':400, 'view_item_purchase':550, 'view_incoming_receipts':250, 'view_incoming_transactions':300, 'view_e5_link':300, 'account_options':600};
     var size = obj[id]
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
@@ -15786,9 +15786,11 @@ return data['data']
     if(!this.state.is_audio_pip_showing) return;
     var size = this.getScreenSize();
     var h = 240
-    // if(size == 's' || size == 'm') h = 310
     var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : 1.0
     var player_size = size == 's' ? 150 : 200
+
+    var x_pos = this.state.width - (player_size + 20)
+    var y_pos = this.state.height - (player_size + 20)
 
     if(this.state.hide_pip != 'e'){
       player_size = 0
@@ -15796,7 +15798,7 @@ return data['data']
     }
     return(
       <div style={{'opacity':opacity}}>
-        <Draggable handle="strong" bounds="body" defaultPosition={{x: this.state.width - 220, y: this.state.height - h}}>
+        <Draggable handle="strong" bounds="body" defaultPosition={{x: x_pos, y: y_pos}}>
           <div className={classes2.pipWindow}>
             <div className="box no-cursor" style={{'position': 'relative'}}>
               <div style={{ width:player_size, height:player_size,'z-index':'210', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
@@ -20030,20 +20032,21 @@ return data['data']
       for(var c = latest_events.length - 1; c >= 0; c--){
         const latest_event = latest_events[c];
         const section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
-        console.log('data', 'section_cid_data', latest_event.returnValues.p4, section_cid_data)
+        // console.log('datas', 'section_cid_data', latest_event.returnValues.p4, section_cid_data)
         if(section_cid_data != null){
           if(section_cid_data['encrypted'] != null && section_cid_data['encrypted'] == true){
             const key = this.state.accounts['E25'].privateKey.toString()
             const bytes = CryptoJS.AES.decrypt(section_cid_data['cids'], key);
             const originalText = bytes.toString(CryptoJS.enc.Utf8);
             const decrypted_data_object = JSON.parse(JSON.parse(originalText));
-            console.log('data', 'decrypted_data_object', decrypted_data_object)
+            // console.log('datas', 'decrypted_data_object', decrypted_data_object)
             decrypted_data_object['data'].forEach(item => {
               if(item != null && !cids.includes(item)){
                 cids.push(item)
               }
             });
           }else{
+            // console.log('datas', 'decrypted_data_object', section_cid_data)
             section_cid_data['cids'].forEach(item => {
               if(item != null && !cids.includes(item)){
                 cids.push(item)
@@ -20052,13 +20055,14 @@ return data['data']
           }
         }
       }
-      const clone = []
+      const clone = this.state.uploaded_data_cids.slice()
       cids.forEach(cid => {
         if(!clone.includes(cid) && !this.state.deleted_files.includes(cid)){
           clone.push(cid)
         }
       });
-      this.fetch_uploaded_data_from_ipfs(clone, true)
+      // console.log('datas', 'loaded uplpaded cid datas', clone)
+      this.fetch_uploaded_data_from_ipfs(clone.reverse(), true)
     }else{
       if(this.uploaded_data_user != account && this.uploaded_data_user != null && this.uploaded_data_user != 1){
         this.setState({uploaded_data_cids:[]})
@@ -20090,7 +20094,9 @@ return data['data']
         if(data != null) this.store_in_local_storage(cids[i], data);
       }
       if(data != null){
-        // console.log('datas', 'obtained object', data)
+        if(filetype == 'video'){
+          this.load_and_store_video_thumbnail(cids[i], data)
+        }
         var clone = structuredClone(this.state.uploaded_data)
         try{
           if(clone[filetype] == null) clone[filetype] = {}
@@ -20107,6 +20113,48 @@ return data['data']
         }
       }
     }
+  }
+
+  load_and_store_video_thumbnail(cid, data){
+    var link = data['data']
+    this.extractFirstFrame(link).then(blob => {
+      const imageUrl = URL.createObjectURL(blob);
+      var clone = structuredClone(this.state.video_thumbnails)
+      clone[cid] = imageUrl
+      this.setState({video_thumbnails: clone})
+    });
+  }
+
+  extractFirstFrame(videoUrl) {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+
+      video.src = videoUrl;
+      video.crossOrigin = "anonymous"; // Needed if video is from another domain
+      video.preload = "auto";
+      video.muted = true;
+
+      video.addEventListener("loadeddata", () => {
+        video.currentTime = 0; // Seek to the beginning
+      });
+
+      video.addEventListener("seeked", () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get a base64 image string or blob
+        canvas.toBlob(blob => {
+          resolve(blob); // Or use canvas.toDataURL() if you want a base64 string
+        }, "image/jpeg");
+      });
+
+      video.addEventListener("error", (err) => {
+        reject("Error loading video: " + err.message);
+      });
+    });
   }
 
   get_cid_split(ecid){
@@ -22655,9 +22703,11 @@ return data['data']
         }
       }
 
-      created_token_object_data.push(token_obj)
-      created_token_object_mapping[created_tokens[i]] = token_obj
-
+      if(tokens_data != null || (created_tokens[i] == 3 || created_tokens[i] == 5)){
+        created_token_object_data.push(token_obj)
+        created_token_object_mapping[created_tokens[i]] = token_obj
+      }
+      
       var token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
       var token_title = tokens_data == null ? 'tokens' : tokens_data.entered_title_text
       var token_id = created_tokens[i]
@@ -22743,7 +22793,6 @@ return data['data']
 
 
     var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
-
 
     var depth_values = []
     for(var j=0; j<object['data'][3].length; j++){
@@ -24045,36 +24094,38 @@ return data['data']
       if(created_audio_events[i].returnValues.p1.toString() == hash.toString()){
         var audio_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
-        if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false)
+        if(audio_data != null){
+          if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false)
 
-        var album_sales = album_sale_data[id] == null ? 0 : album_sale_data[id]
-        var song_sales = song_sale_data[id] == null ? 0 : song_sale_data[id]
-        // requests.forEach(event => {
-        //   if(event.returnValues.p3/* context */ == id){
-        //     if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
-        //       album_sales++
-        //     }else{
-        //       song_sales++
-        //     }
-        //   }
-        // });
+          var album_sales = album_sale_data[id] == null ? 0 : album_sale_data[id]
+          var song_sales = song_sale_data[id] == null ? 0 : song_sale_data[id]
+          // requests.forEach(event => {
+          //   if(event.returnValues.p3/* context */ == id){
+          //     if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
+          //       album_sales++
+          //     }else{
+          //       song_sales++
+          //     }
+          //   }
+          // });
 
-        const data = {'id':id, 'ipfs':audio_data, 'event': created_audio_events[i], 'e5':e5, 'timestamp':parseInt(created_audio_events[i].returnValues.p6), 
-        'author':created_audio_events[i].returnValues.p5, 'e5_id':id+e5, 'album_sales':album_sales, 'song_sales':song_sales
-        }
-
-        var obj = this.get_item_in_array(created_audios, id)
-        if(obj == null){
-          created_audios.push(data)
-        }else{
-          var pos = created_audios.indexOf(obj)
-          if(pos != -1){
-            created_audios[pos] = data
+          const data = {'id':id, 'ipfs':audio_data, 'event': created_audio_events[i], 'e5':e5, 'timestamp':parseInt(created_audio_events[i].returnValues.p6), 
+          'author':created_audio_events[i].returnValues.p5, 'e5_id':id+e5, 'album_sales':album_sales, 'song_sales':song_sales
           }
-        }
-        created_audio_mappings[id] = data
-        if(this.state.my_albums.includes(id)){
-          my_acquired_audios.push(data)
+
+          var obj = this.get_item_in_array(created_audios, id)
+          if(obj == null){
+            created_audios.push(data)
+          }else{
+            var pos = created_audios.indexOf(obj)
+            if(pos != -1){
+              created_audios[pos] = data
+            }
+          }
+          created_audio_mappings[id] = data
+          if(this.state.my_albums.includes(id)){
+            my_acquired_audios.push(data)
+          }
         }
       }
 
@@ -27222,7 +27273,7 @@ return data['data']
     var set_storage_option = this.state.storage_option
     var my_preferred_nitro = this.state.my_preferred_nitro
 
-    if(my_preferred_nitro != '' && this.nitro_node_storage_enabled(my_preferred_nitro)){
+    if(my_preferred_nitro != '' && this.nitro_node_storage_enabled(my_preferred_nitro) && set_storage_option == this.getLocale()['1593cw']/* 'nitro 🛰️' */){
       //upload to nitro storage
       var cid = await this.store_data_in_nitro(data, unencrypt_image, my_preferred_nitro, tags)
       if(cid == '' || cid == null) return ''
@@ -27419,10 +27470,13 @@ return data['data']
       }
       var data = await response.text();
       var obj = JSON.parse(data);
+      // console.log('datas', 'hash object', obj)
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
-      var decrypted_data = this.decrypt_storage_object2(cid_data)
-      return JSON.parse(decrypted_data)
+      var decrypted_data = this.decrypt_storage_object(cid_data)
+      var return_data = JSON.parse(decrypted_data)
+      // console.log('datas', 'hash object return_data', return_data)
+      return return_data
     }
     catch(e){
       if(depth < 3){
@@ -27812,7 +27866,7 @@ return data['data']
     var nitro_cid = split_cid_array[1]
 
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
-    // console.log('datas', nitro_url)
+    console.log('datas', 'loading nitro link', cid)
     if(nitro_url == null) return
 
     const params = new URLSearchParams({
@@ -27828,9 +27882,8 @@ return data['data']
       var data = await response.text();
       var obj = JSON.parse(data);
       var object_data = obj['data']
-      // console.log('datas', object_data)
       var cid_data = object_data[nitro_cid]
-
+      console.log('datas','fetching_file_from_nitro_storage', cid_data)
       if(cid_data != null){
         var file_pointer_link = cid_data['data']
         var split_cid_array2 = file_pointer_link.split('-');
@@ -27842,12 +27895,12 @@ return data['data']
         if(nitro_url != null){
           cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
         }
-        console.log('datas', cid_data)
-
+        console.log('datas','final cid object with link', cid_data)
         return cid_data
       }
     }
     catch(e){
+      console.log('datas', 'error', e)
       if(depth < 3){
         await this.fetch_file_data_from_nitro_storage(cid, depth+1)
       }
@@ -27956,6 +28009,8 @@ return data['data']
       return;
     }
 
+    // console.log('datas', 'uploaded nitro file names', file_names)
+
     var nitro_object_e5_id = nitro_object['e5_id']
     var final_objects = []
     var datas_clone = JSON.parse(JSON.stringify({'data':datas}))['data']
@@ -27968,10 +28023,12 @@ return data['data']
     }
 
     var file_object_cids = await this.upload_file_objects_to_nitro(final_objects, nitro_object, node_details)
-    if(file_names == null){
+    if(file_object_cids == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return;
     }
+
+    console.log('file_object_cids', 'file_object_cids', file_object_cids)
 
     var e_cids = []
     for(var i=0; i<datas.length; i++){
@@ -28120,7 +28177,7 @@ return data['data']
       return null;
     }
 
-    if(total_size < (53 * 1024 * 1024)){
+    if(total_size < (5.3 * 1024 * 1024)){
       var node_url = nitro_object['ipfs'].node_url
       var arg_obj = {
         signature_data: block_hash_and_signature.data,
@@ -28190,23 +28247,25 @@ return data['data']
         try{
           const response = await fetch(request, body);
           if (!response.ok) {
-            console.log('apppage', response)
+            console.log('uploader', response)
             throw new Error(`Failed to retrieve data. Status: ${response}`);
           }
           var data = await response.text();
           var obj = JSON.parse(data);
           if(obj.success == false){
-            console.log('apppage','error', obj.message)
+            console.log('uploader','error', obj.message)
             return null
           }else{
             extension = obj.extension
           }
         }
         catch(e){
-          console.log('apppage','error', e)
+          console.log('uploader','error', e)
           return null
         }
 
+        files.push(extension)
+        this.is_uploading_file = true
         const xhr = new XMLHttpRequest();
         const url = `${node_url}/upload/${extension}`;
         xhr.open("POST", url);
@@ -28214,25 +28273,25 @@ return data['data']
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable) {
             const percent = ((event.loaded / event.total) * 100).toFixed(2);
-            me.setState({nitro_upload_progress_data:{'percentage':percent, 'file_number':e, 'file_count':file_datas.length ,'total_size':total_size}})
+            me.setState({nitro_upload_progress_data:{'percentage':percent, 'file_number':e+1, 'file_count':file_datas.length ,'total_size':total_size}})
           }
         };
         
         var success = true;
         xhr.onload = () => {
-          console.log('apppage',"Upload complete! Server said:", xhr.responseText);
+          console.log('uploader',"Upload complete! Server said:", xhr.responseText);
           var obj = JSON.parse(data)
           if(obj.success == false){
-            console.log('apppage','error during upload', obj.message)
+            console.log('uploader','error during upload', obj.message)
             success = false
-            this.is_uploading_file = false
           }else{
-            files.push(extension)
+            success = true
           }
+          this.is_uploading_file = false
         };
 
         xhr.onerror = () => {
-          console.error('apppage',"Upload failed!");
+          console.error('uploader',"Upload failed!");
           success = false
           this.is_uploading_file = false
         };
@@ -28248,63 +28307,6 @@ return data['data']
         if(success == false){
           return null
         }
-        
-        // const url = `${node_url}/upload/${extension}`; 
-        // const chunkSize = (1024 * 1024);
-        // let uploadedBytes = 0;
-        // var me = this;
-        // const stream = new ReadableStream({
-        //   start(controller) {
-        //     let offset = 0;
-
-        //     function push() {
-        //       if (offset >= totalSize) {
-        //         controller.close(); // End the stream
-        //         return;
-        //       }
-
-        //       const chunk = encoded_data.slice(offset, offset + chunkSize);
-        //       uploadedBytes += chunk.length;
-        //       const progress_percentage = ((uploadedBytes / totalSize) * 100).toFixed(2)
-        //       // console.log(`Uploaded: ${progress_percentage}%`);
-        //       me.setState({nitro_upload_progress_data:{'percentage':progress_percentage, 'file_number':e, 'file_count':file_datas.length ,'total_size':total_size}})
-
-        //       controller.enqueue(chunk);
-        //       offset += chunkSize;
-
-        //       setTimeout(push, 35); // Simulate network delay (optional)
-        //     }
-        //     push();
-        //   },
-        // });
-        
-        // const stream_body = {
-        //   method: "POST",
-        //   headers: { 
-        //     "Content-Type": "application/json" 
-        //   },
-        //   body: new ReadableStream(),
-        //   duplex: "half",
-        // }
-
-        // try{
-        //   const response = await fetch(url, stream_body);
-        //   if (!response.ok) {
-        //     console.log('apppage',response)
-        //     throw new Error(`Failed to retrieve data. Status: ${response}`);
-        //   }
-        //   var data = await response.text();
-        //   var obj = JSON.parse(data);
-        //   if(obj.success == false){
-        //     console.log('apppage','error during upload', obj.message)
-        //     return null
-        //   }else{
-        //     files.push(extension)
-        //   }
-        // }catch(e){
-        //   console.log('apppage', e)
-        //   return null
-        // }
       }
       return files
     }
@@ -28378,6 +28380,7 @@ return data['data']
       }
       var data = await response.text();
       var obj = JSON.parse(data);
+      console.log('upload_file_objects_to_nitro', 'obj', obj)
       if(obj.success == false){
         return null
       }else{
@@ -28472,9 +28475,15 @@ return data['data']
     if(isJsonObject(data)){
       try{
         cipher_text = data['ciphertext']
-        // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
       }catch(f){
         console.log('apppage',f)
+      }
+    }else{
+      try{
+        var json_object = JSON.parse(data)
+        cipher_text = json_object['ciphertext']
+      }catch(f){
+        // console.log(f)
       }
     }
     try{

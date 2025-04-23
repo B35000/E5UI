@@ -128,7 +128,7 @@ class AudioPip extends Component {
     render_backgorund_image(image){
         if(this.state.play_pause_state == 0/* paused */ || this.state.buffer == 0){
             return(
-                <img alt="" src={image} style={{height:this.props.player_size ,width:this.props.player_size, 'border-radius': '15px', 'position': 'absolute', 'z-index':'1', 'filter': 'blur(8px)', '-webkit-filter': 'blur(8px)'}}/>
+                <img alt="" src={image} style={{height:this.props.player_size ,width:this.props.player_size, 'border-radius': '15px', 'position': 'absolute', 'z-index':'1', 'filter': 'blur(3px)', '-webkit-filter': 'blur(3px)'}}/>
             )
         }else{
             return(
@@ -169,6 +169,9 @@ class AudioPip extends Component {
             var current_song = this.state.songs[this.state.pos]
             var current_song_length = current_song['basic_data']['metadata']['format']['duration']
             var buffer = (loaded / current_song_length) * 100
+            if(this.state.buffer == 0){
+                this.audio.current?.play()
+            }
             this.setState({buffer: buffer});
             this.props.when_buffer_updated(buffer)
         }
@@ -251,6 +254,7 @@ class AudioPip extends Component {
 
     render_audio(){
         if(!this.has_file_loaded()) return;
+        // console.log('audiopip', 'file link:', this.get_audio_file())
         return(
             <div style={{width:2, height:2,'z-index':'2', 'opacity':0.0, 'position': 'absolute', 'margin':'100px 0px 0px 0px'}}>
                 <div style={{'position': 'relative'}}>
@@ -391,7 +395,7 @@ class AudioPip extends Component {
     play_previous(){
         if(this.state.pos > 0){
             this.audio.current.currentTime = 0
-            this.setState({value: 0, pos: this.state.pos -1, isloading:true})
+            this.setState({value: 0, pos: this.state.pos -1, isloading:true, buffer:0})
             var me = this;
             setTimeout(function() {
                 me.setState({isloading:false})
@@ -407,7 +411,7 @@ class AudioPip extends Component {
     play_next(){
         if(this.state.pos != this.state.songs.length - 1){
             this.audio.current.currentTime = 0
-            this.setState({value: 0, pos: this.state.pos + 1, isloading:true})
+            this.setState({value: 0, pos: this.state.pos + 1, isloading:true, buffer:0})
             
             var me = this;
             setTimeout(function() {
@@ -434,7 +438,7 @@ class AudioPip extends Component {
             }, (1 * 200));
         }
         this.audio.current.currentTime = 0
-        this.setState({value: 0, pos: index})
+        this.setState({value: 0, pos: index, buffer:0})
         
         var me = this;
         setTimeout(function() {

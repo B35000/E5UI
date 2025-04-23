@@ -349,7 +349,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'infura', 'arweave'], [this.get_selected_storage_option()]
+                ['xor','',0], ['e', 'infura', 'arweave', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */], [this.get_selected_storage_option()]
             ],
         };
     }
@@ -820,7 +820,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1593cv']/* web3.storage */, this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['1593ew']/* arweave */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['1593ew']/* arweave *//* this.props.app_state.loc['1593cv'], web3.storage  */ ], [1]
             ],
         };
     }
@@ -3258,7 +3258,17 @@ return data['data']
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */|| txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
+                else if(
+                    txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || 
+                    txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || 
+                    txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || 
+                    txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || 
+                    txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || 
+                    txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || 
+                    txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || 
+                    txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || 
+                    txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */|| 
+                    txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
@@ -3527,7 +3537,20 @@ return data['data']
 
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */ || pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+            if(
+                pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| 
+                pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
+                pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */ || 
+                pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */
+            ){
                 metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
@@ -3895,6 +3918,7 @@ return data['data']
         const pushed_txs = []
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
+                console.log('stackitem', 'pushing type', txs[i].type)
                 pushed_txs.push(txs[i])
                 if(txs[i].type == this.props.app_state.loc['285']/* 'mail' */){
                     var t = txs[i]
@@ -4053,13 +4077,23 @@ return data['data']
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */|| txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */ || txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
-                    var t = txs[i]
+                else if(
+                    txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || 
+                    txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || 
+                    txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || 
+                    txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || 
+                    txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || 
+                    txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || 
+                    txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || 
+                    txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */|| 
+                    txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */ || 
+                    txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
+                    const t = txs[i]
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
                         t = await this.process_channel_object(txs[i])
                     }
                     var extra_tags = [].concat(t.entered_title_text)
-                    if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
+                    if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
                         var songs = t.songs
                         songs.forEach(song => {
                             extra_tags.push(song['song_title'].toLowerCase())
@@ -4069,7 +4103,7 @@ return data['data']
                         });
                         extra_tags.push(t.entered_author_text.toLowerCase())
                     }
-                    if(txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                    if(txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
                         var videos = t.videos
                         videos.forEach(video => {
                             extra_tags.push(video['video_title'].toLowerCase())
@@ -4142,7 +4176,19 @@ return data['data']
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
                 }
-                else if(txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || txs[i].type == this.props.app_state.loc['601']/* 'token' */ || txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || txs[i].type == this.props.app_state.loc['297']/* 'post' */ || txs[i].type == this.props.app_state.loc['760']/* 'job' */ || txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */|| txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+                else if(
+                    txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || 
+                    txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
+                    txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || 
+                    txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
+                    txs[i].type == this.props.app_state.loc['760']/* 'job' */ || 
+                    txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || 
+                    txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| 
+                    txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || 
+                    txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || 
+                    txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
+                    txs[i].type == this.props.app_state.loc['b311a']/* video */|| 
+                    txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
                     var data = txs[i]
                     if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
                         data = await this.process_channel_object(txs[i])
@@ -11174,15 +11220,6 @@ return data['data']
                         </div>
                     </div>
                 </div>
-                {/* <div style={{'display': 'flex','flex-direction': 'row', 'width':'99%'}}>
-                    <div style={{'width':'95%'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_file_data_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_file_data_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                    <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                        {this.render_upload_button()}
-                    </div>
-                </div> */}
-                <div style={{height: 10}}/>
                 {this.render_uploaded_files()}
             </div>
         )
@@ -11691,13 +11728,25 @@ return data['data']
         var items = this.props.app_state.uploaded_data_cids
         var return_items = []
         items.forEach(ecid => {
-            var data = this.get_cid_split(ecid)
+            const data = this.get_cid_split(ecid)
             if(data != null && (data['filetype'] == file_type || selected_item == this.props.app_state.loc['1593bk']/* all */)){
-                return_items.push(data)
+                if(this.props.app_state.uploaded_data[data['filetype']] != null){
+                    const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
+                    if(file_data != null){
+                        const time = file_data['id']
+                        return_items.push({'data':data, 'time':time})
+                    }
+                }
             }
         });
 
-        return return_items.reverse()
+        var sorted_items = this.sortByAttributeDescending(return_items, 'time')
+        var final_items = []
+        sorted_items.forEach(item => {
+            final_items.push(item['data'])
+        });
+
+        return final_items
     }
 
     get_cid_split(ecid){
@@ -11729,7 +11778,7 @@ return data['data']
                 var details = data['name']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'15%', 'image_width':50})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'15%', 'image_width':'auto'})}
                     </div>
                 )
             }
@@ -11752,6 +11801,14 @@ return data['data']
                 var fs = formatted_size['size']+' '+formatted_size['unit']
                 var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var title = data['name']
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
+                            {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
                 return(
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>

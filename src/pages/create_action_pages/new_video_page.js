@@ -2450,6 +2450,14 @@ return data['data']
             var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
             var title = data['name']
             var video = data['data']
+            if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    </div>
+                )
+            }
             return(
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>

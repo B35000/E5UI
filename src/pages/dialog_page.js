@@ -1285,12 +1285,12 @@ return data['data']
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
 
         if(data != null){
-            var wh = '240px'
+            var wh = '241px'
             if(data['type'] == 'image'){
                 var img = data['data']
                 return(
                     <div>
-                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
+                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':'auto', 'height':wh, 'border_radius':'25px'})}
                     </div>
                 )
             }
@@ -1305,6 +1305,14 @@ return data['data']
             else if(data['type'] == 'video'){
                 var video = encodeURI(data['data'])
                 console.log('videoimage', ''+video)
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':thumbnail, 'width_height':'auto', 'height':wh, 'border_radius':'15px'})}
+                        </div>
+                    )
+                }
                 return(
                     <div style={{'display': 'flex', 'align-items':'center','justify-content':'center','padding': '0px 0px 0px 5px', width: '99%'}}>
                         <div>
@@ -1346,6 +1354,7 @@ return data['data']
             var size = formatted_size['size']+' '+formatted_size['unit']
             var age = this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
             var name = data['name']
+            var link = data['data'].startsWith('http') ? encodeURI(data['data']) : ''
             return(
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3055x']/* File Details. */}</h4>
@@ -1360,6 +1369,7 @@ return data['data']
 
                     {this.render_detail_item('0')}
                     {this.render_not_on_e5_message(ecid_obj)}
+                    {/* {this.render_detail_item('4', {'text':link, 'textsize':'10px', 'font':this.props.app_state.font})} */}
                     {/* <div onClick={() => this.props.delete_file(ecid_obj)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r'] 'Forget File.' , 'action':''})}
                     </div> */}

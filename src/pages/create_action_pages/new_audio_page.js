@@ -55,7 +55,7 @@ class NewAudioPage extends Component {
     
     state = {
         selected: 0, object_type:19,
-        id: makeid(8), type:this.props.app_state.loc['a311a']/* audio */, e5:this.props.app_state.selected_e5,
+        id: makeid(8), type: this.props.app_state.loc['a311a']/* audio */, e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],

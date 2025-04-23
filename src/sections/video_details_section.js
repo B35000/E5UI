@@ -836,6 +836,16 @@ class VideoDetailsSection extends Component {
     }
 
     render_video(item, object, index){
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+            var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+            return(
+                <div onClick={() => this.when_video_item_clicked(item, object)}>
+                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_video_item_clicked(item, object)}>
                 {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}

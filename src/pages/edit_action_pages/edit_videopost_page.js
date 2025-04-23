@@ -2500,13 +2500,21 @@ return data['data']
             var ecid_obj = this.get_cid_split(video_file)
             if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
             var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-            
+            if(data == null) return
             var font_size = ['15px', '12px', 19];
             var formatted_size = this.format_data_size(data['size'])
             var fs = formatted_size['size']+' '+formatted_size['unit']
             var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
             var title = data['name']
             var video = data['data']
+            if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    </div>
+                )
+            }
             return(
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
