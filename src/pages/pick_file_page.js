@@ -250,11 +250,12 @@ class PickFilePage extends Component {
                 if(this.props.app_state.uploaded_data[data['filetype']] != null && this.props.app_state.uploaded_data[data['filetype']][data['full']] != null){
                     var file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
                     var title = file_data['name']
+                    const time = file_data['id']
                     if(title.includes(this.state.search_text)){
-                        return_items.push(data)
+                        return_items.push({'data':data, 'time':time})
                     }
                     else if(this.state.search_text === ''){
-                        return_items.push(data)
+                        return_items.push({'data':data, 'time':time})
                     }
                 }
                 
@@ -262,7 +263,13 @@ class PickFilePage extends Component {
             }
         });
 
-        return return_items.reverse()
+        var sorted_items = this.sortByAttributeDescending(return_items, 'time')
+        var final_items = []
+        sorted_items.forEach(item => {
+            final_items.push(item['data'])
+        });
+
+        return final_items
     }
 
     includes_function(array, ecid){
@@ -537,6 +544,18 @@ class PickFilePage extends Component {
         
     }
 
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
+    }
+    
     get_number_width(number){
         var last_two_digits = number.toString().slice(0, 1)+'0';
         if(number > 10){
