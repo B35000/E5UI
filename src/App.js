@@ -2955,6 +2955,9 @@ class App extends Component {
     }
     if(state != null && state_language == my_language){
       var theme = state.theme;
+      if(theme['name'] == this.getLocale()['1593a']/* 'auto' */){
+        theme = this.get_theme_data(this.getLocale()['1593a']/* 'auto' */)
+      }
       var stack_items = state.stack_items
       var storage_option = state.storage_option
       
@@ -3015,7 +3018,10 @@ class App extends Component {
       var uncommitted_upload_cids = state.uncommitted_upload_cids
 
       var deleted_files = state.deleted_files
-      
+      var loc = (all_locales[my_language] == null ? this.state.loc : all_locales[my_language])
+      if(my_language == 'en'){
+        loc = this.state.loc
+      }
 
       this.setState({
         theme: theme,
@@ -3065,7 +3071,7 @@ class App extends Component {
         hide_pip: hide_pip,
         preferred_currency: preferred_currency,
         all_locales: all_locales, 
-        // loc: (all_locales[my_language] == null ? this.state.loc : all_locales[my_language]),
+        loc: loc,
         theme_image: theme_image,
         subscribed_nitros: subscribed_nitros,
         uncommitted_upload_cids: uncommitted_upload_cids,
@@ -13750,7 +13756,22 @@ return data['data']
   }
 
   show_dialog_bottomsheet(data, id){
-    var obj = {'invalid_ether_amount_dialog_box':400, 'confirm_clear_stack_dialog':200, 'confirm_send_ether_dialog': 450, 'confirm_delete_dialog_box':200, 'confirm_withdraw_ether':430, 'confirm_send_coin_dialog':600, 'song_options':700, 'confirm_upload_file_to_arweave':700, 'view_uploaded_file':400, 'view_item_purchase':550, 'view_incoming_receipts':250, 'view_incoming_transactions':300, 'view_e5_link':300, 'account_options':600};
+    var obj = {
+      'invalid_ether_amount_dialog_box':400, 
+      'confirm_clear_stack_dialog':200, 
+      'confirm_send_ether_dialog': 450, 
+      'confirm_delete_dialog_box':200, 
+      'confirm_withdraw_ether':430, 
+      'confirm_send_coin_dialog':600, 
+      'song_options':700, 
+      'confirm_upload_file_to_arweave':700, 
+      'view_uploaded_file':400, 
+      'view_item_purchase':550, 
+      'view_incoming_receipts':250, 
+      'view_incoming_transactions':300, 
+      'view_e5_link':300, 
+      'account_options':600
+    };
     var size = obj[id]
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
@@ -15789,8 +15810,15 @@ return data['data']
     var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : 1.0
     var player_size = size == 's' ? 150 : 200
 
-    var x_pos = this.state.width - (player_size + 20)
-    var y_pos = this.state.height - (player_size + 20)
+    var x_pos = this.state.width - (player_size + 12)
+    var y_pos = this.state.height - (player_size + 12)
+
+    if(size == 's'){
+      y_pos = y_pos - 75
+    }
+    else if(size == 'm'){
+      y_pos = y_pos - 65
+    }
 
     if(this.state.hide_pip != 'e'){
       player_size = 0
@@ -21801,6 +21829,8 @@ return data['data']
     var created_subscriptions = [id]
     var account_as_list = [[account]]
 
+    var my_payments_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await F5contractInstance.methods.f229(created_subscriptions, account_as_list).call((error, result) => {});
+
     var interactible_checker_status_values_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f254(created_subscriptions,0).call((error, result) => {});
 
     var my_interactable_time_value_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f256(created_subscriptions, account_as_list, 0,2).call((error, result) => {})
@@ -21810,6 +21840,8 @@ return data['data']
     var i = 0
     var paid_accounts = [];
     var paid_amounts = [];
+
+    var my_payment = my_payments_for_all_subscriptions[i]
 
     if(object['event'].returnValues.p3 == account){
       //if the sender is the authority of the subscription
@@ -21850,6 +21882,8 @@ return data['data']
       }
     }
 
+    var payment_history_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account})
+
     var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
     var old_moderators = []
 
@@ -21874,11 +21908,18 @@ return data['data']
 
     var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_subscriptions[i]
 
+
+    var subscription_config = object['data'][1]
+    var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+    var last_expiration_time = this.get_last_expiration_time(payment_history_events, created_subscriptions[i], time_unit, my_payment/* [0] */[0] )
+
     object['moderators'] = moderators
     object['paid_accounts'] = paid_accounts
     object['paid_amounts'] = paid_amounts
     object['access_rights_enabled'] = interactible_checker_status_values[0]
     object['hidden'] = false;
+    object['payment'] = my_payment[0]
+    object['last_expiration_time'] = last_expiration_time
     if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
       object['hidden'] = true;
     }
@@ -23972,7 +24013,7 @@ return data['data']
           //     }
           //   }
           // });
-          var responses = response_data[id]
+          var responses = response_data[id] == null ? [] : response_data[id]
           // all_responses.forEach(response => {
           //   if(response.returnValues.p1 == id){
           //     responses.push(response)

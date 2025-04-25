@@ -11615,7 +11615,10 @@ return data['data']
             }else{
                 if(this.state.selected_nitro_item == null){
                    this.props.notify(this.props.app_state.loc['1593coz']/* 'You need to select a nitro node first.' */, 9000) 
-                }else{
+                }else if(!this.props.app_state.has_wallet_been_set){
+                    this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 9000)
+                }
+                else{
                     var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
                     var obj = this.get_item_in_array2(this.state.selected_nitro_item, all_nitros)
                     var node_details = this.props.app_state.nitro_node_details[this.state.selected_nitro_item]
@@ -11777,7 +11780,7 @@ return data['data']
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var details = data['name']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'15%', 'image_width':'auto'})}
                     </div>
                 )
@@ -11789,7 +11792,7 @@ return data['data']
                 var details = data['name']
                 var thumbnail = data['thumbnail']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
                     </div>
                 )
@@ -11804,13 +11807,13 @@ return data['data']
                 if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
                     var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
                     return(
-                        <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
+                        <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                             {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
                         </div>
                     )
                 }
                 return(
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
                                 <video height="50" style={{'border-radius':'7px'}}>
@@ -11835,7 +11838,7 @@ return data['data']
                 var details = data['name']
                 var thumbnail = data['thumbnail']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
@@ -11847,7 +11850,7 @@ return data['data']
                 var details = data['name']
                 var thumbnail = this.props.app_state.static_assets['zip_file']
                 return(
-                    <div style={{opacity:opacity}} onClick={() => this.when_file_tapped(ecid_obj)}>
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
                     </div>
                 )
@@ -11855,7 +11858,7 @@ return data['data']
         }
     }
 
-    when_file_tapped(ecid_obj){
+    when_file_clicked(ecid_obj){
         this.props.when_file_tapped(ecid_obj)
     }
 

@@ -85,6 +85,7 @@ class NewSubscriptionPage extends Component {
     constructor(props) {
         super(props);
         this.number_picker_ref = React.createRef();
+        this.screen = React.createRef();
     }
 
     get_new_subscription_tags_object(){

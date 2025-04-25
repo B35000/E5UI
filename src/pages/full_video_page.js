@@ -95,7 +95,7 @@ class FullVideoPage extends Component {
             return(
                 <div>
                     {this.render_player()}
-                    <div style={{height: 15}}/>
+                    <div style={{height: 1}}/>
                     {this.render_details_or_queue_tags_then_option()}
                 </div>
             )
@@ -104,7 +104,7 @@ class FullVideoPage extends Component {
             return(
                 <div>
                     {this.render_player()}
-                    <div style={{height: 15}}/>
+                    <div style={{height: 1}}/>
                     <div className="row">
                         <div className="col-6" style={{}}>
                             {this.render_video_details()}
@@ -121,7 +121,7 @@ class FullVideoPage extends Component {
                 <div className="row">
                     <div className="col-7" style={{}}>
                         {this.render_player()}
-                        <div style={{height: 15}}/>
+                        <div style={{height: 1}}/>
                         {this.render_video_details()}
                     </div>
                     <div className="col-5" style={{}}>
@@ -375,8 +375,8 @@ class FullVideoPage extends Component {
         return(
             <div>
                 {this.render_detail_item('3', {'details':current_video['video_composer'], 'title':current_video['video_title'], 'size':'l'})}
-                {this.render_detail_item('0')}
-
+                
+                <div style={{height:'1px', 'background-color':this.props.theme['line_color'], 'margin': '20px 20px 10px 20px', 'border-radius': '1px'}}/>
 
                 {this.render_detail_item('1', item['tags'])}
                 <div style={{height: 10}}/>

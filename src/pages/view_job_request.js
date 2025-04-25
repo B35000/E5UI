@@ -532,14 +532,13 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }else{
-            var background_color = this.props.theme['card_background_color']
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img} onClick={() => this.props.show_images(items, index)}>
                                 <div>
-                                    <img src={item} style={{height:100 ,width:100}} />
+                                    <img alt="" src={item} style={{height:100 ,width:100, 'border-radius': '12px'}} />
                                 </div> 
                             </ImageListItem>
                         ))}

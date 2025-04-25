@@ -397,11 +397,11 @@ class SubscriptionDetailsSection extends Component {
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
         var minimum_cancellable_balance_amount = subscription_config[4/* minimum_cancellable_balance_amount */]
-        var time_unit = subscription_config[5/* time_unit */]
+        // var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
 
         if(object['hidden'] == true) return;
 
-        if(subscription_config[2] == 1/* cancellable */ && object['payment'] > bigInt(minimum_cancellable_balance_amount).multiply(bigInt(time_unit))){
+        if(subscription_config[2] == 1/* cancellable */ && object['payment'] > bigInt(minimum_cancellable_balance_amount)){
             return(
                 <div>
                     {this.render_detail_item('0')}

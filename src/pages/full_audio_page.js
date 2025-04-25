@@ -219,17 +219,17 @@ class FullAudioPage extends Component {
             <div>
                 {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':image})}
 
-                <div style={{'padding':'0px 20px 0px 20px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'padding':'0px 10px 0px 10px', 'margin':'0px 0px 0px 0px'}}>
                     {this.render_detail_item('3', {'title':song_title, 'details':song_details, 'size':'l'})}
                 </div>
                 
                 <div style={{height:24}}/>
 
-                <div style={{'padding':'0px 25px 0px 25px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'padding':'0px 15px 0px 15px', 'margin':'0px 0px 0px 0px'}}>
                     {this.render_seek_bar()}
                 </div>
 
-                <div className="row" style={{'margin':'7px 0px 0px 0px', 'padding':'0px 25px 0px 25px'}}>
+                <div className="row" style={{'margin':'7px 0px 0px 0px', 'padding':'0px 15px 0px 15px'}}>
                     <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                         <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'font-family': this.props.font,'text-decoration': 'none'}}>{this.get_current_time()}</p>
                     </div>
@@ -263,11 +263,11 @@ class FullAudioPage extends Component {
                     </div>
                 </div>
 
-                <div style={{'padding':'10px 10px 0px 10px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_detail_item('0')}
                 </div>
 
-                <div style={{'padding':'0px 20px 0px 20px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'padding':'0px 0px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
                     {this.render_track_details()}
                 </div>
             </div>
@@ -552,7 +552,7 @@ class FullAudioPage extends Component {
                 {this.render_detail_item('3', {'details':(song['credits'] == null ? '': song['credits']), 'title':this.props.app_state.loc['a311bz']/* Credits */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('4', {'text':track_url, 'textsize':'13px', 'font':'Sans-serif'})}
+                {/* {this.render_detail_item('4', {'text':track_url, 'textsize':'13px', 'font':'Sans-serif'})} */}
             </div>
         )
     }
