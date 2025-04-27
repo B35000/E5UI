@@ -21,6 +21,7 @@ import ViewGroups from './../components/view_groups';
 import TextInput from './../components/text_input';
 
 import EndImg from './../assets/end_token_icon.png';
+import SpendImg from './../assets/spend_token_icon.png';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -684,19 +685,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'jobs')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div>
                     <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
@@ -705,7 +703,7 @@ class PostListSection extends Component {
                                 {this.show_load_metrics(items, 'jobs')}
                                 {items.map((item, index) => (
                                     <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                    style={{'padding': '5px'}}>
+                                    style={{'padding': padding}}>
                                         {this.render_job_object(item, index)}
                                     </motion.li>
                                 ))}
@@ -747,6 +745,13 @@ class PostListSection extends Component {
                 </div>
             )
         }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_job_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
         return(
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -778,7 +783,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender+' • '+responses_text, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender+' • '+responses_text, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -855,21 +861,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'contracts')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
                     <AnimatePresence initial={false}>
@@ -877,7 +878,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, 'contracts')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_contract_item(item, index)}
                                 </motion.li>
                             ))}
@@ -905,6 +906,13 @@ class PostListSection extends Component {
             )
         }
         var opacity =  1.0
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_contract_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
         return(
             <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -934,7 +942,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -969,19 +978,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'proposals')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -989,7 +995,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, 'proposals')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_proposal_object(item, index)}
                                 </motion.li>
                             ))}
@@ -1004,6 +1010,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_proposal_item(object)
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_proposal_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -1034,7 +1047,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -1065,22 +1079,17 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'nitro')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }
         else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.nitro_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -1088,7 +1097,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics([], 'nitro')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_nitro_object_if_locked(item, index)}
                                 </motion.li>
                             ))}
@@ -1111,6 +1120,13 @@ class PostListSection extends Component {
             return(
                 <div>
                     {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_nitro_item_clicked(index, object)}>
+                    {this.render_detail_item('8', item['min'])}
                 </div>
             )
         }
@@ -1144,7 +1160,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image}
         }
     }
 
@@ -1173,19 +1190,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'subscriptions')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -1194,7 +1208,7 @@ class PostListSection extends Component {
                             {this.render_pay_all_upcoming_subscriptions_button(items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_subscription_object(item, index)}
                                 </motion.li>
                             ))}
@@ -1224,7 +1238,6 @@ class PostListSection extends Component {
         return this.remove_duplicates(this.props.get_subscription_items())
     }
 
-
     render_subscription_object(object, index){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -1233,6 +1246,13 @@ class PostListSection extends Component {
             return(
                 <div>
                     {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_subscription_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
                 </div>
             )
         }
@@ -1271,7 +1291,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -1302,21 +1323,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], object_type)}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -1324,7 +1340,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, object_type)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_mail_object_or_null(item, index)}
                                 </motion.li>
                             ))}
@@ -1363,6 +1379,13 @@ class PostListSection extends Component {
             return(
                 <div>
                     {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_mail_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
                 </div>
             )
         }
@@ -1410,7 +1433,8 @@ class PostListSection extends Component {
             'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'textsize':'14px', 'text':details, 'font':this.props.app_state.font},
             'author_title':{'title':title, 'details':details, 'size':'l'},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':title+' • '+this.get_time_difference(time), 'title':details, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -1445,22 +1469,17 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'contractor')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }
         else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -1468,7 +1487,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, 'contractor')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_contractor_object(item, index)}
                                 </motion.li>
                             ))}
@@ -1491,6 +1510,13 @@ class PostListSection extends Component {
             return(
                 <div>
                     {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_contractor_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
                 </div>
             )
         }
@@ -1523,7 +1549,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -1793,12 +1820,13 @@ class PostListSection extends Component {
         var data = this.get_searched_object_results()
         var items = data.link_items
         var item_types = data.link_item_types
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 0px 2px 0px' : '4px 0px 4px 0px'
         return(
             <div>
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
-                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                            <div style={{'margin':padding}}>
                                 {this.render_link_object_item(item, index, item_types[index])}
                             </div>
                         ))}
@@ -1817,15 +1845,24 @@ class PostListSection extends Component {
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
+
+        var selector_item = type == 31/* token */ || type == 19/* audioport */ || type == 20/* videoport */ || type == 21/* nitro */ ? '8' : '3'
         
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div onClick={() => this.when_link_object_clicked(index, object, type)}>
+                        {this.render_detail_item(selector_item, item['min'])}
+                    </div>
+                )
+            }
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'padding': '0px 0px 0px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
                         <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
-                            {this.render_detail_item('3', item['id'])}
+                            {this.render_detail_item(selector_item, item['id'])}
                         </div>
                         <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
                             {this.render_detail_item('2', item['age'])}
@@ -1976,6 +2013,39 @@ class PostListSection extends Component {
         }
     }
 
+    format_token_item(object){
+        var object_array = object['data']
+        var token_id = object['id']
+        var item = object
+        var type = object_array[0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
+        var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
+        var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
+        var img = EndImg
+        if(token_id == 3){
+            name = item['e5']
+        } else if(token_id == 5){
+            name = item['e5'].replace('E','3')
+            img = SpendImg
+        }
+        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
+        var image = img
+        if(item['ipfs']!= null){
+            if(item['ipfs'].token_image!= null){
+                image = item['ipfs'].token_image
+            }
+        }
+
+        var balance = item['balance']
+        var age = item['event'] == null ? 0 : item['event'].returnValues.p5
+        var time = item['event'] == null ? 0 : item['event'].returnValues.p4
+        return{
+            'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
+            'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
+            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
 
 
 
@@ -2004,21 +2074,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'posts')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -2026,7 +2091,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, 'posts')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_post_object_if_locked(item, index)}
                                 </motion.li>
                             ))}
@@ -2122,6 +2187,13 @@ class PostListSection extends Component {
                 </div>
             )
         }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_post_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -2198,7 +2270,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -2263,21 +2336,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'channels')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -2285,7 +2353,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, 'channels')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_channel_object(item, index)}
                                 </motion.li>
                             ))}
@@ -2312,6 +2380,13 @@ class PostListSection extends Component {
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div onClick={() => this.when_channel_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['min'])}
+                    </div>
+                )
+            }
             var opacity = 1.0
             return(
                 <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
@@ -2367,7 +2442,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -2430,21 +2506,16 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'storefront')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -2452,7 +2523,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, 'storefront')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_storefront_object(item, index)}
                                 </motion.li>
                             ))}
@@ -2475,6 +2546,13 @@ class PostListSection extends Component {
             return(
                 <div>
                     {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_storefront_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
                 </div>
             )
         }
@@ -2508,7 +2586,8 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -2572,22 +2651,24 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'bags')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                            <div>
                                 {this.render_empty_object()}
-                            </li>
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-            return ( 
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
+            return( 
                 <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'bags')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding':padding}}>
                                     {this.render_bag_object(item, index)}
                                 </motion.li>
                             ))}
@@ -2614,11 +2695,13 @@ class PostListSection extends Component {
             )
         }
         if(object['ipfs'] == null) return;
-        // return(
-        //     <div onClick={() => this.when_bag_item_clicked(index, object)}>
-        //         {this.render_bag_data(object, item, index)}
-        //     </div>
-        // )
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_bag_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
         return(
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -2710,6 +2793,7 @@ class PostListSection extends Component {
             'id':{'title':' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
             // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
+            'min':{'details':object['e5']+' • '+object['id'], 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -2777,20 +2861,17 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'audioport')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }
         else{
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.audio_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -2798,7 +2879,7 @@ class PostListSection extends Component {
                             {this.show_load_metrics(items, 'audioport')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_audio_object_if_locked(item, index)}
                                 </motion.li>
                             ))}
@@ -3033,12 +3114,19 @@ return data['data']
                 </div>
             )
         }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div /* onClick={() => this.when_audio_item_clicked(index, object)} */>
+                    {this.render_detail_item('8', item['min'])}
+                </div>
+            )
+        }
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} /* onClick={() => this.when_audio_item_clicked(index, object)} */>
                         {this.render_detail_item('8', item['id'])}
                     </div>
                     <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
@@ -3077,8 +3165,9 @@ return data['data']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object}
         }
     }
 
@@ -3093,6 +3182,24 @@ return data['data']
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'audio')
         }
+    }
+
+    when_audio_image_clicked(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        var index = 0
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            this.props.when_audio_item_clicked(index, object['id'], object['e5'], object)
+            this.props.play_album_from_list_section(object)
+        }else{
+            this.props.show_post_item_preview_with_subscription(object, 'audio')
+        }
+    }
+
+    when_audio_text_clicked(object){
+        this.when_audio_item_clicked(0, object)
     }
 
 
@@ -3128,22 +3235,17 @@ return data['data']
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'videoport')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
-                            </li>
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }
         else{
-            var background_color = this.props.theme['card_background_color']
-            var card_shadow_color = this.props.theme['card_shadow_color']
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.video_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <AnimatePresence initial={false}>
@@ -3151,7 +3253,7 @@ return data['data']
                             {this.show_load_metrics(items, 'videoport')}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                                style={{'padding': '5px'}}>
+                                style={{'padding': padding}}>
                                     {this.render_video_object_if_locked(item, index)}
                                 </motion.li>
                             ))}
@@ -3254,13 +3356,20 @@ return data['data']
                     {this.render_empty_object()}
                 </div>
             )
-        }      
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div /* onClick={() => this.when_video_item_clicked(index, object)} */>
+                    {this.render_detail_item('8', item['min'])}
+                </div>
+            )
+        }
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} /* onClick={() => this.when_video_item_clicked(index, object)} */>
                         {this.render_detail_item('8', item['id'])}
                     </div>
                     <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
@@ -3298,8 +3407,9 @@ return data['data']
         var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object}
         }
     }
 
@@ -3319,6 +3429,33 @@ return data['data']
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
+        }else{
+            this.props.show_post_item_preview_with_subscription(object, 'video')
+        }
+    }
+
+    when_video_image_clicked(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        var index = 0
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
+            this.props.play_videopost_from_list_section(object)
+        }else{
+            this.props.show_post_item_preview_with_subscription(object, 'video')
+        }
+    }
+
+    when_video_text_clicked(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        var index = 0
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
             this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
         }else{
@@ -3672,14 +3809,16 @@ return data['data']
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'tokens')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
+                            <div>
                                 {this.render_empty_object()}
-                            </li>
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <AnimatePresence initial={false}>
@@ -3687,7 +3826,7 @@ return data['data']
                         {this.show_load_metrics(items2, 'tokens')}
                         {items.map((item, index) => (
                             <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                            style={{'padding': '5px 3px 5px 3px'}}>
+                            style={{'padding': padding}}>
                                 {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                             </motion.li>
                         ))}
@@ -3713,10 +3852,17 @@ return data['data']
             )
         }
         var is_active = this.props.app_state.e5s[object['e5']].active
-        if(!is_active){
+        if(!is_active && token_id == 3){
             return(
                 <div>
                     {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_ends_object_clicked(index, object)}>
+                    {this.render_detail_item('8', item['min'])}
                 </div>
             )
         }
@@ -3772,7 +3918,8 @@ return data['data']
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%'}
         }
     }
 
@@ -3819,15 +3966,16 @@ return data['data']
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics(items2, 'tokens')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
+                            <div>
                                 {this.render_empty_object()}
-                            </li>
+                                <div style={{height: 4}}/>
+                            </div>
                         ))}
                     </ul>
                 </div>
             );
         }
-
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <AnimatePresence initial={false}>
@@ -3835,7 +3983,7 @@ return data['data']
                         {this.show_load_metrics(items2, 'tokens')}
                         {items.map((item, index) => (
                             <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                            style={{'padding': '5px 3px 5px 3px'}}>
+                            style={{'padding': padding}}>
                                 {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                             </motion.li>
                         ))}
@@ -3857,10 +4005,17 @@ return data['data']
             )
         }
         var is_active = this.props.app_state.e5s[object['e5']].active
-        if(!is_active){
+        if(!is_active && token_id == 5){
             return(
                 <div>
                     {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_spends_object_item_clicked(index, object)}>
+                    {this.render_detail_item('8', item['min'])}
                 </div>
             )
         }
@@ -3893,7 +4048,7 @@ return data['data']
     render_small_empty_object(){
         return(
             <div>
-                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                <div style={{ height: 65, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
                         <img alt="" src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
@@ -3904,14 +4059,21 @@ return data['data']
 
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div>
+                    {this.render_small_empty_object()}
                 </div>
-            );
+            )
+        }
+        return(
+            <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                </div>
+            </div>
+        );
     }
 
     /* renders the specific element in the post or detail object */
@@ -3922,7 +4084,9 @@ return data['data']
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} censored_keyword_phrases={censor_list}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} censored_keyword_phrases={censor_list} when_audio_image_clicked={this.when_audio_image_clicked.bind(this)} when_audio_text_clicked={this.when_audio_text_clicked.bind(this)} when_video_image_clicked={this.when_video_image_clicked.bind(this)} when_video_text_clicked={this.when_video_text_clicked.bind(this)}
+                
+                />
             </div>
         )
 

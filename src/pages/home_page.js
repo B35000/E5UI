@@ -3152,7 +3152,7 @@ class home_page extends Component {
 
             when_coin_object_clicked={this.when_coin_object_clicked.bind(this)} when_playlist_selected={this.when_playlist_selected.bind(this)} get_my_entire_public_key={this.props.get_my_entire_public_key.bind(this)}
 
-            get_searched_account_data_trimmed={this.props.get_searched_account_data_trimmed.bind(this)} when_link_object_clicked={this.props.when_link_object_clicked.bind(this)}
+            get_searched_account_data_trimmed={this.props.get_searched_account_data_trimmed.bind(this)} when_link_object_clicked={this.props.when_link_object_clicked.bind(this)} play_album_from_list_section={this.play_album_from_list_section.bind(this)} play_videopost_from_list_section={this.play_videopost_from_list_section.bind(this)}
             />
         )
     }
@@ -3484,6 +3484,49 @@ class home_page extends Component {
         }
     }
 
+    play_album_from_list_section(object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else{
+            var items = this.get_songs_to_display(object)
+            var item = items[0]
+            this.props.play_song(item, object, this.get_audio_items(''), this.is_page_my_collection_page(), false)
+        }
+    }
+
+    get_songs_to_display(object){
+        if(this.is_page_my_collection_page()){
+            var songs_to_display = []
+            var items = object['ipfs'].songs
+            items.forEach(song => {
+                if(this.is_song_available_for_adding_to_playlist(song)){
+                    songs_to_display.push(song)
+                }
+            });
+            return songs_to_display
+        }else{
+            return object['ipfs'].songs
+        }
+    }
+
+    is_song_available_for_adding_to_playlist(song){
+        var my_songs = this.props.app_state.my_tracks
+        if(my_songs.includes(song['song_id'])){
+            return true
+        }
+        return false
+    }
+
+    is_page_my_collection_page(){
+        var page_id = this.get_page_id()
+        var my_collection_page_id = this.props.app_state.loc['1264k']/* 'audioport' */ + this.props.app_state.loc['1264l']/* 'acquired' */
+        if(page_id == my_collection_page_id){
+            return true
+        }
+        return false
+    }
+
+
     when_video_item_clicked(index, id, e5, is_post_nsfw, object, ignore_set_details_data){
         if(is_post_nsfw){
             if(this.props.app_state.auto_skip_nsfw_warning == 'e'){
@@ -3518,6 +3561,50 @@ class home_page extends Component {
         }
 
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
+    }
+
+    play_videopost_from_list_section(object){
+        var items = this.get_videos_to_display(object)
+        var item = items[0]
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else if(!this.is_video_available_for_viewing(item)){
+            this.render_top_notification(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+        }
+        else{
+            this.props.play_video(item, object)
+        }
+    }
+
+    get_videos_to_display(object){
+        if(this.is_page_my_collection_page()){
+            var videos_to_display = []
+            var items = object['ipfs'].videos
+            items.forEach(video => {
+                videos_to_display.push(video)
+            });
+            return videos_to_display
+        }else{
+            return object['ipfs'].videos
+        }
+    }
+
+    is_page_my_collection_page(){
+        var page_id = this.get_page_id()
+        var my_collection_page_id = this.props.app_state.loc['1264p']/* 'videoport' */ + this.props.app_state.loc['1264l']/* 'acquired' */
+        if(page_id == my_collection_page_id){
+            return true
+        }
+        return false
+    }
+
+    is_video_available_for_viewing(video){
+        if(video['price_data'].length == 0) return true;
+        var my_video = this.props.app_state.my_videos
+        if(my_video.includes(video['video_id'])){
+            return true
+        }
+        return false
     }
 
     when_nitro_item_clicked(index, id, e5, object, ignore_set_details_data){

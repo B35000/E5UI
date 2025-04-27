@@ -763,7 +763,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -782,7 +782,7 @@ class App extends Component {
     
     sync_steps:(48), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
 
-    token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
+    object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
     alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp: {},
     created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
@@ -2903,6 +2903,7 @@ class App extends Component {
 
       uncommitted_upload_cids: this.state.uncommitted_upload_cids,
       deleted_files:this.state.deleted_files,
+      minified_content:this.state.minified_content,
     }
   }
 
@@ -3016,6 +3017,7 @@ class App extends Component {
       var theme_image = state.theme_image
       var subscribed_nitros = state.subscribed_nitros
       var uncommitted_upload_cids = state.uncommitted_upload_cids
+      var minified_content = state.minified_content
 
       var deleted_files = state.deleted_files
       var loc = (all_locales[my_language] == null ? this.state.loc : all_locales[my_language])
@@ -3075,7 +3077,8 @@ class App extends Component {
         theme_image: theme_image,
         subscribed_nitros: subscribed_nitros,
         uncommitted_upload_cids: uncommitted_upload_cids,
-        deleted_files:deleted_files
+        deleted_files:deleted_files,
+        minified_content:minified_content,
       })
       var me = this;
       setTimeout(function() {
@@ -3116,7 +3119,7 @@ class App extends Component {
       me.stack_page.current?.set_my_preferred_nitro()
       me.stack_page.current?.set_selected_hide_pip_type_tag()
       me.stack_page.current?.set_selected_preferred_currency_type_tag()
-      
+      me.stack_page.current?.set_selected_minified_content_setting_tag()
     }, (1 * 1000));
   }
 
@@ -6683,7 +6686,7 @@ return data['data']
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)}
       
       />
     )
@@ -7207,6 +7210,14 @@ return data['data']
   when_file_tapped(ecid_obj){
     var data = {'ecid_obj':ecid_obj}
     this.show_dialog_bottomsheet(data, 'view_uploaded_file')
+  }
+
+  when_minified_content_setting_changed(item){
+    this.setState({minified_content: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
 
@@ -30438,20 +30449,24 @@ return data['data']
     update_exchange_ratio_event_data.forEach(event => {
       var exchange_id = parseInt(event.returnValues.p1)
       if(!exchanges.includes(exchange_id)){
-        exchanges.push(exchange_id)
-        var depth_item = this.state.created_token_object_mapping[e5][exchange_id]['ipfs'] == null ? 0 : this.state.created_token_object_mapping[e5][exchange_id]['ipfs'].default_depth
-        if(depth_item == null) depth_item = 0
-        exchanges_depth_data.push(parseInt(depth_item))
+        if(this.state.created_token_object_mapping[e5][exchange_id] != null){
+          exchanges.push(exchange_id)
+          var depth_item = this.state.created_token_object_mapping[e5][exchange_id]['ipfs'] == null ? 0 : this.state.created_token_object_mapping[e5][exchange_id]['ipfs'].default_depth
+          if(depth_item == null) depth_item = 0
+          exchanges_depth_data.push(parseInt(depth_item))
+        }
       }
     });
 
     contract_token_event_data.forEach(event => {
       var exchange_id = parseInt(event['event'].returnValues.p1)
       if(!exchanges.includes(exchange_id)){
-        exchanges.push(exchange_id)
-        var depth_item = this.state.created_token_object_mapping[e5][exchange_id]['ipfs'] == null ? 0 : this.state.created_token_object_mapping[e5][exchange_id]['ipfs'].default_depth
-        if(depth_item == null) depth_item = 0
-        exchanges_depth_data.push(parseInt(depth_item))
+        if(this.state.created_token_object_mapping[e5][exchange_id] != null){
+          exchanges.push(exchange_id)
+          var depth_item = this.state.created_token_object_mapping[e5][exchange_id]['ipfs'] == null ? 0 : this.state.created_token_object_mapping[e5][exchange_id]['ipfs'].default_depth
+          if(depth_item == null) depth_item = 0
+          exchanges_depth_data.push(parseInt(depth_item))
+        }
       }
     });
 

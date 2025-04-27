@@ -2514,7 +2514,7 @@ return data['data']
         var time = item['event'] == null ? 0 : item['event'].returnValues.p4
         return{
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
-            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
+            'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }

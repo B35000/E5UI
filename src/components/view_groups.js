@@ -188,7 +188,7 @@ class ViewGroups extends Component {
             var text_align = 'left'
             var title_image = ''
             var word_wrap_value = 'normal'
-            
+            var word_wrap_value2 = 'normal'
             if(object_data != null){
                 title = object_data['title']
                 details = object_data['details']
@@ -197,6 +197,7 @@ class ViewGroups extends Component {
                 text_align = object_data['text_align'] == null ? 'left' : object_data['text_align']
                 title_image = object_data['title_image'] == null ? '' : object_data['title_image']
                 word_wrap_value = this.longest_word_length(object_data['details']) > 53 ? 'break-word' : 'normal'
+                word_wrap_value2 = this.longest_word_length(object_data['title']) > 53 ? 'break-word' : 'normal'
             }
             var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px', 17];
             if(size == 'l'){
@@ -223,10 +224,10 @@ class ViewGroups extends Component {
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
-                                <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}}/>
+                                <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
                             </div>
-                            <div style={{'margin':'0px 0px 0px 10px'}}>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                            <div style={{'margin':'0px 0px 0px 10px'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])}>
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
                                 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} onClick={() => this.copy_id_to_clipboard(details)}>{
                                     parts.map((part, index) => {
@@ -244,7 +245,7 @@ class ViewGroups extends Component {
                             <div>
                                 <div style={{'display': 'flex','flex-direction': 'row'}}>
                                     {this.render_text_image(title_image, font_size)}
-                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value,'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
                                 </div>
 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{
@@ -564,6 +565,21 @@ class ViewGroups extends Component {
                     >{source}</Markdown>
                 </div>
             )
+        }
+    }
+
+    when_detail_eight_clicked(id, object){
+        if(id == 'when_audio_image_clicked'){
+            this.props.when_audio_image_clicked(object)
+        }
+        else if(id == 'when_audio_text_clicked'){
+            this.props.when_audio_text_clicked(object)
+        }
+        else if(id == 'when_video_image_clicked'){
+            this.props.when_video_image_clicked(object)
+        }
+        else if(id == 'when_video_text_clicked'){
+            this.props.when_video_text_clicked(object)
         }
     }
 
