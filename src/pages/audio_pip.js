@@ -53,6 +53,12 @@ class AudioPip extends Component {
             me.setState({isloading:false})
             }, (1 * 200));
         }
+
+        var current_song = songs[pos]
+        var audio_file = current_song['track']
+        if(current_song['basic_data']['data'] != null){
+            this.play_this_first = encodeURI(current_song['basic_data']['data'])
+        }
     }
 
     constructor(props) {
@@ -169,8 +175,8 @@ class AudioPip extends Component {
             var current_song = this.state.songs[this.state.pos]
             var current_song_length = current_song['basic_data']['metadata']['format']['duration']
             var buffer = (loaded / current_song_length) * 100
-            if(this.state.buffer == 0){
-                this.audio.current?.play()
+            if(this.state.buffer == 0 && (this.props.app_state.os == 'iOS' || this.props.app_state.os == 'Android')){
+                this.play_pause()
             }
             this.setState({buffer: buffer});
             this.props.when_buffer_updated(buffer)
@@ -208,13 +214,28 @@ class AudioPip extends Component {
     }
 
     render_expand_player_icon(){
-        var opacity = !this.has_file_loaded() ? 0.0 : 1.0
+        var opacity = !this.has_file_metadata_loaded() ? 0.0 : 1.0
         return(
             <img alt=""  onClick={()=>this.expand_player()} src={this.props.app_state.static_assets['expand_icon']} style={{height:25, width:'auto', 'margin': '-3px 0px 0px 0px', 'opacity':opacity}} />
         )
     }
 
     has_file_loaded(){
+        if(this.state.isloading) return false
+        var current_song = this.state.songs[this.state.pos]
+        if(current_song['basic_data']['data'] != null){
+            return true
+        }
+        var audio_file = current_song['track']
+        var ecid_obj = this.get_cid_split(audio_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null) return false
+        if(data['data'] == null) return false
+        return true
+    }
+
+    has_file_metadata_loaded(){
         if(this.state.isloading) return false
         var current_song = this.state.songs[this.state.pos]
         var audio_file = current_song['track']
@@ -228,7 +249,7 @@ class AudioPip extends Component {
 
 
     expand_player(){
-        if(!this.has_file_loaded()) return;
+        if(!this.has_file_metadata_loaded()) return;
         this.setState({is_full_screen_open: true})
         this.props.open_full_player(this.state.songs, this.state.pos, this.state.play_pause_state, this.state.value, this.state.is_repeating, this.state.is_shuffling, this.state.original_song_list, this.state.buffer)
     }
@@ -245,6 +266,9 @@ class AudioPip extends Component {
     get_audio_file(){
         var current_song = this.state.songs[this.state.pos]
         var audio_file = current_song['track']
+        if(current_song['basic_data']['data'] != null){
+            return encodeURI(current_song['basic_data']['data'])
+        }
         var ecid_obj = this.get_cid_split(audio_file)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
@@ -254,7 +278,6 @@ class AudioPip extends Component {
 
     render_audio(){
         if(!this.has_file_loaded()) return;
-        // console.log('audiopip', 'file link:', this.get_audio_file())
         return(
             <div style={{width:2, height:2,'z-index':'2', 'opacity':0.0, 'position': 'absolute', 'margin':'100px 0px 0px 0px'}}>
                 <div style={{'position': 'relative'}}>
@@ -395,7 +418,7 @@ class AudioPip extends Component {
     play_previous(){
         if(this.state.pos > 0){
             this.audio.current.currentTime = 0
-            this.setState({value: 0, pos: this.state.pos -1, isloading:true, buffer:0})
+            this.setState({value: 0, pos: this.state.pos -1, isloading:true, buffer:1})
             var me = this;
             setTimeout(function() {
                 me.setState({isloading:false})
@@ -411,7 +434,7 @@ class AudioPip extends Component {
     play_next(){
         if(this.state.pos != this.state.songs.length - 1){
             this.audio.current.currentTime = 0
-            this.setState({value: 0, pos: this.state.pos + 1, isloading:true, buffer:0})
+            this.setState({value: 0, pos: this.state.pos + 1, isloading:true, buffer:1})
             
             var me = this;
             setTimeout(function() {
@@ -438,7 +461,7 @@ class AudioPip extends Component {
             }, (1 * 200));
         }
         this.audio.current.currentTime = 0
-        this.setState({value: 0, pos: index, buffer:0})
+        this.setState({value: 0, pos: index, buffer:1})
         
         var me = this;
         setTimeout(function() {
@@ -521,7 +544,6 @@ class AudioPip extends Component {
         return true
     }
     
-
     is_song_available_for_adding_to_playlist(song){
         var my_songs = this.props.app_state.my_tracks
         if(my_songs.includes(song['song_id'])){
@@ -541,7 +563,7 @@ class AudioPip extends Component {
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data == null) return
-return data['data']
+        return data['data']
     }
 
     get_cid_split(ecid){

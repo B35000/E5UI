@@ -2491,7 +2491,7 @@ return data['data']
 
     render_song_details_picker_part(){
         return(
-            <div>
+            <div style={{'padding':'0px 0px 0px 2px'}}>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['a311j']/* Set the details for a new audio item in your collection or album. */, 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 {this.render_song_tabs()}
@@ -2756,7 +2756,7 @@ return data['data']
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         var clone = structuredClone(data)
         clone['thumbnail'] = null
-        clone['data'] = null
+        // clone['data'] = null
         return clone
     }
 

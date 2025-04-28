@@ -2716,7 +2716,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['b311v']/* 'You need to add a video track.' */, 3800)
         }
         else{
-            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles, 'release_time':video_availability_timestamp}
+            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles, 'release_time':video_availability_timestamp, 'basic_data':this.get_song_basic_data(video_file)}
 
             var clone = this.state.videos.slice()
             if(this.state.edit_video_item_pos != -1){
@@ -2729,6 +2729,14 @@ return data['data']
             this.setState({videos: clone, video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null, subtitles:[], video_availability_timestamp: Date.now()/1000})
             
         }
+    }
+
+    get_video_basic_data(video_file){
+        var ecid_obj = this.get_cid_split(video_file)
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        var clone = structuredClone(data)
+        // clone['data'] = null
+        return clone
     }
 
 
@@ -2840,7 +2848,14 @@ return data['data']
 
     set_focused_video_data(item_pos){
         var video = this.state.videos[item_pos]
-        this.setState({video_title: video['video_title'], video_composer: video['video_composer'], price_data2: video['price_data'], video_file: video['video'], edit_video_item_pos: item_pos, subtitles: (video['subtitles'] == null ? [] : video['subtitles']), video_availability_timestamp:(video['release_time'] == null ? (Date.now()/1000) : video['release_time']) });
+        this.setState({
+            video_title: video['video_title'], 
+            video_composer: video['video_composer'], 
+            price_data2: video['price_data'], 
+            video_file: video['video'], 
+            edit_video_item_pos: item_pos, 
+            subtitles: (video['subtitles'] == null ? [] : video['subtitles']), video_availability_timestamp:(video['release_time'] == null ? (Date.now()/1000) : video['release_time']) 
+        });
     }
 
 

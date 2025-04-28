@@ -1147,6 +1147,7 @@ return data['data']
             song_length = '▶ '+song_length
             text_color = this.props.theme['primary_text_color']
         }
+        var word_wrap_value = this.longest_word_length(song_title) > 53 ? 'break-word' : 'normal'
         return(
             <div onClick={() => this.when_song_item_clicked_selector(item, object, type)}>
                 <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
@@ -1156,7 +1157,7 @@ return data['data']
                         <div>
                             <div className="row">
                                 <div className="col-10" style={{'padding': '0px 0px 0px 13px' }}> 
-                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}}>{song_title}</p>
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value, 'overflow-wrap':word_wrap_value, 'text-align':text_align}}>{song_title}</p>
                                 </div>
                                 <div className="col-2" style={{'padding': '5px 15px 0px 0px' }}>
                                     <p style={{'color': text_color, 'font-size': '10px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{song_length}</p>
@@ -1168,6 +1169,15 @@ return data['data']
                 </div>
             </div>
         )
+    }
+
+    longest_word_length(text) {
+        if(text == null) {
+            return 0
+        }
+        return text.toString()
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
 
     is_song_available_for_adding_to_playlist(song){

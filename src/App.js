@@ -753,7 +753,7 @@ class App extends Component {
   // }
 
   state = {
-    version:'3.0',
+    version:'3.0', os: getOS(),
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -15817,7 +15817,6 @@ return data['data']
   render_audio_pip(){
     if(!this.state.is_audio_pip_showing) return;
     var size = this.getScreenSize();
-    var h = 240
     var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : 1.0
     var player_size = size == 's' ? 150 : 200
 
@@ -15869,8 +15868,7 @@ return data['data']
     this.setState({current_playing_song: queue[0], current_playing_time: 0.0})
     
     var me = this;
-    setTimeout(function() { 
-      // me.stack_page.current.set_media_data(queue, 0, unshuffled_queue, should_shuffle)
+    setTimeout(function() {
       me.audio_pip_page.current?.set_data(queue, 0, unshuffled_queue, should_shuffle)
       me.setState({queue: queue, pos: 0, original_song_list: unshuffled_queue, is_shuffling: should_shuffle})
       me.load_queue(queue, 0)
@@ -15895,6 +15893,9 @@ return data['data']
   close_audio_pip(){
     this.setState({is_audio_pip_showing: false})
     this.when_playing(null, null)
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = null;
+    }
   }
 
   get_playlist_queue(item, object, should_shuffle){

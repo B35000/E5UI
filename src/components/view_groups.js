@@ -654,7 +654,7 @@ class ViewGroups extends Component {
         if(text == null) {
             return 0
         }
-        return text
+        return text.toString()
             .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
             .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
