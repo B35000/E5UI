@@ -1285,7 +1285,8 @@ return data['data']
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
 
         if(data != null){
-            var wh = '241px'
+            var wh = this.props.size == 's' ? '180px':'241px'
+            
             if(data['type'] == 'image'){
                 var img = data['data']
                 return(
@@ -2441,7 +2442,8 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px',}
         }
     }
 
@@ -2673,6 +2675,18 @@ return data['data']
         var e5 = this.state.data['e5']
         this.props.when_view_account_details_selected(account_id, e5)
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

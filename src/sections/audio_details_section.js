@@ -376,6 +376,9 @@ class AudioDetailSection extends Component {
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527x'] 'Download Audiopost.' , 'action':''},)}
                     </div> */}
 
+
+                    {this.render_repost_audiopost_ui(object)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'details':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
                     <div style={{height:10}}/>
@@ -410,6 +413,31 @@ class AudioDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_repost_audiopost_ui(object){
+        var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
+        var title = this.props.app_state.loc['a2527bt']/* 'Repost Audiopost' */
+        var details = this.props.app_state.loc['a2527bu']/*  Add this audiopost to your promoted list. */
+        
+        if(clone['audio'].includes(object['e5_id'])){
+            title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
+            details = this.props.app_state.loc['a2527by']/*  Remove this audiopost from your promoted list. */
+        }
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':title , 'details':details })}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.repost_audiopost(object)}>
+                    {this.render_detail_item('5', {'text':title , 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    repost_audiopost(object){
+        this.props.repost_audiopost(object)
     }
 
     render_follow_unfollow_author_button(object){

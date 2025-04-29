@@ -3884,6 +3884,25 @@ return data['data']
             ints.push(transaction_obj)
         }
 
+        if(this.props.app_state.should_update_posts_reposted_by_me == true){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [12], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+            var posts_reposted_by_me = this.props.app_state.posts_reposted_by_me
+            const data = {'data': posts_reposted_by_me, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'promoted');
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
 
         var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
         console.log('rundata',optimized_run)
@@ -4378,6 +4397,13 @@ return data['data']
             var data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
             ipfs_index_object['censoredkeywords'] = data
             ipfs_index_array.push({'id':'censoredkeywords', 'data':data})
+        }
+
+        if(this.props.app_state.should_update_posts_reposted_by_me == true){
+            var posts_reposted_by_me = this.props.app_state.posts_reposted_by_me
+            var data = {'data': posts_reposted_by_me, 'time':Date.now()}
+            ipfs_index_object['promoted'] = data
+            ipfs_index_array.push({'id':'promoted', 'data':data})
         }
 
 

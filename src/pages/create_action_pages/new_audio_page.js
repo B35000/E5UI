@@ -2756,7 +2756,7 @@ return data['data']
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         var clone = structuredClone(data)
         clone['thumbnail'] = null
-        // clone['data'] = null
+        clone['data'] = null
         return clone
     }
 

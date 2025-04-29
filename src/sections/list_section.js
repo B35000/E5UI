@@ -22,6 +22,7 @@ import TextInput from './../components/text_input';
 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
+import e5_empty_icon from './../assets/e5empty_icon.png'
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -2919,15 +2920,31 @@ class PostListSection extends Component {
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={index}>
-                                <div onClick={() => this.when_audio_item_clicked(index, item)}>
-                                    {this.render_my_bought_audio_item(item, index, w)}
-                                </div> 
+                                <div>
+                                    {this.render_bought_audio_item_plus_buttons(item, index, w)}
+                                </div>
                             </ImageListItem>
                         ))}
                     </ImageList>
                 </div>
             )
         }
+    }
+
+    render_bought_audio_item_plus_buttons(object, index, w){
+        return(
+            <div style={{'position': 'relative'}}>
+                <div onClick={() => this.when_audio_item_clicked(index, object)} style={{width:w, height:'auto', 'z-index':'1', 'position': 'absolute',}}>
+                    {this.render_my_bought_audio_item(object, index, w)}
+                </div>
+
+                <img src={this.props.app_state.static_assets['video_label']} alt="" style={{height:28 ,width:28, 'z-index':'3', 'position': 'absolute', 'margin':`${w-35}px 0px 0px 5px`, 'border-radius': '15px'}} onClick={() => this.play_audio_object(object)}/>
+            </div>
+        )
+    }
+
+    play_audio_object(object){
+        this.when_audio_image_clicked(object)
     }
 
     render_my_bought_audio_item(object, index, w){
@@ -3092,12 +3109,7 @@ return data['data']
         else{
             return(
                 <div>
-                    <div style={{height:160, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                        <div style={{'margin':'10px 20px 0px 0px'}}>
-                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                            <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}></p>
-                        </div>
-                    </div>
+                    {this.render_empty_object()}
                 </div>
             )
         }
@@ -3116,7 +3128,7 @@ return data['data']
         }
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
             return(
-                <div /* onClick={() => this.when_audio_item_clicked(index, object)} */>
+                <div onClick={() => this.when_audio_item_clicked(index, object)}>
                     {this.render_detail_item('8', item['min'])}
                 </div>
             )
@@ -3126,7 +3138,7 @@ return data['data']
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} /* onClick={() => this.when_audio_item_clicked(index, object)} */>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
                         {this.render_detail_item('8', item['id'])}
                     </div>
                     <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
@@ -3359,7 +3371,7 @@ return data['data']
         }
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
             return(
-                <div /* onClick={() => this.when_video_item_clicked(index, object)} */>
+                <div onClick={() => this.when_video_item_clicked(index, object)}>
                     {this.render_detail_item('8', item['min'])}
                 </div>
             )
@@ -3369,7 +3381,7 @@ return data['data']
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} /* onClick={() => this.when_video_item_clicked(index, object)} */>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
                         {this.render_detail_item('8', item['id'])}
                     </div>
                     <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>

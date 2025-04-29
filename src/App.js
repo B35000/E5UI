@@ -831,7 +831,7 @@ class App extends Component {
     
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
-    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{},
+    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}
   };
 
   get_static_assets(){
@@ -2654,6 +2654,7 @@ class App extends Component {
     this.has_my_followed_accounts_loaded = {}
     this.has_posts_blocked_by_me_loaded = {}
     this.has_censored_keywords_by_me_loaded = {}
+    this.has_promoted_posts_by_me_loaded = {}
   }
 
   componentDidMount() {
@@ -2904,6 +2905,8 @@ class App extends Component {
       uncommitted_upload_cids: this.state.uncommitted_upload_cids,
       deleted_files:this.state.deleted_files,
       minified_content:this.state.minified_content,
+      posts_reposted_by_me:this.state.posts_reposted_by_me,
+      should_update_posts_reposted_by_me:this.state.should_update_posts_reposted_by_me,
     }
   }
 
@@ -2924,6 +2927,7 @@ class App extends Component {
   }
 
   load_cookies2 = async () => {
+    return;
     var state = await this.load_data_from_indexdb('5000')
     
     if(state != null){
@@ -3019,6 +3023,9 @@ class App extends Component {
       var uncommitted_upload_cids = state.uncommitted_upload_cids
       var minified_content = state.minified_content
 
+      var posts_reposted_by_me = state.posts_reposted_by_me
+      var should_update_posts_reposted_by_me = state.should_update_posts_reposted_by_me
+
       var deleted_files = state.deleted_files
       var loc = (all_locales[my_language] == null ? this.state.loc : all_locales[my_language])
       if(my_language == 'en'){
@@ -3079,6 +3086,8 @@ class App extends Component {
         uncommitted_upload_cids: uncommitted_upload_cids,
         deleted_files:deleted_files,
         minified_content:minified_content,
+        posts_reposted_by_me:posts_reposted_by_me,
+        should_update_posts_reposted_by_me:should_update_posts_reposted_by_me
       })
       var me = this;
       setTimeout(function() {
@@ -5053,7 +5062,7 @@ return data['data']
 
           load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} get_searched_account_data_trimmed={this.get_searched_account_data_trimmed.bind(this)}
 
-          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)}
+          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)}
 
 
 
@@ -5344,6 +5353,70 @@ return data['data']
 
     this.setState({my_preferred_nitro: object['e5_id'], subscribed_nitros: clone})
     this.prompt_top_notification(this.getLocale()['c2527bu']/* 'Connected to Nitro node.' */, 2500)
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  repost_audiopost(object){
+    if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
+      this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
+      return;
+    }
+    var clone = structuredClone(this.state.posts_reposted_by_me)
+    if(clone['audio'].includes(object['e5_id'])){
+      var index = clone['audio'].indexOf(object['e5_id'])
+      clone['audio'].splice(index, 1)
+      this.prompt_top_notification(this.getLocale()['a2527bw']/* 'Audiopost Removed.' */, 1800)
+    }else{
+      this.prompt_top_notification(this.getLocale()['a2527bv']/* 'Audiopost Added.' */, 1900)
+      clone['audio'].push(object['e5_id'])
+    }
+    this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  repost_videopost(object){
+    if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
+      this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
+      return;
+    }
+    var clone = structuredClone(this.state.posts_reposted_by_me)
+    if(clone['video'].includes(object['e5_id'])){
+      var index = clone['video'].indexOf(object['e5_id'])
+      clone['video'].splice(index, 1)
+      this.prompt_top_notification(this.getLocale()['b2527r']/* 'Videopost Removed.' */, 1800)
+    }else{
+      this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
+      clone['video'].push(object['e5_id'])
+    }
+    this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+
+  repost_post(object){
+    if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
+      this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
+      return;
+    }
+    var clone = structuredClone(this.state.posts_reposted_by_me)
+    if(clone['post'].includes(object['e5_id'])){
+      var index = clone['post'].indexOf(object['e5_id'])
+      clone['post'].splice(index, 1)
+      this.prompt_top_notification(this.getLocale()['b2527r']/* 'Videopost Removed.' */, 1800)
+    }else{
+      this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
+      clone['post'].push(object['e5_id'])
+    }
+    this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -7362,7 +7435,8 @@ return data['data']
             should_update_followed_accounts:false, 
             should_update_posts_blocked_by_me: false, 
             should_update_censored_keyword_phrases:false, 
-            uncommitted_upload_cids:[]
+            uncommitted_upload_cids:[],
+            should_update_posts_reposted_by_me:false,
           })
           me.delete_stack_items(delete_pos_array)
           me.reset_gas_calculation_figure(me)
@@ -7371,9 +7445,13 @@ return data['data']
           me.has_my_followed_accounts_loaded[e5] = null
           me.has_posts_blocked_by_me_loaded[e5] = null
           me.has_censored_keywords_by_me_loaded[e5] = null
+          me.has_promoted_posts_by_me_loaded[e5] = null
           setTimeout(function() {
             me.start_get_accounts_for_specific_e5(false, e5, false)
           }, (1 * 500));
+          setTimeout(function() {
+            me.set_cookies()
+          }, (1 * 1000));
         }).on('error', (error) => {
           console.error('Transaction error:', error);
           var clone = structuredClone(this.state.is_running)
@@ -13781,7 +13859,7 @@ return data['data']
       'view_incoming_receipts':250, 
       'view_incoming_transactions':300, 
       'view_e5_link':300, 
-      'account_options':600
+      'account_options':600,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -15893,9 +15971,6 @@ return data['data']
   close_audio_pip(){
     this.setState({is_audio_pip_showing: false})
     this.when_playing(null, null)
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.metadata = null;
-    }
   }
 
   get_playlist_queue(item, object, should_shuffle){
@@ -19675,6 +19750,18 @@ return data['data']
 
 
 
+
+
+    /* ---------------------------------------- MY PROMOTED POSTS DATA ------------------------------------------- */
+    this.load_my_promoted_posts(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
+
     /* ---------------------------------------- ALBUM COLLECTION DATA ------------------------------------------- */
     await this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address)
     // if(is_syncing){
@@ -20062,24 +20149,27 @@ return data['data']
 
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
     var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
-
+    console.log('apppage', 'loaded cid events', section_cid_data_events)
     if(section_cid_data_events.length != 0){
       const cids = [];
       const latest_events = section_cid_data_events.slice(-3) 
       if(this.state.beacon_node_enabled == true){
-        await this.fetch_multiple_cids_from_nitro(latest_events, 0, 'p4')
+        try{
+          await this.fetch_multiple_cids_from_nitro(latest_events, 0, 'p4')
+        }catch(e){
+          console.log('apppage', e)
+        }
       }
+      console.log('apppage', 'loaded cid event data')
       for(var c = latest_events.length - 1; c >= 0; c--){
         const latest_event = latest_events[c];
         const section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
-        // console.log('datas', 'section_cid_data', latest_event.returnValues.p4, section_cid_data)
         if(section_cid_data != null){
           if(section_cid_data['encrypted'] != null && section_cid_data['encrypted'] == true){
             const key = this.state.accounts['E25'].privateKey.toString()
             const bytes = CryptoJS.AES.decrypt(section_cid_data['cids'], key);
             const originalText = bytes.toString(CryptoJS.enc.Utf8);
             const decrypted_data_object = JSON.parse(JSON.parse(originalText));
-            // console.log('datas', 'decrypted_data_object', decrypted_data_object)
             decrypted_data_object['data'].forEach(item => {
               if(item != null && !cids.includes(item)){
                 cids.push(item)
@@ -20094,6 +20184,7 @@ return data['data']
             });
           }
         }
+        console.log('apppage', 'loaded cid event data for one event')
       }
       const clone = this.state.uploaded_data_cids.slice()
       cids.forEach(cid => {
@@ -20101,7 +20192,7 @@ return data['data']
           clone.push(cid)
         }
       });
-      // console.log('datas', 'loaded uplpaded cid datas', clone)
+      console.log('apppage', 'loaded uplpaded cid datas', clone)
       this.fetch_uploaded_data_from_ipfs(clone.reverse(), true)
     }else{
       if(this.uploaded_data_user != account && this.uploaded_data_user != null && this.uploaded_data_user != 1){
@@ -20119,6 +20210,10 @@ return data['data']
 
   fetch_uploaded_data_from_ipfs = async (cids, is_my_cids) => {
     // console.log('datas', 'all cids', cids)
+    if(is_my_cids){      
+      this.setState({uploaded_data_cids: cids})
+    }
+    // console.log('apppage', 'starting loaded cid objects...')
     for(var i=0; i<cids.length; i++){
       // console.log('datas', 'fetching', cids[i])
       var ecid_obj = this.get_cid_split(cids[i])
@@ -20134,6 +20229,7 @@ return data['data']
         if(data != null) this.store_in_local_storage(cids[i], data);
       }
       if(data != null){
+        // console.log('apppage', 'loaded one cid event data object')
         if(filetype == 'video'){
           this.load_and_store_video_thumbnail(cids[i], data)
         }
@@ -20141,13 +20237,8 @@ return data['data']
         try{
           if(clone[filetype] == null) clone[filetype] = {}
           clone[filetype][cids[i]] = data
-          if(is_my_cids){
-            var cid_clone = this.state.uploaded_data_cids.slice()
-            cid_clone.push(cids[i])
-            this.setState({uploaded_data_cids: cids, uploaded_data: clone})
-          }else{
-            this.setState({uploaded_data: clone})
-          }
+          this.setState({uploaded_data: clone})
+          // console.log('apppage', 'set one cid object in memory.')
         }catch(e){
           console.log('datas', e)
         }
@@ -20367,26 +20458,28 @@ return data['data']
     if(plays_event_data.length > 0){
       var latest_event = plays_event_data[plays_event_data.length - 1];
       var plays_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var loaded_plays = plays_data['plays']
+      if(plays_data != null){
+        var loaded_plays = plays_data['plays']
 
-      var clone = structuredClone(this.state.song_plays)
-      if(this.my_plays_account != account && this.my_plays_account != 1 && this.my_plays_account != null){
-        clone = {}
-      }
-      for (const song_id in loaded_plays) {
-        if (loaded_plays.hasOwnProperty(song_id)) {
-          var count_array = loaded_plays[song_id]
-          if(clone[song_id] == null){
-            clone[song_id] = []
-          }
-          count_array.forEach(time_element => {
-            if(!clone[song_id].includes(time_element)){
-              clone[song_id].push(time_element)
-            }
-          });
+        var clone = structuredClone(this.state.song_plays)
+        if(this.my_plays_account != account && this.my_plays_account != 1 && this.my_plays_account != null){
+          clone = {}
         }
+        for (const song_id in loaded_plays) {
+          if (loaded_plays.hasOwnProperty(song_id)) {
+            var count_array = loaded_plays[song_id]
+            if(clone[song_id] == null){
+              clone[song_id] = []
+            }
+            count_array.forEach(time_element => {
+              if(!clone[song_id].includes(time_element)){
+                clone[song_id].push(time_element)
+              }
+            });
+          }
+        }
+        this.setState({song_plays: clone})
       }
-      this.setState({song_plays: clone})
     }
 
     this.my_plays_account = account
@@ -20469,6 +20562,7 @@ return data['data']
     if(this.state.followed_accounts.length != 0){
       this.load_blocked_posts(web3, E52contractInstance, e5, account)
       this.load_censored_keywords(web3, E52contractInstance, e5, account)
+      this.load_promoted_posts(web3, E52contractInstance, e5, account)
     }
   }
 
@@ -20491,10 +20585,7 @@ return data['data']
         this.setState({posts_blocked_by_me: clone})
         this.has_posts_blocked_by_me_loaded[e5] = account
       }
-      
     }
-
-    
   }
 
   load_blocked_posts = async (web3, E52contractInstance, e5, account) => {
@@ -20603,6 +20694,88 @@ return data['data']
         });
       }
       this.setState({censored_keywords_by_my_following: clone})
+    }
+  }
+
+  load_my_promoted_posts = async (web3, E52contractInstance, e5, account) => {
+    var my_promoted_posts_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12})
+
+    if(my_promoted_posts_event_data.length > 0){
+      var latest_event = my_promoted_posts_event_data[my_promoted_posts_event_data.length - 1];
+      var promoted_posts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var promoted_posts_by_me = promoted_posts_data['data']
+
+      var clone = structuredClone(this.state.posts_reposted_by_me)
+      for(var i=0; i<promoted_posts_by_me['audio'].length; i++){
+        var post = promoted_posts_by_me['audio'][i]
+        if(!clone['audio'].includes(post)){
+          clone['audio'].push(post)
+        }
+      }
+      for(var i=0; i<promoted_posts_by_me['video'].length; i++){
+        var post = promoted_posts_by_me['video'][i]
+        if(!clone['video'].includes(post)){
+          clone['video'].push(post)
+        }
+      }
+      
+      for(var i=0; i<promoted_posts_by_me['post'].length; i++){
+        var post = promoted_posts_by_me['post'][i]
+        if(!clone['post'].includes(post)){
+          clone['post'].push(post)
+        }
+      }
+      if(this.has_promoted_posts_by_me_loaded[e5] != account){
+        this.setState({posts_reposted_by_me: clone})
+        this.has_promoted_posts_by_me_loaded[e5] = account
+      }
+    }
+  }
+
+  load_promoted_posts = async (web3, E52contractInstance, e5, account) => {
+    var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
+    var followed_accounts_promoted_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: accounts_to_load, p3/* context */:12})
+
+    var accounts_obj = {}
+    followed_accounts_promoted_posts_events_data.forEach(event => {
+      accounts_obj[event.returnValues.p2/* sender_acc_id */] = event;
+    });
+
+    followed_accounts_promoted_posts_events_data = []
+    for (const account in accounts_obj) {
+      if (accounts_obj.hasOwnProperty(account)) {
+        followed_accounts_promoted_posts_events_data.push(accounts_obj[account])
+      }
+    }
+
+    if(followed_accounts_promoted_posts_events_data.length != 0){
+      if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+        await this.fetch_multiple_cids_from_nitro(followed_accounts_promoted_posts_events_data, 0, 'p4')
+      }
+
+      var clone = structuredClone(this.state.posts_reposted_by_my_following)
+      for(var i=0; i<followed_accounts_promoted_posts_events_data.length; i++){
+        var latest_event = followed_accounts_promoted_posts_events_data[i]
+        var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+        var promoted_posts = followed_account_data['data']
+        promoted_posts['audio'].forEach(post => {
+          if(!clone['audio'].includes(post)){
+            clone['audio'].push(post)
+          }
+        });
+        promoted_posts['video'].forEach(post => {
+          if(!clone['video'].includes(post)){
+            clone['video'].push(post)
+          }
+        });
+        promoted_posts['post'].forEach(post => {
+          if(!clone['post'].includes(post)){
+            clone['post'].push(post)
+          }
+        });
+        
+      }
+      this.setState({posts_reposted_by_my_following: clone})
     }
   }
 
@@ -27919,7 +28092,7 @@ return data['data']
     var nitro_cid = split_cid_array[1]
 
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
-    console.log('datas', 'loading nitro link', cid)
+    // console.log('datas', 'loading nitro link', cid)
     if(nitro_url == null) return
 
     const params = new URLSearchParams({
@@ -27936,7 +28109,7 @@ return data['data']
       var obj = JSON.parse(data);
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
-      console.log('datas','fetching_file_from_nitro_storage', cid_data)
+      // console.log('datas','fetching_file_from_nitro_storage', cid_data)
       if(cid_data != null){
         var file_pointer_link = cid_data['data']
         var split_cid_array2 = file_pointer_link.split('-');
@@ -27948,7 +28121,7 @@ return data['data']
         if(nitro_url != null){
           cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
         }
-        console.log('datas','final cid object with link', cid_data)
+        // console.log('datas','final cid object with link', cid_data)
         return cid_data
       }
     }
@@ -28514,9 +28687,17 @@ return data['data']
       // console.log(f)
     }
     try{
-      var bytes  = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
-      var originalText = bytes.toString(CryptoJS.enc.Utf8);
-      return originalText
+      var bytes = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
+      console.log('sigbytes', bytes.sigBytes)
+      if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        return originalText
+      } else {
+        console.error('apppage',"Decryption failed: invalid bytes output.");
+        return data
+      }
+      // var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      // return originalText
     }catch(e){
       return data
     }
@@ -28541,8 +28722,13 @@ return data['data']
     }
     try{
       var bytes  = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
-      var originalText = bytes.toString(CryptoJS.enc.Utf8);
-      return originalText
+      if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        return originalText
+      } else {
+        console.error('apppage',"Decryption failed: invalid bytes output.");
+        return data
+      }
     }catch(e){
       console.log('apppage', e)
       return data

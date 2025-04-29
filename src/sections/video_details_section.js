@@ -324,6 +324,27 @@ class VideoDetailsSection extends Component {
         )
     }
 
+    render_repost_videopost_ui(object){
+        var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
+        var title = this.props.app_state.loc['b2527o']/* 'Repost Videopost.' */
+        var details = this.props.app_state.loc['b2527p']/*  Add this videopost to your promoted list. */
+        
+        if(clone['video'].includes(object['e5_id'])){
+            title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
+            details = this.props.app_state.loc['b2527q']/*  Remove this videopost from your promoted list. */
+        }
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':title , 'details':details })}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.props.repost_videopost(object)}>
+                    {this.render_detail_item('5', {'text':title , 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
     render_follow_unfollow_author_button(object){
         var author_id = object['event'].returnValues.p5
         var follow_id = object['e5'] + ':' + author_id

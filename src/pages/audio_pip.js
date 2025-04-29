@@ -55,7 +55,6 @@ class AudioPip extends Component {
         }
 
         var current_song = songs[pos]
-        var audio_file = current_song['track']
         if(current_song['basic_data']['data'] != null){
             this.play_this_first = encodeURI(current_song['basic_data']['data'])
         }
@@ -206,10 +205,11 @@ class AudioPip extends Component {
     }
 
     pause_button(){
-        var play_pause_text = (this.has_file_loaded() && this.state.buffer != 0) ? '▐▐' : '⚬⚬⚬⚬'
+        var play_pause_text = (this.has_file_loaded() && this.state.buffer != 0) ? '▶' : '⚬⚬⚬⚬'
+        var font_size = (this.has_file_loaded() && this.state.buffer != 0) ? '65px' : '30px'
         var opacity = (this.state.play_pause_state == 0/* paused */ || this.state.buffer == 0) ? 1.0 : 0.0
         return(
-            <p onClick={()=>this.play_pause()} style={{'font-size': '30px', width:50,'opacity':opacity}}>{play_pause_text}</p>
+            <p onClick={()=>this.play_pause()} style={{'font-size': font_size, width:50,'opacity':opacity}}>{play_pause_text}</p>
         )
     }
 
@@ -223,9 +223,6 @@ class AudioPip extends Component {
     has_file_loaded(){
         if(this.state.isloading) return false
         var current_song = this.state.songs[this.state.pos]
-        if(current_song['basic_data']['data'] != null){
-            return true
-        }
         var audio_file = current_song['track']
         var ecid_obj = this.get_cid_split(audio_file)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false
@@ -266,9 +263,6 @@ class AudioPip extends Component {
     get_audio_file(){
         var current_song = this.state.songs[this.state.pos]
         var audio_file = current_song['track']
-        if(current_song['basic_data']['data'] != null){
-            return encodeURI(current_song['basic_data']['data'])
-        }
         var ecid_obj = this.get_cid_split(audio_file)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]

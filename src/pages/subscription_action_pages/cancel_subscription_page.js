@@ -147,6 +147,11 @@ class CancelSubscriptionPage extends Component {
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.subscription_item['payment']), 'details':this.props.app_state.loc['825']/* 'Remaining Subscription Time' */, 'size':'l'})}
 
                 <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['828g']/* 'Remaining Time Units.' */, 'number':this.get_remaining_time_units(), 'relativepower':this.props.app_state.loc['828h']/* 'Units.' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['828g']/* 'Remaining Time Units.' */, 'subtitle':this.format_power_figure(this.get_remaining_time_units()), 'barwidth':this.calculate_bar_width(this.get_remaining_time_units()), 'number':this.format_account_balance_figure(this.get_remaining_time_units()), 'barcolor':'', 'relativepower':this.props.app_state.loc['828h']/* 'Units.' */, })}
+                </div>
+
+                <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':number_with_commas(subscription_config[4])+this.props.app_state.loc['828e']/* ' Time Units.' */, 'details':this.props.app_state.loc['828d']/* 'Minimum Cancellable Balance Amount.' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
@@ -159,6 +164,13 @@ class CancelSubscriptionPage extends Component {
 
             </div>
         )
+    }
+
+    get_remaining_time_units(){
+        var subscription_config = this.state.subscription_item['data'][1]
+        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+        var current_time_unit_balance = bigInt(this.state.subscription_item['payment']).divide(bigInt(time_unit))
+        return current_time_unit_balance
     }
 
     render_cancel_credit_part(){

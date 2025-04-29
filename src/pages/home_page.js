@@ -2141,12 +2141,14 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var followed_accounts = this.props.app_state.followed_accounts
+            var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['post']
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
                 var follow_id = object['e5'] + ':' + author_id
-                var followed_accounts = this.props.app_state.followed_accounts
-                if(followed_accounts.includes(follow_id)){
+                
+                if(followed_accounts.includes(follow_id) || my_following_reposts.includes(object['e5_id'])){
                     my_following_objects.push(object)
                 }
             }
@@ -2430,12 +2432,14 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_all_sorted_objects(this.props.app_state.created_audios)
+            var followed_accounts = this.props.app_state.followed_accounts
+            var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['audio']
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
                 var follow_id = object['e5'] + ':' + author_id
-                var followed_accounts = this.props.app_state.followed_accounts
-                if(followed_accounts.includes(follow_id)){
+                
+                if(followed_accounts.includes(follow_id) || my_following_reposts.includes(object['e5_id'])){
                     my_following_objects.push(object)
                 }
             }
@@ -2507,12 +2511,13 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_all_sorted_objects(this.props.app_state.created_videos)
+            var followed_accounts = this.props.app_state.followed_accounts
+            var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['video']
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
                 var follow_id = object['e5'] + ':' + author_id
-                var followed_accounts = this.props.app_state.followed_accounts
-                if(followed_accounts.includes(follow_id)){
+                if(followed_accounts.includes(follow_id) || my_following_reposts.includes(object['e5_id'])){
                     my_following_objects.push(object)
                 }
             }
@@ -3153,6 +3158,7 @@ class home_page extends Component {
             when_coin_object_clicked={this.when_coin_object_clicked.bind(this)} when_playlist_selected={this.when_playlist_selected.bind(this)} get_my_entire_public_key={this.props.get_my_entire_public_key.bind(this)}
 
             get_searched_account_data_trimmed={this.props.get_searched_account_data_trimmed.bind(this)} when_link_object_clicked={this.props.when_link_object_clicked.bind(this)} play_album_from_list_section={this.play_album_from_list_section.bind(this)} play_videopost_from_list_section={this.play_videopost_from_list_section.bind(this)}
+            show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
             />
         )
     }
@@ -3486,7 +3492,7 @@ class home_page extends Component {
 
     play_album_from_list_section(object){
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
-            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            // this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }else{
             var items = this.get_songs_to_display(object)
             var item = items[0]
@@ -3567,9 +3573,9 @@ class home_page extends Component {
         var items = this.get_videos_to_display(object)
         var item = items[0]
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
-            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            // this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }else if(!this.is_video_available_for_viewing(item)){
-            this.render_top_notification(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+            // this.render_top_notification(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
             this.props.play_video(item, object)
@@ -3577,7 +3583,7 @@ class home_page extends Component {
     }
 
     get_videos_to_display(object){
-        if(this.is_page_my_collection_page()){
+        if(this.is_page_my_videopost_collection_page()){
             var videos_to_display = []
             var items = object['ipfs'].videos
             items.forEach(video => {
@@ -3589,7 +3595,7 @@ class home_page extends Component {
         }
     }
 
-    is_page_my_collection_page(){
+    is_page_my_videopost_collection_page(){
         var page_id = this.get_page_id()
         var my_collection_page_id = this.props.app_state.loc['1264p']/* 'videoport' */ + this.props.app_state.loc['1264l']/* 'acquired' */
         if(page_id == my_collection_page_id){
@@ -3792,7 +3798,7 @@ class home_page extends Component {
                 when_discography_audio_item_clicked={this.when_discography_audio_item_clicked.bind(this)} when_discography_video_item_clicked={this.when_discography_video_item_clicked.bind(this)}
 
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
-                connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)}
+                connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_audiopost={this.props.repost_audiopost.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)} repost_post={this.props.repost_post.bind(this)}
                 />
             </div>
         )
