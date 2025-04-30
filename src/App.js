@@ -21995,7 +21995,7 @@ return data['data']
         created_subscription_object_mapping_clone[e5] = created_subscription_object_mapping
 
         this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -22363,7 +22363,7 @@ return data['data']
         
 
         this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone, enter_exit_accounts_notifications: enter_exit_accounts_notifications_clone})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -22640,7 +22640,7 @@ return data['data']
         var my_proposals_clone = structuredClone(this.state.my_proposals)
         my_proposals_clone[e5] = created_proposal_object_data
         this.setState({my_proposals: my_proposals_clone})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -22980,7 +22980,7 @@ return data['data']
         token_name_directory_clone[e5] = token_name_directory
 
         this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone,})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -23260,7 +23260,7 @@ return data['data']
         var created_posts_clone = structuredClone(this.state.created_posts)
         created_posts_clone[e5] = created_posts
         this.setState({created_posts: created_posts_clone}) 
-        await this.wait(150)       
+        // await this.wait(150)       
       }
     }
 
@@ -23397,7 +23397,7 @@ return data['data']
         var created_channels_clone = structuredClone(this.state.created_channels)
         created_channels_clone[e5] = created_channel
         this.setState({created_channels: created_channels_clone})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -23525,7 +23525,7 @@ return data['data']
         created_job_mappings_clone[e5] = created_job_mappings
 
         this.setState({created_jobs: created_jobs_clone, created_job_mappings:created_job_mappings_clone});
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -23677,7 +23677,7 @@ return data['data']
           all_mail_clone[convo_id].push(obj);
           this.setState({all_mail: all_mail_clone})
           this.fetch_uploaded_files_for_object(ipfs_obj)
-          await this.wait(150)
+          // await this.wait(150)
         }
       }
     }
@@ -23838,7 +23838,7 @@ return data['data']
         created_store_mappings_clone[e5] = created_store_mappings
         
         this.setState({created_stores: created_stores_clone, created_store_mappings:created_store_mappings_clone})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -24005,7 +24005,7 @@ return data['data']
         var created_bags_clone = structuredClone(this.state.created_bags)
         created_bags_clone[e5] = my_created_bags
         this.setState({created_bags: created_bags_clone})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
     // console.log('all_data2', 'reached end of loading bag data')
@@ -24234,7 +24234,7 @@ return data['data']
         var created_contractors_clone = structuredClone(this.state.created_contractors)
         created_contractors_clone[e5] = created_contractor
         this.setState({created_contractors: created_contractors_clone,})
-        await this.wait(150)
+        // await this.wait(150)
       }
     }
 
@@ -24376,7 +24376,7 @@ return data['data']
         created_audios_clone[e5] = created_audios
         created_audio_mappings_clone[e5] = created_audio_mappings
         this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone, my_acquired_audios: my_acquired_audios}) 
-        await this.wait(150)       
+        // await this.wait(150)       
       }
     }
 
@@ -24511,7 +24511,7 @@ return data['data']
         created_videos_clone[e5] = created_videos
         created_video_mappings_clone[e5] = created_video_mappings
         this.setState({created_videos: created_videos_clone, created_video_mappings: created_video_mappings_clone, my_acquired_videos: my_acquired_videos})   
-        await this.wait(150)     
+        // await this.wait(150)     
       }
     }
 
@@ -24675,7 +24675,7 @@ return data['data']
         created_nitro_mappings_clone[e5] = created_nitro_mappings
         
         this.setState({created_nitros: created_nitros_clone, created_nitro_mappings:created_nitro_mappings_clone})   
-        await this.wait(150)     
+        // await this.wait(150)     
       }
     }
 
@@ -29176,7 +29176,7 @@ return data['data']
           const clone = structuredClone(this.state.object_messages)
           clone[id] = messages
           this.setState({object_messages: clone})
-          await this.wait(150)
+          // await this.wait(150)
         }
       }
     }
@@ -29731,7 +29731,7 @@ return data['data']
           const mail_messages_clone = structuredClone(this.state.mail_messages)
           mail_messages_clone[convo_id] = messages
           this.setState({mail_messages: mail_messages_clone})
-          await this.wait(150)
+          // await this.wait(150)
         }
       }
     }

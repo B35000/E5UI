@@ -10980,7 +10980,7 @@ return data['data']
         if(data == null) {
             return(
                 <div>
-                    {this.render_empty_views(2)}
+                    
                 </div>
             )
         }
@@ -11010,7 +11010,7 @@ return data['data']
         if(data == null) {
             return(
                 <div>
-                    {this.render_empty_views(3)}
+                    
                 </div>
             )
         }
@@ -11274,6 +11274,8 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1593bj']/* 'Upload a file to storage.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
+                
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fk']/* 'Your files are encypted with your wallets private key. So you need to set your wallet to see them here.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
 
                 <div className="row" style={{width: '90%'}}>

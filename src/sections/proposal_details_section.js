@@ -2141,7 +2141,7 @@ class ProposalDetailsSection extends Component {
             return (
                 <div>
                     <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's' })}
+                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 'l' })}
                     </div>
                     <div style={{ height: 2 }} />
 
@@ -2150,9 +2150,9 @@ class ProposalDetailsSection extends Component {
                     </div>
 
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -2264,20 +2264,20 @@ class ProposalDetailsSection extends Component {
         if (this.state.selected_proposal_vote_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text2(item.returnValues.p3, object), 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': this.props.app_state.loc['2558']/* 'Contract ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': this.props.app_state.loc['2558']/* 'Contract ID' */, 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['2549']/* 'Age' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['2549']/* 'Age' */, 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+ this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+ this.get_sender_title_text2(item.returnValues.p3, object), 'size': 'l' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
