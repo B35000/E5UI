@@ -20590,7 +20590,11 @@ return data['data']
 
   load_blocked_posts = async (web3, E52contractInstance, e5, account) => {
     var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
-    var followed_accounts_blocked_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: accounts_to_load, p3/* context */:9})
+    var followed_accounts_blocked_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:9})
+
+    var followed_accounts_blocked_posts_events_data = followed_accounts_blocked_posts_events_data.filter(function (event) {
+      return (accounts_to_load.includes(parseInt(event.returnValues.p1)))
+    })
 
     var accounts_obj = {}
     followed_accounts_blocked_posts_events_data.forEach(event => {
@@ -20633,7 +20637,7 @@ return data['data']
       var item_e5 = split_account_array[0]
       var account = split_account_array[1]
       if(item_e5 == e5){
-        accepted_ids.push(account)
+        accepted_ids.push(parseInt(account))
       }
     }
     return accepted_ids
@@ -20663,7 +20667,11 @@ return data['data']
 
   load_censored_keywords = async (web3, E52contractInstance, e5, account) => {
     var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
-    var followed_accounts_censored_keywords_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: accounts_to_load, p3/* context */:10})
+    var followed_accounts_censored_keywords_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:10})
+
+    var followed_accounts_censored_keywords_events_data = followed_accounts_censored_keywords_events_data.filter(function (event) {
+      return (accounts_to_load.includes(parseInt(event.returnValues.p1)))
+    })
 
     var accounts_obj = {}
     followed_accounts_censored_keywords_events_data.forEach(event => {
@@ -20734,7 +20742,14 @@ return data['data']
 
   load_promoted_posts = async (web3, E52contractInstance, e5, account) => {
     var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
-    var followed_accounts_promoted_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: accounts_to_load, p3/* context */:12})
+
+    var followed_accounts_promoted_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:12})
+
+    var followed_accounts_promoted_posts_events_data = followed_accounts_promoted_posts_events_data.filter(function (event) {
+      return (accounts_to_load.includes(parseInt(event.returnValues.p1)))
+    })
+
+    console.log('promoted_posts', accounts_to_load, followed_accounts_promoted_posts_events_data) 
 
     var accounts_obj = {}
     followed_accounts_promoted_posts_events_data.forEach(event => {

@@ -307,6 +307,8 @@ class VideoDetailsSection extends Component {
 
                     {this.render_award_button(object)}
 
+                    {this.render_repost_videopost_ui(object)}
+
                     {this.render_pin_post_button(object)}
 
                     {this.render_follow_unfollow_author_button(object)}
@@ -333,6 +335,10 @@ class VideoDetailsSection extends Component {
             title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
             details = this.props.app_state.loc['b2527q']/*  Remove this videopost from your promoted list. */
         }
+
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 == my_account) return;
+
         return(
             <div>
                 {this.render_detail_item('0')}

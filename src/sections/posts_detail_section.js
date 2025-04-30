@@ -256,6 +256,8 @@ class PostsDetailsSection extends Component {
 
                     {this.render_award_button(object)}
 
+                    {this.render_repost_post_ui(object)}
+
                     {this.render_pin_post_button(object)}
 
                     {this.render_block_post_button(object)}
@@ -270,7 +272,7 @@ class PostsDetailsSection extends Component {
     }
 
 
-    render_repost_videopost_ui(object){
+    render_repost_post_ui(object){
         var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
         var title = this.props.app_state.loc['2526c']/* 'Repost Post.' */
         var details = this.props.app_state.loc['2526d']/*  Add this post to your promoted list. */
@@ -279,6 +281,9 @@ class PostsDetailsSection extends Component {
             title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
             details = this.props.app_state.loc['2526e']/*  Remove this post from your promoted list. */
         }
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 == my_account) return;
+
         return(
             <div>
                 {this.render_detail_item('0')}

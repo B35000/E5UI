@@ -424,6 +424,9 @@ class AudioDetailSection extends Component {
             title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
             details = this.props.app_state.loc['a2527by']/*  Remove this audiopost from your promoted list. */
         }
+
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 == my_account) return;
         return(
             <div>
                 {this.render_detail_item('0')}
