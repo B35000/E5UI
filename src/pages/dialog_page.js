@@ -1464,7 +1464,6 @@ return data['data']
                     <div style={{height:10}}/>
                     {this.render_purchase_options_if_any(item)}
                     {this.render_fulfilment_signature_if_any(item, object)}
-                    <div style={{height:10}}/>
                 </div>
                 {this.render_clear_purchase_button(item, object, sender_type)}
             </div>
@@ -1485,17 +1484,17 @@ return data['data']
         var storefront_options = item['storefront_options']
         if(storefront_options == null || storefront_options.length == 0) return;
         return(
-                <div>
-                    {items.map((item, index) => (
-                        <div style={{'padding': '0px 0px 0px 0px'}}>
-                            {/* {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
-                            <div style={{height:3}}/> */}
-                            <Tags font={this.props.app_state.font} page_tags_object={item} tag_size={'l'} when_tags_updated={this.when_purchase_option_tag_selected.bind(this)} theme={this.props.theme} locked={true}/>
-                            <div style={{height:3}}/>
-                        </div>
-                    ))}
-                </div>
-            )
+            <div>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {/* {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
+                        <div style={{height:3}}/> */}
+                        <Tags font={this.props.app_state.font} page_tags_object={item} tag_size={'l'} when_tags_updated={this.when_purchase_option_tag_selected.bind(this)} theme={this.props.theme} locked={true}/>
+                        <div style={{height:3}}/>
+                    </div>
+                ))}
+            </div>
+        )
     }
 
     when_purchase_option_tag_selected(tag_item){

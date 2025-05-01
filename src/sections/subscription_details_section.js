@@ -144,42 +144,42 @@ class SubscriptionDetailsSection extends Component {
 
         if(selected_item == this.props.app_state.loc['2118']/* 'details' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_subscription_main_details_section(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2121']/* 'transfers' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_transfer_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2644']/* 'payments' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_subscription_payment_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2645']/* 'cancellations' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_subscription_cancellations(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2646']/* 'collections' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_subscription_collections(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2647']/* 'modifications' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_modification_events(object)}
                 </div>
             )
@@ -187,28 +187,28 @@ class SubscriptionDetailsSection extends Component {
 
         else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_modify_moderator_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2067']/* 'interactable-checkers' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_interactable_checker_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2068']/* 'interactable-accounts' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_interactable_accounts_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2069']/* 'block-accounts' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_blocked_accounts_logs(object)}
                 </div>
             )
@@ -216,7 +216,7 @@ class SubscriptionDetailsSection extends Component {
 
         else if(selected_item == this.props.app_state.loc['2643']/* 'search' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_search_ui(object)}
                 </div>
             )

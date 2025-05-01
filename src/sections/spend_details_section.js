@@ -180,77 +180,77 @@ class SpendDetailSection extends Component {
         
         if(selected_item ==this.props.app_state.loc['2118']/* 'details' */ || selected_item == 'e'){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_spend_main_details_section(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2121']/* 'transfers' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_transfer_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_updated_proportion_ratio_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2341']/* 'modify-exchange' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_modify_exchange_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2338']/* 'exchange-transfers' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_exchange_transfers_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2339']/* 'updated-balances' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_update_balance_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2342']/* 'freeze-unfreeze' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_freeze_unfreeze_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_modify_moderator_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2067']/* 'interactable-checkers' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_interactable_checker_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2068']/* 'interactable-accounts' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_interactable_accounts_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2069']/* 'block-accounts' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_blocked_accounts_logs(selected_object)}
                 </div>
             )

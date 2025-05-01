@@ -139,14 +139,14 @@ class ContractDetailsSection extends Component {
         if(object != null){
             if (selected_item == this.props.app_state.loc['2118']/* 'details' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.render_contracts_main_details_section(object)}
                     </div>
                 )
             }
             else if (selected_item == this.props.app_state.loc['2122']/* 'create-proposal' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.render_create_proposal_logs(object)}
                     </div>
                 )
@@ -154,7 +154,7 @@ class ContractDetailsSection extends Component {
             }
             else if (selected_item == this.props.app_state.loc['2123']/* 'modify-contract' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.render_modify_contract_logs(object)}
                     </div>
                 )
@@ -162,7 +162,7 @@ class ContractDetailsSection extends Component {
             }
             else if (selected_item == this.props.app_state.loc['2125']/* 'enter-contract' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.render_enter_contract_logs(object)}
                     </div>
                 )
@@ -170,7 +170,7 @@ class ContractDetailsSection extends Component {
             }
             else if (selected_item == this.props.app_state.loc['2126']/* 'extend-contract-stay' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.render_extend_contract_logs(object)}
                     </div>
                 )
@@ -178,7 +178,7 @@ class ContractDetailsSection extends Component {
             }
             else if (selected_item == this.props.app_state.loc['2127']/* 'exit-contract' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.render_exit_contract_logs(object)}
                     </div>
                 )
@@ -186,7 +186,7 @@ class ContractDetailsSection extends Component {
             }
             else if (selected_item == this.props.app_state.loc['2128']/* 'force-exit-accounts' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.force_exit_accounts_logs(object)}
                     </div>
                 )
@@ -194,7 +194,7 @@ class ContractDetailsSection extends Component {
             }
             else if (selected_item == this.props.app_state.loc['1713']/* 'transfers' */) {
                 return (
-                    <div>
+                    <div key={selected_item}>
                         {this.render_transfer_logs(object)}
                     </div>
                 )
@@ -202,35 +202,35 @@ class ContractDetailsSection extends Component {
             }
             else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
                 return(
-                    <div>
+                    <div key={selected_item}>
                         {this.render_modify_moderator_logs(object)}
                     </div>
                 )
             }
             else if(selected_item == this.props.app_state.loc['2067']/* 'interactable-checkers' */){
                 return(
-                    <div>
+                    <div key={selected_item}>
                         {this.render_interactable_checker_logs(object)}
                     </div>
                 )
             }
             else if(selected_item == this.props.app_state.loc['2068']/* 'interactable-accounts' */){
                 return(
-                    <div>
+                    <div key={selected_item}>
                         {this.render_interactable_accounts_logs(object)}
                     </div>
                 )
             }
             else if(selected_item == this.props.app_state.loc['2069']/* 'block-accounts' */){
                 return(
-                    <div>
+                    <div key={selected_item}>
                         {this.render_blocked_accounts_logs(object)}
                     </div>
                 )
             }
             else if(selected_item == this.props.app_state.loc['2214d']/* 'participants' */){
                 return(
-                    <div>
+                    <div key={selected_item}>
                         {this.render_participant_accounts_and_their_expiry_times(object)}
                     </div>
                 )

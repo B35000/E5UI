@@ -143,14 +143,14 @@ class ContractorDetailsSection extends Component {
         if(object != null){
             if(selected_item == this.props.app_state.loc['2215']/* 'details' */ || selected_item == 'e'){
                 return(
-                    <div>
+                    <div key={selected_item}>
                         {this.render_contractor_posts_main_details_section(object)}
                     </div>
                 )
             }
             else if(selected_item == this.props.app_state.loc['2216']/* 'job-requests' */){
                 return(
-                    <div>
+                    <div key={selected_item}>
                         {this.render_contractor_job_responses(object)}
                     </div>
                 )
@@ -812,13 +812,16 @@ class ContractorDetailsSection extends Component {
             return(
                 <div>
                     <div onClick={() => this.view_contract(item, object)}>
-                        {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                        {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                         <div style={{height:3}}/>
 
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
                         <div style={{height:3}}/>
 
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2230']/* 'Accepted' */, 'details':this.props.app_state.loc['2231d']/* 'The contractor Accepted the job request' */, 'size':'s'})}
+                        {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                        <div style={{height:3}}/>
+
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2230']/* 'Accepted' */, 'details':this.props.app_state.loc['2231d']/* 'The contractor Accepted the job request' */, 'size':'l'})}
                     </div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                 </div>
@@ -826,10 +829,13 @@ class ContractorDetailsSection extends Component {
         }else{
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2231']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2231']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:3}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:3}}/>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                 </div>
@@ -851,9 +857,10 @@ class ContractorDetailsSection extends Component {
     }
 
     view_contract(item, object){
-        // if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
-        //     this.props.open_view_job_request_ui(item, object)
-        // }
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
+            return;
+        }
         this.props.open_view_job_request_ui(item, object)
     }
 

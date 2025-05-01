@@ -195,35 +195,35 @@ class ProposalDetailsSection extends Component {
         
         if(selected_item == this.props.app_state.loc['2118']/* 'details' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_proposal_main_details_section(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2527']/* 'proposal-actions' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_proposal_actions(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_proposal_message_activity(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1713']/* 'transfers' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_transfer_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1711']/* 'votes' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_vote_logs(object)}
                 </div>
             )
@@ -1537,7 +1537,7 @@ class ProposalDetailsSection extends Component {
         var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
         var text = this.format_message(item['message'], object)
         // const parts = text.split(/(\d+)/g);
-        const parts = text.split(' ');
+        const parts = this.split_text(text);
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
@@ -1561,11 +1561,11 @@ class ProposalDetailsSection extends Component {
                                                 key={index}
                                                 style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
                                                 onClick={() => this.when_e5_link_tapped(num)}>
-                                                    {part}{index == parts.length-1 ? '':' '}
+                                                    {part}
                                             </span>
                                         );
                                     }
-                                    return <span key={index}>{this.mask_word_if_censored(part, object)}{index == parts.length-1 ? '':' '}</span>;
+                                    return <span key={index}>{this.mask_word_if_censored(part, object)}</span>;
                                 })
                             }</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
@@ -1580,6 +1580,19 @@ class ProposalDetailsSection extends Component {
                 {this.render_response_if_any(item, object)}
             </div>
         ) 
+    }
+
+    split_text(text){
+        if(text == null) return []
+        var split = text.split(' ')
+        var final_string = []
+        split.forEach((word, index) => {
+            final_string.push(word)
+            if(split.length-1 != index){
+                final_string.push(' ')
+            }
+        });
+        return final_string
     }
 
     mask_word_if_censored(word, object){

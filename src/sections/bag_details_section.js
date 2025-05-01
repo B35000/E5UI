@@ -847,24 +847,31 @@ class BagDetailsSection extends Component {
         if(is_application_accepted){
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
-                    <div style={{height:3}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2055']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2056']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:3}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2057']/* 'Accepted' */, 'details':this.props.app_state.loc['2058']/* 'The bag owner picked this fulfilment application' */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+                    
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2055']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2056']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'l'})}
+                    <div style={{height:3}}/>
+                    
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2057']/* 'Accepted' */, 'details':this.props.app_state.loc['2058']/* 'The bag owner picked this fulfilment application' */, 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {/* <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/> */}
                 </div>
             )
         }else{
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2059']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2059']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    <div style={{height:3}}/>
+
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:3}}/>
                     
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2060']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2061']/* 'Sender ID: ' */+item['applicant_id']+', '+ this.get_senders_name2(item['applicant_id'], object), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2060']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2061']/* 'Sender ID: ' */+item['applicant_id']+', '+ this.get_senders_name2(item['applicant_id'], object), 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
@@ -1295,7 +1302,7 @@ class BagDetailsSection extends Component {
         var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
         var text = this.format_message(item['message'], object)
         // const parts = text.split(/(\d+)/g);
-        const parts = text.split(' ');
+        const parts = this.split_text(text);
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
@@ -1319,11 +1326,11 @@ class BagDetailsSection extends Component {
                                                 key={index}
                                                 style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
                                                 onClick={() => this.when_e5_link_tapped(num)}>
-                                                    {part}{index == parts.length-1 ? '':' '}
+                                                    {part}
                                             </span>
                                         );
                                     }
-                                    return <span key={index}>{this.mask_word_if_censored(part, object)}{index == parts.length-1 ? '':' '}</span>;
+                                    return <span key={index}>{this.mask_word_if_censored(part, object)}</span>;
                                 })
                             }</Linkify></p>
                             
@@ -1341,6 +1348,19 @@ class BagDetailsSection extends Component {
             </div>
         )
         
+    }
+
+    split_text(text){
+        if(text == null) return []
+        var split = text.split(' ')
+        var final_string = []
+        split.forEach((word, index) => {
+            final_string.push(word)
+            if(split.length-1 != index){
+                final_string.push(' ')
+            }
+        });
+        return final_string
     }
 
     mask_word_if_censored(word, object){

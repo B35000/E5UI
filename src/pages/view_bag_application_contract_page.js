@@ -249,9 +249,12 @@ class ViewBagApplicationContractPage extends Component {
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['1640']/* 'Estimated Delivery Time' */, 'title':''+this.get_time_diff(item['estimated_delivery_time']), 'size':'l'})}
                     <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                    <div style={{height:10}}/>
                     
                 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1641']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['1642']/* 'Sender ID: ' */+item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1641']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['1642']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id']), 'size':'l'})}
 
                     {this.render_detail_item('0')}
                     {this.render_application_price_amounts(item)}
@@ -261,6 +264,16 @@ class ViewBagApplicationContractPage extends Component {
 
                 </div>
             )
+        }
+    }
+
+    get_senders_name2(sender){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[this.state.e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
         }
     }
 

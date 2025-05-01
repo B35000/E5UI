@@ -226,7 +226,7 @@ class ClearPurchasePage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'title':'Variant ID: '+item['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account']})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account']+', '+this.get_senders_name2(item['sender_account'])})}
                 
                 {this.render_detail_item('0')}
 
@@ -248,6 +248,16 @@ class ClearPurchasePage extends Component {
                 <div style={{height:10}}/>
             </div>
         )
+    }
+
+    get_senders_name2(sender){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[this.state.e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     copy_to_clipboard(signature_data){
@@ -318,7 +328,7 @@ class ClearPurchasePage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1071']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1072']/* 'Sender Account ID: ' */+item['sender_account']})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1071']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1072']/* 'Sender Account ID: ' */+item['sender_account']+', '+this.get_senders_name2(item['sender_account'])})}
                 <div style={{height:5}}/>
                 
                 {this.render_detail_item('0')}
@@ -336,7 +346,17 @@ class ClearPurchasePage extends Component {
         )
     }
 
-    
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
 
     when_received_signature_changed(text){
         this.setState({received_signature: text})

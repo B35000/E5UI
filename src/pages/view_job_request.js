@@ -278,7 +278,7 @@ class ViewJobRequestPage extends Component {
     render_title_details_part(){
         if(this.state.request_item['job_request_id'] != 0){
             return(
-                <div>
+                <div ref={this.pick_images_view_width}>
                     {this.render_job_response_item(this.state.request_item)}
                 </div>
             )
@@ -292,6 +292,9 @@ class ViewJobRequestPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1679']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
@@ -320,6 +323,9 @@ class ViewJobRequestPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1686']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
@@ -636,7 +642,7 @@ class ViewJobRequestPage extends Component {
             })
         }
         this.setState({request_item: request_item, contractor_object: contractor_object, e5: request_item['e5']})
-        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'])
+        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'], request_item['key_data'])
 
         if(request_item['is_response_accepted']){
             this.setState({accept_job_request_title_tags_object: this.get_accepted_job_request_title_tags_object()})
@@ -657,7 +663,7 @@ class ViewJobRequestPage extends Component {
 
     check_for_new_responses_and_messages() {
         if(this.state.request_item['job_request_id'] != 0){
-            this.props.load_job_request_messages(this.state.contractor_object['id'], this.state.request_item['job_request_id'], this.state.request_item['e5'])
+            this.props.load_job_request_messages(this.state.contractor_object['id'], this.state.request_item['job_request_id'], this.state.request_item['e5'], this.state.request_item['key_data'])
         }
     }
 
@@ -983,6 +989,7 @@ class ViewJobRequestPage extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
+        this.pick_images_view_width = React.createRef();
         this.has_user_scrolled = {}
     }
 
@@ -990,7 +997,7 @@ class ViewJobRequestPage extends Component {
         var object = this.state.request_item;
         var has_scrolled = this.has_user_scrolled[object['job_request_id']]
         if(has_scrolled == null){
-            this.scroll_to_bottom()
+            // this.scroll_to_bottom()
         }
     }
 
@@ -1255,9 +1262,11 @@ class ViewJobRequestPage extends Component {
         var size = item['size'] == null ? '11px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
-        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
+        var e5 = item['sender_e5'] == null ? item['e5'] : item['sender_e5']
+        var line_color = item['sender'] == this.props.app_state.user_account_id[e5] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
         var text = this.format_message(item['message'])
-        const parts = text.split(/(\d+)/g);
+        // const parts = text.split(/(\d+)/g);
+        const parts = this.split_text(text);
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
@@ -1300,6 +1309,19 @@ class ViewJobRequestPage extends Component {
                 {this.render_response_if_any(item)}
             </div>
         )
+    }
+
+    split_text(text){
+        if(text == null) return []
+        var split = text.split(' ')
+        var final_string = []
+        split.forEach((word, index) => {
+            final_string.push(word)
+            if(split.length-1 != index){
+                final_string.push(' ')
+            }
+        });
+        return final_string
     }
 
     when_e5_link_tapped(id){
@@ -1444,10 +1466,14 @@ class ViewJobRequestPage extends Component {
     }
 
     get_sender_title_text(item){
-        if(item['sender'] == this.props.app_state.user_account_id[this.state.e5]){
+        var e5 = item['sender_e5'] == null ? item['e5'] : item['sender_e5']
+        if(item['sender'] == this.props.app_state.user_account_id[e5]){
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
-            return item['sender'].toString()
+            var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var sender = item['sender']
+            var alias = obj[sender] == null ? sender.toString() : obj[sender]
+            return alias
         }
     }
 
@@ -1579,7 +1605,7 @@ class ViewJobRequestPage extends Component {
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5}
+            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'sender_e5':this.props.app_state.selected_e5}
 
             this.props.add_job_request_message_to_stack_object(tx)
 

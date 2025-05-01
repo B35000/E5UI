@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/heading-has-content */
 // Copyright (c) 2023 Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -274,7 +276,7 @@ class ViewGroups extends Component {
             }
 
             text = this.format_text_if_empty_or_null(text)
-            const parts = text.split(' ');
+            const parts = this.split_text(text)
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
@@ -292,11 +294,11 @@ class ViewGroups extends Component {
                                                         key={index}
                                                         style={{ textDecoration: "underline", cursor: "pointer", color: color }}
                                                         onClick={() => this.when_e5_link_tapped(num)}>
-                                                            {part}{index == parts.length-1 ? '':' '}
+                                                            {part}
                                                     </span>
                                                 );
                                             }
-                                            return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                            return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}</span>;
                                         })
                                     }
                                 </Linkify>
@@ -447,19 +449,31 @@ class ViewGroups extends Component {
             var rowHeight = 45;
             var items = object_data == null ? [] :object_data['images'];
             var items_pos = object_data == null ? 0 : object_data['pos'];
-            return(
-                <div style={{'margin':'5px 0px 0px 10px'}}>
-                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                        {items.map((item, index) => (
-                            <ImageListItem key={item.img}>
-                                <div style={{}} onClick={() => this.when_image_clicked(items, index)}>
-                                    <img alt="" src={this.get_image_from_file(item)} style={{width:45, height:45, 'border-radius': '50%'}} />
-                                </div> 
-                            </ImageListItem>
-                        ))}
-                    </ImageList>
+
+            return (
+                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'100px'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
+                            <img alt="" src={this.get_image_from_file(item)} style={{width:'auto', height:90, 'border-radius': '10px'}} />
+                          </li>
+                      ))}
+                    </ul>
                 </div>
-            ) 
+            );
+            // return(
+            //     <div style={{'margin':'5px 0px 0px 10px'}}>
+            //         <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+            //             {items.map((item, index) => (
+            //                 <ImageListItem key={item.img}>
+            //                     <div style={{}} onClick={() => this.when_image_clicked(items, index)}>
+            //                         <img alt="" src={this.get_image_from_file(item)} style={{width:45, height:45, 'border-radius': '50%'}} />
+            //                     </div>
+            //                 </ImageListItem>
+            //             ))}
+            //         </ImageList>
+            //     </div>
+            // ) 
         }
         else if(item_id=='10'){/* text2 */
             /* {this.render_detail_item('10', {'text':'', 'textsize':'', 'font':''})} */
@@ -543,14 +557,32 @@ class ViewGroups extends Component {
         else if(item_id=='13'){/* markdown preview */
             /* {this.render_detail_item('13', {'source':''})}  */
             var source = object_data == null ? '' : object_data['source']
-            var theme = this.props.theme['markdown_theme']
             var padding = '10px 15px 10px 15px'
             var word_wrap_value = this.longest_word_length(source) > 53 ? 'break-word' : 'normal'
             return(
                 <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
                     <Markdown
                     components={{
-                            p: ({ node, ...props }) => <p style={{ color: this.props.theme['secondary_text_color'],  'word-wrap': word_wrap_value }} {...props} />,
+                            // p: ({ node, ...props }) => <p style={{ color: this.props.theme['secondary_text_color'],  'word-wrap': word_wrap_value }} {...props} />,
+
+                            p: ({ node, ...props }) => {
+                                console.log('markdown',props.children)
+                                const text = props.children
+
+                                const processed = typeof text === "string" ? this.split_text(text).map((part, i) => (!isNaN(parseInt(part)) && parseInt(part) > 1000) ? (
+                                        <span key={i} style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color']}} onClick={() => this.when_e5_link_tapped(parseInt(part))}>
+                                            {part}
+                                        </span>
+                                    ) : (
+                                        <React.Fragment key={i}>{this.mask_word_if_censored(part)}</React.Fragment>
+                                    )
+                                ) : props.children;
+
+                                return (
+                                    <p style={{ color: this.props.theme['secondary_text_color'], wordWrap: word_wrap_value }}>{processed}</p>
+                                );
+                            },
+
                             h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'] }} {...props} />,
                             h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
                             h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
@@ -568,6 +600,19 @@ class ViewGroups extends Component {
         }
     }
 
+    split_text(text){
+        if(text == null) return []
+        var split = text.split(' ')
+        var final_string = []
+        split.forEach((word, index) => {
+            final_string.push(word)
+            if(split.length-1 != index){
+                final_string.push(' ')
+            }
+        });
+        return final_string
+    }
+
     when_detail_eight_clicked(id, object){
         if(id == 'when_audio_image_clicked'){
             this.props.when_audio_image_clicked(object)
@@ -581,6 +626,15 @@ class ViewGroups extends Component {
         else if(id == 'when_video_text_clicked'){
             this.props.when_video_text_clicked(object)
         }
+    }
+
+    process_source(source){
+        const parts = source.split(' ');
+        var final_string = ''
+        parts.forEach((word, index) => {
+            final_string = final_string + this.mask_word_if_censored(word) + (index == parts.length-1 ? '':' ')
+        });
+        return final_string
     }
 
     mask_word_if_censored(word){

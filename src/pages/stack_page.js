@@ -42,6 +42,7 @@ const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 var bigInt = require("big-integer");
+const ecies = require('ecies-geth');
 
 
 function number_with_commas(x) {
@@ -4110,7 +4111,8 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
                     var t = txs[i]
                     var now = parseInt(now.toString() + i)
-                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects}
+                    var key_data = await this.get_encrypted_job_request_key(t)
+                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data}
 
                     ipfs_index_object[t.id] = application_obj
                     ipfs_index_array.push({'id':t.id, 'data':application_obj})
@@ -4123,9 +4125,23 @@ return data['data']
                 }
                 else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
                     var t = txs[i]
+                    const my_unique_crosschain_identifier = bigInt(await this.get_my_unique_crosschain_identifier_number())
+                    const private_key_to_use = this.props.get_my_private_key()
+
                     for(var m=0; m<t.messages_to_deliver.length; m++){
-                        ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
-                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
+                        var message_obj = t.messages_to_deliver[m]
+                        if(t.messages_to_deliver[m]['key_data'] != null && t.messages_to_deliver[m]['key_data'][my_unique_crosschain_identifier] != null){
+                            // console.log('key_data',t.messages_to_deliver[m]['key_data'], private_key_to_use)
+                            var focused_encrypted_key = t.messages_to_deliver[m]['key_data'][my_unique_crosschain_identifier]
+                            if(focused_encrypted_key != null){
+                                var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
+                                var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+                                var encrypted_obj = this.props.encrypt_data_object(JSON.stringify(message_obj), my_key.toString())
+                                message_obj = {'encrypted_data':encrypted_obj}
+                            }
+                        }
+                        ipfs_index_object[t.messages_to_deliver[m]['message_id']] = message_obj
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':message_obj})
                     }
                 }
                 else if(
@@ -4421,6 +4437,27 @@ return data['data']
         }
         console.log('stack_page_ipfs', 'link', link)
         return link
+    }
+
+    get_encrypted_job_request_key = async (t) =>{
+        var key = makeid(35)
+        var recipient = t.contractor_item['author']
+        var author_e5 = t.contractor_item['e5']
+        var key_data = {}
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, author_e5)
+        if(recipients_pub_key_hash != ''){
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+            key_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+        }
+        var uint8array = await this.props.get_account_raw_public_key() 
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+        key_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+
+        return key_data
+    }
+
+    get_encrypted_job_request_message = async (t, recip) => {
+
     }
 
     get_device_color(){
@@ -9566,8 +9603,10 @@ return data['data']
     }
 
     get_senders_name(sender, provided_e5){
+        if(sender == null) return sender
         var e5 = provided_e5 == null ? this.props.app_state.selected_e5 : provided_e5
-        var alias = (this.props.app_state.alias_bucket[e5][sender] == null ? sender : this.props.app_state.alias_bucket[e5][sender])
+        var obj = this.props.app_state.alias_bucket[e5] == null ? {} : this.props.app_state.alias_bucket[e5]
+        var alias = (obj[sender] == null ? sender : obj[sender])
         return alias
     }
 

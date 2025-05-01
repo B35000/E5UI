@@ -220,7 +220,7 @@ class SendJobRequestPage extends Component {
 
     render_title_details_part_data(){
         return(
-            <div>
+            <div ref={this.pick_images_view_width}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1345']/* 'Set some details for your new job request. It should be task specific.' */})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1346']/* 'Enter Details...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
@@ -361,10 +361,19 @@ class SendJobRequestPage extends Component {
 
 
 
+    constructor(props) {
+        super(props);
+        this.pick_images_view_width = React.createRef();
+        this.amount_picker = React.createRef();
+    }
+
+    componentDidMount(){
+        this.setState({screen_width: this.pick_images_view_width.current.offsetWidth})
+    }
 
 
     render_image_part(){
-        var col = Math.round(400 / 100)
+        var col = Math.round(this.state.screen_width / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
@@ -805,11 +814,6 @@ return data['data']
 
             </div>
         )
-    }
-
-    constructor(props) {
-        super(props);
-        this.amount_picker = React.createRef();
     }
 
     get_power_limit_for_exchange(exchange){

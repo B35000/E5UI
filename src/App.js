@@ -780,7 +780,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(48), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -6759,7 +6759,7 @@ return data['data']
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)}
       
       />
     )
@@ -29304,6 +29304,7 @@ return data['data']
           ipfs_message['id'] = created_job_respnse_data[j].returnValues.p5
           ipfs_message['job_id'] = id;
           ipfs_message['e5'] = e5
+          ipfs_message['time'] = created_job_respnse_data[j].returnValues.p6
 
           var filtered_events = []
           for(var i=0; i<application_responses.length; i++){
@@ -29424,6 +29425,7 @@ return data['data']
         ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
         ipfs_message['contractor_post_id'] = id;
         ipfs_message['e5'] = E5
+        ipfs_message['time'] = created_job_respnse_data[j].returnValues.p6
 
         var filtered_events = []
         for(var i=0; i<application_responses.length; i++){
@@ -29470,7 +29472,7 @@ return data['data']
         return all_objects
   }
 
-  load_job_request_messages = async (contractor_id, request_id, e5) => {
+  load_job_request_messages = async (contractor_id, request_id, e5, key_data) => {
     // var messages = []
     // for(var i=0; i<this.state.e5s['data'].length; i++){
     //   var focused_e5 = this.state.e5s['data'][i]
@@ -29507,14 +29509,34 @@ return data['data']
       await this.fetch_multiple_cids_from_nitro(all_object_comment_events, 0, 'p4')
     }
 
+    var convo_key = ''
+    const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+    const private_key_to_use = this.get_my_private_key()
+    if(key_data != null && key_data[my_unique_crosschain_identifier] != null){
+        var focused_encrypted_key = key_data[my_unique_crosschain_identifier]
+        if(focused_encrypted_key != null){
+          var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
+          convo_key = await ecies.decrypt(private_key_to_use, uint8array)
+        }
+    }
+
     var is_first_time = this.state.object_messages[request_id] == null ? true: false
     var messages = []
     for(var j=0; j<all_object_comment_events.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
       console.log('apppage', 'ipfs message', ipfs_message)
       if(ipfs_message != null){
+        if(ipfs_message['encrypted_data'] != null){
+          //channel message was encrypted
+          console.log('apppage', 'message is encrypted, decrypting...')
+          console.log('apppage', 'key used: ', convo_key)
+          var bytes = CryptoJS.AES.decrypt(ipfs_message['encrypted_data'], convo_key.toString());
+          var originalText = bytes.toString(CryptoJS.enc.Utf8);
+          ipfs_message = JSON.parse(JSON.parse(originalText));
+          console.log('apppage', 'parsed object: ', ipfs_message)
+        }
+        ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
-
         const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
         if(includes == null){
           messages.push(ipfs_message)
@@ -29530,6 +29552,14 @@ return data['data']
     const clone = structuredClone(this.state.object_messages)
     clone[request_id] = messages
     this.setState({object_messages: clone})
+  }
+
+  get_my_private_key(){
+    const web3 = new Web3(this.get_web3_url_from_e5('E25'));
+    const privateKey = this.state.accounts['E25'].privateKey == null ? 'e' : this.state.accounts['E25'].privateKey
+    const private_key_hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    const private_key_to_use = Buffer.from(private_key_hash)
+    return private_key_to_use
   }
 
   get_job_request_comment_events = async (contractor_id, request_id) => {
