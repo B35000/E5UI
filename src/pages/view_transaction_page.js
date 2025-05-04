@@ -782,11 +782,32 @@ class ViewTransactionPage extends Component {
                 )
             }
             else if(tx.type == this.props.app_state.loc['3031']/* 'buy-storage' */){
-               return(
+                return(
                     <div>
                         {this.render_buy_storage_transaction_data()}
                     </div>
                 ) 
+            }
+            else if(tx.type == this.props.app_state.loc['3068ac']/* 'iTransfer' */){
+                return(
+                    <div>
+                        {this.render_itransfer_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3068af']/* 'bill' */){
+                return(
+                    <div>
+                        {this.render_bill_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3071j']/* 'bill-payment' */){
+                return(
+                    <div>
+                        {this.render_pay_bill_data()}
+                    </div>
+                )
             }
 
         }
@@ -6472,6 +6493,99 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+
+
+    render_itransfer_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068ai']/* 'iTransfer Identifier' */, 'title':''+transaction_item.identifier, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068al']/* 'Recipient Account.' */, 'title':''+transaction_item.recipient+','+this.get_senders_name2(transaction_item.recipient), 'size':'l'})}
+
+                {this.render_detail_item('0')}
+                
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3068ak']/* 'Amounts' */, 'details':this.props.app_state.loc['3068aj']/* 'All the amounts for the iTransfer action.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_set_prices_list_part()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    get_senders_name2(sender){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[this.state.e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    render_bill_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var recurring_enabled = transaction_item.recurring_enabled == true ? this.props.app_state.loc['3068bb']/* 'Recurring' */: this.props.app_state.loc['3068bc']/* 'one-time' */
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068ao']/* 'Bill Identifier.' */, 'title':''+transaction_item.identifier, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068am']/* 'Request Target.' */, 'title':''+transaction_item.recipient+','+this.get_senders_name2(transaction_item.recipient), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068au']/* 'Payment Target' */, 'title':''+transaction_item.transfer_recipient+','+this.get_senders_name2(transaction_item.transfer_recipient), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068bd']/* 'Bill Type' */, 'title':recurring_enabled, 'size':'l'})}
+                
+
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3068ak']/* 'Amounts' */, 'details':this.props.app_state.loc['3068an']/* 'All the amounts for the bill youre sending.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_set_prices_list_part()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_pay_bill_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3071m']/* 'Bill Identifier.' */, 'title':''+transaction_item.identifier, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068al']/* 'Recipient Account.' */, 'title':''+transaction_item.recipient+','+this.get_senders_name2(transaction_item.recipient), 'size':'l'})}
+
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3068ak']/* 'Amounts' */, 'details':this.props.app_state.loc['3071n']/* 'All the amounts for the bill payment action.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_set_prices_list_part()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
 
 
 

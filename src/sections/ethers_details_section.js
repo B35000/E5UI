@@ -55,7 +55,7 @@ class EthersDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */],[0]
+              ['xor','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */],[1]
           ],
         }
     }

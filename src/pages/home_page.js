@@ -96,7 +96,7 @@ class home_page extends Component {
         work_page_tags_object:this.get_main_page_tag_object('?'), 
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
-        selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null, selected_mail_item: null, selected_storefront_item: null, selected_bag_item: null, selected_coin_item:null, selected_audio_item:null, selected_video_item:null, selected_nitro_item:null,
+        selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null, selected_mail_item: null, selected_storefront_item: null, selected_bag_item: null, selected_coin_item:null, selected_audio_item:null, selected_video_item:null, selected_nitro_item:null, selected_bill_item:null,
         
         view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
@@ -104,7 +104,7 @@ class home_page extends Component {
         
         confirmation_dialog_box: false, contact_to_add:0, 
         
-        pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[], pinned_nitros:[],
+        pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[], pinned_nitros:[], pinned_bills:[],
         
         page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[],
 
@@ -361,14 +361,20 @@ class home_page extends Component {
         return obj
       }
       else{/* wallet_section */
-        return{
+        var obj = {
           'i':{
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */,this.props.app_state.loc['1264ai']/* 'e.bills' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
           ],
         }
+
+        obj[this.props.app_state.loc['1264aj']/* 'bills' */] = [
+            ['xor','',0], [this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
+        ]
+
+        return obj
       }
       
     }
@@ -963,6 +969,9 @@ class home_page extends Component {
       }
       else{
         var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+        if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
+            return 'bills'
+        }
         var data = {'ends ☝️':'8','spends 🫰':'8'};
         data[this.props.app_state.loc['1218']/* ends ☝️ */] = '8'
         data[this.props.app_state.loc['1219']/* spends 🫰 */] = '8'
@@ -994,7 +1003,11 @@ class home_page extends Component {
     when_e_plus_letter_clicked(){
       var button_target = this.get_e_plus_button_mapping();
       if(button_target != ''){
-        this.props.open_new_object(button_target);
+        if(button_target == 'bills'){
+            this.props.show_view_contextual_transfer_bottomsheet('bills')
+        }else{
+            this.props.open_new_object(button_target);
+        }
       }
     }
 
@@ -1571,6 +1584,11 @@ class home_page extends Component {
             else if(selected_item == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
                 if(this.wallet_list_section.current != null){
                     this.wallet_list_section.current?.set_spend_list(scroll_pos)
+                }
+            }
+            else if(selected_item == this.props.app_state.loc['1264ai']/* 'bills 🧾' */){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_bills_list(scroll_pos)
                 }
             }
         }
@@ -2596,6 +2614,64 @@ class home_page extends Component {
         }
     }
 
+    get_bill_items(all){
+        var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+
+        if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1264aj']/* 'bills' */|| all != null){
+            return this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bills))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264ak']/* 'received' */){
+            var my_received_bills = []
+            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            for(var i=0; i<created_bills.length; i++){
+                var target = created_bills[i]['target']
+                var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
+                if(myid == null) myid = 1
+                if(target.toString() == myid.toString()){
+                    my_received_bills.push(obj)
+                }
+            }
+            return this.filter_for_blocked_accounts(my_received_bills)
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264am']/* 'sent' */){
+            var my_sent_bills = []
+            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            for(var i=0; i<created_bills.length; i++){
+                var post_author = created_bills[i]['author']
+                var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
+                if(myid == null) myid = 1
+                if(post_author.toString() == myid.toString()){
+                    my_sent_bills.push(obj)
+                }
+            }
+            return this.filter_for_blocked_accounts(my_sent_bills)
+        }
+        else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
+            var my_pinned_bills = []
+            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            for(var i=0; i<this.state.pinned_bills.length; i++){
+                var obj = this.get_item_in_array(this.state.pinned_bills[i], created_bills)
+                if(obj != null) my_pinned_bills.push(obj)
+            }
+            
+            return this.filter_for_blocked_accounts(my_pinned_bills)
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264an']/* 'reucrring' */){
+            var my_recurring_bills = []
+            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            for(var i=0; i<created_bills.length; i++){
+                var recurring_enabled = created_bills[i]['ipfs'].recurring_enabled
+                var target = created_bills[i]['target']
+                var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
+                if(myid == null) myid = 1
+                if(recurring_enabled == true && target.toString() == myid.toString()){
+                    my_recurring_bills.push(obj)
+                }
+            }
+            return this.filter_for_blocked_accounts(my_recurring_bills)
+        }
+    }
+
 
 
 
@@ -3142,13 +3218,13 @@ class home_page extends Component {
         return(
             <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.render_top_notification.bind(this)}
             
-            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)} when_audio_item_clicked={this.when_audio_item_clicked.bind(this)} when_video_item_clicked={this.when_video_item_clicked.bind(this)} when_nitro_item_clicked={this.when_nitro_item_clicked.bind(this)}
+            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)} when_audio_item_clicked={this.when_audio_item_clicked.bind(this)} when_video_item_clicked={this.when_video_item_clicked.bind(this)} when_nitro_item_clicked={this.when_nitro_item_clicked.bind(this)} when_bill_item_clicked={this.when_bill_item_clicked.bind(this)}
 
             theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} when_view_image_clicked={this.when_view_image_clicked.bind(this)}
             
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors} viewed_audios={this.state.viewed_audios} viewed_videos={this.state.viewed_videos} viewed_nitros={this.state.viewed_nitros}
 
-            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)}
+            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)}
 
             show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
             get_all_sorted_notifications={this.get_all_sorted_notifications.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} view_number={this.props.view_number.bind(this)}
@@ -3636,6 +3712,17 @@ class home_page extends Component {
         }
     }
 
+    when_bill_item_clicked(object, ignore_set_details_data){
+        this.setState({selected_bill_item: object['e5_id']})
+        if(ignore_set_details_data == null) this.set_detail_data();
+        this.reset_post_detail_object()
+        this.add_to_tab(object['e5_id'], object['id'], 'w', this.props.app_state.loc['1264aj']/* 'bills' */)
+        this.props.perform_bill_object_payment_search(object)
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
 
 
 
@@ -3666,8 +3753,9 @@ class home_page extends Component {
             selected_tag = this.state.explore_page_tags_object['i'].active
         }
         else if(selected_page == 'w'){
-            var selected_item = this.state.wallet_page_tags_object['e'][2][0];
-            selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
+            // var selected_item = this.state.wallet_page_tags_object['e'][2][0];
+            // selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
+            var selected_tag = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
         }
         this.setState({detail_page: selected_page, detail_selected_tag: selected_tag})
     }
@@ -3684,21 +3772,6 @@ class home_page extends Component {
                 }
             }
         }
-        // var selected_page = this.state.page
-        // var selected_tag = ''
-        // if(selected_page == '?'){
-        //     selected_tag = this.state.work_page_tags_object['i'].active
-        //     if(selected_tag == 'e'){
-        //         selected_tag = this.props.app_state.loc['1196']/* 'jobs' */
-        //     }
-        // }
-        // else if(selected_page == 'e'){
-        //     selected_tag = this.state.explore_page_tags_object['i'].active
-        // }
-        // else if(selected_page == 'w'){
-        //     var selected_item = this.state.wallet_page_tags_object['e'][2][0];
-        //     selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
-        // }
         var obj = {'selected_tag':selected_tag, 'selected_page':selected_page, 'e5_id':object_e5_id, 'id':object_id}
         clone.push(obj)
 
@@ -3754,7 +3827,7 @@ class home_page extends Component {
                 {this.render_page_tabs()}
                 <PostDetailSection ref={this.detail_section} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} detail_page={this.state.detail_page} detail_selected_tag={this.state.detail_selected_tag}
 
-                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item} selected_audio_item={this.state.selected_audio_item} selected_video_item={this.state.selected_video_item} selected_nitro_item={this.state.selected_nitro_item}
+                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item} selected_audio_item={this.state.selected_audio_item} selected_video_item={this.state.selected_video_item} selected_nitro_item={this.state.selected_nitro_item} selected_bill_item={this.state.selected_bill_item}
 
                 height={h} screensize={this.props.screensize} width={width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.render_top_notification.bind(this)}
                 
@@ -3773,13 +3846,15 @@ class home_page extends Component {
                 open_clear_purchase={this.props.open_clear_purchase.bind(this)} add_bag_message_to_stack_object={this.props.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.props.add_storefront_message_to_stack_object.bind(this)} open_view_job_request_ui={this.props.open_view_job_request_ui} open_view_contract_ui={this.props.open_view_contract_ui.bind(this)}
 
                 get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)}
-                get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)}
+                get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)}
 
                 add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.open_give_awards.bind(this)}
 
                 get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} get_e5_data={this.get_e5_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)}
 
-                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.props.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} pin_bag={this.pin_bag.bind(this)} pin_channel={this.pin_channel.bind(this)} pin_item={this.pin_item.bind(this)} pin_post={this.pin_post.bind(this)} pin_subscription={this.pin_subscription.bind(this)} pin_proposal={this.pin_proposal.bind(this)} pin_contractor={this.pin_contractor.bind(this)} pin_contract={this.pin_contract.bind(this)} pin_job={this.pin_job.bind(this)} pin_audio={this.pin_audio.bind(this)} pin_video={this.pin_video.bind(this)} pin_nitro={this.pin_nitro.bind(this)}
+                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.props.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)}
+                
+                pin_bag={this.pin_bag.bind(this)} pin_channel={this.pin_channel.bind(this)} pin_item={this.pin_item.bind(this)} pin_post={this.pin_post.bind(this)} pin_subscription={this.pin_subscription.bind(this)} pin_proposal={this.pin_proposal.bind(this)} pin_contractor={this.pin_contractor.bind(this)} pin_contract={this.pin_contract.bind(this)} pin_job={this.pin_job.bind(this)} pin_audio={this.pin_audio.bind(this)} pin_video={this.pin_video.bind(this)} pin_nitro={this.pin_nitro.bind(this)} pin_bill={this.pin_bill.bind(this)}
                 
                 get_channel_event_data={this.props.get_channel_event_data.bind(this)} open_e5_link={this.open_e5_link.bind(this)} open_rpc_settings={this.open_rpc_settings.bind(this)} get_wallet_data_for_specific_e5={this.props.get_wallet_data_for_specific_e5.bind(this)}
                 view_number={this.props.view_number.bind(this)}
@@ -4038,6 +4113,14 @@ class home_page extends Component {
         }
         else if(this.state.page == 'e'){
             var selected_item = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
+            if(selected_item == this.props.app_state.loc['1222']/* 'pinned' */){
+                return true
+            } 
+            return false
+        }
+        else if(this.state.page == 'w'){
+            var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
 
             if(selected_item == this.props.app_state.loc['1222']/* 'pinned' */){
                 return true
@@ -4326,6 +4409,29 @@ class home_page extends Component {
         }
     }
 
+    pin_bill(item){
+        var id = item['id']
+        var pinned_item_clone = this.state.pinned_bills.slice()
+        var pos = pinned_item_clone.indexOf(id)
+        if(pos == -1){
+            pinned_item_clone.push(id)
+            this.setState({pinned_bills: pinned_item_clone})
+            this.update_cookies()
+            this.props.notify(this.props.app_state.loc['3071e']/* 'Bill Pinned' */,900)
+        }else{
+            pinned_item_clone.splice(pos, 1)
+            this.setState({pinned_bills: pinned_item_clone})
+            this.update_cookies()
+            this.props.notify(this.props.app_state.loc['3071f']/* 'Bill Unpinned' */,900)
+
+            if(this.is_in_pinned_section()){
+                if(this.props.screensize == 's'){
+                    this.open_view_object_bottomsheet()
+                }
+            }
+        }
+    }
+
 
 
 
@@ -4508,6 +4614,12 @@ class home_page extends Component {
                 return object['ipfs'].entered_title_text
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_bills))
+            if(object != null){
+                return object['ipfs'].identifier
+            }
+        }
         return ''
     }
 
@@ -4547,6 +4659,7 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1264k']/* audioport */] = '🎧'
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = '📺'
         obj[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'
+        obj[this.props.app_state.loc['1264aj']/* 'bills' */] = '🧾'
         return `${obj[item['selected_tag']]} ${item['selected_tag']}`
     }
 
@@ -4665,6 +4778,14 @@ class home_page extends Component {
                 }
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
+            var selected_item = this.state.selected_bill_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
 
         return is_tab_active;
     }
@@ -4757,6 +4878,12 @@ class home_page extends Component {
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1264s']/* 'nitro' */){
            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_nitro_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_bills))
+            if(object != null) this.props.perform_bill_object_payment_search(object);
+
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_bill_item: tem['e5_id']})
         }
     }
 

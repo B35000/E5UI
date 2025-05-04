@@ -78,7 +78,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['xor','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */], [1]
+                    ['or','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */, this.props.app_state.loc['1264aj']/* 'bills' */], [0]
                 ],
             };
         }
@@ -142,7 +142,6 @@ class ViewNotificationLogPage extends Component {
         
         const page = this.state.data
         if(page == null) return;
-        // mail, message, proposal, job_application, job_request, job_application_response, job_request_response, contract
         if(selected_item == 'e'){
             if(page == '?'){
                 return(
@@ -155,6 +154,13 @@ class ViewNotificationLogPage extends Component {
                 return(
                     <div>
                         {this.render_explore_notifications([])}
+                    </div>
+                )
+            }
+            else if(page == 'w'){
+                return(
+                    <div>
+                        {this.render_wallet_data([])}
                     </div>
                 )
             }
@@ -212,7 +218,14 @@ class ViewNotificationLogPage extends Component {
         else if(selected_item == this.props.app_state.loc['3067']/* 'wallet' */){
             return(
                 <div>
-                    {this.render_wallet_data()}
+                    {this.render_wallet_data(['token'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1264aj']/* 'bills' */){
+            return(
+                <div>
+                    {this.render_wallet_data(['bill_request'])}
                 </div>
             )
         }
@@ -392,8 +405,8 @@ class ViewNotificationLogPage extends Component {
 
 
 
-    render_wallet_data(){
-        var items = this.get_all_wallet_notification_items()
+    render_wallet_data(types){
+        var items = this.get_all_wallet_notification_items(types)
         if(items.length == 0){
             return(
                 <div>
@@ -420,23 +433,50 @@ class ViewNotificationLogPage extends Component {
     }
 
     render_token_notification_item(item, index){
-        var sender = item.returnValues.p2
-        var amount = item.returnValues.p4
-        var depth = item.returnValues.p7
-        var exchange = item.returnValues.p1
-        var timestamp = item.returnValues.p5
-        var e5 = item['e5']
-        return(
-            <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
-                {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
-            </div>
-        )
+        if(item['event_type'] == 'token'){
+            var sender = item.returnValues.p2
+            var amount = item.returnValues.p4
+            var depth = item.returnValues.p7
+            var exchange = item.returnValues.p1
+            var timestamp = item.returnValues.p5
+            var e5 = item['e5']
+            return(
+                <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
+                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
+                </div>
+            )
+        }else{
+            const obj = {
+                'bill_request':this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
+            }
+            const event_type = item['event_type']
+            const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
+            const message = obj[event_type]
+            const processed_message = message.replace('$', sender_alias_or_account)
+            const timestamp = item['time']
+            const e5 = item['e5']
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
+                </div>
+            )
+        }
+        
     }
 
-    get_all_wallet_notification_items(){
+    get_all_wallet_notification_items(types){
         const notification_object = this.props.app_state.notification_object
         const token = notification_object['token'] == null ? [] : notification_object['token']
-        return this.sortByAttributeDescending(token, 'time')
+        const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
+        
+        
+        const all_events = token.concat(bill_request)
+
+        const filtered_events = all_events.filter(function (event) {
+            return (types.includes(event['event_type'])  || types.length == 0)
+        });
+
+        return this.sortByAttributeDescending(filtered_events, 'time')
     }
 
     get_all_sorted_objects_mappings(object){

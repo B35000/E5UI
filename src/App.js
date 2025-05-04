@@ -558,6 +558,7 @@ import BuyNitroPage from './pages/buy_nitro_storage'
 import ConfigureNitroNodePage from './pages/configure_nitro_node'
 import DialerPage from './pages/dialer_page'
 import ViewNotificationLogPage from './pages/view_notification_log_page'
+import ContextualTransferPage from './pages/contextual_transfer_page'
 
 import english from "./texts/english";
 
@@ -757,13 +758,13 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -780,7 +781,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32,
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -831,7 +832,7 @@ class App extends Component {
     
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
-    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}
+    loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
   };
 
   get_static_assets(){
@@ -2647,6 +2648,7 @@ class App extends Component {
     this.remoteStream = React.createRef();
     this.dialer_page = React.createRef();
     this.view_notification_log_page = React.createRef();
+    this.view_contextual_transfer_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -2768,6 +2770,7 @@ class App extends Component {
     if(this.interval2 != null) clearInterval(this.interval2)
     if(this.interval3 != null) clearInterval(this.interval3)
     if(this.interval4 != null) clearInterval(this.interval4)
+    if(this.interval5 != null) clearInterval(this.interval5)
     
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':290_000, 'fast':90_000}
     obj[this.getLocale()['1421']/* sluggish */] = 1000_000
@@ -2775,12 +2778,21 @@ class App extends Component {
     obj[this.getLocale()['1423']/* average */] = 290_000
     obj[this.getLocale()['1424']/* fast */] = 90_000
 
+    var obj2 = {}
+    obj2[this.getLocale()['1593ft']/* '2min' */] = 2*60*1000
+    obj2[this.getLocale()['1593fu']/* '5min' */] = 5*60*1000
+    obj2[this.getLocale()['1593fv']/* '10min' */] = 10*60*1000
+
     var me = this;
     setTimeout(function() {
       me.interval = setInterval(() => me.background_sync(), obj[me.state.refresh_speed]);
       me.interval2 = setInterval(() => me.start_get_accounts_data(false, true), 35_000)
       me.interval3 = setInterval(() => me.background_coin_sync(), 3*60_000)
       me.interval4 = setInterval(() => me.load_and_notify_flash(), 40_000)
+
+      if(me.state.auto_run != 'e'){
+        me.interval = setInterval(() => me.background_run(), obj2[me.state.auto_run]);
+      }
     }, (1 * 100));
     
   }
@@ -2854,15 +2866,6 @@ class App extends Component {
       visible_tabs: this.state.visible_tabs,
       storage_permissions: this.state.storage_permissions,
 
-      // from:this.from,
-      // e5_events:this.e5_events,
-      // e52_events:this.e52_events,
-      // f5_events:this.f5_events,
-      // g5_events:this.g5_events,
-      // g52_events:this.g52_events,
-      // h5_events:this.h5_events,
-      // h52_events:this.h52_events,
-
       added_providers: this.state.added_providers,
       selected_providers: this.get_selected_urls(),
       stack_optimizer: this.state.stack_optimizer,
@@ -2907,6 +2910,8 @@ class App extends Component {
       minified_content:this.state.minified_content,
       posts_reposted_by_me:this.state.posts_reposted_by_me,
       should_update_posts_reposted_by_me:this.state.should_update_posts_reposted_by_me,
+
+      auto_run:this.state.auto_run,
     }
   }
 
@@ -3031,6 +3036,7 @@ class App extends Component {
       if(my_language == 'en'){
         loc = this.state.loc
       }
+      var auto_run = state.auto_run == null ? 'e' : state.auto_run
 
       this.setState({
         theme: theme,
@@ -3087,7 +3093,8 @@ class App extends Component {
         deleted_files:deleted_files,
         minified_content:minified_content,
         posts_reposted_by_me:posts_reposted_by_me,
-        should_update_posts_reposted_by_me:should_update_posts_reposted_by_me
+        should_update_posts_reposted_by_me:should_update_posts_reposted_by_me,
+        auto_run: auto_run
       })
       var me = this;
       setTimeout(function() {
@@ -3129,6 +3136,7 @@ class App extends Component {
       me.stack_page.current?.set_selected_hide_pip_type_tag()
       me.stack_page.current?.set_selected_preferred_currency_type_tag()
       me.stack_page.current?.set_selected_minified_content_setting_tag()
+      me.stack_page.current?.set_selected_auto_run_setting_tag()
     }, (1 * 1000));
   }
 
@@ -3973,6 +3981,10 @@ return data['data']
         if(seed != '')  this.update_coin_balances('',true)
       }
     }
+  }
+
+  background_run(){
+    this.stack_page.current?.auto_run_in_background()
   }
 
 
@@ -4971,6 +4983,7 @@ return data['data']
           {this.render_dialer_bottomsheet()}
           {this.render_view_notification_log_bottomsheet()}
           {this.render_edit_videopost_object_bottomsheet()}
+          {this.render_view_contextual_transfer_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -5062,7 +5075,7 @@ return data['data']
 
           load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} get_searched_account_data_trimmed={this.get_searched_account_data_trimmed.bind(this)}
 
-          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)}
+          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)}
 
 
 
@@ -5090,7 +5103,7 @@ return data['data']
     this.setState({stack_bottomsheet2: true});
     setTimeout(function() { 
       if(me.stack_page.current!= null){
-        me.stack_page.current?.run_transactions(true)
+        me.stack_page.current?.run_transactions(true, false)
       } 
       me.set_cookies()
 
@@ -5400,7 +5413,6 @@ return data['data']
       me.set_cookies()
     }, (1 * 1000));
   }
-
 
   repost_post(object){
     if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
@@ -6726,19 +6738,19 @@ return data['data']
     var os = getOS()
 
     if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.stack_bottomsheet} onClose={this.open_stack_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-34, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                            {this.render_stack_item(size)}
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_stack_bottomsheet()}/>
-            </Sheet>
-        )
+      return(
+        <Sheet isOpen={this.state.stack_bottomsheet} onClose={this.open_stack_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+            <Sheet.Container>
+                <Sheet.Content>
+                    <div style={{ height: this.state.height-34, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                        {this.render_stack_item(size)}
+                    </div>
+                </Sheet.Content>
+                <ToastContainer limit={3} containerId="id2"/>
+            </Sheet.Container>
+            <Sheet.Backdrop onTap={()=> this.open_stack_bottomsheet()}/>
+        </Sheet>
+      )
     }
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
@@ -6759,7 +6771,7 @@ return data['data']
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)}
       
       />
     )
@@ -7290,6 +7302,15 @@ return data['data']
     var me = this;
     setTimeout(function() {
       me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_auto_run_setting_changed(item){
+    this.setState({auto_run: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+      me.reset_background_sync()
     }, (1 * 1000));
   }
 
@@ -13507,7 +13528,7 @@ return data['data']
   start_run(){
     this.open_confirm_run_bottomsheet()
     if(this.stack_page.current != null){
-      this.stack_page.current?.run_transactions(false)
+      this.stack_page.current?.run_transactions(false, false)
     }
   }
 
@@ -13809,7 +13830,7 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
         
         />
       </div>
@@ -13860,6 +13881,7 @@ return data['data']
       'view_incoming_transactions':300, 
       'view_e5_link':300, 
       'account_options':600,
+      'confirm_pay_bill':450,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -14144,6 +14166,11 @@ return data['data']
       this.homepage.current?.when_proposal_item_clicked(index, object['id'], object['e5'], object, 'ignore')
       this.homepage.current?.reset_post_detail_object()
     }
+    else if(type == 'bill'){
+      this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264aj']/* 'bills' */})
+      this.homepage.current?.when_bill_item_clicked(object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
     this.open_dialog_bottomsheet()
     if(this.state.view_notification_log_bottomsheet == true) this.open_view_notification_log_bottomsheet();
   }
@@ -14271,6 +14298,35 @@ return data['data']
         me.searched_account_page.current?.set_searched_item(object, account)
       }
     }, (1 * 500));
+  }
+
+  add_bill_payments_to_stack(objects){
+    var stack_clone = this.state.stack_items.slice()      
+    objects.forEach(object => {
+      var recipient = object['ipfs'].transfer_recipient
+      var price_data = object['ipfs'].price_data
+      var identifier = object['ipfs'].identifier
+      var e5 = object['e5']
+      const state_obj = {
+        id: identifier, type:this.props.app_state.loc['3071j']/* 'bill-payment' */,
+        entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3071k']/* 'bill' */, this.props.app_state.loc['3068ad']/* 'send' */],
+        e5:e5, recipient: recipient, price_data: price_data, identifier:identifier
+      }
+      var edit_id = -1
+      for(var i=0; i<stack_clone.length; i++){
+        if(stack_clone[i].id == state_obj.id){
+          edit_id = i
+        }
+      }
+      if(edit_id != -1){
+        stack_clone[edit_id] = state_obj
+      }else{
+        stack_clone.push(state_obj)
+      }
+    });
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+    this.prompt_top_notification(this.getLocale()['3071l']/* Transactions added to stack. */, 1400)
   }
 
 
@@ -16867,7 +16923,7 @@ return data['data']
     else if(event_type == 'message'){
       this.load_specific_incoming_message_mail_item(events)
     }
-    else if(event_type == ''){
+    else if(event_type == 'proposal'){
       this.load_specific_notification_proposals(events)
     }
     else if(event_type == 'job_application'){
@@ -16897,6 +16953,182 @@ return data['data']
 
     var id = obj['notification_id']
     this.show_dialog_bottomsheet(obj, id)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_view_contextual_transfer_bottomsheet(){
+    if(this.state.view_contextual_transfer_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_contextual_transfer_bottomsheet} onClose={this.open_view_contextual_transfer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_view_contextual_transfer_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_contextual_transfer_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_contextual_transfer_bottomsheet.bind(this)} open={this.state.view_contextual_transfer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_view_contextual_transfer_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_contextual_transfer_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <ContextualTransferPage ref={this.view_contextual_transfer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_itransfer_transaction_to_stack={this.add_itransfer_transaction_to_stack.bind(this)} add_bill_transaction_to_stack={this.add_bill_transaction_to_stack.bind(this)}
+
+        />
+      </div>
+    )
+  }
+
+  open_view_contextual_transfer_bottomsheet(){
+    if(this.state.view_contextual_transfer_bottomsheet == true){
+      //closing
+      this.view_contextual_transfer_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_contextual_transfer_bottomsheet: !this.state.view_contextual_transfer_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_contextual_transfer_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_contextual_transfer_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_contextual_transfer_bottomsheet: !me.state.view_contextual_transfer_bottomsheet});
+
+          if(me.view_contextual_transfer_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.view_contextual_transfer_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_contextual_transfer_bottomsheet(item){
+    this.open_view_contextual_transfer_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_contextual_transfer_page.current != null){
+        me.view_contextual_transfer_page.current.set_data(item)
+      }
+    }, (1 * 500));
+  }
+
+  perform_itransfer_search = async (identifier, account, recipient, e5) => {
+    const focused_e5 = e5
+    const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[focused_e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    const used_identifier = this.hash_data(identifier)
+    var itransfer_event_params = []
+    var transfer_event_params = []
+    if(account != ''){
+      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
+      transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: used_identifier, p2/* sender */:account})
+    }else{
+      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
+      transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient})
+    }
+
+    var grouped_transfers_by_block = {}
+    transfer_event_params.forEach(event => {
+      if(grouped_transfers_by_block[event.returnValues.p6/* block_number */] == null){
+        grouped_transfers_by_block[event.returnValues.p6/* block_number */] = []
+      }
+      grouped_transfers_by_block[event.returnValues.p6/* block_number */].push(event)
+    });
+
+    var iTransfer_objects = {}
+    var found = false
+    itransfer_event_params.forEach(event => {
+      var block = event.returnValues.p6/* block_number */
+      var transfers_for_block = grouped_transfers_by_block[block]
+      if(iTransfer_objects[block] == null){
+        iTransfer_objects[block] = {}
+      }
+      transfers_for_block.forEach(transfer => {
+        var transfer_receiver = transfer.returnValues.p3/* receiver */
+        var transfer_sender = transfer.returnValues.p2/* sender */
+        if(transfer_receiver == recipient){
+          if(iTransfer_objects[block][transfer_sender] == null){
+            iTransfer_objects[block][transfer_sender] = []
+          }
+          iTransfer_objects[block][transfer_sender].push(transfer)
+          found = true;
+        }
+      });
+    });
+
+    const id = identifier + account + recipient + focused_e5
+    var clone = structuredClone(this.state.searched_itransfer_results)
+    clone[id] = iTransfer_objects
+    this.setState({searched_itransfer_results: clone})
+
+    if(found == false){
+      await this.wait(3000)
+      this.prompt_top_notification(this.getLocale()['3068w']/* Nothing has been found matching that searched identifier. */, 7000)
+    }
+  }
+
+  add_itransfer_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  add_bill_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -20710,7 +20942,7 @@ return data['data']
 
     if(my_promoted_posts_event_data.length > 0){
       var latest_event = my_promoted_posts_event_data[my_promoted_posts_event_data.length - 1];
-      var promoted_posts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var promoted_posts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
       var promoted_posts_by_me = promoted_posts_data['data']
 
       var clone = structuredClone(this.state.posts_reposted_by_me)
@@ -22720,6 +22952,8 @@ return data['data']
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
 
+    this.load_my_bills(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account)
+
     var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5)
     var my_posted_events = created_token_events.filter(function (event) {
       return (exchanges_to_load_first.includes(event.returnValues.p1))
@@ -22999,6 +23233,45 @@ return data['data']
     this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone,})
     // console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
 
+  }
+
+  load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
+    var created_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
+
+    var my_sent_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p2/* sender_acc_id */:account})
+
+    created_bill_events = created_bill_events.reverse()
+    my_sent_bill_events = my_sent_bill_events.reverse()
+
+    const all_bills = created_bill_events.concat(my_sent_bill_events)
+
+    var my_bills = []
+    var is_first_time = this.state.my_bills[e5] == null
+    if(all_bills.length > 0){
+      if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+        await this.fetch_multiple_cids_from_nitro(all_bills, 0, 'p4')
+      }
+    }
+    for(var i=0; i<all_bills.length; i++){
+      const event = all_bills[i]
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+      const data = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
+      if(data != null && data != ipfs){
+        var id = event.returnValues.p5/* int_data */
+        var bill = {'id':id, 'ipfs':data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6/* timestamp */), 'author':event.returnValues.p2/* sender_acc_id */ ,'e5_id':id+e5, 'target':event.returnValues.p1}
+        my_bills.push(bill)
+
+        if(is_first_time){
+          var created_bills_clone = structuredClone(this.state.created_bills)
+          created_bills_clone[e5] = my_bills
+          this.setState({created_bills: created_bills_clone});
+        }
+      }
+    }
+
+    var created_bills_clone = structuredClone(this.state.created_bills)
+    created_bills_clone[e5] = my_bills
+    this.setState({created_bills: created_bills_clone});
   }
 
   load_extra_token_data = async (object) => {
@@ -25743,6 +26016,7 @@ return data['data']
     this.load_and_notify_user_of_incoming_bag_application()
     this.load_and_nofity_user_of_incoming_bag_application_responses()
     this.load_and_notify_user_of_incoming_storefront_direct_order()
+    this.load_and_notify_user_of_incoming_bills()
 
     this.update_watched_account_data()
   }
@@ -27139,6 +27413,89 @@ return data['data']
         this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, null, false, e5_data[e5])
       }
     }
+  }
+
+
+
+
+  load_and_notify_user_of_incoming_bills = async () => {
+    var all_unsorted_events = {}
+    var block_stamp = {}
+    var current_blocks = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      var account = this.state.user_account_id[focused_e5]
+      if(this.state.addresses[focused_e5] != null && account > 1000){
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = this.state.addresses[focused_e5][1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var current_block_number = await web3.eth.getBlockNumber()
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
+
+        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: account, p3/* context */:13/* bills */}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+        all_unsorted_events[focused_e5] = all_received_on_chain_events
+        block_stamp[focused_e5] = current_block_number
+        current_blocks[focused_e5] = current_block_number
+      }
+    }
+
+    if(this.load_and_notify_user_times_bill_requests == null){
+      this.load_and_notify_user_times_bill_requests = {}
+    }
+
+    var notifs = []
+    var all_notifications = []
+    for(const e5 in all_unsorted_events){
+      if(all_unsorted_events.hasOwnProperty(e5)){
+        if(this.load_and_notify_user_times_bill_requests[e5] == null){
+          this.load_and_notify_user_times_bill_requests[e5] = block_stamp[e5]
+        }
+        var account = this.state.user_account_id[e5]
+        all_unsorted_events[e5].forEach(event => {
+          var event_block = event.returnValues.p7/* block_number */
+          if(event_block > this.load_and_notify_user_times_bill_requests[e5]){
+            event['e5'] = e5
+            notifs.push(event)
+          }
+
+          event['e5'] = e5
+          event['p'] = event.returnValues.p5
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'bill'
+          event['event_type'] = 'bill_request'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'bill', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
+        });
+        this.load_and_notify_user_times_bill_requests[e5] = block_stamp[e5]
+      }
+    }
+
+    if(notifs.length > 0){
+      console.log('notifier', 'found one bill request to nofity', notifs)
+      this.handle_bill_request_notifications(notifs)
+    }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['bill_request'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+  }
+
+  handle_bill_request_notifications(events){
+    var senders = []
+    events.forEach(event => {
+      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
+      senders.push(alias)
+    });
+    var prompt = this.getLocale()['2738ag']/* 'Incoming bills from $' */
+    prompt = prompt.replace('$', senders.toString())
+    this.prompt_top_notification(prompt, 15000)
   }
 
 
@@ -29946,6 +30303,63 @@ return data['data']
     return arr
   }
 
+  perform_bill_object_payment_search = async (bill_object) => {
+    const focused_e5 = bill_object['e5']
+    const identifier = bill_object['ipfs'].identifier
+    const account = bill_object['event'].returnValues.p1
+    const recipient = bill_object['ipfs'].transfer_recipient
+    const used_identifier = this.hash_data(identifier)
+
+    const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[focused_e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    
+    var itransfer_event_params = []
+    var transfer_event_params = []
+    if(account != ''){
+      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
+      transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient, p2/* sender */:account})
+    }else{
+      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
+      transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient})
+    }
+
+    var grouped_transfers_by_block = {}
+    transfer_event_params.forEach(event => {
+      if(grouped_transfers_by_block[event.returnValues.p6/* block_number */] == null){
+        grouped_transfers_by_block[event.returnValues.p6/* block_number */] = []
+      }
+      grouped_transfers_by_block[event.returnValues.p6/* block_number */].push(event)
+    });
+
+    var iTransfer_objects = {}
+    var found = false
+    itransfer_event_params.forEach(event => {
+      var block = event.returnValues.p6/* block_number */
+      var transfers_for_block = grouped_transfers_by_block[block]
+      if(iTransfer_objects[block] == null){
+        iTransfer_objects[block] = {}
+      }
+      transfers_for_block.forEach(transfer => {
+        var transfer_receiver = transfer.returnValues.p3/* receiver */
+        var transfer_sender = transfer.returnValues.p2/* sender */
+        if(transfer_receiver == recipient){
+          if(iTransfer_objects[block][transfer_sender] == null){
+            iTransfer_objects[block][transfer_sender] = []
+          }
+          iTransfer_objects[block][transfer_sender].push(transfer)
+          found = true;
+        }
+      });
+    });
+
+    const id = bill_object['e5_id']
+    var clone = structuredClone(this.state.bill_payment_results)
+    clone[id] = iTransfer_objects
+    this.setState({bill_payment_results: clone})
+  }
+
 
 
 
@@ -31229,6 +31643,13 @@ return data['data']
       }
     }
     return cids
+  }
+
+
+  hash_data(data){
+    const web3 = new Web3(this.get_web3_url_from_e5('E25'));
+    var hash = web3.utils.keccak256(data.toString())
+    return hash
   }
 
 

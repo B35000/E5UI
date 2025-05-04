@@ -57,6 +57,7 @@ class tags extends Component {
           items[this.props.app_state.loc['1264k']/* audioport */] = '🎧'
           items[this.props.app_state.loc['1264p']/* 'videoport' */] = '📺'
           items[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'
+          items[this.props.app_state.loc['1264aj']/* 'bills' */] = '🧾'
       }
       
       if(items[item] != null) return items[item];

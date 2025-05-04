@@ -101,6 +101,7 @@ class StackPage extends Component {
         get_hide_pip_tags_object:this.get_hide_pip_tags_object(),
         get_preferred_currency_tags_object:this.get_preferred_currency_tags_object(),
         get_minified_content_setting_object:this.get_minified_content_setting_object(),
+        get_auto_run_setting_object:this.get_auto_run_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -125,7 +126,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -946,6 +947,36 @@ class StackPage extends Component {
 
 
 
+    get_auto_run_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593ft']/* '2min' */, this.props.app_state.loc['1593fu']/* '5min' */, this.props.app_state.loc['1593fv']/* '10min' */], [this.get_selected_auto_run_setting_option()]
+            ], 
+        }
+    }
+
+    get_selected_auto_run_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593ft']/* '2min' */] = 1
+        obj[this.props.app_state.loc['1593fu']/* '5min' */] = 2
+        obj[this.props.app_state.loc['1593fv']/* '10min' */] = 3
+        return obj[this.props.app_state.auto_run]
+    }
+
+    set_selected_auto_run_setting_tag(){
+        this.setState({get_auto_run_setting_object: this.get_auto_run_setting_object(),})
+    }
+
+
+
+
+
+
+
+
 
     render(){
         return(
@@ -1073,7 +1104,13 @@ class StackPage extends Component {
                 </div>
             )
         }
-        
+        else if(selected_item == this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */){
+            return(
+                <div>
+                    {this.render_contextual_transfers_ui()}
+                </div>
+            )
+        }
 
     }
 
@@ -1310,20 +1347,17 @@ class StackPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin':'5px 0px 5px 0px' }}>
-                                <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                    <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
-                                </div>
-                            </div>
-                        ))}
-                    </ul>
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gc']/* 'Your Run History.' */, 'details':this.props.app_state.loc['1593ge']/* 'When you run some transactions with e, they will show here.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
             return(
                 <div style={{}}>
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gc']/* 'Your Run History.' */, 'details':this.props.app_state.loc['1593gd']/* 'Blow are all the runs youve made before.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.show_view_transaction_log_bottomsheet(item)}>
@@ -1466,13 +1500,13 @@ class StackPage extends Component {
     }
 
     render_stack_transactions(){
-        var background_color = this.props.theme['card_background_color']
-        
         var items = [].concat(this.props.app_state.stack_items)
 
         if(items.length == 0){
             return(
                 <div style={{}}>
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fz']/* 'Your Transactions.' */, 'details':this.props.app_state.loc['1593gb']/* 'When you create a transaction in e, it will show here.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
                     {this.render_empty_views(3)}
                 </div>
             )
@@ -1480,6 +1514,8 @@ class StackPage extends Component {
             return(
                 <div>
                     <div style={{}}>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fz']/* 'Your Transactions.' */, 'details':this.props.app_state.loc['1593ga']/* 'Below are all the transactions youve stacked ready for your next run.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
                         {this.render_clear_stack_button()}
                         <div style={{height: 10}}/>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -1671,7 +1707,7 @@ class StackPage extends Component {
                 {this.render_arweave_network_fee_if_selected()}
 
                 <div style={{height:10}}/>
-                <div style={{'padding': '5px', 'opacity':button_opacity}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
+                <div style={{'padding': '5px', 'opacity':button_opacity}} onClick={()=> this.open_confirmation_bottomsheet(false)}>
                     {this.render_detail_item('5', {'text':button_text, 'action':''})}
                 </div>
                 <div style={{height:7}}/>
@@ -2256,7 +2292,11 @@ return data['data']
     
 
 
-    open_confirmation_bottomsheet(){
+    auto_run_in_background(){
+        this.open_confirmation_bottomsheet(true)
+    }
+
+    open_confirmation_bottomsheet(silently){
         var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
         var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
@@ -2280,39 +2320,42 @@ return data['data']
             is_running = false;
         }
         if(pushed_txs.length == 0){
-            this.props.notify(this.props.app_state.loc['1487']/* 'Add some transactions first.' */,3600)
+            if(!silently) this.props.notify(this.props.app_state.loc['1487']/* 'Add some transactions first.' */,3600)
         }
         else if(account_balance == 0){
-            this.props.open_wallet_guide_bottomsheet('one')
+            if(!silently)this.props.open_wallet_guide_bottomsheet('one')
         }
         else if(account_balance < (estimated_gas_to_be_consumed * run_gas_price)){
             this.setState({invalid_ether_amount_dialog_box: true})
         }
         else if(run_gas_limit < 35000){
-            this.props.notify(this.props.app_state.loc['1490']/* 'That transaction gas limit is too low.' */,3900)
+            if(!silently)this.props.notify(this.props.app_state.loc['1490']/* 'That transaction gas limit is too low.' */,3900)
         }
         else if(estimated_gas_to_be_consumed > gas_limit){
-            this.props.notify(this.props.app_state.loc['1491']/* 'That transaction is too large, please reduce your stack size.' */,4900)
+            if(!silently)this.props.notify(this.props.app_state.loc['1491']/* 'That transaction is too large, please reduce your stack size.' */,4900)
         }
         else if(estimated_gas_to_be_consumed > run_gas_limit){
-            this.props.notify(this.props.app_state.loc['1492']/* 'Set a gas limit above ' */+estimated_gas_to_be_consumed+this.props.app_state.loc['1493']/* ' gas' */,5900)
+            if(!silently)this.props.notify(this.props.app_state.loc['1492']/* 'Set a gas limit above ' */+estimated_gas_to_be_consumed+this.props.app_state.loc['1493']/* ' gas' */,5900)
         }
         else if(is_running){
-            console.log('opening_confirmation!', 'e is already message')
-            this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
+            if(!silently)this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
         }
         else if(!this.props.app_state.has_wallet_been_set){
-            this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
+            if(!silently)this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
         }
-        else if(!this.is_areweave_checkers_ok()){
-            console.log('insufficient Arweave balance.')
+        else if(!this.is_areweave_checkers_ok(silently)){
+            
         }
         else if(this.is_e5_public_disabled_for_sender()){
-            this.props.notify(this.props.app_state.loc['1593et']/* 'The E5 you wish to use is not active yet.' */, 9000)
+            if(!silently)this.props.notify(this.props.app_state.loc['1593et']/* 'The E5 you wish to use is not active yet.' */, 9000)
         }
         else{
-            console.log('opening_confirmation!')
-            this.props.show_confirm_run_bottomsheet(run_data)
+            if(!silently){
+                this.props.show_confirm_run_bottomsheet(run_data)
+            }else{
+                this.run_transactions(false/* calculate_gas */, true/* silently */)
+            }
+            
         }
     }
 
@@ -2326,7 +2369,7 @@ return data['data']
         }
     }
 
-    is_areweave_checkers_ok(){
+    is_areweave_checkers_ok(silently){
         var set_storage_option = this.props.app_state.storage_option
         var my_preferred_nitro = this.props.app_state.my_preferred_nitro
         var wallet_data = this.props.app_state.coin_data['AR']
@@ -2336,11 +2379,11 @@ return data['data']
         if(fees == null) fees = 0;
         if(my_preferred_nitro == '' && set_storage_option == 'arweave'){
             if(wallet_address == 'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U'){
-                this.props.notify(this.props.app_state.loc['2738h']/* 'Please wait for your Arweave wallet to finish loading first.' */, 9000)
+                if(!silently) this.props.notify(this.props.app_state.loc['2738h']/* 'Please wait for your Arweave wallet to finish loading first.' */, 9000)
                 return false
             }
             else if(fees > my_arweave_balance){
-                this.props.notify(this.props.app_state.loc['1593er']/* 'Your Arweave balance is insufficient to make the transaction.' */, 9000)
+                if(!silently) this.props.notify(this.props.app_state.loc['1593er']/* 'Your Arweave balance is insufficient to make the transaction.' */, 9000)
                 return false
             }else{
                 return true
@@ -2352,16 +2395,18 @@ return data['data']
 
     fetch_gas_figures(){
         this.props.notify(this.props.app_state.loc['1494']/* 'calculating your stacks gas figure...' */, 2200)
-        this.run_transactions(true)
+        this.run_transactions(true, false)
     }
 
-    run_transactions = async (calculate_gas) => {
+    run_transactions = async (calculate_gas, silently) => {
         const txs = this.props.app_state.stack_items
         if(!calculate_gas){
             var is_running = this.props.app_state.is_running[this.props.app_state.selected_e5]
             if(is_running == null) is_running = false
             if(is_running){
-                this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
+                if(!silently){
+                    this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
+                }
                 return;
             }
             this.props.lock_run(true)
@@ -3551,6 +3596,35 @@ return data['data']
                     adds.push([])
                     ints.push(obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3068ac']/* 'iTransfer' */){
+                    var format_object = await this.format_iTransfer_object(txs[i], calculate_gas, ints, ipfs_index)
+                    if(format_object.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(format_object.depth)
+                    }
+                    strs.push(format_object.str)
+                    adds.push([])
+                    ints.push(format_object.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3068af']/* 'bill' */){
+                    var bill_obj = await this.format_bill_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(bill_obj.str)
+                    adds.push([])
+                    ints.push(bill_obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3071j']/* 'bill-payment' */){
+                    var format_object = await this.format_bill_payment_object(txs[i], calculate_gas, ints, ipfs_index)
+                    if(format_object.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(format_object.depth)
+                    }
+                    strs.push(format_object.str)
+                    adds.push([])
+                    ints.push(format_object.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -3904,6 +3978,8 @@ return data['data']
             ints.push(transaction_obj)
         }
 
+        //context ->> 13 in use!!!!!!!
+
 
         var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
         console.log('rundata',optimized_run)
@@ -3928,24 +4004,24 @@ return data['data']
         if(!calculate_gas){
             if(pushed_txs.length > 0){
                 if(account_balance == 0){
-                    this.props.open_wallet_guide_bottomsheet('one')
+                    if(!silently) this.props.open_wallet_guide_bottomsheet('one')
                     this.props.lock_run(false)
                 }
                 else if(account_balance < (estimated_gas_to_be_consumed * run_gas_price)){
                     // this.setState({invalid_ether_amount_dialog_box: true})
-                    this.props.show_dialog_bottomsheet({'run_gas_limit':run_gas_limit}, 'invalid_ether_amount_dialog_box')
+                    if(!silently) this.props.show_dialog_bottomsheet({'run_gas_limit':run_gas_limit}, 'invalid_ether_amount_dialog_box')
                     this.props.lock_run(false)
                 }
                 else if(run_gas_limit < 35000){
-                    this.props.notify(this.props.app_state.loc['1517']/* 'That transaction gas limit is too low.' */,5900)
+                    if(!silently) this.props.notify(this.props.app_state.loc['1517']/* 'That transaction gas limit is too low.' */,5900)
                     this.props.lock_run(false)
                 }
                 else if(estimated_gas_to_be_consumed > gas_limit){
-                    this.props.notify(this.props.app_state.loc['1518']/* 'That transaction is too large, please reduce your stack size.' */,6900)
+                    if(!silently) this.props.notify(this.props.app_state.loc['1518']/* 'That transaction is too large, please reduce your stack size.' */,6900)
                     this.props.lock_run(false)
                 }
                 else if(estimated_gas_to_be_consumed > run_gas_limit){
-                    this.props.notify(this.props.app_state.loc['1519']/* 'Set a gas limit above ' */+number_with_commas(estimated_gas_to_be_consumed)+this.props.app_state.loc['1520']/* ' gas' */,3900)
+                    if(!silently) this.props.notify(this.props.app_state.loc['1519']/* 'Set a gas limit above ' */+number_with_commas(estimated_gas_to_be_consumed)+this.props.app_state.loc['1520']/* ' gas' */,3900)
                     this.props.lock_run(false)
                 }
                 else{
@@ -3954,7 +4030,7 @@ return data['data']
                 }
             }else{
                 this.props.lock_run(false)
-                this.props.notify(this.props.app_state.loc['1521']/* 'Add some transactions first.' */,1600)
+                if(!silently) this.props.notify(this.props.app_state.loc['1521']/* 'Add some transactions first.' */,1600)
             }
         }else{
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -4290,6 +4366,11 @@ return data['data']
                     ipfs_index_object[txs[i].id] = txs[i]
                     ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
                 }
+                else if(txs[i].type == this.props.app_state.loc['3068af']/* 'bill' */){
+                    var encrypted_object = await this.get_encrypted_bill_object(txs[i])
+                    ipfs_index_object[txs[i].id] = encrypted_object
+                    ipfs_index_array.push({'id':txs[i].id, 'data':encrypted_object})
+                }
             }
         }
 
@@ -4439,6 +4520,26 @@ return data['data']
         return link
     }
 
+    get_encrypted_bill_object = async (t) =>{
+        var key = makeid(35)
+        var encrypted_obj = this.props.encrypt_data_object(t, key)
+        var recipent_data = {}
+        var recipient = t.recipient
+        var e5 = t.e5
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, e5)
+
+        if(recipients_pub_key_hash != ''){
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+            recipent_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+        }
+
+        var uint8array = await this.props.get_account_raw_public_key() 
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+        recipent_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+
+        return {'obj':encrypted_obj, 'recipient_data':recipent_data}
+    }
+
     get_encrypted_job_request_key = async (t) =>{
         var key = makeid(35)
         var recipient = t.contractor_item['author']
@@ -4454,10 +4555,6 @@ return data['data']
         key_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
 
         return key_data
-    }
-
-    get_encrypted_job_request_message = async (t, recip) => {
-
     }
 
     get_device_color(){
@@ -7290,6 +7387,139 @@ return data['data']
         return {int: obj, str: string_obj}
     }
 
+    format_iTransfer_object = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var author = t.recipient
+        var string_data = this.props.hash_data(t.identifier)
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
+            ['1'],/* awward contexts */
+            
+            [5], [23],/* exchange ids for first target receiver */
+            [t.award_amount.toString().toLocaleString('fullwide', {useGrouping:false})],/* amounts for first target receiver */
+            [0],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        for(var i=0; i<t.price_data.length; i++){
+            var exchange = t.price_data[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+            var amount = t.price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
+            }
+        }
+        
+        
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
+    format_bill_object = async(t, calculate_gas, ipfs_index) => {
+        var bill_target = t.recipient
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [bill_target.toString().toLocaleString('fullwide', {useGrouping:false})], [23],
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        var context = 13
+        var int_data = Date.now()
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_bill_payment_object = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var author = t.recipient
+        var string_data = this.props.hash_data(t.identifier)
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
+            ['2'],/* awward contexts */
+            
+            [5], [23],/* exchange ids for first target receiver */
+            [t.award_amount.toString().toLocaleString('fullwide', {useGrouping:false})],/* amounts for first target receiver */
+            [0],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        for(var i=0; i<t.price_data.length; i++){
+            var exchange = t.price_data[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+            var amount = t.price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
+            }
+        }
+        
+        
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
 
 
 
@@ -8585,6 +8815,26 @@ return data['data']
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                 {this.render_detail_item('0')}
+
+                
+                {this.render_auto_run_setting_if_not_ios()}
+            </div>
+        )
+    }
+
+    render_auto_run_setting_if_not_ios(){
+        if(this.props.app_state.os == 'iOS') return;
+
+        return(
+            <div>
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fw']/* 'Auto-Run Stack.' */, 'details':this.props.app_state.loc['1593fx']/* 'Run all your stacked transactions automatically in the background at the frequency you set below.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_auto_run_setting_object} tag_size={'l'} when_tags_updated={this.when_get_auto_run_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fy']/* 'Youll need to set your wallet for the runs to occur.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -8846,7 +9096,7 @@ return data['data']
         this.setState({get_stack_optimizer_tags_object: tag_object})
         var selected_item = this.get_selected_item(this.state.get_stack_optimizer_tags_object, 'e')
         this.props.when_stack_optimizer_setting_changed(selected_item)
-        this.run_transactions(true)
+        this.run_transactions(true, false)
     }
 
     when_homepage_tags_position_tags_object_updated(tag_group){
@@ -8895,6 +9145,12 @@ return data['data']
         this.setState({get_minified_content_setting_object: tag_object})
         var selected_item = this.get_selected_item(this.state.get_minified_content_setting_object, 'e')
         this.props.when_minified_content_setting_changed(selected_item)
+    }
+
+    when_get_auto_run_setting_object_updated(tag_object){
+        this.setState({get_auto_run_setting_object: tag_object})
+        var selected_item = this.get_selected_item(this.state.get_auto_run_setting_object, 'e')
+        this.props.when_auto_run_setting_changed(selected_item)
     }
 
 
@@ -12293,8 +12549,8 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593dr']/* 'Censor Keywords.' */, 'details':this.props.app_state.loc['1593ds']/* 'You can specify phrases, keywords and accounts you wish to not see any content from. The censored phrases will be applied to all accounts you moderate.' */, 'size':'l'})}
-
                 <div style={{height:10}}/>
+
                 <div className="row" style={{width:'100%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593dt']/* 'Keyword or phrase...' */} when_text_input_field_changed={this.when_censor_keyword_text_text_changed.bind(this)} text={this.state.censor_keyword_text} theme={this.props.theme}/>
@@ -12380,6 +12636,71 @@ return data['data']
                 </div>
             )
         }
+    }
+
+
+
+
+
+
+
+
+
+    render_contextual_transfers_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_contextual_transfers_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contextual_transfers_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contextual_transfers_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_contextual_transfers_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593gg']/* 'Create or Verify an iTransfer.' */, 'details':this.props.app_state.loc['1593gh']/* 'Create or verify a set of transfers that have been made with an attached identifier.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div onClick={() => this.open_create_itransfer_ui()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gi']/* 'Create or Verify iTransfer' */, 'action':''})}
+                </div>
+
+                <div style={{height:20}}/>
+                {this.render_empty_views(2)}
+            </div>
+        )
+    }
+
+    open_create_itransfer_ui(){
+        this.props.show_view_contextual_transfer_bottomsheet('')
     }
 
 

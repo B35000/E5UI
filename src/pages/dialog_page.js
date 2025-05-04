@@ -47,7 +47,8 @@ class DialogPage extends Component {
     state = {
         selected: 0,
         data:null,
-        id:''
+        id:'',
+        ignored_bills:[],
     };
 
 
@@ -162,6 +163,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_account_options_data()}
+                </div>
+            )
+        }
+        else if(option == 'confirm_pay_bill'){
+            return(
+                <div>
+                    {this.render_cofirm_pay_bill()}
                 </div>
             )
         }
@@ -1789,6 +1797,9 @@ return data['data']
         else if(type == 'proposal'){
             items = this.props.app_state.my_proposals[e5]
         }
+        else if(type == 'bill'){
+            items = this.props.app_state.created_bills[e5]
+        }
         console.log('when_event_clicked', items)
         if(items == null) items = [];
 
@@ -1833,7 +1844,17 @@ return data['data']
             if(object['ipfs'].device_city != null){
                 tags = [object['ipfs'].device_city].concat(tags)
             }
-        }else{
+        }
+        else if(this.state.data['type'] == 'bill'){
+            var exchanges = object['ipfs'].price_data
+            var obj = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)
+            exchanges.forEach(exchange_transfer => {
+                var exchange = exchange_transfer['id']
+                var exchange_name = obj[object['e5']+exchange]
+                tags.push(exchange_name)
+            });
+        }
+        else{
             tags = object['ipfs'] == null ? ['Object'] : [].concat(object['ipfs'].entered_indexing_tags)
             if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
                 tags = [object['ipfs'].selected_device_city].concat(tags)
@@ -1852,7 +1873,7 @@ return data['data']
             details = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+' • '+sender
         }
         var title = ' • '+object['id']+' • '+sender
-        if(this.state.data['type'] == 'message'){
+        if(this.state.data['type'] == 'message' || this.state.data['type'] == 'bill'){
             var recipient = object['event'].returnValues.p1
             title = ' • '+this.props.app_state.loc['2738ab']/* 'From $' */
             title = title.replace('$', sender)
@@ -1860,6 +1881,9 @@ return data['data']
                 title = ' • '+this.props.app_state.loc['2738ac']/* 'To $' */
                 title = title.replace('$',this.get_senders_name_or_you(recipient, event['e5']))
             }
+        }
+        if(this.state.data['type'] == 'bill'){
+            details = object['ipfs'] == null ? 'Identifier' : object['ipfs'].identifier
         }
         var age = event == null ? 0 : event.returnValues[blockp]
         var time = object['event'] == null ? 0 : event.returnValues[timep]
@@ -2679,6 +2703,366 @@ return data['data']
 
 
 
+
+
+
+    render_cofirm_pay_bill(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_render_cofirm_pay_bill_items()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_render_cofirm_pay_bill_items()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_render_cofirm_pay_bill_items()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_render_cofirm_pay_bill_items(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3071g']/* 'Confirm Bill Payments' */, 'details':this.props.app_state.loc['3071h']/* 'Confirm that you want to fulfill all the bill payments listed below.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_bills_objects()}
+                {this.render_bills_list_part()}
+                {this.render_detail_item('0')} 
+                <div onClick={()=> this.confirm_bill_payments()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3071i']/* 'Confirm Payments.' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    render_bills_objects(){
+        var items = [].concat(this.get_bill_object_items())
+        var items2 = [0, 1, 2]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none', 'opacity':this.get_opacity(item)}} onClick={() => this.when_bill_clicked(item)}>
+                                {this.render_detail_item('3', {'title':item['title'], 'details':item['details'], 'size':'l', 'border_radius':'0%'},)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    get_opacity(item){
+        var index = item['object']['e5_id']
+        var opacity = this.state.ignored_bills.includes(index) ? 0.6 : 1.0
+        return opacity
+    }
+
+    get_bill_object_items(){
+        var objects = this.state.data['objects']
+        var items = []
+        objects.forEach(object => {
+            var details = object['ipfs'] == null ? 'Identifier' : start_and_end(object['ipfs'].identifier)
+            var myid = this.props.app_state.user_account_id[object['e5']]
+            if(myid == null) myid = 1;
+            var sender = object['event'].returnValues.p2
+            var recipient = object['event'].returnValues.p1
+            var title = this.props.app_state.loc['2738ab']/* 'From $' */
+            title = title.replace('$', this.get_sender_title_text(sender, object))
+            if(myid == sender){
+                title = this.props.app_state.loc['2738ac']/* 'To $' */
+                title = title.replace('$',this.get_sender_title_text(recipient, object))
+            }
+            items.push({'object':object, 'title':title, 'details':details})
+        });
+        return items
+    }
+
+    get_sender_title_text(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:50, width:65, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    when_bill_clicked(item){
+        var index = item['object']['e5_id']
+        var clone = this.state.ignored_bills.slice()
+        if(clone.includes(index)){
+            var pos = clone.indexOf(index)
+            if(pos != -1){
+                clone.splice(pos, 1)
+            }
+        }else{
+            clone.push(index)
+        }
+        if(clone.length != this.state.data['objects'].length){
+            this.setState({ignored_bills: clone})
+        }
+    }
+
+    render_bills_list_part(){
+        var items = [].concat(this.get_all_bill_transactions())
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '1px 1px 1px 1px'}}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+item['exchange']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    get_all_bill_transactions(){
+        var objects = this.state.data['objects']
+        var selected_objects = []
+        objects.forEach(object => {
+            var index = object['e5_id']
+            if(!this.state.ignored_bills.includes(index)){
+                selected_objects.push(object)
+            }
+        });
+
+        var transaction_object = {}
+        selected_objects.forEach(object => {
+            var price_data = object['ipfs'].price_data
+            if(transaction_object[object['e5']] == null){
+                transaction_object[object['e5']] = {}
+            }
+            price_data.forEach(price_element => {
+                if(transaction_object[object['e5']][price_element['id']] == null){
+                   transaction_object[object['e5']][price_element['id']] = bigInt(0) 
+                }
+                transaction_object[object['e5']][price_element['id']] = bigInt(transaction_object[object['e5']][price_element['id']]).plus(price_element['amount'])
+            });
+        });
+
+        var e5_keys = Object.keys(transaction_object)
+        var all_transfers = []
+        e5_keys.forEach(e5 => {
+            var exchanges = Object.keys(transaction_object[e5])
+            exchanges.forEach(exchange => {
+                all_transfers.push({'e5':e5, 'exchange':exchange, 'amount':transaction_object[e5][exchange]})
+            });
+        });
+
+        return all_transfers
+    }
+
+    confirm_bill_payments(){
+        var objects = this.state.data['objects']
+        var selected_objects = []
+        objects.forEach(object => {
+            var index = object['e5_id']
+            if(!this.state.ignored_bills.includes(index)){
+                selected_objects.push(object)
+            }
+        });
+
+        if(!this.check_if_sender_has_enough_money()){
+            this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+            return;
+        }
+        this.props.add_bill_payments_to_stack(selected_objects)
+    }
+
+    check_if_sender_has_enough_money(){
+        var price_data = this.get_all_bill_transactions()
+        var has_enough = true;
+        for(var i=0; i<price_data.length; i++){
+            var e5 = price_data[i]['e5']
+            var amount = price_data[i]['amount']
+            var exchange = price_data[i]['exchange']
+            var my_balance = this.props.calculate_actual_balance(e5, exchange)
+            my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(exchange, e5))
+            if(bigInt(my_balance).lesser(bigInt(amount))){
+                has_enough = false
+            }
+        }
+        return has_enough
+    }
+
+    get_debit_balance_in_stack(token_id, e5){
+        var txs = this.props.app_state.stack_items
+        var total_amount = bigInt(0)
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(txs[i].e5 == e5){
+                if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                    var amount = bigInt(txs[i].amount)
+                    var exchange = t.token_item['id']
+                    var action = this.get_action(t)
+                    if(token_id == exchange && action == 1){
+                        total_amount = bigInt(total_amount).add(amount)
+                    }
+                }
+                else 
+                if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                    if(txs[i].token_item['id'] == token_id){
+                        total_amount = bigInt(total_amount).add(txs[i].debit_balance)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    for(var i=0; i<t.selected_variant['price_data'].length; i++){
+                        var exchange = t.selected_variant['price_data'][i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                    for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
+                    if(token_id == 5){
+                        total_amount = bigInt(total_amount).add(t.award_amount)
+                    }
+                    for(var i=0; i<t.price_data.length; i++){
+                        var exchange = t.price_data[i]['id']
+                        var amount = t.price_data[i]['amount']
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                // else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                //     var buy_tokens = t.token_item['data'][3]
+                //     var required_amounts = this.calculate_token_prices(t, t.token_item['data'][4])
+                //     for(var i=0; i<buy_tokens.length; i++){
+                //         var buy_token_id = buy_tokens[i]
+                //         if(buy_token_id == token_id){
+                //             var required_amount = required_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
+                //     var entry_tokens = t.contract_item['data'][2]
+                //     var entry_amounts = t.contract_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         var entry_token_id = entry_tokens[i]
+                //         if(entry_token_id == token_id){
+                //             var required_amount = entry_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['312']/* 'proposal' */){
+                //     for(var i = 0; i<t.bounty_values.length; i++){
+                //         if(t.bounty_values[i]['exchange'] == token_id){
+                //             var required_amount = t.bounty_values[i]['amount']
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */){
+                //     var entry_tokens = this.state.subscription_item['data'][2]
+                //     var entry_fees = this.state.subscription_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         if(token_id == entry_tokens[i]){
+                //             var required_amount = this.calculate_final_amount(entry_fees[i], t)
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                //     var exchanges_used = t.data.exchanges_used
+                //     var exchange_amounts = t.data.exchange_amounts
+                //     for(var i=0; i<exchanges_used.length; i++){
+                //         if(token_id == exchanges_used[i]){
+                //             var required_amount = exchange_amounts[token_id]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+            }
+        }
+        return total_amount
+    }
+
+    get_action(t){
+        var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
+        var stack_action = 1
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
+        return stack_action
+    }
+    
+    get_amounts_to_be_paid(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
+    }
 
 
 

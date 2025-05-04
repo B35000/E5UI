@@ -263,6 +263,13 @@ class PostListSection extends Component {
                     </div>
                 )
             }
+            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */ && (selected_option_name == this.props.app_state.loc['1264ak']/* 'received' */ || selected_option_name == this.props.app_state.loc['1264am']/* 'sent' */ || selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */ || this.props.app_state.loc['1264an']/* 'reucrring' */)){
+                return(
+                    <div>
+                        {this.render_bills_list_group()}
+                    </div>
+                )
+            }
         }
 
     }
@@ -326,6 +333,7 @@ class PostListSection extends Component {
         this.ether_list = React.createRef();
         this.end_list = React.createRef();
         this.spend_list = React.createRef();
+        this.bill_list = React.createRef();
     }
 
 
@@ -588,6 +596,10 @@ class PostListSection extends Component {
 
     set_spend_list(pos){
         this.spend_list.current?.scrollTo(0, pos);
+    }
+
+    set_bills_list(pos){
+        this.bill_list.current?.scrollTo(0, pos);
     }
 
 
@@ -1401,7 +1413,6 @@ class PostListSection extends Component {
                     <div style={{'padding': '15px 0px 0px 0px'}} onClick={() => this.when_mail_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
-                    
                 </div>         
             </div>
         )
@@ -2788,7 +2799,6 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        // var item_images = this.get_bag_images(object)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
@@ -4052,6 +4062,148 @@ return data['data']
     when_spends_object_item_clicked(index, item){
         this.props.when_spends_object_clicked(index, item['id'], item['e5'], item)
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_bills_list_group(){
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.props.get_bill_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return (
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
+            return ( 
+                <div ref={this.bill_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_pay_all_bills_button(items)}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': padding}}>
+                                    {this.render_bill_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
+                </div>
+            );
+        }
+    }
+
+    render_bill_object(object, index){
+        var item = this.format_bill_object(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_bill_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bill_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['author_title'])}
+                    </div>
+                    <div style={{'padding': '15px 0px 0px 0px'}} onClick={() => this.when_bill_item_clicked(index, object)}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    format_bill_object(object){
+        var tags = []
+        var exchanges = object['ipfs'].price_data
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)
+        exchanges.forEach(exchange_transfer => {
+            var exchange = exchange_transfer['id']
+            var exchange_name = obj[object['e5']+exchange]
+            tags.push(exchange_name)
+        });
+        var details = object['ipfs'] == null ? 'Identifier' : object['ipfs'].identifier
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1;
+        var sender = object['event'].returnValues.p2
+        var recipient = object['event'].returnValues.p1
+        var title = this.props.app_state.loc['2738ab']/* 'From $' */
+        title = title.replace('$', this.get_sender_title_text(sender, object))
+        if(myid == sender){
+            title = this.props.app_state.loc['2738ac']/* 'To $' */
+            title = title.replace('$',this.get_sender_title_text(recipient, object))
+        }
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
+            'id':{'title':' • '+title, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+details, 'title':title, 'size':'l', 'border_radius':'0%'}
+        }
+    }
+
+    when_bill_item_clicked(index, object){
+        this.props.when_bill_item_clicked(object)
+    }
+
+    render_pay_all_bills_button(items){
+        var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
+        if(selected_option_name == this.props.app_state.loc['1264an']/* 'reucrring' */ && items.length != 0){
+            return(
+                <div style={{'margin':'5px 0px 10px 0px'}} onClick={() => this.when_pay_all_bills_tapped(items)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2895']/* pay all. */, 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    when_pay_all_bills_tapped(items){
+        this.props.show_dialog_bottomsheet({'objects':items }, 'confirm_pay_bill')
+    }
+
+
+
+
+
+
+
 
 
 

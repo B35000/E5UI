@@ -476,7 +476,6 @@ class GiveAwardPage extends Component {
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1184']/* Add Amount' */, 'action':''})}
                 </div>
-
                 <div style={{height: 10}}/>
                 
             </div>
@@ -507,7 +506,6 @@ class GiveAwardPage extends Component {
             return 63
         }
     }
-
 
     when_exchange_id_input_field_changed(text){
         this.setState({exchange_id: text})
@@ -680,7 +678,7 @@ class GiveAwardPage extends Component {
         )
     }
 
-   get_suggested_tokens(){
+    get_suggested_tokens(){
         var items = [
             {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['1188']/* 'Account 3' */, 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['1189']/* 'Account 5' */, 'size':'s'}},
