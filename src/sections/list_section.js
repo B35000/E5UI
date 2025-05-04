@@ -4138,10 +4138,10 @@ return data['data']
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bill_item_clicked(index, object)}>
-                        {this.render_detail_item('3', item['author_title'])}
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bill_clicked(index, object)}>
+                        {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '15px 0px 0px 0px'}} onClick={() => this.when_bill_item_clicked(index, object)}>
+                    <div style={{'padding': '15px 0px 0px 0px'}} onClick={() => this.when_bill_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                 </div>         
@@ -4179,7 +4179,7 @@ return data['data']
         }
     }
 
-    when_bill_item_clicked(index, object){
+    when_bill_clicked(index, object){
         this.props.when_bill_item_clicked(object)
     }
 

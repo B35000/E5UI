@@ -49,6 +49,25 @@ class BillDetailsSection extends Component {
         }
     }
 
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_payments(), this.props.app_state.details_section_syncy_time);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_payments(){
+        if(this.props.selected_bill_item != null){
+            var object = this.get_item_in_array(this.get_bills_data(), this.props.selected_bill_item);
+            if(object == null) return;
+            this.props.perform_bill_object_payment_search(object)
+        }
+    }
+
+
+
+
     render(){
         return(
             <div>
@@ -57,8 +76,8 @@ class BillDetailsSection extends Component {
         )
     }
 
-    render_ethers_list_detail(){
-        if(this.props.selected_ether_item == null){
+    render_bills_list_detail(){
+        if(this.props.selected_bill_item == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}
@@ -82,13 +101,14 @@ class BillDetailsSection extends Component {
     }
 
     get_item_in_array(object_array, id){
-        var object = object_array.find(x => x['id'] === id);
+        var object = object_array.find(x => x['e5_id'] === id);
         return object
     }
 
     render_bills_details_section(){
         var selected_item = this.get_selected_item(this.state.get_navigate_view_bills_list_detail_tags, this.state.get_navigate_view_bills_list_detail_tags['i'].active)
         var item = this.get_item_in_array(this.get_bills_data(), this.props.selected_bill_item)
+        // console.log('bills_details_section', item, this.props.selected_bill_item)
 
         if(item == null){
             return(
@@ -148,13 +168,14 @@ class BillDetailsSection extends Component {
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['3068bd']/* 'Bill Type' */, 'title':recurring_enabled, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_last_payment_time_data(object)}
-
                     {this.render_total_payments_data(object)}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
+
+                    {this.render_last_payment_time_data(object)}
+
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3069']/* 'Requested Amounts.' */, 'details':this.props.app_state.loc['3070']/* 'Below are the amounts requested in the bill.' */, 'size':'l'})}
@@ -207,7 +228,7 @@ class BillDetailsSection extends Component {
         }
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
-            'id':{'title':' • '+title, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':object['e5']+' • '+title, 'details':details, 'size':'l', 'border_radius':'0%'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
             'min':{'details':object['e5']+' • '+details, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
@@ -249,7 +270,7 @@ class BillDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '1px 1px 1px 1px'}}>
-                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
@@ -314,6 +335,10 @@ class BillDetailsSection extends Component {
         if(last_payment_time != 0){
             return(
                 <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3071q']/* 'Last Payment Time.' */, 'details':this.props.app_state.loc['3071r']/* 'The last time the bill was paid.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':''+(new Date(last_payment_time*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(last_payment_time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                 </div>
@@ -374,8 +399,8 @@ class BillDetailsSection extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.load_itransfer_result_items())
-
+        var items = [].concat(this.load_itransfer_result_items(object))
+        
         if(items.length == 0){
             items = [0,1]
             return(
@@ -430,10 +455,9 @@ class BillDetailsSection extends Component {
         return this.sortByAttributeDescending(object_array, 'time')
     }
 
-    
-
     get_bill_payment_responses(object){
         var payments = this.props.app_state.bill_payment_results[object['e5_id']]
+        // console.log('payments', payments)
         if(payments == null) return []
         return payments
     }
@@ -470,17 +494,20 @@ class BillDetailsSection extends Component {
         var alias = this.get_senders_name_or_you2(item['account'], item['e5'])
         return(
             <div>
-                {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%'},)}
-                <div style={{height: 3}}/>
+                {/* {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%'},)}
+                <div style={{height: 3}}/> */}
 
-                {this.render_detail_item('3', {'title':number_with_commas(item['block']), 'details':this.props.app_state.loc['3068x']/* Block Number */, 'size':'l', 'border_radius':'0%'},)}
-                <div style={{height: 3}}/>
+                {/* {this.render_detail_item('3', {'title':number_with_commas(item['block']), 'details':this.props.app_state.loc['3068x'] Block Number, 'size':'l', 'border_radius':'0%'},)}
+                <div style={{height: 3}}/> */}
 
                 {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 3}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'margin':'0px 0px 0px 5px'}}>
+                        {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+                    </div>
+                    
                     {item['transfers'].map((transfer, index) => (
                         <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
                             {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}

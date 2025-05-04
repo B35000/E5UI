@@ -6209,11 +6209,11 @@ return data['data']
             }
 
             var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
+            for(var f=0; f<transfer_actions.length; f++){
                 obj[4].push(exchange)
                 obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
+                obj[6].push(transfer_actions[f]['amount'])
+                obj[7].push(transfer_actions[f]['depth'])
             }
         }
 
@@ -6680,11 +6680,11 @@ return data['data']
             }
 
             var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
+            for(var f=0; f<transfer_actions.length; f++){
                 obj[4].push(exchange)
                 obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
+                obj[6].push(transfer_actions[f]['amount'])
+                obj[7].push(transfer_actions[f]['depth'])
             }
         }
 
@@ -7405,9 +7405,9 @@ return data['data']
             [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
             ['1'],/* awward contexts */
             
-            [5], [23],/* exchange ids for first target receiver */
-            [t.award_amount.toString().toLocaleString('fullwide', {useGrouping:false})],/* amounts for first target receiver */
-            [0],/* depths for the first targeted receiver*/
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
         ]
         var string_obj = [[]]
 
@@ -7428,11 +7428,11 @@ return data['data']
             }
 
             var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
+            for(var f=0; f<transfer_actions.length; f++){
                 obj[4].push(exchange)
                 obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
+                obj[6].push(transfer_actions[f]['amount'])
+                obj[7].push(transfer_actions[f]['depth'])
             }
         }
         
@@ -7483,15 +7483,14 @@ return data['data']
             [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
             ['2'],/* awward contexts */
             
-            [5], [23],/* exchange ids for first target receiver */
-            [t.award_amount.toString().toLocaleString('fullwide', {useGrouping:false})],/* amounts for first target receiver */
-            [0],/* depths for the first targeted receiver*/
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
         ]
         var string_obj = [[]]
-
-        for(var i=0; i<t.price_data.length; i++){
-            var exchange = t.price_data[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
-            var amount = t.price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+        for(var i=0; i<t['price_data'].length; i++){
+            var exchange = t['price_data'][i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+            var amount = t['price_data'][i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
 
             var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
             var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
@@ -7506,11 +7505,11 @@ return data['data']
             }
 
             var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
+            for(var f=0; f<transfer_actions.length; f++){
                 obj[4].push(exchange)
                 obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
+                obj[6].push(transfer_actions[f]['amount'])
+                obj[7].push(transfer_actions[f]['depth'])
             }
         }
         

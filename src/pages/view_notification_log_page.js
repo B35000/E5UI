@@ -456,7 +456,7 @@ class ViewNotificationLogPage extends Component {
             const timestamp = item['time']
             const e5 = item['e5']
             return(
-                <div>
+                <div onClick={() => this.when_event_clicked(item)}>
                     {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
                 </div>
             )

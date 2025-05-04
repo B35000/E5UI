@@ -2749,8 +2749,8 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3071g']/* 'Confirm Bill Payments' */, 'details':this.props.app_state.loc['3071h']/* 'Confirm that you want to fulfill all the bill payments listed below.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_bills_objects()}
+                <div style={{height:10}}/>
                 {this.render_bills_list_part()}
-                {this.render_detail_item('0')} 
                 <div onClick={()=> this.confirm_bill_payments()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3071i']/* 'Confirm Payments.' */, 'action':''},)}
                 </div>

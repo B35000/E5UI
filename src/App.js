@@ -13881,7 +13881,7 @@ return data['data']
       'view_incoming_transactions':300, 
       'view_e5_link':300, 
       'account_options':600,
-      'confirm_pay_bill':450,
+      'confirm_pay_bill':350,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -14301,6 +14301,7 @@ return data['data']
   }
 
   add_bill_payments_to_stack(objects){
+    this.open_dialog_bottomsheet()
     var stack_clone = this.state.stack_items.slice()      
     objects.forEach(object => {
       var recipient = object['ipfs'].transfer_recipient
@@ -14308,8 +14309,8 @@ return data['data']
       var identifier = object['ipfs'].identifier
       var e5 = object['e5']
       const state_obj = {
-        id: identifier, type:this.props.app_state.loc['3071j']/* 'bill-payment' */,
-        entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3071k']/* 'bill' */, this.props.app_state.loc['3068ad']/* 'send' */],
+        id: identifier, type:this.getLocale()['3071j']/* 'bill-payment' */,
+        entered_indexing_tags:[this.getLocale()['3068ae']/* 'transfer' */, this.getLocale()['3071k']/* 'bill' */, this.getLocale()['3068ad']/* 'send' */],
         e5:e5, recipient: recipient, price_data: price_data, identifier:identifier
       }
       var edit_id = -1
@@ -17038,7 +17039,7 @@ return data['data']
     }, (1 * 500));
   }
 
-  perform_itransfer_search = async (identifier, account, recipient, e5) => {
+  perform_itransfer_search = async (identifier, account, recipient, e5, silently) => {
     const focused_e5 = e5
     const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
@@ -17051,7 +17052,7 @@ return data['data']
       itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
       transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: used_identifier, p2/* sender */:account})
     }else{
-      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
+      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p3/* awward_context */: 1/* iTransfer */})
       transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient})
     }
 
@@ -17089,7 +17090,7 @@ return data['data']
     clone[id] = iTransfer_objects
     this.setState({searched_itransfer_results: clone})
 
-    if(found == false){
+    if(found == false && silently == false){
       await this.wait(3000)
       this.prompt_top_notification(this.getLocale()['3068w']/* Nothing has been found matching that searched identifier. */, 7000)
     }
@@ -23236,6 +23237,7 @@ return data['data']
   }
 
   load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var created_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
 
     var my_sent_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p2/* sender_acc_id */:account})
@@ -23245,8 +23247,10 @@ return data['data']
 
     const all_bills = created_bill_events.concat(my_sent_bill_events)
 
-    var my_bills = []
-    var is_first_time = this.state.my_bills[e5] == null
+    console.log('all_bills', all_bills)
+
+    const my_bills = []
+    var is_first_time = this.state.created_bills[e5] == null
     if(all_bills.length > 0){
       if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
         await this.fetch_multiple_cids_from_nitro(all_bills, 0, 'p4')
@@ -23256,6 +23260,7 @@ return data['data']
       const event = all_bills[i]
       const ipfs = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
       const data = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
+      console.log('all_bills','loaded data', data)
       if(data != null && data != ipfs){
         var id = event.returnValues.p5/* int_data */
         var bill = {'id':id, 'ipfs':data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6/* timestamp */), 'author':event.returnValues.p2/* sender_acc_id */ ,'e5_id':id+e5, 'target':event.returnValues.p1}
@@ -30318,10 +30323,10 @@ return data['data']
     var itransfer_event_params = []
     var transfer_event_params = []
     if(account != ''){
-      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
+      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 2/* bill_payment */})
       transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient, p2/* sender */:account})
     }else{
-      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
+      itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p3/* awward_context */: 2/* bill_payment */})
       transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient})
     }
 

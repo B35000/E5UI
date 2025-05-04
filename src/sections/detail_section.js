@@ -181,6 +181,7 @@ class PostDetailSection extends Component {
             // var selected_item = this.props.wallet_page_tags_object['e'][2][0];
             // var selected_option_name = this.props.wallet_page_tags_object['e'][1][selected_item];
             var selected_option_name = this.props.detail_selected_tag
+            // console.log('bills_details_section', 'selected_option_name', selected_option_name)
             if(selected_option_name == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_option_name == 'e'){
                 return(
                     <CoinsDetailsSection
@@ -205,10 +206,11 @@ class PostDetailSection extends Component {
                 return(
                     <SpendDetailSection ref={this.curent_post_section} app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_spend_item={this.props.selected_spend_item} open_mint_burn_token_ui={this.props.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.props.open_transfer_ui.bind(this)} open_modify_token_ui={this.props.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.props.open_exchange_transfers_ui.bind(this)} open_freeze_unfreeze_ui={this.props.open_freeze_unfreeze_ui.bind(this)} open_authmint_ui={this.props.open_authmint_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_exchange_tokens={this.props.get_exchange_tokens.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} view_number={this.props.view_number.bind(this)}/>
                 )
-            }else if(selected_option_name == this.props.app_state.loc['1264ak']/* 'received' */ || selected_option_name == this.props.app_state.loc['1264am']/* 'sent' */ || selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */ || this.props.app_state.loc['1264an']/* 'reucrring' */){
+            }
+            else if(selected_option_name == this.props.app_state.loc['1264aj']/* 'bills' */){
                 return(
                     <BillDetailsSection
-                        app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bill_item={this.props.selected_bill_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} pin_bill={this.props.pin_bill.bind(this)} get_bill_items={this.props.get_bill_items.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} 
+                        app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bill_item={this.props.selected_bill_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} pin_bill={this.props.pin_bill.bind(this)} get_bill_items={this.props.get_bill_items.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)}
                     />
                 )
             }

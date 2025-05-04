@@ -2628,7 +2628,7 @@ class home_page extends Component {
                 var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
                 if(myid == null) myid = 1
                 if(target.toString() == myid.toString()){
-                    my_received_bills.push(obj)
+                    my_received_bills.push(created_bills[i])
                 }
             }
             return this.filter_for_blocked_accounts(my_received_bills)
@@ -2641,7 +2641,7 @@ class home_page extends Component {
                 var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
                 if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
-                    my_sent_bills.push(obj)
+                    my_sent_bills.push(created_bills[i])
                 }
             }
             return this.filter_for_blocked_accounts(my_sent_bills)
@@ -2665,7 +2665,7 @@ class home_page extends Component {
                 var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
                 if(myid == null) myid = 1
                 if(recurring_enabled == true && target.toString() == myid.toString()){
-                    my_recurring_bills.push(obj)
+                    my_recurring_bills.push(created_bills[i])
                 }
             }
             return this.filter_for_blocked_accounts(my_recurring_bills)
@@ -3753,9 +3753,12 @@ class home_page extends Component {
             selected_tag = this.state.explore_page_tags_object['i'].active
         }
         else if(selected_page == 'w'){
-            // var selected_item = this.state.wallet_page_tags_object['e'][2][0];
-            // selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
-            var selected_tag = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+            var selected_item = this.state.wallet_page_tags_object['e'][2][0];
+            selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
+
+            if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
+                selected_tag = this.state.wallet_page_tags_object['i'].active
+            }
         }
         this.setState({detail_page: selected_page, detail_selected_tag: selected_tag})
     }
@@ -3874,6 +3877,8 @@ class home_page extends Component {
 
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
                 connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_audiopost={this.props.repost_audiopost.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)} repost_post={this.props.repost_post.bind(this)}
+
+                perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)}
                 />
             </div>
         )

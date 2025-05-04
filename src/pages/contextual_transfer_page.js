@@ -36,6 +36,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -64,6 +71,14 @@ class ContextualTransferPage extends Component {
         super(props);
         this.amount_picker = React.createRef();
         this.amount_picker2 = React.createRef();
+    }
+
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_payments(), this.props.app_state.details_section_syncy_time);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
 
@@ -230,7 +245,7 @@ class ContextualTransferPage extends Component {
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_identifier_input_field_changed.bind(this)} text={this.state.identifier} theme={this.props.theme}/>
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.iTransfer_identifier_size - this.state.identifier.length)})}
+                {/* {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.iTransfer_identifier_size - this.state.identifier.length)})} */}
 
                 <div style={{height:20}}/>
 
@@ -548,9 +563,9 @@ class ContextualTransferPage extends Component {
         if(identifier == ''){
             this.props.notify(this.props.app_state.loc['3068o']/* 'You need to set an identifier first.' */, 6000)
         }
-        else if(identifier.length > this.props.app_state.iTransfer_identifier_size){
-            this.props.notify(this.props.app_state.loc['3068p']/* 'That identifier is too long.' */, 6000)
-        }
+        // else if(identifier.length > this.props.app_state.iTransfer_identifier_size){
+        //     this.props.notify(this.props.app_state.loc['3068p']/* 'That identifier is too long.' */, 6000)
+        // }
         else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(identifier) || /\p{Emoji}/u.test(identifier)){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
@@ -766,7 +781,7 @@ class ContextualTransferPage extends Component {
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['3068r']/* 'Set the identifier for the iTransfer your verifying.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_search_identifier_input_field_changed.bind(this)} text={this.state.search_identifier} theme={this.props.theme}/>
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.iTransfer_identifier_size - this.state.search_identifier_account.length)})}
+                {/* {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.iTransfer_identifier_size - this.state.search_identifier_account.length)})} */}
 
 
 
@@ -903,9 +918,9 @@ class ContextualTransferPage extends Component {
         if(identifier == ''){
             this.props.notify(this.props.app_state.loc['3068o']/* 'You need to set an identifier first.' */, 6000)
         }
-        else if(identifier.length > this.props.app_state.iTransfer_identifier_size){
-            this.props.notify(this.props.app_state.loc['3068p']/* 'That identifier is too long.' */, 6000)
-        }
+        // else if(identifier.length > this.props.app_state.iTransfer_identifier_size){
+        //     this.props.notify(this.props.app_state.loc['3068p']/* 'That identifier is too long.' */, 6000)
+        // }
         else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(identifier) || /\p{Emoji}/u.test(identifier)){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
@@ -919,11 +934,20 @@ class ContextualTransferPage extends Component {
             this.props.notify(this.props.app_state.loc['3068q']/* 'Performing Search...' */, 4000)
             var clone = this.state.searches.slice()
             const includes = clone.find(e => (e['identifier'] == identifier && e['account']== account && e['recipient'] == recipient))
+            var pos = -1
             if(includes == null){
                 clone.push({'identifier':identifier, 'account':account, 'recipient':recipient, 'e5':e5})
+                pos = clone.length-1
+            }else{
+                clone.forEach((element, index) => {
+                    if(element['identifier'] == identifier && element['account'] == account && element['recipient'] == recipient && element['e5'] == e5){
+                        pos = index
+                    }
+                });
             }
-            this.setState({searches: clone, pos: clone.length-1})
-            this.props.perform_itransfer_search(identifier, account, recipient, e5)
+            this.setState({searches: clone, pos: pos})
+            console.log('itransfer_data', identifier, account, recipient, e5)
+            this.props.perform_itransfer_search(identifier, account, recipient, e5, false)
         }
     }
 
@@ -952,15 +976,48 @@ class ContextualTransferPage extends Component {
             <div>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_detail_item('3', {'title':item['recipient'], 'details':item['identifier'], 'size':'l', 'border_radius':'0%'},)}
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_search_object_tapped(item)}>
+                                {this.render_detail_item('3', {'title':item['recipient']+`, ${this.get_senders_name_or_you2(item['recipient'], item['e5'])}`, 'details':start_and_end(item['identifier']), 'size':'l', 'border_radius':'0%'},)}
+                                {this.render_line_if_selected(item)}
                             </li>
                         ))}
                     </ul>
                 </div>
             </div>
         )
+    }
+
+    render_line_if_selected(item){
+        if(this.is_item_focused(item)){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    is_item_focused(item){
+        var pos = -1
+        this.state.searches.forEach((element, index) => {
+            if(element['identifier'] == item['identifier'] && element['account'] == item['account'] && element['recipient'] == item['recipient'] && element['e5'] == item['e5']){
+                pos = index
+            }
+        });
+        
+        return pos == this.state.pos
+    }
+
+    when_search_object_tapped(item){
+        var pos = -1
+        this.state.searches.forEach((element, index) => {
+            if(element['identifier'] == item['identifier'] && element['account'] == item['account'] && element['recipient'] == item['recipient'] && element['e5'] == item['e5']){
+                pos = index
+            }
+        });
+        this.setState({pos: pos})
+        this.props.perform_itransfer_search(item['identifier'], item['account'], item['recipient'], item['e5'], true)
     }
 
     load_itransfer_search_results(){
@@ -980,14 +1037,10 @@ class ContextualTransferPage extends Component {
             var recpient_name = this.get_senders_name_or_you(recipient, e5)
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':' • '+identifier, 'details':recpient_name, 'size':'l', 'title_image':this.props.app_state.e5s[e5].e5_img, 'border_radius':'0%'},)}
-                    <div style={{height: 10}}/>
                     {items.map((item, index) => (
-                        <li style={{'padding': '2px 5px 2px 5px'}}>
-                            <div key={index}>
-                                {this.render_itransfer_item(item)}
-                            </div>
-                        </li> 
+                        <div key={index}>
+                            {this.render_itransfer_item(item)}
+                        </div>
                     ))}
                 </div>
             )
@@ -1030,6 +1083,7 @@ class ContextualTransferPage extends Component {
         var selected_search = this.state.searches[pos]
         var key = selected_search['identifier'] + selected_search['account'] + selected_search['recipient'] + selected_search['e5']
         var object = this.props.app_state.searched_itransfer_results[key]
+        console.log('itransfer_data', object)
         if(object == null) return []
 
         var blocks = Object.keys(object)
@@ -1081,14 +1135,17 @@ class ContextualTransferPage extends Component {
                 {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%'},)}
                 <div style={{height: 3}}/>
 
-                {this.render_detail_item('3', {'title':number_with_commas(item['block']), 'details':this.props.app_state.loc['3068x']/* Block Number */, 'size':'l', 'border_radius':'0%'},)}
-                <div style={{height: 3}}/>
+                {/* {this.render_detail_item('3', {'title':number_with_commas(item['block']), 'details':this.props.app_state.loc['3068x'] Block Number, 'size':'l', 'border_radius':'0%'},)}
+                <div style={{height: 3}}/> */}
 
                 {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 3}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'margin':'0px 0px 0px 5px'}}>
+                        {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+                    </div>
+
                     {item['transfers'].map((transfer, index) => (
                         <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
                             {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
@@ -1098,6 +1155,13 @@ class ContextualTransferPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    check_for_new_payments(){
+        if(this.state.pos != -1){
+            var item = this.state.searches[this.state.pos]
+            this.props.perform_itransfer_search(item['identifier'], item['account'], item['recipient'], item['e5'], true)
+        }
     }
 
 
