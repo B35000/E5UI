@@ -781,7 +781,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53,
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*350),
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -13882,6 +13882,7 @@ return data['data']
       'view_e5_link':300, 
       'account_options':600,
       'confirm_pay_bill':350,
+      'invalid_stack_size_dialog_box':350,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -16093,7 +16094,7 @@ return data['data']
     var index_of_obj = audio_items.indexOf(object)
 
     for(var i=(index_of_obj+1); i<audio_items.length; i++){
-      if(!this.is_post_taken_down_for_sender(audio_items[i])){
+      if(!this.is_post_taken_down_for_sender(audio_items[i]) && this.is_same_audiopost_type(object, audio_items[i])){
         var extra_objects_songs = audio_items[i]['ipfs'].songs
         extra_objects_songs.forEach(song => {
           if(!song_ids.includes(song['song_id']) ){
@@ -16119,6 +16120,14 @@ return data['data']
 
 
     return songs
+  }
+
+  is_same_audiopost_type(audiopost, focused_object){
+    var audiopost_listing_type = audiopost['ipfs'] == null ? 1 :this.get_selected_item2(audiopost['ipfs'].get_listing_type_tags_option, 'e')
+
+    var focused_object_listing_type = focused_object['ipfs'] == null ? 1 :this.get_selected_item2(focused_object['ipfs'].get_listing_type_tags_option, 'e')
+
+    return audiopost_listing_type == focused_object_listing_type
   }
 
   is_song_available_for_playing(song){

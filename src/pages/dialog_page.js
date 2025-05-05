@@ -173,6 +173,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'invalid_stack_size_dialog_box'){
+            return(
+                <div>
+                    {this.render_invalid_stack_size()}
+                </div>
+            )
+        }
     }
 
 
@@ -3067,6 +3074,74 @@ return data['data']
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+    render_invalid_stack_size(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_invalid_stack_size_items()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_invalid_stack_size_items()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_invalid_stack_size_items()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_invalid_stack_size_items(){
+        var upload_limit = this.format_data_size(this.props.app_state.upload_object_size_limit)
+        var stack_size = this.format_data_size(this.state.data['stack_size'])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bk']/* 'Stack Too Large.' */, 'details':this.props.app_state.loc['3055bl']/* 'The amount of data your uploading to E5 is too much for one transaction. Try splitting it into multiple runs.' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+                
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055bm']/* 'Upload Size Limit.' */, 'subtitle':this.format_power_figure(upload_limit['size']), 'barwidth':this.calculate_bar_width(upload_limit['size']), 'number':this.format_account_balance_figure(upload_limit['size']), 'barcolor':'#606060', 'relativepower':upload_limit['unit'], })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055bn']/* 'Stack Size' */, 'subtitle':this.format_power_figure(stack_size['size']), 'barwidth':this.calculate_bar_width(stack_size['size']), 'number':this.format_account_balance_figure(stack_size['size']), 'barcolor':'#606060', 'relativepower':stack_size['unit'], })}
+                </div>
+            </div>
+        )
+    }
 
 
 

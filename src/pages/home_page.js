@@ -791,7 +791,7 @@ class home_page extends Component {
 
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
                   <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 6px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                    {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 4px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
                       
                   </div>
                 
@@ -865,7 +865,7 @@ class home_page extends Component {
         if(icontype == 's' || icontype == 'xs'){
             return (
                 <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
-                    <img src={img} style={{height:img_height,width:img_width, padding: img_padding}} />
+                    <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
 
                     <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p>
 
@@ -877,7 +877,7 @@ class home_page extends Component {
                 <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
                     <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
                         <div style={{height:'7%', width:'100%'}}>
-                            <img src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
+                            <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
                         </div>
                     </div>
                     <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
@@ -890,6 +890,7 @@ class home_page extends Component {
             );
         }
     }
+
 
     open_view_stack_bottomsheet(){
         this.props.open_stack_bottomsheet()
@@ -3453,6 +3454,7 @@ class home_page extends Component {
         if(ignore_set_details_data == null) this.set_detail_data();
         this.props.fetch_uploaded_files_for_object(object)
         this.reset_post_detail_object()
+        this.add_to_tab(object['e5_id'], object['id'], '?', this.props.app_state.loc['1201']/* 'mail' */)
         this.props.get_mail_messages(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -4625,6 +4627,12 @@ class home_page extends Component {
                 return object['ipfs'].identifier
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1201']/* 'mail' */){
+            var object = this.get_item_in_array2(tem['e5_id'], this.get_all_mail())
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
         return ''
     }
 
@@ -4791,6 +4799,14 @@ class home_page extends Component {
                 }
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1201']/* 'mail' */){
+            var selected_item = this.state.selected_mail_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
 
         return is_tab_active;
     }
@@ -4889,6 +4905,12 @@ class home_page extends Component {
             if(object != null) this.props.perform_bill_object_payment_search(object);
 
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_bill_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1201']/* 'mail' */){
+            var object = this.get_item_in_array2(tem['e5_id'], this.get_all_mail())
+            if(object != null) this.props.get_mail_messages(object);
+
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_mail_item: tem['e5_id']})
         }
     }
 

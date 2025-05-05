@@ -1684,8 +1684,6 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {/* <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
-                     */}
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1451']/* 'Storage Space Utilized' */, 'subtitle':this.format_power_figure(formatted_data_size['size']), 'barwidth':this.calculate_bar_width(formatted_data_size['size']), 'number':this.format_account_balance_figure(formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':formatted_data_size['unit'], })}
                 </div>
                 <div style={{height:10}}/>
@@ -2433,6 +2431,14 @@ return data['data']
             this.props.lock_run(false)
             return;
         }
+
+        if(ipfs_index == 'large'){
+            if(!silently) this.props.show_dialog_bottomsheet({'stack_size':this.current_object_size}, 'invalid_stack_size_dialog_box')
+
+            this.props.lock_run(false)
+            return;
+        }
+
         var new_transaction_index_obj={}
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
@@ -4510,7 +4516,11 @@ return data['data']
         });
         console.log('stack_page_ipfs', 'unupdated ipfs-object', obj)
 
-
+        const size = this.lengthInUtf8Bytes(JSON.stringify(obj))
+        if(size > this.props.app_state.upload_object_size_limit && calculate_gas == false && ipfs_index_array.length > 0){
+            this.current_object_size = size
+            return 'large'
+        }
         console.log('stack_page_ipfs', 'updated ipfs-array', ipfs_index_array)
         const link = await this.get_object_ipfs_index(obj, calculate_gas);
         if(calculate_gas != null && calculate_gas == true && ipfs_index_array.length > 0){
