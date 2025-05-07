@@ -409,7 +409,7 @@ class NewPostPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
+            <div ref={this.screen} style={{'padding':'0px 0px 0px 3px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['301']})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>

@@ -792,10 +792,13 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
-        var responses_text = object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
+        var responses_text = ' • '+object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
+        if(object['responses'] == 0){
+            responses_text = ''
+        }
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender+' • '+responses_text, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+sender+responses_text, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':object['e5']+' • '+object['id']+sender+' • '+responses_text, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
@@ -2796,7 +2799,11 @@ class PostListSection extends Component {
             tags = [object['ipfs'].device_city].concat(tags)
         }
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
+        var responses_text = ' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
+        if(object['responses'] == 0){
+            responses_text = ''
+        }
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+ responses_text + sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {

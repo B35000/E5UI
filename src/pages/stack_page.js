@@ -352,18 +352,23 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'infura', 'arweave', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */], [this.get_selected_storage_option()]
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, /* 'infura', */ 'arweave'], [this.get_selected_storage_option()]
             ],
         };
     }
 
     get_selected_storage_option(){
-        if(this.props.app_state.storage_option == 'infura'){
+        // if(this.props.app_state.storage_option == 'infura'){
+        //     return 0
+        // }
+        // else 
+        if(this.props.app_state.storage_option == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
             return 1
         }
         else if(this.props.app_state.storage_option == 'arweave'){
             return 2
         }
+        
         return 1;
     }
 
@@ -2324,7 +2329,8 @@ return data['data']
             if(!silently)this.props.open_wallet_guide_bottomsheet('one')
         }
         else if(account_balance < (estimated_gas_to_be_consumed * run_gas_price)){
-            this.setState({invalid_ether_amount_dialog_box: true})
+            // this.setState({invalid_ether_amount_dialog_box: true})
+            if(!silently) this.props.show_dialog_bottomsheet({'run_gas_limit':run_gas_limit}, 'invalid_ether_amount_dialog_box')
         }
         else if(run_gas_limit < 35000){
             if(!silently)this.props.notify(this.props.app_state.loc['1490']/* 'That transaction gas limit is too low.' */,3900)
@@ -3728,7 +3734,8 @@ return data['data']
             ]
 
             const string_obj = [[]]
-            string_obj[0].push(await this.get_account_public_key())
+            var pub_key_link = calculate_gas == true ? "ar.TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw==" : await this.get_account_public_key()
+            string_obj[0].push(pub_key_link)
             
             strs.push(string_obj)
             adds.push([])
@@ -4628,6 +4635,8 @@ return data['data']
         if(Object.keys(tx).length <= 3 && ipfs_index == null){
             return null
         }
+
+        console.log('stack_page_ipfs', Object.keys(tx).length, ipfs_index, calculate_gas)
         if(calculate_gas != null && calculate_gas == true){
             return 'ar.TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw=='
             // return 'in.QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk_qwsedrf'

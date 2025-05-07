@@ -600,6 +600,7 @@ var bigInt = require("big-integer");
 var primary_following = []
 const root_e5 = 'E25'
 const root_account = 1002
+const default_nitro_option = '1479E25'
 
 
 
@@ -763,7 +764,7 @@ class App extends Component {
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
-    theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura'/* infura, arweave */,
+    theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e',
 
     new_object_target: '0', edit_object_target:'0',
@@ -6795,12 +6796,7 @@ return data['data']
       setTimeout(function() {
         if(me.state != null){
           me.setState({stack_bottomsheet: !me.state.stack_bottomsheet});
-
-          // if(me.stack_bottomsheet != null){
-          //   me.stack_page.current?.setState(me.stack_bottomsheet)
-          // }
-          // me.set_stack_page_data()
-          me.stack_page.current?.run_transactions(true)
+          me.stack_page.current?.run_transactions(true, false)
         }
       }, (1 * 200));
     }
@@ -17059,7 +17055,7 @@ return data['data']
     var transfer_event_params = []
     if(account != ''){
       itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p1/* awward_sender */:account, p3/* awward_context */: 1/* iTransfer */})
-      transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: used_identifier, p2/* sender */:account})
+      transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient, p2/* sender */:account})
     }else{
       itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', focused_e5, {p4/* metadata */: used_identifier,p2/* awward_receiver */: recipient, p3/* awward_context */: 1/* iTransfer */})
       transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: recipient})
@@ -20452,7 +20448,7 @@ return data['data']
 
   fetch_uploaded_data_from_ipfs = async (cids, is_my_cids) => {
     // console.log('datas', 'all cids', cids)
-    if(is_my_cids){      
+    if(is_my_cids){
       this.setState({uploaded_data_cids: cids})
     }
     // console.log('apppage', 'starting loaded cid objects...')
@@ -22962,7 +22958,7 @@ return data['data']
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
 
-    this.load_my_bills(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account)
+    // this.load_my_bills(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account)
 
     var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5)
     var my_posted_events = created_token_events.filter(function (event) {
@@ -25167,6 +25163,9 @@ return data['data']
     if(page == this.getLocale()['1264s']/* 'nitro' */){
       this.load_nitro_data(prioritized_accounts)
     }
+    if(page == this.getLocale()['1264aj']/* 'bills' */){
+      this.load_bill_data(prioritized_accounts)
+    }
 
     if(page == 'w'){
       this.load_token_data(prioritized_accounts)
@@ -25469,6 +25468,41 @@ return data['data']
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
         this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts)
+      }
+    }
+  }
+
+  load_bill_data = async (prioritized_accounts, preferred_e5) => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      }
+      if(e5_address != ''){
+        var web3_url = this.get_web3_url_from_e5(e5)
+        const web3 = new Web3(web3_url);
+
+        var account = this.state.user_account_id[e5]
+        var contract_addresses = this.state.addresses[e5]
+
+        const contractArtifact = require('./contract_abis/E5.json');
+        const contractAddress = e5_address
+        const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        const H5contractArtifact = require('./contract_abis/H5.json');
+        const H5_address = contract_addresses[5];
+        const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
+
+        const H52contractArtifact = require('./contract_abis/H52.json');
+        const H52_address = contract_addresses[6];
+        const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+        this.load_my_bills(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts)
       }
     }
   }
@@ -27626,6 +27660,7 @@ return data['data']
     obj[this.getLocale()['1264p']/* 'videoport' */] = 20
     obj[this.getLocale()['1264s']/* 'nitro' */] = 21
     obj['w'] = 31
+    obj[this.getLocale()['1264aj']/* 'bills' */] = 31
 
     return obj[page]
   }
@@ -27698,7 +27733,7 @@ return data['data']
     var hashes = []
     var valid_ids = []
 
-    // console.log('apppage', 'all events length', all_events.length)
+    console.log('apppage', 'all events length', all_events.length)
 
     for(var i=0; i<all_events.length; i++){
       var objects_event = all_events[i]
@@ -27724,7 +27759,7 @@ return data['data']
       }
     }
 
-    // console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
+    console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes: hashes}),
     });
@@ -27743,7 +27778,7 @@ return data['data']
       var data = await response.text();
       var obj = JSON.parse(data);
       var object_data = obj['data']
-      // console.log('apppage', 'data', obj)
+      console.log('apppage', 'data', obj)
       for(var i=0; i<hashes.length; i++){
         var cid_data = object_data[hashes[i]]
         if(cid_data != null){
@@ -27773,7 +27808,7 @@ return data['data']
       }
     }
 
-    // console.log('apppage', 'return', data)
+    console.log('apppage', 'return', data)
     return data
   }
 
@@ -27784,11 +27819,19 @@ return data['data']
     var target_id = id;
     var events = await this.load_event_data(web3, E52contractInstance, 'e5', e5, {p1/* target_obj_id */: target_id})
     if(events.length == 0) return;
-    var cid = events[events.length - 1].returnValues.p4
+    var n = 1
+    var cid = events[events.length - n].returnValues.p4
     if(cid == 'e3' || cid == 'e2' || cid == 'e1' || cid == 'e') return;
 
-    // console.log('apppage','cid to fetch',id, cid)
-    return await this.fetch_objects_data_from_ipfs_using_option(cid)
+    var data = null
+    while(data == null && events.length >= n){
+      var cid = events[events.length - n].returnValues.p4
+      data = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      if(data == null){
+        n++
+      }
+    }
+    return data
   }
 
 
@@ -27877,8 +27920,8 @@ return data['data']
   }
 
   store_image_in_ipfs = async (data) => {
-    var cid = await this.store_objects_data_in_ipfs_using_option(data, true, true)
-    return `https://nftstorage.link/ipfs/${cid}`
+    // var cid = await this.store_objects_data_in_ipfs_using_option(data, true, true)
+    // return `https://nftstorage.link/ipfs/${cid}`
   }
 
   store_objects_data_in_ipfs_using_option = async (data, unappend_identifier, unencrypt_image, tags) => {
@@ -27892,12 +27935,12 @@ return data['data']
       if(unappend_identifier == true) return cid
       return 'ni.'+cid;
     }
-    if(set_storage_option == 'infura'){
-      var cid = await this.store_data_in_infura(data, unencrypt_image, tags)
-      if(cid == '' || cid == null) return ''
-      if(unappend_identifier == true) return cid
-      return 'in.'+cid;
-    }
+    // if(set_storage_option == 'infura'){
+    //   var cid = await this.store_data_in_infura(data, unencrypt_image, tags)
+    //   if(cid == '' || cid == null) return ''
+    //   if(unappend_identifier == true) return cid
+    //   return 'in.'+cid;
+    // }
     // else if(set_storage_option == 'web3-storage'){
     //   var cid = await this.store_data_in_web3(data, unencrypt_image)
     //   if(unappend_identifier == true) return cid
@@ -27913,6 +27956,14 @@ return data['data']
     //   if(unappend_identifier == true) return cid
     //   return 'ch.'+cid;
     // }
+    if(set_storage_option == this.getLocale()['1593cw']/* 'nitro 🛰️' */){
+      //upload to nitro storage
+      console.log('set_storage_option', 'running store_data_in_nitro')
+      var cid = await this.store_data_in_nitro(data, unencrypt_image, default_nitro_option, tags)
+      if(cid == '' || cid == null) return ''
+      if(unappend_identifier == true) return cid
+      return 'ni.'+cid;
+    }
     else if(set_storage_option == 'arweave'){
       var cid = await this.store_data_in_arweave_storage(data, unencrypt_image, tags)
       if(cid == '' || cid == null) return ''
@@ -28059,7 +28110,6 @@ return data['data']
       this.lock_run(false)
       return '';
     }
-
   }
 
   fetch_data_from_nitro = async (cid, depth) => {
@@ -28085,6 +28135,10 @@ return data['data']
       // console.log('datas', 'hash object', obj)
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
+      var confirmation_hash = await this.generate_hash(cid_data)
+      if(confirmation_hash != nitro_cid){
+        console.log('apppage', nitro_cid, 'data has been modified')
+      }
       var decrypted_data = this.decrypt_storage_object(cid_data)
       var return_data = JSON.parse(decrypted_data)
       // console.log('datas', 'hash object return_data', return_data)
@@ -28095,6 +28149,21 @@ return data['data']
         return await this.fetch_data_from_nitro(cid, depth+1)
       }
     }
+  }
+
+  generate_hash = async (data) => {
+    // Encode the data as a Uint8Array
+    const encoder = new TextEncoder();
+    const encodedData = encoder.encode(data);
+
+    // Generate the hash using the SubtleCrypto API
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encodedData);
+
+    // Convert the hash to a hexadecimal string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+
+    return hashHex.substring(0, 64);
   }
 
 
@@ -28157,6 +28226,19 @@ return data['data']
   }
 
   fetch_object_data_from_infura = async (cid, depth) => {
+    if(
+      cid.includes('QmYBx95TyCASAEx8bu2fG6yT7fMQirwZxnRbLgANg5MdKG') || 
+      cid.includes('QmdSTjEkHPVwrbrFpuVRshCnPEx1rxSXxatPtkj29V6muA') ||
+      cid.includes('QmPRZMnbFHhErrVPunL2f2ddxLXCKMQnny4q7x6nXcoReM') ||
+      cid.includes('QmZCDWu2v4Co7msuAZ7Z5qS6PfnyqhHiHHcotwosdKFko1') ||
+      cid.includes('QmVism7hS71hBxhPoyE4ov4w3rv2aqrJ5y4vADQD9xHwoY') ||
+      cid.includes('QmTTEn4rJC6YRyvctJMkDYzeFevJS9S54rj2hwE3rUJdC5') ||
+      cid.includes('Qmf5ivGEBeopqoQKu8Hc5DqdjGscBRQcxTwUnFV4BMWG3U') ||
+      cid.includes('QmRhhLZckJpkvZ6kHzHEx5hAf2wK5JPWhPvePWMtPBBbsQ') ||
+      cid.includes('QmZYveGfHPDLSbhyusr7f452bAAzqZUsmxqaecku71HXvQ')
+    ){
+      return null
+    }
     await this.wait(this.state.ipfs_delay)
     var gateways = [
       `https://ipfs.io/ipfs/${cid}`,
@@ -28176,7 +28258,6 @@ return data['data']
     ]
 
     var gateways = [
-      //https://ipfs.algonode.xyz/ipfs/${cid}
       `https://gateway.pinata.cloud/ipfs/${cid}`,
       `https://ipfs.io/ipfs/${cid}`,
     ]
@@ -28189,7 +28270,8 @@ return data['data']
     }
     selected_gateway = this.get_selected_gateway_if_custom_set(cid, selected_gateway)
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), 3000);
+    const id = setTimeout(() => controller.abort(), 9000);
+    console.log('infura', cid)
     try {
       const response = await fetch(selected_gateway ,{ signal: controller.signal });
       clearTimeout(id)
@@ -28201,9 +28283,9 @@ return data['data']
       return JSON.parse(data);
       // Do something with the retrieved data
     } catch (error) {
-      console.log('Error fetching infura file: ', error)
+      console.log('Error fetching infura file: ', cid, error)
 
-      if(depth<5){
+      if(depth<3){
         await this.wait(3000)
         return await this.fetch_object_data_from_infura(cid, depth+1)
       }
@@ -28495,6 +28577,10 @@ return data['data']
       var obj = JSON.parse(data);
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
+      var confirmation_hash = await this.generate_hash(cid_data)
+      if(confirmation_hash != nitro_cid){
+        console.log('apppage', nitro_cid, 'data has been modified')
+      }
       // console.log('datas','fetching_file_from_nitro_storage', cid_data)
       if(cid_data != null){
         var file_pointer_link = cid_data['data']

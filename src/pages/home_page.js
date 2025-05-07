@@ -792,7 +792,6 @@ class home_page extends Component {
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
                   <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
                     {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 4px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
-                      
                   </div>
                 
 
@@ -890,7 +889,6 @@ class home_page extends Component {
             );
         }
     }
-
 
     open_view_stack_bottomsheet(){
         this.props.open_stack_bottomsheet()
@@ -1208,6 +1206,9 @@ class home_page extends Component {
         else{
             //wallet
             selected_page = 'w'
+            if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
+                selected_page = this.props.app_state.loc['1264aj']/* 'bills' */
+            }
         }
         return selected_page;
     }
@@ -1400,6 +1401,9 @@ class home_page extends Component {
             //wallet
             this.setState({wallet_page_tags_object: tag_group})
             selected_page = 'w'
+            if(tag_group['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
+                selected_page = this.props.app_state.loc['1264aj']/* 'bills' */
+            }
         }
 
         var id = this.get_page_id()
