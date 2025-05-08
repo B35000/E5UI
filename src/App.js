@@ -592,6 +592,8 @@ var textEncoding = require('text-encoding');
 var CryptoJS = require("crypto-js"); 
 const xrpl = require("xrpl")
 const BITBOXSDK = require('bitbox-sdk').BITBOX;
+const pako = require('pako');
+
 const BITBOX = new BITBOXSDK();
 const arweave = Arweave.init();
 
@@ -701,6 +703,25 @@ function shuffle(array) {
 
 function isJsonObject(data) {
   return typeof data === "object" && data !== null && !Array.isArray(data);
+}
+
+function base64ToUint8Array(base64) {
+  const binary = atob(base64);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+// Helper: Convert Uint8Array to Base64 string
+function uint8ArrayToBase64(bytes) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
 }
 
 const PDFViewerWrapper  = forwardRef(({ fileUrl, theme /* , record_page, current_page */ }, ref) => {
@@ -834,6 +855,8 @@ class App extends Component {
     recommended_videopost_threshold:10, recommended_video_threshold:20, recommended_audiopost_threshold:10, recommended_audio_threshold:20, theme_images_enabled:false, deleted_files:[], all_mail:{}, mail_message_events:{}, mail_messages:{}, country_moderators:{}, manual_beacon_node_disabled:'e',
 
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
+
+    verified_file_statuses:{},
   };
 
   get_static_assets(){
@@ -2689,6 +2712,7 @@ class App extends Component {
 
   start_everything = async () => {
     // this.test_beacon_node()
+    // this.test_infura()
     await this.load_cookies();
     this.load_cookies2()
     var me = this;
@@ -2739,6 +2763,28 @@ class App extends Component {
     }
     catch(e){
       console.log('apppage', e)
+    }
+  }
+
+  test_infura = async () => {
+    const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
+    const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
+    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    const client = create({
+      host: 'ipfs.infura.io',
+      port: 5001,
+      protocol: 'https',
+      apiPath: '/api/v0',
+      headers: {
+        authorization: auth,
+      }
+    })
+
+    try {
+      const added = await client.add('hello world')
+      console.log('infura','hello world', added.path.toString())
+    } catch (error) {
+      console.log('Error uploading file: ', error)
     }
   }
 
@@ -13826,7 +13872,7 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)}
         
         />
       </div>
@@ -13879,6 +13925,7 @@ return data['data']
       'account_options':600,
       'confirm_pay_bill':350,
       'invalid_stack_size_dialog_box':350,
+      'file_type_picker':450,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -14325,6 +14372,62 @@ return data['data']
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
     this.prompt_top_notification(this.getLocale()['3071l']/* Transactions added to stack. */, 1400)
+  }
+
+  when_file_type_to_select_is_selected(type){
+    this.open_dialog_bottomsheet()
+    if(this.stack_page.current != null){
+      this.stack_page.current?.call_input_function(type)
+    }
+  }
+
+  verify_file = async (ecid_obj) => {
+    this.prompt_top_notification(this.getLocale()['3055ca']/* 'Verifying the file...' */, 5500)
+    var file_link = this.get_file_data(ecid_obj)
+    var valid_known_hash = this.get_file_known_hash(ecid_obj)
+    try {
+      if(file_link == null || valid_known_hash == null){
+        console.log('file_link or valid_known_hash is null', file_link, valid_known_hash)
+        throw new Error("file_link or valid_known_hash is null");
+      }
+      // Fetch the zip as a blob
+      const response = await fetch(file_link);
+      if (!response.ok) {
+        throw new Error("Failed to fetch image");
+      }
+      const blob = await response.blob();
+      // Create a temporary object URL
+      const objectUrl = URL.createObjectURL(blob);
+      
+      var valid_hash = await this.get_valid_data_hash(objectUrl, true)
+      if(valid_hash != valid_known_hash){
+        console.log('apppage','Data has beeen tampered with, reverting', valid_hash, valid_known_hash)
+        this.prompt_top_notification(this.getLocale()['3055cc']/* 'Your data might have been tampered with.' */, 7500)
+      }else{
+        this.prompt_top_notification(this.getLocale()['3055cd']/* 'File verified.' */, 4500)
+        var clone = structuredClone(this.state.verified_file_statuses)
+        clone[ecid_obj['full']] = true
+        this.setState({verified_file_statuses: clone})
+      }
+
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      this.prompt_top_notification(this.getLocale()['3055cb']/* 'Something went wrong.' */, 4500)
+    }
+  }
+
+  get_file_data(ecid_obj){
+    if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(data == null) return null
+    return data['data']
+  }
+
+  get_file_known_hash(ecid_obj){
+    if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(data == null) return null
+    return data['hash']
   }
 
 
@@ -15722,7 +15825,7 @@ return data['data']
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return null
     if(data == null) return
-return data['data']
+    return data['data']
   }
 
 
@@ -27732,8 +27835,8 @@ return data['data']
     var obj_id_ecid = {}
     var hashes = []
     var valid_ids = []
-
-    console.log('apppage', 'all events length', all_events.length)
+    var obj_types = {}
+    // console.log('apppage', 'all events length', all_events.length)
 
     for(var i=0; i<all_events.length; i++){
       var objects_event = all_events[i]
@@ -27741,8 +27844,10 @@ return data['data']
         var ecid = objects_event[objects_event.length - 1].returnValues.p4
         if(ecid != 'e3' && ecid != 'e2' && ecid != 'e1' && ecid != 'e'){
           var cid = ecid
+          var option = 'in'
           if(ecid.includes('.')){
             var split_cid_array = ecid.split('.');
+            option = split_cid_array[0]
             cid = split_cid_array[1]
           }
           var id = cid;
@@ -27752,14 +27857,15 @@ return data['data']
             id = split_cid_array2[0]
             internal_id = split_cid_array2[1]
           }
-          obj_id_ecid[ids[i]] = {'id':id, 'internal_id':internal_id}
+          obj_id_ecid[ids[i]] = {'id':id, 'internal_id':internal_id,'option':option }
+          obj_types[id] = option
           if(this.fetch_from_storage(id) == null) hashes.push(id)
           valid_ids.push(ids[i])
         }
       }
     }
 
-    console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
+    // console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes: hashes}),
     });
@@ -27782,9 +27888,14 @@ return data['data']
       for(var i=0; i<hashes.length; i++){
         var cid_data = object_data[hashes[i]]
         if(cid_data != null){
-          var decrypted_data = this.decrypt_storage_object2(cid_data)
-          // console.log('apppage', 'decrypted object', decrypted_data)
-          this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+          var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+          if(confirmation_hash != hashes[i] && obj_types[hashes[i]] == 'ni'){
+            console.log('apppage', hashes[i], 'data has been modified! bad data!', confirmation_hash)
+          }else{
+            var decrypted_data = this.decrypt_storage_object2(cid_data)
+            // console.log('apppage', 'decrypted object', decrypted_data)
+            this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+          }
         }
       }
     }
@@ -28075,10 +28186,11 @@ return data['data']
     }
 
     var node_url = this.get_nitro_link_from_e5_id(my_preferred_nitro)
+    var file_object = JSON.stringify(data)
     var arg_obj = {
       signature_data: block_hash_and_signature.data,
       signature:block_hash_and_signature.signature,
-      file_datas: [JSON.stringify(data)],
+      file_datas: [file_object],
     }
 
     var body = {
@@ -28102,6 +28214,11 @@ return data['data']
         this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */+' '+obj.message, 8000)
         return '';
       }else{
+        var valid_hash = await this.get_valid_data_hash(file_object, false)
+        if(valid_hash != obj.files[0]){
+          console.log('apppage','Data has beeen tampered with, reverting', valid_hash, obj.files[0])
+          throw new Error(`Data has beeen tampered with, reverting`);
+        }
         return my_preferred_nitro+'-'+obj.files[0]
       }
     }
@@ -28135,9 +28252,12 @@ return data['data']
       // console.log('datas', 'hash object', obj)
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
-      var confirmation_hash = await this.generate_hash(cid_data)
+      var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
       if(confirmation_hash != nitro_cid){
-        console.log('apppage', nitro_cid, 'data has been modified')
+        console.log('apppage', 'data has been modified')
+        console.log('apppage', nitro_cid)
+        console.log('apppage', confirmation_hash)
+        return null
       }
       var decrypted_data = this.decrypt_storage_object(cid_data)
       var return_data = JSON.parse(decrypted_data)
@@ -28149,21 +28269,6 @@ return data['data']
         return await this.fetch_data_from_nitro(cid, depth+1)
       }
     }
-  }
-
-  generate_hash = async (data) => {
-    // Encode the data as a Uint8Array
-    const encoder = new TextEncoder();
-    const encodedData = encoder.encode(data);
-
-    // Generate the hash using the SubtleCrypto API
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encodedData);
-
-    // Convert the hash to a hexadecimal string
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-
-    return hashHex.substring(0, 64);
   }
 
 
@@ -28577,21 +28682,25 @@ return data['data']
       var obj = JSON.parse(data);
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
-      var confirmation_hash = await this.generate_hash(cid_data)
-      if(confirmation_hash != nitro_cid){
-        console.log('apppage', nitro_cid, 'data has been modified')
-      }
       // console.log('datas','fetching_file_from_nitro_storage', cid_data)
       if(cid_data != null){
+        var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+        if(confirmation_hash != nitro_cid){
+          console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
+          return null
+        }
         var file_pointer_link = cid_data['data']
-        var split_cid_array2 = file_pointer_link.split('-');
-        var e5_id2 = split_cid_array2[0]
-        var nitro_cid2 = split_cid_array2[1]
+        if(file_pointer_link.includes('-')){
+          var split_cid_array2 = file_pointer_link.split('-');
+          var e5_id2 = split_cid_array2[0]
+          var nitro_cid2 = split_cid_array2[1]
 
-        var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
-        var content_type = this.get_file_extension(cid_data['name'])
-        if(nitro_url != null){
-          cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
+          var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
+          var content_type = this.get_file_extension(cid_data['name'])
+          if(nitro_url != null){
+            cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
+            cid_data['hash'] = nitro_cid2
+          }
         }
         // console.log('datas','final cid object with link', cid_data)
         return cid_data
@@ -28819,13 +28928,14 @@ return data['data']
         var cids = []
         var _data = structuredClone(data)
         _data['data'] = `https://arweave.net/${transaction_hash}`
-        var cid = await this.store_data_in_infura2(JSON.stringify(_data), null, null)
+        // var cid = await this.store_data_in_infura2(JSON.stringify(_data), null, null)
+        var cid = await this.store_data_in_nitro(JSON.stringify(_data), null, default_nitro_option, null)
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
           this.setState({is_uploading_to_arweave: false})
           return;
         }else{
-          var e_cid = _data['type']+'_'+cid+'.in'
+          var e_cid = _data['type']+'_'+cid+'.ni'
           e_cids.push(e_cid)
           cids.push(cid)
         }
@@ -28904,6 +29014,13 @@ return data['data']
         if(obj.success == false){
           return null
         }else{
+          obj.files.forEach(async (encoded_data_name, index) => {
+            var valid_hash = await this.get_valid_data_hash(file_datas[index], true)
+            if(valid_hash != encoded_data_name){
+              console.log('apppage','Data has beeen tampered with, reverting', valid_hash, encoded_data_name)
+              throw new Error(`Data has beeen tampered with, reverting`);
+            }
+          });
           return obj.files
         }
       }
@@ -28921,8 +29038,7 @@ return data['data']
         const focused_data = file_datas[e]
         const base64Data = focused_data.split(",")[1];
         const encoded_data = Buffer.from(base64Data, "base64");
-        // const encoder = new TextEncoder();
-        // const encoded_data = encoder.encode(focused_data);
+        const extension = await this.get_valid_data_hash(encoded_data, false)
         const totalSize = encoded_data.length;
 
         const node_url = nitro_object['ipfs'].node_url
@@ -28931,6 +29047,7 @@ return data['data']
           signature: block_hash_and_signature.signature,
           file_length: totalSize + (5 * 1024 * 1024),
           file_type: file_types[e],
+          upload_extension: extension
         }
 
         const body = {
@@ -28940,7 +29057,6 @@ return data['data']
           },
           body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
         }
-        var extension = ''
         const request = `${node_url}/reserve_upload`
         try{
           const response = await fetch(request, body);
@@ -28954,7 +29070,7 @@ return data['data']
             console.log('uploader','error', obj.message)
             return null
           }else{
-            extension = obj.extension
+            // extension = obj.extension
           }
         }
         catch(e){
@@ -29082,12 +29198,28 @@ return data['data']
       if(obj.success == false){
         return null
       }else{
+        obj.files.forEach(async (encoded_data_name, index) => {
+          var valid_hash = await this.get_valid_data_hash(file_objects[index], false)
+          if(valid_hash != encoded_data_name){
+            console.log('apppage','Data has beeen tampered with, reverting', valid_hash, encoded_data_name)
+            throw new Error(`Data has beeen tampered with, reverting`);
+          }
+        });
         return obj.files
       }
     }
     catch(e){
       return null
     }
+  }
+
+  get_valid_data_hash = async (data, encoded) => {
+    if(encoded == true){
+      const base64Data = data.split(",")[1];
+      const binaryData = Buffer.from(base64Data, "base64");
+      return await this.generate_hash(binaryData)
+    }
+    return await this.generate_hash(data)
   }
 
 
@@ -29144,7 +29276,8 @@ return data['data']
   encrypt_storage_object(data, tags_obj){
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
     var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
-    var final_obj = {'ciphertext':ciphertext, 'tags':tags_obj}
+    const compressed = pako.deflate(base64ToUint8Array(ciphertext))/* Im not sure if compressing data then converting it to base64 makes much of a difference in the long run for storage efficiency. Im yet to actually gauge if this a good thing since storage objects cant exceeed the limit i've set in the state of about 350Kb... */
+    var final_obj = {'ciphertext':uint8ArrayToBase64(compressed), 'tags':tags_obj, 'c'/* compressed */: true}
     return JSON.stringify(final_obj)
   }
 
@@ -29154,9 +29287,15 @@ return data['data']
     try{
       var json_object = JSON.parse(data)
       cipher_text = json_object['ciphertext']
+      if(json_object['c'] != null && json_object['c'] == true){
+        //the object was compressed
+        // console.log('apppage', 'found compressed object...')
+        cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
+        // console.log('apppage', 'uncompressed ciphertext', cipher_text)
+      }
       // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
     }catch(f){
-      // console.log(f)
+      // console.log('apppage', f)
     }
     try{
       var bytes = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
@@ -29165,12 +29304,11 @@ return data['data']
         var originalText = bytes.toString(CryptoJS.enc.Utf8);
         return originalText
       } else {
-        console.error('apppage',"Decryption failed: invalid bytes output.");
+        
         return data
       }
-      // var originalText = bytes.toString(CryptoJS.enc.Utf8);
-      // return originalText
     }catch(e){
+      console.error('apppage',"Decryption failed:", e);
       return data
     }
   }
@@ -29181,13 +29319,21 @@ return data['data']
     if(isJsonObject(data)){
       try{
         cipher_text = data['ciphertext']
+        if(data['c'] != null && data['c'] == true){
+          //the object was compressed
+          cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
+        }
       }catch(f){
-        console.log('apppage',f)
+        // console.log('apppage',f)
       }
     }else{
       try{
         var json_object = JSON.parse(data)
         cipher_text = json_object['ciphertext']
+        if(json_object['c'] != null && json_object['c'] == true){
+          //the object was compressed
+          cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
+        }
       }catch(f){
         // console.log(f)
       }
@@ -31677,7 +31823,9 @@ return data['data']
 
 
   fetch_multiple_cids_from_nitro = async (events, depth, p) => {
-    var hashes = this.get_cid_from_data_from_events(events, p)
+    var cid_data = this.get_cid_from_data_from_events(events, p)
+    var hashes = cid_data.cids
+    var options = cid_data.options
     if(hashes.length == 0) return;
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes: hashes}),
@@ -31702,9 +31850,14 @@ return data['data']
       for(var i=0; i<hashes.length; i++){
         var cid_data = object_data[hashes[i]]
         if(cid_data != null){
-          var decrypted_data = this.decrypt_storage_object2(cid_data)
-          count++
-          this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+          var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+          if(confirmation_hash != hashes[i] && options[i] == 'ni'){
+            console.log('apppage', hashes[i], 'data has been modified')
+          }else{
+            var decrypted_data = this.decrypt_storage_object2(cid_data)
+            count++
+            this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+          }
         }
       }
       // this.prompt_top_notification('loaded '+count+' hashes', 3000)
@@ -31719,13 +31872,16 @@ return data['data']
 
   get_cid_from_data_from_events(events, p){
     var cids = []
+    var options = []
     for(var i=0; i<events.length; i++){
       var event = events[i]
       var ecid = event.returnValues[p]
 
       var cid = ecid
+      var option = 'in'
       if(ecid.includes('.')){
         var split_cid_array = ecid.split('.');
+        option = split_cid_array[0]
         cid = split_cid_array[1]
       }
       var included_underscore = false
@@ -31740,9 +31896,10 @@ return data['data']
       var data = this.fetch_from_storage(id)
       if(data == null){
         cids.push(id)
+        options.push(option)
       }
     }
-    return cids
+    return {cids, options}
   }
 
 

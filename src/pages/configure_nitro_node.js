@@ -73,7 +73,7 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['3040']/* 'boot' */,this.props.app_state.loc['3041']/* 'restore' */,this.props.app_state.loc['3042']/* 'backup' */, this.props.app_state.loc['3043']/* 'new-E5' */, this.props.app_state.loc['3044']/* 'delete-E5' */,this.props.app_state.loc['3045']/* 'iteration' */, this.props.app_state.loc['3046']/* 'content-gateway' */, this.props.app_state.loc['3047']/* 'provider' */, this.props.app_state.loc['3048']/* 'boot-storage' */, this.props.app_state.loc['3049']/* 'reconfigure-storage' */], [0]
+                ['or','',0], ['e',this.props.app_state.loc['3040']/* 'boot' */,this.props.app_state.loc['3041']/* 'restore' */,this.props.app_state.loc['3042']/* 'backup' */, this.props.app_state.loc['3043']/* 'new-E5' */, this.props.app_state.loc['3044']/* 'delete-E5' */,this.props.app_state.loc['3045']/* 'iteration' *//* , this.props.app_state.loc['3046'] *//* 'content-gateway' */, this.props.app_state.loc['3047']/* 'provider' */, this.props.app_state.loc['3048']/* 'boot-storage' */, this.props.app_state.loc['3049']/* 'reconfigure-storage' */], [0]
             ],
         };
     }
@@ -95,7 +95,7 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' */, this.props.app_state.loc['3054cl']/* 'Recipient' */, this.props.app_state.loc['3054cu']/* 'free-storage' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' */, this.props.app_state.loc['3054cl']/* 'Recipient' *//* , this.props.app_state.loc['3054cu'] *//* 'free-storage' */], [1]
             ],
         };
     }
@@ -1417,7 +1417,8 @@ class ConfigureNitroNodePage extends Component {
         var price_per_megabyte = this.state.price_data
         var target_storage_purchase_recipient_account = this.state.recipient_id
         
-        var selected_basic_storage_setting = this.get_selected_item(this.state.basic_storage_enabled_tags_object, this.state.basic_storage_enabled_tags_object['i'].active) === this.props.app_state.loc['3054cr']/* enabled */
+        // var selected_basic_storage_setting = this.get_selected_item(this.state.basic_storage_enabled_tags_object, this.state.basic_storage_enabled_tags_object['i'].active) === this.props.app_state.loc['3054cr']/* enabled */
+        var selected_basic_storage_setting = true
 
         if(max_buyable_capacity == 0){
             this.props.notify(this.props.app_state.loc['3054cf']/* 'You need to specify a maximum amount of storage that can be bought' */, 4000)

@@ -613,7 +613,7 @@ class NitroDetailsSection extends Component {
 
     render_subscribe_to_nitro_button(object){
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-        if(node_details != null && node_details != 'unavailable'){
+        if(object['bought'] == true && node_details != null && node_details != 'unavailable'){
             return(
                 <div>
                     {this.render_detail_item('0')}

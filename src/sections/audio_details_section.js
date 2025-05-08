@@ -2319,11 +2319,7 @@ return data['data']
         this.props.when_e5_link_tapped(id)
     }
 
-    longest_word_length(text) {
-        return text
-            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
-            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
-    }
+    
 
     render_response_if_any(_item, object){
         if(_item['focused_message_id'] == 0) return;

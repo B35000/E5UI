@@ -451,10 +451,10 @@ class ViewGroups extends Component {
             var items_pos = object_data == null ? 0 : object_data['pos'];
 
             return (
-                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'100px'}}>
+                <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 0px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'auto'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
                       {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
+                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:'auto'}}>
                             <img alt="" src={this.get_image_from_file(item)} style={{width:'auto', height:90, 'border-radius': '10px'}} />
                           </li>
                       ))}

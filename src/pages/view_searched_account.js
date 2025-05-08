@@ -732,13 +732,13 @@ class SearchedAccountPage extends Component {
             return(
                 <div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 5px 3px 5px'}}/>
-                    {this.render_detail_item('3',{'title':''+item, 'details':this.get_years_exchanges(data, item).length+this.props.app_state.loc['1770c']/* ' exchanges' */,'size':'s'})}
+                    {this.render_detail_item('3',{'title':''+item, 'details':this.get_years_exchanges(data, item).length+this.props.app_state.loc['1770c']/* ' exchanges' */,'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':''+item, 'details':this.get_years_exchanges(data, item).length+this.props.app_state.loc['1770c']/* ' exchanges' */,'size':'s'})}
+                    {this.render_detail_item('3',{'title':''+item, 'details':this.get_years_exchanges(data, item).length+this.props.app_state.loc['1770c']/* ' exchanges' */,'size':'l'})}
                 </div>
             )
         }
@@ -854,7 +854,7 @@ class SearchedAccountPage extends Component {
                 
                 {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(event_data), 'interval':110, 'hide_label': true})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'l'})}
                
                 {this.render_detail_item('0')}
             </div>
@@ -1103,7 +1103,7 @@ class SearchedAccountPage extends Component {
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_transaction_count_data_points(events), 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1727']/* 'Y-Axis: Total Runs Made' */, 'details':this.props.app_state.loc['1728']/* 'X-Axis: Time' */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1727']/* 'Y-Axis: Total Runs Made' */, 'details':this.props.app_state.loc['1728']/* 'X-Axis: Time' */, 'size':'l'})}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -1230,20 +1230,20 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_creations_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': this.props.app_state.loc['1743']/* 'Object ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': this.props.app_state.loc['1743']/* 'Object ID' */, 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': object_type, 'details': 'Object Type', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': object_type, 'details': 'Object Type', 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': object_type, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': object_type, 'size': 'l' })}
                 </div>
             )
         }
@@ -1524,7 +1524,7 @@ return data['data']
                     <div ref={this.activity_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
-                                <li style={{ 'padding': '5px 0px 5px 0px' }}>
+                                <li style={{ 'padding': '2px 0px 2px 0px' }}>
                                     <div>
                                         {this.render_message_item(item)}
                                     </div>
@@ -1566,7 +1566,7 @@ return data['data']
         var title = ''+this.get_sender_title_text2(item)
         var time = ''+this.get_time_difference(item['time'])
         var message = ''+this.format_message(item['message'])
-
+        var word_wrap_value = this.longest_word_length(message) > 53 ? 'break-all' : 'normal'
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         return(
@@ -1580,11 +1580,17 @@ return data['data']
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{time}</p>
                         </div>
                     </div>
-                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}}><Linkify options={{target: '_blank'}}>{message}</Linkify></p>
+                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}}><Linkify options={{target: '_blank'}}>{message}</Linkify></p>
                     {this.render_images_if_any(item)}
                 </div>
             </div>
         )
+    }
+
+    longest_word_length(text) {
+        return text
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
 
     get_sender_title_text2(item){
@@ -1684,9 +1690,9 @@ return data['data']
         if (this.state.selected_withdraws_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1745']/* 'transaction ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1745']/* 'transaction ID' */, 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p3), 'title': 'target', 'size': 's' })}
+                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p3), 'title': 'target', 'size': 'l' })}
                     <div style={{ height: 2 }}/>
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
@@ -1698,9 +1704,9 @@ return data['data']
                     </div>
                     <div style={{ height: 2 }}/>
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1804,9 +1810,9 @@ return data['data']
                     </div>
                     <div style={{ height: 2 }}/>
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p3), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p3), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1885,10 +1891,10 @@ return data['data']
             return (
                 <div>
                     <div onClick={() => this.when_transactions_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': this.props.app_state.loc['1750']/* 'Transaction ID' */, 'size': 's' })}
+                        {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': this.props.app_state.loc['1750']/* 'Transaction ID' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1751']/* 'Transaction Stack Size' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1751']/* 'Transaction Stack Size' */, 'size': 'l' })}
                     <div style={{ height: 2 }}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1752']/* 'Estimated Gas Consumed' */, 'number':estimated_gas_consumed, 'relativepower':'Gas'})}>
@@ -1904,18 +1910,18 @@ return data['data']
                         </div>
                     </div>
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p8), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p8), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p9, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p9, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p10), 'title':this.props.app_state.loc['1755'] /* 'Coinbase (Miner)' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p10), 'title':this.props.app_state.loc['1755'] /* 'Coinbase (Miner)' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div onClick={() => this.when_transactions_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1750']/* 'Transaction ID' */+': '+item.returnValues.p3, 'details': this.format_account_balance_figure(estimated_gas_consumed)+' gas', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1750']/* 'Transaction ID' */+': '+item.returnValues.p3, 'details': this.format_account_balance_figure(estimated_gas_consumed)+' gas', 'size': 'l' })}
                 </div>
             )
         }
@@ -1997,7 +2003,7 @@ return data['data']
             return (
                 <div>
                     <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
+                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2807']/* 'Time Units: ' */, 'number':number, 'relativepower':'units'})}>
@@ -2005,16 +2011,16 @@ return data['data']
                     </div>
 
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number), 'size': 'l' })}
                 </div>
             )
         }
@@ -2094,7 +2100,7 @@ return data['data']
             return (
                 <div>
                     <div onClick={() => this.when_cancellations_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
+                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'number':number, 'relativepower': 'units'})}>
@@ -2102,16 +2108,16 @@ return data['data']
                     </div>
 
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div onClick={() => this.when_cancellations_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number)+' units.', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number)+' units.', 'size': 'l' })}
                 </div>
             )
         }
@@ -2189,20 +2195,20 @@ return data['data']
         if (this.state.selected_entry_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_diff((Date.now() / 1000) - item.returnValues.p4), 'details': 'Entry Expiry', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_diff((Date.now() / 1000) - item.returnValues.p4), 'details': 'Entry Expiry', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details':this.props.app_state.loc['1744'] /* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details':this.props.app_state.loc['1744'] /* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details':this.props.app_state.loc['1759'] /* 'Contract ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details':this.props.app_state.loc['1759'] /* 'Contract ID' */, 'size': 'l' })}
                     {/* <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
@@ -2280,18 +2286,18 @@ return data['data']
         if (this.state.selected_exit_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 'l' })}
                     {/* <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
@@ -2372,20 +2378,20 @@ return data['data']
         if (this.state.selected_vote_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1760']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1760']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p2 , 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p2 , 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1762']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1762']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 'l' })}
                     {/* <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
@@ -2470,10 +2476,10 @@ return data['data']
             return (
                 <div>
                     <div onClick={() => this.when_swap_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 's' })}
+                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': action, 'details': 'Action', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': action, 'details': 'Action', 'size': 'l' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
@@ -2499,16 +2505,16 @@ return data['data']
                     {this.render_detail_item('3', {'title':this.format_exchange_ratio(updated_exchange_ratio_x, updated_exchange_ratio_y), 'details':this.props.app_state.loc['1768']/* 'Updated Exchange Ratios X:Y' */, 'size':'l'},)}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p9), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p9), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p10, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p10, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div onClick={() => this.when_swap_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.searched_account['e5']+item.returnValues.p1], 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.searched_account['e5']+item.returnValues.p1], 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
                     
                 </div>
             )
@@ -2609,7 +2615,7 @@ return data['data']
             return (
                 <div>
                     <div onClick={() => this.when_transfers_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's'})}
+                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 'l'})}
                     </div>
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
@@ -2617,16 +2623,16 @@ return data['data']
                     </div>
 
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 'l' })}
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div onClick={() => this.when_transfers_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
     
                 </div>
             )

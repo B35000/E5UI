@@ -180,6 +180,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'file_type_picker'){
+            return(
+                <div>
+                    {this.render_file_type_picker()}
+                </div>
+            )
+        }
     }
 
 
@@ -1371,6 +1378,7 @@ return data['data']
             var age = this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
             var name = data['name']
             var link = data['data'].startsWith('http') ? encodeURI(data['data']) : ''
+            var hash = data['hash']
             return(
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3055x']/* File Details. */}</h4>
@@ -1385,10 +1393,12 @@ return data['data']
 
                     {this.render_detail_item('0')}
                     {this.render_not_on_e5_message(ecid_obj)}
+                    {this.render_file_verified_message(ecid_obj)}
                     {/* {this.render_detail_item('4', {'text':link, 'textsize':'10px', 'font':this.props.app_state.font})} */}
                     {/* <div onClick={() => this.props.delete_file(ecid_obj)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r'] 'Forget File.' , 'action':''})}
                     </div> */}
+                    {this.render_verify_file_button(hash, ecid_obj)}
                 </div>
             )
         }
@@ -1406,6 +1416,42 @@ return data['data']
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055v']/* 'On Chain.' */, 'details':this.props.app_state.loc['3055w']/* 'A link to the file is permanently stored on chain.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_file_verified_message(ecid_obj){
+        var verified = this.props.app_state.verified_file_statuses[ecid_obj['full']]
+        if(verified != null){
+            if(verified == true){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ce']/* 'File Verified.' */, 'details':this.props.app_state.loc['3055cf']/* 'The file has not been tampered with.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055cg']/* 'File Not Verified.' */, 'details':this.props.app_state.loc['3055ch']/* 'The file might have been tampered with.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )
+            }
+        }
+    }
+
+    render_verify_file_button(hash, ecid_obj){
+        if(hash != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055by']/* 'Verify File' */, 'details':this.props.app_state.loc['3055bz']/* 'Verify that the entire file has not been tampered with.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.props.verify_file(ecid_obj)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055by']/* 'Verify File' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
                     <div style={{height: 10}}/>
                 </div>
             )
@@ -3122,7 +3168,6 @@ return data['data']
         }
     }
 
-
     render_invalid_stack_size_items(){
         var upload_limit = this.format_data_size(this.props.app_state.upload_object_size_limit)
         var stack_size = this.format_data_size(this.state.data['stack_size'])
@@ -3144,6 +3189,109 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    render_file_type_picker(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_file_type_picker_buttons()}
+                    {this.render_detail_item('0')}
+                    {this.render_file_type_picker_buttons2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_file_type_picker_buttons()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_file_type_picker_buttons2()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_file_type_picker_buttons()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_file_type_picker_buttons2()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_file_type_picker_buttons(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bo']/* 'Pick Image' */, 'details':this.props.app_state.loc['3055bp']/* 'Images with the .png .jpg and .jpeg extensions are supported as well as .gif files.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_file_type_selected('image')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bo']/* 'Pick Image' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bq']/* 'Pick Audio' */, 'details':this.props.app_state.loc['3055br']/* 'Audio files with the .mp3 extensions are supported.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_file_type_selected('audio')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bq']/* 'Pick Audio' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bs']/* 'Pick Video' */, 'details':this.props.app_state.loc['3055bt']/* 'Video files with the .mp4 extensions are supported.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_file_type_selected('video')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bs']/* 'Pick Video' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+            </div>
+        )
+    }
+
+    render_file_type_picker_buttons2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bu']/* 'Pick PDF' */, 'details':this.props.app_state.loc['3055bv']/* 'Pdf files with the .pdf extensions are supported.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_file_type_selected('pdf')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bu']/* 'Pick PDF' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bw']/* 'Pick Zip' */, 'details':this.props.app_state.loc['3055bx']/* 'Compressed files with the .zip extensions are supported.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_file_type_selected('zip')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bw']/* 'Pick Zip' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+            </div>
+        )
+    }
+
+    when_file_type_selected(type){
+        this.props.when_file_type_to_select_is_selected(type)
+    }
 
 
 

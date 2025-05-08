@@ -55,7 +55,7 @@ class NewMintActionPage extends Component {
         selected: 0, id:makeid(8), type:this.props.app_state.loc['946']/* 'buy-sell' */, entered_indexing_tags:[this.props.app_state.loc['947']/* 'mint' */, this.props.app_state.loc['948']/* 'dump' */, this.props.app_state.loc['883']/* 'token' */],
         new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
         recipient_id:'', amount:0, token_item: null, 
-        upper_bound:0, lower_bound:0, e5:this.props.app_state.selected_e5
+        upper_bound:0, lower_bound:0, e5:this.props.app_state.selected_e5, hide_number_picker:false
     };
 
 
@@ -66,6 +66,17 @@ class NewMintActionPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['949']/* 'mint-buy' */, this.props.app_state.loc['950']/* 'dump-sell' */], [1]
+            ],
+        };
+    }
+
+    get_exclusive_mint_action_page_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['949']/* 'mint-buy' */], [1]
             ],
         };
     }
@@ -95,6 +106,10 @@ class NewMintActionPage extends Component {
 
     when_new_mint_dump_page_tags_updated(tag_obj){
         this.setState({new_mint_dump_action_page_tags_object: tag_obj})
+    }
+
+    set_exclusive(){
+        this.setState({new_mint_dump_action_page_tags_object: this.get_exclusive_mint_action_page_tags_object()})
     }
 
 
@@ -173,7 +188,8 @@ class NewMintActionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
+                
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['953']/* 'Set the recipient of the mint/dump action' */, 'title':this.props.app_state.loc['954']/* 'Recipient of action' */})}
 
                 <div style={{height:10}}/>
@@ -181,17 +197,38 @@ class NewMintActionPage extends Component {
                 {this.load_account_suggestions()}
 
                 {this.render_detail_item('0')}
-                {this.set_buy_sell_header()}
-
-                <div style={{height:10}}/>
-                <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['961']/* 'Set Maximum' */, 'action':''})}
-                </div>
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                {this.show_amount_picker_if_enabled()}
 
             </div>
         )
+    }
+
+    show_amount_picker_if_enabled(){
+        if(this.state.hide_number_picker == false){
+            return(
+                <div>
+                    {this.set_buy_sell_header()}
+
+                    <div style={{height:10}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['961']/* 'Set Maximum' */, 'action':''})}
+                    </div>
+
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['958']/* 'Amount' */, 'number':this.state.amount, 'relativepower':this.props.app_state.loc['92']/* tokens */})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['958']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['92']/* tokens */, })}
+                        </div>
+                    </div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['996i']/* 'The amount you will receive may be less than this target depending on the state of the tokens demand.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
     }
 
     render_fees_and_price_data_if_buyable(){
@@ -250,7 +287,6 @@ class NewMintActionPage extends Component {
                     <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'number':this.get_token_sell_limit(), 'relativepower':token})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':token, })}
                     </div>
-
                 </div>
             </div>
         )
@@ -968,6 +1004,33 @@ class NewMintActionPage extends Component {
             })
         }
         this.setState({token_item: item, e5: item['e5']})
+
+        if(this.is_token_buy_exclusive(item)){
+            this.set_exclusive()
+        }
+        if(this.is_token_like_spend(item)){
+            var mint_limit = item['data'][1][0/* <0>default_exchange_amount_buy_limit, */]
+            this.setState({hide_number_picker: true, amount: mint_limit})
+        }
+    }
+
+    is_token_buy_exclusive(token_item){
+        var sell_limit = token_item['data'][1][11/* <11>default_exchange_amount_sell_limit */]
+        if(sell_limit == 0) return true
+        return false
+    }
+
+    is_token_like_spend(token_item){
+        var buy_data = token_item['data'][3]
+        var buy_amounts = token_item['data'][4]
+        var buy_token_exists = false
+        buy_data.forEach((item, index) => {
+            if(buy_data[index] != 0 && buy_amounts[index] != 0){
+                buy_token_exists = true
+            }
+        });
+
+        return buy_token_exists == false
     }
 
 

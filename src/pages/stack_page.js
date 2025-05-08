@@ -117,7 +117,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0.7*1024*1024), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'',
+        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'',
     };
 
     get_stack_page_tags_object(){
@@ -146,7 +146,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1261']/* 'settings-data' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593cr']/* 'gateway 🚧' */, ], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' *//* , this.props.app_state.loc['1593cr'] *//* 'gateway 🚧' */, ], [1],[1]
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'Censor 🚫' */], [1],[1]
@@ -11584,30 +11584,86 @@ return data['data']
 
 
     render_upload_files_ui(){
+
         return(
             <div>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1593bj']/* 'Upload a file to storage.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
-                
+                {this.render_message_if_no_storage_option_is_selected()}
+                {this.render_detail_item('0')}
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fk']/* 'Your files are encypted with your wallets private key. So you need to set your wallet to see them here.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
-
-                <div className="row" style={{width: '90%'}}>
-                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_file_data_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_file_data_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            {this.render_upload_button()}
-                        </div>
-                    </div>
-                </div>
                 {this.render_uploaded_files()}
             </div>
         )
     }
 
+    render_message_if_no_storage_option_is_selected(){
+        var max_size = this.get_upload_file_size_limit()
+        if(max_size == 0){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['1593gk']/* 'You need to select a storage option to use.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_open_options_picker_upload_button()}
+                </div>
+            )
+        }
+    }
+
     when_get_file_data_option_tags_object_updated(tag_obj){
         this.setState({get_file_data_option_tags_object: tag_obj})
+    }
+
+    constructor(props) {
+        super(props);
+        this.image_input = React.createRef()
+        this.audio_input = React.createRef()
+        this.video_input = React.createRef()
+        this.pdf_input = React.createRef()
+        this.zip_input = React.createRef()
+    }
+
+    render_open_options_picker_upload_button(){
+        return(
+            <div>
+                <input ref={this.image_input} style={{display: 'none'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+                
+                <input ref={this.audio_input} style={{display: 'none'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)} multiple/>
+
+                <input ref={this.video_input} style={{display: 'none'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)} multiple/>
+
+                <input ref={this.pdf_input} style={{display: 'none'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)} multiple/>
+
+                <input ref={this.zip_input} style={{display: 'none'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)} multiple/>
+
+                <div onClick={() => this.props.show_dialog_bottomsheet({}, 'file_type_picker')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gj']/* 'Upload File.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    call_input_function(type){
+        if(type == 'image'){
+            this.image_input.current?.click()
+        }
+        else if(type == 'audio'){
+            this.audio_input.current?.click()
+        }
+        else if(type == 'video'){
+            this.video_input.current?.click()
+        }
+        else if(type == 'pdf'){
+            this.pdf_input.current?.click()
+        }
+        else if(type == 'zip'){
+            this.zip_input.current?.click()
+        }
     }
 
     render_upload_button(){

@@ -251,8 +251,7 @@ class PostsDetailsSection extends Component {
                     {this.render_detail_item('3', item['reply_count'])}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', item['award_count'])}
-                    <div style={{height: 10}}/>
+                    {this.render_award_count_if_not_anonymous(item, object)}
 
                     {this.render_award_button(object)}
 
@@ -271,6 +270,16 @@ class PostsDetailsSection extends Component {
         )
     }
 
+
+    render_award_count_if_not_anonymous(item, object){
+        if(this.is_post_anonymous(object)) return;
+        return(
+            <div>
+                {this.render_detail_item('3', item['award_count'])}
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
 
     render_repost_post_ui(object){
         var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
@@ -300,6 +309,8 @@ class PostsDetailsSection extends Component {
         var author_id = object['event'].returnValues.p5
         var follow_id = object['e5'] + ':' + author_id
         var followed_accounts = this.props.app_state.followed_accounts
+
+        if(this.is_post_anonymous(object)) return;
 
         if(followed_accounts.includes(follow_id)){
             return(
@@ -719,6 +730,8 @@ class PostsDetailsSection extends Component {
         // var object = this.get_post_items()[this.props.selected_post_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
+        if(this.is_post_anonymous(object)) return;
+
         if(object['event'].returnValues.p5 != my_account){
             return(
                 <div>
@@ -1133,54 +1146,6 @@ class PostsDetailsSection extends Component {
                     </SwipeableList>
             </div>
         )
-
-        var focused_message = this.get_focused_message(object)
-
-        if(item == focused_message){
-            return(
-                <div>
-                    <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>Focus</div>,
-                            action: () => console.log()
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message(object)
-                            }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>Focus</div>,
-                            action: () => this.focus_message(item, object)
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message(object)
-                            }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
-
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                </div>
-            )
-        }
     }
 
     when_message_clicked = (event, item, focused_message) => {
@@ -1244,7 +1209,7 @@ class PostsDetailsSection extends Component {
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}> 
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.add_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                                 </div>
                                 <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
@@ -1329,7 +1294,7 @@ class PostsDetailsSection extends Component {
             <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
                 <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
                     <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.add_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                     </div>
                     <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                         <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
@@ -1341,6 +1306,11 @@ class PostsDetailsSection extends Component {
                 {this.get_then_render_my_awards(item, object)}
             </div>
         )
+    }
+
+    add_to_contacts(sender, item, object){
+        if(this.is_post_anonymous(object) && object['author'] == sender) return;
+        this.props.add_id_to_contacts(sender, item, object)
     }
 
     render_award_object_if_any(item){
