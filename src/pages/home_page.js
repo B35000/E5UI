@@ -1386,19 +1386,26 @@ class home_page extends Component {
         )
     }
 
-    when_tags_updated(tag_group){
+    when_tags_updated(tag_group, clicked_tag_name){
         var selected_page = ''
+        var previous_selected_option = ''
         if(this.state.page == '?'){
+            previous_selected_option = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
             this.setState({work_page_tags_object: tag_group})
             selected_page = tag_group['i'].active
             if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
         }
         else if(this.state.page == 'e'){
+            previous_selected_option = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
             this.setState({explore_page_tags_object: tag_group})
             selected_page = tag_group['i'].active
         }
         else{
             //wallet
+            previous_selected_option = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+
             this.setState({wallet_page_tags_object: tag_group})
             selected_page = 'w'
             if(tag_group['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
@@ -1407,12 +1414,15 @@ class home_page extends Component {
         }
 
         var id = this.get_page_id()
+
+        if(previous_selected_option == clicked_tag_name && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
+            this.props.show_dialog_bottomsheet({'previous_option': previous_selected_option, 'id':id, 'selected_page':selected_page}, 'home_page_view_options')
+            return;
+        }
+        
         var posts_to_load = []
         var searched_data = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
-        // if(searched_data != null){
-        //     posts_to_load = [searched_data].concat(posts_to_load)
-        // }
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
@@ -1422,12 +1432,24 @@ class home_page extends Component {
         }
         this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data)
 
-        // this.setState({ selected_job_post_item:null, selected_contract_item:null, selected_subscription_item:null, selected_post_item:null, selected_channel_item:null, selected_proposal_item:null, selected_storefront_item:null, selected_bag_item:null, selected_contractor_item: null})
-
         var me = this;
         setTimeout(function() {
             me.update_scroll_position()
         }, (1 * 10));
+    }
+
+    reload_section_data(id, selected_page){
+        var posts_to_load = []
+        var searched_data = this.state.page_search_data[id]
+        var searched_tags = this.state.tags_search_data[id]
+        if(searched_tags != null){
+            posts_to_load = posts_to_load.concat(searched_tags)
+        }
+        if(posts_to_load.length == 0 && (id == this.props.app_state.loc['1264k']/* 'audioport' */+this.props.app_state.loc['1264l']/* 'acquired' */ || id == this.props.app_state.loc['1264k']/* 'audioport' */+this.props.app_state.loc['1264m']/* 'playlists' */)){
+            //if viewing my collection or my playlists, load my albums first
+            posts_to_load = posts_to_load.concat(this.props.app_state.my_albums)
+        }
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data)
     }
 
     
@@ -1594,6 +1616,138 @@ class home_page extends Component {
             else if(selected_item == this.props.app_state.loc['1264ai']/* 'bills 🧾' */){
                 if(this.wallet_list_section.current != null){
                     this.wallet_list_section.current?.set_bills_list(scroll_pos)
+                }
+            }
+        }
+    }
+
+    update_scroll_position2(){
+        if(this.page_scroll_data == null) this.page_scroll_data = {}
+
+        if(this.state.page == '?'){
+            var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+            var id = this.state.work_page_tags_object['i'].active + selected_item
+
+            // var scroll_pos = this.page_scroll_data[id]
+            var scroll_pos = 0
+            if(scroll_pos == null) scroll_pos = 0;
+           
+            var selected_tag = this.state.work_page_tags_object['i'].active
+            if(selected_tag == 'e' || selected_tag == this.props.app_state.loc['1196']/* 'jobs' */){
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_jobs_list(scroll_pos, true)
+                }
+            } 
+            else if(selected_tag == this.props.app_state.loc['1197']/* 'contracts' */){
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_contract_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1199']/* 'proposals' */ ){
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_proposal_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1200']/* 'subscriptions' */ ){
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_subscription_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_mail_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_contractor_list(scroll_pos, true)
+                }
+            }
+        }
+        else if(this.state.page == 'e'){
+            var selected_item = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+            var id = this.state.explore_page_tags_object['i'].active + selected_item
+
+            // var scroll_pos = this.page_scroll_data[id]
+            var scroll_pos = 0
+            if(scroll_pos == null) scroll_pos = 0;
+            
+            var selected_tag = this.state.explore_page_tags_object['i'].active
+            if(selected_tag == this.props.app_state.loc['1212']/* 'E5s' */ || selected_tag == 'e'){
+                var selected_item = this.get_selected_item(this.state.explore_page_tags_object, selected_tag)
+                if(selected_item == this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */){
+                    if(this.explore_list_section.current != null){
+                        this.explore_list_section.current?.set_searched_account_list(scroll_pos, true)
+                    }
+                }else{
+                    if(this.explore_list_section.current != null){
+                        this.explore_list_section.current?.set_e5_list(scroll_pos, true)
+                    }
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1213']/* 'posts' */ ){
+               if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_post_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1214']/* 'channels' */ ){
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_channel_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1215']/* 'storefront' */){
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_storefront_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1216']/* 'bags' */){
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_bag_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1264k']/* 'audioport' */){
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_audio_list(scroll_pos, true)
+                }
+            }
+            else if(selected_tag == this.props.app_state.loc['1264p']/* 'videoport' */){
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_video_list(scroll_pos, true)
+                }
+            }
+        }
+        else{
+            //wallet
+            var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+            var id = selected_item
+
+            // var scroll_pos = this.page_scroll_data[id]
+            var scroll_pos = 0
+            if(scroll_pos == null) scroll_pos = 0;
+
+            if(selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_coin_list(scroll_pos, true)
+                }
+            }
+            else if(selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_ether_list(scroll_pos, true)
+                }
+            }
+            else if(selected_item == this.props.app_state.loc['1218']/* 'ends ☝️' */ ){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_end_list(scroll_pos, true)
+                }
+            }
+            else if(selected_item == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_spend_list(scroll_pos, true)
+                }
+            }
+            else if(selected_item == this.props.app_state.loc['1264ai']/* 'bills 🧾' */){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_bills_list(scroll_pos, true)
                 }
             }
         }

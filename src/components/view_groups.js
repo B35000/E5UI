@@ -316,15 +316,17 @@ class ViewGroups extends Component {
             /* {this.render_detail_item('5', {'text':'', 'action':''})} */
             var text = 'buy'
             var action = 'none'
+            var text_transform = 'capitalize'
             var prevent_default = false
             if(object_data!= null){
                 text = object_data['text'];
                 action = object_data['action']
                 prevent_default = object_data['prevent_default'] == null ? false : object_data['prevent_default']
+                text_transform = object_data['text_transform'] == null ? 'capitalize' : object_data['text_transform']
             }
             return(
                 <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <button style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize', 'font-family': this.props.font}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
+                    <button style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
                       {text}
                     </button>
                 </div>

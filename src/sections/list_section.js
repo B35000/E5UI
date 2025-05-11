@@ -522,84 +522,106 @@ class PostListSection extends Component {
         this.props.set_page_scroll(pos)
     };
 
-    set_jobs_list(pos){
-        this.jobs_list.current?.scrollTo(0, pos);
+    set_jobs_list(pos, smooth){
+        if(smooth == null || smooth == false){
+            this.jobs_list.current?.scrollTo(0, pos);
+        }else{
+            this.jobs_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        }
     }
 
-    set_contract_list(pos){
-        this.contract_list.current?.scrollTo(0, pos);
+    set_contract_list(pos, smooth){
+        if(smooth == null || smooth == false) this.contract_list.current?.scrollTo(0, pos);
+        else this.contract_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_contractor_list(pos){
-        this.contractor_list.current?.scrollTo(0, pos);
+    set_contractor_list(pos, smooth){
+        if(smooth == null || smooth == false) this.contractor_list.current?.scrollTo(0, pos);
+        else this.contractor_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_proposal_list(pos){
-        this.proposal_list.current?.scrollTo(0, pos);
+    set_proposal_list(pos, smooth){
+        if(smooth == null || smooth == false) this.proposal_list.current?.scrollTo(0, pos);
+        else this.proposal_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_subscription_list(pos){
-        this.subscription_list.current?.scrollTo(0, pos);
+    set_subscription_list(pos, smooth){
+        if(smooth == null || smooth == false) this.subscription_list.current?.scrollTo(0, pos);
+        else this.subscription_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_mail_list(pos){
-        this.mail_list.current?.scrollTo(0, pos);
-    }
-
-
-
-    set_e5_list(pos){
-        this.e5_list.current?.scrollTo(0, pos);
-    }
-
-    set_searched_account_list(pos){
-        this.searched_account_list.current?.scrollTo(0, pos)
-    }
-
-    set_post_list(pos){
-        this.post_list.current?.scrollTo(0, pos);
-    }
-
-    set_channel_list(pos){
-        this.channel_list.current?.scrollTo(0, pos);
-    }
-
-    set_storefront_list(pos){
-        this.storefront_list.current?.scrollTo(0, pos);
-    }
-
-    set_bag_list(pos){
-        this.bag_list.current?.scrollTo(0, pos);
-    }
-
-    set_audio_list(pos){
-        this.audio_list.current?.scrollTo(0, pos)
-    }
-
-    set_video_list(pos){
-        this.video_list.current?.scrollTo(0, pos)
+    set_mail_list(pos, smooth){
+        if(smooth == null || smooth == false) this.mail_list.current?.scrollTo(0, pos);
+        else this.mail_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
 
 
-    set_coin_list(pos){
-        this.coin_list.current?.scrollTo(0, pos)
+    set_e5_list(pos, smooth){
+        if(smooth == null || smooth == false) this.e5_list.current?.scrollTo(0, pos);
+        else this.e5_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_ether_list(pos){
-        this.ether_list.current?.scrollTo(0, pos);
+    set_searched_account_list(pos, smooth){
+        if(smooth == null || smooth == false) this.searched_account_list.current?.scrollTo(0, pos);
+        else this.searched_account_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_end_list(pos){
-        this.end_list.current?.scrollTo(0, pos);
+    set_post_list(pos, smooth){
+        if(smooth == null || smooth == false) this.post_list.current?.scrollTo(0, pos);
+        else this.post_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_spend_list(pos){
-        this.spend_list.current?.scrollTo(0, pos);
+    set_channel_list(pos, smooth){
+        if(smooth == null || smooth == false) this.channel_list.current?.scrollTo(0, pos);
+        else this.channel_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
-    set_bills_list(pos){
-        this.bill_list.current?.scrollTo(0, pos);
+    set_storefront_list(pos, smooth){
+        if(smooth == null || smooth == false) this.storefront_list.current?.scrollTo(0, pos);
+        else this.storefront_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_bag_list(pos, smooth){
+        if(smooth == null || smooth == false) this.bag_list.current?.scrollTo(0, pos);
+        else this.bag_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_audio_list(pos, smooth){
+        if(smooth == null || smooth == false) this.audio_list.current?.scrollTo(0, pos);
+        else this.audio_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_video_list(pos, smooth){
+        if(smooth == null || smooth == false) this.video_list.current?.scrollTo(0, pos);
+        else this.video_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+
+
+    set_coin_list(pos, smooth){
+        if(smooth == null || smooth == false) this.coin_list.current?.scrollTo(0, pos)
+        else this.coin_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_ether_list(pos, smooth){
+        if(smooth == null || smooth == false) this.ether_list.current?.scrollTo(0, pos);
+        else this.ether_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_end_list(pos, smooth){
+        if(smooth == null || smooth == false) this.end_list.current?.scrollTo(0, pos);
+        else this.end_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_spend_list(pos, smooth){
+        if(smooth == null || smooth == false) this.spend_list.current?.scrollTo(0, pos);
+        else this.spend_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_bills_list(pos, smooth){
+        if(smooth == null || smooth == false) this.bill_list.current?.scrollTo(0, pos);
+        else this.bill_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
 

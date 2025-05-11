@@ -13872,7 +13872,7 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)}
         
         />
       </div>
@@ -13926,6 +13926,7 @@ return data['data']
       'confirm_pay_bill':350,
       'invalid_stack_size_dialog_box':350,
       'file_type_picker':450,
+      'home_page_view_options': 300,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -14428,6 +14429,17 @@ return data['data']
     var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return null
     return data['hash']
+  }
+
+  when_scroll_to_top_section(data){
+    this.open_dialog_bottomsheet()
+    this.homepage.current?.update_scroll_position2()
+  }
+
+  when_reload_section(data){
+    this.open_dialog_bottomsheet()
+    this.prompt_top_notification(this.getLocale()['3055cm']/* 'Reloading in progress...' */, 4000)
+    this.homepage.current?.reload_section_data(data['id'], data['selected_page'])
   }
 
 
@@ -17421,6 +17433,9 @@ return data['data']
     this.get_section_tags_data_e5_timestamp = 0
     this.my_contacts_timestamp = 0
     this.my_collection_timestamp = 0
+    this.my_followed_accounts_collection_timestamp = 0
+    this.my_loaded_plays_collection_timestamp = 0
+    this.my_playlists_timestamp = 0
     
     var me = this
     setTimeout(function() {
@@ -19573,85 +19588,87 @@ return data['data']
     if(root_data_events.length > 0){
       var latest_event = root_data_events[root_data_events.length - 1];
       var root_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
-      const allowed_countries = root_data.data['allowed_countries']
-      const logo_title = this.get_selected_item(root_data.get_logo_title_tags_object, 'e')
-      const selected_dark_emblem_country = root_data.selected_dark_emblem_country
-      const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
-      const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
-      const beacon_chain_url = root_data.data['beacon_chain_url']/* 'http://localhost:4000' */
-      console.log('apppage', 'resetting beacon_chain_url to', beacon_chain_url)
-      const e5s = this.update_e5_images(root_data.data['e5s'])
+      if(root_data != null){
+        const allowed_countries = root_data.data['allowed_countries']
+        const logo_title = this.get_selected_item(root_data.get_logo_title_tags_object, 'e')
+        const selected_dark_emblem_country = root_data.selected_dark_emblem_country
+        const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
+        const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
+        const beacon_chain_url = root_data.data['beacon_chain_url']/* 'http://localhost:4000' */
+        console.log('apppage', 'resetting beacon_chain_url to', beacon_chain_url)
+        const e5s = this.update_e5_images(root_data.data['e5s'])
 
-      const ether_data = root_data.data['ether_data']
-      const all_locales = root_data.data['all_locales']
-      const dialer_addresses = root_data.data['dialer_addresses']
-      const theme_images = root_data.data['theme_images']
-      const line_setting = this.get_selected_item(root_data.get_line_setting_object, 'e') == 'enabled' ? true : false
-      const get_available_for_all_tags_object = root_data.get_available_for_all_tags_object == null ? 'enabled': this.get_selected_item(root_data.get_available_for_all_tags_object, 'e')
+        const ether_data = root_data.data['ether_data']
+        const all_locales = root_data.data['all_locales']
+        const dialer_addresses = root_data.data['dialer_addresses']
+        const theme_images = root_data.data['theme_images']
+        const line_setting = this.get_selected_item(root_data.get_line_setting_object, 'e') == 'enabled' ? true : false
+        const get_available_for_all_tags_object = root_data.get_available_for_all_tags_object == null ? 'enabled': this.get_selected_item(root_data.get_available_for_all_tags_object, 'e')
 
-      const recommended_videopost_threshold = root_data.data['recommended_videopost_threshold'] || 10
-      const recommended_video_threshold = root_data.data['recommended_video_threshold'] || 20
-      const recommended_audiopost_threshold = root_data.data['recommended_audiopost_threshold'] || 10
-      const recommended_audio_threshold = root_data.data['recommended_audio_threshold'] || 20
+        const recommended_videopost_threshold = root_data.data['recommended_videopost_threshold'] || 10
+        const recommended_video_threshold = root_data.data['recommended_video_threshold'] || 20
+        const recommended_audiopost_threshold = root_data.data['recommended_audiopost_threshold'] || 10
+        const recommended_audio_threshold = root_data.data['recommended_audio_threshold'] || 20
 
-      const theme_images_enabled = root_data.get_custom_background_images_object == null ? false: (this.get_selected_item(root_data.get_custom_background_images_object, 'e') == 'enabled' ? true: false)
+        const theme_images_enabled = root_data.get_custom_background_images_object == null ? false: (this.get_selected_item(root_data.get_custom_background_images_object, 'e') == 'enabled' ? true: false)
 
-      const country_moderators = root_data.data['country_moderators'] == null ? {} : root_data.data['country_moderators']
-      const my_states_moderators = country_moderators[this.state.device_country] == null ? [] : country_moderators[this.state.device_country]
-      const default_moderators = country_moderators['all'] == null ? [] : country_moderators['all']
-      const my_moderators = default_moderators.concat(my_states_moderators)
+        const country_moderators = root_data.data['country_moderators'] == null ? {} : root_data.data['country_moderators']
+        const my_states_moderators = country_moderators[this.state.device_country] == null ? [] : country_moderators[this.state.device_country]
+        const default_moderators = country_moderators['all'] == null ? [] : country_moderators['all']
+        const my_moderators = default_moderators.concat(my_states_moderators)
 
-      const manual_beacon_node_disabled = root_data.get_manual_disable_beacon_node_override_object == null ? 'e': this.get_selected_item(root_data.get_manual_disable_beacon_node_override_object, 'e')/* 'e' */
+        const manual_beacon_node_disabled = root_data.get_manual_disable_beacon_node_override_object == null ? 'e': this.get_selected_item(root_data.get_manual_disable_beacon_node_override_object, 'e')/* 'e' */
 
-      const my_language = this.get_language() == null ? 'en' : this.get_language()
-      if(my_language != 'en' && all_locales[my_language] != null){
-        // this.prompt_top_notification('language: '+my_language, 5000)
-        const language_obj = await this.load_json_object_from_url(all_locales[my_language])
-        const language_override = root_data.override_object
-        if(language_override[my_language] != null){
-          for (const string_text_key in language_override[my_language]) {
-            if (language_override[my_language].hasOwnProperty(string_text_key)) {
-              language_obj[string_text_key] = language_override[my_language][string_text_key]
+        const my_language = this.get_language() == null ? 'en' : this.get_language()
+        if(my_language != 'en' && all_locales[my_language] != null){
+          // this.prompt_top_notification('language: '+my_language, 5000)
+          const language_obj = await this.load_json_object_from_url(all_locales[my_language])
+          const language_override = root_data.override_object
+          if(language_override[my_language] != null){
+            for (const string_text_key in language_override[my_language]) {
+              if (language_override[my_language].hasOwnProperty(string_text_key)) {
+                language_obj[string_text_key] = language_override[my_language][string_text_key]
+              }
             }
           }
+          var clone = structuredClone(all_locales)
+          clone[my_language] = language_obj
+          // this.setState({loc: language_obj, all_locales: clone})
         }
-        var clone = structuredClone(all_locales)
-        clone[my_language] = language_obj
-        // this.setState({loc: language_obj, all_locales: clone})
+
+        console.log('apppage', 'theme', get_theme_stage_tags_object)
+        console.log('apppage', 'mymods', my_moderators)
+
+        this.setState({
+          allowed_countries: allowed_countries, 
+          logo_title: logo_title, 
+          selected_dark_emblem_country: selected_dark_emblem_country, 
+          get_theme_stage_tags_object: get_theme_stage_tags_object, 
+          get_content_channeling_tags_object: get_content_channeling_tags_object, 
+          beacon_chain_url: beacon_chain_url, 
+          e5s: e5s,
+          ether_data: ether_data, 
+          dialer_addresses: dialer_addresses, 
+          theme_images: theme_images, 
+          line_setting: line_setting, 
+          get_available_for_all_tags_object: get_available_for_all_tags_object, 
+          recommended_videopost_threshold: recommended_videopost_threshold, 
+          recommended_video_threshold: recommended_video_threshold, 
+          recommended_audiopost_threshold: recommended_audiopost_threshold, 
+          recommended_audio_threshold: recommended_audio_threshold,
+          theme_images_enabled: theme_images_enabled,
+          followed_accounts: my_moderators,
+          country_moderators: country_moderators,
+          manual_beacon_node_disabled: manual_beacon_node_disabled
+        })
+        primary_following = primary_following.concat(my_moderators)
+
+        localStorage.setItem("logo_title", logo_title);
+        localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
+        localStorage.setItem("is_country_allowed", allowed_countries)
+
+        this.set_stack_page_data()
       }
-
-      console.log('apppage', 'theme', get_theme_stage_tags_object)
-      console.log('apppage', 'mymods', my_moderators)
-
-      this.setState({
-        allowed_countries: allowed_countries, 
-        logo_title: logo_title, 
-        selected_dark_emblem_country: selected_dark_emblem_country, 
-        get_theme_stage_tags_object: get_theme_stage_tags_object, 
-        get_content_channeling_tags_object: get_content_channeling_tags_object, 
-        beacon_chain_url: beacon_chain_url, 
-        e5s: e5s,
-        ether_data: ether_data, 
-        dialer_addresses: dialer_addresses, 
-        theme_images: theme_images, 
-        line_setting: line_setting, 
-        get_available_for_all_tags_object: get_available_for_all_tags_object, 
-        recommended_videopost_threshold: recommended_videopost_threshold, 
-        recommended_video_threshold: recommended_video_threshold, 
-        recommended_audiopost_threshold: recommended_audiopost_threshold, 
-        recommended_audio_threshold: recommended_audio_threshold,
-        theme_images_enabled: theme_images_enabled,
-        followed_accounts: my_moderators,
-        country_moderators: country_moderators,
-        manual_beacon_node_disabled: manual_beacon_node_disabled
-      })
-      primary_following = primary_following.concat(my_moderators)
-
-      localStorage.setItem("logo_title", logo_title);
-      localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
-      localStorage.setItem("is_country_allowed", allowed_countries)
-
-      this.set_stack_page_data()
     }
   }
 
@@ -20766,13 +20783,21 @@ return data['data']
       var latest_event = playlists_event_data[playlists_event_data.length - 1];
       var playlists_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var loaded_playlists = playlists_data['playlists']
-      
-      var clone = structuredClone(this.state.my_playlists)
-      if(this.my_playlist_account != address_account && this.my_playlist_account != null){
-        clone = []
+      var timestamp = playlists_data['time']
+
+      if(this.my_playlists_timestamp == null){
+        this.my_playlists_timestamp = 0
       }
-      var new_playlist = this.combine_playlists(loaded_playlists, clone)
-      this.setState({my_playlists: new_playlist})
+      
+      if(parseInt(this.my_playlists_timestamp) < parseInt(timestamp)){
+        var clone = structuredClone(this.state.my_playlists)
+        if(this.my_playlist_account != address_account && this.my_playlist_account != null){
+          clone = []
+        }
+        var new_playlist = this.combine_playlists(loaded_playlists, clone)
+        this.setState({my_playlists: new_playlist})
+        this.my_playlists_timestamp = timestamp
+      }
     }
 
     this.my_playlist_account = address_account
@@ -20801,25 +20826,33 @@ return data['data']
       var plays_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       if(plays_data != null){
         var loaded_plays = plays_data['plays']
+        var timestamp = plays_data['time']
 
-        var clone = structuredClone(this.state.song_plays)
-        if(this.my_plays_account != account && this.my_plays_account != 1 && this.my_plays_account != null){
-          clone = {}
+        if(this.my_loaded_plays_collection_timestamp == null){
+          this.my_loaded_plays_collection_timestamp = 0
         }
-        for (const song_id in loaded_plays) {
-          if (loaded_plays.hasOwnProperty(song_id)) {
-            var count_array = loaded_plays[song_id]
-            if(clone[song_id] == null){
-              clone[song_id] = []
-            }
-            count_array.forEach(time_element => {
-              if(!clone[song_id].includes(time_element)){
-                clone[song_id].push(time_element)
-              }
-            });
+
+        if(parseInt(this.my_loaded_plays_collection_timestamp) < parseInt(timestamp)){
+          this.my_loaded_plays_collection_timestamp = timestamp
+          var clone = structuredClone(this.state.song_plays)
+          if(this.my_plays_account != account && this.my_plays_account != 1 && this.my_plays_account != null){
+            clone = {}
           }
+          for (const song_id in loaded_plays) {
+            if (loaded_plays.hasOwnProperty(song_id)) {
+              var count_array = loaded_plays[song_id]
+              if(clone[song_id] == null){
+                clone[song_id] = []
+              }
+              count_array.forEach(time_element => {
+                if(!clone[song_id].includes(time_element)){
+                  clone[song_id].push(time_element)
+                }
+              });
+            }
+          }
+          this.setState({song_plays: clone})
         }
-        this.setState({song_plays: clone})
       }
     }
 
@@ -20884,8 +20917,13 @@ return data['data']
       var latest_event = followed_accounts_data[followed_accounts_data.length - 1];
       var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var loaded_followed_accounts = followed_account_data['followed_accounts']
+      var timestamp = followed_account_data['time']
 
-      if(loaded_followed_accounts != null){
+      if(this.my_followed_accounts_collection_timestamp == null){
+        this.my_followed_accounts_collection_timestamp = 0
+      }
+
+      if(loaded_followed_accounts != null && parseInt(this.my_followed_accounts_collection_timestamp) < parseInt(timestamp)){
         var clone = []
         for(var i=0; i<loaded_followed_accounts.length; i++){
           var account = loaded_followed_accounts[i]
@@ -20896,6 +20934,7 @@ return data['data']
         if(this.has_my_followed_accounts_loaded[e5] != account){
           this.setState({followed_accounts: clone})
           this.has_my_followed_accounts_loaded[e5] = account
+          this.my_followed_accounts_collection_timestamp = timestamp
         }
       }
     }
@@ -26155,6 +26194,7 @@ return data['data']
 
 
   load_and_notify_flash = async () => {
+    if(this.state.syncronizing_progress < 10) return;
     this.load_and_notify_user_of_incoming_payments()
     this.load_and_notify_user_of_incoming_mail()
     this.load_and_notify_user_of_incoming_messages()
@@ -28069,7 +28109,6 @@ return data['data']
     // }
     if(set_storage_option == this.getLocale()['1593cw']/* 'nitro 🛰️' */){
       //upload to nitro storage
-      console.log('set_storage_option', 'running store_data_in_nitro')
       var cid = await this.store_data_in_nitro(data, unencrypt_image, default_nitro_option, tags)
       if(cid == '' || cid == null) return ''
       if(unappend_identifier == true) return cid

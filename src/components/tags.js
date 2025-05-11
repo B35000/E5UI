@@ -305,7 +305,7 @@ class tags extends Component {
             } 
         }
       
-        this.props.when_tags_updated(clone);
+        this.props.when_tags_updated(clone, clicked_tag_name);
 
         var me = this;
         setTimeout(function() {

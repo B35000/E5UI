@@ -11584,7 +11584,6 @@ return data['data']
 
 
     render_upload_files_ui(){
-
         return(
             <div>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1593bj']/* 'Upload a file to storage.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
@@ -12764,7 +12763,7 @@ return data['data']
                 <div style={{height:10}}/>
 
                 <div onClick={() => this.open_create_itransfer_ui()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gi']/* 'Create or Verify iTransfer' */, 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gi']/* 'Create or Verify iTransfer' */, 'action':'', 'text_transform': 'none'})}
                 </div>
 
                 <div style={{height:20}}/>

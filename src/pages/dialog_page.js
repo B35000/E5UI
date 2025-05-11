@@ -187,6 +187,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'home_page_view_options'){
+            return(
+                <div>
+                    {this.render_home_page_view_options()}
+                </div>
+            )
+        }
     }
 
 
@@ -3293,6 +3300,83 @@ return data['data']
         this.props.when_file_type_to_select_is_selected(type)
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    render_home_page_view_options(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_home_page_view_items()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_home_page_view_items()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_home_page_view_items()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        } 
+    }
+
+    render_home_page_view_items(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ck']/* 'Scroll to Top.' */, 'details':this.props.app_state.loc['3055cl']/* 'Scroll to the top of the section.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_scroll_to_top_section_selected()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ck']/* 'Scroll to Top' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ci']/* 'Reload Section.' */, 'details':this.props.app_state.loc['3055cj']/* 'Reload the section and scroll to the top.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_reload_section_selected()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ci']/* 'Reload Section.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+
+            </div>
+        )
+    }
+
+    when_scroll_to_top_section_selected(){
+        this.props.when_scroll_to_top_section(this.state.data)
+    }
+
+    when_reload_section_selected(){
+        this.props.when_reload_section(this.state.data)
+    }
 
 
 
