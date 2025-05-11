@@ -200,9 +200,11 @@ class tags extends Component {
         if(this.props.locked != null && this.props.locked == true) return;
         var page_data = this.props.page_tags_object;
         var active = page_data['i'].active;
+        var current_selected_tag = this.get_selected_item(page_data, active)
         var clone = {};
         var clicked_tag_name = page_data[active][1/* tag_options */][pos];
         var is_moving_down_option = false
+        var is_selecting_same_tag = current_selected_tag == clicked_tag_name
         for (var key in page_data) {
             if (page_data.hasOwnProperty(key)) {
                 clone[key] = page_data[key];
@@ -305,7 +307,7 @@ class tags extends Component {
             } 
         }
       
-        this.props.when_tags_updated(clone, clicked_tag_name);
+        this.props.when_tags_updated(clone, clicked_tag_name, is_selecting_same_tag);
 
         var me = this;
         setTimeout(function() {
@@ -318,6 +320,12 @@ class tags extends Component {
                 me.myRef.current?.scrollTo(position, 0);
             }
         }, (1 * 10));
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
     }
 
 

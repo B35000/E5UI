@@ -1386,25 +1386,25 @@ class home_page extends Component {
         )
     }
 
-    when_tags_updated(tag_group, clicked_tag_name){
+    when_tags_updated(tag_group, clicked_tag_name, is_selecting_same_tag){
         var selected_page = ''
-        var previous_selected_option = ''
+        // var previous_selected_option = false
         if(this.state.page == '?'){
-            previous_selected_option = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+            // previous_selected_option = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active) == clicked_tag_name
 
             this.setState({work_page_tags_object: tag_group})
             selected_page = tag_group['i'].active
             if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
         }
         else if(this.state.page == 'e'){
-            previous_selected_option = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+            // previous_selected_option = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active) == clicked_tag_name
 
             this.setState({explore_page_tags_object: tag_group})
             selected_page = tag_group['i'].active
         }
         else{
             //wallet
-            previous_selected_option = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+            // previous_selected_option = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active) == clicked_tag_name
 
             this.setState({wallet_page_tags_object: tag_group})
             selected_page = 'w'
@@ -1414,9 +1414,10 @@ class home_page extends Component {
         }
 
         var id = this.get_page_id()
+        console.log('homepage', 'is_selecting_same_tag', is_selecting_same_tag, clicked_tag_name)
 
-        if(previous_selected_option == clicked_tag_name && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
-            this.props.show_dialog_bottomsheet({'previous_option': previous_selected_option, 'id':id, 'selected_page':selected_page}, 'home_page_view_options')
+        if(is_selecting_same_tag == true && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
+            this.props.show_dialog_bottomsheet({'id':id, 'selected_page':selected_page}, 'home_page_view_options')
             return;
         }
         
