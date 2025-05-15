@@ -856,7 +856,7 @@ class App extends Component {
 
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
 
-    verified_file_statuses:{},
+    verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{},
   };
 
   get_static_assets(){
@@ -990,7 +990,7 @@ class App extends Component {
         first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:thundercore_logo/* 'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i' */, iteration:40_000, url:0	, active:false, e5_img:null
       },
       'E165':{
-        web3:['https://rpc.tomochain.com'],
+        web3:['https://viction.drpc.org'],
         token:'VIC',
         e5_address:'',/* 0xd3B4c06c7514a72284fCe95DCAD911c8EaD9Be3F */
         first_block:73021490, end_image:'https://nftstorage.link/ipfs/bafkreifgogs44o7da3acci3uc2oqv5oxmsmegw437w2zif655ifxtkkr7a', spend_image:'https://nftstorage.link/ipfs/bafkreiht6b53kzxpwomvq7kmrqseav3rwxgrbeovw6zlqhxc4tccylav4u', ether_image:viction_logo/* 'https://nftstorage.link/ipfs/bafkreiaovtind2gl7fguqisxsdlqp2agxr7xe2t3dehietmhygwcx3dcny' */, iteration:40_000, url:0, active:false, e5_img:null
@@ -6818,7 +6818,7 @@ return data['data']
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)}
       
       />
     )
@@ -7356,6 +7356,14 @@ return data['data']
     }, (1 * 1000));
   }
 
+  set_contextual_transfer_identifier(id){
+    this.setState({tracked_contextual_transfer_identifier: id})
+    var me = this;
+    setTimeout(function() {
+      this.update_contextual_transfer_account_data()
+    }, (1 * 1000));
+    
+  }
 
 
 
@@ -22354,7 +22362,7 @@ return data['data']
       // }
 
       if(this.homepage.current?.state.selected_subscription_item == created_subscriptions[i]+e5){
-        const previous_obj = this.state.created_subscriptions[e5].find(e => e['id'] === created_subscriptions[i])
+        const previous_obj = this.state.created_subscriptions[e5].find(e => e['e5_id'] == created_subscriptions[i]+e5)
         if(previous_obj != null){
           subscription_object['moderators'] = previous_obj['moderators'] 
           subscription_object['paid_accounts'] = previous_obj['paid_accounts']
@@ -22701,7 +22709,7 @@ return data['data']
       //   contract_obj['hidden'] = false
       // }
       if(this.homepage.current?.state.selected_contract_item == created_contracts[i]+e5){
-        const previous_obj = this.state.created_contracts[e5].find(e => e['id'] === created_contracts[i])
+        const previous_obj = this.state.created_contracts[e5].find(e => e['e5_id'] == created_contracts[i]+e5)
         if(previous_obj != null){
           contract_obj['end_balance'] = previous_obj['end_balance']
           contract_obj['spend_balance'] = previous_obj['spend_balance']
@@ -23002,7 +23010,7 @@ return data['data']
       var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':0/* end_balance */, 'spend_balance':0/* spend_balance */, 'consensus_data':[0,0,0]/* consensus_data[i] */, 'modify_target_type':0/* proposal_modify_target_type */, 'account_vote':0/* senders_vote_in_proposal[0] */, 'archive_accounts':[]/* archive_participants */, 'e5':e5, 'timestamp':parseInt(event.returnValues.p5), 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5, 'pos':created_proposal_object_data.length, 'loaded_extra':false}
 
       if(this.homepage.current?.state.selected_proposal_item == my_proposal_ids[i]+e5){
-        const previous_obj = this.state.my_proposals[e5].find(e => e['id'] === my_proposal_ids[i])
+        const previous_obj = this.state.my_proposals[e5].find(e => e['e5_id'] == my_proposal_ids[i]+e5)
         if(previous_obj != null){
           obj['archive_accounts'] = previous_obj['archive_accounts']
           obj['loaded_extra'] = previous_obj['loaded_extra']
@@ -23312,7 +23320,7 @@ return data['data']
 
       if(this.homepage.current?.state.selected_end_item == created_tokens[i]+e5 || this.homepage.current?.state.selected_spend_item == created_tokens[i]+e5){
         // the token is being viewed
-        const previous_obj = this.state.created_tokens[e5].find(e => e['id'] === created_tokens[i])
+        const previous_obj = this.state.created_tokens[e5].find(e => e['e5_id'] == created_tokens[i]+e5)
         if(previous_obj != null){
           token_obj['exchanges_balances'] = previous_obj['exchanges_balances']
           token_obj['moderators'] = previous_obj['moderators']
@@ -26210,6 +26218,7 @@ return data['data']
     this.load_and_notify_user_of_incoming_bills()
 
     this.update_watched_account_data()
+    this.update_contextual_transfer_account_data()
   }
 
   load_and_notify_user_of_incoming_payments = async () => {
@@ -31488,6 +31497,64 @@ return data['data']
 
 
 
+
+  update_contextual_transfer_account_data(){
+    var tracked_contextual_transfer_identifier = this.state.tracked_contextual_transfer_identifier
+    if(tracked_contextual_transfer_identifier != ''){
+      this.get_contextual_transfer_data(tracked_contextual_transfer_identifier, this.state.selected_e5)
+    }
+  }
+
+  get_contextual_transfer_data = async (identifier, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    const recipient = this.state.user_account_id[e5]
+    const used_identifier = this.hash_data(identifier)
+
+    var current_block_number = await web3.eth.getBlockNumber()
+    var difference = this.state.e5s[e5].notification_blocks == null ? 10_000 : this.state.e5s[e5].notification_blocks
+    var start = current_block_number == 0 ? 0 : current_block_number - difference
+    if(start < 0) start = 0;
+    
+    const itransfer_event_params = await H52contractInstance.getPastEvents('e5', { filter: { p4/* metadata */: used_identifier, p2/* awward_receiver */: recipient, p3/* awward_context */: 1/* iTransfer */ }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+    
+    const transfer_event_params = await H52contractInstance.getPastEvents('e1', { filter: { p3/* receiver */: recipient }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+    var grouped_transfers_by_block = {}
+    transfer_event_params.forEach(event => {
+      if(grouped_transfers_by_block[event.returnValues.p6/* block_number */] == null){
+        grouped_transfers_by_block[event.returnValues.p6/* block_number */] = []
+      }
+      grouped_transfers_by_block[event.returnValues.p6/* block_number */].push(event)
+    });
+
+    var iTransfer_objects = {}
+    itransfer_event_params.forEach(event => {
+      var block = event.returnValues.p6/* block_number */
+      var transfers_for_block = grouped_transfers_by_block[block]
+      if(iTransfer_objects[block] == null){
+        iTransfer_objects[block] = {}
+      }
+      transfers_for_block.forEach(transfer => {
+        var transfer_receiver = transfer.returnValues.p3/* receiver */
+        var transfer_sender = transfer.returnValues.p2/* sender */
+        if(transfer_receiver == recipient){
+          if(iTransfer_objects[block][transfer_sender] == null){
+            iTransfer_objects[block][transfer_sender] = []
+          }
+          iTransfer_objects[block][transfer_sender].push(transfer)
+        }
+      });
+    });
+
+
+    var clone = structuredClone(this.state.stack_contextual_transfer_data)
+    clone[identifier] = iTransfer_objects
+    this.setState({stack_contextual_transfer_data: clone})
+  }
+
   update_watched_account_data(){
     var watched_account = this.state.watched_account_id
     if(watched_account != ''){
@@ -31496,12 +31563,6 @@ return data['data']
   }
 
   get_watched_account_data = async (id, e5) => {
-    // var contract_token_event_data = await this.get_token_event_data(id, e5);
-    // var watched_account_data_clone = structuredClone(this.state.watched_account_data)
-    // var pointer = e5+id
-    // watched_account_data_clone[pointer] = contract_token_event_data
-    // this.setState({watched_account_data: watched_account_data_clone})
-
     var all_unsorted_events = {}
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
@@ -31525,10 +31586,11 @@ return data['data']
         });
       }
     }
-
     this.setState({watched_account_data: previous_notifs.reverse()})
-
   }
+
+
+
 
 
 
@@ -31940,7 +32002,6 @@ return data['data']
     }
     return {cids, options}
   }
-
 
   hash_data(data){
     const web3 = new Web3(this.get_web3_url_from_e5('E25'));

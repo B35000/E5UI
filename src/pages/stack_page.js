@@ -117,7 +117,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'',
+        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'',
     };
 
     get_stack_page_tags_object(){
@@ -12725,6 +12725,7 @@ return data['data']
             return(
                 <div>
                     {this.render_contextual_transfers_data()}
+                    {this.load_itransfer_search_results()}
                 </div>
             )
         }
@@ -12735,7 +12736,7 @@ return data['data']
                         {this.render_contextual_transfers_data()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.load_itransfer_search_results()}
                     </div>
                 </div>
                 
@@ -12748,7 +12749,7 @@ return data['data']
                         {this.render_contextual_transfers_data()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.load_itransfer_search_results()}
                     </div>
                 </div>
                 
@@ -12766,8 +12767,17 @@ return data['data']
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gi']/* 'Create or Verify iTransfer' */, 'action':'', 'text_transform': 'none'})}
                 </div>
 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593gl']/* 'Track Recent iTransfers.' */, 'details':this.props.app_state.loc['1593gm']/* 'Track the most recent iTransfers that have been made to your account with a specific identifier.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_search_identifier_input_field_changed.bind(this)} text={this.state.search_identifier} theme={this.props.theme}/>
+                
+                <div style={{height:15}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.perform_verify_itransfer_search()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3068k']/* Perform Search.' */, 'action':''})}
+                </div>
                 <div style={{height:20}}/>
-                {this.render_empty_views(2)}
             </div>
         )
     }
@@ -12776,7 +12786,124 @@ return data['data']
         this.props.show_view_contextual_transfer_bottomsheet('')
     }
 
+    when_search_identifier_input_field_changed(text){
+        this.setState({search_identifier: text})
+    }
 
+    perform_verify_itransfer_search(){
+        var identifier = this.state.search_identifier.trim()
+        
+        if(identifier == ''){
+            this.props.notify(this.props.app_state.loc['3068o']/* 'You need to set an identifier first.' */, 6000)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(identifier) || /\p{Emoji}/u.test(identifier)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['1593gn']/* 'Listening for current iTransfers..' */, 4000)
+            this.props.set_contextual_transfer_identifier(identifier)
+        }
+    }
+
+    load_itransfer_search_results(){
+        var items = [].concat(this.load_itransfer_result_items())
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            {this.render_itransfer_item(item)}
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    render_itransfer_item(item){
+        var alias = this.get_senders_name_or_you2(item['account'], item['e5'])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%'},)}
+                <div style={{height: 3}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 3}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'margin':'0px 0px 0px 5px'}}>
+                        {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+                    </div>
+
+                    {item['transfers'].map((transfer, index) => (
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
+                        </div>
+                    ))}
+                </div>
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    get_senders_name_or_you2(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? this.props.app_state.loc['1591']/* Unknown */ : bucket[sender])
+        return alias
+    }
+
+    load_itransfer_result_items(){
+        var pos = this.state.pos
+        if(pos == -1) return []
+
+        var key = this.props.app_state.tracked_contextual_transfer_identifier
+        var object = this.props.app_state.stack_contextual_transfer_data[key]
+        if(object == null) return []
+
+        var blocks = Object.keys(object)
+        var object_array = []
+        blocks.forEach(block => {
+            var sender_accounts = Object.keys(object[block])
+            sender_accounts.forEach(account => {
+                var transfers = this.process_transfers(object[block][account])
+                var time = object[block][account][0].returnValues.p5/* timestamp */
+                object_array.push({'account':account, 'block':block, 'transfers':transfers, 'time':time, 'e5':selected_search['e5']})
+            });
+        });
+
+        return this.sortByAttributeDescending(object_array, 'time')
+    }
+
+    process_transfers(transfers){
+        var obj = {}
+        transfers.forEach(transfer => {
+            var exchange = transfer.returnValues.p1
+            var amount = transfer.returnValues.p4/* amount */
+            var depth = transfer.returnValues.p7/* depth */
+            if(obj[exchange] == null){
+                obj[exchange] = bigInt('0')
+            }
+            var actual_amount = this.get_actual_number(amount, depth)
+            obj[exchange] = bigInt(obj[exchange]).plus(bigInt(actual_amount))
+        });
+
+        var exchange_transfers = Object.keys(obj)
+        var final_transfers = []
+        exchange_transfers.forEach(key => {
+            final_transfers.push({'amount':obj[key], 'exchange':key})
+        });
+
+        return final_transfers
+    }
 
 
 
