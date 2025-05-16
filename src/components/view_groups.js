@@ -600,6 +600,49 @@ class ViewGroups extends Component {
                 </div>
             )
         }
+        else if(item_id=='14'){/* coin item */
+            var border_radius = '7px';
+            var title = 'Author';
+            var details = 'e25885';
+            var size = 'l';
+            var img_size = 45
+            if(object_data != null){
+                title = object_data['title']
+                details = object_data['details']
+                size = object_data['size']
+            }
+            var font_size = ['12px', '10px', 16];
+            if(size == 'l'){
+                font_size = ['17px', '13px', 19];
+            }
+            if(title == ''){
+                title = '...'
+            }
+            if(details == ''){
+                details = '...'
+            }
+            var img = E5EmptyIcon;
+            if(object_data != null){
+                img = object_data['image'];
+            }
+            if(object_data != null && object_data['img_size'] != null){
+                img_size = object_data['img_size']
+            }
+            return (
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
+                        <div style={{'margin':'0px 0px 0px 0px'}}>
+                            <img alt="" src={img} style={{height:img_size ,width:img_size, 'border-radius':'6px'}} />
+                        </div>
+                        <div style={{'margin':'0px 0px 0px 5px'}}>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                            
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
     }
 
     split_text(text){

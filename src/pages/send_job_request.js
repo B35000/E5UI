@@ -967,7 +967,7 @@ return data['data']
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                            {this.render_detail_item('3', item['label'])}
+                            {this.render_detail_item('14', item['label'])}
                         </li>
                     ))}
                 </ul>
@@ -977,8 +977,8 @@ return data['data']
 
    get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['1361']/* 'Account 3' */, 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['1362']/* 'Account 5' */, 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.state.e5, 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.state.e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         var sorted_token_exchange_data = []
@@ -999,7 +999,7 @@ return data['data']
         }
 
         for (let i = 0; i < sorted_token_exchange_data.length; i++) {
-            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['ipfs'].entered_symbol_text, 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s', 'image':(sorted_token_exchange_data[i]['ipfs'].token_image == null ? (sorted_token_exchange_data[i]['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img']:this.props.app_state.static_assets['spend_img']) : sorted_token_exchange_data[i]['ipfs'].token_image), 'img_size':30}})
         }
 
         return items;

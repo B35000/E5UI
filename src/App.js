@@ -31,6 +31,9 @@ import video_label from './assets/default_music_icon.png'
 import letter from './assets/letter.png'
 import e5_empty_icon from './assets/e5empty_icon.png'
 import e5_empty_icon3 from './assets/e5empty_icon3.png'
+import EndImg from './assets/end_token_icon.png';
+import SpendImg from './assets/spend_token_icon.png';
+
 import alert_icon from './assets/alert_icon.png'
 import add_icon from './assets/add_icon.png'
 import background from './assets/background.png'
@@ -888,6 +891,8 @@ class App extends Component {
       'zoom_out_icon':zoom_out_icon,
       'video_label':video_label,
       'zip_file':zip_file,
+      'end_img':EndImg,
+      'spend_img':SpendImg
     }
   }
 
