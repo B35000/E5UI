@@ -2772,6 +2772,8 @@ return data['data']
             return(
                 <div>
                     {this.render_render_cofirm_pay_bill_items()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2782,7 +2784,7 @@ return data['data']
                         {this.render_render_cofirm_pay_bill_items()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_my_balances_bit_if_medium_or_large()}
                     </div>
                 </div>
                 
@@ -2795,7 +2797,7 @@ return data['data']
                         {this.render_render_cofirm_pay_bill_items()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_my_balances_bit_if_medium_or_large()}
                     </div>
                 </div>
                 
@@ -2811,9 +2813,35 @@ return data['data']
                 {this.render_bills_objects()}
                 <div style={{height:10}}/>
                 {this.render_bills_list_part()}
+                {this.render_my_balances_bit_if_small()}
                 <div onClick={()=> this.confirm_bill_payments()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3071i']/* 'Confirm Payments.' */, 'action':''},)}
                 </div>
+            </div>
+        )
+    }
+
+    render_my_balances_bit_if_small(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055cn']/* Your balance. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                    {this.render_my_balances()}
+                    <div style={{height:20}}/>
+                </div>
+            )
+        }
+    }
+
+    render_my_balances_bit_if_medium_or_large(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['3055cn']/* Your balance. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                {this.render_my_balances()}
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -2937,8 +2965,36 @@ return data['data']
                     </ul>
                 </div>
             )
+        } 
+    }
+
+    render_my_balances(){
+        var items = [].concat(this.get_all_bill_transactions())
+        if(items.length > 0){
+            var buy_amounts = []
+            var bt = []
+            var token_e5s = []
+            for(var i=0; i<items.length; i++){
+                var token_id = items[i]['exchange']
+                var token_balance = this.props.app_state.created_token_object_mapping[items[i]['e5']][token_id]
+                token_balance = token_balance == null ? 0 : token_balance['balance']
+                buy_amounts.push(token_balance)
+                bt.push(token_id)
+                token_e5s.push(items[i]['e5'])
+            }
+
+            return(
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
+                        {bt.map((item, index) => (
+                            <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':buy_amounts[index], 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[token_e5s[index]+item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[token_e5s[index]+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>  
+            )
         }
-        
     }
 
     get_all_bill_transactions(){
@@ -3123,9 +3179,6 @@ return data['data']
     get_amounts_to_be_paid(amount, count){
         return bigInt(amount).multiply(bigInt(count))
     }
-
-
-
 
 
 

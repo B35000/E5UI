@@ -262,8 +262,7 @@ class EnterContractPage extends Component {
                         </li>
                     ))}
                 </ul>
-            </div>
-            
+            </div>  
         )
     }
 

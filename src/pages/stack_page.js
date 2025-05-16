@@ -1769,11 +1769,13 @@ class StackPage extends Component {
     get_total_wallet_value_in_usd(){
         var total_value = 0.0
         this.props.app_state.e5s['data'].forEach(e5 => {
-            var symbol = this.props.app_state.e5s[e5].token
-            var ether_price = this.props.app_state.asset_price_data[symbol] == null ? 0 : this.props.app_state.asset_price_data[symbol]['price']
-            var ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : (this.props.app_state.account_balance[e5] / 10**18)
-            if(ether_price != null){
-                total_value += (ether_balance * ether_price)
+            if(e5 != 'E35'){
+                var symbol = this.props.app_state.e5s[e5].token
+                var ether_price = this.props.app_state.asset_price_data[symbol] == null ? 0 : this.props.app_state.asset_price_data[symbol]['price']
+                var ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : (this.props.app_state.account_balance[e5] / 10**18)
+                if(ether_price != null){
+                    total_value += (ether_balance * ether_price)
+                }
             }
         });
         var coins = this.props.app_state.coins

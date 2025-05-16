@@ -971,13 +971,13 @@ class App extends Component {
         first_block:68418980, end_image:'https://nftstorage.link/ipfs/bafkreia4rnmraomzhv5ofx4bzp4l2chi4toderqyqkvct6q2vzpxgdtpai', spend_image:'https://nftstorage.link/ipfs/bafkreidxjjqn3muqycclxfddeqzaeboepw6yu3f424a3rwhiedt4tlga5a', ether_image:xdc_logo/* 'https://nftstorage.link/ipfs/bafkreidextl3x3rq4c26vxqwh7q5jjpv6bgcmutad257qyabe6zslxpevi' */, iteration:40_000, url:0, active:false, e5_img:null
       },
       'E125':{
-        web3:['https://polygon.llamarpc.com'],
+        web3:['https://polygon-bor-rpc.publicnode.com'],
         token:'POL',
         e5_address:'',/* 0x3D610010C43fC1Af89D8d040ED530398817A8E94 */
         first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:polygon_logo/* 'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty' */, iteration:40_000, url:0, active:false, e5_img:null
       },
       'E135':{
-        web3:['https://binance.llamarpc.com'],
+        web3:['https://bsc-rpc.publicnode.com'],
         token:'BNB',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
         first_block:33723227, end_image:'https://nftstorage.link/ipfs/bafkreif4lbsuzzhu23piwbdv3p47ha46g6egmoh7pddrex6f3tbl76ycii', spend_image:'https://nftstorage.link/ipfs/bafkreigvlzjjujid2f3n7zzfw4jzmwowaq2mvd35d32rauedberpnjl6vq', ether_image:binance_logo/* 'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e' */, iteration:40_000, url:0, active:false, e5_img:null
@@ -1023,25 +1023,25 @@ class App extends Component {
       },
 
       'E185':{
-        web3:['https://rpc.ankr.com/eth'],
+        web3:['https://ethereum-rpc.publicnode.com'],
         token:'ETH',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:ethereum_logo/* 'https://nftstorage.link/ipfs/bafkreifhlwgbspcfrn2kbu25nevksegskhbns7aesdr6kwy6ikqct7lp7e' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E195':{
-        web3:['https://optimism.llamarpc.com'],
+        web3:['https://optimism-rpc.publicnode.com'],
         token:'OETH',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:optimism_logo/* 'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E205':{
-        web3:['https://base.llamarpc.com'],
+        web3:['https://base-rpc.publicnode.com'],
         token:'BETH',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:base_logo/* 'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E215':{
-        web3:['https://arbitrum.llamarpc.com'],
+        web3:['https://arbitrum-one-rpc.publicnode.com'],
         token:'AETH',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
@@ -6631,8 +6631,9 @@ return data['data']
   create_and_broadcast_solana_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_sol_wallet(seed)
-    var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
-    const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    // var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
+    // const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    const connection = new Connection('https://solana-rpc.publicnode.com')
 
     const recipient = new PublicKey(recipient_address);
     const transaction = new Transaction().add(
@@ -18660,8 +18661,9 @@ return data['data']
     const wallet = await this.generate_sol_wallet(seed)
     const address = wallet.address
 
-    var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
-    const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    // var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
+    // const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    const connection = new Connection('https://solana-rpc.publicnode.com')
     const balance = await this.get_solana_address_balance(address, connection)
     
     var fee_info = {'fee':await this.get_sol_transaction_fee(), 'type':'fixed', 'per':'transaction'}
@@ -18701,8 +18703,9 @@ return data['data']
     // var clone = structuredClone(this.state.coin_data)
     var address = clone['SOL']['address']
     
-    var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
-    const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    // var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
+    // const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
+    const connection = new Connection('https://solana-rpc.publicnode.com')
     const balance = await this.get_solana_address_balance(address, connection)
 
     clone['SOL']['balance'] = balance;
