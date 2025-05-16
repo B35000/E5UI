@@ -12734,6 +12734,7 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_contextual_transfers_data()}
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.load_itransfer_search_results()}
@@ -12747,6 +12748,7 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_contextual_transfers_data()}
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.load_itransfer_search_results()}
@@ -12759,7 +12761,7 @@ return data['data']
 
     render_contextual_transfers_data(){
         return(
-            <div>
+            <div style={{'padding': '0px 0px 0px 10px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593gg']/* 'Create or Verify an iTransfer.' */, 'details':this.props.app_state.loc['1593gh']/* 'Create or verify a set of transfers that have been made with an attached identifier.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -12771,11 +12773,15 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593gl']/* 'Track Recent iTransfers.' */, 'details':this.props.app_state.loc['1593gm']/* 'Track the most recent iTransfers that have been made to your account with a specific identifier.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_search_identifier_input_field_changed.bind(this)} text={this.state.search_identifier} theme={this.props.theme}/>
-                
-                <div style={{height:15}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.perform_verify_itransfer_search()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3068k']/* Perform Search.' */, 'action':''})}
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_search_identifier_input_field_changed.bind(this)} text={this.state.search_identifier} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.perform_verify_itransfer_search()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
                 </div>
                 <div style={{height:20}}/>
             </div>
@@ -12862,10 +12868,8 @@ return data['data']
     }
 
     load_itransfer_result_items(){
-        var pos = this.state.pos
-        if(pos == -1) return []
-
         var key = this.props.app_state.tracked_contextual_transfer_identifier
+        var selected_e5 = this.props.app_state.tracked_contextual_transfer_e5
         var object = this.props.app_state.stack_contextual_transfer_data[key]
         if(object == null) return []
 
@@ -12876,7 +12880,7 @@ return data['data']
             sender_accounts.forEach(account => {
                 var transfers = this.process_transfers(object[block][account])
                 var time = object[block][account][0].returnValues.p5/* timestamp */
-                object_array.push({'account':account, 'block':block, 'transfers':transfers, 'time':time, 'e5':selected_search['e5']})
+                object_array.push({'account':account, 'block':block, 'transfers':transfers, 'time':time, 'e5':selected_e5})
             });
         });
 

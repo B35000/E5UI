@@ -856,7 +856,7 @@ class App extends Component {
 
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
 
-    verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{},
+    verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
   };
 
   get_static_assets(){
@@ -7357,7 +7357,7 @@ return data['data']
   }
 
   set_contextual_transfer_identifier(id){
-    this.setState({tracked_contextual_transfer_identifier: id})
+    this.setState({tracked_contextual_transfer_identifier: id, tracked_contextual_transfer_e5: this.state.selected_e5})
     var me = this;
     setTimeout(function() {
       this.update_contextual_transfer_account_data()
