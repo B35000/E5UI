@@ -243,7 +243,7 @@ class SuccessfulSend extends Component {
         }else if(e5 == 'E135'){
             return `https://bscscan.com/tx/${hash}`
         }else if(e5 == 'E145'){
-            return null
+            return `https://seitrace.com/tx/${hash}?chain=pacific-1`
         }else if(e5 == 'E155'){
             return `https://explorer-mainnet.thundercore.com/tx/${hash}`
         }else if(e5 == 'E165'){
@@ -631,6 +631,9 @@ class SuccessfulSend extends Component {
         }
         else if(item['symbol'] == 'SUI'){
             return `https://suiscan.xyz/mainnet/tx/${hash}`
+        }
+        else if(item['symbol'] == 'TIA'){
+            return `https://celenium.io/tx/${hash}`
         }
     }
 

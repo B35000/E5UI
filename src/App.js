@@ -415,6 +415,9 @@ import ecredits_logo from './assets/ecredits.png'
 import eluv_logo from './assets/eluv.png'
 import etho_logo from './assets/etho.png'
 import oneledger_logo from './assets/oneledger.png'
+import sei_logo from './assets/sei.png'
+
+import celestia_logo from './assets/celestia.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -427,6 +430,7 @@ import E5_E35_image from './assets/end35.png'
 /* blockchain stuff */
 import { mnemonicToSeedSync, mnemonicToSeed, entropyToMnemonic } from 'bip39';
 import { Buffer } from 'buffer';
+import { bech32 } from "bech32";
 import * as bitcoin from 'bitcoinjs-lib';
 import * as StellarSdk from "@stellar/stellar-sdk";
 import { TronWeb } from 'tronweb';
@@ -860,6 +864,7 @@ class App extends Component {
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
 
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
+    e5_ether_override:'e'
   };
 
   get_static_assets(){
@@ -897,7 +902,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -983,16 +988,16 @@ class App extends Component {
         first_block:33723227, end_image:'https://nftstorage.link/ipfs/bafkreif4lbsuzzhu23piwbdv3p47ha46g6egmoh7pddrex6f3tbl76ycii', spend_image:'https://nftstorage.link/ipfs/bafkreigvlzjjujid2f3n7zzfw4jzmwowaq2mvd35d32rauedberpnjl6vq', ether_image:binance_logo/* 'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e' */, iteration:40_000, url:0, active:false, e5_img:null
       },
       'E145':{
-        web3:['https://nodeapi.energi.network'],
-        token:'NRG',
-        e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:1955370, end_image:'https://nftstorage.link/ipfs/bafkreicgkrcoqradelnzgdnm3tm7x7atblgskl6uxkywv2klp7ghrv6ndu', spend_image:'https://nftstorage.link/ipfs/bafkreif35wji3e3mcuu5y67mclzb3zwzneckvqo5n4dj7ekbigjsnd2g24', ether_image:energi_logo/* 'https://nftstorage.link/ipfs/bafkreiaoiipzjii67rl6jujy25qbwiauu43ifcrhofw625x4cm34hjmz5e' */, iteration:10_000, url:1	, active:false, e5_img:null
+        web3:['https://evm-rpc.sei-apis.com'],
+        token:'SEI',
+        e5_address:'',/*  */
+        first_block:0, end_image:null, spend_image:null, ether_image:sei_logo, iteration:10_000, url:0	, active:false, e5_img:null
       },
       'E155':{
         web3:['https://mainnet-rpc.thundercore.io'],
         token:'TT',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:thundercore_logo/* 'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i' */, iteration:40_000, url:0	, active:false, e5_img:null
+        first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:thundercore_logo/* 'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i' */, iteration:40_000, url:0, active:false, e5_img:null
       },
       'E165':{
         web3:['https://viction.drpc.org'],
@@ -1014,7 +1019,7 @@ class App extends Component {
 
 
 
-
+      
       'E5':{
         web3:[''],
         token:'',
@@ -1406,6 +1411,12 @@ class App extends Component {
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreic3mo4xe7dfftguut7apsufbc4mzlnwxqpupmyo46f6adzd5nd65u.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
       },
+      'E825':{
+        web3:['https://nodeapi.energi.network'],
+        token:'NRG',
+        e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
+        first_block:1955370, end_image:'https://nftstorage.link/ipfs/bafkreicgkrcoqradelnzgdnm3tm7x7atblgskl6uxkywv2klp7ghrv6ndu', spend_image:'https://nftstorage.link/ipfs/bafkreif35wji3e3mcuu5y67mclzb3zwzneckvqo5n4dj7ekbigjsnd2g24', ether_image:energi_logo/* 'https://nftstorage.link/ipfs/bafkreiaoiipzjii67rl6jujy25qbwiauu43ifcrhofw625x4cm34hjmz5e' */, iteration:10_000, url:0	, active:false, e5_img:null
+      },
     }
   }
 
@@ -1431,7 +1442,7 @@ class App extends Component {
       this.get_token('POL', 'Polygon', 'E125'),
       this.get_token('BNB', 'Binance S.C.', 'E135'),
       this.get_token('TT', 'ThunderCore', 'E155'),
-      this.get_token('NRG', 'Energi', 'E145', true),
+      this.get_token('SEI', 'Sei', 'E145'),
       this.get_token('VIC', 'Viction', 'E165'),
       this.get_token('EVMOS', 'Evmos EVM', 'E175'),
 
@@ -1499,6 +1510,7 @@ class App extends Component {
       this.get_token('KAIA', 'KAIA', 'E795'),
       this.get_token('S', 'Sonic', 'E805'),
       this.get_token('BERA', 'Berachain', 'E815'),
+      this.get_token('NRG', 'Energi', 'E825', true),
     ]
 
     return list
@@ -1550,6 +1562,8 @@ class App extends Component {
         'AR': this.get_coin_info('AR', 'Arweave', 'https://bafkreidyyzdm2fp7bz6wwv7eyyxpzll4djv4pal74x4wcfheyh6qiqd75a.ipfs.w3s.link/', 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
 
         'SUI': this.get_coin_info('SUI', 'Sui', 'https://bafkreigttgkydkngvfgv2uflanuizda2us3o3qfslfnppmrdxyxwgogfii.ipfs.w3s.link/', 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~'),
+
+        'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2),
     }
     return list
   }
@@ -5865,6 +5879,9 @@ return data['data']
     else if(item['symbol'] == 'SUI'){
       return this.validate_sui_address(address)
     }
+    else if(item['symbol'] == 'TIA'){
+      return this.validate_celestia_address(address)
+    }
 
 
     return true;
@@ -5972,7 +5989,16 @@ return data['data']
   }
 
   validate_cosmos_address(address){
-    return address.startsWith('cosmos')
+    // return address.startsWith('cosmos')
+    try {
+      const decoded = bech32.decode(address);
+      return (
+        decoded.prefix === "cosmos" &&
+        decoded.words.length > 0
+      );
+    } catch (err) {
+      return false;
+    }
   }
 
   validate_filecoin_address(address){
@@ -6023,6 +6049,19 @@ return data['data']
   validate_sui_address(address){
     const suiAddressRegex = /^0x[a-fA-F0-9]{64}$/;
     return suiAddressRegex.test(address);
+  }
+
+  validate_celestia_address(address){
+    // return address.startsWith('celestia')
+    try {
+      const decoded = bech32.decode(address);
+      return (
+        decoded.prefix === "celestia" &&
+        decoded.words.length > 0
+      );
+    } catch (err) {
+      return false;
+    }
   }
 
 
@@ -6775,6 +6814,27 @@ return data['data']
     }
   }
 
+  create_and_broadcast_tia_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_tia_wallet(seed)
+    const rpc = "https://celestia-rpc.publicnode.com:443"
+
+    var send_amount = transfer_amount
+    var gasfee = fee / 40_000
+    const signingClient = await SigningStargateClient.connectWithSigner(rpc, wallet.wall)
+    var amount_obj = [{ denom: "utia", amount: send_amount.toString() }]
+    var fee_obj = { amount: [{ denom: "utia", amount: gasfee.toString() }], gas: "200000", }
+
+    try{
+      const result = await signingClient.sendTokens(wallet.celestiaAddress, recipient_address, amount_obj, fee_obj, memo_text)
+      const hash = result['transactionHash']
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
 
 
 
@@ -6830,7 +6890,6 @@ return data['data']
     )
   }
 
-
   open_stack_bottomsheet(){
     if(this.state.stack_bottomsheet == true){
       //closing
@@ -6853,7 +6912,6 @@ return data['data']
       }, (1 * 200));
     }
   }
-
 
   when_device_theme_changed(theme){
     this.setState({theme: this.get_theme_data(theme), theme_image:''})
@@ -17590,6 +17648,7 @@ return data['data']
     // console.log('coin', 'stacks...')
     // console.log('coin', this.state.coin_data)
     coin_data['SUI'] = await this.get_and_set_sui_wallet_info(seed)
+    coin_data['TIA'] = await this.get_and_set_celestia_wallet_info(seed)
 
     //should be last
     coin_data['AR'] = await this.get_and_set_arweave_wallet_info(seed)
@@ -17646,8 +17705,8 @@ return data['data']
     if(coin == 'APT' || should_update_all) coin_data = await this.update_aptos_balance(coin_data);
     if(coin == 'ADA' || should_update_all) coin_data = await this.update_ada_balance(coin_data);
     if(coin == 'STX' || should_update_all) coin_data = await this.update_stacks_balance(coin_data);
-    if(coin == 'SUI' || should_update_all) coin_data = await this.update_sui_balance(coin_data)
-    
+    if(coin == 'SUI' || should_update_all) coin_data = await this.update_sui_balance(coin_data);
+    if(coin == 'TIA' || should_update_all) coin_data = await this.update_celestia_balance(coin_data);
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -19087,6 +19146,62 @@ return data['data']
 
 
 
+
+  get_and_set_celestia_wallet_info = async (seed) => {
+    const wallet = await this.generate_tia_wallet(seed)
+    const address = wallet.celestiaAddress
+    const rpc = "https://celestia-rpc.publicnode.com:443"
+    const client = await StargateClient.connect(rpc)
+    const balance = await this.get_tia_address_balance(address, client)
+    client.disconnect()
+
+    var fee_info = {'fee':await this.get_tia_transaction_fee(), 'type':'variable', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
+    return data
+  }
+
+  generate_tia_wallet = async (mnemonic) => {
+    const hash = sha256(Buffer.from(mnemonic));
+    const privateKey = await Secp256k1.makeKeypair(hash)
+    const wallet = await DirectSecp256k1Wallet.fromKey(privateKey.privkey, "celestia")
+    const address = (await wallet.getAccounts())[0].address
+
+    return {keys: privateKey, celestiaAddress:address, wall: wallet}
+  }
+
+  get_tia_address_balance = async (address, client) => {
+    const balance = await client.getAllBalances(address)
+    var bal = 0;
+    balance.forEach(item => {
+      if(item['denom'] == "utia"){
+        bal = parseInt(item['amount'])
+      }
+    });
+    return bal
+  }
+
+  get_tia_transaction_fee = async () => {
+    return (0.002052 * 1_000_000)
+  }
+
+  update_celestia_balance = async (clone) => {
+    var address = clone['TIA']['address']
+
+    const rpc = "https://celestia-rpc.publicnode.com:443"
+    const client = await StargateClient.connect(rpc)
+    const balance = await this.get_tia_address_balance(address, client)
+    client.disconnect()
+
+    clone['TIA']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
   
 
   //unused
@@ -19611,10 +19726,11 @@ return data['data']
         const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
         const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
         const beacon_chain_url = root_data.data['beacon_chain_url']/* 'http://localhost:4000' */
-        console.log('apppage', 'resetting beacon_chain_url to', beacon_chain_url)
-        const e5s = this.update_e5_images(root_data.data['e5s'])
+        // console.log('apppage', 'resetting beacon_chain_url to', beacon_chain_url)
+        const e5_ether_override = root_data.get_ether_e5_softwrite_object == null ? 'e' : this.get_selected_item(root_data.get_ether_e5_softwrite_object, 'e');
+        const e5s = e5_ether_override == 'e' ? this.state.e5s : this.update_e5_images(root_data.data['e5s'])
 
-        const ether_data = root_data.data['ether_data']
+        const ether_data = e5_ether_override == 'e' ? this.get_ether_data() : root_data.data['ether_data']
         const all_locales = root_data.data['all_locales']
         const dialer_addresses = root_data.data['dialer_addresses']
         const theme_images = root_data.data['theme_images']
@@ -19675,7 +19791,8 @@ return data['data']
           theme_images_enabled: theme_images_enabled,
           followed_accounts: my_moderators,
           country_moderators: country_moderators,
-          manual_beacon_node_disabled: manual_beacon_node_disabled
+          manual_beacon_node_disabled: manual_beacon_node_disabled,
+          e5_ether_override: e5_ether_override,
         })
         primary_following = primary_following.concat(my_moderators)
 

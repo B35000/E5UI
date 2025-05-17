@@ -250,6 +250,10 @@ class FullVideoPage extends Component {
                     </div>
                 )
             }
+            var tracks = []
+            subtitles.forEach(subtitle_track => {
+                tracks.push({kind: 'subtitles', src: this.get_subtitle_file(subtitle_track), srcLang: subtitle_track['subtitle_language_object']['code']})
+            });
             return(
                 <div style={{}}>
                     <video ref={this.video_player} width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
