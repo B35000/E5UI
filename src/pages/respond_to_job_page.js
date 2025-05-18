@@ -502,7 +502,7 @@ class RespondToJobPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -523,7 +523,7 @@ class RespondToJobPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1332a']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1332b']/* 'You can also include extra information for the job your applying for.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications (eg. email or phone number)' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications...' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
 
             </div>
         )

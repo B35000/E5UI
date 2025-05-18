@@ -249,26 +249,18 @@ class CancelSubscriptionPage extends Component {
             this.props.notify(this.props.app_state.loc['828f']/* 'You cant cancel that much. Theres a minimum number of time units thats supposed to remain.' */, 7700)
         }
         else{
-            var clone = structuredClone(this.state)
-            // clone.e5 = this.props.app_state.selected_e5
-            this.props.add_cancel_subscription_to_stack(clone)
+            this.props.add_cancel_subscription_to_stack(this.state)
             this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
     is_minimum_cancellable_amount_left(){
-        var subscription_config = this.state.subscription_item['data'][1]
-        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
-
         var time_units_picked = this.state.time_units
+        var subscription_config = this.state.subscription_item['data'][1]
         var minimum_cancellable_balance_amount = subscription_config[4]
-        var current_time_unit_balance = bigInt(this.state.subscription_item['payment']).divide(bigInt(time_unit))
-
-        var remaining_time_units_after_cancellation = bigInt(current_time_unit_balance).minus(bigInt(time_units_picked))
-        if(bigInt(remaining_time_units_after_cancellation).greater(bigInt(minimum_cancellable_balance_amount))){
+        if(bigInt(minimum_cancellable_balance_amount).greater(bigInt(time_units_picked))){
             return false
         }
-
         return true
     }
 

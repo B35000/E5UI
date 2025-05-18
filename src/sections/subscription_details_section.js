@@ -1676,11 +1676,17 @@ class SubscriptionDetailsSection extends Component {
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2682']/* 'Search Subscription Payment' */, 'size': 'l' })}
                     </div>
                     <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
-                        <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2682']/* 'Enter ID or Alias...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
-                        </div>
-                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search(object)}>
-                            {this.render_detail_item('5',{'text':'Search','action':''})}
+                        <div className="row" style={{width:'100%'}}>
+                            <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2682']/* 'Enter ID or Alias...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                            </div>
+                            <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                                <div onClick={()=>this.perform_search(object)}>
+                                    <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                        <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     {this.render_search_results_if_any(object)}
