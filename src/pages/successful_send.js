@@ -376,6 +376,8 @@ class SuccessfulSend extends Component {
             return `https://sonicscan.org/tx/${hash}`
         }else if(e5 == 'E815'){
             return `https://berascan.com/tx/${hash}`
+        }else if(e5 == 'E835'){
+            return `https://www.hyperscan.com/tx/${hash}`
         }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link

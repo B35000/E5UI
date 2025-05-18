@@ -416,6 +416,7 @@ import eluv_logo from './assets/eluv.png'
 import etho_logo from './assets/etho.png'
 import oneledger_logo from './assets/oneledger.png'
 import sei_logo from './assets/sei.png'
+import hyperliquid_logo from './assets/hyperliquid.png'
 
 import celestia_logo from './assets/celestia.png'
 
@@ -665,7 +666,7 @@ function getOS() {
   let os = null;
 
   if (macosPlatforms.indexOf(platform) !== -1) {
-    os = 'Mac OS';
+    os = 'macOS';
   } else if (iosPlatforms.indexOf(platform) !== -1) {
     os = 'iOS';
   } else if (windowsPlatforms.indexOf(platform) !== -1) {
@@ -902,7 +903,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1417,6 +1418,13 @@ class App extends Component {
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
         first_block:1955370, end_image:'https://nftstorage.link/ipfs/bafkreicgkrcoqradelnzgdnm3tm7x7atblgskl6uxkywv2klp7ghrv6ndu', spend_image:'https://nftstorage.link/ipfs/bafkreif35wji3e3mcuu5y67mclzb3zwzneckvqo5n4dj7ekbigjsnd2g24', ether_image:energi_logo/* 'https://nftstorage.link/ipfs/bafkreiaoiipzjii67rl6jujy25qbwiauu43ifcrhofw625x4cm34hjmz5e' */, iteration:10_000, url:0	, active:false, e5_img:null
       },
+      'E835':{
+        web3:['https://rpc.hyperliquid.xyz/evm'],
+        token:'HYPE',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:hyperliquid_logo, iteration:10_000, url:0	, active:false, e5_img:null
+      },
+      
     }
   }
 
@@ -1511,6 +1519,7 @@ class App extends Component {
       this.get_token('S', 'Sonic', 'E805'),
       this.get_token('BERA', 'Berachain', 'E815'),
       this.get_token('NRG', 'Energi', 'E825', true),
+      this.get_token('HYPE', 'HyperEVM', 'E835'),
     ]
 
     return list
