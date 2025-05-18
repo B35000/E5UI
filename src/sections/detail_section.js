@@ -210,7 +210,7 @@ class PostDetailSection extends Component {
             else if(selected_option_name == this.props.app_state.loc['1264aj']/* 'bills' */){
                 return(
                     <BillDetailsSection
-                        app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bill_item={this.props.selected_bill_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} pin_bill={this.props.pin_bill.bind(this)} get_bill_items={this.props.get_bill_items.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)}
+                        app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bill_item={this.props.selected_bill_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} pin_bill={this.props.pin_bill.bind(this)} get_bill_items={this.props.get_bill_items.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)}
                     />
                 )
             }

@@ -26,6 +26,13 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
+function start_and_end(str) {
+    if (str.length > 13) {
+        return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+    }
+    return str;
+}
+
 function number_with_commas(x) {
     if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -176,6 +183,8 @@ class BillDetailsSection extends Component {
 
                     {this.render_last_payment_time_data(object)}
 
+                    {this.render_pdf_files_if_any()}
+
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3069']/* 'Requested Amounts.' */, 'details':this.props.app_state.loc['3070']/* 'Below are the amounts requested in the bill.' */, 'size':'l'})}
@@ -193,6 +202,73 @@ class BillDetailsSection extends Component {
             </div>
         )
     }
+
+    render_pdf_files_if_any(object){
+        var state = object['ipfs']
+        if(state.entered_pdf_objects != null && state.entered_pdf_objects.length > 0){
+            return(
+                <div>
+                    {this.render_pdfs_part(state.entered_pdf_objects)}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_part(entered_pdf_objects){
+        var items = [].concat(entered_pdf_objects)
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_pdf_item_clicked(item)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_pdf_item_clicked(item){
+        this.props.when_pdf_file_opened(item)
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        //
+        var formatted_size = this.format_data_size(data['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+        title = fs;
+        var details = start_and_end(data['name'])
+        var thumbnail = data['thumbnail']
+
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+
 
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];

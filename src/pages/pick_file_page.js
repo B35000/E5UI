@@ -181,31 +181,29 @@ class PickFilePage extends Component {
     render_title_text(){
         var type = this.state.type
         if(type == 'image'){
-            var text = this.props.app_state.loc['2958']/* 'Pick one or multiple image files from your storage.To see an image file here, you need to upload it in the stack page.' */
-            var t = text.replace('image','image')
-            return t
+            return this.props.app_state.loc['2958']/* 'Pick one or multiple image files from your storage.To see an image file here, you need to upload it in the stack page.' */
         }
         else if(type == 'audio'){
             var text = this.props.app_state.loc['2958']/* 'Pick one or multiple audio files from your storage.To see an audio file here, you need to upload it in the stack page.' */
-            var t = text.replace('image','audio')
+            var t = text.replaceAll(this.props.app_state.loc['2955']/* image */,this.props.app_state.loc['2956']/* 'audio' */)
             return t
         }
         else if(type == 'pdf'){
             var text = this.props.app_state.loc['2958']/* 'Pick one or multiple audio files from your storage.To see an audio file here, you need to upload it in the stack page.' */
-            var t = text.replace('image','pdf')
-            t = t.replace('an pdf','a pdf')
+            var t = text.replaceAll(this.props.app_state.loc['2955']/* image */, this.props.app_state.loc['1593cd']/* 'pdf' */)
+            t = t.replaceAll('an pdf','a pdf')
             return t
         }
         else if(type == 'zip'){
             var text = this.props.app_state.loc['2958']/* 'Pick one or multiple zip files from your storage.To see an audio file here, you need to upload it in the stack page.' */
-            var t = text.replace('image','zip')
-            t = t.replace('an zip','a zip')
+            var t = text.replaceAll(this.props.app_state.loc['2955']/* image */,this.props.app_state.loc['1593ed']/* 'zip' */)
+            t = t.replaceAll('an zip','a zip')
             return t
         }
         else{
             var text = this.props.app_state.loc['2958']/* 'Pick one or multiple video files from your storage.To see an video here, you need to upload it in the stack page.' */
-            var t = text.replace('image','video')
-            t = t.replace('an video','a video')
+            var t = text.replaceAll(this.props.app_state.loc['2955']/* image */, this.props.app_state.loc['2957']/* 'video' */)
+            t = t.replaceAll('an video','a video')
             return t 
         }
     }

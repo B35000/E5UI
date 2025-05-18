@@ -822,7 +822,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender+responses_text, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender+' • '+responses_text, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':object['e5']+' • '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 

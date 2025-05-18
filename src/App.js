@@ -1442,7 +1442,7 @@ class App extends Component {
       this.get_token('ONE', 'Harmony', 'E45'),
       this.get_token('CELO', 'Celo', 'E55'),
       this.get_token('FLR', 'Flare', 'E65'),
-      this.get_token('XDAI', 'Gnosis', 'E75'),
+      this.get_token('XDAI', 'Gnosis Chain', 'E75'),
       this.get_token('FUSE', 'Fuse', 'E85'),
       this.get_token('GLMR', 'Moonbeam', 'E95'),
       this.get_token('MOVR', 'Moonriver', 'E105'),
@@ -14790,6 +14790,7 @@ return data['data']
 
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
       this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
+      this.view_contextual_transfer_page.current?.when_pdf_files_picked(picked_files)
     }
     else if(function_name == 'create_zip'){
       this.new_channel_page.current?.when_zip_files_picked(picked_files)
@@ -17197,7 +17198,7 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <ContextualTransferPage ref={this.view_contextual_transfer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_itransfer_transaction_to_stack={this.add_itransfer_transaction_to_stack.bind(this)} add_bill_transaction_to_stack={this.add_bill_transaction_to_stack.bind(this)}
+        <ContextualTransferPage ref={this.view_contextual_transfer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_itransfer_transaction_to_stack={this.add_itransfer_transaction_to_stack.bind(this)} add_bill_transaction_to_stack={this.add_bill_transaction_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
 
         />
       </div>

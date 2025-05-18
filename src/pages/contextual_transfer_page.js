@@ -64,7 +64,7 @@ class ContextualTransferPage extends Component {
         
         search_identifier:'', search_identifier_account:'', searches:[], search_identifier_recipient:'', pos:-1, selected_e5:this.props.app_state.selected_e5,
 
-        identifier2:'', exchange_id2:'', price_amount2:0, price_data2:[], recipient_id2:'', transfer_recipient_id2:'', get_reocurring_tags_object:this.get_reocurring_tags_object(),
+        identifier2:'', exchange_id2:'', price_amount2:0, price_data2:[], recipient_id2:'', transfer_recipient_id2:'', get_reocurring_tags_object:this.get_reocurring_tags_object(), entered_pdf_objects:[],
     };
 
     constructor(props) {
@@ -1245,10 +1245,131 @@ class ContextualTransferPage extends Component {
 
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_reocurring_tags_object} tag_size={'l'} when_tags_updated={this.when_get_reocurring_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3068bg']/* 'Attach some pdf documents to the bill.' */, 'title':this.props.app_state.loc['3068bh']/* 'Attach PDFs.' */})}
+                {this.render_create_pdf_ui_buttons_part()}
+                {this.render_selected_files()}
                 <div style={{height:10}}/>
             </div>
         )
     }
+
+    render_create_pdf_ui_buttons_part(){
+        return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '5px 5px 5px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
+            </div>
+        </div>
+      )
+    }
+
+    when_pdf_files_picked(files){
+        var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
+        files.forEach(file => {
+            clonedArray.push(file);
+        });
+        this.setState({entered_pdf_objects: clonedArray});
+    }
+
+    render_selected_files(){
+        var items = this.state.entered_pdf_objects
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_selected_file_tapped(index)}>
+                            {this.render_uploaded_file(this.get_cid_split(item), index, true)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_selected_file_tapped(index){
+        var cloned_array = this.state.entered_pdf_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_pdf_objects: cloned_array})
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+    render_uploaded_file(ecid_obj, index, minified){
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data != null){
+            if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+        }
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
 
     render_amount_picker_ui(){
         return(
@@ -1400,7 +1521,7 @@ class ContextualTransferPage extends Component {
         var recipient = this.state.recipient_id2.trim()
         var transfer_recipient = this.state.transfer_recipient_id2.trim()
         var price_data = this.state.price_data2
-
+        var entered_pdf_objects = this.state.entered_pdf_objects
         var my_id = this.props.app_state.user_account_id[this.state.e5]
 
         if(isNaN(recipient)){
@@ -1434,7 +1555,7 @@ class ContextualTransferPage extends Component {
             var obj = {
                 id:makeid(8), type:this.props.app_state.loc['3068af']/* 'bill' */,
                 entered_indexing_tags:[this.props.app_state.loc['3068ag']/* 'request' */, this.props.app_state.loc['3068af']/* 'bill' */, this.props.app_state.loc['3068ah']/* 'payment' */],
-                e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier, transfer_recipient: transfer_recipient, recurring_enabled: recurring_enabled
+                e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier, transfer_recipient: transfer_recipient, recurring_enabled: recurring_enabled, entered_pdf_objects: entered_pdf_objects
             }
             this.props.add_bill_transaction_to_stack(obj)
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)

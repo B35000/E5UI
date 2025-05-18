@@ -6577,6 +6577,8 @@ return data['data']
 
                 {this.render_detail_item('3', {'details':this.props.app_state.loc['3068al']/* 'Recipient Account.' */, 'title':''+transaction_item.recipient+','+this.get_senders_name2(transaction_item.recipient), 'size':'l'})}
 
+                {this.render_pdf_files_if_any()}
+
                 {this.render_detail_item('0')}
                 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3068ak']/* 'Amounts' */, 'details':this.props.app_state.loc['3071n']/* 'All the amounts for the bill payment action.' */, 'size':'l'})}
