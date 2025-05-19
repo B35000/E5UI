@@ -1106,7 +1106,7 @@ return data['data']
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['652']/* 'Recommended: 3.5%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
                 </div>
             )
         }
@@ -1390,7 +1390,7 @@ return data['data']
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['662']/* 'Recommended: 3.5%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
                     
                 </div>
             )
@@ -1566,7 +1566,7 @@ return data['data']
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['698']/* 'Recommended: 40% - 51%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
                 </div>
             )
         }
@@ -1581,7 +1581,7 @@ return data['data']
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['702']/* 'Recommended: 65% - 91%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
                 </div>
             )
         }
@@ -2175,7 +2175,7 @@ return data['data']
                 <div style={{height:2}}/>
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['698']/* 'Recommended: 40% - 51%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_simulator_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
 
                 {this.render_detail_item('0')}
 
@@ -2191,7 +2191,7 @@ return data['data']
                 <div style={{height:2}}/>
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['702']/* 'Recommended: 65% - 91%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
 
                 {this.render_detail_item('0')}
 

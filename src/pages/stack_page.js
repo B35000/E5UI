@@ -1210,7 +1210,7 @@ class StackPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593bz']/* 'Transaction Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_pric/10**9), 'number':(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63} decimal_count={9}/>
                     
                     <div style={{height:10}}/>
                     {this.render_gas_price_options()}

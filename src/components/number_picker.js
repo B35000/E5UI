@@ -40,8 +40,8 @@ class NumberPicker extends Component {
     state = {
         selected: 0,
         create_number_data: this.get_create_number_data(),
-        is_picking_with_text_area:false,
-        entered_number:'',
+        is_picking_with_text_area: this.props.pick_with_text_area == null ? false : this.props.pick_with_text_area,
+        entered_number:'', hint: this.props.text_area_hint == null ? '5.32' : this.props.text_area_hint
     };
 
     get_create_number_data(){
@@ -198,7 +198,7 @@ class NumberPicker extends Component {
         return(
           <div>
             <div style={{height: 20}}/>
-            <TextInput font={this.props.font} height={20} placeholder={'000'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.entered_number} theme={this.props.theme}/>
+            <TextInput font={this.props.font} height={20} placeholder={this.state.hint} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.entered_number} theme={this.props.theme}/>
           </div>
         )
       }else{
@@ -211,16 +211,68 @@ class NumberPicker extends Component {
     }
 
     when_text_input_field_changed(text){
-      if(!isNaN(text)){ 
-        if(this.props.number_limit != null && bigInt(text).greater(bigInt(this.props.number_limit))){
+      var number_string = this.process_text_input(text)
+      if(!isNaN(number_string)){
+        if(this.props.number_limit != null && bigInt(number_string).greater(bigInt(this.props.number_limit))){
 
         }else{
           var new_obj = this.get_create_number_data()
-          new_obj['number'] = this.get_power_number() + (bigInt(0).add(bigInt(text))).toString().toLocaleString('fullwide', {useGrouping:false});
+          new_obj['number'] = this.get_power_number() + (bigInt(0).add(bigInt(number_string))).toString().toLocaleString('fullwide', {useGrouping:false});
           this.setState({create_number_data: new_obj, entered_number: text})
           this.props.when_number_picker_value_changed(bigInt(new_obj['number']))
         }
       }
+    }
+
+    process_text_input(text){
+      if(/^-?\d+$/.test(text) == true){
+        //its a number
+        console.log('number_picker', 'its a number')
+        var number = parseInt(text)
+        if(number < 0){
+          return '0'
+        }
+        return number.toString().toLocaleString('fullwide', {useGrouping:false})
+      }
+      else if(/^-?\d+(\.\d+)?$/.test(text) == true){
+        //its a float
+        console.log('number_picker', 'its a float', this.props.decimal_count)
+        var number = parseFloat(text)
+        if(number < 0){
+          return '0'
+        }
+        var decimal_places = this.countDecimalPlaces(number)
+        var default_decimal_count = this.props.decimal_count == null ? 0 : this.props.decimal_count
+        var difference = default_decimal_count - decimal_places
+        var number_string = number.toString().replace('.','')
+        if(difference > 0){
+          //decimals specified are less than default, so fill in extra places
+          for(var i=0; i<difference; i++){
+            number_string = number_string + '0'
+          }
+          return number_string
+        }else{
+          //decimals specified are less than default, so remove extra places
+          return number_string.slice(0, difference)
+        }
+      }
+      else if(text.endsWith('.') && text.split('.').length === 2){
+        console.log('number_picker', 'its an incomplete float')
+        return text.replace('.','')
+      }
+      else{
+        console.log('number_picker', 'its not a number or float')
+        return '0'
+      }
+    }
+
+    countDecimalPlaces(num) {
+      if (!isFinite(num)) return 0;
+      const str = num.toString();
+      if (str.includes(".")) {
+        return str.split(".")[1].length;
+      }
+      return 0;
     }
 
     render_number_picker_sliders(){

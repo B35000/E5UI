@@ -83,7 +83,7 @@ class TextInput extends Component {
                         {`
                           .form-control::placeholder {
                             color: ${this.props.theme['text_input_color']};
-                            opacity: 1; /* Ensures visibility in some browsers */
+                            opacity: 0.6; /* Ensures visibility in some browsers */
                           }
                         `}
                       </style>

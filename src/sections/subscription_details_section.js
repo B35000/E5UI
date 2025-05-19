@@ -572,9 +572,26 @@ class SubscriptionDetailsSection extends Component {
         )
     }
 
+    filter_for_my_logs2(logs, object){
+        var me = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+        if(me == object['author']){
+            return logs
+        }else{
+            var filtered_logs = []
+            logs.forEach(log => {
+                var account = log['returnValues']['p2']
+                var account2 = log['returnValues']['p3']
+                if(me == account || me == account2){
+                    filtered_logs.push(log)
+                }
+            });
+            return filtered_logs
+        }
+    }
+
     render_contract_transfer_item_logs(object){
         var middle = this.props.height - 120;
-        var items = [].concat(this.get_item_logs(object, 'transfer'))
+        var items = [].concat(this.filter_for_my_logs2(this.get_item_logs(object, 'transfer'), object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -715,7 +732,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_pay_subscription_item_logs(object){
         var middle = this.props.height - 120;
-        var items = [].concat(this.filter_subscription_payment_event_logs(this.get_item_logs(object, 'pay'), this.state.subscription_payment_search_text, object))
+        var items = [].concat(this.filter_for_my_logs(this.filter_subscription_payment_event_logs(this.get_item_logs(object, 'pay'), this.state.subscription_payment_search_text, object), 'p2', object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -846,7 +863,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_cancel_subscription_item_logs(object){
         var middle = this.props.height - 120;
-        var items = [].concat(this.filter_subscription_cancellation_event_logs(this.get_item_logs(object, 'cancel'), this.state.subscription_cancellation_search_text, object))
+        var items = [].concat(this.filter_for_my_logs(this.filter_subscription_cancellation_event_logs(this.get_item_logs(object, 'cancel'), this.state.subscription_cancellation_search_text, object), 'p2', object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -945,9 +962,25 @@ class SubscriptionDetailsSection extends Component {
         )
     }
 
+    filter_for_my_logs(logs, p, object){
+        var me = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+        if(me == object['author']){
+            return logs
+        }else{
+            var filtered_logs = []
+            logs.forEach(log => {
+                var account = log['returnValues'][p]
+                if(me == account){
+                    filtered_logs.push(log)
+                }
+            });
+            return filtered_logs
+        }
+    }
+
     render_collect_subscription_item_logs(object){
         var middle = this.props.height - 120;
-        var items = [].concat(this.get_item_logs(object, 'collect'))
+        var items = [].concat(this.filter_for_my_logs(this.get_item_logs(object, 'collect'), 'p2', object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -958,7 +991,7 @@ class SubscriptionDetailsSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1683,7 +1716,7 @@ class SubscriptionDetailsSection extends Component {
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                                 <div onClick={()=>this.perform_search(object)}>
                                     <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                                        <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                        <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                                     </div>
                                 </div>
                             </div>

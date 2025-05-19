@@ -238,7 +238,7 @@ class SendReceiveCoinPage extends Component {
 
     show_memo_textarea_if_required(){
         var item = this.state.coin
-        if(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX'){
+        if(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA'){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -349,7 +349,7 @@ class SendReceiveCoinPage extends Component {
                     {this.render_detail_item('2', this.get_picked_amount_in_decimal())}
                 </div>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={this.get_coin_decimal_count()}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
@@ -364,6 +364,10 @@ class SendReceiveCoinPage extends Component {
                 <div style={{height: 30}}/>
             </div>
         )
+    }
+
+    get_coin_decimal_count(){
+        return this.state.coin['conversion']
     }
 
     get_picked_amount_in_base_units(){
@@ -523,7 +527,7 @@ class SendReceiveCoinPage extends Component {
                         {this.render_detail_item('2', this.get_picked_fee_amount_in_base_units())}
                     </div>
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={17}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={17} decimal_count={this.get_coin_decimal_count()}/>
                 </div>
             )
         }

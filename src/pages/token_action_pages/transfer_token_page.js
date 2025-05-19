@@ -112,6 +112,8 @@ class TransferTokenPage extends Component {
             return(
                 <div>
                     {this.render_data_picker_ui()}
+                    {this.render_detail_item('0')}
+                    {this.render_amount_picker()}
                     {this.render_stack_transactions()}
                 </div>
             )
@@ -121,8 +123,10 @@ class TransferTokenPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_amount_picker()}
                         {this.render_stack_transactions()}
                     </div>
                 </div>
@@ -134,14 +138,39 @@ class TransferTokenPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_amount_picker()}
                         {this.render_stack_transactions()}
                     </div>
                 </div>
                 
             )
         }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
     render_data_picker_ui(){
@@ -161,14 +190,21 @@ class TransferTokenPage extends Component {
                     </div>
                 </div>
 
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
+                
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1023']/* 'Set the recipient of the transfer action' */, 'title':this.props.app_state.loc['1024']/* 'Recipient of action' */})}
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
                 {this.load_account_suggestions()}
+                <div style={{height:20}}/>
+            </div>
+        )
+    }
 
-                {this.render_detail_item('0')}
+    render_amount_picker(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1026']/* 'Amount to transfer to the speicified target account' */, 'title':this.props.app_state.loc['1027']/* 'Amount for Transfer' */})}
 
                 <div style={{height:10}}/>
@@ -182,12 +218,11 @@ class TransferTokenPage extends Component {
                 </div>
 
                 <div style={{height:10}}/>
-                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.token_item)+9))} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.token_item)}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.token_item)+9))} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.token_item)} pick_with_text_area={this.state.token_item['balance'] < 1_000_000_000} text_area_hint={'1000'}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1029']/* 'Add Transaction' */, 'action':''})}
                 </div>
-
             </div>
         )
     }
@@ -418,7 +453,7 @@ class TransferTokenPage extends Component {
         var items = [].concat(this.state.stack_items)
 
         if(items.length == 0){
-            items = [0, 1, 2]
+            items = [0, 1]
             return(
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
@@ -426,7 +461,7 @@ class TransferTokenPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>

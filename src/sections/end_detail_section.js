@@ -443,7 +443,7 @@ class EndDetailSection extends Component {
         return(
             <div>
                 <div style={{height:10}}/>
-                <div onClick={()=>this.open_transfer_ui(selected_object)}>
+                <div onClick={()=>this.open_end_transfer_ui(selected_object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2347']/* 'Transfer' */, 'action':''},)}
                 </div>
             </div>

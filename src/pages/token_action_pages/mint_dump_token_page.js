@@ -203,18 +203,26 @@ class NewMintActionPage extends Component {
         )
     }
 
+    should_show_text_area(){
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
+            return this.get_token_buy_limit() < 1_000_000_000
+        }else{
+            return this.get_token_sell_limit() < 1_000_000_000
+        }
+    }
+
     show_amount_picker_if_enabled(){
         if(this.state.hide_number_picker == false){
             return(
                 <div>
                     {this.set_buy_sell_header()}
 
-                    <div style={{height:10}}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={this.should_show_text_area()} text_area_hint={'1000'}/>
+
                     <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['961']/* 'Set Maximum' */, 'action':''})}
                     </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }else{
@@ -281,22 +289,34 @@ class NewMintActionPage extends Component {
                     <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['958']/* 'Amount' */, 'number':this.state.amount, 'relativepower':token})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['958']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':token, })}
                     </div>
-                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'number':this.get_token_buy_limit(), 'relativepower':token})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':token, })}
-                    </div>
-                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'number':this.get_token_sell_limit(), 'relativepower':token})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':token, })}
-                    </div>
+                    {this.show_buy_or_sell_limit(token)}
                 </div>
             </div>
         )
+    }
+
+    show_buy_or_sell_limit(token){
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
+            return(
+                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'number':this.get_token_buy_limit(), 'relativepower':token})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':token, })}
+                </div>
+            )
+        }else{
+            return(
+                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'number':this.get_token_sell_limit(), 'relativepower':token})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':token, })}
+                </div>
+            )
+        }
     }
 
     calculate_and_show_buy_sell_impact_proportion(){
         var selected_object = this.state.token_item
         var token_type = selected_object['data'][0][3]
         var selected_obj_ratio_config = selected_object['data'][2];
-        if(token_type == 3){
+        if(token_type == 3 && selected_object['id'] != 3){
             var exchanges_liquidity = selected_obj_ratio_config[2]
             var amount = this.state.amount
             var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
@@ -306,7 +326,14 @@ class NewMintActionPage extends Component {
                 var output_reserve_ratio = selected_object['data'][2][0]
                 amount = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
             }
-            var impact_percentage = bigInt(amount).multiply(100).divide(exchanges_liquidity)
+            var impact_percentage = 0
+            try{
+                var big_int_amount = bigInt(amount)
+                var big_int_liquidity = bigInt(exchanges_liquidity)
+                impact_percentage = bigInt(big_int_amount).multiply(100).divide(big_int_liquidity)
+            }catch(e){
+                impact_percentage = ( amount * 100 ) / exchanges_liquidity
+            }
             var p = impact_percentage+'%'
             var n = action == this.props.app_state.loc['949']/* 'mint-buy' */ ? '-' : ''
 
@@ -371,15 +398,8 @@ class NewMintActionPage extends Component {
                         </div>
                         <div style={{height:20}}/>
                         {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['996f']/* 'Exchanges Liquidity.' */, 'details':this.props.app_state.loc['996g']/* 'The tokens the exchange has available to send to you after the sell action.' */})}
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                            {buy_tokens.map((item, index) => (
-                                <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'number':exchanges_balance_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
-                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(exchanges_balance_amounts[index]), 'barwidth':this.calculate_bar_width(exchanges_balance_amounts[index]), 'number':this.format_account_balance_figure(exchanges_balance_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                        <div style={{height:10}}/>
+                        {this.render_exchange_liquidity_values(buy_tokens, exchanges_balance_amounts)}
                     </div>
                 )
             }else{
@@ -387,18 +407,54 @@ class NewMintActionPage extends Component {
                 var input_reserve_ratio = selected_object['data'][2][1]
                 var output_reserve_ratio = selected_object['data'][2][0]
                 var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
+                var number = ''
+                if(parseInt(price) == 0){
+                    number = '0'
+                }else{
+                    number = this.format_account_balance_figure(price)
+                }
                 return(
                     <div>
                         <div style={{height:20}}/>
                         {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['965']/* 'The amount youll probably get from the buy action' */, 'title':this.props.app_state.loc['966']/* 'Receive Amount' */})}
                         <div style={{height:10}}/>
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'number':price, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
-                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'subtitle':this.format_power_figure(price), 'barwidth':this.calculate_bar_width(price), 'number':''+this.format_account_balance_figure(price), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'subtitle':this.format_power_figure(price), 'barwidth':this.calculate_bar_width(price), 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}
                         </div>
                     </div>
                     
                 )
             }
+        }
+    }
+
+    render_exchange_liquidity_values(buy_tokens, exchanges_balance_amounts){
+        var selected_object = this.state.token_item
+        if(selected_object['id'] != 3){
+            return(
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {buy_tokens.map((item, index) => (
+                            <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'number':exchanges_balance_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(exchanges_balance_amounts[index]), 'barwidth':this.calculate_bar_width(exchanges_balance_amounts[index]), 'number':this.format_account_balance_figure(exchanges_balance_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            var e5 = selected_object['e5']
+            return(
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} >
+                    <div>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['996j']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.props.app_state.E5_balance[e5]/10**18), 'relativepower':'Ether'})}
+                    </div>
+
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
+                    </div>
+                </div>
+            )
         }
     }
 
@@ -1029,6 +1085,10 @@ class NewMintActionPage extends Component {
                 buy_token_exists = true
             }
         });
+
+        if(token_item['id'] == 3){
+            buy_token_exists = true
+        }
 
         return buy_token_exists == false
     }
