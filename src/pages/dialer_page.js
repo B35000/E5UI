@@ -481,8 +481,51 @@ class DialerPage extends Component {
                 </div>
                 <div style={{height:20}}/>
                 {this.render_moderators_for_country()}
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Set the upload object size limit in bytes, or the limit for how large a stack size can be during run.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'10000'} when_text_input_field_changed={this.when_upload_object_size_limit_input_field_changed.bind(this)} text={this.state.data['upload_object_size_limit']} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':'Current OnChain setting: '+this.get_current_upload_object_size(), 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
             </div>
         )
+    }
+
+    when_upload_object_size_limit_input_field_changed(text){
+        if(!isNaN(text)){
+            var clone = structuredClone(this.state.data)
+            clone['upload_object_size_limit'] = parseInt(text)
+            this.setState({data: clone})
+        }
+    }
+
+    get_current_upload_object_size(){
+        var limit = this.state.data['upload_object_size_limit']
+        var formatted_size = this.format_data_size(limit)
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        return fs
+    }
+    
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':this.round_off(size/1_000_000_000), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':this.round_off(size/1_000_000), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':this.round_off(size/1_000), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    round_off(number){
+        return (Math.round(number * 100) / 100)
     }
 
     render_admin_content2(){

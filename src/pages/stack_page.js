@@ -117,7 +117,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'',
+        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:0
     };
 
     get_stack_page_tags_object(){
@@ -1656,6 +1656,7 @@ class StackPage extends Component {
         var viewed_data = localStorage.getItem("viewed") == null ? "":localStorage.getItem("viewed")
         var data_size = this.lengthInUtf8Bytes(viewed_data) + this.props.app_state.index_db_size
         var formatted_data_size = this.format_data_size(data_size)
+        
 
         var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
         if(gas_price == null){
@@ -1693,6 +1694,8 @@ class StackPage extends Component {
                 </div>
                 <div style={{height:10}}/>
 
+                {this.render_stack_run_space_utilization_if_non_zero()}
+
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}  onClick={()=>this.fetch_gas_figures()}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
@@ -1716,6 +1719,36 @@ class StackPage extends Component {
                 <div style={{height:7}}/>
             </div>
         )
+    }
+
+    render_stack_run_space_utilization_if_non_zero(){
+        if(this.state.stack_size_in_bytes > 100){
+            var stack_size_in_bytes_formatted_data_size = this.format_data_size(this.state.stack_size_in_bytes)
+            
+            var percentage = this.round_off((this.state.stack_size_in_bytes / this.props.app_state.upload_object_size_limit) * 100)
+            if(percentage >= 100){
+                percentage = 99.99
+            }
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593go']/* 'Stack Run Storage Utilization' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':this.format_account_balance_figure(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593gp']/* 'Run Storage Utilization Proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage, 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+        else if(this.state.stack_size_in_bytes == -1){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1593gq']/* 'Calculating Stack Run Storage Utilization...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+        
     }
 
     render_arweave_network_fee_if_selected(){
@@ -4054,6 +4087,7 @@ return data['data']
     }
 
     get_ipfs_index_object = async (txs, now, calculate_gas) => {
+        this.setState({stack_size_in_bytes: -1})
         const ipfs_index_object = {'version':this.props.app_state.version, 'color':this.get_device_color()}
         const obj = {'version':this.props.app_state.version, 'color':this.get_device_color(), 'tags':{'color':this.get_device_color()}}
         const ipfs_index_array = []
@@ -4526,6 +4560,7 @@ return data['data']
         console.log('stack_page_ipfs', 'unupdated ipfs-object', obj)
 
         const size = this.lengthInUtf8Bytes(JSON.stringify(obj))
+        this.setState({stack_size_in_bytes: size})
         if(size > this.props.app_state.upload_object_size_limit && calculate_gas == false && ipfs_index_array.length > 0){
             this.current_object_size = size
             return 'large'

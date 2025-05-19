@@ -811,7 +811,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*350),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135),
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -2741,6 +2741,7 @@ class App extends Component {
   start_everything = async () => {
     // this.test_beacon_node()
     // this.test_infura()
+    // this.test_key_hasher()
     await this.load_cookies();
     this.load_cookies2()
     var me = this;
@@ -2751,6 +2752,16 @@ class App extends Component {
       me.get_key()
       me.init_db()
     }, (1 * 1000));
+  }
+
+  test_key_hasher = async () => {
+    console.log('base64', 'attempting...')
+    const web3 = new Web3(this.get_selected_web3_url());
+    var hash = web3.utils.keccak256('eeeeeeeeeee').slice(34)
+    var private_key_to_use = Buffer.from(hash)
+    const publicKeyA = await ecies.getPublic(private_key_to_use);
+    var base64 = this.uint8ToBase64(new Uint8Array(publicKeyA))
+    console.log('base64', base64)
   }
 
   test_beacon_node = async () => {
@@ -7681,6 +7692,7 @@ return data['data']
         clone_array.push(item)
     }
     this.setState({hidden: clone_array})
+    this.set_cookies_after_stack_action(this.state.stack_items.slice())
   }
 
   remove_account_from_contacts(item){
@@ -16942,6 +16954,7 @@ return data['data']
       'recommended_audiopost_threshold':this.state.recommended_audiopost_threshold, 
       'recommended_audio_threshold':this.state.recommended_audio_threshold, 
       'country_moderators':this.state.country_moderators,
+      'upload_object_size_limit':this.state.upload_object_size_limit
     }
     setTimeout(function() {
       if(me.dialer_page.current != null){
@@ -19739,6 +19752,7 @@ return data['data']
         // console.log('apppage', 'resetting beacon_chain_url to', beacon_chain_url)
         const e5_ether_override = root_data.get_ether_e5_softwrite_object == null ? 'e' : this.get_selected_item(root_data.get_ether_e5_softwrite_object, 'e');
         const e5s = e5_ether_override == 'e' ? this.state.e5s : this.update_e5_images(root_data.data['e5s'])
+        
 
         const ether_data = e5_ether_override == 'e' ? this.get_ether_data() : root_data.data['ether_data']
         const all_locales = root_data.data['all_locales']
@@ -19760,6 +19774,8 @@ return data['data']
         const my_moderators = default_moderators.concat(my_states_moderators)
 
         const manual_beacon_node_disabled = root_data.get_manual_disable_beacon_node_override_object == null ? 'e': this.get_selected_item(root_data.get_manual_disable_beacon_node_override_object, 'e')/* 'e' */
+
+        const upload_object_size_limit = root_data.data['upload_object_size_limit'] == null ? this.state.upload_object_size_limit : root_data.data['upload_object_size_limit']
 
         const my_language = this.get_language() == null ? 'en' : this.get_language()
         if(my_language != 'en' && all_locales[my_language] != null){
@@ -19803,6 +19819,7 @@ return data['data']
           country_moderators: country_moderators,
           manual_beacon_node_disabled: manual_beacon_node_disabled,
           e5_ether_override: e5_ether_override,
+          upload_object_size_limit: upload_object_size_limit
         })
         primary_following = primary_following.concat(my_moderators)
 
@@ -29780,17 +29797,22 @@ return data['data']
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
     const publicKeyA = await ecies.getPublic(private_key_to_use);
-    var key = (new Uint8Array(publicKeyA)).toString()//oh my god
+    // var key = (new Uint8Array(publicKeyA)).toString()//oh my god
+    var key = this.uint8ToBase64(new Uint8Array(publicKeyA))
 
+    return key
     var object_as_string = JSON.stringify({'key':key})
     var obj_cid = await this.store_objects_data_in_ipfs_using_option(object_as_string)
     return obj_cid
   }
 
+  uint8ToBase64(uint8) {
+    return btoa(String.fromCharCode(...uint8));
+  }
+
   get_my_entire_public_key = async () => {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
-    // console.log('apppage', 'get_my_entire_public_key', privateKey)
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
     const publicKeyA = await ecies.getPublic(private_key_to_use);
@@ -29819,14 +29841,33 @@ return data['data']
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:'0'})
 
-    var filtered_events = events;
-
-    if(filtered_events.length == 0){
+    if(events.length == 0){
       return ''
     }
-    var obj_key = await this.fetch_objects_data_from_ipfs_using_option(filtered_events[filtered_events.length-1].returnValues.p4)
-    var uint8array = Uint8Array.from(obj_key['key'].split(',').map(x=>parseInt(x,10))); 
-    return uint8array
+
+    const most_recent_event_data = events[events.length-1].returnValues.p4
+    if(!most_recent_event_data.includes('.')){
+      try{
+        var k = this.base64ToUint8(most_recent_event_data)
+        return k
+      }catch(e){
+        console.log(e)
+        return ''
+      }
+    }
+    var obj_key = await this.fetch_objects_data_from_ipfs_using_option(most_recent_event_data)
+    
+    if(obj_key['key'] != null){
+      return Uint8Array.from(obj_key['key'].split(',').map(x=>parseInt(x,10)));
+    }
+    else{
+      return ''
+    }
+  }
+
+  base64ToUint8(base64) {
+    const binary = atob(base64);
+    return new Uint8Array([...binary].map(char => char.charCodeAt(0)));
   }
 
   encrypt_key_with_accounts_public_key_hash = async (key, pub_key_hash) => {
