@@ -117,7 +117,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:0
+        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:0, is_calculating_stack:{}, can_switch_e5s:true,
     };
 
     get_stack_page_tags_object(){
@@ -1700,9 +1700,9 @@ class StackPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
-
                 </div>
                 <div style={{height:10}}/>
+                {this.render_message_if_calculating_stack_gas_figures()}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'number':gas_price, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
@@ -1719,6 +1719,17 @@ class StackPage extends Component {
                 <div style={{height:7}}/>
             </div>
         )
+    }
+
+    render_message_if_calculating_stack_gas_figures(){
+        if(this.state.is_calculating_stack[this.props.app_state.selected_e5] == true){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1593gs']/* 'Calculating your next runs gas figures...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_stack_run_space_utilization_if_non_zero(){
@@ -2328,7 +2339,11 @@ return data['data']
 
 
     
-
+    set_calculate_stack_complete(e5){
+        var clone = structuredClone(this.state.is_calculating_stack)
+        clone[e5] = false
+        this.setState({is_calculating_stack: clone})
+    }
 
     auto_run_in_background(){
         this.open_confirmation_bottomsheet(true)
@@ -2439,13 +2454,16 @@ return data['data']
 
     run_transactions = async (calculate_gas, silently) => {
         const txs = this.props.app_state.stack_items
+        const e5 = this.props.app_state.selected_e5
+        this.setState({can_switch_e5s: false})
         if(!calculate_gas){
-            var is_running = this.props.app_state.is_running[this.props.app_state.selected_e5]
+            var is_running = this.props.app_state.is_running[e5]
             if(is_running == null) is_running = false
             if(is_running){
                 if(!silently){
                     this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
                 }
+                this.setState({can_switch_e5s: true})
                 return;
             }
             this.props.lock_run(true)
@@ -2453,6 +2471,13 @@ return data['data']
             if(txs.length > 0){
                 this.props.notify(this.props.app_state.loc['1496']/* 'Running your transactions...' */, 7600)
             }
+        }else{
+            var clone = structuredClone(this.state.is_calculating_stack)
+            if(clone[e5] == true){
+                return;
+            }
+            clone[e5] = true
+            this.setState({is_calculating_stack: clone})
         }
         var strs = []
         var ints = []
@@ -2470,19 +2495,20 @@ return data['data']
         
         if(ipfs_index == ''){
             this.props.lock_run(false)
+            this.setState({can_switch_e5s: true})
             return;
         }
 
         if(ipfs_index == 'large'){
             if(!silently) this.props.show_dialog_bottomsheet({'stack_size':this.current_object_size}, 'invalid_stack_size_dialog_box')
-
+            this.setState({can_switch_e5s: true})
             this.props.lock_run(false)
             return;
         }
 
         var new_transaction_index_obj={}
         for(var i=0; i<txs.length; i++){
-            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
+            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
                 var new_tx_index = -1
                 if(txs[i].type == this.props.app_state.loc['1311']/* 'contract' */){
                     var contract_obj = this.format_contract_object(txs[i])
@@ -3757,7 +3783,7 @@ return data['data']
 
 
 
-        var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
+        var runs = this.props.app_state.E5_runs[e5] == null ? [] : this.props.app_state.E5_runs[e5]
 
         if(runs.length == 0){
             //if its the first time running a transaction
@@ -4040,13 +4066,13 @@ return data['data']
         
 
 
-        var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
+        var account_balance = this.props.app_state.account_balance[e5]
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
-        // var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
+        // var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[e5] : this.state.run_gas_price
         var run_gas_price = this.get_gas_price()
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*5/* 5 hours */) : this.state.run_time_expiry
 
-        var gas_limit = this.get_latest_block_data(this.props.app_state.selected_e5).gasLimit
+        var gas_limit = this.get_latest_block_data(e5).gasLimit
         var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
 
         if(!calculate_gas){
@@ -4074,7 +4100,7 @@ return data['data']
                 }
                 else{
                     var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration, )
+                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration, e5)
                 }
             }else{
                 this.props.lock_run(false)
@@ -4084,6 +4110,7 @@ return data['data']
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
             this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, this.set_max_priority_per_gas(), this.set_max_fee_per_gas())
         }
+        this.setState({can_switch_e5s: true})
     }
 
     get_ipfs_index_object = async (txs, now, calculate_gas) => {
@@ -9280,6 +9307,10 @@ return data['data']
     }
 
     when_e5_clicked(item){
+        if(this.state.can_switch_e5s == false){
+            this.props.notify(this.props.app_state.loc['1593gr']/* Wait a bit.' */, 1200)
+            return;
+        }
         this.props.when_selected_e5_changed(item)
     }
 

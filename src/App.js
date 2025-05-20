@@ -7503,35 +7503,36 @@ return data['data']
     const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
-
+    const e5 = this.state.selected_e5
     var v5/* t_limits */ = [1000000000000, 1000000000000];
     console.log('calculating gas price for current stack...')
     console.log(ints)
     if(this.state.stack_items.length == 0){
       var clone = structuredClone(me.state.calculated_gas_figures)
-      clone[me.state.selected_e5] = 0
+      clone[e5] = 0
       me.setState({calculated_gas_figures: clone})
+      me.stack_page.current?.set_calculate_stack_complete(e5)
       return;
     }
-    contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).estimateGas({from: me.state.accounts[me.state.selected_e5].address, gas: run_gas_limit, value: wei}, function(error, gasAmount){
+    contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).estimateGas({from: me.state.accounts[e5].address, gas: run_gas_limit, value: wei}, function(error, gasAmount){
         console.log('---------------------calculate_gas_with_e-------------------------')
         console.log(gasAmount)
         if(gasAmount == null){
           me.prompt_top_notification(me.getLocale()['2699']/* 'Your next run might fail with its current stack' */, 4000)
         }
         var clone = structuredClone(me.state.calculated_gas_figures)
-        clone[me.state.selected_e5] = gasAmount
+        clone[e5] = gasAmount
         me.setState({calculated_gas_figures: clone})
+        me.stack_page.current?.set_calculate_stack_complete(e5)
     });
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, set_max_priority_per_gas, set_max_fee_per_gas) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, e5) => {
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
-    const e5 = this.state.selected_e5
 
     var now = await contractInstance.methods.f147(2).call((error, result) => {})
     var run_expiry_time = now + run_expiry_duration
@@ -7576,7 +7577,7 @@ return data['data']
 
     
     
-    web3.eth.accounts.signTransaction(tx, me.state.accounts[this.state.selected_e5].privateKey).then(signed => {
+    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           var clone = structuredClone(me.state.is_running)
           clone[e5] = false
