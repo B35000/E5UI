@@ -22,6 +22,7 @@ import Tags from './../components/tags';
 import { from } from "@iotexproject/iotex-address-ts";
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
+import ReactJson from 'react-json-view'
 
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -191,6 +192,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_home_page_view_options()}
+                </div>
+            )
+        }
+        else if(option == 'view_json_example'){
+            return(
+                <div>
+                    {this.render_poll_json_example()}
                 </div>
             )
         }
@@ -3452,6 +3460,67 @@ return data['data']
         this.props.when_reload_section(this.state.data)
     }
 
+
+
+
+
+
+
+
+
+    render_poll_json_example(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_poll_json_example_item()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_poll_json_example_item()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_poll_json_example_item()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        } 
+    }
+
+    render_poll_json_example_item(){
+        var data = {
+            'E25':[1002, 1003, 1004, 1005], 
+            'E35':[1032, 7003, 29304, 39205], 
+            'E45':[1032, 10009, 19829, 182928]
+        }
+        var view_theme = this.props.app_state.theme['json_view_theme']
+        return(
+            <div>
+                <ReactJson src={data} theme={view_theme} collapsed={false} iconStyle={'circle'} displayObjectSize={false} displayDataTypes={false}
+                />
+            </div>
+        )
+    }
 
 
 

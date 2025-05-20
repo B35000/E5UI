@@ -2073,6 +2073,7 @@ return data['data']
                     {this.render_detail_item('3', item['participants'])}
                     {this.render_csv_files_if_any()}
                     {this.render_json_files_if_any()}
+                    {this.poll_e5s()}
                     {this.render_detail_item('0')}
 
                     {this.render_item_data(items)}
@@ -2183,6 +2184,51 @@ return data['data']
                         </li>
                     ))}
                 </ul>
+            </div>
+        )
+    }
+
+    poll_e5s(){
+        var state = this.props.app_state.stack_items[this.state.transaction_index]
+        var items = state.poll_e5s
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        return(
+            <div>
+                {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
             </div>
         )
     }
@@ -5828,6 +5874,7 @@ return data['data']
                     {this.render_detail_item('3', item['participants'])}
                     {this.render_csv_files_if_any()}
                     {this.render_json_files_if_any()}
+                    {this.poll_e5s()}
                     {this.render_detail_item('0')}
 
                     {this.render_item_data(items)}

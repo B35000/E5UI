@@ -86,7 +86,7 @@ class NewPollPage extends Component {
         start_time:(new Date().getTime()/1000)+7200,
         end_time:(new Date().getTime()/1000)+64800,
 
-        winner_count:1, candidate:'', candidates:[]
+        winner_count:1, candidate:'', candidates:[], poll_e5s:[this.props.app_state.selected_e5]
     };
 
 
@@ -343,6 +343,13 @@ class NewPollPage extends Component {
 
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cb']/* 'Participation E5s.' */, 'details':this.props.app_state.loc['c311cc']/* 'Restrict participation of this poll to specific E5s.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.load_preferred_e5_ui()}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cd']/* 'If you specify a participant in an E5 that you dont select here, their vote will be discarded.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
@@ -404,6 +411,87 @@ class NewPollPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
+    }
+
+    
+
+    load_preferred_e5_ui(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        if(this.state.poll_e5s.includes(item)){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked(item){
+        if(item == this.props.app_state.selected_e5){
+            this.props.notify(this.props.app_state.loc['c311ca']/* You cant remove that E5. */, 1800)
+            return;
+        }
+        var clone = this.state.poll_e5s.slice()
+        const index = clone.indexOf(item)
+        if (index > -1) { // only splice array when item is found
+            clone.splice(index, 1); // 2nd parameter means remove one item only
+        }else{
+            clone.push(item)
+        }
+        this.setState({poll_e5s: clone})
     }
 
 
@@ -1500,7 +1588,9 @@ class NewPollPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['c311u']/* 'Select a JSON file to use. You can select multiple files at once. Kindly observe the required format as shown below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
-                {this.render_json_format_example()}
+                <div onClick={() => this.props.show_dialog_bottomsheet({}, 'view_json_example')}>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['c311ce']/* 'Tap this to view an example.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                </div>
                 <div style={{height:10}}/>
                 <div onClick={() => this.call_input_function('json')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['c311r']/* 'Select JSON File.' */, 'action':''})}
@@ -2283,7 +2373,7 @@ class NewPollPage extends Component {
                     id: makeid(8), type:me.props.app_state.loc['c311a']/* 'poll' */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, device_region: me.props.app_state.device_region, edit_text_item_pos:-1, get_content_channeling_object:me.get_content_channeling_object(), entered_pdf_objects:[], markdown:'', participant_id:'', participants:[], json_files:[], csv_files:[],
                     start_time:(new Date().getTime()/1000)+7200,
                     end_time:(new Date().getTime()/1000)+64800,
-                    winner_count:1, candidate:'', candidates:[]
+                    winner_count:1, candidate:'', candidates:[], poll_e5s:[me.props.app_state.selected_e5]
                 })
             }, (1 * 1000));
             

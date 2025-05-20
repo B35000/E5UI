@@ -7667,7 +7667,8 @@ return data['data']
             start_time: t.start_time,
             end_time: t.end_time,
             candidates: t.candidates,
-            winner_count: t.winner_count
+            winner_count: t.winner_count,
+            poll_e5s: t.poll_e5s
         }/* try not to change this at all. even the order. */
         var string_data = await this.props.hash_data(JSON.stringify(obj))
 

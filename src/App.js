@@ -8087,7 +8087,7 @@ return data['data']
     }
     else if(target == '13'/* polls */){
       return(
-          <NewPollPage ref={this.new_poll_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)}
+          <NewPollPage ref={this.new_poll_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         />
       )
     }
@@ -14140,6 +14140,7 @@ return data['data']
       'invalid_stack_size_dialog_box':350,
       'file_type_picker':450,
       'home_page_view_options': 300,
+      'view_json_example':200,
     };
     var size = obj[id]
     if(id == 'song_options'){
