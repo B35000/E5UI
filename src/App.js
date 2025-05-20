@@ -33,6 +33,8 @@ import e5_empty_icon from './assets/e5empty_icon.png'
 import e5_empty_icon3 from './assets/e5empty_icon3.png'
 import EndImg from './assets/end_token_icon.png';
 import SpendImg from './assets/spend_token_icon.png';
+import json_icon from './assets/json_file.png'
+import csv_icon from './assets/csv_file.png'
 
 import alert_icon from './assets/alert_icon.png'
 import add_icon from './assets/add_icon.png'
@@ -485,7 +487,6 @@ import NewSubscriptionPage from './pages/create_action_pages/new_subscription_pa
 import NewContractPage from './pages/create_action_pages/new_contract_page'
 import NewPostPage from './pages/create_action_pages/new_post_page'
 import NewChannelPage from './pages/create_action_pages/new_channel_page'
-// import NewStorefrontPage from './pages/create_action_pages/new_storefront_page'
 import NewStorefrontItemPage from './pages/create_action_pages/new_storefront_item_page';
 import NewProposalPage from './pages/create_action_pages/new_proposal_page';
 import NewMailPage from './pages/create_action_pages/new_mail_page';
@@ -493,6 +494,7 @@ import NewContractorPage from './pages/create_action_pages/new_contractor_page';
 import NewAudioPage from './pages/create_action_pages/new_audio_page'
 import NewVideoPage from './pages/create_action_pages/new_video_page';
 import NewNitroPage from './pages/create_action_pages/new_nitro_page'
+import NewPollPage from './pages/create_action_pages/new_poll_page'
 
 import EditJobPage from './pages/edit_action_pages/edit_job_page'
 import EditTokenPage from './pages/edit_action_pages/edit_token_page'
@@ -504,6 +506,7 @@ import EditProposalPage from './pages/edit_action_pages/edit_proposal_page';
 import EditAudioPage from './pages/edit_action_pages/edit_audiopost_page';
 import EditVideoPage from './pages/edit_action_pages/edit_videopost_page';
 import EditNitroPage from './pages/edit_action_pages/edit_nitropost_page';
+import EditPollPage from './pages/edit_action_pages/edit_poll_page';
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -788,7 +791,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -811,7 +814,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:53, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -836,7 +839,7 @@ class App extends Component {
 
     my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{},
     
-    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{}, load_video_metrics:{}, load_nitro_metrics:{},
+    load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{}, load_video_metrics:{}, load_nitro_metrics:{}, load_poll_metrics:{},
 
     frozen_unfrozen_account_balance_data:{}, watched_account_data:null, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
@@ -865,7 +868,7 @@ class App extends Component {
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
 
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
-    e5_ether_override:'e'
+    e5_ether_override:'e', 
   };
 
   get_static_assets(){
@@ -898,7 +901,9 @@ class App extends Component {
       'video_label':video_label,
       'zip_file':zip_file,
       'end_img':EndImg,
-      'spend_img':SpendImg
+      'spend_img':SpendImg,
+      'csv_file':csv_icon,
+      'json_file':json_icon
     }
   }
 
@@ -2663,6 +2668,7 @@ class App extends Component {
     this.edit_channel_page = React.createRef();
     this.edit_storefront_page = React.createRef()
     this.edit_contractor_page = React.createRef();
+    this.edit_poll_page = React.createRef();
 
     this.give_award_page = React.createRef();
     this.add_comment_page = React.createRef();
@@ -2701,6 +2707,7 @@ class App extends Component {
     this.dialer_page = React.createRef();
     this.view_notification_log_page = React.createRef();
     this.view_contextual_transfer_page = React.createRef();
+    this.new_poll_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4369,7 +4376,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light', 'json_view_theme':'summerfruit:inverted',
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIcon, 'ExploreIcon': ExploreIcon, 'WalletIcon':WalletIcon, 'StackIcon': StackIcon, 
 
@@ -4408,7 +4415,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#2e2e2e', 'text_input_color':'white', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#2e2e2e', 'text_input_color':'white', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
         
@@ -4447,7 +4454,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#1a1a1a', 'text_input_color':'white', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#1a1a1a', 'text_input_color':'white', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
@@ -4489,7 +4496,7 @@ return data['data']
         'number_picker_power_color':'rgb(185, 247, 198,.9)','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#02f902', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#13190c', 'text_input_color':'#04e504', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#13190c', 'text_input_color':'#04e504', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
 
         'background':background_green, 'JobIcon':job_icon_green, 'ExploreIcon': explore_icon_green, 'WalletIcon':wallet_icon_green, 'StackIcon': stack_icon_green,
@@ -4529,7 +4536,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#c5e8d6','number_picker_label_text_color':'#01c601', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkgreen, 'add_icon':add_icon_darkgreen, 'text_input_background':'#d4e2cc', 'text_input_color':'#029302', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkgreen, 'add_icon':add_icon_darkgreen, 'text_input_background':'#d4e2cc', 'text_input_color':'#029302', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
 
         'background':background_darkgreen, 'JobIcon':job_icon_darkgreen, 'ExploreIcon': explore_icon_darkgreen, 'WalletIcon':wallet_icon_darkgreen, 'StackIcon': stack_icon_darkgreen,
 
@@ -4570,7 +4577,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#3f0101','number_picker_label_text_color':'#f90202', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#190c0c', 'text_input_color':'#f70404', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#190c0c', 'text_input_color':'#f70404', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
 
         'background':background_red, 'JobIcon':job_icon_red, 'ExploreIcon': explore_icon_red, 'WalletIcon':wallet_icon_red, 'StackIcon': stack_icon_red,
@@ -4610,7 +4617,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9d1d1','number_picker_label_text_color':'#c60b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkred, 'add_icon':add_icon_darkred, 'text_input_background':'#e2cdcc', 'text_input_color':'#930101', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkred, 'add_icon':add_icon_darkred, 'text_input_background':'#e2cdcc', 'text_input_color':'#930101', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
 
         'background':background_darkred, 'JobIcon':job_icon_darkred, 'ExploreIcon': explore_icon_darkred, 'WalletIcon':wallet_icon_darkred, 'StackIcon': stack_icon_darkred,
 
@@ -4651,7 +4658,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#183651','number_picker_label_text_color':'#0079ff', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#0d0c19', 'text_input_color':'#0079ff', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#0d0c19', 'text_input_color':'#0079ff', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
 
         'background':background_blue, 'JobIcon':job_icon_blue, 'ExploreIcon': explore_icon_blue, 'WalletIcon':wallet_icon_blue, 'StackIcon': stack_icon_blue,
@@ -4691,7 +4698,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#d1ebf9','number_picker_label_text_color':'#0181c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkblue, 'add_icon':add_icon_darkblue, 'text_input_background':'#ccdce2', 'text_input_color':'#017493', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkblue, 'add_icon':add_icon_darkblue, 'text_input_background':'#ccdce2', 'text_input_color':'#017493', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
 
         'background':background_darkblue, 'JobIcon':job_icon_darkblue, 'ExploreIcon': explore_icon_darkblue, 'WalletIcon':wallet_icon_darkblue, 'StackIcon': stack_icon_darkblue,
 
@@ -4732,7 +4739,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#505118','number_picker_label_text_color':'#efec4c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'#19190c', 'text_input_color':'#efec4c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'#19190c', 'text_input_color':'#efec4c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
 
         'background':background_yellow, 'JobIcon':job_icon_yellow, 'ExploreIcon': explore_icon_yellow, 'WalletIcon':wallet_icon_yellow, 'StackIcon': stack_icon_yellow,
@@ -4772,7 +4779,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#DCDCDC','number_picker_label_text_color':'#9ba003', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#9ba003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkyellow, 'add_icon':add_icon_darkyellow, 'text_input_background':'#e2e2cc', 'text_input_color':'#757701', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#9ba003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkyellow, 'add_icon':add_icon_darkyellow, 'text_input_background':'#e2e2cc', 'text_input_color':'#757701', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
 
         'background':background_darkyellow, 'JobIcon':job_icon_darkyellow, 'ExploreIcon': explore_icon_darkyellow, 'WalletIcon':wallet_icon_darkyellow, 'StackIcon': stack_icon_darkyellow,
 
@@ -4813,7 +4820,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#491851','number_picker_label_text_color':'#dc4cef', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#160c19', 'text_input_color':'#c94cef', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#160c19', 'text_input_color':'#c94cef', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
 
         'background':background_pink, 'JobIcon':job_icon_pink, 'ExploreIcon': explore_icon_pink, 'WalletIcon':wallet_icon_pink, 'StackIcon': stack_icon_pink,
@@ -4853,7 +4860,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f2d1f9','number_picker_label_text_color':'#af01c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkpink, 'add_icon':add_icon_darkpink, 'text_input_background':'#decce2', 'text_input_color':'#930191', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkpink, 'add_icon':add_icon_darkpink, 'text_input_background':'#decce2', 'text_input_color':'#930191', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
 
         'background':background_darkpink, 'JobIcon':job_icon_darkpink, 'ExploreIcon': explore_icon_darkpink, 'WalletIcon':wallet_icon_darkpink, 'StackIcon': stack_icon_darkpink,
 
@@ -4894,7 +4901,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#513a18','number_picker_label_text_color':'#ef964c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#19130c', 'text_input_color':'#efa04c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
+        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#19130c', 'text_input_color':'#efa04c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
 
 
         'background':background_orange, 'JobIcon':job_icon_orange, 'ExploreIcon': explore_icon_orange, 'WalletIcon':wallet_icon_orange, 'StackIcon': stack_icon_orange,
@@ -4934,7 +4941,7 @@ return data['data']
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9ebd1','number_picker_label_text_color':'#c67b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkorange, 'add_icon':add_icon_darkorange, 'text_input_background':'#e2d7cc', 'text_input_color':'#935b01', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
+        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkorange, 'add_icon':add_icon_darkorange, 'text_input_background':'#e2d7cc', 'text_input_color':'#935b01', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
 
         'background':background_darkorange, 'JobIcon':job_icon_darkorange, 'ExploreIcon': explore_icon_darkorange, 'WalletIcon':wallet_icon_darkorange, 'StackIcon': stack_icon_darkorange,
 
@@ -5070,6 +5077,7 @@ return data['data']
           {this.render_view_notification_log_bottomsheet()}
           {this.render_edit_videopost_object_bottomsheet()}
           {this.render_view_contextual_transfer_bottomsheet()}
+          {this.render_edit_poll_object_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -6904,7 +6912,7 @@ return data['data']
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)}
       
       />
     )
@@ -7470,6 +7478,10 @@ return data['data']
       clone[me.state.selected_e5] = false
       me.setState({is_running: clone})
     }, t);
+  }
+
+  set_stack_depth_value(size){
+    this.setState({stack_size_in_bytes: size})
   }
 
   calculate_arweave_data_fees = async (tx) => {
@@ -8071,6 +8083,12 @@ return data['data']
     else if(target == '12'/* nitro */){
       return(
         <NewNitroPage ref={this.new_nitro_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} test_node_url_link={this.test_node_url_link.bind(this)}/>
+      )
+    }
+    else if(target == '13'/* polls */){
+      return(
+          <NewPollPage ref={this.new_poll_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)}
+        />
       )
     }
     
@@ -8954,6 +8972,85 @@ return data['data']
 
 
 
+  render_edit_poll_object_bottomsheet(){
+    if(this.state.edit_poll_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.edit_poll_bottomsheet} onClose={this.open_edit_poll_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_edit_poll_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_edit_poll_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_poll_bottomsheet.bind(this)} open={this.state.edit_poll_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_edit_poll_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_edit_poll_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+          <EditPollPage ref={this.edit_poll_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} />
+        </div>
+    )
+  }
+
+  open_edit_poll_bottomsheet(){
+    if(this.state.edit_poll_bottomsheet == true){
+      //closing
+      this.edit_poll_bottomsheet = this.edit_poll_page.current?.state;
+
+      this.setState({edit_poll_bottomsheet: !this.state.edit_poll_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_poll_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_poll_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_poll_bottomsheet: !me.state.edit_poll_bottomsheet});
+          if(me.edit_poll_bottomsheet != null){
+            me.edit_poll_page.current?.setState(me.edit_poll_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_edit_poll_object(target, object){
+    this.open_edit_poll_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_poll_page.current){
+      me.edit_poll_page.current?.setState(object['ipfs'])
+      me.edit_poll_page.current?.setState({type:me.getLocale()['3072h']/* 'edit-poll' */})
+      me.edit_poll_page.current?.setState({object_id: object['id']})
+      me.edit_poll_page.current?.set()
+    }
+    }, (1 * 500));
+  }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8994,8 +9091,10 @@ return data['data']
     else if(target == '12'){
       this.open_edit_nitropost_object(target, object)
     }
+    else if(target == '13'){
+      this.open_edit_poll_object(target, object)
+    }
   }
-
 
   when_add_edit_object_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()
@@ -11103,19 +11202,13 @@ return data['data']
 
   render_view_transaction_bottomsheet(){
     if(this.state.view_transaction_bottomsheet2 != true) return;
-    var background_color = this.state.theme['send_receive_ether_background_color'];
-    var size = this.getScreenSize();
     var os = getOS()
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.view_transaction_bottomsheet} onClose={this.open_view_transaction_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} 
-                          
-                          />
-                        </div>
+                        {this.render_view_transaction_element()}
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
                 </Sheet.Container>
@@ -11125,10 +11218,18 @@ return data['data']
     }
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} />
-          </div>
+          {this.render_view_transaction_element()}
       </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_transaction_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} />
+        </div>
     )
   }
 
@@ -11663,7 +11764,25 @@ return data['data']
           }
         }, (1 * 500));
     }
-    
+    else if(tx.type == this.getLocale()['c311a']/* 'poll' */){
+      this.open_new_object('13')
+      var me = this;
+      setTimeout(function() {
+        if(me.new_poll_page.current){
+        me.new_poll_page.current?.setState(tx)
+      }
+      }, (1 * 500));
+      
+    }
+    else if(tx.type == this.getLocale()['3072h']/* 'edit-poll' */){
+      this.open_edit_poll_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.edit_poll_page.current){
+        me.edit_poll_page.current?.setState(tx)
+      }
+      }, (1 * 500));  
+    }
   }
 
   delete_message_item(item, transaction_item){
@@ -14401,6 +14520,11 @@ return data['data']
       this.homepage.current?.when_nitro_item_clicked(index, object['id'], object['e5'], object, 'ignore')
       this.homepage.current?.reset_post_detail_object()
     }
+    else if(object_type == 28/* 28(poll-object) */){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264ao']/* 'polls' */})
+      this.homepage.current?.when_poll_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
 
     if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet()
     if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
@@ -14722,6 +14846,7 @@ return data['data']
       this.new_audio_page.current?.when_image_gif_files_picked(picked_files)
       this.new_video_page.current?.when_image_gif_files_picked(picked_files)
       this.new_nitro_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_poll_page.current?.when_image_gif_files_picked(picked_files)
 
       this.edit_job_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_token_page.current?.when_image_gif_files_picked(picked_files)
@@ -14747,6 +14872,7 @@ return data['data']
       this.new_audio_page.current?.when_banner_selected(picked_files)
       this.new_video_page.current?.when_banner_selected(picked_files)
       this.new_nitro_page.current?.when_banner_selected(picked_files)
+      this.new_poll_page.current?.when_banner_selected(picked_files)
 
       this.edit_job_page.current?.when_banner_selected(picked_files)
       this.edit_token_page.current?.when_banner_selected(picked_files)
@@ -14791,6 +14917,7 @@ return data['data']
       this.new_audio_page.current?.when_pdf_files_picked(picked_files)
       this.new_video_page.current?.when_pdf_files_picked(picked_files)
       this.new_nitro_page.current?.when_pdf_files_picked(picked_files)
+      this.new_poll_page.current?.when_pdf_files_picked(picked_files)
 
       this.edit_job_page.current?.when_pdf_files_picked(picked_files)
       this.edit_token_page.current?.when_pdf_files_picked(picked_files)
@@ -14816,6 +14943,7 @@ return data['data']
       this.new_audio_page.current?.when_zip_files_picked(picked_files)
       this.new_video_page.current?.when_zip_files_picked(picked_files)
       this.new_nitro_page.current?.when_zip_files_picked(picked_files)
+      this.new_poll_page.current?.when_zip_files_picked(picked_files)
 
       this.edit_job_page.current?.when_zip_files_picked(picked_files)
       this.edit_token_page.current?.when_zip_files_picked(picked_files)
@@ -22279,7 +22407,7 @@ return data['data']
   }
 
   record_number_of_items(e5, object_type, count){
-    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics, 'nitro':this.state.load_nitro_metrics}
+    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics, 'nitro':this.state.load_nitro_metrics, 'polls':this.state.load_poll_metrics}
 
     var load_metrics_clone = structuredClone(obj[object_type])
     if(load_metrics_clone[e5] == null){
@@ -22331,6 +22459,9 @@ return data['data']
     }
     else if(object_type == 'nitro'){
       this.setState({load_nitro_metrics: load_metrics_clone})
+    }
+    else if(object_type == 'poll'){
+      this.setState({load_poll_metrics: load_metrics_clone})
     }
   }
 
@@ -25277,6 +25408,84 @@ return data['data']
     
   }
 
+  get_poll_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
+    var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */})
+    created_post_events = created_post_events.reverse()
+
+    //prioritize my content first
+    var my_posted_events = created_post_events.filter(function (event) {
+      return (event.returnValues.p5/* sender_account */ == account)
+    })
+    created_post_events.forEach(event => {
+      if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+        my_posted_events.push(event)
+      }
+    });
+    created_post_events = my_posted_events
+
+    if(prioritized_accounts && prioritized_accounts.length > 0){
+      var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:28/* 28(poll-object) */ , p2/* item */: prioritized_accounts})
+
+      prioritized_object_events = prioritized_object_events.reverse()
+
+      var final_object_events = []
+      var added_ids = []
+      prioritized_object_events.forEach(element => {
+        added_ids.push(element.returnValues.p2)
+        final_object_events.push(element)
+      });
+      created_post_events.forEach(element => {
+        if(!added_ids.includes(element.returnValues.p2)){
+          added_ids.push(element.returnValues.p2)
+          final_object_events.push(element)
+        }
+      });
+      created_post_events = final_object_events
+    }
+
+    if(specific_items != null && specific_items.length > 0){
+      var my_events = created_post_events.filter(function (event) {
+        return (specific_items.includes(event.returnValues.p2))
+      })
+      created_post_events.forEach(event => {
+        if(my_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+          my_events.push(event)
+        }
+      });
+      created_post_events = my_events
+    }
+
+    
+    this.record_number_of_items(e5, 'poll', created_post_events.length)
+    var created_posts = []
+    var is_first_time = this.state.created_posts[e5] == null
+
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events), web3, e5, contract_addresses)
+    console.log('all_data', all_data)
+
+    for(var i=0; i<created_post_events.length; i++){
+      var id = created_post_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
+        var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
+        
+        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
+      }
+
+      if(is_first_time){
+        var created_polls_clone = structuredClone(this.state.created_polls)
+        created_polls_clone[e5] = created_posts
+        this.setState({created_polls: created_polls_clone}) 
+      }
+    }
+
+    var created_posts_clone = structuredClone(this.state.created_polls)
+    created_posts_clone[e5] = created_posts
+    this.setState({created_polls: created_posts_clone})
+
+    console.log('poll count: '+created_posts.length)
+  }
+
   load_run_data = async (contractInstance, E52contractInstance, e5, web3, H52contractInstance) => {
     if(this.state.beacon_node_enabled == true){
       var event_params = [
@@ -25468,6 +25677,9 @@ return data['data']
     }
     if(page == this.getLocale()['1264aj']/* 'bills' */){
       this.load_bill_data(prioritized_accounts)
+    }
+    if(page == this.getLocale()['1264ao']/* 'polls' */){
+      this.load_poll_data(prioritized_accounts)
     }
 
     if(page == 'w'){
@@ -25806,6 +26018,29 @@ return data['data']
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
         this.load_my_bills(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts)
+      }
+    }
+  }
+
+  load_poll_data = async (prioritized_accounts, preferred_e5) => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.get_web3_url_from_e5(e5)
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(preferred_e5 != null && e5 != preferred_e5){
+        e5_address = '';
+      } 
+      if(e5_address != ''){
+        const web3 = new Web3(web3_url);
+
+        var account = this.state.user_account_id[e5]
+        var contract_addresses = this.state.addresses[e5]
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        this.get_poll_data(E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, account)
       }
     }
   }
@@ -26339,6 +26574,9 @@ return data['data']
       }
       else if(object_type == 21/* nitro */){
         this.load_nitro_data([id], e5)
+      }
+      else if(object_type == 28/* 28(poll-object) */){
+        this.load_poll_data([id], e5)
       }
     }
 
@@ -27966,6 +28204,7 @@ return data['data']
     obj[this.getLocale()['1264s']/* 'nitro' */] = 21
     obj['w'] = 31
     obj[this.getLocale()['1264aj']/* 'bills' */] = 31
+    obj[this.getLocale()['1264ao']/* 'polls' */] = 28
 
     return obj[page]
   }

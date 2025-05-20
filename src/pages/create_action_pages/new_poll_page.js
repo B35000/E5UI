@@ -20,26 +20,36 @@ import React, { Component } from 'react';
 import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
+import NumberPicker from '../../components/number_picker';
+
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
-import EndImg from '../../assets/end_token_icon.png';
-
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
+import ReactJson from 'react-json-view'
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 
 var bigInt = require("big-integer");
 
-function bgN(number, power) {
-  return bigInt((number+"e"+power)).toString();
-}
-
 function number_with_commas(x) {
-    if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+function start_and_end(str) {
+    if (str.length > 13) {
+      return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+    }
+    return str;
+  }
 
 function makeid(length) {
     let result = '';
@@ -53,10 +63,10 @@ function makeid(length) {
     return result;
 }
 
-class NewNitroPage extends Component {
+class NewPollPage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), object_type:21, type:this.props.app_state.loc['a273a']/* 'nitro' */, e5:this.props.app_state.selected_e5,
+        selected: 0, id: makeid(8), object_type:28, type:this.props.app_state.loc['c311a']/* 'poll' */, e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
@@ -68,12 +78,16 @@ class NewNitroPage extends Component {
         device_region: this.props.app_state.device_region,
 
         edit_text_item_pos:-1,
-        get_disabled_comments_section:this.get_disabled_comments_section(),
         get_content_channeling_object:this.get_content_channeling_object(),
 
-        entered_pdf_objects:[], markdown:'', entered_node_url_text:'', node_url:'', album_art:null, entered_node_key_text:'', encrypted_key:'' ,get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
-    };
+        entered_pdf_objects:[], markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
+        participant_id:'', participants:[], json_files:[], csv_files:[],
+        start_time:(new Date().getTime()/1000)+7200,
+        end_time:(new Date().getTime()/1000)+64800,
+
+        winner_count:1, candidate:'', candidates:[]
+    };
 
 
     get_new_job_page_tags_object(){
@@ -82,7 +96,7 @@ class NewNitroPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['c311bh']/* candidates */, this.props.app_state.loc['c311c']/* 'participants' */, this.props.app_state.loc['c311z']/* 'schedule' */,this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -105,17 +119,6 @@ class NewNitroPage extends Component {
                 ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
             ]
         return obj;
-    }
-
-    get_disabled_comments_section(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e',this.props.app_state.loc['2756']/* disabled */], [0]
-            ],
-        };
     }
 
     get_content_channeling_object(){
@@ -147,8 +150,7 @@ class NewNitroPage extends Component {
             ],
         };
     }
-
-
+    
 
 
 
@@ -179,7 +181,6 @@ class NewNitroPage extends Component {
     when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
-
 
     render_everything(){
         var selected_item = this.get_selected_item(this.state.get_new_job_page_tags_object, this.state.get_new_job_page_tags_object['i'].active)
@@ -226,6 +227,27 @@ class NewNitroPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['c311c']/* 'participants' */){
+            return(
+                <div>
+                    {this.render_enter_participants_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['c311z']/* 'schedule' */){
+            return(
+                <div>
+                    {this.render_enter_schedule_time_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['c311bh']/* candidates */){
+            return(
+                <div>
+                    {this.render_enter_candidates_part()}
+                </div>
+            )
+        }
     }
 
     is_text_selected_item(selected_item){
@@ -236,17 +258,12 @@ class NewNitroPage extends Component {
         return false
     }
 
-
-
-
-
-
+   
 
 
     componentDidMount(){
         this.setState({screen_width: this.screen.current?.offsetWidth})
     }
-
 
     render_enter_tags_part(){
         var size = this.props.size
@@ -289,7 +306,7 @@ class NewNitroPage extends Component {
     render_title_tags_part(){
         return(
             <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['301']})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['c311b']})}
                 <div style={{height:10}}/>
                 
                 <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -325,49 +342,10 @@ class NewNitroPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
 
 
-
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-
-
-
-
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a273b']/* 'Node URL.' */, 'details':this.props.app_state.loc['a273c']/* 'Set the url link to the node or its ip address.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <TextInput height={30} placeholder={this.props.app_state.loc['a273g']/* https://<your-public-ip>:3000/ */} when_text_input_field_changed={this.when_node_url_input_field_changed.bind(this)} text={this.state.entered_node_url_text} theme={this.props.theme}/>
-
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.nitro_link_size - this.state.entered_node_url_text.length)})}
-                <div style={{height: 10}}/>
-
-                <TextInput height={60} placeholder={this.props.app_state.loc['a273o']/* 'nitro key (e.g. eeeee2Edp...di4reeeee)' */} when_text_input_field_changed={this.when_node_key_input_field_changed.bind(this)} text={this.state.entered_node_key_text} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-                
-                <div onClick={()=>this.test_node_url_link()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['a273d']/* 'Test and Add.' */, 'action':''})}
-                </div>
-                
-                <div style={{height:10}}/>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.node_url})}
-
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['a273m']/* 'Set an image to identify your new node. The image will be rendered in a 1:1 aspect ratio.' */})}
-                <div style={{height:10}}/>
-                {this.render_create_image_ui_buttons_part2()}
-
             </div>
         )
-    }
-
-    when_get_disabled_comments_section_option(tag_obj){
-        this.setState({get_disabled_comments_section: tag_obj})
     }
 
     when_title_text_input_field_changed(text){
@@ -430,87 +408,6 @@ class NewNitroPage extends Component {
 
 
 
-    when_node_url_input_field_changed(text){
-        this.setState({entered_node_url_text: text})
-    }
-
-    when_node_key_input_field_changed(text){
-        this.setState({entered_node_key_text: text})
-    }
-
-    test_node_url_link(){
-        var link = this.state.entered_node_url_text
-        var key = this.state.entered_node_key_text
-
-        if(link == ''){
-            this.props.notify(this.props.app_state.loc['a273e']/* 'Please add a url link.' */, 4000)
-        }
-        else if(!this.isValidURL(link)){
-            this.props.notify(this.props.app_state.loc['a273f']/* 'That link is not valid.' */, 4000)
-        }
-        else if(link.length > this.props.app_state.nitro_link_size){
-            this.props.notify(this.props.app_state.loc['a273s']/* 'That link is too long.' */, 4000)
-        }
-        else if(link.endsWith('/')){
-            this.props.notify(this.props.app_state.loc['a273k']/* 'The link should not end with the \'/\' character.' */, 4000)
-        }
-        else if(key == ''){
-            this.props.notify(this.props.app_state.loc['a273p']/* 'Please provide the nitro key for your node.' */, 4000)
-        }
-        else if(!key.startsWith('eeeee') || !key.endsWith('eeeee')){
-            this.props.notify(this.props.app_state.loc['a273q']/* 'That key isn\'t valid.' */, 4000)
-        }
-        else if(!this.props.app_state.has_wallet_been_set){
-            this.props.notify(this.props.app_state.loc['a273r']/* 'You need to set your wallet first to encrypt that nitro key.' */, 4000)
-        }
-        else{
-            this.props.test_node_url_link(link, key)
-        }
-    }
-
-    isValidURL(string) {
-        let url;
-        try {
-            url = new URL(string);
-        } catch (_) {
-            return false;  
-        }
-        return /* url.protocol === "http:" || */ url.protocol === "https:" || url.protocol === "wss:";
-    }
-
-    set_node_url(link, encrypted_key){
-        this.setState({node_url: link, encrypted_key: encrypted_key, entered_node_key_text:'', entered_node_url_text:''})
-    }
-
-
-    /* renders the buttons for pick images, set images and clear images */
-    render_create_image_ui_buttons_part2(){
-        var default_image = EndImg
-        var image = this.state.album_art == null ? default_image : this.get_image_from_file(this.state.album_art)
-        return(
-            <div>
-                <div style={{'margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
-                    <div style={{'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_audio_album_art', 1)}/>
-                    </div>
-
-                    <div style={{'margin': '10px 0px 0px 0px'}}>
-                        <img alt="" src={image} style={{height:100 ,width:100, 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    when_icon_image_tapped(){
-        this.setState({album_art: null})
-    }
-
-    when_album_art_selected(files){
-        this.setState({album_art: files[0]});
-    }
-
-
 
 
 
@@ -565,12 +462,6 @@ class NewNitroPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['307']})}
-                {this.render_detail_item('0')} */}
-                
-                {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/> */}
-
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
@@ -860,7 +751,6 @@ class NewNitroPage extends Component {
 
 
 
-
     render_enter_image_part(){
         var size = this.props.size
         if(size == 's'){
@@ -1020,6 +910,8 @@ class NewNitroPage extends Component {
     constructor(props) {
         super(props);
         this.screen = React.createRef()
+        this.csv_input = React.createRef()
+        this.json_input = React.createRef()
     }
 
     render_image_part(){
@@ -1036,7 +928,7 @@ class NewNitroPage extends Component {
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                     
                                 </div>
@@ -1100,8 +992,6 @@ class NewNitroPage extends Component {
         }
         this.setState({entered_image_objects: cloned_array})
     }
-
-
 
 
 
@@ -1256,6 +1146,13 @@ class NewNitroPage extends Component {
 
 
 
+
+
+
+
+
+
+
     render_enter_zip_part(){
         var size = this.props.size
         if(size == 's'){
@@ -1380,8 +1277,6 @@ class NewNitroPage extends Component {
         }
         this.setState({entered_zip_objects: cloned_array})
     }
-
-
 
 
 
@@ -1520,11 +1415,846 @@ class NewNitroPage extends Component {
 
 
 
+    render_enter_participants_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_participants_parts()}
+                    {this.render_detail_item('0')}
+                    {this.render_pick_participants_parts2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_participants_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_participants_parts2()}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_participants_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_participants_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_participants_parts(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['c311d']/* 'Specify the accounts set to participate in the poll. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311n']/* 'This action cannot be undone or changed after youre next run. */, 'textsize':'11px', 'font':this.props.app_state.font})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311e']/* Participant Account */, 'details':this.props.app_state.loc['c311f']/* Manually add an account to the accepted participants */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311g']/* Account... */} when_text_input_field_changed={this.when_participant_id_input_field_changed.bind(this)} text={this.state.participant_id} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('participants')}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_participant_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311h']/* Add Account. */, 'action':''})}
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_added_participants()}
+            </div>
+        )
+    }
+
+    render_pick_participants_parts2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311o']/* Add from File. */, 'details':this.props.app_state.loc['c311p']/* You can add multiple account ids from a csv or json file if youre dealing with a large number of participants. */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311y']/* 'You will be required to reproduce these files in their current condition while calculating and posting results. Do not change them after your post this poll.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{height:30}}/>
+
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['c311s']/* 'Select a CSV file to use. You can select multiple files at once. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311t']/* 'Make sure each value in the file is separated by a comma \',\' character. \n eg ---> E25:1002,E25:1120,E25:1125,E25:31300,,,...*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.call_input_function('csv')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311q']/* 'Select CSV File' */, 'action':''})}
+                </div>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', this.state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.render_csv_files()}
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['c311u']/* 'Select a JSON file to use. You can select multiple files at once. Kindly observe the required format as shown below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                {this.render_json_format_example()}
+                <div style={{height:10}}/>
+                <div onClick={() => this.call_input_function('json')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311r']/* 'Select JSON File.' */, 'action':''})}
+                </div>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', this.state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.render_json_files()}
+
+                {this.render_open_options_picker_upload_button()}
+            </div>
+        )
+    }
+
+    when_participant_id_input_field_changed(text){
+        this.setState({participant_id: text})
+    }
+
+    when_add_participant_button_tapped(){
+        var typed_text = this.state.participant_id.trim()
+        var participant_id = this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
+        var final_value = participant_e5+':'+participant_id
+        var participants_clone = this.state.participants.slice()
+        if(isNaN(participant_id) || parseInt(participant_id) < 0 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else if(participants_clone.includes(final_value)){
+            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        }
+        else{
+            participants_clone.push(final_value)
+            this.setState({participants: participants_clone, participant_id:''});
+            this.props.notify(this.props.app_state.loc['c311k']/* Account Added. */, 1400)
+        }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = (obj[alias] == null ? alias : obj[alias])
+        return id
+    }
+
+    get_alias_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    render_added_participants(){
+        var items = [].concat(this.state.participants)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_participant_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '3px'}}>
+                                            {this.render_detail_item('3', {'title':this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        } 
+    }
+
+    get_data(item){
+        var obj = item.split(':')
+        return { e5: obj[0], id: obj[1]}
+    }
+
+    get_senders_name(item){
+        var data_item = this.get_data(item)
+        var sender = data_item.id
+        var e5 = data_item.e5
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.props.app_state.alias_bucket[e5]
+            var alias = (obj[sender] == null ? this.props.app_state.loc['c311m']/* 'Account' */ : obj[sender])
+            return alias
+        }
+    }
+
+    when_added_participant_clicked(item, index){
+        var cloned_array = this.state.participants.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({participants: cloned_array})
+    }
+
+    render_open_options_picker_upload_button(){
+        return(
+            <div>
+                <input ref={this.json_input} style={{display: 'none'}} id="upload" type="file" accept =".json" onChange ={this.when_json_file_picked.bind(this)} multiple/>
+                
+                <input ref={this.csv_input} style={{display: 'none'}} id="upload" type="file" accept =".csv" onChange ={this.when_csv_file_picked.bind(this)} multiple/>
+            </div>
+        )
+    }
+
+    call_input_function(type){
+        if(type == 'json'){
+            this.json_input.current?.click()
+        }
+        else if(type == 'csv'){
+            this.csv_input.current?.click()
+        }
+    }
+
+    when_json_file_picked = async (e) => {
+        this.props.notify(this.props.app_state.loc['c311v']/* Preparing files... */, 1200);
+        await new Promise(resolve => setTimeout(resolve, 1400))
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){
+                this.is_loading_file = true
+                let reader = new FileReader();
+                reader.onload = async function(ev){
+                    var data = ev.target.result
+                    try{
+                        var participants_data = JSON.parse(data)
+                        var voter_data = await this.process_json_file_object(participants_data)
+                        var clone = this.state.json_files.slice()
+                        clone.push({'size':ev.total, 'name':this.current_file, 'data':voter_data})
+                        this.setState({json_files: clone})
+                    }catch(ex){
+                        console.log('new_poll', ex)
+                    }
+                    this.is_loading_file = false
+                }.bind(this);
+                var jsonFile = e.target.files[i];
+                this.current_file = jsonFile['name']
+                const includes = this.state.json_files.find(e => e['name'] === this.current_file)
+                if(includes == null){
+                    reader.readAsText(jsonFile);
+                }else{
+                    this.is_loading_file = false
+                }
+
+                while (this.is_loading_file == true) {
+                    if (this.is_loading_file == false) break
+                    console.log('poll_data','Waiting for file to be loaded')
+                    await new Promise(resolve => setTimeout(resolve, 1000))
+                }
+            }
+        }
+    }
+
+    process_json_file_object = async (object) => {
+        var keys = Object.keys(object)
+        var final_obj = {}
+        var account_entries = 0
+        try{
+            keys.forEach(key => {
+                if(this.props.app_state.e5s['data'].includes(key)){
+                    if(final_obj[key] == null){
+                        final_obj[key] = []
+                    }
+                    try{
+                        object[key].forEach(account => {
+                            var trimed_account = account.toString().trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                            if(!isNaN(trimed_account) && parseInt(trimed_account) < 10**16){
+                                final_obj[key].push(parseInt(trimed_account))
+                                account_entries++
+                            }
+                        });
+                    }catch(e){
+                        console.log('new_poll', e)
+                    }
+                    
+                }
+            });
+        }catch(o){
+            console.log('new_poll', 0)
+        }
+
+        var hash = await this.props.generate_hash(JSON.stringify(final_obj))
+        return { data: hash, account_entries}
+    }
+
+    when_csv_file_picked = async(e) => {
+        this.props.notify(this.props.app_state.loc['c311v']/* Preparing files... */, 1200);
+        await new Promise(resolve => setTimeout(resolve, 1400))
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                this.is_loading_file = true
+                let reader = new FileReader();
+                reader.onload = async function(ev){
+                    var data = ev.target.result
+                    var participants_data = data.toString()
+                    var voter_data = await this.process_csv_file_data(participants_data)
+                    var clone = this.state.csv_files.slice()
+                    clone.push({'size':ev.total, 'name':this.current_file, 'data':voter_data})
+                    this.setState({csv_files: clone})
+
+                    this.is_loading_file = false
+                }.bind(this);
+                var csvFile = e.target.files[i];
+                this.current_file = csvFile['name']
+                const includes = this.state.csv_files.find(e => e['name'] === this.current_file)
+                if(includes == null){
+                    reader.readAsText(csvFile);
+                }else{
+                    this.is_loading_file = false
+                }
+
+                while (this.is_loading_file == true) {
+                    if (this.is_loading_file == false) break
+                    console.log('poll_data','Waiting for file to be loaded')
+                    await new Promise(resolve => setTimeout(resolve, 1000))
+                }
+            }
+        }
+    }
+
+    process_csv_file_data = async (data) => {
+        var entities = data.split(',')
+        var final_obj = {}
+        var account_entries = 0
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5)){
+                        if(final_obj[e5] == null){
+                            final_obj[e5] = []
+                        }
+                        if(!isNaN(account) && parseInt(account) < 10**16){
+                            final_obj[e5].push(parseInt(account))
+                            account_entries++
+                        }
+                    }
+                }
+            }
+        });
+
+        var hash = await this.props.generate_hash(JSON.stringify(final_obj))
+        return { data: hash, account_entries}
+    }
+
+    render_json_format_example(){
+        var data = {
+            'E25':[1002, 1003, 1004, 1005], 
+            'E35':[1032, 7003, 29304, 39205], 
+            'E45':[1032, 10009, 19829, 182928]
+        }
+        var view_theme = this.props.app_state.theme['json_view_theme']
+        return(
+            <div>
+                <ReactJson src={data} theme={view_theme} collapsed={false} iconStyle={'circle'} displayObjectSize={false} displayDataTypes={false}
+                />
+            </div>
+        )
+    }
+
+    render_csv_files(){
+        var items = this.state.csv_files
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_csv_file_tapped(index)}>
+                            {this.render_file(item, index, true, 'csv')}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_file(item, index, minified, type){
+        var formatted_size = this.format_data_size(item['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var txt = this.props.app_state.loc['c311w']/* $ accounts */.replace('$', number_with_commas(item['data'].account_entries))
+        var details = fs+' • '+txt;
+        var title = item['name']
+        var size = 'l'
+        var thumbnail = type == 'csv' ? this.props.app_state.static_assets['csv_file'] : this.props.app_state.static_assets['json_file']
+        if(minified == true){
+            details = fs
+            title = start_and_end(title)
+            size = 's'
+        }
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    when_csv_file_tapped(index){
+        var cloned_array = this.state.csv_files.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({csv_files: cloned_array})
+    }
+
+    render_json_files(){
+        var items = this.state.json_files
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_json_file_tapped(index)}>
+                            {this.render_file(item, index, true, 'json')}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_json_file_tapped(index){
+        var cloned_array = this.state.json_files.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({json_files: cloned_array})
+    }
+
+
+
+
+
+
+
+
+    load_account_suggestions(target_type){
+        var items = [].concat(this.get_suggested_accounts(target_type))
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_suggested_accounts(target_type){
+        var me = this.props.app_state.user_account_id[this.state.e5]
+        if(me == null){
+            return this.get_account_suggestions(target_type)
+        }
+        return[
+            {'id':me, 'label':{'title':this.props.app_state.loc['c311l']/* My Account. */, 'details':this.props.app_state.loc['c311m']/* 'Account' */, 'size':'s'}},
+        ].concat(this.get_account_suggestions(target_type))
+    }
+
+    get_account_suggestions(target_type){
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        var return_array = []
+
+        if(target_type == 'participants'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.participants)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        return (obj[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : obj[contact['id']])
+    }
+
+    when_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'participants'){
+            this.setState({participants: item['id']})
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    render_enter_schedule_time_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_starting_time_calendar()}
+                    {this.render_detail_item('0')}
+                    {this.render_pick_ending_time_calendar()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_starting_time_calendar()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_ending_time_calendar()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_starting_time_calendar()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_ending_time_calendar()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_starting_time_calendar(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311ba']/* Poll Start Time */, 'details':this.props.app_state.loc['c311bb']/* Set the starting time after which votes can be submitted to the poll. */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311bf']/* 'Events logged before the time set below are rendered invalid during consensus.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['c311bc']/* 'In: ' */+this.get_time_diff(this.state.start_time - Date.now()/1000), 'title':''+(new Date(this.state.start_time * 1000)), 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_start_time_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    when_start_time_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        var timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        if(timeInSeconds > Date.now() + 600){
+            timeInSeconds = Date.now() + 600
+        }
+        if(this.state.end_time < timeInSeconds){
+            this.setState({end_time: timeInSeconds + 600})
+        }
+        this.setState({start_time: timeInSeconds})
+    }
+
+    render_pick_ending_time_calendar(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311bd']/* Poll Ending Time. */, 'details':this.props.app_state.loc['c311be']/* Set the time after which no new votes can be submitted to the poll. */, 'size':'l'})}
+                
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311bg']/* 'Events logged after the time set below are discarded during consensus.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['c311bc']/* 'In: ' */+this.get_time_diff(this.state.end_time - Date.now()/1000), 'title':''+(new Date(this.state.end_time * 1000)), 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_end_time_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    when_end_time_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        var timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        if(timeInSeconds > Date.now() + 600){
+            timeInSeconds = Date.now() + 600
+        }
+        if(this.state.start_time > timeInSeconds){
+            timeInSeconds = this.state.start_time + 1200
+        }
+        this.setState({end_time: timeInSeconds})
+    }
+
+
+
+
+
+
+
+
+    render_enter_candidates_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_candidates_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_candidates_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_candidates_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_candidates_parts(){
+        var winner_text = this.state.winner_count == 0 ? '000' : this.state.winner_count
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311bi']/* Poll Targeted Winners. */, 'details':this.props.app_state.loc['c311bj']/* Specify the number of winners for the poll.*/, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('4', {'text':winner_text.toString(), 'textsize':'13px', 'font':this.props.app_state.font})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_winner_count.bind(this)} theme={this.props.theme} power_limit={9} pick_with_text_area={true} text_area_hint={'1'}/>
+
+                {this.show_consensus_type_message()}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311bl']/* Poll Candidates. */, 'details':this.props.app_state.loc['c311bm']/* Specify the candidates for the poll. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311bn']/* Name... */} when_text_input_field_changed={this.when_candidate_input_field_changed.bind(this)} text={this.state.candidate} theme={this.props.theme}/>
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_candidate_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311bo']/* Add Candidate. */, 'action':''})}
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_added_candidates()}
+            </div>
+        )
+    }
+
+    show_consensus_type_message(){
+        var text = this.props.app_state.loc['c311bv']/* instant-runoff voting shall be used. */
+        if(this.state.winner_count > 1){
+            text = this.props.app_state.loc['c311bu']/* single transferrable vote (propotinal-ranked choice voting) shall be used. */
+        }
+        if(this.state.winner_count == 0) return;
+
+        return(
+            <div>
+                {this.render_detail_item('10', {'text':text, 'textsize':'11px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    when_winner_count(number){
+        this.setState({winner_count: parseInt(number)})
+    }
+
+    when_candidate_input_field_changed(text){
+        this.setState({candidate: text})
+    }
+
+    when_add_candidate_button_tapped(){
+        var candidate = this.state.candidate.trim()
+        const includes = this.state.candidates.find(e => e['name'] === candidate)
+        
+        var id = makeid(2)
+        while(this.state.candidates.find(e => e['id'] === id)){
+            id = makeid(2)
+        }
+
+        if(candidate == ''){
+            this.props.notify(this.props.app_state.loc['128'], 1400)
+        }
+        else if(this.hasWhiteSpace(candidate)){
+            this.props.notify(this.props.app_state.loc['129'], 1400)
+        }
+        else if(candidate.length < 3){
+            this.props.notify(this.props.app_state.loc['c311bp']/* 'That name is too short.' */, 1400)
+        }
+        else if(includes != null){
+            this.props.notify(this.props.app_state.loc['c311bq']/* 'Youve already added that candidate.' */, 2400)
+        }
+        else if(this.state.candidates.length == this.props.app_state.max_candidates_count){
+            this.props.notify(this.props.app_state.loc['c311br']/* 'You cant use more than $ candidates.' */.replace('$', this.props.app_state.max_candidates_count), 5400)
+        }
+        else{
+            var clone = this.state.candidates.slice()
+            clone.push({'name': candidate, 'id':id})
+            this.setState({candidates: clone, candidate:''})
+        }
+    }
+
+    render_added_candidates(){
+        var items = [].concat(this.state.candidates)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_candidate_tapped(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '3px'}}>
+                                            {this.render_detail_item('3', {'title':this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_added_candidate_tapped(item, index){
+        var cloned_array = this.state.candidates.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({candidates: cloned_array})
+    }
+
+
+
+
+
+
+
 
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
-        var node_url = this.state.node_url
+        var winner_count = this.state.winner_count
+        var candidates = this.state.candidates
 
         if(index_tags.length < 3){
             this.props.notify(this.props.app_state.loc['270'], 4700)
@@ -1535,8 +2265,14 @@ class NewNitroPage extends Component {
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['272'], 4700)
         }
-        else if(node_url == ''){
-            this.props.notify(this.props.app_state.loc['a273l']/* 'You havent set a node url link' */, 4700)
+        else if(winner_count == 0){
+            this.props.notify(this.props.app_state.loc['c311bs']/* Your targeted winners cannot be 0 */, 4700)
+        }
+        else if(candidates.length < 2 ){
+            this.props.notify(this.props.app_state.loc['c311bw']/* A minimum of 2 candidates is required for any poll. */, 4700)
+        }
+        else if(candidates.length >= winner_count){
+            this.props.notify(this.props.app_state.loc['c311bt']/* The number of targeted winners cannot be equal or greater than your candidates. */, 9700)
         }
         else{
             var me = this;
@@ -1544,7 +2280,10 @@ class NewNitroPage extends Component {
                 me.props.when_add_new_object_to_stack(me.state)
         
                 me.setState({ 
-                    id: makeid(8), type:me.props.app_state.loc['a273a']/* 'nitro' */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, device_region: me.props.app_state.device_region, edit_text_item_pos:-1, get_disabled_comments_section:me.get_disabled_comments_section(), get_content_channeling_object:me.get_content_channeling_object(), entered_pdf_objects:[], markdown:'', node_url:'', entered_node_url_text:'', album_art:null,
+                    id: makeid(8), type:me.props.app_state.loc['c311a']/* 'poll' */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, device_region: me.props.app_state.device_region, edit_text_item_pos:-1, get_content_channeling_object:me.get_content_channeling_object(), entered_pdf_objects:[], markdown:'', participant_id:'', participants:[], json_files:[], csv_files:[],
+                    start_time:(new Date().getTime()/1000)+7200,
+                    end_time:(new Date().getTime()/1000)+64800,
+                    winner_count:1, candidate:'', candidates:[]
                 })
             }, (1 * 1000));
             
@@ -1552,11 +2291,6 @@ class NewNitroPage extends Component {
             
         }
     }
-
-
-
-
-
 
 
 
@@ -1705,4 +2439,4 @@ class NewNitroPage extends Component {
 
 
 
-export default NewNitroPage;
+export default NewPollPage;

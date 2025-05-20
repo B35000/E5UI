@@ -20,26 +20,36 @@ import React, { Component } from 'react';
 import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
+import NumberPicker from '../../components/number_picker';
+
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
-import EndImg from '../../assets/end_token_icon.png';
-
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
+import ReactJson from 'react-json-view'
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 
 var bigInt = require("big-integer");
 
-function bgN(number, power) {
-  return bigInt((number+"e"+power)).toString();
-}
-
 function number_with_commas(x) {
-    if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+function start_and_end(str) {
+    if (str.length > 13) {
+      return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+    }
+    return str;
+  }
 
 function makeid(length) {
     let result = '';
@@ -53,10 +63,10 @@ function makeid(length) {
     return result;
 }
 
-class NewNitroPage extends Component {
+class EditPollPage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), object_type:21, type:this.props.app_state.loc['a273a']/* 'nitro' */, e5:this.props.app_state.selected_e5,
+        selected: 0, id: makeid(8), object_type:28, type:this.props.app_state.loc['3072h']/* 'edit-poll' */, e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
@@ -68,12 +78,28 @@ class NewNitroPage extends Component {
         device_region: this.props.app_state.device_region,
 
         edit_text_item_pos:-1,
-        get_disabled_comments_section:this.get_disabled_comments_section(),
         get_content_channeling_object:this.get_content_channeling_object(),
+        get_take_down_option: this.get_take_down_option(),
 
-        entered_pdf_objects:[], markdown:'', entered_node_url_text:'', node_url:'', album_art:null, entered_node_key_text:'', encrypted_key:'' ,get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
+        entered_pdf_objects:[], markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+
+        participant_id:'', participants:[], json_files:[], csv_files:[],
+        start_time:(new Date().getTime()/1000)+7200,
+        end_time:(new Date().getTime()/1000)+64800,
+
+        winner_count:1, candidate:'', candidates:[]
     };
 
+    set(){
+        if(this.state.get_take_down_option == null){
+            this.setState({get_take_down_option: this.get_take_down_option()})
+        }
+        if(this.state.get_markdown_preview_or_editor_object == null){
+            this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
+        }
+
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
+    }
 
 
     get_new_job_page_tags_object(){
@@ -82,7 +108,7 @@ class NewNitroPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -105,17 +131,6 @@ class NewNitroPage extends Component {
                 ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
             ]
         return obj;
-    }
-
-    get_disabled_comments_section(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e',this.props.app_state.loc['2756']/* disabled */], [0]
-            ],
-        };
     }
 
     get_content_channeling_object(){
@@ -147,8 +162,7 @@ class NewNitroPage extends Component {
             ],
         };
     }
-
-
+    
 
 
 
@@ -179,7 +193,6 @@ class NewNitroPage extends Component {
     when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
-
 
     render_everything(){
         var selected_item = this.get_selected_item(this.state.get_new_job_page_tags_object, this.state.get_new_job_page_tags_object['i'].active)
@@ -236,17 +249,12 @@ class NewNitroPage extends Component {
         return false
     }
 
-
-
-
-
-
+   
 
 
     componentDidMount(){
         this.setState({screen_width: this.screen.current?.offsetWidth})
     }
-
 
     render_enter_tags_part(){
         var size = this.props.size
@@ -289,7 +297,7 @@ class NewNitroPage extends Component {
     render_title_tags_part(){
         return(
             <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['301']})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['c311b']})}
                 <div style={{height:10}}/>
                 
                 <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -320,54 +328,19 @@ class NewNitroPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
-
-
+                <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-
-
-
-
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a273b']/* 'Node URL.' */, 'details':this.props.app_state.loc['a273c']/* 'Set the url link to the node or its ip address.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <TextInput height={30} placeholder={this.props.app_state.loc['a273g']/* https://<your-public-ip>:3000/ */} when_text_input_field_changed={this.when_node_url_input_field_changed.bind(this)} text={this.state.entered_node_url_text} theme={this.props.theme}/>
-
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.nitro_link_size - this.state.entered_node_url_text.length)})}
-                <div style={{height: 10}}/>
-
-                <TextInput height={60} placeholder={this.props.app_state.loc['a273o']/* 'nitro key (e.g. eeeee2Edp...di4reeeee)' */} when_text_input_field_changed={this.when_node_key_input_field_changed.bind(this)} text={this.state.entered_node_key_text} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-                
-                <div onClick={()=>this.test_node_url_link()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['a273d']/* 'Test and Add.' */, 'action':''})}
-                </div>
-                
-                <div style={{height:10}}/>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.node_url})}
-
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['a273m']/* 'Set an image to identify your new node. The image will be rendered in a 1:1 aspect ratio.' */})}
-                <div style={{height:10}}/>
-                {this.render_create_image_ui_buttons_part2()}
-
             </div>
         )
     }
 
-    when_get_disabled_comments_section_option(tag_obj){
-        this.setState({get_disabled_comments_section: tag_obj})
+    when_get_take_down_option(tag_obj){
+        this.setState({get_take_down_option: tag_obj})
     }
 
     when_title_text_input_field_changed(text){
@@ -430,87 +403,6 @@ class NewNitroPage extends Component {
 
 
 
-    when_node_url_input_field_changed(text){
-        this.setState({entered_node_url_text: text})
-    }
-
-    when_node_key_input_field_changed(text){
-        this.setState({entered_node_key_text: text})
-    }
-
-    test_node_url_link(){
-        var link = this.state.entered_node_url_text
-        var key = this.state.entered_node_key_text
-
-        if(link == ''){
-            this.props.notify(this.props.app_state.loc['a273e']/* 'Please add a url link.' */, 4000)
-        }
-        else if(!this.isValidURL(link)){
-            this.props.notify(this.props.app_state.loc['a273f']/* 'That link is not valid.' */, 4000)
-        }
-        else if(link.length > this.props.app_state.nitro_link_size){
-            this.props.notify(this.props.app_state.loc['a273s']/* 'That link is too long.' */, 4000)
-        }
-        else if(link.endsWith('/')){
-            this.props.notify(this.props.app_state.loc['a273k']/* 'The link should not end with the \'/\' character.' */, 4000)
-        }
-        else if(key == ''){
-            this.props.notify(this.props.app_state.loc['a273p']/* 'Please provide the nitro key for your node.' */, 4000)
-        }
-        else if(!key.startsWith('eeeee') || !key.endsWith('eeeee')){
-            this.props.notify(this.props.app_state.loc['a273q']/* 'That key isn\'t valid.' */, 4000)
-        }
-        else if(!this.props.app_state.has_wallet_been_set){
-            this.props.notify(this.props.app_state.loc['a273r']/* 'You need to set your wallet first to encrypt that nitro key.' */, 4000)
-        }
-        else{
-            this.props.test_node_url_link(link, key)
-        }
-    }
-
-    isValidURL(string) {
-        let url;
-        try {
-            url = new URL(string);
-        } catch (_) {
-            return false;  
-        }
-        return /* url.protocol === "http:" || */ url.protocol === "https:" || url.protocol === "wss:";
-    }
-
-    set_node_url(link, encrypted_key){
-        this.setState({node_url: link, encrypted_key: encrypted_key, entered_node_key_text:'', entered_node_url_text:''})
-    }
-
-
-    /* renders the buttons for pick images, set images and clear images */
-    render_create_image_ui_buttons_part2(){
-        var default_image = EndImg
-        var image = this.state.album_art == null ? default_image : this.get_image_from_file(this.state.album_art)
-        return(
-            <div>
-                <div style={{'margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
-                    <div style={{'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_audio_album_art', 1)}/>
-                    </div>
-
-                    <div style={{'margin': '10px 0px 0px 0px'}}>
-                        <img alt="" src={image} style={{height:100 ,width:100, 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    when_icon_image_tapped(){
-        this.setState({album_art: null})
-    }
-
-    when_album_art_selected(files){
-        this.setState({album_art: files[0]});
-    }
-
-
 
 
 
@@ -565,12 +457,6 @@ class NewNitroPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['307']})}
-                {this.render_detail_item('0')} */}
-                
-                {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/> */}
-
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
@@ -860,7 +746,6 @@ class NewNitroPage extends Component {
 
 
 
-
     render_enter_image_part(){
         var size = this.props.size
         if(size == 's'){
@@ -1020,6 +905,8 @@ class NewNitroPage extends Component {
     constructor(props) {
         super(props);
         this.screen = React.createRef()
+        this.csv_input = React.createRef()
+        this.json_input = React.createRef()
     }
 
     render_image_part(){
@@ -1036,7 +923,7 @@ class NewNitroPage extends Component {
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                     
                                 </div>
@@ -1100,8 +987,6 @@ class NewNitroPage extends Component {
         }
         this.setState({entered_image_objects: cloned_array})
     }
-
-
 
 
 
@@ -1256,6 +1141,13 @@ class NewNitroPage extends Component {
 
 
 
+
+
+
+
+
+
+
     render_enter_zip_part(){
         var size = this.props.size
         if(size == 's'){
@@ -1380,8 +1272,6 @@ class NewNitroPage extends Component {
         }
         this.setState({entered_zip_objects: cloned_array})
     }
-
-
 
 
 
@@ -1519,12 +1409,9 @@ class NewNitroPage extends Component {
 
 
 
-
-
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
-        var node_url = this.state.node_url
 
         if(index_tags.length < 3){
             this.props.notify(this.props.app_state.loc['270'], 4700)
@@ -1535,28 +1422,12 @@ class NewNitroPage extends Component {
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['272'], 4700)
         }
-        else if(node_url == ''){
-            this.props.notify(this.props.app_state.loc['a273l']/* 'You havent set a node url link' */, 4700)
-        }
         else{
-            var me = this;
-            setTimeout(function() {
-                me.props.when_add_new_object_to_stack(me.state)
-        
-                me.setState({ 
-                    id: makeid(8), type:me.props.app_state.loc['a273a']/* 'nitro' */, e5:me.props.app_state.selected_e5, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], content_channeling_setting: me.props.app_state.content_channeling, device_language_setting: me.props.app_state.device_language, device_country: me.props.app_state.device_country, device_region: me.props.app_state.device_region, edit_text_item_pos:-1, get_disabled_comments_section:me.get_disabled_comments_section(), get_content_channeling_object:me.get_content_channeling_object(), entered_pdf_objects:[], markdown:'', node_url:'', entered_node_url_text:'', album_art:null,
-                })
-            }, (1 * 1000));
-            
+            this.props.when_add_edit_object_to_stack(this.state)
             this.props.notify(this.props.app_state.loc['18'], 1700);
             
         }
     }
-
-
-
-
-
 
 
 
@@ -1705,4 +1576,4 @@ class NewNitroPage extends Component {
 
 
 
-export default NewNitroPage;
+export default EditPollPage;

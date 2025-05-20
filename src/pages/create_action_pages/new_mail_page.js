@@ -2066,7 +2066,8 @@ return data['data']
     }
 
     get_recipient_id(recipient){
-        var id = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[recipient] == null ? recipient : this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[recipient])
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = (obj[recipient] == null ? recipient : obj[recipient])
         return id
     }
 

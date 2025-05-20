@@ -232,6 +232,11 @@ class PostListSection extends Component {
                     <div>{this.render_video_list_group(selected_item)}</div>
                 )
             }
+            else if(selected_tag == this.props.app_state.loc['1264ao']/* 'polls' */){
+                return(
+                    <div>{this.render_poll_list_group()}</div>
+                )
+            }
         }
         else if(selected_page == 'w'){
             var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
@@ -328,6 +333,7 @@ class PostListSection extends Component {
         this.bag_list = React.createRef();
         this.audio_list = React.createRef();
         this.video_list = React.createRef();
+        this.poll_list = React.createRef();
 
         this.coin_list = React.createRef();
         this.ether_list = React.createRef();
@@ -596,6 +602,11 @@ class PostListSection extends Component {
         if(smooth == null || smooth == false) this.video_list.current?.scrollTo(0, pos);
         else this.video_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
+    
+    set_poll_list(pos, smooth){
+        if(smooth == null || smooth == false) this.poll_list.current?.scrollTo(0, pos);
+        else this.poll_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
 
 
 
@@ -683,7 +694,7 @@ class PostListSection extends Component {
     }
 
     get_total_count_for_object_type(object_type){
-        var obj = {'subscriptions':this.props.app_state.load_subscription_metrics, 'contracts':this.props.app_state.load_contracts_metrics, 'proposals':this.props.app_state.load_proposal_metrics, 'tokens':this.props.app_state.load_tokens_metrics, 'posts':this.props.app_state.load_posts_metrics, 'channels':this.props.app_state.load_channels_metrics, 'jobs':this.props.app_state.load_jobs_metrics, 'sent_mail':this.props.app_state.load_sent_mail_metrics, 'received_mail':this.props.app_state.load_received_mail_metrics, 'storefront':this.props.app_state.load_storefront_metrics, 'bags':this.props.app_state.load_bags_metrics, 'contractor':this.props.app_state.load_contractors_metrics, 'audioport':this.props.app_state.load_audio_metrics, 'videoport':this.props.app_state.load_video_metrics, 'nitro':this.props.app_state.load_nitro_metrics}
+        var obj = {'subscriptions':this.props.app_state.load_subscription_metrics, 'contracts':this.props.app_state.load_contracts_metrics, 'proposals':this.props.app_state.load_proposal_metrics, 'tokens':this.props.app_state.load_tokens_metrics, 'posts':this.props.app_state.load_posts_metrics, 'channels':this.props.app_state.load_channels_metrics, 'jobs':this.props.app_state.load_jobs_metrics, 'sent_mail':this.props.app_state.load_sent_mail_metrics, 'received_mail':this.props.app_state.load_received_mail_metrics, 'storefront':this.props.app_state.load_storefront_metrics, 'bags':this.props.app_state.load_bags_metrics, 'contractor':this.props.app_state.load_contractors_metrics, 'audioport':this.props.app_state.load_audio_metrics, 'videoport':this.props.app_state.load_video_metrics, 'nitro':this.props.app_state.load_nitro_metrics, 'polls':this.props.app_state.load_poll_metrics}
         
         var load_metrics = obj[object_type]
         var total_count = 0        
@@ -2520,6 +2531,117 @@ class PostListSection extends Component {
             arr = arr.slice(0, 36);
         }
         return arr
+    }
+
+
+
+
+
+
+
+
+
+
+    render_poll_list_group(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_poll_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'polls')}
+                        {items.map((item, index) => (
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
+            return ( 
+                <div ref={this.poll_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'polls')}
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': padding}}>
+                                    {this.render_poll_object(item, index)}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
+                </div>
+            );
+        }
+    }
+
+    render_poll_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_poll_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_poll_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
+        var opacity = 1.0
+        return(
+            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_poll_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_poll_item_clicked(index, object)}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    get_channel_items(){
+        return this.remove_duplicates(this.props.get_poll_items())
+    }
+
+    format_poll_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+        }
+    }
+
+    when_poll_item_clicked = async (index, object) => {
+        this.props.when_poll_item_clicked(index, object['id'], object['e5'], object)
     }
 
 

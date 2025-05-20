@@ -28,7 +28,6 @@ import DurationPicker from '../../components/duration_picker';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
-
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Draggable } from "react-drag-reorder";
@@ -1903,7 +1902,7 @@ class NewContractPage extends Component {
 
     get_suggested_accounts(target_type){
         return[
-            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+            {'id':'53', 'label':{'title':this.props.app_state.loc['c311l']/* My Account. */, 'details':this.props.app_state.loc['c311m']/* 'Account' */, 'size':'s'}},
         ].concat(this.get_account_suggestions(target_type))
     }
 
@@ -1930,7 +1929,8 @@ class NewContractPage extends Component {
     }
 
     get_contact_alias(contact){
-        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
+        var obj = this.props.app_state.alias_bucket[this.state.e5]
+        return (obj[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : obj[contact['id']])
     }
 
 

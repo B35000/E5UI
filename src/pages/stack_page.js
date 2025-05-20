@@ -3419,7 +3419,9 @@ return data['data']
                     txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || 
                     txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || 
                     txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */|| 
-                    txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
+                    txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */ ||
+                    txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */
+                ){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
@@ -3698,6 +3700,23 @@ return data['data']
                     adds.push([])
                     ints.push(format_object.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */){
+                    var job_obj = this.format_poll_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(job_obj)
+
+                    new_tx_index = ints.length -1
+                    var hash_obj = this.format_hash_record(txs[i], new_tx_index)
+                    strs.push(hash_obj.str)
+                    adds.push([])
+                    ints.push(hash_obj.int)
+
+                    // var index_data = this.format_indexing_post_item(txs[i], false/* should_index_title */, ints.length-1, ints[ints.length-1][0][9])
+                    // strs.push(index_data.str)
+                    // adds.push([])
+                    // ints.push(index_data.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -3729,7 +3748,8 @@ return data['data']
                 pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
                 pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */ || 
-                pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */
+                pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
+                pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */
             ){
                 metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
@@ -3760,7 +3780,19 @@ return data['data']
         var index_data_strings = [ [], [] ]
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */|| pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+            if(
+                pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
+                pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */|| 
+                pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
+                pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */
+            ){
                 // var tx_tags = pushed_txs[i].entered_indexing_tags
                 index_data_in_tags[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 index_data_in_tags[2].push(35)
@@ -3795,7 +3827,7 @@ return data['data']
             ]
 
             const string_obj = [[]]
-            var pub_key_link = calculate_gas == true ? "ar.TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw==" : await this.get_account_public_key()
+            var pub_key_link = calculate_gas == true ? "TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw==" : await this.get_account_public_key()
             string_obj[0].push(pub_key_link)
             
             strs.push(string_obj)
@@ -4306,7 +4338,9 @@ return data['data']
                     txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || 
                     txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */|| 
                     txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */ || 
-                    txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */){
+                    txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */ ||
+                    txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */
+                ){
                     const t = txs[i]
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
                         t = await this.process_channel_object(txs[i])
@@ -4407,7 +4441,9 @@ return data['data']
                     txs[i].type == this.props.app_state.loc['253']/* 'contractor' */ || 
                     txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
                     txs[i].type == this.props.app_state.loc['b311a']/* video */|| 
-                    txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */){
+                    txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */ ||
+                    txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */
+                ){
                     var data = txs[i]
                     if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
                         data = await this.process_channel_object(txs[i])
@@ -4588,6 +4624,7 @@ return data['data']
 
         const size = this.lengthInUtf8Bytes(JSON.stringify(obj))
         this.setState({stack_size_in_bytes: size})
+        this.props.set_stack_depth_value(size)
         if(size > this.props.app_state.upload_object_size_limit && calculate_gas == false && ipfs_index_array.length > 0){
             this.current_object_size = size
             return 'large'
@@ -7600,6 +7637,48 @@ return data['data']
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
+    format_poll_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 28/* 28(poll-object) */, 0]
+        ]
+        return obj
+    }
+
+    format_hash_record = async (t, target_stack_index) => {
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        var target_id = target_stack_index
+        var target_id_type = 35
+        var context = 42
+        var int_data = 0
+
+        var obj = {
+            participants: t.participants, 
+            json_files: this.sortByAttributeDescending(t.json_files, 'name'), 
+            csv_files: this.sortByAttributeDescending(t.csv_files, 'name'), 
+            start_time: t.start_time,
+            end_time: t.end_time,
+            candidates: t.candidates,
+            winner_count: t.winner_count
+        }/* try not to change this at all. even the order. */
+        var string_data = await this.props.hash_data(JSON.stringify(obj))
+
+        obj[1].push(target_id)
+        obj[2].push(target_id_type)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
     }
 
 

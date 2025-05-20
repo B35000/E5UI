@@ -39,6 +39,7 @@ import AudioDetailSection from './audio_details_section'
 import VideoDetailsSection from './video_details_section'
 import NitroDetailsSection from './nitro_details_section'
 import BillDetailsSection from './bill_details_section'
+import PollDetailsSection from './poll_details_section';
 
 var bigInt = require("big-integer");
 
@@ -174,6 +175,11 @@ class PostDetailSection extends Component {
                     <VideoDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_video_item={this.props.selected_video_item} viewed_videos={this.props.viewed_videos} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} add_video_reply_to_stack={this.props.add_video_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_video_items={this.props.get_video_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.props.open_award_ui.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_video={this.props.pin_video.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)} play_video={this.props.play_video.bind(this)} get_page_id={this.props.get_page_id.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} block_post={this.props.block_post.bind(this)} when_discography_video_item_clicked={this.props.when_discography_video_item_clicked.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)}
                     />
                 )
+            }
+            else if(selected_tag == this.props.app_state.loc['1264ao']/* 'polls' */){
+                <PollDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_poll_item={this.props.selected_poll_item} viewed_polls={this.props.viewed_polls} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)}  notify={this.props.notify.bind(this)} get_poll_items={this.props.get_poll_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} pin_poll={this.props.pin_poll.bind(this)} view_number={this.props.view_number.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}  when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} open_vote_in_poll_ui={this.props.open_vote_in_poll_ui.bind(this)}
+                
+                />
             }
         }
         else if(selected_page == 'w'){

@@ -210,7 +210,29 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */ && item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */ && item.type != this.props.app_state.loc['1593ct']/* 'video-messages' */ && item.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
+        if(
+            item != null && 
+            item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && 
+            item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && 
+            item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && 
+            item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && 
+            item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && 
+            item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && 
+            item.type != this.props.app_state.loc['783']/* 'submit' */ && 
+            item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && 
+            item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && 
+            item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && 
+            item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && 
+            item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && 
+            item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && 
+            item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && 
+            item.type != this.props.app_state.loc['1506']/* 'alias' */ && 
+            item.type != this.props.app_state.loc['1507']/* 'unalias' */ && 
+            item.type != this.props.app_state.loc['1508']/* 're-alias' */ && 
+            item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */ && 
+            item.type != this.props.app_state.loc['1593ct']/* 'video-messages' */ && 
+            item.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */
+        ){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1788']/* 'Make some changes to the transaction' */, 'title':this.props.app_state.loc['1789']/* 'Edit' */})}
@@ -809,7 +831,20 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
-
+            else if(tx.type == this.props.app_state.loc['c311a']/* 'poll' */){
+                return(
+                    <div>
+                        {this.render_poll_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3072h']/* 'edit-poll' */){
+                return(
+                    <div>
+                        {this.render_edit_poll()}
+                    </div>
+                )
+            }
         }
     }
 
@@ -2008,6 +2043,148 @@ return data['data']
             'node_url':{'title':node_url, 'details':this.props.app_state.loc['a273n']/* 'Nitro Link.' */, 'size':'l'},
             'banner-icon':{'header':'', 'subtitle':'', 'image':image},
         }
+    }
+
+
+
+
+
+
+    render_poll_data(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_poll_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['winner_data'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['start_time'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['end_time'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['participants'])}
+                    {this.render_csv_files_if_any()}
+                    {this.render_json_files_if_any()}
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_pdf_files_if_any()}
+                    {this.render_zip_files_if_any()}
+                    {this.render_markdown_if_any()}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    get_poll_details_data(object){
+        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var winner_count = this.props.app_state.log['c311bx']/* '$ winners targeted.' */.replace('$', object['ipfs'].winner_count)
+        var candidates_count = this.props.app_state.log['c311by']/* '$ candidates specified.' */.replace('$', object['ipfs'].candidates.length)
+        var start_time = object['ipfs'].start_time
+        var end_time = object['ipfs'].end_time
+        var participants_count = object['ipfs'].participants.length
+        object['ipfs'].csv_files.forEach(file => {
+            participants_count += file['data'].account_entries;
+        });
+        object['ipfs'].json_files.forEach(file => {
+            participants_count += file['data'].account_entries
+        });
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'winner_data':{'title':candidates_count, 'details':winner_count, 'size':'l'},
+            'start_time':{'details':this.props.app_state.loc['3072a']/* 'Start Time' */, 'title':''+(new Date(start_time * 1000)), 'size':'l'},
+            'end_time':{'details':this.props.app_state.loc['3072b']/* 'End Time.' */, 'title':''+(new Date(end_time * 1000)), 'size':'l'},
+            'participants':{'title':number_with_commas(participants_count), 'details':this.props.app_state.loc['c311bz']/* 'targeted participants.' */, 'size':'l'},
+        }
+    }
+
+    render_csv_files_if_any(){
+        var state = this.props.app_state.stack_items[this.state.transaction_index]
+        if(state.csv_files != null && state.csv_files.length > 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
+                    {this.render_pdfs_part(state.csv_files)}
+                </div>
+            )
+        }
+    }
+
+    render_csv_files(items){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_file(item, index, true, 'csv')}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_file(item, index, minified, type){
+        var formatted_size = this.format_data_size(item['size'])
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var txt = this.props.app_state.loc['c311w']/* $ accounts */.replace('$', number_with_commas(item['data'].account_entries))
+        var details = fs+' • '+txt;
+        var title = item['name']
+        var size = 'l'
+        var thumbnail = type == 'csv' ? this.props.app_state.static_assets['csv_file'] : this.props.app_state.static_assets['json_file']
+        if(minified == true){
+            details = fs
+            title = start_and_end(title)
+            size = 's'
+        }
+        return(
+            <div>
+                {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+            </div>
+        )
+    }
+
+    render_json_files_if_any(){
+        var state = this.props.app_state.stack_items[this.state.transaction_index]
+        if(state.json_files != null && state.json_files.length > 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
+                    {this.render_pdfs_part(state.json_files)}
+                </div>
+            )
+        }
+    }
+
+    render_json_files(items){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_file(item, index, true, 'json')}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
     
 
@@ -5626,6 +5803,45 @@ return data['data']
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
         }
+    }
+
+    render_edit_poll(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_poll_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['winner_data'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['start_time'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['end_time'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['participants'])}
+                    {this.render_csv_files_if_any()}
+                    {this.render_json_files_if_any()}
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_pdf_files_if_any()}
+                    {this.render_zip_files_if_any()}
+                    {this.render_markdown_if_any()}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
     }
 
 

@@ -2058,7 +2058,8 @@ return data['data']
                     31/* token */: this.props.app_state.created_tokens[e5],
                     19/* audioport */: this.props.app_state.created_audios[e5],
                     20/* videoport */: this.props.app_state.created_videos[e5],
-                    21/* nitro */: this.props.app_state.created_nitros[e5]
+                    21/* nitro */: this.props.app_state.created_nitros[e5],
+                    28/* 28(poll-object) */: this.props.app_state.created_polls[e5]
                 }
                 const items = obj[object_type]
                 const e5_object = items.find(e => e['id'] == id)
@@ -2196,6 +2197,9 @@ return data['data']
         else if(object_type == 21/* nitro */){
             this.props.when_link_object_clicked(object, object_type)
         }
+        else if(object_type == 28/* 28(poll-object) */){
+            this.props.when_link_object_clicked(object, object_type)
+        }
     }
 
     get_my_unique_crosschain_identifier_number = async () => {
@@ -2247,6 +2251,9 @@ return data['data']
         }
         else if(object_type == 21/* nitro */){
             return this.format_nitro_item(object)
+        }
+        else if(object_type == 28 /* 28(poll-object) */){
+            return this.format_poll_item(object)
         }
     }
 
@@ -2602,6 +2609,20 @@ return data['data']
             'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    format_poll_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
