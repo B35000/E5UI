@@ -3717,6 +3717,20 @@ return data['data']
                     // adds.push([])
                     // ints.push(index_data.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3073']/* 'vote-poll' */){
+                    var obj = await this.format_poll_vote_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(obj.str)
+                    adds.push([])
+                    ints.push(obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3074bq']/* 'poll-result' */){
+                    var obj = await this.format_poll_update_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(obj.str)
+                    adds.push([])
+                    ints.push(obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -4482,6 +4496,14 @@ return data['data']
                     var encrypted_object = await this.get_encrypted_bill_object(txs[i])
                     ipfs_index_object[txs[i].id] = encrypted_object
                     ipfs_index_array.push({'id':txs[i].id, 'data':encrypted_object})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3074bq']/* 'poll-result' */){
+                    const poll_result_data = {
+                        results_object: txs[i].results_object,
+                        nitro: txs[i].nitro
+                    }
+                    ipfs_index_object[txs[i].id] = poll_result_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':poll_result_data})
                 }
             }
         }
@@ -7668,12 +7690,64 @@ return data['data']
             end_time: t.end_time,
             candidates: t.candidates,
             winner_count: t.winner_count,
-            poll_e5s: t.poll_e5s
+            poll_e5s: t.poll_e5s,
+            randomizer: t.randomizer,
         }/* try not to change this at all. even the order. */
         var string_data = await this.props.hash_data(JSON.stringify(obj))
 
         obj[1].push(target_id)
         obj[2].push(target_id_type)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_poll_vote_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [25], [23],/* 25(poll_vote_registry) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = t.poll_object['id']
+        var int_data = parseInt(t.e5.replace('E',''))
+        var vote_string = []
+        
+        t.candidate_preference.forEach(candidate => {
+            vote_string.push(candidate['id'])   
+        });
+        var string_data = JSON.stringify({'e':vote_string});
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_poll_update_object = async (t, calculate_gas, ipfs_index) =>{
+        var target = t.poll_object['id']
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [target], [23],/* 25(poll_vote_registry) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = 43
+        var int_data = t.results_object.time
+        
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
         obj[3].push(context)
         obj[4].push(int_data)
 

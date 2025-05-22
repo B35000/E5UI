@@ -231,7 +231,11 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['1508']/* 're-alias' */ && 
             item.type != this.props.app_state.loc['1593cc']/* 'audio-messages' */ && 
             item.type != this.props.app_state.loc['1593ct']/* 'video-messages' */ && 
-            item.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */
+            item.type != this.props.app_state.loc['1593cu']/* 'nitro-messages' */ &&
+            item.type != this.props.app_state.loc['3068ac']/* 'iTransfer' */ && 
+            item.type != this.props.app_state.loc['3068af']/* 'bill' */ &&
+            item.type != this.props.app_state.loc['3071j']/* 'bill-payment' */ &&
+            item.type != this.props.app_state.loc['3074bq']/* 'poll-result' */
         ){
             return(
                 <div>
@@ -842,6 +846,20 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_edit_poll()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3073']/* 'vote-poll' */){
+                return(
+                    <div>
+                        {this.render_vote_poll()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3074bq']/* 'poll-result' */){
+                return(
+                    <div>
+                        {this.render_poll_result()}
                     </div>
                 )
             }
@@ -2121,7 +2139,7 @@ return data['data']
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
-                    {this.render_pdfs_part(state.csv_files)}
+                    {this.render_csv_files(state.csv_files)}
                 </div>
             )
         }
@@ -2168,7 +2186,7 @@ return data['data']
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
-                    {this.render_pdfs_part(state.json_files)}
+                    {this.render_json_files(state.json_files)}
                 </div>
             )
         }
@@ -6857,14 +6875,182 @@ return data['data']
 
 
 
+    render_vote_poll(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                {this.render_voting_account()}
 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3073m']/* 'Vote Order.' */, 'details':this.props.app_state.loc['3073n']/* 'Your preferred ordering of the candidates in the poll.' */, 'size':'l'})}
+                {this.render_added_candidates()}
+            </div>
+        )
+    }
+
+    render_voting_account(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var e5 = transaction_item.e5
+        var account_id = this.props.app_state.user_account_id[e5]
+        var associated_alias = this.get_senders_name3(account_id, e5)
+        if(account_id == null || account_id == 1){
+            account_id = (this.props.app_state.accounts[e5].address)
+        }
+        var image = this.props.app_state.e5s[e5].e5_img
+        var details = this.props.app_state.loc['3073l']/* 'Voting Account.' */
+        var title = account_id
+        if(associated_alias != ''){
+            title = title+','+associated_alias
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':' • '+title, 'details':details, 'size':'l', 'title_image':image, 'border_radius':'0%'})}
+            </div>
+        )
+    }
+
+    get_senders_name3(sender, e5){
+        var obj = this.props.app_state.alias_bucket[e5]
+        var alias = (obj[sender] == null ? '' : obj[sender])
+        return alias
+    }
+
+    render_added_candidates(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index]
+        var items = [].concat(transaction_item.candidate_preference)
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.reverse().map((item, index) => (
+                        <div style={{'padding': '3px'}} >
+                            {this.render_candidate_choice(item, index)}
+                        </div>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_candidate_choice(candidate, index){
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':(index+1)+'. '+candidate['name'], 'textsize':'13px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+    render_poll_result(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var results_object = transaction_item.results_object
+        var time = results_object.time
+        var registered_voters = results_object.registered_voters
+        var valid_vote_count = results_object.valid_vote_count
+        var consensus_snapshots = results_object.consensus_snapshots
+        var current_winners = results_object.current_winners
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074t']/* 'Poll Results' */, 'details':this.props.app_state.loc['3074u']/* 'As of $' */.replace('$', (''+(new Date(time)))), 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_voter_count_message(registered_voters)}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074x']/* Valid Votes Counted. */, 'subtitle':this.format_power_figure(valid_vote_count), 'barwidth':this.calculate_bar_width(valid_vote_count), 'number':this.format_account_balance_figure(valid_vote_count), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
+                    {this.render_turnout_message(registered_voters, valid_vote_count)}
+                </div>
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bb']/* '$ consensus cycles' */.replace('$', consensus_snapshots.length), 'details':this.props.app_state.loc['3074bc']/* '$ runoffs.' */.replace('$', (''+(consensus_snapshots.length - 1))), 'size':'l'})}
+
+                {this.render_final_winners_if_voting_period_over(current_winners, transaction_item.poll_object, time)}
+            </div>
+        )
+    }
+
+    render_voter_count_message(registered_voters){
+        if(registered_voters != 0){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074v']/* Number of Registered Voters. */, 'subtitle':this.format_power_figure(registered_voters), 'barwidth':this.calculate_bar_width(registered_voters), 'number':this.format_account_balance_figure(registered_voters), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074w']/* 'voters' */, })}
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_turnout_message(registered_voters, vote_count){
+        if(registered_voters == 0) return;
+        var percentage = vote_count > 0 ? this.round_off((vote_count / registered_voters) * 100) : 0
+        if(percentage >= 100){
+            percentage = 99.99
+        }
+        return(
+            <div>
+                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074bf']/* Turnout Proprtion. */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage+'%', 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+            </div>
+        )
+    }
+
+    render_final_winners_if_voting_period_over(current_winners, poll_object, time){
+        var now = time
+        if(now < poll_object['ipfs'].end_time){
+            return(
+                <div>
+                    <div style={{height:30}}/>
+                </div>
+            )
+        }
+        var candidate_index = {}
+        poll_object['ipfs'].candidates.forEach(candidate => {
+            candidate_index[candidate['id']] = candidate['name']
+        });
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bk']/* 'Current Winners.' */, 'details':this.props.app_state.loc['3074bl']/* 'Below are the current and final winners of the poll.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {current_winners.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_detail_item('4', {'text':candidate_index[item], 'textsize':'15px', 'font':this.props.app_state.font})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
+    }
 
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
-
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

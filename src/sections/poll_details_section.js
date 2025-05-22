@@ -181,12 +181,15 @@ class PollDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
 
-
                     {this.render_edit_object_button(object)}
 
                     {this.render_vote_object_button(object)}
 
                     {this.render_pin_post_button(object)}
+
+                    {this.render_messgae_if_voted_in_poll(object)}
+
+                    {this.post_consensus_status(object)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -206,6 +209,32 @@ class PollDetailsSection extends Component {
         }
     }
 
+    render_messgae_if_voted_in_poll(object){
+        var id = object['id']
+        var vote_array = this.props.app_state.object_votes[id] == null ? [] : this.props.app_state.object_votes[id]
+        if(vote_array.length > 0 && (this.props.app_state.has_wallet_been_set || this.props.app_state.accounts[this.props.app_state.selected_e5] != null)){
+            var time = vote_array[0]['time']
+            var account_id = vote_array[0]['event'].returnValues.p2
+            var e5 = vote_array[0]['event']['e5']
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['c311ck']/* Participated. */, 'details':this.props.app_state.loc['c311cl']/* 'You have a vote record in this poll.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':''+(this.props.app_state.loc['3072p']/* 'As $' */.replace('$', account_id)), 'details':this.get_senders_name2(account_id, e5), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':''+(new Date(time)), 'details':this.props.app_state.loc['3072o']/* 'Vote Timestamp' */, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    get_senders_name2(sender, e5){
+        var obj = this.props.app_state.alias_bucket[e5]
+        var alias = (obj[sender] == null ? sender : obj[sender])
+        return alias
+    }
+
 
 
     render_csv_files_if_any(object){
@@ -215,7 +244,7 @@ class PollDetailsSection extends Component {
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
-                    {this.render_pdfs_part(state.csv_files)}
+                    {this.render_csv_files(state.csv_files)}
                 </div>
             )
         }
@@ -262,7 +291,7 @@ class PollDetailsSection extends Component {
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['c311x']/* '$ files selected.*/.replace('$', state.csv_files.length), 'textsize':'11px', 'font':this.props.app_state.font})}
-                    {this.render_pdfs_part(state.json_files)}
+                    {this.render_json_files(state.json_files)}
                 </div>
             )
         }
@@ -601,7 +630,9 @@ class PollDetailsSection extends Component {
         var start_time = object['ipfs'].start_time
         var end_time = object['ipfs'].end_time
         var now = Date.now()/1000
-        if(start_time < now && now < end_time){
+        var id = object['id']
+        var vote_array = this.props.app_state.object_votes[id] == null ? [] : this.props.app_state.object_votes[id]
+        if(start_time < now && now < end_time && vote_array.length == 0){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -634,7 +665,33 @@ class PollDetailsSection extends Component {
     }
 
     open_vote_in_poll_ui(object){
+        if(!this.props.app_state.has_wallet_been_set && this.props.app_state.accounts[this.props.app_state.selected_e5] == null){
+            this.props.notify(this.props.app_state.log['3072n']/* Set your wallet first. */, 1500)
+            return;
+        }
         this.props.open_vote_in_poll_ui(object)
+    }
+
+    post_consensus_status(object){
+        var start_time = object['ipfs'].start_time
+        var now = Date.now()/1000
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 == my_account && start_time < now){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3072q']/* Tally Vote.' */, 'details':this.props.app_state.loc['3072r']/* 'Count all the valid votes that have been posted and post the status of the poll.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_post_consensus_status_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_post_consensus_status_ui(object){
+
     }
 
     

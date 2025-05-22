@@ -570,6 +570,8 @@ import ConfigureNitroNodePage from './pages/configure_nitro_node'
 import DialerPage from './pages/dialer_page'
 import ViewNotificationLogPage from './pages/view_notification_log_page'
 import ContextualTransferPage from './pages/contextual_transfer_page'
+import VotePollPage from './pages/vote_poll_page'
+import CalculatePollResultPage from './pages/calculate_poll_result'
 
 import english from "./texts/english";
 
@@ -791,7 +793,7 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
-    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false,
+    dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -868,7 +870,7 @@ class App extends Component {
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
 
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
-    e5_ether_override:'e', 
+    e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}
   };
 
   get_static_assets(){
@@ -2708,6 +2710,8 @@ class App extends Component {
     this.view_notification_log_page = React.createRef();
     this.view_contextual_transfer_page = React.createRef();
     this.new_poll_page = React.createRef();
+    this.view_vote_poll_page = React.createRef();
+    this.view_calculate_poll_result_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -5078,6 +5082,8 @@ return data['data']
           {this.render_edit_videopost_object_bottomsheet()}
           {this.render_view_contextual_transfer_bottomsheet()}
           {this.render_edit_poll_object_bottomsheet()}
+          {this.render_view_vote_poll_bottomsheet()}
+          {this.render_view_calculate_poll_result_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -5169,7 +5175,7 @@ return data['data']
 
           load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} get_searched_account_data_trimmed={this.get_searched_account_data_trimmed.bind(this)}
 
-          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)}
+          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} show_view_vote_poll_bottomsheet={this.show_view_vote_poll_bottomsheet.bind(this)} get_objects_votes={this.get_objects_votes.bind(this)}
 
 
 
@@ -8087,7 +8093,7 @@ return data['data']
     }
     else if(target == '13'/* polls */){
       return(
-          <NewPollPage ref={this.new_poll_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+          <NewPollPage ref={this.new_poll_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)}
         />
       )
     }
@@ -8166,6 +8172,79 @@ return data['data']
     catch(e){
       this.prompt_top_notification(this.getLocale()['a273h']/* 'That provided link is not available for use.' */, 6000)
     }
+  }
+
+  process_csv_file_data = async (data, should_include_data) => {
+    var entities = data.split(',')
+    var final_obj = {}
+    var account_entries = 0
+    entities.forEach(account_data => {
+        if(account_data != null && account_data != ''){
+            var data_point_array = account_data.split(':')
+            var e5 = ''
+            var account = ''
+            if(data_point_array.length == 2){
+                e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+            }
+            else if(data_point_array.length == 1){
+                e5 = this.state.e5
+                account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+            }
+            if(e5 != '' && account != ''){
+                if(this.props.app_state.e5s['data'].includes(e5)){
+                    if(final_obj[e5] == null){
+                        final_obj[e5] = []
+                    }
+                    if(!isNaN(account) && parseInt(account) < 10**16){
+                        final_obj[e5].push(parseInt(account))
+                        account_entries++
+                    }
+                }
+            }
+        }
+    });
+
+    var hash = await this.generate_hash(JSON.stringify(final_obj))
+    if(should_include_data == true){
+      return { data: hash, account_entries, final_obj}
+    }
+    return { data: hash, account_entries}
+  }
+
+  process_json_file_object = async (object, should_include_data) => {
+    var keys = Object.keys(object)
+    var final_obj = {}
+    var account_entries = 0
+    try{
+        keys.forEach(key => {
+            if(this.props.app_state.e5s['data'].includes(key)){
+                if(final_obj[key] == null){
+                    final_obj[key] = []
+                }
+                try{
+                    object[key].forEach(account => {
+                        var trimed_account = account.toString().trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                        if(!isNaN(trimed_account) && parseInt(trimed_account) < 10**16){
+                            final_obj[key].push(parseInt(trimed_account))
+                            account_entries++
+                        }
+                    });
+                }catch(e){
+                    console.log('new_poll', e)
+                }
+                
+            }
+        });
+    }catch(o){
+        console.log('new_poll', 0)
+    }
+
+    var hash = await this.generate_hash(JSON.stringify(final_obj))
+    if(should_include_data == true){
+      return { data: hash, account_entries, final_obj}
+    }
+    return { data: hash, account_entries}
   }
 
 
@@ -11783,6 +11862,25 @@ return data['data']
       }
       }, (1 * 500));  
     }
+    else if(tx.type == this.getLocale()['3031']/* 'buy-storage' */){
+      this.open_buy_nitro_storage_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.buy_nitro_storage_page.current){
+        me.buy_nitro_storage_page.current?.setState(tx)
+      }
+      }, (1 * 500));  
+    }
+    else if(tx.type == this.getLocale()['3073']/* 'vote-poll' */){
+      this.open_view_vote_poll_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.view_vote_poll_page.current){
+        me.view_vote_poll_page.current?.setState(tx)
+      }
+      }, (1 * 500));  
+    }
+    
   }
 
   delete_message_item(item, transaction_item){
@@ -17477,6 +17575,264 @@ return data['data']
     this.set_cookies_after_stack_action(stack_clone)
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_view_vote_poll_bottomsheet(){
+    if(this.state.view_vote_poll_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_vote_poll_bottomsheet} onClose={this.open_view_vote_poll_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_view_vote_poll_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_vote_poll_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_vote_poll_bottomsheet.bind(this)} open={this.state.view_vote_poll_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_view_vote_poll_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_vote_poll_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <VotePollPage ref={this.view_vote_poll_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_poll_vote_transaction_to_stack={this.add_poll_vote_transaction_to_stack.bind(this)} 
+        />
+      </div>
+    )
+  }
+
+  open_view_vote_poll_bottomsheet(){
+    if(this.state.view_vote_poll_bottomsheet == true){
+      //closing
+      this.view_vote_poll_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_vote_poll_bottomsheet: !this.state.view_vote_poll_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_vote_poll_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_vote_poll_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_vote_poll_bottomsheet: !me.state.view_vote_poll_bottomsheet});
+
+          if(me.view_vote_poll_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.view_vote_poll_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_vote_poll_bottomsheet(item){
+    this.open_view_vote_poll_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_vote_poll_page.current != null){
+        me.view_vote_poll_page.current.set_data(item)
+      }
+    }, (1 * 500));
+  }
+
+  add_poll_vote_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_view_calculate_poll_result_bottomsheet(){
+    if(this.state.view_calculate_poll_result_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_calculate_poll_result_bottomsheet} onClose={this.open_view_calculate_poll_result_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_view_calculate_poll_result_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_calculate_poll_result_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_calculate_poll_result_bottomsheet.bind(this)} open={this.state.view_calculate_poll_result_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_view_calculate_poll_result_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_calculate_poll_result_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <CalculatePollResultPage ref={this.view_calculate_poll_result_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_poll_result_transaction_to_stack={this.add_poll_result_transaction_to_stack.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} count_poll_votes_and_post_results={this.count_poll_votes_and_post_results.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_view_calculate_poll_result_bottomsheet(){
+    if(this.state.view_calculate_poll_result_bottomsheet == true){
+      //closing
+      this.view_calculate_poll_result_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_calculate_poll_result_bottomsheet: !this.state.view_calculate_poll_result_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_calculate_poll_result_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_calculate_poll_result_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_calculate_poll_result_bottomsheet: !me.state.view_calculate_poll_result_bottomsheet});
+
+          if(me.view_calculate_poll_result_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.view_calculate_poll_result_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_calculate_poll_result_bottomsheet(item){
+    this.open_view_calculate_poll_result_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_calculate_poll_result_page.current != null){
+        me.view_calculate_poll_result_page.current.set_data(item)
+      }
+    }, (1 * 500));
+  }
+
+  add_poll_result_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  count_poll_votes_and_post_results = async (static_poll_data, poll_id, poll_e5, file_objects, nitro_object, poll_obj) => {
+    await this.wait(this.state.ipfs_delay)
+    var node_url = nitro_object['ipfs'].node_url
+    var query_time = structuredClone(this.state.count_poll_times)
+    query_time[poll_obj['e5_id']] = Date.now()
+    this.setState({count_poll_times: query_time})
+
+    var arg_obj = {
+      static_poll_data: static_poll_data,
+      poll_id: parseInt(poll_id),
+      poll_e5: poll_e5,
+      file_objects: file_objects,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${node_url}/count_votes`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+      if(obj.error != null){
+        console.log('vote_counter', obj.error)
+      }
+      if(obj.success == true){
+        var clone = structuredClone(this.state.poll_consensus_results)
+        obj.results['nitro_id'] = nitro_object['e5_id']
+        obj.results['success'] = true
+        clone[poll_obj['e5_id']] = obj.results
+        this.setState({poll_consensus_results: clone})
+      }else{
+        var clone = structuredClone(this.state.poll_consensus_results)
+        var results = {}
+        results['nitro_id'] = nitro_object['e5_id']
+        results['success'] = false
+        results['message'] = obj.message
+        clone[poll_obj['e5_id']] = results
+        this.setState({poll_consensus_results: clone})
+      }
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
+  }
 
 
 
@@ -29106,7 +29462,6 @@ return data['data']
     var nitro_cid = split_cid_array[1]
 
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
-    // console.log('datas', 'loading nitro link', cid)
     if(nitro_url == null) return
 
     const params = new URLSearchParams({
@@ -31069,6 +31424,68 @@ return data['data']
     var clone = structuredClone(this.state.bill_payment_results)
     clone[id] = iTransfer_objects
     this.setState({bill_payment_results: clone})
+  }
+
+  get_objects_votes = async (id, e5, object) => {  
+    const all_object_comment_events = await this.get_object_vote_events(id, e5, object)
+    const clone = structuredClone(this.state.object_votes)
+    clone[id] = all_object_comment_events
+    this.setState({object_votes: clone})
+  }
+
+  get_object_vote_events = async (id, e5, object) => {
+    var all_unsorted_events = []
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params = []
+      const used_e5s = []
+      for(var i=0; i<object['ipfs'].poll_e5s.length; i++){
+        const focused_e5 = object['ipfs'].poll_e5s[i]
+        if(this.state.addresses[focused_e5] != null){
+          used_e5s.push(focused_e5)
+          const account_id = this.state.user_account_id[focused_e5]
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = this.state.addresses[focused_e5][1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+          var e5_id = parseInt(e5.replace('E',''))
+          event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 25, p3/* context */:id, p5: e5_id, p2/* sender_acc_id */:account_id}])
+        }
+      }
+      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      all_events.forEach((event_array, index)=> {       
+        for(var l=0; l<event_array.length; l++){
+          const event = event_array[l]
+          const focused_e5 = 'E'+event.returnValues.p5
+          event['e5'] = focused_e5
+          all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+        }
+      });
+    }else{
+      for(var i=0; i<object['ipfs'].poll_e5s.length; i++){
+        const focused_e5 = object['ipfs'].poll_e5s[i]
+        if(this.state.addresses[focused_e5] != null){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const account_id = this.state.user_account_id[focused_e5]
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = this.state.addresses[focused_e5][1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+          const e5_id = parseInt(e5.replace('E',''))
+          
+          const created_comment_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 25, p3/* context */:id, p5: e5_id, p2/* sender_acc_id */:account_id}))
+          var m = 0
+          for(var k=0; k<created_comment_data.length; k++){
+            const event = created_comment_data[k]
+            event['e5'] = 'E'+event.returnValues.p5
+            all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+          }
+        }
+      }
+    }
+    if(all_unsorted_events.length > 0){
+      var sorted_object_events = this.sortByAttributeDescending(all_unsorted_events, 'time').reverse()
+      return [sorted_object_events[0]]
+    }
+    return []
   }
 
 

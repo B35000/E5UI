@@ -2590,7 +2590,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_poll_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || !this.can_sender_view_poll(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -2622,7 +2622,30 @@ class PostListSection extends Component {
         )
     }
 
-    get_channel_items(){
+    can_sender_view_poll(object){
+        var viewers = object['ipfs'].viewers
+        if(viewers.length == 0) return true;
+        var my_active_accounts = this.load_my_active_accounts()
+        return my_active_accounts.some(r=> viewers.includes(r))
+    }
+
+    load_my_active_accounts(){
+        var active_e5s = []
+        var preferred_e5s = this.state.poll_object['ipfs'].poll_e5s
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true && preferred_e5s.includes(e5)){
+                var id = this.props.app_state.user_account_id[e5]
+                if(id != null && id != 1){
+                    var account = e5+':'+id
+                    active_e5s.push(account)
+                }
+            }
+        }
+        return active_e5s
+    }
+
+    get_poll_items(){
         return this.remove_duplicates(this.props.get_poll_items())
     }
 

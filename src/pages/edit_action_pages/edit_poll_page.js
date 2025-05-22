@@ -87,7 +87,7 @@ class EditPollPage extends Component {
         start_time:(new Date().getTime()/1000)+7200,
         end_time:(new Date().getTime()/1000)+64800,
 
-        winner_count:1, candidate:'', candidates:[]
+        winner_count:1, candidate:'', candidates:[], viewers:[],
     };
 
     set(){
@@ -108,7 +108,7 @@ class EditPollPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', this.props.app_state.log['c311cf']/* access */, this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -236,6 +236,13 @@ class EditPollPage extends Component {
             return(
                 <div>
                     {this.render_enter_zip_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.log['c311cf']/* access */){
+            return(
+                <div>
+                    {this.render_access_rights_part()}
                 </div>
             )
         }
@@ -1401,6 +1408,244 @@ class EditPollPage extends Component {
         this.setState({markdown: this.state.markdown+'\n'+text})
     }
 
+
+
+
+
+
+
+
+    render_access_rights_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_access_rights_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_access_rights_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_access_rights_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_access_rights_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cg']/* Poll Accessibility. */, 'details':this.props.app_state.loc['c311ch']/* Specify which accounts can view the poll if it is a private poll. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_viewer_input_field_changed.bind(this)} text={this.state.viewer} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.load_account_suggestions('viewer')}
+                
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_viewer_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311cj']/* Add viewer. */, 'action':''})}
+                </div>
+                <div style={{height: 20}}/>
+                {this.render_added_viewers()}
+            </div>
+        )
+    }
+
+    when_viewer_input_field_changed(text){
+        this.setState({viewer: text})
+    }
+
+    when_add_viewer_button_tapped(){
+        var typed_text = this.state.viewer.trim()
+        if(typed_text.includes(',')){
+            this.add_multiple_viewers(typed_text)
+            return;
+        }
+        var participant_id = this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
+        var final_value = participant_e5+':'+participant_id
+        var participants_clone = this.state.viewers.slice()
+        if(isNaN(participant_id) || parseInt(participant_id) < 0 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else if(participants_clone.includes(final_value)){
+            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        }
+        else{
+            participants_clone.push(final_value)
+            this.setState({viewers: participants_clone, viewer:''});
+        }
+    }
+
+    add_multiple_viewers(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        var participants_clone = this.state.viewers.slice()
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5)){
+                        if(!isNaN(account) && parseInt(account) < 10**16){
+                            var final_value = e5+':'+parseInt(account)
+                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
+                                final_obj.push(final_value)
+                                account_entries++
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.log['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            participants_clone.concat(final_obj)
+            this.setState({viewers: participants_clone, viewer:''});
+            this.props.notify(this.props.app_state.log['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+
+    render_added_viewers(){
+        var items = [].concat(this.state.viewers)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_viewer_tapped(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '3px'}}>
+                                        {this.render_detail_item('3', {'title':this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_added_viewer_tapped(item, index){
+        var cloned_array = this.state.viewers.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({viewers: cloned_array})
+    }
+
+
+
+
+
+
+    load_account_suggestions(target_type){
+        var items = [].concat(this.get_suggested_accounts(target_type))
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_suggested_accounts(target_type){
+        var me = this.props.app_state.user_account_id[this.state.e5]
+        if(me == null){
+            return this.get_account_suggestions(target_type)
+        }
+        return[
+            {'id':me, 'label':{'title':this.props.app_state.loc['c311l']/* My Account. */, 'details':this.props.app_state.loc['c311m']/* 'Account' */, 'size':'s'}},
+        ].concat(this.get_account_suggestions(target_type))
+    }
+
+    get_account_suggestions(target_type){
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        var return_array = []
+
+        if(target_type == 'participants'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.participants)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'viewer'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.viewers)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        return (obj[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : obj[contact['id']])
+    }
+
+    when_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'participants'){
+            this.setState({participants: item['id']})
+        }
+        else if(target_type == 'viewer'){
+            this.setState({viewer: item['id']})
+        }
+    }
 
 
 

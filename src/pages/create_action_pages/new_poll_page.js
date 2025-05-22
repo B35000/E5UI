@@ -86,7 +86,7 @@ class NewPollPage extends Component {
         start_time:(new Date().getTime()/1000)+7200,
         end_time:(new Date().getTime()/1000)+64800,
 
-        winner_count:1, candidate:'', candidates:[], poll_e5s:[this.props.app_state.selected_e5]
+        winner_count:1, candidate:'', candidates:[], poll_e5s:[this.props.app_state.selected_e5], viewers:[], randomizer: Math.random() + 0.001
     };
 
 
@@ -96,7 +96,7 @@ class NewPollPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['c311bh']/* candidates */, this.props.app_state.loc['c311c']/* 'participants' */, this.props.app_state.loc['c311z']/* 'schedule' */,this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['c311bh']/* candidates */, this.props.app_state.loc['c311c']/* 'participants' */, this.props.app_state.loc['c311z']/* 'schedule' */, this.props.app_state.log['c311cf']/* access */,this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -245,6 +245,13 @@ class NewPollPage extends Component {
             return(
                 <div>
                     {this.render_enter_candidates_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.log['c311cf']/* access */){
+            return(
+                <div>
+                    {this.render_access_rights_part()}
                 </div>
             )
         }
@@ -1554,8 +1561,8 @@ class NewPollPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['c311e']/* Participant Account */, 'details':this.props.app_state.loc['c311f']/* Manually add an account to the accepted participants */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311g']/* Account... */} when_text_input_field_changed={this.when_participant_id_input_field_changed.bind(this)} text={this.state.participant_id} theme={this.props.theme}/>
-
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311g']/* Account... */} when_text_input_field_changed={this.when_participant_id_input_field_changed.bind(this)} text={this.state.participant_id} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
                 {this.load_account_suggestions('participants')}
 
                 <div style={{height: 10}}/>
@@ -1609,6 +1616,10 @@ class NewPollPage extends Component {
 
     when_add_participant_button_tapped(){
         var typed_text = this.state.participant_id.trim()
+        if(typed_text.includes(',')){
+            this.add_multiple_participants(typed_text)
+            return;
+        }
         var participant_id = this.get_typed_alias_id(typed_text)
         var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
         var final_value = participant_e5+':'+participant_id
@@ -1622,9 +1633,49 @@ class NewPollPage extends Component {
         else{
             participants_clone.push(final_value)
             this.setState({participants: participants_clone, participant_id:''});
-            this.props.notify(this.props.app_state.loc['c311k']/* Account Added. */, 1400)
         }
     }
+
+    add_multiple_participants(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        var participants_clone = this.state.participants.slice()
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5)){
+                        if(!isNaN(account) && parseInt(account) < 10**16){
+                            var final_value = e5+':'+parseInt(account)
+                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
+                                final_obj.push(final_value)
+                                account_entries++
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.log['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            participants_clone.concat(final_obj)
+            this.setState({participants: participants_clone, viewer:''});
+            this.props.notify(this.props.app_state.log['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+    
 
     get_typed_alias_id(alias){
         if(!isNaN(alias)){
@@ -1722,6 +1773,10 @@ class NewPollPage extends Component {
     }
 
     call_input_function(type){
+        if(this.is_preparing == true){
+            this.props.notify(this.props.app_state.loc['3074g']/* Please wait for e to finish loading your selected files. */, 1200);
+            return;
+        }
         if(type == 'json'){
             this.json_input.current?.click()
         }
@@ -1732,6 +1787,7 @@ class NewPollPage extends Component {
 
     when_json_file_picked = async (e) => {
         this.props.notify(this.props.app_state.loc['c311v']/* Preparing files... */, 1200);
+        this.is_preparing = true;
         await new Promise(resolve => setTimeout(resolve, 1400))
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){
@@ -1741,7 +1797,7 @@ class NewPollPage extends Component {
                     var data = ev.target.result
                     try{
                         var participants_data = JSON.parse(data)
-                        var voter_data = await this.process_json_file_object(participants_data)
+                        var voter_data = await this.props.process_json_file_object(participants_data)
                         var clone = this.state.json_files.slice()
                         clone.push({'size':ev.total, 'name':this.current_file, 'data':voter_data})
                         this.setState({json_files: clone})
@@ -1749,9 +1805,14 @@ class NewPollPage extends Component {
                         console.log('new_poll', ex)
                     }
                     this.is_loading_file = false
+                    if(this.current_pos == e.target.files.length -1){
+                        //its the last one
+                        this.is_preparing = false;
+                    }
                 }.bind(this);
                 var jsonFile = e.target.files[i];
                 this.current_file = jsonFile['name']
+                this.current_pos = i;
                 const includes = this.state.json_files.find(e => e['name'] === this.current_file)
                 if(includes == null){
                     reader.readAsText(jsonFile);
@@ -1768,40 +1829,9 @@ class NewPollPage extends Component {
         }
     }
 
-    process_json_file_object = async (object) => {
-        var keys = Object.keys(object)
-        var final_obj = {}
-        var account_entries = 0
-        try{
-            keys.forEach(key => {
-                if(this.props.app_state.e5s['data'].includes(key)){
-                    if(final_obj[key] == null){
-                        final_obj[key] = []
-                    }
-                    try{
-                        object[key].forEach(account => {
-                            var trimed_account = account.toString().trim().replace(/[^a-zA-Z0-9 ]/g, '')
-                            if(!isNaN(trimed_account) && parseInt(trimed_account) < 10**16){
-                                final_obj[key].push(parseInt(trimed_account))
-                                account_entries++
-                            }
-                        });
-                    }catch(e){
-                        console.log('new_poll', e)
-                    }
-                    
-                }
-            });
-        }catch(o){
-            console.log('new_poll', 0)
-        }
-
-        var hash = await this.props.generate_hash(JSON.stringify(final_obj))
-        return { data: hash, account_entries}
-    }
-
     when_csv_file_picked = async(e) => {
         this.props.notify(this.props.app_state.loc['c311v']/* Preparing files... */, 1200);
+        this.is_preparing = true;
         await new Promise(resolve => setTimeout(resolve, 1400))
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){ 
@@ -1810,14 +1840,19 @@ class NewPollPage extends Component {
                 reader.onload = async function(ev){
                     var data = ev.target.result
                     var participants_data = data.toString()
-                    var voter_data = await this.process_csv_file_data(participants_data)
+                    var voter_data = await this.props.process_csv_file_data(participants_data)
                     var clone = this.state.csv_files.slice()
                     clone.push({'size':ev.total, 'name':this.current_file, 'data':voter_data})
                     this.setState({csv_files: clone})
 
                     this.is_loading_file = false
+                    if(this.current_pos == e.target.files.length -1){
+                        //its the last one
+                        this.is_preparing = false;
+                    }
                 }.bind(this);
                 var csvFile = e.target.files[i];
+                this.current_pos = i;
                 this.current_file = csvFile['name']
                 const includes = this.state.csv_files.find(e => e['name'] === this.current_file)
                 if(includes == null){
@@ -1833,42 +1868,6 @@ class NewPollPage extends Component {
                 }
             }
         }
-    }
-
-    process_csv_file_data = async (data) => {
-        var entities = data.split(',')
-        var final_obj = {}
-        var account_entries = 0
-        entities.forEach(account_data => {
-            if(account_data != null && account_data != ''){
-                var data_point_array = account_data.split(':')
-                var e5 = ''
-                var account = ''
-                if(data_point_array.length == 2){
-                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
-                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
-                }
-                else if(data_point_array.length == 1){
-                    e5 = this.state.e5
-                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
-                }
-
-                if(e5 != '' && account != ''){
-                    if(this.props.app_state.e5s['data'].includes(e5)){
-                        if(final_obj[e5] == null){
-                            final_obj[e5] = []
-                        }
-                        if(!isNaN(account) && parseInt(account) < 10**16){
-                            final_obj[e5].push(parseInt(account))
-                            account_entries++
-                        }
-                    }
-                }
-            }
-        });
-
-        var hash = await this.props.generate_hash(JSON.stringify(final_obj))
-        return { data: hash, account_entries}
     }
 
     render_json_format_example(){
@@ -2031,6 +2030,13 @@ class NewPollPage extends Component {
                 }
             });
         }
+        else if(target_type == 'viewer'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.viewers)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
         
         return return_array;
     }
@@ -2043,6 +2049,9 @@ class NewPollPage extends Component {
     when_suggestion_clicked(item, pos, target_type){
         if(target_type == 'participants'){
             this.setState({participants: item['id']})
+        }
+        else if(target_type == 'viewer'){
+            this.setState({viewer: item['id']})
         }
     }
 
@@ -2264,7 +2273,7 @@ class NewPollPage extends Component {
         const includes = this.state.candidates.find(e => e['name'] === candidate)
         
         var id = makeid(2)
-        while(this.state.candidates.find(e => e['id'] === id)){
+        while(this.state.candidates.find(e => e['id'] === id) != null){
             id = makeid(2)
         }
 
@@ -2312,7 +2321,7 @@ class NewPollPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '3px'}}>
-                                            {this.render_detail_item('3', {'title':this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                            {this.render_detail_item('4', {'text':item['name'], 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -2334,6 +2343,177 @@ class NewPollPage extends Component {
     }
 
 
+
+
+
+
+
+
+    render_access_rights_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_access_rights_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_access_rights_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_access_rights_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_access_rights_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cg']/* Poll Accessibility. */, 'details':this.props.app_state.loc['c311ch']/* Specify which accounts can view the poll if it is a private poll. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_viewer_input_field_changed.bind(this)} text={this.state.viewer} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.load_account_suggestions('viewer')}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_viewer_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311cj']/* Add viewer. */, 'action':''})}
+                </div>
+                <div style={{height: 20}}/>
+                {this.render_added_viewers()}
+            </div>
+        )
+    }
+
+    when_viewer_input_field_changed(text){
+        this.setState({viewer: text})
+    }
+
+    when_add_viewer_button_tapped(){
+        var typed_text = this.state.viewer.trim()
+        if(typed_text.includes(',')){
+            this.add_multiple_viewers(typed_text)
+            return;
+        }
+        var participant_id = this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
+        var final_value = participant_e5+':'+participant_id
+        var participants_clone = this.state.viewers.slice()
+        if(isNaN(participant_id) || parseInt(participant_id) < 0 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else if(participants_clone.includes(final_value)){
+            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        }
+        else{
+            participants_clone.push(final_value)
+            this.setState({viewers: participants_clone, viewer:''});
+        }
+    }
+
+    add_multiple_viewers(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        var participants_clone = this.state.viewers.slice()
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5)){
+                        if(!isNaN(account) && parseInt(account) < 10**16){
+                            var final_value = e5+':'+parseInt(account)
+                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
+                                final_obj.push(final_value)
+                                account_entries++
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.log['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            participants_clone.concat(final_obj)
+            this.setState({viewers: participants_clone, viewer:''});
+            this.props.notify(this.props.app_state.log['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+
+    render_added_viewers(){
+        var items = [].concat(this.state.viewers)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_viewer_tapped(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '3px'}}>
+                                        {this.render_detail_item('3', {'title':this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_added_viewer_tapped(item, index){
+        var cloned_array = this.state.viewers.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({viewers: cloned_array})
+    }
 
 
 
