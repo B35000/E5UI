@@ -784,6 +784,7 @@ class CalculatePollResult extends Component {
         var vote_transfer_snapshots = results_object.vote_transfer_snapshots
         var current_winners = results_object.current_winners
         var vote_donation_snapshots = results_object.vote_donation_snapshots
+        var tie_breaker = results_object.tie_breaker
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074t']/* 'Poll Results' */, 'details':this.props.app_state.loc['3074u']/* 'As of $' */.replace('$', (''+(new Date(time)))), 'size':'l'})}
@@ -811,7 +812,7 @@ class CalculatePollResult extends Component {
                         {this.render_consensus_cycle(item, elimination_snapshot[index], index, valid_vote_count, vote_transfer_snapshots[index], index == consensus_snapshots.length-1, vote_donation_snapshots[index] )}
                     </div>
                 ))}
-                {this.render_final_winners_if_voting_period_over(current_winners, time)}
+                {this.render_final_winners_if_voting_period_over(current_winners, time, tie_breaker)}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bm']/* 'Post Result.' */, 'details':this.props.app_state.loc['3074bn']/* 'Post these results in your poll for others to see.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
@@ -930,7 +931,7 @@ class CalculatePollResult extends Component {
         }
     }
 
-    render_final_winners_if_voting_period_over(current_winners, time){
+    render_final_winners_if_voting_period_over(current_winners, time, tie_breaker){
         var now = time
         if(now < this.state.poll_object['ipfs'].end_time){
             return(
@@ -939,6 +940,7 @@ class CalculatePollResult extends Component {
                 </div>
             )
         }
+        var items = tie_breaker != '' ? [tie_breaker] : current_winners
         var candidate_index = {}
         this.state.poll_object['ipfs'].candidates.forEach(candidate => {
             candidate_index[candidate['id']] = candidate['name']
@@ -946,21 +948,31 @@ class CalculatePollResult extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bk']/* 'Current Winners.' */, 'details':this.props.app_state.loc['3074bl']/* 'Below are the current and final winners of the poll.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bk']/* 'Current Winners 🎉' */, 'details':this.props.app_state.loc['3074bl']/* 'Below are the current and final winners of the poll.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {current_winners.map((item, index) => (
+                        {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_detail_item('4', {'text':candidate_index[item], 'textsize':'15px', 'font':this.props.app_state.font})}
                             </li>
                         ))}
                     </ul>
                 </div>
-
+                {this.render_tie_breaker_message(tie_breaker)}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    render_tie_breaker_message(tie_breaker){
+        if(tie_breaker != ''){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3074bv']/* 'There was a tie, so the randomizer was used to pick the winner.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
     }
 
 

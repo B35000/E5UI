@@ -6956,6 +6956,7 @@ return data['data']
         var valid_vote_count = results_object.valid_vote_count
         var consensus_snapshots = results_object.consensus_snapshots
         var current_winners = results_object.current_winners
+        var tie_breaker = results_object.tie_breaker
         return(
             <div>
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
@@ -6970,7 +6971,7 @@ return data['data']
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bb']/* '$ consensus cycles' */.replace('$', consensus_snapshots.length), 'details':this.props.app_state.loc['3074bc']/* '$ runoffs.' */.replace('$', (''+(consensus_snapshots.length - 1))), 'size':'l'})}
 
-                {this.render_final_winners_if_voting_period_over(current_winners, transaction_item.poll_object, time)}
+                {this.render_final_winners_if_voting_period_over(current_winners, transaction_item.poll_object, time, tie_breaker)}
             </div>
         )
     }
@@ -7001,7 +7002,7 @@ return data['data']
         )
     }
 
-    render_final_winners_if_voting_period_over(current_winners, poll_object, time){
+    render_final_winners_if_voting_period_over(current_winners, poll_object, time, tie_breaker){
         var now = time
         if(now < poll_object['ipfs'].end_time){
             return(
@@ -7010,6 +7011,7 @@ return data['data']
                 </div>
             )
         }
+        var items = tie_breaker != '' ? [tie_breaker] : current_winners
         var candidate_index = {}
         poll_object['ipfs'].candidates.forEach(candidate => {
             candidate_index[candidate['id']] = candidate['name']
@@ -7021,15 +7023,26 @@ return data['data']
                 <div style={{height:10}}/>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {current_winners.map((item, index) => (
+                        {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_detail_item('4', {'text':candidate_index[item], 'textsize':'15px', 'font':this.props.app_state.font})}
                             </li>
                         ))}
                     </ul>
                 </div>
+                {this.render_tie_breaker_message(tie_breaker)}
             </div>
         )
+    }
+
+    render_tie_breaker_message(tie_breaker){
+        if(tie_breaker != ''){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3074bv']/* 'There was a tie, so the randomizer was used to pick the winner.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
     }
 
 
