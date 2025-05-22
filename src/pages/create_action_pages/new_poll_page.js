@@ -86,7 +86,7 @@ class NewPollPage extends Component {
         start_time:(new Date().getTime()/1000)+7200,
         end_time:(new Date().getTime()/1000)+64800,
 
-        winner_count:1, candidate:'', candidates:[], poll_e5s:[this.props.app_state.selected_e5], viewers:[], randomizer: Math.random() + 0.001
+        winner_count:1, candidate:'', candidates:[], poll_e5s:[this.props.app_state.selected_e5], viewers:[], randomizer: Math.random() + 0.001, get_changeable_vote_tags_object:this.get_changeable_vote_tags_object()
     };
 
 
@@ -147,6 +147,17 @@ class NewPollPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
+            ],
+        };
+    }
+
+    get_changeable_vote_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['c311cp']/* 'enabled' */], [0]
             ],
         };
     }
@@ -356,10 +367,20 @@ class NewPollPage extends Component {
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cd']/* 'If you specify a participant in an E5 that you dont select here, their vote will be discarded.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
 
 
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cq']/* 'Changeable Vote.' */, 'details':this.props.app_state.loc['c311cr']/* 'If se to enabled, voters can change their vote during the valid period.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_changeable_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_get_changeable_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_changeable_vote_tags_object_updated(tag_obj){
+        this.setState({get_changeable_vote_tags_object: tag_obj})
     }
 
     when_title_text_input_field_changed(text){

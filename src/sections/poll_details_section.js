@@ -185,6 +185,8 @@ class PollDetailsSection extends Component {
 
                     {this.render_vote_object_button(object)}
 
+                    {this.render_vote_changing_message_if_enabled(object)}
+
                     {this.render_pin_post_button(object)}
 
                     {this.render_messgae_if_voted_in_poll(object)}
@@ -196,6 +198,27 @@ class PollDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_vote_changing_message_if_enabled(object){
+        const get_changeable_vote_tags_object = this.get_selected_item2(object['ipfs'].get_changeable_vote_tags_object, 'e') == 1
+        
+        var title = this.props.app_state.loc['3072s']/* 'Change Vote Enabled.' */
+        var details = this.props.app_state.loc['3072t']/* 'You can change your vote during the poll period.' */
+        if(get_changeable_vote_tags_object == false){
+            title = this.props.app_state.loc['3072u']/* 'Change Vote Disabled.' */
+            details = this.props.app_state.loc['3072v']/* 'nly your first vote will be counted.' */
+        }
+        return(
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
     get_senders_name(sender, object){

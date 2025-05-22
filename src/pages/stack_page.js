@@ -7682,6 +7682,7 @@ return data['data']
         var context = 42
         var int_data = 0
 
+        const get_changeable_vote_tags_object = this.get_selected_item2(t.get_changeable_vote_tags_object, 'e') == 1
         var obj = {
             participants: t.participants, 
             json_files: this.sortByAttributeDescending(t.json_files, 'name'), 
@@ -7692,6 +7693,7 @@ return data['data']
             winner_count: t.winner_count,
             poll_e5s: t.poll_e5s,
             randomizer: t.randomizer,
+            change_vote_enabled: get_changeable_vote_tags_object
         }/* try not to change this at all. even the order. */
         var string_data = await this.props.hash_data(JSON.stringify(obj))
 
@@ -7703,6 +7705,10 @@ return data['data']
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
     format_poll_vote_object = async (t, calculate_gas, ipfs_index) =>{

@@ -2089,6 +2089,8 @@ return data['data']
                     {this.render_detail_item('3', item['end_time'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['participants'])}
+                    <div style={{height: 10}}/>
+                    {this.render_vote_changing_message_if_enabled(object)}
                     {this.render_csv_files_if_any()}
                     {this.render_json_files_if_any()}
                     {this.poll_e5s()}
@@ -2104,6 +2106,22 @@ return data['data']
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    render_vote_changing_message_if_enabled(object){
+        const get_changeable_vote_tags_object = this.get_selected_item2(object['ipfs'].get_changeable_vote_tags_object, 'e') == 1
+        
+        var title = this.props.app_state.loc['3072s']/* 'Change Vote Enabled.' */
+        var details = this.props.app_state.loc['3072t']/* 'You can change your vote during the poll period.' */
+        if(get_changeable_vote_tags_object == false){
+            title = this.props.app_state.loc['3072u']/* 'Change Vote Disabled.' */
+            details = this.props.app_state.loc['3072v']/* 'nly your first vote will be counted.' */
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
     }
@@ -5890,6 +5908,8 @@ return data['data']
                     {this.render_detail_item('3', item['end_time'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['participants'])}
+                    <div style={{height: 10}}/>
+                    {this.render_vote_changing_message_if_enabled(object)}
                     {this.render_csv_files_if_any()}
                     {this.render_json_files_if_any()}
                     {this.poll_e5s()}

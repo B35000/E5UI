@@ -728,6 +728,7 @@ class CalculatePollResult extends Component {
             this.props.notify(this.props.app_state.loc['3074r']/* You need to select a nitro node first. */, 4000)
         }
         else{
+            const get_changeable_vote_tags_object = this.get_selected_item2(t.get_changeable_vote_tags_object, 'e') == 1
             const static_poll_data = {
                 participants: t.participants, 
                 json_files: this.sortByAttributeDescending(t.json_files, 'name'), 
@@ -738,6 +739,7 @@ class CalculatePollResult extends Component {
                 winner_count: t.winner_count,
                 poll_e5s: t.poll_e5s,
                 randomizer: t.randomizer,
+                change_vote_enabled: get_changeable_vote_tags_object,
             }
             const poll_id = this.state.poll_object['id']
             const poll_e5 = this.state.poll_object['e5']
@@ -1000,6 +1002,10 @@ class CalculatePollResult extends Component {
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
     render_empty_views(size){

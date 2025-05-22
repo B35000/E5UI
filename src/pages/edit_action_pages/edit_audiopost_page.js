@@ -244,7 +244,7 @@ class EditAudioPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['a311cx']/* 'explicit' */], [1]
+                ['or','',0], ['e',this.props.app_state.loc['a311cx']/* 'explicit' */], [0]
             ],
         };
     }
