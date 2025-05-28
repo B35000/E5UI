@@ -17849,7 +17849,7 @@ return data['data']
     }
 
     const body = {
-      method: "POST", // Specify the HTTP method
+      method: "GET", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
