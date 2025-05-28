@@ -164,8 +164,8 @@ class CalculatePollResult extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074c']/* 'Tally via Nitro.' */, 'details':this.props.app_state.loc['3074d']/* 'Use a nitro node to calculate the current results of your poll for you.' */, 'size':'l'})}
                 <div style={{height:20}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3074i']/* Filter... */} when_text_input_field_changed={this.when_nitro_input_field_changed.bind(this)} text={this.state.nitro} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-                {this.load_my_nitro_objects_to_select()}
+                {/* <div style={{height:10}}/> */}
+                {/* {this.load_my_nitro_objects_to_select()} */}
                 <div style={{height:10}}/>
                 {this.load_selected_nitro_object_details()}
                 {this.render_file_pickers_if_needed()}
@@ -689,17 +689,24 @@ class CalculatePollResult extends Component {
     }
 
     when_start_count_tapped(){
-        var last_time = this.state.selected_nitro_item == null ? 0 : (this.props.app_state.count_poll_times[this.state.selected_nitro_item] == null ? 0 : this.props.app_state.count_poll_times[this.state.selected_nitro_item])
+        var last_time = this.props.app_state.count_poll_times[this.state.poll_object['e5_id']] == null ? 0 : this.props.app_state.count_poll_times[this.state.poll_object['e5_id']]
         var now = Date.now()
         if(last_time > (now-240_000)){
             this.props.notify(this.props.app_state.loc['3074bp']/* Wait a bit. */, 1900)
             return;
         }
 
+        var nitros = this.load_active_nitros()
+        var selected_nitro_objects = []
+        if(nitros < 23){
+            selected_nitro_objects = nitros
+        }else{
+            selected_nitro_objects = this.getRandomValues(nitros, 23)
+        }
+
         const final_csv_files = []
         const final_json_files = []
         var missing_files = 0
-        const nitro_object = this.state.selected_nitro_object
         const csv_files = this.state.csv_files
         const json_files = this.state.json_files
         const t = this.state.poll_object['ipfs']
@@ -724,9 +731,9 @@ class CalculatePollResult extends Component {
         if(missing_files != 0){
             this.props.notify(this.props.app_state.loc['3074q']/* $ files are missing or invalid. */.replace('$', missing_files), 7000)
         }
-        else if(nitro_object == null){
-            this.props.notify(this.props.app_state.loc['3074r']/* You need to select a nitro node first. */, 4000)
-        }
+        // else if(nitro_object == null){
+        //     this.props.notify(this.props.app_state.loc['3074r']/* You need to select a nitro node first. */, 4000)
+        // }
         else{
             const get_changeable_vote_tags_object = this.get_selected_item2(t.get_changeable_vote_tags_object, 'e') == 1
             const static_poll_data = {
@@ -748,10 +755,16 @@ class CalculatePollResult extends Component {
                 json_files: final_json_files
             }
 
-            this.props.notify(this.props.app_state.loc['3074s']/* Sending the request to nitro.. */, 2000)
+            this.props.notify(this.props.app_state.loc['3074s']/* Sending the request.. */, 2000)
 
-            this.props.count_poll_votes_and_post_results(static_poll_data, poll_id, poll_e5, file_objects, nitro_object, t)
+            this.props.count_poll_votes_and_post_results(static_poll_data, poll_id, poll_e5, file_objects, selected_nitro_objects, t)
         }
+    }
+
+    getRandomValues(array, count) {
+        // Make a shallow copy to avoid modifying the original array
+        const shuffled = [...array].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
     }
 
 
@@ -760,20 +773,67 @@ class CalculatePollResult extends Component {
 
 
     render_poll_results(){
-        var results_object = this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']]
+        return(
+            <div>
+                {this.load_my_used_nitro_objects()}
+                {this.render_poll_result_item()}
+            </div>
+        )
+    }
+
+    load_my_used_nitro_objects(){
+        var items = this.load_used_nitros()
+        var items2 = [0, 1, 2]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_used_nitro_item_clicked(item)}>
+                            {this.render_nitro_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_used_nitros(){
+        var results_obj = this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']]
+        var used_nitro_ids = results_obj == null ? [] : Object.keys(results_obj)
+        var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        var nitro_objects_used = []
+        for(var i=0; i<all_nitros.length; i++){
+            var obj = all_nitros[i]
+            if(used_nitro_ids.includes(obj['e5_id'])){
+                nitro_objects_used.push(obj)
+            }
+        }
+        return nitro_objects_used
+    }
+
+    when_used_nitro_item_clicked(item){
+        this.setState({selected_nitro_item: item['e5_id'], selected_nitro_object: item})
+    }
+
+    render_poll_result_item(){
+        var results_object = this.state.selected_nitro_object == null ? null : this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']][this.state.selected_nitro_object]
         if(results_object == null){
             return(
                 <div>
                     {this.render_empty_views(3)}
-                </div>
-            )
-        }
-        else if(results_object['success'] == false){
-            return(
-                <div>
-                    {this.render_detail_item('4', {'text':results_object['message'], 'textsize':'13px', 'font':this.props.app_state.font})}
-                    <div style={{height:10}}/>
-                    {this.render_empty_views(2)}
                 </div>
             )
         }
@@ -787,6 +847,18 @@ class CalculatePollResult extends Component {
         var current_winners = results_object.current_winners
         var vote_donation_snapshots = results_object.vote_donation_snapshots
         var tie_breaker = results_object.tie_breaker
+        var inconclusive_ballot = results_object.inconclusive_ballot
+        var quota = results_object.quota
+
+        if(inconclusive_ballot == true){
+            return (
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3074ca']/* 'Inconclusive Poll.' */, 'details':this.props.app_state.loc['3074cb']/* 'Not enough votes have been cast to render the poll valid.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074t']/* 'Poll Results' */, 'details':this.props.app_state.loc['3074u']/* 'As of $' */.replace('$', (''+(new Date(time)))), 'size':'l'})}
@@ -794,6 +866,9 @@ class CalculatePollResult extends Component {
                 {this.render_voter_count_message(registered_voters)}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074x']/* Valid Votes Counted. */, 'subtitle':this.format_power_figure(valid_vote_count), 'barwidth':this.calculate_bar_width(valid_vote_count), 'number':this.format_account_balance_figure(valid_vote_count), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074bz']/* Quota Used. */, 'subtitle':this.format_power_figure(quota), 'barwidth':this.calculate_bar_width(quota), 'number':this.format_account_balance_figure(quota), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
+
                     {this.render_turnout_message(registered_voters, valid_vote_count)}
                 </div>
                 <div style={{height:10}}/>
@@ -811,10 +886,15 @@ class CalculatePollResult extends Component {
                 <div style={{height:10}}/>
                 {consensus_snapshots.map((item, index) => (
                     <div>
-                        {this.render_consensus_cycle(item, elimination_snapshot[index], index, valid_vote_count, vote_transfer_snapshots[index], index == consensus_snapshots.length-1, vote_donation_snapshots[index] )}
+                        {this.render_consensus_cycle(item, elimination_snapshot[index], index, valid_vote_count, vote_transfer_snapshots[index], index == consensus_snapshots.length-1, vote_donation_snapshots[index], quota )}
                     </div>
                 ))}
                 {this.render_final_winners_if_voting_period_over(current_winners, time, tie_breaker)}
+                
+                <div style={{height: 10}}/>
+                {this.calculate_consistency_metric(results_object)}
+
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bm']/* 'Post Result.' */, 'details':this.props.app_state.loc['3074bn']/* 'Post these results in your poll for others to see.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
@@ -851,15 +931,13 @@ class CalculatePollResult extends Component {
         )
     }
 
-    render_consensus_cycle(snapshot, eliminated_candidate, index, vote_count, vote_transfer_snapshot, is_last, vote_donation_snapshot){
+    render_consensus_cycle(snapshot, eliminated_candidate, index, vote_count, vote_transfer_snapshot, is_last, vote_donation_snapshot, quota){
         var figures = []
         var candidate_index = {}
         this.state.poll_object['ipfs'].candidates.forEach(candidate => {
             candidate_index[candidate['id']] = candidate['name']
         });
         var candidate_ids = Object.keys(snapshot)
-        const target_positions = this.state.poll_object['ipfs'].winner_count
-        const quota = Math.floor((vote_count / (target_positions+1)) +1)/* droop_quota */
 
         candidate_ids.forEach(candidate_id => {
             var candidates_votes = snapshot[candidate_id]
@@ -977,6 +1055,58 @@ class CalculatePollResult extends Component {
         }
     }
 
+    calculate_consistency_metric(results_object){
+        var focused_results_obj = this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']]
+        var used_nitro_ids = focused_results_obj == null ? [] : Object.keys(focused_results_obj)
+        if(used_nitro_ids.length < 2){
+            return;
+        }
+        var consistency_count = 0
+
+        var time = results_object.time
+        var end_time = this.state.poll_object['ipfs'].end_time
+        if(time < end_time){
+            return;
+        }
+        
+        used_nitro_ids.forEach(used_nitro_id => {
+            var results_obj = this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']][used_nitro_id]
+            var registered_voters = results_obj.registered_voters
+            var valid_vote_count = results_obj.valid_vote_count
+            var current_winners = results_obj.current_winners
+            var tie_breaker = results_obj.tie_breaker
+            var quota = results_obj.quota
+            var tied_candidates = results_obj.tied_candidates
+            var inconclusive_ballot = results_obj.inconclusive_ballot
+            if(
+                registered_voters == results_object.registered_voters &&
+                valid_vote_count == results_object.valid_vote_count &&
+                current_winners.length == results_object.current_winners.length &&
+                this.allElementsAppearOnce(current_winners, results_object.current_winners) &&
+                tie_breaker == results_object.tie_breaker &&
+                quota == results_object.quota &&
+                this.allElementsAppearOnce(tied_candidates, results_object.tied_candidates) &&
+                inconclusive_ballot == results_object.inconclusive_ballot
+            ){
+                consistency_count++
+            }
+        });
+
+        var percentage = this.round_off((consistency_count / used_nitro_ids.length) * 100)
+        if(percentage >= 100){
+            percentage = 100
+        }
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bw']/* 'Consistency levels.' */, 'details':this.props.app_state.loc['3074bx']/* 'The similarity in results returned by the randomly selected nitros.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074by']/* 'Consistency proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage+'%', 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+                </div>
+            </div>
+        )
+    }
 
 
 
@@ -986,7 +1116,7 @@ class CalculatePollResult extends Component {
         var obj = {
             id:this.state.id, type: this.props.app_state.loc['3074bq']/* 'poll-result' */,
             entered_indexing_tags:[this.props.app_state.loc['3074br']/* 'poll' */, this.props.app_state.loc['3074bs']/* 'result' */, this.props.app_state.loc['3074bt']/* 'post' */],
-            e5:this.state.poll_object['e5'], results_object: results_object, poll_object:this.state.poll_object, nitro: this.state.selected_nitro_item
+            e5:this.state.poll_object['e5'], results_object: results_object, poll_object:this.state.poll_object
         }
         this.props.add_poll_result_transaction_to_stack(obj)
         this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)

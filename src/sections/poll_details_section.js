@@ -162,6 +162,9 @@ class PollDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
+                    <div style={{height: 10}}/>
+                    {this.show_consensus_type_message(object)}
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['winner_data'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['start_time'])}
@@ -169,9 +172,15 @@ class PollDetailsSection extends Component {
                     {this.render_detail_item('3', item['end_time'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['participants'])}
+                    <div style={{height: 10}}/>
+                    {this.render_vote_changing_message_if_enabled(object)}
+                    <div style={{height: 10}}/>
+                    {this.render_randomizer_value(object)}
+
                     {this.render_csv_files_if_any(object)}
                     {this.render_json_files_if_any(object)}
                     {this.poll_e5s(object)}
+
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
                     {this.render_item_images(object)}
@@ -185,7 +194,7 @@ class PollDetailsSection extends Component {
 
                     {this.render_vote_object_button(object)}
 
-                    {this.render_vote_changing_message_if_enabled(object)}
+                    
 
                     {this.render_pin_post_button(object)}
 
@@ -196,6 +205,26 @@ class PollDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    show_consensus_type_message(object){
+        var text = this.props.app_state.loc['3072y']/* Instant-Runoff */
+        if(object['ipfs'].winner_count > 1){
+            text = this.props.app_state.loc['3072z']/* Proportional-Ranked Choice (Single Transferrable Vote) */
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':text, 'details':this.props.app_state.loc['3072x']/* 'Consensus Type.' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_randomizer_value(object){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':object['ipfs'].randomizer.toString(), 'details':this.props.app_state.loc['3072w']/* 'randomizer' */, 'size':'l'})}
             </div>
         )
     }
@@ -655,7 +684,8 @@ class PollDetailsSection extends Component {
         var now = Date.now()/1000
         var id = object['id']
         var vote_array = this.props.app_state.object_votes[id] == null ? [] : this.props.app_state.object_votes[id]
-        if(start_time < now && now < end_time && vote_array.length == 0){
+        const vote_changeable = this.get_selected_item2(object['ipfs'].get_changeable_vote_tags_object, 'e') == 1
+        if(start_time < now && now < end_time && (vote_array.length == 0 || vote_changeable == true)){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -714,8 +744,111 @@ class PollDetailsSection extends Component {
     }
 
     open_post_consensus_status_ui(object){
-
+        this.props.show_view_calculate_poll_result_bottomsheet(object)
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_poll_results_section(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3072ba']/* 'Poll Results.' */, 'details':this.props.app_state.loc['3072bb']/* 'All the results of the poll are listed below. */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_poll_result_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_poll_result_items(object){
+        var middle = this.props.height-200;
+        var items = [].concat(this.get_results(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.reverse().map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={() => this.when_poll_result_item_clicked(item, object)}>
+                                    <div>
+                                        {this.render_poll_result_item(item)}
+                                        <div style={{height: 4}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_results(object){
+        var results_obj = this.props.app_state.poll_results[object['e5_id']]
+        if(results_obj == null) return [];
+        return results_obj
+    }
+
+    render_poll_result_item(item){
+        var results_object = item.results_object
+        var time = results_object['event'].returnValues.p6/* timestamp */
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.get_time_difference(time), 'title':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_poll_result_item_clicked(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'poll_results')
+    }
+
+
+
+
+
+
+
 
     
 

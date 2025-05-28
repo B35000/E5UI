@@ -870,7 +870,7 @@ class App extends Component {
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
 
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
-    e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}
+    e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}
   };
 
   get_static_assets(){
@@ -5175,7 +5175,7 @@ return data['data']
 
           load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} get_searched_account_data_trimmed={this.get_searched_account_data_trimmed.bind(this)}
 
-          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} show_view_vote_poll_bottomsheet={this.show_view_vote_poll_bottomsheet.bind(this)} get_objects_votes={this.get_objects_votes.bind(this)}
+          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} show_view_vote_poll_bottomsheet={this.show_view_vote_poll_bottomsheet.bind(this)} get_objects_votes={this.get_objects_votes.bind(this)} get_poll_results={this.get_poll_results.bind(this)} show_view_calculate_poll_result_bottomsheet={this.show_view_calculate_poll_result_bottomsheet.bind(this)}
 
 
 
@@ -14239,6 +14239,7 @@ return data['data']
       'file_type_picker':450,
       'home_page_view_options': 300,
       'view_json_example':200,
+      'poll_results':450,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -17777,21 +17778,77 @@ return data['data']
     this.set_cookies_after_stack_action(stack_clone)
   }
 
-  count_poll_votes_and_post_results = async (static_poll_data, poll_id, poll_e5, file_objects, nitro_object, poll_obj) => {
+  // count_poll_votes_and_post_results = async (static_poll_data, poll_id, poll_e5, file_objects, nitro_object, poll_obj) => {
+  //   await this.wait(this.state.ipfs_delay)
+  //   var node_url = nitro_object['ipfs'].node_url
+  //   var query_time = structuredClone(this.state.count_poll_times)
+  //   query_time[poll_obj['e5_id']] = Date.now()
+  //   this.setState({count_poll_times: query_time})
+
+  //   var arg_obj = {
+  //     static_poll_data: static_poll_data,
+  //     poll_id: parseInt(poll_id),
+  //     poll_e5: poll_e5,
+  //     file_objects: file_objects,
+  //   }
+
+  //   var body = {
+  //     method: "POST", // Specify the HTTP method
+  //     headers: {
+  //       "Content-Type": "application/json" // Set content type to JSON
+  //     },
+  //     body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+  //   }
+
+  //   var request = `${node_url}/count_votes`
+  //   try{
+  //     const response = await fetch(request, body);
+  //     if (!response.ok) {
+  //       console.log(response)
+  //       throw new Error(`Failed to retrieve data. Status: ${response}`);
+  //     }
+  //     var data = await response.text();
+  //     var obj = JSON.parse(data);
+  //     var duration = obj.success == true ? 3700 : 4800
+  //     this.prompt_top_notification(obj.message, duration)
+  //     if(obj.error != null){
+  //       console.log('vote_counter', obj.error)
+  //     }
+  //     if(obj.success == true){
+  //       var clone = structuredClone(this.state.poll_consensus_results)
+  //       obj.results['nitro_id'] = nitro_object['e5_id']
+  //       obj.results['success'] = true
+  //       clone[poll_obj['e5_id']] = obj.results
+  //       this.setState({poll_consensus_results: clone})
+  //     }else{
+  //       var clone = structuredClone(this.state.poll_consensus_results)
+  //       var results = {}
+  //       results['nitro_id'] = nitro_object['e5_id']
+  //       results['success'] = false
+  //       results['message'] = obj.message
+  //       clone[poll_obj['e5_id']] = results
+  //       this.setState({poll_consensus_results: clone})
+  //     }
+  //   }
+  //   catch(e){
+  //     this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+  //   }
+  // }
+
+  count_poll_votes_and_post_results = async (static_poll_data, poll_id, poll_e5, file_objects, nitro_objects, poll_obj) => {
     await this.wait(this.state.ipfs_delay)
-    var node_url = nitro_object['ipfs'].node_url
     var query_time = structuredClone(this.state.count_poll_times)
     query_time[poll_obj['e5_id']] = Date.now()
     this.setState({count_poll_times: query_time})
 
-    var arg_obj = {
+    const arg_obj = {
       static_poll_data: static_poll_data,
       poll_id: parseInt(poll_id),
       poll_e5: poll_e5,
       file_objects: file_objects,
     }
 
-    var body = {
+    const body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
@@ -17799,6 +17856,13 @@ return data['data']
       body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
     }
 
+    nitro_objects.forEach(nitro_object => {
+      var node_url = nitro_object['ipfs'].node_url
+      this.get_vote_count_from_nitro(node_url, body, nitro_object, poll_obj)
+    });
+  }
+
+  get_vote_count_from_nitro = async (node_url, body, nitro_object, poll_obj) => {
     var request = `${node_url}/count_votes`
     try{
       const response = await fetch(request, body);
@@ -17808,8 +17872,6 @@ return data['data']
       }
       var data = await response.text();
       var obj = JSON.parse(data);
-      var duration = obj.success == true ? 3700 : 4800
-      this.prompt_top_notification(obj.message, duration)
       if(obj.error != null){
         console.log('vote_counter', obj.error)
       }
@@ -17817,20 +17879,16 @@ return data['data']
         var clone = structuredClone(this.state.poll_consensus_results)
         obj.results['nitro_id'] = nitro_object['e5_id']
         obj.results['success'] = true
-        clone[poll_obj['e5_id']] = obj.results
-        this.setState({poll_consensus_results: clone})
-      }else{
-        var clone = structuredClone(this.state.poll_consensus_results)
-        var results = {}
-        results['nitro_id'] = nitro_object['e5_id']
-        results['success'] = false
-        results['message'] = obj.message
-        clone[poll_obj['e5_id']] = results
+        if(clone[poll_obj['e5_id']] == null){
+          clone[poll_obj['e5_id']] = {}
+        }
+        clone[poll_obj['e5_id']][nitro_object['e5_id']] = obj.results
         this.setState({poll_consensus_results: clone})
       }
     }
     catch(e){
-      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+      console.log('apppage', e)
+      // this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
     }
   }
 
@@ -31487,6 +31545,44 @@ return data['data']
     }
     return []
   }
+
+  get_poll_results = async(id, e5, object) => {
+    const author = object['author']
+    const e5_id = object['e5_id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const created_results_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:43, p2/* sender_acc_id */:author}))
+
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_results_data, 0, 'p4')
+    }
+
+    const result_objects = []
+    var is_first_time = this.state.poll_results[e5_id] == null ? true : false
+    for(var i=0; i<created_results_data.length; i++){
+      const event = created_results_data[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      ipfs['event'] = event
+      result_objects.push(ipfs)
+      if(is_first_time == true){
+        const poll_resutls_clone = structuredClone(this.state.poll_results)
+        poll_resutls_clone[e5_id] = result_objects
+        this.setState({poll_results: poll_resutls_clone})
+      }
+    }
+
+    const poll_resutls_clone = structuredClone(this.state.poll_results)
+    poll_resutls_clone[e5_id] = result_objects
+    this.setState({poll_results: poll_resutls_clone})
+  }
+
+
+
+
 
 
 

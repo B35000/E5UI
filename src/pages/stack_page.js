@@ -4500,7 +4500,6 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['3074bq']/* 'poll-result' */){
                     const poll_result_data = {
                         results_object: txs[i].results_object,
-                        nitro: txs[i].nitro
                     }
                     ipfs_index_object[txs[i].id] = poll_result_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':poll_result_data})
@@ -7742,7 +7741,7 @@ return data['data']
         var target = t.poll_object['id']
         var obj = [ /* add data */
             [20000, 13, 0],
-            [target], [23],/* 25(poll_vote_registry) */
+            [target], [23],/*  */
             [], /* contexts */
             [] /* int_data */
         ]

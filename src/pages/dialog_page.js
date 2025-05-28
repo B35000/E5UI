@@ -202,6 +202,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'poll_results'){
+            return(
+                <div>
+                    {this.render_poll_results()}
+                </div>
+            )
+        }
     }
 
 
@@ -3522,6 +3529,414 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+    render_poll_results(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_poll_result_items()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_poll_result_items()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_poll_result_items()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_poll_result_items(){
+        return(
+            <div>
+                {this.load_my_used_nitro_objects()}
+                {this.render_poll_result_item()}
+            </div>
+        )
+    }
+
+    load_my_used_nitro_objects(){
+        var items = this.load_used_nitros()
+        var items2 = [0, 1, 2]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_used_nitro_item_clicked(item)}>
+                            {this.render_nitro_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    allElementsAppearOnce(arr1, arr2) {
+        const countMap = {};
+        for (const el of arr2) {
+            countMap[el] = (countMap[el] || 0) + 1;
+        }
+        return arr1.every(el => countMap[el] >= 1);
+    }
+
+    render_nitro_item(item){
+        var object = item
+        var default_image = this.props.app_state.static_assets['end_img']
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+        var title = item['e5']+' • '+item['id']
+        var details = object['ipfs'] == null ? 'Nitropost ID' : start_and_end(object['ipfs'].entered_title_text)
+        if(this.state.selected_nitro_item == item['e5_id']){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image,'details':details, 'size':'s', 'border_radius':'9px'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image, 'details':details, 'size':'s', 'border_radius':'9px'})}
+                </div>
+            )
+        }
+    }
+
+    load_used_nitros(){
+        var results_obj = this.state.data['item']
+        var used_nitro_ids = results_obj == null ? [] : Object.keys(results_obj)
+        var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        var nitro_objects_used = []
+        for(var i=0; i<all_nitros.length; i++){
+            var obj = all_nitros[i]
+            if(used_nitro_ids.includes(obj['e5_id'])){
+                nitro_objects_used.push(obj)
+            }
+        }
+        return nitro_objects_used
+    }
+
+    when_used_nitro_item_clicked(item){
+        this.setState({selected_nitro_item: item['e5_id'], selected_nitro_object: item})
+    }
+
+    render_poll_result_item(){
+        var results_obj = this.state.data['item']
+        var poll_object = this.state.data['object']
+        var results_object = this.state.selected_nitro_object == null ? null : results_obj[poll_object['e5_id']][this.state.selected_nitro_object]
+        if(results_object == null){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        var time = results_object.time
+        var registered_voters = results_object.registered_voters
+        var valid_vote_count = results_object.valid_vote_count
+        var targeted_winners = poll_object['ipfs'].winner_count
+        var consensus_snapshots = results_object.consensus_snapshots
+        var elimination_snapshot = results_object.elimination_snapshot
+        var vote_transfer_snapshots = results_object.vote_transfer_snapshots
+        var current_winners = results_object.current_winners
+        var vote_donation_snapshots = results_object.vote_donation_snapshots
+        var tie_breaker = results_object.tie_breaker
+        var inconclusive_ballot = results_object.inconclusive_ballot
+        var quota = results_object.quota
+
+        if(inconclusive_ballot == true){
+            return (
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3074ca']/* 'Inconclusive Poll.' */, 'details':this.props.app_state.loc['3074cb']/* 'Not enough votes have been cast to render the poll valid.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074t']/* 'Poll Results' */, 'details':this.props.app_state.loc['3074u']/* 'As of $' */.replace('$', (''+(new Date(time)))), 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_voter_count_message(registered_voters)}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074x']/* Valid Votes Counted. */, 'subtitle':this.format_power_figure(valid_vote_count), 'barwidth':this.calculate_bar_width(valid_vote_count), 'number':this.format_account_balance_figure(valid_vote_count), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074bz']/* Quota Used. */, 'subtitle':this.format_power_figure(quota), 'barwidth':this.calculate_bar_width(quota), 'number':this.format_account_balance_figure(quota), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
+
+                    {this.render_turnout_message(registered_voters, valid_vote_count)}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074z']/* Targeted Winners. */, 'subtitle':this.format_power_figure(targeted_winners), 'barwidth':this.calculate_bar_width(targeted_winners), 'number':this.format_account_balance_figure(targeted_winners), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074ba']/* 'candidates' */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bb']/* '$ consensus cycles' */.replace('$', consensus_snapshots.length), 'details':this.props.app_state.loc['3074bc']/* '$ runoffs.' */.replace('$', (''+(consensus_snapshots.length - 1))), 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bd']/* 'Counting Results.' */, 'details':this.props.app_state.loc['3074be']/* 'Below are the figures obtained at each cycle and runoff.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {consensus_snapshots.map((item, index) => (
+                    <div>
+                        {this.render_consensus_cycle(item, elimination_snapshot[index], index, valid_vote_count, vote_transfer_snapshots[index], index == consensus_snapshots.length-1, vote_donation_snapshots[index], quota )}
+                    </div>
+                ))}
+                {this.render_final_winners_if_voting_period_over(current_winners, time, tie_breaker)}
+                
+                <div style={{height: 10}}/>
+                {this.calculate_consistency_metric(results_object)}
+            </div>
+        )
+    }
+
+    render_voter_count_message(registered_voters){
+        if(registered_voters != 0){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074v']/* Number of Registered Voters. */, 'subtitle':this.format_power_figure(registered_voters), 'barwidth':this.calculate_bar_width(registered_voters), 'number':this.format_account_balance_figure(registered_voters), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074w']/* 'voters' */, })}
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_turnout_message(registered_voters, vote_count){
+        if(registered_voters == 0) return;
+        var percentage = vote_count > 0 ? this.round_off((vote_count / registered_voters) * 100) : 0
+        if(percentage >= 100){
+            percentage = 99.99
+        }
+        return(
+            <div>
+                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074bf']/* Turnout Proprtion. */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage+'%', 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+            </div>
+        )
+    }
+
+    render_consensus_cycle(snapshot, eliminated_candidate, index, vote_count, vote_transfer_snapshot, is_last, vote_donation_snapshot, quota){
+        var figures = []
+        var candidate_index = {}
+        var poll_object = this.state.data['object']
+        poll_object['ipfs'].candidates.forEach(candidate => {
+            candidate_index[candidate['id']] = candidate['name']
+        });
+        var candidate_ids = Object.keys(snapshot)
+
+        candidate_ids.forEach(candidate_id => {
+            var candidates_votes = snapshot[candidate_id]
+            var percentage = candidates_votes > 0 ? this.round_off((candidates_votes / vote_count) * 100) : 0
+            if(percentage >= 100){
+                percentage = 99.99
+            }
+            var title = candidate_index[candidate_id]
+            var number = number_with_commas(candidates_votes)
+            if(candidates_votes >= quota){
+                var donated_vote_count = vote_donation_snapshot[candidate_id]
+                title = '✅ '+title
+                if(donated_vote_count > 0){
+                    number = number + this.props.app_state.loc['3074bu']/* ' ---> $ surplus votes donated.' */.replace('$', number_with_commas(donated_vote_count))
+                }
+            }
+            figures.push({'name':title, 'number': number, 'votes':candidates_votes, 'surplus':donated_vote_count, 'percentage':percentage})
+        });
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['3074bg']/* Stage $ */.replace('$', index+1), 'textsize':'15px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {figures.map((item, index) => (
+                        <div>
+                            {this.render_detail_item('2', { 'style':'l', 'title':item['name'], 'subtitle':this.format_power_figure(item['votes']), 'barwidth':item['percentage']+'%', 'number':item['number'], 'barcolor':'#606060', 'relativepower':item['percentage']+'%',})}
+                        </div>
+                    ))}
+                </div>
+                <div style={{height:10}}/>
+                {this.render_eliminated_candidate_data_if_not_null(eliminated_candidate, vote_transfer_snapshot, candidate_index)}
+                {this.render_space_if_not_last(is_last)}
+            </div>
+        )
+    }
+
+    render_space_if_not_last(is_last){
+        if(!is_last){
+            return(
+                <div>
+                    <div style={{height:30}}/>
+                </div>
+            )
+        }
+    }
+
+    render_eliminated_candidate_data_if_not_null(eliminated_candidate, vote_transfer_snapshot, candidate_index){
+        if(eliminated_candidate != null){
+            var receivers = Object.keys(vote_transfer_snapshot)
+            var items = []
+            var transferred_vote_count = 0
+            receivers.forEach(candidate_recipient => {
+                items.push({'name':candidate_index[candidate_recipient], 'votes_received':vote_transfer_snapshot[candidate_recipient]})
+                transferred_vote_count += vote_transfer_snapshot[candidate_recipient]
+            });
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bi']/* $ was eliminated. */.replace('$', items['name']), 'details':this.props.app_state.loc['3074bj']/* $ votes were transferred to the following candidates. */.replace('$', number_with_commas(transferred_vote_count)), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_detail_item('3', {'title':items['name'], 'details':this.props.app_state.loc['3074bh']/* + $ votes */.replace('$', number_with_commas(items['votes_received'])), 'size':'s'})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_final_winners_if_voting_period_over(current_winners, time, tie_breaker){
+        var now = time
+        var poll_object = this.state.data['object']
+        if(now < poll_object['ipfs'].end_time){
+            return(
+                <div>
+                    <div style={{height:30}}/>
+                </div>
+            )
+        }
+        var items = tie_breaker != '' ? [tie_breaker] : current_winners
+        var candidate_index = {}
+        var poll_object = this.state.data['object']
+        poll_object['ipfs'].candidates.forEach(candidate => {
+            candidate_index[candidate['id']] = candidate['name']
+        });
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bk']/* 'Current Winners 🎉' */, 'details':this.props.app_state.loc['3074bl']/* 'Below are the current and final winners of the poll.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_detail_item('4', {'text':candidate_index[item], 'textsize':'15px', 'font':this.props.app_state.font})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                {this.render_tie_breaker_message(tie_breaker)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_tie_breaker_message(tie_breaker){
+        if(tie_breaker != ''){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3074bv']/* 'There was a tie, so the randomizer was used to pick the winner.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
+    calculate_consistency_metric(results_object){
+        var poll_object = this.state.data['object']
+        var focused_results_obj = this.props.app_state.poll_consensus_results[poll_object['e5_id']]
+        var used_nitro_ids = focused_results_obj == null ? [] : Object.keys(focused_results_obj)
+        if(used_nitro_ids.length < 2){
+            return;
+        }
+        var consistency_count = 0
+
+        var time = results_object.time
+        var end_time = poll_object['ipfs'].end_time
+        if(time < end_time){
+            return;
+        }
+        
+        used_nitro_ids.forEach(used_nitro_id => {
+            var results_obj = this.props.app_state.poll_consensus_results[poll_object['e5_id']][used_nitro_id]
+            var registered_voters = results_obj.registered_voters
+            var valid_vote_count = results_obj.valid_vote_count
+            var current_winners = results_obj.current_winners
+            var tie_breaker = results_obj.tie_breaker
+            var quota = results_obj.quota
+            var tied_candidates = results_obj.tied_candidates
+            var inconclusive_ballot = results_obj.inconclusive_ballot
+            if(
+                registered_voters == results_object.registered_voters &&
+                valid_vote_count == results_object.valid_vote_count &&
+                current_winners.length == results_object.current_winners.length &&
+                this.allElementsAppearOnce(current_winners, results_object.current_winners) &&
+                tie_breaker == results_object.tie_breaker &&
+                quota == results_object.quota &&
+                this.allElementsAppearOnce(tied_candidates, results_object.tied_candidates) &&
+                inconclusive_ballot == results_object.inconclusive_ballot
+            ){
+                consistency_count++
+            }
+        });
+
+        var percentage = this.round_off((consistency_count / used_nitro_ids.length) * 100)
+        if(percentage >= 100){
+            percentage = 100
+        }
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bw']/* 'Consistency levels.' */, 'details':this.props.app_state.loc['3074bx']/* 'The similarity in results returned by the randomly selected nitros.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074by']/* 'Consistency proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage+'%', 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+                </div>
+            </div>
+        )
+    }
 
 
 

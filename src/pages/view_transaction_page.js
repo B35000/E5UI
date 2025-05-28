@@ -2082,6 +2082,8 @@ return data['data']
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.show_consensus_type_message(object)}
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['winner_data'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['start_time'])}
@@ -2265,6 +2267,18 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    show_consensus_type_message(object){
+        var text = this.props.app_state.loc['3072y']/* Instant-Runoff */
+        if(object['ipfs'].winner_count > 1){
+            text = this.props.app_state.loc['3072z']/* Proportional-Ranked Choice (Single Transferrable Vote) */
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':text, 'details':this.props.app_state.loc['3072x']/* 'Consensus Type.' */, 'size':'l'})}
             </div>
         )
     }
@@ -5900,6 +5914,8 @@ return data['data']
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.show_consensus_type_message(object)}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['winner_data'])}
                     <div style={{height: 10}}/>
