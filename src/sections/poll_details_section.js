@@ -134,7 +134,7 @@ class PollDetailsSection extends Component {
         else if(selected_item == this.props.app_state.loc['3072']/* 'results' */){
             return(
                 <div>
-                    {this.render_post_responses(object)}
+                    {this.render_poll_results_section(object)}
                 </div>
             )  
         }
@@ -170,8 +170,7 @@ class PollDetailsSection extends Component {
                     {this.render_detail_item('3', item['start_time'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['end_time'])}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['participants'])}
+                    {this.render_targeted_participants(item, object)}
                     <div style={{height: 10}}/>
                     {this.render_vote_changing_message_if_enabled(object)}
                     <div style={{height: 10}}/>
@@ -207,6 +206,46 @@ class PollDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_targeted_participants(item, object){
+        var participants_count = object['ipfs'].participants.length
+        object['ipfs'].csv_files.forEach(file => {
+            participants_count += file['data'].account_entries;
+        });
+        object['ipfs'].json_files.forEach(file => {
+            participants_count += file['data'].account_entries
+        });
+
+        if(participants_count > 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['participants'])}
+                </div>
+            )
+        }
+    }
+
+    render_taken_down_message_if_post_is_down(object){
+        if(this.is_post_taken_down_for_sender(object)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2526b']/* The object has been taken down.' */, 'title':this.props.app_state.loc['2526a']/* '🔒 Taken Down' */})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
+    is_post_taken_down_for_sender(object){
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
     show_consensus_type_message(object){
@@ -246,9 +285,6 @@ class PollDetailsSection extends Component {
         )
     }
 
-    get_selected_item2(object, option){
-        return object[option][2][0]
-    }
 
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
@@ -275,7 +311,7 @@ class PollDetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':''+(this.props.app_state.loc['3072p']/* 'As $' */.replace('$', account_id)), 'details':this.get_senders_name2(account_id, e5), 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+(new Date(time)), 'details':this.props.app_state.loc['3072o']/* 'Vote Timestamp' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(time * 1000)), 'details':this.props.app_state.loc['3072o']/* 'Vote Timestamp' */, 'size':'l'})}
                 </div>
             )
         }
@@ -417,8 +453,8 @@ class PollDetailsSection extends Component {
     get_poll_details_data(object){
         var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
-        var winner_count = this.props.app_state.log['c311bx']/* '$ winners targeted.' */.replace('$', object['ipfs'].winner_count)
-        var candidates_count = this.props.app_state.log['c311by']/* '$ candidates specified.' */.replace('$', object['ipfs'].candidates.length)
+        var winner_count = this.props.app_state.loc['c311bx']/* '$ winners targeted.' */.replace('$', object['ipfs'].winner_count)
+        var candidates_count = this.props.app_state.loc['c311by']/* '$ candidates specified.' */.replace('$', object['ipfs'].candidates.length)
         var start_time = object['ipfs'].start_time
         var end_time = object['ipfs'].end_time
         var participants_count = object['ipfs'].participants.length
@@ -428,6 +464,8 @@ class PollDetailsSection extends Component {
         object['ipfs'].json_files.forEach(file => {
             participants_count += file['data'].account_entries
         });
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
@@ -435,6 +473,7 @@ class PollDetailsSection extends Component {
             'start_time':{'details':this.props.app_state.loc['3072a']/* 'Start Time' */, 'title':''+(new Date(start_time * 1000)), 'size':'l'},
             'end_time':{'details':this.props.app_state.loc['3072b']/* 'End Time.' */, 'title':''+(new Date(end_time * 1000)), 'size':'l'},
             'participants':{'title':number_with_commas(participants_count), 'details':this.props.app_state.loc['c311bz']/* 'targeted participants.' */, 'size':'l'},
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
         }
     }
 
@@ -694,7 +733,7 @@ class PollDetailsSection extends Component {
                     <div onClick={()=>this.open_vote_in_poll_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3072k']/* 'Participate' */, 'action':''})}
                     </div>
-                    {this.show_message_if_private()}
+                    {this.show_message_if_private(object)}
                 </div>
             )
         }
@@ -719,7 +758,7 @@ class PollDetailsSection extends Component {
 
     open_vote_in_poll_ui(object){
         if(!this.props.app_state.has_wallet_been_set && this.props.app_state.accounts[this.props.app_state.selected_e5] == null){
-            this.props.notify(this.props.app_state.log['3072n']/* Set your wallet first. */, 1500)
+            this.props.notify(this.props.app_state.loc['3072n']/* Set your wallet first. */, 1500)
             return;
         }
         this.props.open_vote_in_poll_ui(object)
@@ -809,7 +848,7 @@ class PollDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         <div>
                             {items.reverse().map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={() => this.when_poll_result_item_clicked(item, object)}>
+                                <li style={{}} onClick={() => this.when_poll_result_item_clicked(item, object)}>
                                     <div>
                                         {this.render_poll_result_item(item)}
                                         <div style={{height: 4}}/>
@@ -830,11 +869,10 @@ class PollDetailsSection extends Component {
     }
 
     render_poll_result_item(item){
-        var results_object = item.results_object
-        var time = results_object['event'].returnValues.p6/* timestamp */
+        var time = item['event'].returnValues.p6/* timestamp */
         return(
             <div>
-                {this.render_detail_item('3', {'details':this.get_time_difference(time), 'title':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'details':this.get_time_difference(time), 'title':''+(new Date(time * 1000)), 'size':'l'})}
             </div>
         )
     }

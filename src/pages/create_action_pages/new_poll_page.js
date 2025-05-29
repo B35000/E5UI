@@ -96,7 +96,7 @@ class NewPollPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['c311bh']/* candidates */, this.props.app_state.loc['c311c']/* 'participants' */, this.props.app_state.loc['c311z']/* 'schedule' */, this.props.app_state.log['c311cf']/* access */,this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['c311bh']/* candidates */, this.props.app_state.loc['c311c']/* 'participants' */, this.props.app_state.loc['c311z']/* 'schedule' */, this.props.app_state.loc['c311cf']/* access */,this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -130,12 +130,17 @@ class NewPollPage extends Component {
             
             'all':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1233']/* 'international' */ ]
         }
+        var setting = {}
+        setting[this.props.app_state.loc['1231']/* 'local' */] = 1
+        setting[this.props.app_state.loc['1232']/* 'language' */] = 2
+        setting[this.props.app_state.loc['1233']/* 'international' */ ] = 3
+        var pos = setting[this.props.app_state.content_channeling]
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], obj[channeling_setting], [1]
+                ['xor','',0], obj[channeling_setting], [pos]
             ],
         };
     }
@@ -259,7 +264,7 @@ class NewPollPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.log['c311cf']/* access */){
+        else if(selected_item == this.props.app_state.loc['c311cf']/* access */){
             return(
                 <div>
                     {this.render_access_rights_part()}
@@ -290,6 +295,8 @@ class NewPollPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
                 </div>
             )
         }
@@ -300,7 +307,7 @@ class NewPollPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -313,7 +320,7 @@ class NewPollPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -360,7 +367,16 @@ class NewPollPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
 
 
+
                 {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_title_tags_part2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cb']/* 'Participation E5s.' */, 'details':this.props.app_state.loc['c311cc']/* 'Restrict participation of this poll to specific E5s.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.load_preferred_e5_ui()}
@@ -372,9 +388,6 @@ class NewPollPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cq']/* 'Changeable Vote.' */, 'details':this.props.app_state.loc['c311cr']/* 'If se to enabled, voters can change their vote during the valid period.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_changeable_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_get_changeable_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -1601,7 +1614,7 @@ class NewPollPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['c311o']/* Add from File. */, 'details':this.props.app_state.loc['c311p']/* You can add multiple account ids from a csv or json file if youre dealing with a large number of participants. */, 'size':'l'})}
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['c311y']/* 'You will be required to reproduce these files in their current condition while calculating and posting results. Do not change them after your post this poll.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
-                <div style={{height:30}}/>
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['c311s']/* 'Select a CSV file to use. You can select multiple files at once. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['c311t']/* 'Make sure each value in the file is separated by a comma \',\' character. \n eg ---> E25:1002,E25:1120,E25:1125,E25:31300,,,...*/, 'textsize':'11px', 'font':this.props.app_state.font})}
@@ -1689,11 +1702,11 @@ class NewPollPage extends Component {
             }
         });
         if(account_entries == 0){
-            this.props.notify(this.props.app_state.log['c311cn']/* 'No accounts added.' */, 1200)
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
         }else{
             participants_clone.concat(final_obj)
             this.setState({participants: participants_clone, viewer:''});
-            this.props.notify(this.props.app_state.log['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
         }
     }
     
@@ -2032,7 +2045,7 @@ class NewPollPage extends Component {
 
     get_suggested_accounts(target_type){
         var me = this.props.app_state.user_account_id[this.state.e5]
-        if(me == null){
+        if(me == null || me == 1){
             return this.get_account_suggestions(target_type)
         }
         return[
@@ -2069,7 +2082,7 @@ class NewPollPage extends Component {
 
     when_suggestion_clicked(item, pos, target_type){
         if(target_type == 'participants'){
-            this.setState({participants: item['id']})
+            this.setState({participant_id: item['id']})
         }
         else if(target_type == 'viewer'){
             this.setState({viewer: item['id']})
@@ -2342,7 +2355,7 @@ class NewPollPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '3px'}}>
-                                            {this.render_detail_item('4', {'text':item['name'], 'textsize':'13px', 'font':this.props.app_state.font})}
+                                            {this.render_detail_item('4', {'text':`${index+1}. ${item['name']}`, 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -2485,11 +2498,11 @@ class NewPollPage extends Component {
             }
         });
         if(account_entries == 0){
-            this.props.notify(this.props.app_state.log['c311cn']/* 'No accounts added.' */, 1200)
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
         }else{
             participants_clone.concat(final_obj)
             this.setState({viewers: participants_clone, viewer:''});
-            this.props.notify(this.props.app_state.log['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
         }
     }
 
@@ -2562,7 +2575,7 @@ class NewPollPage extends Component {
         else if(candidates.length < 2 ){
             this.props.notify(this.props.app_state.loc['c311bw']/* A minimum of 2 candidates is required for any poll. */, 4700)
         }
-        else if(candidates.length >= winner_count){
+        else if(candidates.length <= winner_count){
             this.props.notify(this.props.app_state.loc['c311bt']/* The number of targeted winners cannot be equal or greater than your candidates. */, 9700)
         }
         else{

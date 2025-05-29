@@ -3707,7 +3707,7 @@ return data['data']
                     ints.push(job_obj)
 
                     new_tx_index = ints.length -1
-                    var hash_obj = this.format_hash_record(txs[i], new_tx_index)
+                    var hash_obj = await this.format_hash_record(txs[i], new_tx_index)
                     strs.push(hash_obj.str)
                     adds.push([])
                     ints.push(hash_obj.int)
@@ -7682,7 +7682,7 @@ return data['data']
         var int_data = 0
 
         const get_changeable_vote_tags_object = this.get_selected_item2(t.get_changeable_vote_tags_object, 'e') == 1
-        var obj = {
+        var hash_obj = {
             participants: t.participants, 
             json_files: this.sortByAttributeDescending(t.json_files, 'name'), 
             csv_files: this.sortByAttributeDescending(t.csv_files, 'name'), 
@@ -7694,7 +7694,7 @@ return data['data']
             randomizer: t.randomizer,
             change_vote_enabled: get_changeable_vote_tags_object
         }/* try not to change this at all. even the order. */
-        var string_data = await this.props.hash_data(JSON.stringify(obj))
+        var string_data = await this.props.hash_data(JSON.stringify(hash_obj))
 
         obj[1].push(target_id)
         obj[2].push(target_id_type)
@@ -7738,7 +7738,7 @@ return data['data']
     }
 
     format_poll_update_object = async (t, calculate_gas, ipfs_index) =>{
-        var target = t.poll_object['id']
+        var target = t.poll_object['id'].toString().toLocaleString('fullwide', {useGrouping:false})
         var obj = [ /* add data */
             [20000, 13, 0],
             [target], [23],/*  */
@@ -7749,7 +7749,7 @@ return data['data']
         var string_obj = [[]]
 
         var context = 43
-        var int_data = t.results_object.time
+        var int_data = 0
         
         var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
 

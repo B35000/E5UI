@@ -870,7 +870,7 @@ class App extends Component {
     loaded_contract_and_proposal_data:{}, notification_object:{}, link_type_data:{}, searched_objects_data:{}, post_censored_data:{}, video_thumbnails:{}, posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, should_update_posts_reposted_by_me:false, posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]}, searched_itransfer_results:{}, created_bills:{}, bill_payment_results:{},
 
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
-    e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}
+    e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
   };
 
   get_static_assets(){
@@ -8212,7 +8212,8 @@ return data['data']
     return { data: hash, account_entries}
   }
 
-  process_json_file_object = async (object, should_include_data) => {
+  process_json_file_object = async (root_obj, should_include_data) => {
+    var object = root_obj['root']
     var keys = Object.keys(object)
     var final_obj = {}
     var account_entries = 0
@@ -14238,8 +14239,8 @@ return data['data']
       'invalid_stack_size_dialog_box':350,
       'file_type_picker':450,
       'home_page_view_options': 300,
-      'view_json_example':200,
-      'poll_results':450,
+      'view_json_example':550,
+      'poll_results':600,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -17836,6 +17837,15 @@ return data['data']
   // }
 
   count_poll_votes_and_post_results = async (static_poll_data, poll_id, poll_e5, file_objects, nitro_objects, poll_obj) => {
+    // const web3 = new Web3(this.get_web3_url_from_e5(poll_e5));
+    // const E52contractArtifact = require('./contract_abis/E52.json');
+    // const E52_address = this.state.addresses[e5][1];
+    // const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    // const test_event_thing = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: poll_id, p3/* context */:42}))
+    // console.log('count_poll_votes', test_event_thing[0].returnValues.p4)
+    // var data_hash = this.hash_data()
+
+
     await this.wait(this.state.ipfs_delay)
     var query_time = structuredClone(this.state.count_poll_times)
     query_time[poll_obj['e5_id']] = Date.now()
@@ -17844,12 +17854,14 @@ return data['data']
     const arg_obj = {
       static_poll_data: static_poll_data,
       poll_id: parseInt(poll_id),
-      poll_e5: poll_e5,
       file_objects: file_objects,
+      poll_e5: poll_e5,
     }
 
+    // console.log('vote_counter', arg_obj)
+
     const body = {
-      method: "GET", // Specify the HTTP method
+      method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
@@ -17872,9 +17884,8 @@ return data['data']
       }
       var data = await response.text();
       var obj = JSON.parse(data);
-      if(obj.error != null){
-        console.log('vote_counter', obj.error)
-      }
+      console.log('vote_counter', obj)
+      
       if(obj.success == true){
         var clone = structuredClone(this.state.poll_consensus_results)
         obj.results['nitro_id'] = nitro_object['e5_id']
@@ -17887,7 +17898,7 @@ return data['data']
       }
     }
     catch(e){
-      console.log('apppage', e)
+      console.log('vote_counter', e)
       // this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
     }
   }
@@ -20338,6 +20349,7 @@ return data['data']
           // this.setState({loc: language_obj, all_locales: clone})
         }
 
+        console.log('apppage', 'data', root_data)
         console.log('apppage', 'theme', get_theme_stage_tags_object)
         console.log('apppage', 'mymods', my_moderators)
 
@@ -22822,7 +22834,7 @@ return data['data']
   }
 
   record_number_of_items(e5, object_type, count){
-    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics, 'nitro':this.state.load_nitro_metrics, 'polls':this.state.load_poll_metrics}
+    var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics, 'nitro':this.state.load_nitro_metrics, 'poll':this.state.load_poll_metrics}
 
     var load_metrics_clone = structuredClone(obj[object_type])
     if(load_metrics_clone[e5] == null){
@@ -25825,6 +25837,7 @@ return data['data']
 
   get_poll_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
     var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */})
+    console.log('poll_loader', created_post_events)
     created_post_events = created_post_events.reverse()
 
     //prioritize my content first
@@ -25873,7 +25886,7 @@ return data['data']
     
     this.record_number_of_items(e5, 'poll', created_post_events.length)
     var created_posts = []
-    var is_first_time = this.state.created_posts[e5] == null
+    var is_first_time = this.state.created_polls[e5] == null
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events), web3, e5, contract_addresses)
     console.log('all_data', all_data)
@@ -25883,8 +25896,10 @@ return data['data']
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
         var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
-        
+
         created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
+
+        console.log('poll_loader', created_posts)
       }
 
       if(is_first_time){
@@ -25922,9 +25937,10 @@ return data['data']
         /* 15 */[web3, contractInstance, 'e2', e5, {}],/* withdraw */
         /* 16 */[web3, contractInstance, 'e4', e5, {}],/* transaction */
         /* 17 */[web3, H52contractInstance, 'e1', e5, {}],/* transfer */
+        /* 18 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */ }],
       ]
       var all_events = await this.load_multiple_events_from_nitro(event_params)
-      var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12]}
+      var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12], 'poll':all_events[18]}
 
       var all_data_clone = structuredClone(this.state.all_data)
       all_data_clone[e5] = obj
@@ -25966,8 +25982,10 @@ return data['data']
       var transaction_events = await this.load_event_data(web3, contractInstance, 'e4', e5, {})
 
       var transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {})
+      
+      var poll_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */ })
 
-      var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events, 'video':created_video_events, 'nitro':created_nitro_events}
+      var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events, 'video':created_video_events, 'nitro':created_nitro_events, 'poll':poll_events}
 
       var all_data_clone = structuredClone(this.state.all_data)
       all_data_clone[e5] = obj
@@ -31566,8 +31584,8 @@ return data['data']
       const event = created_results_data[i]
       const cid = event.returnValues.p4
       const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
-      ipfs['event'] = event
-      result_objects.push(ipfs)
+      const obj = {'ipfs':ipfs, 'event':event}
+      result_objects.push(obj)
       if(is_first_time == true){
         const poll_resutls_clone = structuredClone(this.state.poll_results)
         poll_resutls_clone[e5_id] = result_objects

@@ -17,17 +17,10 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { Component } from 'react';
-import ViewGroups from '../../components/view_groups';
-import Tags from '../../components/tags';
-import TextInput from '../../components/text_input';
-import NumberPicker from '../../components/number_picker';
+import ViewGroups from './../components/view_groups';
+import Tags from './../components/tags';
+import TextInput from './../components/text_input';
 
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
-import { Draggable } from "react-drag-reorder";
-
-import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
-import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
 var bigInt = require("big-integer");
 
@@ -94,11 +87,6 @@ class CalculatePollResult extends Component {
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_title_tags_object} tag_size={'l'} when_tags_updated={this.when_get_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.finish_vote_poll()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
-                        </div>
-                    </div>
                 </div>
 
                 {this.render_everything()}
@@ -159,15 +147,15 @@ class CalculatePollResult extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074a']/* 'Tally Poll Results.' */, 'details':this.props.app_state.loc['3074b']/* 'Count all the valid votes that have been recorded in this poll and calculate the results.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_poll_object()}
-                {this.render_detail_item('0')}
+                {/* {this.render_detail_item('0')} */}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074c']/* 'Tally via Nitro.' */, 'details':this.props.app_state.loc['3074d']/* 'Use a nitro node to calculate the current results of your poll for you.' */, 'size':'l'})}
-                <div style={{height:20}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3074i']/* Filter... */} when_text_input_field_changed={this.when_nitro_input_field_changed.bind(this)} text={this.state.nitro} theme={this.props.theme}/>
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3074c']'Tally  via Nitro.' , 'details':this.props.app_state.loc['3074d'] 'Use a nitro node to calculate the current results of your poll for you.' , 'size':'l'})}  */}
+                {/* <div style={{height:20}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3074i']} when_text_input_field_changed={this.when_nitro_input_field_changed.bind(this)} text={this.state.nitro} theme={this.props.theme}/> */}
                 {/* <div style={{height:10}}/> */}
                 {/* {this.load_my_nitro_objects_to_select()} */}
-                <div style={{height:10}}/>
-                {this.load_selected_nitro_object_details()}
+                {/* <div style={{height:10}}/> */}
+                {/* {this.load_selected_nitro_object_details()} */}
                 {this.render_file_pickers_if_needed()}
                 {this.render_calculate_poll_button()}
             </div>
@@ -211,6 +199,16 @@ class CalculatePollResult extends Component {
         }
     }
 
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
     when_nitro_input_field_changed(text){
         this.setState({nitro: text})
     }
@@ -246,7 +244,7 @@ class CalculatePollResult extends Component {
         )
     }
 
-    render_empty_horizontal_list_item2(){
+    render_empty_horizontal_list_item(){
         var background_color = this.props.theme['view_group_card_item_background']
         return(
             <div>
@@ -757,7 +755,7 @@ class CalculatePollResult extends Component {
 
             this.props.notify(this.props.app_state.loc['3074s']/* Sending the request.. */, 2000)
 
-            this.props.count_poll_votes_and_post_results(static_poll_data, poll_id, poll_e5, file_objects, selected_nitro_objects, t)
+            this.props.count_poll_votes_and_post_results(static_poll_data, poll_id, poll_e5, file_objects, selected_nitro_objects, this.state.poll_object)
         }
     }
 
@@ -776,6 +774,7 @@ class CalculatePollResult extends Component {
         return(
             <div>
                 {this.load_my_used_nitro_objects()}
+                <div style={{height: 10}}/>
                 {this.render_poll_result_item()}
             </div>
         )
@@ -812,6 +811,7 @@ class CalculatePollResult extends Component {
 
     load_used_nitros(){
         var results_obj = this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']]
+        console.log('poll_results',this.props.app_state.poll_consensus_results)
         var used_nitro_ids = results_obj == null ? [] : Object.keys(results_obj)
         var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
         var nitro_objects_used = []
@@ -829,7 +829,12 @@ class CalculatePollResult extends Component {
     }
 
     render_poll_result_item(){
-        var results_object = this.state.selected_nitro_object == null ? null : this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']][this.state.selected_nitro_object]
+        var nitro_item_to_use = this.state.selected_nitro_item
+        var nitro_objects_used = this.load_used_nitros()
+        if(nitro_item_to_use == null && nitro_objects_used.length != 0){
+            nitro_item_to_use = nitro_objects_used[0]['e5_id']
+        }
+        var results_object = nitro_item_to_use == null ? null : this.props.app_state.poll_consensus_results[this.state.poll_object['e5_id']][nitro_item_to_use]
         if(results_object == null){
             return(
                 <div>
@@ -884,11 +889,8 @@ class CalculatePollResult extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bd']/* 'Counting Results.' */, 'details':this.props.app_state.loc['3074be']/* 'Below are the figures obtained at each cycle and runoff.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                {consensus_snapshots.map((item, index) => (
-                    <div>
-                        {this.render_consensus_cycle(item, elimination_snapshot[index], index, valid_vote_count, vote_transfer_snapshots[index], index == consensus_snapshots.length-1, vote_donation_snapshots[index], quota )}
-                    </div>
-                ))}
+                {this.render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota)}
+
                 {this.render_final_winners_if_voting_period_over(current_winners, time, tie_breaker)}
                 
                 <div style={{height: 10}}/>
@@ -931,7 +933,52 @@ class CalculatePollResult extends Component {
         )
     }
 
-    render_consensus_cycle(snapshot, eliminated_candidate, index, vote_count, vote_transfer_snapshot, is_last, vote_donation_snapshot, quota){
+    render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota){
+        var selected_index = this.state.selected_stage == null ? 0 : this.state.selected_stage
+        var snapshot = consensus_snapshots[selected_index]
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {consensus_snapshots.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_consensus_snapshot_item_selected(index)}>
+                                {this.render_stage_item(index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_consensus_cycle(snapshot, elimination_snapshot[selected_index], valid_vote_count, vote_transfer_snapshots[selected_index], vote_donation_snapshots[selected_index], quota )}
+            </div>
+        )
+    }
+
+    render_stage_item(index){
+        var text = this.props.app_state.loc['3074cc']/* 'Primary Stage.' */
+        if(index == 0){
+            text = this.props.app_state.loc['3074cc']/* 'Runoff $' */.replace('$', index)
+        }
+        if(this.state.selected_stage == index){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':text, 'textsize':'15px', 'font':this.props.app_state.font})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':text, 'textsize':'15px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
+    when_consensus_snapshot_item_selected(index){
+        this.setState({selected_stage: index})
+    }
+
+    render_consensus_cycle(snapshot, eliminated_candidate, vote_count, vote_transfer_snapshot, vote_donation_snapshot, quota){
         var figures = []
         var candidate_index = {}
         this.state.poll_object['ipfs'].candidates.forEach(candidate => {
@@ -956,10 +1003,9 @@ class CalculatePollResult extends Component {
             }
             figures.push({'name':title, 'number': number, 'votes':candidates_votes, 'surplus':donated_vote_count, 'percentage':percentage})
         });
+        figures = this.sortByAttributeDescending(figures, 'votes')
         return(
             <div>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['3074bg']/* Stage $ */.replace('$', index+1), 'textsize':'15px', 'font':this.props.app_state.font})}
-                <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                     {figures.map((item, index) => (
                         <div>
@@ -969,19 +1015,8 @@ class CalculatePollResult extends Component {
                 </div>
                 <div style={{height:10}}/>
                 {this.render_eliminated_candidate_data_if_not_null(eliminated_candidate, vote_transfer_snapshot, candidate_index)}
-                {this.render_space_if_not_last(is_last)}
             </div>
         )
-    }
-
-    render_space_if_not_last(is_last){
-        if(!is_last){
-            return(
-                <div>
-                    <div style={{height:30}}/>
-                </div>
-            )
-        }
     }
 
     render_eliminated_candidate_data_if_not_null(eliminated_candidate, vote_transfer_snapshot, candidate_index){
@@ -1013,12 +1048,8 @@ class CalculatePollResult extends Component {
 
     render_final_winners_if_voting_period_over(current_winners, time, tie_breaker){
         var now = time
-        if(now < this.state.poll_object['ipfs'].end_time){
-            return(
-                <div>
-                    <div style={{height:30}}/>
-                </div>
-            )
+        if(now/1000 < this.state.poll_object['ipfs'].end_time){
+            return;
         }
         var items = tie_breaker != '' ? [tie_breaker] : current_winners
         var candidate_index = {}
@@ -1034,13 +1065,13 @@ class CalculatePollResult extends Component {
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_detail_item('4', {'text':candidate_index[item], 'textsize':'15px', 'font':this.props.app_state.font})}
+                                {this.render_detail_item('4', {'text':candidate_index[item]+' 🏅', 'textsize':'15px', 'font':this.props.app_state.font})}
                             </li>
                         ))}
                     </ul>
                 </div>
                 {this.render_tie_breaker_message(tie_breaker)}
-                {this.render_detail_item('0')}
+                
             </div>
         )
     }
@@ -1099,6 +1130,7 @@ class CalculatePollResult extends Component {
 
         return(
             <div>
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bw']/* 'Consistency levels.' */, 'details':this.props.app_state.loc['3074bx']/* 'The similarity in results returned by the randomly selected nitros.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>

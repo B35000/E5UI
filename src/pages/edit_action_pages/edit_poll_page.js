@@ -108,7 +108,7 @@ class EditPollPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.log['c311cf']/* access */, this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['c311cf']/* access */, this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -239,7 +239,7 @@ class EditPollPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.log['c311cf']/* access */){
+        else if(selected_item == this.props.app_state.loc['c311cf']/* access */){
             return(
                 <div>
                     {this.render_access_rights_part()}
@@ -1530,11 +1530,11 @@ class EditPollPage extends Component {
             }
         });
         if(account_entries == 0){
-            this.props.notify(this.props.app_state.log['c311cn']/* 'No accounts added.' */, 1200)
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
         }else{
             participants_clone.concat(final_obj)
             this.setState({viewers: participants_clone, viewer:''});
-            this.props.notify(this.props.app_state.log['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
         }
     }
 
@@ -1603,7 +1603,7 @@ class EditPollPage extends Component {
 
     get_suggested_accounts(target_type){
         var me = this.props.app_state.user_account_id[this.state.e5]
-        if(me == null){
+        if(me == null || me == 1){
             return this.get_account_suggestions(target_type)
         }
         return[
@@ -1640,7 +1640,7 @@ class EditPollPage extends Component {
 
     when_suggestion_clicked(item, pos, target_type){
         if(target_type == 'participants'){
-            this.setState({participants: item['id']})
+            this.setState({participant_id: item['id']})
         }
         else if(target_type == 'viewer'){
             this.setState({viewer: item['id']})

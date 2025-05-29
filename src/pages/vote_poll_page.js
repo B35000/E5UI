@@ -104,6 +104,8 @@ class VotePollPage extends Component {
             return(
                 <div>
                     {this.render_poll_details()}
+                    {this.render_detail_item('0')}
+                    {this.render_poll_details2()}
                 </div>
             )
         }
@@ -114,7 +116,7 @@ class VotePollPage extends Component {
                         {this.render_poll_details()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_poll_details2()}
                     </div>
                 </div>
                 
@@ -127,7 +129,7 @@ class VotePollPage extends Component {
                         {this.render_poll_details()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_poll_details2()}
                     </div>
                 </div>
                 
@@ -149,9 +151,14 @@ class VotePollPage extends Component {
                 <div style={{height:10}}/>
                 {this.load_my_e5_accounts()}
                 {this.render_switch_message()}
-
-                {this.render_detail_item('0')}
                 
+            </div>
+        )
+    }
+
+    render_poll_details2(){
+        return(
+            <div>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['3073c']/* 'Select the candidates listed below in the order of your preference. Your most preferred candidate will be listed on the left.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 {this.render_my_selected_candidates()}
                 <div style={{height:20}}/>
@@ -215,12 +222,22 @@ class VotePollPage extends Component {
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
-        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+        }
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
         }
     }
 
@@ -336,7 +353,7 @@ class VotePollPage extends Component {
             var account_id = this.props.app_state.user_account_id[e5]
             var associated_alias = this.get_senders_name(account_id, e5)
             if(account_id == null || account_id == 1){
-                account_id = start_and_end(this.props.app_state.accounts[e5].address)
+                account_id = start_and_end('0x00')
             }
             accounts.push({'id':account_id, 'alias':associated_alias, 'e5':e5})
         });

@@ -90,6 +90,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div>
                     {this.render_everything()}
+                    {this.render_detail_item('0')}
                     {this.render_transaction_details()}
                 </div>
             )
@@ -2077,7 +2078,6 @@ return data['data']
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
@@ -2131,8 +2131,8 @@ return data['data']
     get_poll_details_data(object){
         var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
-        var winner_count = this.props.app_state.log['c311bx']/* '$ winners targeted.' */.replace('$', object['ipfs'].winner_count)
-        var candidates_count = this.props.app_state.log['c311by']/* '$ candidates specified.' */.replace('$', object['ipfs'].candidates.length)
+        var winner_count = this.props.app_state.loc['c311bx']/* '$ winners targeted.' */.replace('$', object['ipfs'].winner_count)
+        var candidates_count = this.props.app_state.loc['c311by']/* '$ candidates specified.' */.replace('$', object['ipfs'].candidates.length)
         var start_time = object['ipfs'].start_time
         var end_time = object['ipfs'].end_time
         var participants_count = object['ipfs'].participants.length
@@ -5910,7 +5910,6 @@ return data['data']
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
@@ -5978,14 +5977,14 @@ return data['data']
                 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1977']/* 'Custom Amounts' */, 'details':this.props.app_state.loc['1978']/* 'Your included custom amounts for the award action' */, 'size':'l'})}
                 <div style={{height: 10}}/>
-                {this.render_set_prices_list_part()}
+                {this.render_set_prices_list_part2()}
                 {this.render_detail_item('0')}
             </div>
         )
     }
 
 
-    render_set_prices_list_part(){
+    render_set_prices_list_part2(){
         var middle = this.props.height-300;
         var size = this.props.size;
         if(size == 'm'){
@@ -6933,7 +6932,7 @@ return data['data']
         var account_id = this.props.app_state.user_account_id[e5]
         var associated_alias = this.get_senders_name3(account_id, e5)
         if(account_id == null || account_id == 1){
-            account_id = (this.props.app_state.accounts[e5].address)
+            account_id = ('0x00')
         }
         var image = this.props.app_state.e5s[e5].e5_img
         var details = this.props.app_state.loc['3073l']/* 'Voting Account.' */
@@ -6986,7 +6985,8 @@ return data['data']
 
     render_poll_result(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var results_object = transaction_item.results_object
+        var key = Object.keys(transaction_item.results_object)[0]
+        var results_object = transaction_item.results_object[key]
         var time = results_object.time
         var registered_voters = results_object.registered_voters
         var valid_vote_count = results_object.valid_vote_count
@@ -7008,6 +7008,8 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bb']/* '$ consensus cycles' */.replace('$', consensus_snapshots.length), 'details':this.props.app_state.loc['3074bc']/* '$ runoffs.' */.replace('$', (''+(consensus_snapshots.length - 1))), 'size':'l'})}
 
                 {this.render_final_winners_if_voting_period_over(current_winners, transaction_item.poll_object, time, tie_breaker)}
+                <div style={{height:10}}/>
+                {this.render_empty_views(2)}
             </div>
         )
     }
@@ -7040,12 +7042,8 @@ return data['data']
 
     render_final_winners_if_voting_period_over(current_winners, poll_object, time, tie_breaker){
         var now = time
-        if(now < poll_object['ipfs'].end_time){
-            return(
-                <div>
-                    <div style={{height:30}}/>
-                </div>
-            )
+        if(now/1000 < poll_object['ipfs'].end_time){
+            return;
         }
         var items = tie_breaker != '' ? [tie_breaker] : current_winners
         var candidate_index = {}

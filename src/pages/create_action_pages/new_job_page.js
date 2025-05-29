@@ -148,13 +148,19 @@ class NewJobPage extends Component {
             
             'local-language':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */ ], 
             
-            'all':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1233']/* 'international' */ ]}
+            'all':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1233']/* 'international' */ ]
+        }
+        var setting = {}
+        setting[this.props.app_state.loc['1231']/* 'local' */] = 1
+        setting[this.props.app_state.loc['1232']/* 'language' */] = 2
+        setting[this.props.app_state.loc['1233']/* 'international' */ ] = 3
+        var pos = setting[this.props.app_state.content_channeling]
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], obj[channeling_setting], [1]
+                ['xor','',0], obj[channeling_setting], [pos]
             ],
         };
     }

@@ -2848,11 +2848,13 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_polls))))))
+            var items = this.get_all_sorted_objects(this.props.app_state.created_polls)
+            
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
-            var all_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var all_posts = this.get_all_sorted_objects(this.props.app_state.created_polls)
             for(var i=0; i<this.state.viewed_polls.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -2872,6 +2874,7 @@ class home_page extends Component {
             var my_following_objects = []
             var all_objects = this.get_all_sorted_objects(this.props.app_state.created_polls)
             var followed_accounts = this.props.app_state.followed_accounts
+            // console.log('followed_accounts', followed_accounts)
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['post']
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3955,7 +3958,7 @@ class home_page extends Component {
     when_poll_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_poll_item: id+e5})
         if(ignore_set_details_data == null) this.set_detail_data()
-        this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1264ao']/* 'polls' */)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264ao']/* 'polls' */)
         this.reset_post_detail_object()
         var viewed_polls_clone = this.state.viewed_polls.slice()
         var pos = viewed_polls_clone.indexOf(id)
@@ -6004,6 +6007,7 @@ class home_page extends Component {
         var audio_events = this.load_all_event_data('audio').length
         var video_events = this.load_all_event_data('video').length
         var nitro_events = this.load_all_event_data('nitro').length
+        var poll_events = this.load_all_event_data('poll').length
 
         return(
             <div>
@@ -6027,7 +6031,6 @@ class home_page extends Component {
                         {this.render_detail_item('2', this.render_small_number(exchange_events, this.props.app_state.loc['2829']/* exchanges */))}
                         {this.render_detail_item('2', this.render_small_number(post_events, this.props.app_state.loc['2830']/* posts */))}
                         {this.render_detail_item('2', this.render_small_number(channel_events, this.props.app_state.loc['2831']/* channels */))}
-                        {this.render_detail_item('2', this.render_small_number(job_events, this.props.app_state.loc['2832']/* jobs */))}
                 </div>
                 <div style={{height: 10}}/>
 
@@ -6044,6 +6047,13 @@ class home_page extends Component {
                         {this.render_detail_item('2', this.render_small_number(audio_events, this.props.app_state.loc['1264x']/* audiopost-items */))}
                         {this.render_detail_item('2', this.render_small_number(video_events, this.props.app_state.loc['1264y']/* videopost-items */))}
                         {this.render_detail_item('2', this.render_small_number(nitro_events, this.props.app_state.loc['1264z']/* nitro-items */))}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2843a']/* Total Jobs and Polls. */}</p>
+                        {this.render_detail_item('2', this.render_small_number(job_events, this.props.app_state.loc['2832']/* jobs */))}
+                        {this.render_detail_item('2', this.render_small_number(poll_events, this.props.app_state.loc['2843b']/* polls */))}
                 </div>
                 <div style={{height: 10}}/>
 

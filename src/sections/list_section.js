@@ -2550,7 +2550,7 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_poll_items()
-
+        // console.log('poll_loader', items)
         if(items.length == 0){
             items = ['0','1'];
             return ( 

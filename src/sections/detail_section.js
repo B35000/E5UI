@@ -177,9 +177,11 @@ class PostDetailSection extends Component {
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1264ao']/* 'polls' */){
-                <PollDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_poll_item={this.props.selected_poll_item} viewed_polls={this.props.viewed_polls} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)}  notify={this.props.notify.bind(this)} get_poll_items={this.props.get_poll_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} pin_poll={this.props.pin_poll.bind(this)} view_number={this.props.view_number.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}  when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} open_vote_in_poll_ui={this.props.open_vote_in_poll_ui.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
+                return(
+                    <PollDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_poll_item={this.props.selected_poll_item} viewed_polls={this.props.viewed_polls} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)}  notify={this.props.notify.bind(this)} get_poll_items={this.props.get_poll_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} pin_poll={this.props.pin_poll.bind(this)} view_number={this.props.view_number.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}  when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} open_vote_in_poll_ui={this.props.open_vote_in_poll_ui.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
                 
-                />
+                    />
+                )
             }
         }
         else if(selected_page == 'w'){

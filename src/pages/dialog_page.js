@@ -3523,6 +3523,8 @@ return data['data']
         var view_theme = this.props.app_state.theme['json_view_theme']
         return(
             <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['3055co']/* The JSON object in the file should look something like this. Make sure the format matches exactly, otherwise it wont work. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:15}}/>
                 <ReactJson src={data} theme={view_theme} collapsed={false} iconStyle={'circle'} displayObjectSize={false} displayDataTypes={false}
                 />
             </div>
@@ -3542,6 +3544,8 @@ return data['data']
                 <div>
                     {this.render_poll_result_items()}
                     {this.render_detail_item('0')}
+                    {this.render_poll_result_item2()}
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -3551,9 +3555,11 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_poll_result_items()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_poll_result_item2()}
                     </div>
                 </div>
                 
@@ -3564,9 +3570,11 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_poll_result_items()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_poll_result_item2()}
                     </div>
                 </div>
                 
@@ -3578,6 +3586,7 @@ return data['data']
         return(
             <div>
                 {this.load_my_used_nitro_objects()}
+                <div style={{height:10}}/>
                 {this.render_poll_result_item()}
             </div>
         )
@@ -3592,7 +3601,7 @@ return data['data']
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items2.map(() => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                            {this.render_empty_horizontal_list_item()}
+                            {this.render_empty_horizontal_list_item2()}
                         </li>
                     ))}
                 </ul>
@@ -3608,6 +3617,19 @@ return data['data']
                         </li>
                     ))}
                 </ul>
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:127, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
             </div>
         )
     }
@@ -3643,7 +3665,7 @@ return data['data']
     }
 
     load_used_nitros(){
-        var results_obj = this.state.data['item']
+        var results_obj = this.state.data['item']['ipfs']['results_object']
         var used_nitro_ids = results_obj == null ? [] : Object.keys(results_obj)
         var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
         var nitro_objects_used = []
@@ -3661,9 +3683,60 @@ return data['data']
     }
 
     render_poll_result_item(){
-        var results_obj = this.state.data['item']
+        var results_obj = this.state.data['item']['ipfs']['results_object']
         var poll_object = this.state.data['object']
-        var results_object = this.state.selected_nitro_object == null ? null : results_obj[poll_object['e5_id']][this.state.selected_nitro_object]
+        var nitro_item_to_use = this.state.selected_nitro_item
+        var nitro_objects_used = this.load_used_nitros()
+        if(nitro_item_to_use == null && nitro_objects_used.length != 0){
+            nitro_item_to_use = nitro_objects_used[0]['e5_id']
+        }
+        var results_object = nitro_item_to_use == null ? null : results_obj[nitro_item_to_use]
+        if(results_object == null){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        var time = results_object.time
+        var registered_voters = results_object.registered_voters
+        var valid_vote_count = results_object.valid_vote_count
+        var targeted_winners = poll_object['ipfs'].winner_count
+        var consensus_snapshots = results_object.consensus_snapshots
+        var quota = results_object.quota
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074t']/* 'Poll Results' */, 'details':this.props.app_state.loc['3074u']/* 'As of $' */.replace('$', (''+(new Date(time)))), 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_voter_count_message(registered_voters)}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074x']/* Valid Votes Counted. */, 'subtitle':this.format_power_figure(valid_vote_count), 'barwidth':this.calculate_bar_width(valid_vote_count), 'number':this.format_account_balance_figure(valid_vote_count), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074bz']/* Quota Used. */, 'subtitle':this.format_power_figure(quota), 'barwidth':this.calculate_bar_width(quota), 'number':this.format_account_balance_figure(quota), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
+
+                    {this.render_turnout_message(registered_voters, valid_vote_count)}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074z']/* Targeted Winners. */, 'subtitle':this.format_power_figure(targeted_winners), 'barwidth':this.calculate_bar_width(targeted_winners), 'number':this.format_account_balance_figure(targeted_winners), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074ba']/* 'candidates' */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bb']/* '$ consensus cycles' */.replace('$', consensus_snapshots.length), 'details':this.props.app_state.loc['3074bc']/* '$ runoffs.' */.replace('$', (''+(consensus_snapshots.length - 1))), 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_poll_result_item2(){
+        var results_obj = this.state.data['item']['ipfs']['results_object']
+        var poll_object = this.state.data['object']
+        var nitro_item_to_use = this.state.selected_nitro_item
+        var nitro_objects_used = this.load_used_nitros()
+        if(nitro_item_to_use == null && nitro_objects_used.length != 0){
+            nitro_item_to_use = nitro_objects_used[0]['e5_id']
+        }
+        var results_object = nitro_item_to_use == null ? null : results_obj[nitro_item_to_use]
         if(results_object == null){
             return(
                 <div>
@@ -3685,44 +3758,18 @@ return data['data']
         var quota = results_object.quota
 
         if(inconclusive_ballot == true){
-            return (
+            return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3074ca']/* 'Inconclusive Poll.' */, 'details':this.props.app_state.loc['3074cb']/* 'Not enough votes have been cast to render the poll valid.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {this.render_empty_views(2)}
+                    {this.render_empty_views(3)}
                 </div>
             )
         }
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074t']/* 'Poll Results' */, 'details':this.props.app_state.loc['3074u']/* 'As of $' */.replace('$', (''+(new Date(time)))), 'size':'l'})}
-                <div style={{height:10}}/>
-                {this.render_voter_count_message(registered_voters)}
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074x']/* Valid Votes Counted. */, 'subtitle':this.format_power_figure(valid_vote_count), 'barwidth':this.calculate_bar_width(valid_vote_count), 'number':this.format_account_balance_figure(valid_vote_count), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074bz']/* Quota Used. */, 'subtitle':this.format_power_figure(quota), 'barwidth':this.calculate_bar_width(quota), 'number':this.format_account_balance_figure(quota), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074y']/* 'votes' */, })}
-
-                    {this.render_turnout_message(registered_voters, valid_vote_count)}
-                </div>
-                <div style={{height:10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3074z']/* Targeted Winners. */, 'subtitle':this.format_power_figure(targeted_winners), 'barwidth':this.calculate_bar_width(targeted_winners), 'number':this.format_account_balance_figure(targeted_winners), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3074ba']/* 'candidates' */, })}
-                </div>
-                <div style={{height:10}}/>
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bb']/* '$ consensus cycles' */.replace('$', consensus_snapshots.length), 'details':this.props.app_state.loc['3074bc']/* '$ runoffs.' */.replace('$', (''+(consensus_snapshots.length - 1))), 'size':'l'})}
-
-                {this.render_detail_item('0')}
-
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bd']/* 'Counting Results.' */, 'details':this.props.app_state.loc['3074be']/* 'Below are the figures obtained at each cycle and runoff.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                {consensus_snapshots.map((item, index) => (
-                    <div>
-                        {this.render_consensus_cycle(item, elimination_snapshot[index], index, valid_vote_count, vote_transfer_snapshots[index], index == consensus_snapshots.length-1, vote_donation_snapshots[index], quota )}
-                    </div>
-                ))}
+                {this.render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota)}
+
                 {this.render_final_winners_if_voting_period_over(current_winners, time, tie_breaker)}
                 
                 <div style={{height: 10}}/>
@@ -3757,7 +3804,52 @@ return data['data']
         )
     }
 
-    render_consensus_cycle(snapshot, eliminated_candidate, index, vote_count, vote_transfer_snapshot, is_last, vote_donation_snapshot, quota){
+    render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota){
+        var selected_index = this.state.selected_stage == null ? 0 : this.state.selected_stage
+        var snapshot = consensus_snapshots[selected_index]
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {consensus_snapshots.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_consensus_snapshot_item_selected(index)}>
+                                {this.render_stage_item(index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_consensus_cycle(snapshot, elimination_snapshot[selected_index], valid_vote_count, vote_transfer_snapshots[selected_index], vote_donation_snapshots[selected_index], quota )}
+            </div>
+        )
+    }
+
+    render_stage_item(index){
+        var text = this.props.app_state.loc['3074cc']/* 'Primary Stage.' */
+        if(index == 0){
+            text = this.props.app_state.loc['3074cc']/* 'Runoff $' */.replace('$', index)
+        }
+        if(this.state.selected_stage == index){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':text, 'textsize':'15px', 'font':this.props.app_state.font})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':text, 'textsize':'15px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
+    when_consensus_snapshot_item_selected(index){
+        this.setState({selected_stage: index})
+    }
+
+    render_consensus_cycle(snapshot, eliminated_candidate, vote_count, vote_transfer_snapshot, vote_donation_snapshot, quota){
         var figures = []
         var candidate_index = {}
         var poll_object = this.state.data['object']
@@ -3783,10 +3875,9 @@ return data['data']
             }
             figures.push({'name':title, 'number': number, 'votes':candidates_votes, 'surplus':donated_vote_count, 'percentage':percentage})
         });
+        figures = this.sortByAttributeDescending(figures, 'votes')
         return(
             <div>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['3074bg']/* Stage $ */.replace('$', index+1), 'textsize':'15px', 'font':this.props.app_state.font})}
-                <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                     {figures.map((item, index) => (
                         <div>
@@ -3796,20 +3887,10 @@ return data['data']
                 </div>
                 <div style={{height:10}}/>
                 {this.render_eliminated_candidate_data_if_not_null(eliminated_candidate, vote_transfer_snapshot, candidate_index)}
-                {this.render_space_if_not_last(is_last)}
             </div>
         )
     }
 
-    render_space_if_not_last(is_last){
-        if(!is_last){
-            return(
-                <div>
-                    <div style={{height:30}}/>
-                </div>
-            )
-        }
-    }
 
     render_eliminated_candidate_data_if_not_null(eliminated_candidate, vote_transfer_snapshot, candidate_index){
         if(eliminated_candidate != null){
@@ -3841,16 +3922,11 @@ return data['data']
     render_final_winners_if_voting_period_over(current_winners, time, tie_breaker){
         var now = time
         var poll_object = this.state.data['object']
-        if(now < poll_object['ipfs'].end_time){
-            return(
-                <div>
-                    <div style={{height:30}}/>
-                </div>
-            )
+        if(now/1000 < poll_object['ipfs'].end_time){
+            return;
         }
         var items = tie_breaker != '' ? [tie_breaker] : current_winners
         var candidate_index = {}
-        var poll_object = this.state.data['object']
         poll_object['ipfs'].candidates.forEach(candidate => {
             candidate_index[candidate['id']] = candidate['name']
         });
@@ -3863,7 +3939,7 @@ return data['data']
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_detail_item('4', {'text':candidate_index[item], 'textsize':'15px', 'font':this.props.app_state.font})}
+                                {this.render_detail_item('4', {'text':candidate_index[item]+' 🏅', 'textsize':'15px', 'font':this.props.app_state.font})}
                             </li>
                         ))}
                     </ul>
@@ -3943,6 +4019,31 @@ return data['data']
 
 
 
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
+    }
+  
 
     render_empty_views(size){
         var items = []
