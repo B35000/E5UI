@@ -1370,6 +1370,7 @@ class PostListSection extends Component {
             return( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_mail_message_if_wallet_not_set()}
                         {this.show_load_metrics([], object_type)}
                         {items.map((item, index) => (
                             <div>
@@ -1397,6 +1398,17 @@ class PostListSection extends Component {
                     </AnimatePresence>
                 </div>
             );
+        }
+    }
+
+    show_mail_message_if_wallet_not_set(){
+        if(this.props.app_state.has_wallet_been_set == false){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2509g']/* 'You need to set your wallet to see your mail.' */, 'title':this.props.app_state.loc['2509f']/* 'Wallet Unset.' */})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
         }
     }
 
@@ -4260,6 +4272,7 @@ return data['data']
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_bills_message_if_wallet_not_set()}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -4286,6 +4299,17 @@ return data['data']
                     </AnimatePresence>
                 </div>
             );
+        }
+    }
+
+    show_bills_message_if_wallet_not_set(){
+        if(this.props.app_state.has_wallet_been_set == false){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2509h']/* 'You need to set your wallet to see your bills.' */, 'title':this.props.app_state.loc['2509f']/* 'Wallet Unset.' */})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
         }
     }
 

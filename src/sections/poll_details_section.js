@@ -175,6 +175,8 @@ class PollDetailsSection extends Component {
                     {this.render_vote_changing_message_if_enabled(object)}
                     <div style={{height: 10}}/>
                     {this.render_randomizer_value(object)}
+                    <div style={{height: 10}}/>
+                    {this.render_closed_poll_message(object)}
 
                     {this.render_csv_files_if_any(object)}
                     {this.render_json_files_if_any(object)}
@@ -206,6 +208,18 @@ class PollDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_closed_poll_message(object){
+        var end_time = object['ipfs'].end_time
+        var now = Date.now()/1000
+        if(now > end_time){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3072bd']/* 'The voting period for the poll is officiall over.' */, 'title':this.props.app_state.loc['3072bc']/* '⛔ Poll Closed' */})}
+                </div>
+            )
+        }
     }
 
     render_targeted_participants(item, object){
