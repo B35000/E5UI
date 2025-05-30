@@ -117,7 +117,7 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:0, is_calculating_stack:{}, can_switch_e5s:true,
+        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true,
     };
 
     get_stack_page_tags_object(){
@@ -1733,10 +1733,11 @@ class StackPage extends Component {
     }
 
     render_stack_run_space_utilization_if_non_zero(){
-        if(this.state.stack_size_in_bytes > 100){
-            var stack_size_in_bytes_formatted_data_size = this.format_data_size(this.state.stack_size_in_bytes)
+        var size = this.state.stack_size_in_bytes[this.props.app_state.selected_e5] == null ? 0 : this.state.stack_size_in_bytes[this.props.app_state.selected_e5]
+        if(size > 100){
+            var stack_size_in_bytes_formatted_data_size = this.format_data_size(size)
             
-            var percentage = this.round_off((this.state.stack_size_in_bytes / this.props.app_state.upload_object_size_limit) * 100)
+            var percentage = this.round_off((size / this.props.app_state.upload_object_size_limit) * 100)
             if(percentage >= 100){
                 percentage = 99.99
             }
@@ -1751,7 +1752,7 @@ class StackPage extends Component {
                 </div>
             )
         }
-        else if(this.state.stack_size_in_bytes == -1){
+        else if(size == -1){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1593gq']/* 'Calculating Stack Run Storage Utilization...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
@@ -4160,7 +4161,10 @@ return data['data']
     }
 
     get_ipfs_index_object = async (txs, now, calculate_gas) => {
-        this.setState({stack_size_in_bytes: -1})
+        var stack_size_data_clone = structuredClone(this.state.stack_size_in_bytes)
+        stack_size_data_clone[this.props.app_state.selected_e5] = -1
+        this.setState({stack_size_in_bytes: stack_size_data_clone})
+
         const ipfs_index_object = {'version':this.props.app_state.version, 'color':this.get_device_color()}
         const obj = {'version':this.props.app_state.version, 'color':this.get_device_color(), 'tags':{'color':this.get_device_color()}}
         const ipfs_index_array = []
@@ -4644,7 +4648,11 @@ return data['data']
         console.log('stack_page_ipfs', 'unupdated ipfs-object', obj)
 
         const size = this.lengthInUtf8Bytes(JSON.stringify(obj))
-        this.setState({stack_size_in_bytes: size})
+        var stack_size_data_clone = structuredClone(this.state.stack_size_in_bytes)
+        stack_size_data_clone[this.props.app_state.selected_e5] = size
+        this.setState({stack_size_in_bytes: stack_size_data_clone})
+        this.props.set_stack_size_in_bytes(stack_size_data_clone)
+
         this.props.set_stack_depth_value(size)
         if(size > this.props.app_state.upload_object_size_limit && calculate_gas == false && ipfs_index_array.length > 0){
             this.current_object_size = size

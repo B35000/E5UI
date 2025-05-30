@@ -871,6 +871,8 @@ class App extends Component {
 
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
+
+    stack_size_in_bytes:{},
   };
 
   get_static_assets(){
@@ -6918,7 +6920,7 @@ return data['data']
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)}
       
       />
     )
@@ -7463,6 +7465,9 @@ return data['data']
     
   }
 
+  set_stack_size_in_bytes(data){
+    this.setState({stack_size_in_bytes: data})
+  }
 
 
 
@@ -8196,7 +8201,7 @@ return data['data']
                     if(final_obj[e5] == null){
                         final_obj[e5] = []
                     }
-                    if(!isNaN(account) && parseInt(account) < 10**16){
+                    if(!isNaN(account) && parseInt(account) < 10**16 && parseInt(account)>1000){
                         final_obj[e5].push(parseInt(account))
                         account_entries++
                     }
@@ -8226,7 +8231,7 @@ return data['data']
                 try{
                     object[key].forEach(account => {
                         var trimed_account = account.toString().trim().replace(/[^a-zA-Z0-9 ]/g, '')
-                        if(!isNaN(trimed_account) && parseInt(trimed_account) < 10**16){
+                        if(!isNaN(trimed_account) && parseInt(trimed_account) < 10**16 && parseInt(account)>1000){
                             final_obj[key].push(parseInt(trimed_account))
                             account_entries++
                         }
