@@ -357,6 +357,21 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
 
+        if(tag_id == this.props.app_state.loc['1264i']/* 'wallet-notifications' */){
+            var first_event_block = items.length == 0 ? 0 : items[0]['event'].returnValues.p6/* block_number */
+            var most_recent_events = this.props.app_state.notification_object['token']
+            if(most_recent_events != null){
+                var newer_events = []
+                most_recent_events.forEach(new_event => {
+                    var block = new_event.returnValues.p6/* block_number */
+                    if(block > first_event_block){
+                        newer_events.push({'type':'token_event_notification', 'event':new_event, 'e5':new_event['e5'], 'timestamp':new_event.returnValues.p5})
+                    }
+                });
+                items = newer_events.concat(items)
+            }
+        }
+
         if(items.length == 0){
             items = [0, 0]
             return(
@@ -396,8 +411,10 @@ class PostListSection extends Component {
             var depth = item['event'].returnValues.p7
             var exchange = item['event'].returnValues.p1
             var timestamp = item['event'].returnValues.p5
+            var now = Date.now()/1000
+            var opacity = timestamp > (now - (60 * 5)) ? 0.7 : 1.0;
             return(
-                <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})} /* onClick={() => this.open_object(exchange, item['e5'], 'token')} */>
+                <div style={{'opacity':opacity}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})} /* onClick={() => this.open_object(exchange, item['e5'], 'token')} */>
                     {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+' sent you '+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+/* (new Date(timestamp*1000))+', '+ */(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
                 </div>
             )

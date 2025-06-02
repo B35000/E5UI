@@ -415,13 +415,32 @@ class AddToBagPage extends Component {
             return(
                 <div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 5px 3px 5px'}}/>
-                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                    {this.render_item(item)}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                    {this.render_item(item)}
+                </div>
+            )
+        }
+    }
+
+    render_item(variant_in_store){
+        var composition_type = this.state.storefront_item['ipfs'].composition_type == null ? 'Units.' : this.get_selected_item(this.state.storefront_item['ipfs'].composition_type, 'e')
+
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            var image = variant_in_store['image_data']['data']['images'][0]
+            return(
+                <div>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
                 </div>
             )
         }

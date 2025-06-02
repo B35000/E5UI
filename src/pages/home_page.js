@@ -3068,7 +3068,10 @@ class home_page extends Component {
 
     sort_feed_based_on_my_section_tags2(objects){
         const feed_objs = []
-        const section_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
+        const feed_objs_2 = []
+        const all_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
+        const section_tags = all_tags.current_tags
+        const exra_tags = all_tags.extra_tags
 
         for(var i=0; i<objects.length; i++){
             const object = objects[i]
@@ -3091,6 +3094,13 @@ class home_page extends Component {
                         }
                     }
                 }
+                for(var j=0; j<exra_tags.length; j++){
+                    if(object_tags.includes(exra_tags[j])){
+                        if(!feed_objs_2.includes(object)){
+                            feed_objs_2.push(object)
+                        }
+                    }
+                }
                 // const includes = section_tags.some(r=> object_tags.includes(r))
                 // if(includes == true && !feed_objs.includes(object)){
                 //     feed_objs.push(object)
@@ -3098,7 +3108,7 @@ class home_page extends Component {
             }
         }
 
-        return feed_objs
+        return feed_objs.concat(feed_objs_2)
     }
 
     sort_feed_based_on_my_section_tags(objects){
@@ -3171,18 +3181,21 @@ class home_page extends Component {
     get_job_section_tags(){
         if(this.state.job_section_tags == null){
             this.setState({job_section_tags: this.props.app_state.job_section_tags})
-            return this.props.app_state.job_section_tags;
+            return {current_tags: this.state.job_section_tags, extra_tags: []}
         }else{
-            return this.state.job_section_tags
+            const difference = this.props.app_state.job_section_tags.filter(element => !this.state.job_section_tags.includes(element));
+
+            return {current_tags: this.state.job_section_tags, extra_tags: difference}
         }
     }
 
     get_explore_section_tags(){
         if(this.state.explore_section_tags == null){
             this.setState({explore_section_tags: this.props.app_state.explore_section_tags})
-            return this.props.app_state.explore_section_tags
+            return {current_tags: this.state.explore_section_tags, extra_tags: []}
         }else{
-            return this.state.explore_section_tags
+            const difference = this.props.app_state.explore_section_tags.filter(element => !this.state.explore_section_tags.includes(element));
+            return {current_tags: this.state.explore_section_tags, extra_tags: difference}
         }
     }
 
@@ -3405,7 +3418,7 @@ class home_page extends Component {
     }
 
     is_page_valid(){
-        if(this.props.app_state.my_preferred_nitro == '') return false;
+        // if(this.props.app_state.my_preferred_nitro == '') return false;
         if(this.state.page == '?'){
             var selected_item = this.state.work_page_tags_object['i'].active
             if(selected_item == 'e'){

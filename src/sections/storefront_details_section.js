@@ -266,7 +266,7 @@ class StorefrontDetailsSection extends Component {
                     <div style={{height: 5}}/>
                     {this.render_item_variants(object, composition_type)}  
                     
-                    <div style={{height: 20}}/>
+                    <div style={{height: 10}}/>
                     {this.render_out_of_stock_message_if_any(object)}                
 
                     {this.render_add_to_bag_button(object)}
@@ -526,12 +526,29 @@ class StorefrontDetailsSection extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                            {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' '+composition_type, 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                            {this.render_item(item, composition_type)}
                         </li>
                     ))}
                 </ul>
             </div>
         )
+    }
+
+    render_item(variant_in_store, composition_type){
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            var image = variant_in_store['image_data']['data']['images'][0]
+            return(
+                <div>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
+                </div>
+            )
+        }
     }
 
     render_fulfilment_accounts_if_any(object){
@@ -588,7 +605,7 @@ class StorefrontDetailsSection extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style':'none'}}>
-                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':'Account', 'size':'s'})}
+                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':item, 'size':'s'})}
                         </li>
                     ))}
                 </ul>

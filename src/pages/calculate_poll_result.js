@@ -696,10 +696,10 @@ class CalculatePollResult extends Component {
 
         var nitros = this.load_active_nitros()
         var selected_nitro_objects = []
-        if(nitros < 23){
+        if(nitros < this.props.app_state.max_poll_nitro_calculator_count){
             selected_nitro_objects = nitros
         }else{
-            selected_nitro_objects = this.getRandomValues(nitros, 23)
+            selected_nitro_objects = this.getRandomValues(nitros, this.props.app_state.max_poll_nitro_calculator_count)
         }
 
         const final_csv_files = []
