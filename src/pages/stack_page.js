@@ -102,6 +102,7 @@ class StackPage extends Component {
         get_preferred_currency_tags_object:this.get_preferred_currency_tags_object(),
         get_minified_content_setting_object:this.get_minified_content_setting_object(),
         get_auto_run_setting_object:this.get_auto_run_setting_object(),
+        get_explore_display_type_setting_object:this.get_explore_display_type_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -973,6 +974,36 @@ class StackPage extends Component {
 
     set_selected_auto_run_setting_tag(){
         this.setState({get_auto_run_setting_object: this.get_auto_run_setting_object(),})
+    }
+
+
+
+
+
+
+
+
+
+    get_explore_display_type_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593gv']/* 'default' */, this.props.app_state.loc['1593gw']/* 'image-oriented' */,], [this.get_selected_explore_display_type_setting_option()]
+            ], 
+        }
+    }
+
+    get_selected_explore_display_type_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593gv']/* 'default' */] = 1
+        obj[this.props.app_state.loc['1593gw']/* 'image-oriented' */] = 2
+        return obj[this.props.app_state.explore_display_type]
+    }
+
+    set_selected_explore_display_type_setting_tag(){
+        this.setState({get_explore_display_type_setting_object: this.get_explore_display_type_setting_object(),})
     }
 
 
@@ -8934,8 +8965,6 @@ return data['data']
         
     }
 
-    
-
     render_settings_details(){
         return(
             <div>
@@ -9065,8 +9094,8 @@ return data['data']
 
                 {this.render_detail_item('0')}
 
-                
                 {this.render_auto_run_setting_if_not_ios()}
+
             </div>
         )
     }
@@ -9177,8 +9206,6 @@ return data['data']
 
 
 
-
-
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
@@ -9189,6 +9216,15 @@ return data['data']
 
 
                     {this.render_theme_image_setting_if_any()}
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
 
                 </div>
             </div>
@@ -9400,6 +9436,12 @@ return data['data']
         this.setState({get_auto_run_setting_object: tag_object})
         var selected_item = this.get_selected_item(this.state.get_auto_run_setting_object, 'e')
         this.props.when_auto_run_setting_changed(selected_item)
+    }
+
+    when_get_explore_display_type_setting_object_updated(tag_obj){
+        this.setState({get_explore_display_type_setting_object: tag_obj})
+        var selected_item = this.get_selected_item(this.state.get_explore_display_type_setting_object, 'e')
+        this.props.when_explore_display_type_changed(selected_item)
     }
 
 

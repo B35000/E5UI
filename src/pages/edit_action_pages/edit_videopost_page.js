@@ -702,7 +702,7 @@ class EditVideoPage extends Component {
                     </div>
 
                     <div style={{'margin': '10px 0px 0px 0px'}}>
-                        <img alt="" src={image} style={{height:'auto' ,width:100, 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
+                        <img alt="" src={image} style={{height:100 ,width:'auto', 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
                     </div>
                 </div>
             </div>

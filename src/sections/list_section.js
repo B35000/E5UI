@@ -2767,6 +2767,46 @@ class PostListSection extends Component {
                 </div>
             )
         }
+        if(this.props.app_state.explore_display_type == this.props.app_state.loc['1593gw']/* 'image-oriented' */){
+            var image = object['ipfs'].storefront_item_art == null ? this.props.app_state.static_assets['empty_image']: object['ipfs'].storefront_item_art
+            var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
+            title = this.truncate(title, 35)
+            var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+            
+            var variants_available = this.props.app_state.loc['2509j']/* $ variants available. */.replace('$', object['ipfs'].variants.length)
+            var e5_img = this.props.app_state.e5s[object['e5']].e5_img
+            return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
+                        <div style={{'padding':'1px 0px 0px 0px'}}>
+                            <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:90, 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_storefront_item_clicked(index, object)}/>
+                        </div>
+                        <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '14px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{title}</p>
+                            <div style={{height: 3}}/>
+
+                            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 0px', width: '99%'}}>
+                                <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1.5px 0px 0px 0px'}}>
+                                    <img src={e5_img} alt={object['e5']} style={{height:15,width:15}}/>
+                                    <div style={{width:2}}/>
+                                </div>
+                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{object['id']+sender}</p>
+                            </div>
+                            
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{variants_available}</p>
+                            <div style={{height: 3}}/>
+
+                            {this.render_storefront_price_data(object)}
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -2781,6 +2821,49 @@ class PostListSection extends Component {
                     </div>
                     
                 </div>         
+            </div>
+        )
+    }
+
+    render_storefront_price_data(object){
+        var variants = object['ipfs'].variants
+        var spend_price = 0;
+        variants.forEach(variant => {
+            var price_data = variant['price_data']
+            price_data.forEach(price_item => {
+                if(price_item['id'] == 5){
+                    if(price_item['amount'] < spend_price || spend_price == 0){
+                        spend_price = price_item['amount']
+                    }
+                }
+            });
+        });
+
+        if(spend_price == 0){
+            var id = ''
+            variants.forEach(variant => {
+                var price_data = variant['price_data']
+                price_data.forEach(price_item => {
+                    if(spend_price == 0){
+                        spend_price = price_item['amount']
+                        id = price_item['id']
+                    }
+                });
+            });
+            var text = this.props.app_state.loc['2509i']/* From $ SPEND */
+            text = text.replace('$', this.format_account_balance_figure(spend_price))
+            text = text.replace('SPEND', this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[id])
+            
+            return(
+                <div>
+                    <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{text}</p>
+                </div>
+            )
+        }
+        var text = this.props.app_state.loc['2509i']/* From $ SPEND */.replace('$', this.format_account_balance_figure(spend_price))
+        return(
+            <div>
+                <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{text}</p>
             </div>
         )
     }
@@ -3346,6 +3429,66 @@ return data['data']
                 </div>
             )
         }
+
+
+        if(this.props.app_state.explore_display_type == this.props.app_state.loc['1593gw']/* 'image-oriented' */){
+            var image = object['ipfs'].album_art == null ? this.props.app_state.static_assets['music_label']: object['ipfs'].album_art
+            var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+            title = this.truncate(title, 35)
+            var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+            var author = object['ipfs'] == null ? sender : ' • '+object['ipfs'].entered_author_text
+            if(this.is_post_anonymous(object)){
+                author = ' • '+this.props.app_state.loc['2509k']/* '🥸 Anonymous' */
+            }
+            var e5_img = this.props.app_state.e5s[object['e5']].e5_img
+
+            var extra = ''
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+                extra = extra+'🔏'
+            }
+            if(extra != '') extra = extra + ' '
+            var songs_available = this.props.app_state.loc['2509l']/* '$ songs available.' */.replace('$', object['ipfs'].songs.length)
+
+            var year = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_year_recorded_text
+
+            var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+
+            return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
+                        <div style={{'padding':'1px 0px 0px 0px'}}>
+                            <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:90, 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_audio_image_clicked(object)}/>
+                        </div>
+                        <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_audio_item_clicked(index, object)}>
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '14px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{extra+title}</p>
+                            <div style={{height: 3}}/>
+
+                            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 0px', width: '99%'}}>
+                                <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1.5px 0px 0px 0px'}}>
+                                    <img src={e5_img} alt={object['e5']} style={{height:15,width:15}}/>
+                                    <div style={{width:2}}/>
+                                </div>
+                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{object['id']+author}</p>
+                            </div>
+                            
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{songs_available}</p>
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ year}</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -3589,6 +3732,64 @@ return data['data']
                 </div>
             )
         }
+
+        if(this.props.app_state.explore_display_type == this.props.app_state.loc['1593gw']/* 'image-oriented' */){
+            var image = object['ipfs'].album_art == null ? this.props.app_state.static_assets['video_label']: object['ipfs'].album_art
+            var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+            title = this.truncate(title, 35)
+            var author = this.get_senders_name(object['event'].returnValues.p5, object);
+            if(this.is_post_anonymous(object)){
+                author = ' • '+this.props.app_state.loc['2509k']/* '🥸 Anonymous' */
+            }
+            var e5_img = this.props.app_state.e5s[object['e5']].e5_img
+
+            var extra = ''
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+                extra = extra+'🔏'
+            }
+            if(extra != '') extra = extra + ' '
+            var videos_available = this.props.app_state.loc['2509m']/* '$ videos available.' */.replace('$', object['ipfs'].videos.length)
+
+            var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+
+            var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+
+            return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
+                        <div style={{'padding':'1px 0px 0px 0px'}}>
+                            <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:'auto', 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_video_image_clicked(object)}/>
+                        </div>
+                        <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_video_text_clicked(object)}>
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '14px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{extra+title}</p>
+                            <div style={{height: 3}}/>
+
+                            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 0px', width: '99%'}}>
+                                <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1.5px 0px 0px 0px'}}>
+                                    <img src={e5_img} alt={object['e5']} style={{height:15,width:15}}/>
+                                    <div style={{width:2}}/>
+                                </div>
+                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{object['id']+author}</p>
+                            </div>
+                            
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{videos_available}</p>
+                            <div style={{height: 3}}/>
+
+                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ this.get_time_difference(time)}</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -3632,7 +3833,7 @@ return data['data']
         var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object},
+            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object}
         }

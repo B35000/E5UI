@@ -594,7 +594,7 @@ class FullVideoPage extends Component {
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
 
             'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
-            'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_width':'auto'},
         }
     }
 

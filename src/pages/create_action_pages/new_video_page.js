@@ -475,7 +475,7 @@ class NewVideoPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['b311g']/* 'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['b311g']/* 'Set the album art for your new post.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part2()}
 
@@ -647,7 +647,7 @@ class NewVideoPage extends Component {
                     </div>
 
                     <div style={{'margin': '10px 0px 0px 0px'}}>
-                        <img alt="" src={image} style={{height:'auto' ,width:100, 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
+                        <img alt="" src={image} style={{height:100 ,width:'auto', 'border-radius':'10px'}} onClick={()=> this.when_icon_image_tapped()}/>
                     </div>
                 </div>
             </div>

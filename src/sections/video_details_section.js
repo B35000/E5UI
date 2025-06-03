@@ -958,10 +958,10 @@ class VideoDetailsSection extends Component {
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
         return(
-            <div style={{width:100, height:'auto'}}>
-                <img src={this.get_image_from_file(image)} alt="" style={{height:'auto' ,width:100,'border-radius': '10px'}}/>
+            <div style={{}}>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:100 ,width:'auto','border-radius': '10px'}}/>
                 <div style={{height:5}}/>
-                <p style={{'color': this.props.theme['primary_text_color'], width:100, 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 15)}</p>
+                <p style={{'color': this.props.theme['primary_text_color'], width:100, 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 23)}</p>
             </div>
         )
     }
@@ -1021,7 +1021,7 @@ class VideoDetailsSection extends Component {
         if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
 
         if(data == null) return
-return data['data']
+        return data['data']
     }
 
 
@@ -1062,11 +1062,11 @@ return data['data']
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         var author = sender
         return(
-            <div style={{width:100, height:'auto'}}>
-                <img src={this.get_image_from_file(image)} alt="" style={{height:'auto' ,width:100,'border-radius': '10px'}}/>
+            <div style={{}}>
+                <img src={this.get_image_from_file(image)} alt="" style={{height:100 ,width:'auto','border-radius': '10px'}}/>
                 <div style={{height:5}}/>
-                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 15)}</p>
-                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 15)}</p>
+                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 23)}</p>
+                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 23)}</p>
             </div>
         )
     }
@@ -1262,7 +1262,7 @@ return data['data']
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         <div>
-                            {items.reverse().map((item, index) => (
+                            {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={() => this.when_discography_item_clicked(index, item)}>
                                     <div>
                                         {this.render_similar_videopost_item_in_list(item)}
@@ -1288,7 +1288,7 @@ return data['data']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         return(
             <div>
-                {this.render_detail_item('8', {'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'})}
+                {this.render_detail_item('8', {'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_width':'auto'})}
             </div>
         )
     }
