@@ -12235,12 +12235,18 @@ return data['data']
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-            // Get a base64 image string or blob
-            canvas.toDataURL(blob => {
-              resolve(blob); // Or use canvas.toDataURL() if you want a base64 string
-            }, "image/jpeg", 0.6);
 
+            const image_size = 35 * 1024
+            canvas.toBlob(blob => {
+                var quality = 1.0
+                var blob_size = blob.size
+                if(blob_size > image_size){
+                    quality = image_size / blob_size
+                }
+                canvas.toDataURL(blob => {
+                    resolve(blob);
+                }, "image/jpeg", quality);
+            }, "image/jpeg")
           });
     
           video.addEventListener("error", (err) => {
@@ -12324,10 +12330,17 @@ return data['data']
             const ctx = canvas.getContext("2d");
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-            // Get a base64 image string or blob
-            canvas.toDataURL(blob => {
-              resolve(blob); // Or use canvas.toDataURL() if you want a base64 string
-            }, "image/jpeg", 0.6);
+            const image_size = 35 * 1024
+            canvas.toBlob(blob => {
+                var quality = 1.0
+                var blob_size = blob.size
+                if(blob_size > image_size){
+                    quality = image_size / blob_size
+                }
+                canvas.toDataURL(blob => {
+                    resolve(blob);
+                }, "image/jpeg", quality);
+            }, "image/jpeg")
 
           });
     
