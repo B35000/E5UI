@@ -199,6 +199,7 @@ class ViewGroups extends Component {
             var title_image = ''
             var word_wrap_value = 'normal'
             var word_wrap_value2 = 'normal'
+            var text_image_border_radius = '0px'
             if(object_data != null){
                 title = object_data['title']
                 details = object_data['details']
@@ -208,6 +209,7 @@ class ViewGroups extends Component {
                 title_image = object_data['title_image'] == null ? '' : object_data['title_image']
                 word_wrap_value = this.longest_word_length(object_data['details']) > 53 ? 'break-word' : 'normal'
                 word_wrap_value2 = this.longest_word_length(object_data['title']) > 53 ? 'break-word' : 'normal'
+                text_image_border_radius = object_data['text_image_border_radius'] != null ? object_data['text_image_border_radius'] : '0px'
             }
             var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px', 17];
             if(size == 'l'){
@@ -254,7 +256,7 @@ class ViewGroups extends Component {
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
                                 <div style={{'display': 'flex','flex-direction': 'row'}}>
-                                    {this.render_text_image(title_image, font_size)}
+                                    {this.render_text_image(title_image, font_size, text_image_border_radius)}
                                     <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
                                 </div>
 
@@ -714,11 +716,11 @@ class ViewGroups extends Component {
         }
     }
 
-    render_text_image(title_image, font_size){
+    render_text_image(title_image, font_size, text_image_border_radius){
         if(title_image != null && title_image != ''){
             return(
                 <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1px 0px 0px 0px'}}>
-                    <img src={this.get_image_from_file(title_image)} alt={title_image} style={{height:font_size[5],width:font_size[5]}}/>
+                    <img src={this.get_image_from_file(title_image)} alt={title_image} style={{height:font_size[5],width:font_size[5], 'border-radius':text_image_border_radius}}/>
                     <div style={{width:2}}/>
                 </div>
             )

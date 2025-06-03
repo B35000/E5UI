@@ -108,7 +108,6 @@ class SearchedAccountPage extends Component {
         return obj
     }
 
-
     get_account_balance_history_tag_object(){
         return{
             'i':{
@@ -123,7 +122,7 @@ class SearchedAccountPage extends Component {
 
 
     set_searched_item(item, searched_id){
-        this.setState({searched_account: item, searched_account_id: searched_id})
+        this.setState({searched_account: item, searched_account_id: searched_id, searched_account_page_tags_object: this.get_searched_account_page_tags_object()})
 
         var me = this;
         setTimeout(function() {
@@ -140,14 +139,16 @@ class SearchedAccountPage extends Component {
 
     render(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
-        var f = 130
+        var f = 110
         if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e' || selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
             f = 90
         }
 
+        f+=60
+
         if(this.state.searched_account == null){
             return(
-                <div>
+                <div style={{'padding':'10px 10px 0px 10px'}}>
                     {this.render_empty_everything()}
                 </div>
             )
@@ -155,7 +156,7 @@ class SearchedAccountPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
+                {this.render_search_tabs()}
                 <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-f}}>
                     {this.render_everything()}
                 </div>
@@ -169,6 +170,84 @@ class SearchedAccountPage extends Component {
         setTimeout(function() {
             me.update_scroll_position()
         }, (1 * 10));
+    }
+
+    render_search_tabs(){
+        var items = this.get_searched_accounts()
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            var items2 = [0, 1]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_searched_account_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    get_searched_accounts(){
+        var keys = Object.keys(this.props.app_state.searched_accounts_data)
+        var items = []
+        keys.forEach(key => {
+            items = items.concat(this.props.app_state.searched_accounts_data[key])
+        });
+
+        return items
+    }
+
+    render_searched_account_item(item){
+        var details = item['alias'] == 'Unknown' ? this.truncate(item['address'], 23) : item['alias']
+        var title = item['id']
+        var image = this.props.app_state.e5s[item['e5']].e5_img
+
+        if(this.state.searched_account['id'] == item['id'] && this.state.searched_account['e5'] == item['e5']){
+            return(
+                <div onClick={() => this.props.when_searched_account_reclicked(item, item['id'])}>
+                {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.props.when_searched_account_reclicked(item, item['id'])}>
+                {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
 
 
@@ -209,6 +288,8 @@ class SearchedAccountPage extends Component {
             )
         }
     }
+
+
 
 
     render_everything(){
@@ -1184,7 +1265,7 @@ class SearchedAccountPage extends Component {
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1201,7 +1282,7 @@ class SearchedAccountPage extends Component {
             )
         } else {
             return (
-                <div ref={this.creations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.creations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1287,7 +1368,7 @@ class SearchedAccountPage extends Component {
             if(items.length == 0){
                 items = ['0','1','2'];
                 return ( 
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{overflow: 'auto', }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -1299,7 +1380,7 @@ class SearchedAccountPage extends Component {
                 );
             }else{
                 return(
-                    <div ref={this.creations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                    <div ref={this.creations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '5px 3px 5px 3px' }}>
@@ -1315,7 +1396,7 @@ class SearchedAccountPage extends Component {
         }else{
             items = ['0','1','2'];
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -1521,7 +1602,7 @@ return data['data']
             var items = account_activity;
             return(
                 <div>
-                    <div ref={this.activity_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                    <div ref={this.activity_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 0px 2px 0px' }}>
@@ -1537,7 +1618,7 @@ return data['data']
         }else{
             var items = ['0','1','2'];
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -1637,7 +1718,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1654,7 +1735,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1749,7 +1830,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1766,7 +1847,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.pending_withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.pending_withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1843,7 +1924,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1860,7 +1941,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.runs_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.runs_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1957,7 +2038,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1974,7 +2055,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.payments_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.payments_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2054,7 +2135,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -2071,7 +2152,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.cancellations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle }}>
+                <div ref={this.cancellations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2151,7 +2232,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -2168,7 +2249,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.entries_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle }}>
+                <div ref={this.entries_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2242,7 +2323,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -2259,7 +2340,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.exits_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle }}>
+                <div ref={this.exits_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2331,7 +2412,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',  }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -2348,7 +2429,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.votes_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle }}>
+                <div ref={this.votes_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2424,7 +2505,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto',}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -2441,7 +2522,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.swaps_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.swaps_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2472,18 +2553,22 @@ return data['data']
         var updated_exchange_ratio_y = item.returnValues.p6
         var parent_tokens_balance = item.returnValues.p7
         var amount = item.returnValues.p8
+        var e5 = this.state.searched_account['e5']
+        var exchange_id = item.returnValues.p1
+        var thumbnail = this.props.app_state.token_thumbnail_directory[e5] == null ? this.props.app_state.static_assets['end_img'] : (this.props.app_state.token_thumbnail_directory[e5][exchange_id] == null ? this.props.app_state.static_assets['end_img'] : this.props.app_state.token_thumbnail_directory[e5][exchange_id])
+
         if (this.state.selected_swap_event_item == index) {
             return (
                 <div>
                     <div onClick={() => this.when_swap_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 'l' })}
+                        {this.render_detail_item('8', { 'title': (exchange_id), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
                     </div>
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': action, 'details': 'Action', 'size': 'l' })}
                     <div style={{ height: 2 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: 2 }} />
 
@@ -2514,7 +2599,7 @@ return data['data']
         } else {
             return (
                 <div onClick={() => this.when_swap_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.searched_account['e5']+item.returnValues.p1], 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                    {this.render_detail_item('8', { 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.searched_account['e5']+item.returnValues.p1], 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
                     
                 </div>
             )
@@ -2562,7 +2647,7 @@ return data['data']
             items = [0, 1]
             return (
                 <div>
-                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                    <div style={{ overflow: 'auto', }}>
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -2579,7 +2664,7 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.transfers_ref} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.transfers_ref} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto',}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2610,30 +2695,36 @@ return data['data']
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3): 'From: '+this.get_sender_title_text(item['event'].returnValues.p2)
-        
+
+        var other_party = item['action'] == 'Sent' ? item['event'].returnValues.p3 : item['event'].returnValues.p2
+        var thumbnail = this.props.app_state.token_thumbnail_directory[e5] == null ? this.props.app_state.static_assets['end_img'] : (this.props.app_state.token_thumbnail_directory[e5][exchange_id] == null ? this.props.app_state.static_assets['end_img'] : this.props.app_state.token_thumbnail_directory[e5][exchange_id])
+
         if (this.state.selected_transfers_event_item == index) {
             return (
                 <div>
+                    <div onClick={() => this.props.when_account_in_data_clicked(other_party, e5, this.get_sender_title_text(other_party))}>
+                        {this.render_detail_item('8', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 'l', 'image':thumbnail, 'border_radius':'5px'})}
+                    </div>
                     <div onClick={() => this.when_transfers_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 'l'})}
-                    </div>
-                    <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
-                    </div>
+                        <div style={{ height: 2 }} />
+                        <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
+                            {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                        <div style={{ height: 2 }} />
+                        {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 'l' })}
+                        <div style={{ height: 2 }} />
+                        {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 'l' })}
+                        <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    </div>
+                    
                 </div>
             )
         } else {
+            
             return (
                 <div onClick={() => this.when_transfers_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
-    
+                    {this.render_detail_item('8', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
                 </div>
             )
         }

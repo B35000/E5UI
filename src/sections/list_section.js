@@ -1887,7 +1887,7 @@ class PostListSection extends Component {
         var alias = item['alias']
         
         return(
-            <div onClick={() => this.props.when_searched_account_clicked(item, this.state.searched_account)}>
+            <div onClick={() => this.props.when_searched_account_clicked(item, item['typed_search'])}>
                 {this.render_detail_item('3', {'title':' • '+alias+' • '+this.state.searched_account, 'details':start_and_end(address), 'size':'l','title_image':e5_img})}
             </div>
         )

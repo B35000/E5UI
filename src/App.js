@@ -872,7 +872,7 @@ class App extends Component {
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
 
-    stack_size_in_bytes:{},
+    stack_size_in_bytes:{}, token_thumbnail_directory:{}
   };
 
   get_static_assets(){
@@ -13625,7 +13625,8 @@ return data['data']
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)}/>
+                          <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
+                          />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -13637,7 +13638,9 @@ return data['data']
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_searched_account_bottomsheet.bind(this)} open={this.state.searched_account_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)}/>
+            <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
+            
+            />
           </div>
       </SwipeableBottomSheet>
     )
@@ -13672,19 +13675,107 @@ return data['data']
   when_searched_account_clicked = async (item, searched_id) => {
     this.open_searched_account_bottomsheet()
 
+    var data = this.state.searched_accounts_data[item['id']] == null ? [] : this.state.searched_accounts_data[item['id']]
+    var existing = false
+    var object = data.find(e => (e['address'] === item['address'] && e['ether_balance'] != null))
+    if(object != null){
+      var me = this;
+      existing = true
+      setTimeout(function() {
+        if(me.searched_account_page.current != null){
+          me.searched_account_page.current?.set_searched_item(object, searched_id)
+        }
+      }, (1 * 500));
+      if(object['search_time'] > (Date.now() - (1000*60*15))){
+        return;
+      }
+    }
+    console.log('when_searched_account_clicked', item)
     await this.get_searched_account_data(item['id'], item['typed_search'], item['e5'])
     await this.wait(300)
     var data = this.state.searched_accounts_data[item['id']] == null ? [] : this.state.searched_accounts_data[item['id']]
-    const object = data.find(e => e['address'] === item['address'])
+    var object = data.find(e => e['address'] === item['address'])
 
     var me = this;
     setTimeout(function() {
       if(me.searched_account_page.current != null){
-        me.searched_account_page.current?.set_searched_item(object, searched_id)
+        if(existing == false){
+          me.searched_account_page.current?.set_searched_item(object, searched_id)
+        }else{
+          if(me.searched_account_page.current.state.searched_account['id'] == item['id'] && me.searched_account_page.current.state.searched_account['e5'] == item['e5']){
+            me.searched_account_page.current?.set_searched_item(object, searched_id)
+          }
+        }
       }
     }, (1 * 500));
-    
+  }
 
+  when_searched_account_reclicked = async (item, searched_id) => {
+    var data = this.state.searched_accounts_data[item['id']] == null ? [] : this.state.searched_accounts_data[item['id']]
+    var object = data.find(e => (e['address'] === item['address'] && e['ether_balance'] != null))
+    var existing = false
+    if(object != null){
+      existing = true
+      var me = this;
+      setTimeout(function() {
+        if(me.searched_account_page.current != null){
+          me.searched_account_page.current?.set_searched_item(object, searched_id)
+        }
+      }, (1 * 500));
+      if(object['search_time'] > (Date.now() - (1000*60*15))){
+        return;
+      }
+    }
+    await this.get_searched_account_data(item['id'], item['typed_search'], item['e5'])
+    await this.wait(300)
+    var data = this.state.searched_accounts_data[item['id']] == null ? [] : this.state.searched_accounts_data[item['id']]
+    var object = data.find(e => e['address'] === item['address'])
+
+    var me = this;
+    setTimeout(function() {
+      if(existing == false){
+        me.searched_account_page.current?.set_searched_item(object, searched_id)
+      }else{
+        if(me.searched_account_page.current.state.searched_account['id'] == item['id'] && me.searched_account_page.current.state.searched_account['e5'] == item['e5']){
+          me.searched_account_page.current?.set_searched_item(object, searched_id)
+        }
+      }
+    }, (1 * 500));
+  }
+
+  when_account_in_data_clicked = async (account, e5, name) => {
+    this.prompt_top_notification(this.getLocale()['2738ah']/* 'Searching for $...' */.replace('$', name), 1500)
+    var data = this.state.searched_accounts_data[account] == null ? [] : this.state.searched_accounts_data[account]
+    var object = data.find(e => (e['id'] == account && e['e5'] == e5 && e['ether_balance'] != null))
+    var existing = false
+    if(object != null){
+      existing = true
+      var me = this;
+      setTimeout(function() {
+        if(me.searched_account_page.current != null){
+          me.searched_account_page.current?.set_searched_item(object, account)
+        }
+      }, (1 * 500));
+      if(object['search_time'] > (Date.now() - (1000*60*15))){
+        return;
+      }
+    }
+
+    await this.get_searched_account_data(account, account, e5)
+    await this.wait(300)
+    var data = this.state.searched_accounts_data[account] == null ? [] : this.state.searched_accounts_data[account]
+    var object = data.find(e => (e['id'] == account && e['e5'] == e5))
+
+    var me = this;
+    setTimeout(function() {
+      if(existing == false){
+        me.searched_account_page.current?.set_searched_item(object, account)
+      }else{
+        if(me.searched_account_page.current.state.searched_account['id'] == account && me.searched_account_page.current.state.searched_account['e5'] == e5){
+          me.searched_account_page.current?.set_searched_item(object, account)
+        }
+      }
+    }, (1 * 500));
   }
 
   perform_searched_account_balance_search = async (exchange_id, id, e5) => {
@@ -14668,15 +14759,36 @@ return data['data']
     this.open_dialog_bottomsheet()
     this.open_searched_account_bottomsheet()
 
+    var data = this.state.searched_accounts_data[account] == null ? [] : this.state.searched_accounts_data[account]
+    var object = data.find(e => (e['id'] == account && e['e5'] == e5 && e['ether_balance'] != null))
+    var existing = false
+    if(object != null){
+      existing = true
+      var me = this;
+      setTimeout(function() {
+        if(me.searched_account_page.current != null){
+          me.searched_account_page.current?.set_searched_item(object, account)
+        }
+      }, (1 * 500));
+      if(object['search_time'] > (Date.now() - (1000*60*15))){
+        return;
+      }
+    }
+
     await this.get_searched_account_data(account, account, e5)
     await this.wait(300)
     var data = this.state.searched_accounts_data[account] == null ? [] : this.state.searched_accounts_data[account]
-    const object = data.find(e => (e['id'] == account && e['e5'] == e5))
+    var object = data.find(e => (e['id'] == account && e['e5'] == e5))
 
     var me = this;
     setTimeout(function() {
-      if(me.searched_account_page.current != null){
+      
+      if(existing == false){
         me.searched_account_page.current?.set_searched_item(object, account)
+      }else{
+        if(me.searched_account_page.current.state.searched_account['id'] == account && me.searched_account_page.current.state.searched_account['e5'] == e5){
+          me.searched_account_page.current?.set_searched_item(object, account)
+        }
       }
     }, (1 * 500));
   }
@@ -23972,6 +24084,7 @@ return data['data']
 
     var token_symbol_directory = {}
     var token_name_directory = {}
+    var token_thumbnail_directory = {}
     token_symbol_directory[0] = 'wei'
     token_symbol_directory['wei'] = 0
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
@@ -24037,8 +24150,18 @@ return data['data']
       //   token_balance_data = token_balances_and_data2['bal_data'][0]
       // }
 
-      if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false)
-
+      if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false);
+      
+      if(tokens_data != null){
+        token_thumbnail_directory[created_tokens[i]] = tokens_data.token_image
+      }
+      else if(created_tokens[i] == 3){
+        token_thumbnail_directory[created_tokens[i]] = this.state.e5s[e5].end_image
+      }
+      else if(created_tokens[i] == 5){
+        token_thumbnail_directory[created_tokens[i]] = this.state.e5s[e5].spend_image
+      }
+        
       var token_obj = {
         'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length
       }
@@ -24104,7 +24227,10 @@ return data['data']
         var token_name_directory_clone = structuredClone(this.state.token_name_directory)
         token_name_directory_clone[e5] = token_name_directory
 
-        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone,})
+        var token_thumbnail_directory_clone = structuredClone(this.state.token_thumbnail_directory)
+        token_thumbnail_directory_clone[e5] = token_thumbnail_directory
+
+        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone})
         // await this.wait(150)
       }
     }
@@ -24121,7 +24247,10 @@ return data['data']
     var token_name_directory_clone = structuredClone(this.state.token_name_directory)
     token_name_directory_clone[e5] = token_name_directory
 
-    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone,})
+    var token_thumbnail_directory_clone = structuredClone(this.state.token_thumbnail_directory)
+    token_thumbnail_directory_clone[e5] = token_thumbnail_directory
+
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone})
     // console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
 
   }
@@ -32330,7 +32459,9 @@ return data['data']
 
           var searched_accounts_exchange_interactions_data = await this.load_searched_accounts_exchange_interactions_data(id, e5)
 
-          var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances, 'searched_accounts_exchange_interactions_data': searched_accounts_exchange_interactions_data}
+          var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances, 'searched_accounts_exchange_interactions_data': searched_accounts_exchange_interactions_data, 'typed_search':typed_search,
+          'search_time':Date.now(),
+          }
 
           data.push(obj)
 
@@ -32341,7 +32472,7 @@ return data['data']
     }
 
     if(!data_found){
-      this.prompt_top_notification(this.getLocale()['2737']/* 'Search complete, no account data found' */, 5000)
+      this.prompt_top_notification(this.getLocale()['2737']/* 'e didnt find anything matching your search.' */, 5000)
       return;
     }
     var clone = structuredClone(this.state.searched_accounts_data)
