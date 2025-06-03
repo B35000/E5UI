@@ -12150,9 +12150,9 @@ return data['data']
             for(var i = 0; i < e.target.files.length; i++){
                 this.is_loading_file = true
                 let reader = new FileReader();
-                reader.onload = function(ev){
-                    // console.log('stackpage',ev)
-                    var obj = {'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'thumbnail':'', 'data_type':type, 'metadata':''}
+                reader.onload = async function(ev){
+                    var thumb = type == 'video' ? await this.extractFirstFrame(ev.target.result) : ''
+                    var obj = {'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':''}
 
                     if(ev.total < this.get_upload_file_size_limit()){
                         this.files.push(obj)
@@ -12216,13 +12216,48 @@ return data['data']
         }
     }
 
+    extractFirstFrame(videoUrl) {
+        return new Promise((resolve, reject) => {
+          const video = document.createElement("video");
+    
+          video.src = videoUrl;
+          video.crossOrigin = "anonymous"; // Needed if video is from another domain
+          video.preload = "auto";
+          video.muted = true;
+    
+          video.addEventListener("loadeddata", () => {
+            video.currentTime = 0; // Seek to the beginning
+          });
+    
+          video.addEventListener("seeked", () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+            // Get a base64 image string or blob
+            canvas.toDataURL(blob => {
+              resolve(blob); // Or use canvas.toDataURL() if you want a base64 string
+            }, "image/jpeg", 0.6);
+
+          });
+    
+          video.addEventListener("error", (err) => {
+            reject("Error loading video: " + err.message);
+          });
+        });
+    }
+
     when_file_picked_for_arweave = async (e, type) => {
         if(e.target.files && e.target.files[0]){
             this.props.notify(this.props.app_state.loc['1593ex']/* 'Preparing File...' */, 2000)
             this.selected_file_type = type
             let reader = new FileReader();
-            reader.onload = function(ev){
-                this.file = {'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'thumbnail':'', 'data_type':type, 'metadata':''}
+            reader.onload = async function(ev){
+                var thumb = type == 'video' ? await this.extractFirstFrameFromArrayBuffer(ev.target.result) : ''
+                
+                this.file = {'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':''}
 
                 if(ev.total < this.get_upload_file_size_limit()){
                     this.upload_file_to_arweave()
@@ -12265,6 +12300,41 @@ return data['data']
                 reader.readAsArrayBuffer(zipFile);
             }
         }
+    }
+
+    extractFirstFrameFromArrayBuffer(arrayBuffer) {
+        return new Promise((resolve, reject) => {
+          const video = document.createElement("video");
+          const blob = new Blob([arrayBuffer], { type: 'video/mp4' }); // or appropriate MIME type
+          const videoUrl = URL.createObjectURL(blob);
+
+          video.src = videoUrl;
+          video.crossOrigin = "anonymous"; // Needed if video is from another domain
+          video.preload = "auto";
+          video.muted = true;
+    
+          video.addEventListener("loadeddata", () => {
+            video.currentTime = 0; // Seek to the beginning
+          });
+    
+          video.addEventListener("seeked", () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+            // Get a base64 image string or blob
+            canvas.toDataURL(blob => {
+              resolve(blob); // Or use canvas.toDataURL() if you want a base64 string
+            }, "image/jpeg", 0.6);
+
+          });
+    
+          video.addEventListener("error", (err) => {
+            reject("Error loading video: " + err.message);
+          });
+        });
     }
 
     get_pdf_image_from_file = async (file) => {

@@ -21339,12 +21339,19 @@ return data['data']
 
   load_and_store_video_thumbnail(cid, data){
     var link = data['data']
-    this.extractFirstFrame(link).then(blob => {
-      const imageUrl = URL.createObjectURL(blob);
+    var existing_thumbnail = data['thumbnail']
+    if(existing_thumbnail != null && existing_thumbnail != ''){
       var clone = structuredClone(this.state.video_thumbnails)
-      clone[cid] = imageUrl
+      clone[cid] = existing_thumbnail
       this.setState({video_thumbnails: clone})
-    });
+    }else{
+      this.extractFirstFrame(link).then(blob => {
+        const imageUrl = URL.createObjectURL(blob);
+        var clone = structuredClone(this.state.video_thumbnails)
+        clone[cid] = imageUrl
+        this.setState({video_thumbnails: clone})
+      });
+    }
   }
 
   extractFirstFrame(videoUrl) {
