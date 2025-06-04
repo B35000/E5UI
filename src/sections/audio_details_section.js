@@ -992,7 +992,7 @@ return data['data']
             'copyright':{'title':copyright, 'details':this.props.app_state.loc['a311ae']/* 'Copyright' */, 'size':'l'},
             'comment':{'title':comment, 'details':this.props.app_state.loc['a311ag']/* 'Comment' */, 'size':'l'},
             'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
-            'banner-icon':{'header':author, 'subtitle':this.truncate(title, 15), 'image':image},
+            'banner-icon':{'header':'', 'subtitle':'', 'image':image},
 
             'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
 
@@ -1156,6 +1156,7 @@ return data['data']
                                 <div style={{height:5}}/>
                             </div>
                         ))}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
             </div>
@@ -1194,7 +1195,7 @@ return data['data']
                                     <p style={{'color': text_color, 'font-size': '10px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{song_length}</p>
                                 </div>
                             </div>
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-3px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
                         </div>
                     </div>
                 </div>
@@ -1224,7 +1225,7 @@ return data['data']
         if(type == 'playlist'){
             return(
                 <div>
-                    <img src={this.get_image_from_file(img)} alt="" style={{height:43 ,width:43, 'border-radius': '10px'}}/>
+                    <img src={this.get_image_from_file(img)} alt="" style={{height:43 ,width:'auto', 'border-radius': '10px'}}/>
                 </div>
             )
         }
@@ -1357,16 +1358,15 @@ return data['data']
         var he = this.props.height-45
         var items = object['songs']
         if(items.length == 0){
-            items = ['0','1','2'];
             return ( 
                 <div>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                {this.render_small_empty_object()}
-                            </li>
-                        ))}
-                    </ul>
+                    <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                        <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
+                            {this.render_detail_item('3', {'title':object['title'], 'details':object['details'], 'size':'l'})}
+                            {this.render_detail_item('0')}
+                            {this.render_empty_views(3)}
+                        </div>
+                    </div>
                 </div>
             );
         }
@@ -1451,8 +1451,11 @@ return data['data']
 
 
     render_discography(object){
+        var he = this.props.height-45
         var items = [].concat(this.get_authors_discography(object))
-        if(items.length == 0) return;
+        if(items.length == 0){
+            return;
+        }
         return(
             <div>
                 {this.render_detail_item('0')}
@@ -1544,8 +1547,11 @@ return data['data']
 
 
     render_similar_audioposts(object){
+        var he = this.props.height-45
         var items = [].concat(this.get_similar_posts(object))
-        if(items.length == 0) return;
+        if(items.length == 0){
+            return;
+        }
         return(
             <div>
                 {this.render_detail_item('0')}
@@ -2006,7 +2012,7 @@ return data['data']
             return
         }
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'audio')
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'audio', null, this.state.entered_text)
     }
 
 
@@ -2600,7 +2606,14 @@ return data['data']
     }
 
     when_entered_text_input_field_changed(text){
-        this.setState({entered_text: text})
+        if(text.length > this.props.app_state.max_input_text_length){
+            var object = this.is_object_playlist() ? this.get_item_in_playlists(this.get_audio_items(), this.props.selected_audio_item) : this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
+
+            this.show_add_comment_bottomsheet(object)
+        }else{
+            this.setState({entered_text: text})
+        }
+        
     }
 
     add_message_to_stack(object){
@@ -2760,6 +2773,29 @@ return data['data']
 
 
 
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
 
     render_small_empty_object(){

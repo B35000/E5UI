@@ -666,6 +666,18 @@ class ProposalDetailsSection extends Component {
         }
 
         if(now < proposal_exipry_time && object['loaded_extra'] == true){
+            if(object['is_part_of_contract'] == false){
+                return(
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2258c']/* 'Expired Entry Time.' */, 'details':this.props.app_state.loc['2258d']/* 'Youre time in the contract this proposal belongs to has expired and you need to enter it again.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.props.when_e5_link_tapped(object['data'][1][5/* <5>target_contract_authority */])}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['2258e']/* 'Open Contract' */, 'action':''})}
+                        </div>
+                    </div>
+                )
+            }
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1297,7 +1309,7 @@ class ProposalDetailsSection extends Component {
     show_add_comment_bottomsheet(object){
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'proposal')
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'proposal', null, this.state.entered_text)
     }
 
     render_top_title(object){
@@ -1887,7 +1899,12 @@ class ProposalDetailsSection extends Component {
     }
 
     when_entered_text_input_field_changed(text){
-        this.setState({entered_text: text})
+        if(text.length > this.props.app_state.max_input_text_length){
+            var object =  this.get_item_in_array(this.get_proposal_items(), this.props.selected_proposal_item);
+            this.show_add_comment_bottomsheet(object)
+        }else{
+            this.setState({entered_text: text})
+        }
     }
 
     add_message_to_stack(object){

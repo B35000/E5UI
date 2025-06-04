@@ -4395,10 +4395,12 @@ return data['data']
                         t = await this.process_channel_object(txs[i])
                     }
                     var extra_tags = [].concat(t.entered_title_text)
+                    extra_tags = extra_tags.concat(t.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
                         var songs = t.songs
                         songs.forEach(song => {
-                            extra_tags.push(song['song_title'].toLowerCase())
+                            extra_tags = extra_tags.concat(song['song_title'].trim().split(/\s+/).filter(word => word.length >= 3))
+                            extra_tags.push(song['song_title'])
                             if(!extra_tags.includes(song['song_composer'].toLowerCase())){
                                 extra_tags.push(song['song_composer'].toLowerCase())
                             }
@@ -4408,7 +4410,8 @@ return data['data']
                     if(txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
                         var videos = t.videos
                         videos.forEach(video => {
-                            extra_tags.push(video['video_title'].toLowerCase())
+                            extra_tags = extra_tags.concat(video['video_title'].trim().split(/\s+/).filter(word => word.length >= 3))
+                            extra_tags.push(video['video_title'])
                             if(!extra_tags.includes(video['video_composer'].toLowerCase())){
                                 extra_tags.push(video['video_composer'].toLowerCase())
                             }
@@ -4499,10 +4502,12 @@ return data['data']
                     }
                     ipfs_index_object[data.id] = data
                     var extra_tags = [].concat(data.entered_title_text)
+                    extra_tags = extra_tags.concat(t.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
                         var songs = data.songs
                         songs.forEach(song => {
-                            extra_tags.push(song['song_title'].toLowerCase())
+                            extra_tags = extra_tags.concat(song['song_title'].trim().split(/\s+/).filter(word => word.length >= 3))
+                            extra_tags.push(song['song_title'])
                             if(!extra_tags.includes(song['song_composer'].toLowerCase())){
                                 extra_tags.push(song['song_composer'].toLowerCase())
                             }
@@ -4512,7 +4517,8 @@ return data['data']
                     if(txs[i].type == this.props.app_state.loc['b311a']/* video */){
                         var videos = data.videos
                         videos.forEach(video => {
-                            extra_tags.push(video['video_title'].toLowerCase())
+                            extra_tags = extra_tags.concat(video['video_title'].trim().split(/\s+/).filter(word => word.length >= 3))
+                            extra_tags.push(video['video_title'])
                             if(!extra_tags.includes(video['video_composer'].toLowerCase())){
                                 extra_tags.push(video['video_composer'].toLowerCase())
                             }

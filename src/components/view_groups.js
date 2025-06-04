@@ -200,6 +200,7 @@ class ViewGroups extends Component {
             var word_wrap_value = 'normal'
             var word_wrap_value2 = 'normal'
             var text_image_border_radius = '0px'
+            var blur_image = false
             if(object_data != null){
                 title = object_data['title']
                 details = object_data['details']
@@ -228,15 +229,16 @@ class ViewGroups extends Component {
                 var img = E5EmptyIcon;
                 if(object_data != null){
                     img = object_data['image'];
-                    if(object_data['border_radius'] != null) image_border_radius = object_data['border_radius']
-                    if(object_data['image_width'] != null) image_width = object_data['image_width']
+                    if(object_data['border_radius'] != null) image_border_radius = object_data['border_radius'];
+                    if(object_data['image_width'] != null) image_width = object_data['image_width'];
+                    if(object_data['blur_image'] != null) blur_image = object_data['blur_image'];
                 }
 
                return (
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
-                                <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
+                                {this.render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data)}
                             </div>
                             <div style={{'margin':'0px 0px 0px 10px'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])}>
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
@@ -652,6 +654,22 @@ class ViewGroups extends Component {
                     </div>
                 </div>
             );
+        }
+    }
+
+    render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data){
+        if(blur_image == true){
+            return(
+                <div>
+                    <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius, 'filter': 'blur(3px)', '-webkit-filter': 'blur(3px)'}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
+                </div>
+            )
         }
     }
 

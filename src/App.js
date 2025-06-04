@@ -816,7 +816,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35,
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:35,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -872,7 +872,7 @@ class App extends Component {
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
 
-    stack_size_in_bytes:{}, token_thumbnail_directory:{}
+    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}
   };
 
   get_static_assets(){
@@ -2722,6 +2722,9 @@ class App extends Component {
     this.has_posts_blocked_by_me_loaded = {}
     this.has_censored_keywords_by_me_loaded = {}
     this.has_promoted_posts_by_me_loaded = {}
+
+    this.gateway_traffic_cache_pointers = {}
+    this.gateway_traffic_cache_pointers_index = 0
   }
 
   componentDidMount() {
@@ -2926,8 +2929,8 @@ class App extends Component {
     this.set_cookies2(size);
   }
 
-  set_cookies2(size){
-    var x = JSON.stringify(this.get_persistent_data2(), (key, value) =>
+  set_cookies2 = async (size) => {
+    var x = JSON.stringify(await this.get_persistent_data2(), (key, value) =>
             typeof value === 'bigint'
                 ? value.toString()
                 : value // return everything else unchanged));
@@ -3015,10 +3018,10 @@ class App extends Component {
     }
   }
 
-  get_persistent_data2(){
+  get_persistent_data2 = async () => {
     return {
       cached_tracks: this.get_cached_tracks_to_store(),
-      cached_files: this.get_uploaded_data_to_stash()
+      cached_files: await this.get_uploaded_data_to_stash()
     }
   }
 
@@ -3337,17 +3340,17 @@ class App extends Component {
     this.setState({created_audios: created_audios, created_audio_mappings: created_audio_mappings})
   }
 
-  get_uploaded_data_to_stash(){
+  get_uploaded_data_to_stash = async () => {
     var cid_clone = this.state.uploaded_data_cids
     var obj = {}
     obj['e'] = cid_clone
-    cid_clone.forEach(cid => {
-      var data = this.fetch_from_storage(cid)
+    for(var i=0; i<cid_clone.length; i++){
+      var cid = cid_clone[i]
+      var data = await this.fetch_from_storage(cid)
       if(data != null){
         obj[cid] = data
       }
-    });
-
+    }
     return obj
   }
 
@@ -13197,13 +13200,13 @@ return data['data']
     }
   }
 
-  show_add_comment_bottomsheet = async (object, focused_message_id, page, contractor_object) => {
+  show_add_comment_bottomsheet = async (object, focused_message_id, page, contractor_object, starting_text) => {
     this.set_comment_bottomsheet_size(focused_message_id)
     this.open_add_comment_bottomsheet()
     var me = this;
     setTimeout(function() {
       if(me.add_comment_page.current != null){
-        me.add_comment_page.current.set_comment_data(object, focused_message_id, page, contractor_object)
+        me.add_comment_page.current.set_comment_data(object, focused_message_id, page, contractor_object, starting_text)
       }
     }, (1 * 500));
     
@@ -18206,7 +18209,31 @@ return data['data']
     var seed = added_tags.join(' | ') + set_salt + selected_item;
     this.generate_one_account_for_all_e5s(seed)
     this.generate_account_data_for_each_coin(seed)
-    this.setState({account_balance: {}, account_seed: seed, mail_message_events:{}, all_mail:{}, account_balance:{}, });
+    this.setState({
+      account_balance: {}, 
+      account_seed: seed, 
+      mail_message_events:{}, 
+      all_mail:{}, 
+      account_balance:{}, 
+      contacts:{}, 
+      blocked_accounts:{}, 
+      job_section_tags: [], 
+      explore_section_tags: [], 
+      uploaded_data_cids:[], 
+      my_albums: [], 
+      my_tracks: [], 
+      my_playlists:[], 
+      song_plays:{}, 
+      my_videoposts: [], 
+      my_videos: [], 
+      followed_accounts: primary_following, 
+      posts_blocked_by_me:[], 
+      posts_blocked_by_my_following:[], 
+      censored_keyword_phrases:[], 
+      censored_keywords_by_my_following:[], 
+      posts_reposted_by_me:{}, 
+      posts_reposted_by_my_following:{}
+    });
 
     this.get_blocked_accounts_data_e5_timestamp = 0
     this.get_section_tags_data_e5_timestamp = 0
@@ -21232,7 +21259,7 @@ return data['data']
 
     this.setState({withdraw_event_data: withdraw_clone, pending_withdraw_event_data: pending_withdraw_clone})
   }
-
+  
   get_contacts_data = async (web3, E52contractInstance, e5, account) => {
     var contacts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1})
 
@@ -21425,7 +21452,7 @@ return data['data']
       var storage_id = ecid_obj['storage']
       var file_name = ecid_obj['file_name']
       // console.log('datas', 'fetching object', ecid_obj)
-      var data = this.fetch_from_storage(cids[i])
+      var data = await this.fetch_from_storage(cids[i])
       if(data == null){
         data = await this.fetch_file_data_from_respective_storage(id, storage_id, file_name, 0)
         // console.log('datas', 'loaded:', data)
@@ -21642,7 +21669,7 @@ return data['data']
       }
       
       if(parseInt(this.my_playlists_timestamp) < parseInt(timestamp)){
-        var clone = structuredClone(this.state.my_playlists)
+        var clone = this.state.my_playlists.slice()
         if(this.my_playlist_account != address_account && this.my_playlist_account != null){
           clone = []
         }
@@ -23732,7 +23759,6 @@ return data['data']
         created_contracts.push(contract)
         accounts_for_expiry_time.push([account])
       }
-      
     }
 
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
@@ -23854,7 +23880,7 @@ return data['data']
       //   }
       // }
 
-      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':0/* end_balance */, 'spend_balance':0/* spend_balance */, 'consensus_data':[0,0,0]/* consensus_data[i] */, 'modify_target_type':0/* proposal_modify_target_type */, 'account_vote':0/* senders_vote_in_proposal[0] */, 'archive_accounts':[]/* archive_participants */, 'e5':e5, 'timestamp':parseInt(event.returnValues.p5), 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5, 'pos':created_proposal_object_data.length, 'loaded_extra':false}
+      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':0/* end_balance */, 'spend_balance':0/* spend_balance */, 'consensus_data':[0,0,0]/* consensus_data[i] */, 'modify_target_type':0/* proposal_modify_target_type */, 'account_vote':0/* senders_vote_in_proposal[0] */, 'archive_accounts':[]/* archive_participants */, 'e5':e5, 'timestamp':parseInt(event.returnValues.p5), 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5, 'pos':created_proposal_object_data.length, 'loaded_extra':false, 'is_part_of_contract':false}
 
       if(this.homepage.current?.state.selected_proposal_item == my_proposal_ids[i]+e5){
         const previous_obj = this.state.my_proposals[e5].find(e => e['e5_id'] == my_proposal_ids[i]+e5)
@@ -23866,6 +23892,7 @@ return data['data']
           obj['modify_target_type'] = previous_obj['modify_target_type']
           obj['end_balance'] = previous_obj['end_balance']
           obj['spend_balance'] = previous_obj['spend_balance']
+          obj['is_part_of_contract'] = previous_obj['is_part_of_contract']
         }
       }
 
@@ -23938,6 +23965,14 @@ return data['data']
     var end_balance = /* await this.get_balance_in_exchange(3, my_proposal_ids[i], e5, contract_addresses); */ balances[i][0]
     var spend_balance = /* await this.get_balance_in_exchange(5, my_proposal_ids[i], e5, contract_addresses); */ balances[i][1]
 
+    var is_part_of_contract = true
+    var proposal_contract = object['data'][1][5/* <5>target_contract_authority */]
+    if(proposal_contract != 2){
+      var contract_entered_accounts = [account]
+      var entered_account_times = await G52contractInstance.methods.f266([proposal_contract], [contract_entered_accounts], 3).call((error, result) => {});
+      var is_part_of_contract = entered_account_times[0][0] > (Date.now()/1000)
+    }
+
     object['archive_accounts'] = archive_participants
     object['loaded_extra'] = true
     object['consensus_data'] = consensus_data[i]
@@ -23945,6 +23980,7 @@ return data['data']
     object['modify_target_type'] = proposal_modify_target_type
     object['end_balance'] = end_balance
     object['spend_balance'] = spend_balance
+    object['is_part_of_contract'] = is_part_of_contract
 
     var my_proposals_clone = structuredClone(this.state.my_proposals)
     my_proposals_clone[e5][object['pos']] = object
@@ -24085,6 +24121,7 @@ return data['data']
     var token_symbol_directory = {}
     var token_name_directory = {}
     var token_thumbnail_directory = {}
+    var end_tokens = []
     token_symbol_directory[0] = 'wei'
     token_symbol_directory['wei'] = 0
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
@@ -24139,10 +24176,10 @@ return data['data']
       var balance = balance_obj[created_tokens[i]]['token_balance']
       var token_balance_data = balance_obj[created_tokens[i]]['token_balance_data']
 
-      // var exchanges_depth = 0
-      // if(tokens_data != null){
-      //   exchanges_depth = tokens_data.default_depth == null ? 0 : tokens_data.default_depth
-      // }
+      var exchanges_depth = 0
+      if(tokens_data != null){
+        exchanges_depth = tokens_data.default_depth == null ? 0 : tokens_data.default_depth
+      }
 
       // if(exchanges_depth > 13){
       //   var token_balances_and_data2 = await this.get_balance_from_multiple_exchanges([created_tokens[i]], account, H52contractInstance, [exchanges_depth], e5)
@@ -24160,6 +24197,10 @@ return data['data']
       }
       else if(created_tokens[i] == 5){
         token_thumbnail_directory[created_tokens[i]] = this.state.e5s[e5].spend_image
+      }
+
+      if(exchanges_depth != 0){
+        end_tokens.push(created_tokens[i])
       }
         
       var token_obj = {
@@ -24230,7 +24271,10 @@ return data['data']
         var token_thumbnail_directory_clone = structuredClone(this.state.token_thumbnail_directory)
         token_thumbnail_directory_clone[e5] = token_thumbnail_directory
 
-        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone})
+        var end_tokens_clone = structuredClone(this.state.end_tokens)
+        end_tokens_clone[e5] = end_tokens
+
+        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
         // await this.wait(150)
       }
     }
@@ -24250,7 +24294,10 @@ return data['data']
     var token_thumbnail_directory_clone = structuredClone(this.state.token_thumbnail_directory)
     token_thumbnail_directory_clone[e5] = token_thumbnail_directory
 
-    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone})
+    var end_tokens_clone = structuredClone(this.state.end_tokens)
+    end_tokens_clone[e5] = end_tokens
+
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
     // console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
 
   }
@@ -25845,7 +25892,7 @@ return data['data']
     }
 
     console.log('bought_nitros', bought_nitro_events, 'account', account, 'e5', e5)
-    created_nitro_events = created_nitro_events.reverse()
+    // created_nitro_events = created_nitro_events.reverse()
 
     //prioritize my content first
     var my_posted_events = created_nitro_events.filter(function (event) {
@@ -28886,7 +28933,7 @@ return data['data']
           }
           obj_id_ecid[ids[i]] = {'id':id, 'internal_id':internal_id,'option':option }
           obj_types[id] = option
-          if(this.fetch_from_storage(id) == null) hashes.push(id)
+          if(await this.fetch_from_storage(id) == null) hashes.push(id)
           valid_ids.push(ids[i])
         }
       }
@@ -28936,7 +28983,7 @@ return data['data']
       var valid_id = valid_ids[i]
       var valid_id_cid = obj_id_ecid[valid_id]['id']
       var valid_id_internal_id = obj_id_ecid[valid_id]['internal_id']
-      var valid_id_data = this.fetch_from_storage(valid_id_cid)
+      var valid_id_data = await this.fetch_from_storage(valid_id_cid)
       if(valid_id_data != null){
         var final_data = valid_id_data
         if(valid_id_internal_id != ''){
@@ -28995,7 +29042,7 @@ return data['data']
     }
     
     if(option == 'in'){
-      var data = this.fetch_from_storage(id)
+      var data = await this.fetch_from_storage(id)
       if(data == null){
         data = await this.fetch_object_data_from_infura(id, 0)
         this.store_in_local_storage(id, data)
@@ -29008,7 +29055,7 @@ return data['data']
       return data
     }
     else if(option == 'we'){
-      var data = this.fetch_from_storage(id)
+      var data = await this.fetch_from_storage(id)
       if(data == null){
         data = await this.fetch_objects_data_from_web3(id, 0)
         this.store_in_local_storage(id, data)
@@ -29020,7 +29067,7 @@ return data['data']
       return data
     }
     else if(option == 'nf'){
-      var data = this.fetch_from_storage(id)
+      var data = await this.fetch_from_storage(id)
       if(data == null){
         data = await this.fetch_objects_data_from_nft_storage(id, 0)
         this.store_in_local_storage(id, data)
@@ -29032,7 +29079,7 @@ return data['data']
       return data
     }
     else if(option == 'ni'){
-      var data = this.fetch_from_storage(id)
+      var data = await this.fetch_from_storage(id)
       if(data == null){
         data = await this.fetch_data_from_nitro(id, 0)
         this.store_in_local_storage(id, data)
@@ -29044,7 +29091,7 @@ return data['data']
       return data
     }
     else if(option == 'ar'){
-      var data = this.fetch_from_storage(id)
+      var data = await this.fetch_from_storage(id)
       if(data == null){
         data = await this.fetch_data_from_arweave(id)
         if(data != null) this.store_in_local_storage(id, data);
@@ -30387,11 +30434,22 @@ return data['data']
 
 
 
-  fetch_from_storage(cid){
+  fetch_from_storage = async(cid) => {
     if(this.gateway_traffic_cache == null){
       this.gateway_traffic_cache = {}
     }
-    return this.gateway_traffic_cache[cid] 
+    var data_or_pointer = this.gateway_traffic_cache[cid];
+    if(data_or_pointer != null){
+      return data_or_pointer
+    }else{
+      if(this.gateway_traffic_cache_pointers != null){
+        var pointer = this.gateway_traffic_cache_pointers[cid]
+        if(pointer != null){
+          var storage_object = await this.load_data_from_indexdb(pointer.toString())
+          return storage_object[cid]
+        }
+      }
+    }
   }
 
   store_in_local_storage(cid, data){
@@ -30399,6 +30457,32 @@ return data['data']
       this.gateway_traffic_cache = {}
     }
     this.gateway_traffic_cache[cid] = data
+
+    if(this.get_object_size_in_mbs(this.gateway_traffic_cache) > 5.3){
+      this.gateway_traffic_cache_pointers_index += 1
+      var keys = Object.keys(this.gateway_traffic_cache)
+      var store_obj = {}
+      if(this.gateway_traffic_cache_pointers == null){
+        this.gateway_traffic_cache_pointers = {}
+      }
+      keys.forEach(key => {
+        store_obj[key] = this.gateway_traffic_cache[key]
+        this.gateway_traffic_cache_pointers[key] = this.gateway_traffic_cache_pointers_index
+      });
+
+      var x = JSON.stringify(store_obj, (key, value) =>
+        typeof value === 'bigint'
+            ? value.toString()
+            : value // return everything else unchanged));
+      )
+      this.update_data_in_db(x, this.gateway_traffic_cache_pointers_index.toString())
+      Object.keys(this.gateway_traffic_cache).forEach(key => delete this.gateway_traffic_cache[key]);
+    }
+  }
+
+  get_object_size_in_mbs(obj) {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj, (_, v) => typeof v === 'bigint' ? v.toString() : v)).length;
+    return (bytes / (1024 * 1024)).toFixed(2); // Convert bytes to MB
   }
 
   wait = async (t) => {

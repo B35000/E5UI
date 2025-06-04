@@ -576,7 +576,7 @@ class MailDetailsSection extends Component {
     show_add_comment_bottomsheet(object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'mail')
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'mail', null, this.state.entered_text)
     }
 
     render_top_title(mail){
@@ -1224,7 +1224,12 @@ class MailDetailsSection extends Component {
     }
 
     when_entered_text_input_field_changed(text){
-        this.setState({entered_text: text})
+        if(text.length > this.props.app_state.max_input_text_length){
+            var object =  this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+            this.show_add_comment_bottomsheet(object)
+        }else{
+            this.setState({entered_text: text})
+        }
     }
 
     add_message_to_stack(mail){

@@ -2708,12 +2708,6 @@ return data['data']
         }
     }
 
-    lengthInUtf8Bytes(str) {
-        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
-        var m = encodeURIComponent(str).match(/%[89ABab]/g);
-        return str.length + (m ? m.length : 0);
-    }
-
     when_subtitle_file_tapped(){
         this.setState({video_subtitle_file_name:'', video_subtitle_file:null})
         this.props.notify(this.props.app_state.loc['b311ac']/* 'Staged .vtt file removed.' */, 1200);

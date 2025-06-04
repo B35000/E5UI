@@ -1048,7 +1048,7 @@ class BagDetailsSection extends Component {
     show_add_comment_bottomsheet(object){
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'bag')
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'bag', null, this.state.entered_text)
     }
   
 
@@ -1731,7 +1731,12 @@ class BagDetailsSection extends Component {
     }
 
     when_entered_text_input_field_changed(text){
-        this.setState({entered_text: text})
+        if(text.length > this.props.app_state.max_input_text_length){
+            var object =  this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
+            this.show_add_comment_bottomsheet(object)
+        }else{
+            this.setState({entered_text: text})
+        }
     }
 
     add_message_to_stack(object){

@@ -918,7 +918,7 @@ class ChannelDetailsSection extends Component {
             return
         }
         else {
-            this.props.show_add_comment_bottomsheet(object, focused_message_id, 'channel')
+            this.props.show_add_comment_bottomsheet(object, focused_message_id, 'channel', null,this.state.entered_text)
         }
     }
 
@@ -1545,7 +1545,12 @@ class ChannelDetailsSection extends Component {
     }
 
     when_entered_text_input_field_changed(text){
-        this.setState({entered_text: text})
+        if(text.length > this.props.app_state.max_input_text_length){
+            var object =  this.get_item_in_array(this.get_channel_items(), this.props.selected_channel_item);
+            this.show_add_comment_bottomsheet(object)
+        }else{
+            this.setState({entered_text: text})
+        }
     }
 
     add_message_to_stack(object){

@@ -779,7 +779,7 @@ class ContractDetailsSection extends Component {
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if (time_to_expiry > 0 || object['id'] == 2) {
+        if (time_to_expiry > 0 || object['id'] == 2){
             return (
                 <div>
                     {this.render_detail_item('0')}
@@ -925,13 +925,16 @@ class ContractDetailsSection extends Component {
 
     show_contract_token_balances_data_chart(object){
         var data = this.props.app_state.contract_exchange_interactions_data[object['e5']+object['id']]
-        if(data == null || this.get_interacted_exchanges(data, object).length == 0) return;
+        if(data == null) return;
+        var interacted_exchange_data = this.get_interacted_exchanges(data, object)
+        if(interacted_exchange_data.length == 0) return;
         var selected_exchange = this.get_selected_interacted_exchange(object, data)[0]
         var event_data = this.get_selected_exchange_data(data, selected_exchange)
         return(
             <div>
                 <div style={{height: 10}}/>
-                {this.render_detail_item('1', {'active_tags':this.get_interacted_exchanges(data, object), 'index_option':'indexed', 'when_tapped': 'when_contract_exchange_tapped', 'selected_tags':this.get_selected_interacted_exchange(object, data)}, object)}
+                {/* {this.render_detail_item('1', {'active_tags':interacted_exchange_data, 'index_option':'indexed', 'when_tapped': 'when_contract_exchange_tapped', 'selected_tags':this.get_selected_interacted_exchange(object, data)}, object)} */}
+                {this.load_my_used_exchange_objects(interacted_exchange_data, object, selected_exchange)}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
                 
@@ -943,24 +946,85 @@ class ContractDetailsSection extends Component {
         )
     }
 
-    get_interacted_exchanges(data, object){
-        var keys = Object.keys(data)
-        var exchange_names = []
-        keys.forEach(key => {
-            var name = this.get_token_symbol_from_id(key, object)
-            if(this.is_exchange_valid(data[key], name)) exchange_names.push(name)
-        });
-        return exchange_names
+    load_my_used_exchange_objects(items, object, selected_exchange){
+        var items2 = [0, 1, 2]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item2()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_contract_exchange_tapped(item.symbol, index, object)}>
+                            {this.render_exchange_item(item, object, selected_exchange)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
-    is_exchange_valid(events, key){
+    render_exchange_item(item, object, selected_exchange){
+        var e5 = object['e5']
+        var title = item.name
+        var details = item.symbol
+        var image = this.props.app_state.token_thumbnail_directory[e5][item.exchange_id]
+        if(selected_exchange == item.symbol){
+            return(
+                <div>
+                    {this.render_detail_item('14', {'title':title, 'image':image,'details':details, 'size':'s', 'border_radius':'9px', 'img_size':30})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'border_radius':'9px', 'img_size':30})}
+                </div>
+            )
+        }
+    }
+
+    get_interacted_exchanges(data, object){
+        var keys = Object.keys(data)
+        var exchange_data = []
+        keys.forEach(key => {
+            var symbol = this.get_token_symbol_from_id(key, object)
+            var name = this.get_token_name_from_id(key, object)
+            if(this.is_exchange_valid(data[key], name, key, object)){
+                exchange_data.push({name, exchange_id: key, symbol})
+            } 
+        });
+        return exchange_data
+    }
+
+    get_token_name_from_id(exchange_id, object){
+        var e5 = object['e5']
+        var name = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id]
+        if(name == null) return exchange_id
+        return name
+    }
+
+    is_exchange_valid(events, key, exchange_id, object){
         for(var i=0; i<events.length; i++){
             if(events[i]['action'] === 'DepthMint' && events[i]['event'].returnValues.p4/* depth_val */ !== 0){
                 return false
             }
         }
-        if(key == 'MAMMOTH' || key == 'GOL') return false
-        if(key != 'END' && key != 'SPEND') return false
+        var e5 = object['e5']
+        if(this.props.app_state.end_tokens[e5] != null && this.props.app_state.end_tokens[e5].includes(exchange_id)){
+            return false
+        }
         return true
     }
 

@@ -844,6 +844,17 @@ class VideoDetailsSection extends Component {
         var he = this.props.height-45
         var items = this.get_videos_to_display(object)
         var object_item = this.get_post_details_data(object)
+        if(items.length == 0){
+            return(
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
+                        {this.render_detail_item('8', object_item['id2'])}
+                        {this.render_detail_item('0')}
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
@@ -1494,7 +1505,7 @@ class VideoDetailsSection extends Component {
             return
         }
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'video')
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'video', null, this.state.entered_text)
     }
 
 
@@ -2092,7 +2103,12 @@ class VideoDetailsSection extends Component {
     }
 
     when_entered_text_input_field_changed(text){
-        this.setState({entered_text: text})
+        if(text.length > this.props.app_state.max_input_text_length){
+            var object =  this.get_item_in_array(this.get_video_items(), this.props.selected_video_item);
+            this.show_add_comment_bottomsheet(object)
+        }else{
+            this.setState({entered_text: text})
+        }
     }
 
     add_message_to_stack(object){
@@ -2257,7 +2273,28 @@ class VideoDetailsSection extends Component {
 
 
 
-
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     get_selected_item(object, option){
         var selected_item = object[option][2][0]

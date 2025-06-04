@@ -3134,10 +3134,12 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_audio_items()
+        
 
         if(selected_item == this.props.app_state.loc['1264l']/* 'acquired' */){
             return(
                 <div style={{ 'padding': '7px 0px 0px 0px'}}>
+                    {this.render_search_songs(items)}
                     {this.render_my_bought_albums(items)}
                 </div>
             )
@@ -3153,7 +3155,7 @@ class PostListSection extends Component {
 
         if(items.length == 0){
             items = ['0','1'];
-            return ( 
+            return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'audioport')}
@@ -3174,6 +3176,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'audioport')}
+                            {this.render_search_songs(items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -3186,6 +3189,244 @@ class PostListSection extends Component {
             );
         }
     }
+
+    render_search_songs(audioposts){
+        var items = this.get_searched_audio_items(audioposts)
+        if(items.length == 0){
+            return;
+        }
+        return(
+            <div>
+                {items.map((item, index) => (
+                    <div key={index}>
+                        {this.render_song(item['song'], item['object'], index, 'album')} 
+                        {this.render_space_if_not_last(index, items.length)}
+                    </div>
+                ))}
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    get_searched_audio_items(audioposts){
+        const search = this.props.current_search
+        if(search == null || search == ''){
+            return []
+        }
+        var searched_string_words = search.trim().split(/\s+/).filter(word => word.length >= 3)
+        var selected_songs = []
+        var similar_songs = []
+        audioposts.forEach(audiopost => {
+            var audiopost_songs = audiopost['ipfs'].songs
+            audiopost_songs.forEach(song => {
+                var song_title = song['song_title']
+                var song_composer = song['song_composer']
+
+                if(
+                    this.containsAllWords(song_title, searched_string_words, 'all') || 
+                    this.containsAllWords(song_composer, searched_string_words, 'all')
+                ){
+                    selected_songs.push({'song':song, 'object':audiopost})
+                }else if(
+                    this.containsAllWords(song_title, searched_string_words, 'some') || 
+                    this.containsAllWords(song_composer, searched_string_words, 'some')
+                ){
+                    similar_songs.push({'song':song, 'object':audiopost})
+                }
+            });
+        });
+
+        return selected_songs.concat(similar_songs)
+    }
+    
+    render_space_if_not_last(index, length){
+        if(index != length-1){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+    render_song(item, object, index, type){
+        var border_radius = '10px';
+        var text_align = 'left'
+        var padding = '10px 15px 10px 15px'
+        var font_size = ['15px', '12px', 19, 50];
+        var explicit_selection = item['explicit'] == null ? 0 : this.get_selected_item2(item['explicit'], 'e')
+        var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
+
+        var song_title = explicit_text + item['song_title'] + ( this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
+        var song_details = item['song_composer']
+        var song_length = this.get_song_duration(item['basic_data'])
+        var text_color = this.props.theme['secondary_text_color']
+        if(this.is_song_playing(item)){
+            song_length = '▶ '+song_length
+            text_color = this.props.theme['primary_text_color']
+        }
+        var word_wrap_value = this.longest_word_length(song_title) > 53 ? 'break-word' : 'normal'
+        return(
+            <div onClick={() => this.when_song_item_clicked_selector(item, object, type)}>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
+                    {this.render_image_if_playlist_item(item, type, object)}
+                    {this.render_space_if_playlist_item(type)}
+                    <div style={{height:'100%', width:'100%'}}>
+                        <div>
+                            <div className="row">
+                                <div className="col-10" style={{'padding': '0px 0px 0px 13px' }}> 
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value, 'overflow-wrap':word_wrap_value, 'text-align':text_align}}>{song_title}</p>
+                                </div>
+                                <div className="col-2" style={{'padding': '5px 15px 0px 0px' }}>
+                                    <p style={{'color': text_color, 'font-size': '10px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{song_length}</p>
+                                </div>
+                            </div>
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-3px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    longest_word_length(text) {
+        if(text == null) {
+            return 0
+        }
+        return text.toString()
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
+    }
+
+    render_image_if_playlist_item(item, type, object){
+        var img = item['album_art'] || object['ipfs'].album_art
+        return(
+            <div>
+                <img src={this.get_image_from_file(img)} alt="" style={{height:43 ,width:'auto', 'border-radius': '10px'}}/>
+            </div>
+        )
+    }
+
+    render_space_if_playlist_item(type){
+        return(
+            <div style={{width:10}}></div>
+        )
+    }
+
+    get_song_duration(item){
+        var duration = '0:00'
+        if(item['metadata'] != null && item['metadata']['format'] != null){
+            var format = item['metadata']['format']
+            if(format['duration'] != null){
+               var min = Math.floor(parseInt(format['duration']) / 60)
+               var sec = parseInt(format['duration']) % 60
+               duration = min+':'+sec
+            }
+        }
+        return duration
+    }
+
+    is_song_playing(item){
+        if(this.props.app_state.current_playing_song != null && this.props.app_state.current_playing_song['song_id'] == item['song_id']){
+            return true
+        }
+        return false
+    }
+
+    is_song_available_for_adding_to_playlist(song){
+        var my_songs = this.props.app_state.my_tracks
+        if(my_songs.includes(song['song_id'])){
+            return true
+        }
+        return false
+    }
+
+    when_song_item_clicked_selector(item, object, type){
+        if(type == 'album'){
+            this.when_song_item_clicked(item, object)
+        }else{
+            this.when_song_item_clicked2(item, object)
+        }
+    }
+
+    when_song_item_clicked2(item, object){
+        let me = this;
+        if(Date.now() - this.last_all_click_time3 < 200){
+            clearTimeout(this.all_timeout3);
+            //double tap
+            me.props.show_dialog_bottomsheet({'item':item, 'object':object, 'from':'audio_details_section2'}, 'song_options')
+        }else{
+            this.all_timeout3 = setTimeout(function() {
+                clearTimeout(this.all_timeout3);
+                // single tap
+                me.play_song_in_playlist(item, object)
+            }, 200);
+        }
+        this.last_all_click_time3 = Date.now();
+    }
+
+    play_song_in_playlist(item, object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else{
+            this.props.play_song_in_playlist(item, object, false)
+        }
+        
+    }
+
+    when_song_item_clicked(item, object){
+        let me = this;
+        if(Date.now() - this.last_all_click_time3 < 200){
+            clearTimeout(this.all_timeout3);
+            //double tap
+            item['object'] = object
+            item['album_art'] = object['ipfs'].album_art
+            me.props.show_dialog_bottomsheet({'item':item, 'object':object, 'from':'audio_details_section'}, 'song_options')
+        }else{
+            this.all_timeout3 = setTimeout(function() {
+                clearTimeout(this.all_timeout3);
+                // single tap
+                me.play_song(item, object)
+            }, 200);
+        }
+        this.last_all_click_time3 = Date.now();
+    }
+
+    play_song(item, object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }else{
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.play_song(item, object, this.get_preferred_audio_items(), this.is_page_my_collection_page(), false)
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'audio')
+            }
+        }
+    }
+
+    get_preferred_audio_items(){
+        var all_audios = this.get_audio_items()
+        if(this.is_page_my_collection_page()){
+            return this.props.app_state.my_acquired_audios.reverse()
+        }
+        return all_audios
+    }
+
+    is_page_my_collection_page(){
+        var page_id = this.props.get_page_id()
+        var my_collection_page_id = this.props.app_state.loc['1264k']/* 'audioport' */ + this.props.app_state.loc['1264l']/* 'acquired' */
+        if(page_id == my_collection_page_id){
+            return true
+        }
+        return false
+    }
+
+
 
     render_my_bought_albums(items){
         var background_color = this.props.theme['card_background_color']
@@ -3591,6 +3832,7 @@ return data['data']
         if(selected_item == this.props.app_state.loc['1264l']/* 'acquired' */){
             return(
                 <div style={{ 'padding': '7px 0px 0px 0px'}}>
+                    {this.render_search_videos(items)}
                     {this.render_my_bought_videos(items)}
                 </div>
             )
@@ -3619,6 +3861,7 @@ return data['data']
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'videoport')}
+                            {this.render_search_videos(items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -3631,6 +3874,110 @@ return data['data']
             );
         }
     }
+
+    render_search_videos(vieoposts){
+        var items = this.get_searched_video_items(vieoposts)
+        if(items.length == 0){
+            return;
+        }
+        return(
+            <div>
+                {items.map((item, index) => (
+                    <div key={index}>
+                        {this.render_video(item['video'], item['object'], index)} 
+                        {this.render_space_if_not_last(index, items.length)}
+                    </div>
+                ))}
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    get_searched_video_items(videoposts){
+        var search = this.props.current_search
+        if(search == null || search == ''){
+            return []
+        }
+        var searched_string_words = search.trim().split(/\s+/).filter(word => word.length >= 3)
+        var selected_videos = []
+        var similar_videos = []
+        videoposts.forEach(videopost => {
+            var videopost_videos = videopost['ipfs'].videos
+            videopost_videos.forEach(video => {
+                var video_title = video['video_title'];
+                var video_composer = video['video_composer']
+                console.log('get_searched_video_items', video_title, video_composer, searched_string_words)
+                if(
+                    this.containsAllWords(video_title, searched_string_words, 'all') || 
+                    this.containsAllWords(video_composer, searched_string_words, 'all')
+                ){
+                    selected_videos.push({'video':video, 'object':videopost})
+                }else if(
+                    this.containsAllWords(video_title, searched_string_words, 'some') || 
+                    this.containsAllWords(video_composer, searched_string_words, 'some')
+                ){
+                    similar_videos.push({'video':video, 'object':videopost})
+                }
+            });
+        });
+
+        return selected_videos.concat(similar_videos)
+    }
+
+    containsAllWords(text, requiredWords, type) {
+        const lowerText = text.toLowerCase();
+        if(type == 'all'){
+            return requiredWords.every(word => lowerText.includes(word.trim().toLowerCase()));
+        }
+        if(requiredWords.length > 1){
+            const matchCount = requiredWords.filter(word => lowerText.includes(word.toLowerCase())).length;
+            return matchCount >= 2;
+        }
+        return requiredWords.some(word => lowerText.includes(word.trim().toLowerCase()));
+    }
+
+    render_video(item, object, index){
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
+        return(
+            <div onClick={() => this.when_searched_video_item_clicked(item, object)}>
+                {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})}
+            </div>
+        )
+    }
+
+    is_video_available_for_viewing(video){
+        if(video['price_data'].length == 0) return true;
+        var my_video = this.props.app_state.my_videos
+        if(my_video.includes(video['video_id'])){
+            return true
+        }
+        return false
+    }
+
+    when_searched_video_item_clicked(item, object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        else if(!this.is_video_available_for_viewing(item)){
+            this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+        }
+        else{
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var post_author = object['event'].returnValues.p5
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            var index = 0
+            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+                this.props.play_video(item, object)
+            }else{
+                this.props.show_post_item_preview_with_subscription(object, 'video')
+            }
+        }
+    }
+
+
+
 
     render_my_bought_videos(items){
         var background_color = this.props.theme['card_background_color']
@@ -3757,12 +4104,12 @@ return data['data']
             var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
 
             var time = object['event'] == null ? 0 : object['event'].returnValues.p6
-
+            var blur = this.is_post_nsfw(object)
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
                         <div style={{'padding':'1px 0px 0px 0px'}}>
-                            <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:'auto', 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_video_image_clicked(object)}/>
+                            {this.render_video_image(image, object, blur)}
                         </div>
                         <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_video_text_clicked(object)}>
                             <div style={{height: 3}}/>
@@ -3807,6 +4154,22 @@ return data['data']
         )
     }
 
+    render_video_image(image, object, blur){
+        if(blur == true){
+            return(
+                <div>
+                    <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:'auto', 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170, 'filter': 'blur(3px)', '-webkit-filter': 'blur(3px)'}} onClick={() => this.when_video_image_clicked(object)}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:'auto', 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_video_image_clicked(object)}/>
+                </div>
+            )
+        }
+    }
+
     format_video_item(object){
         var tags = object['ipfs'] == null ? ['Videopost'] : [].concat(object['ipfs'].entered_indexing_tags)
         if(object['ipfs'].video_type != null){
@@ -3833,9 +4196,9 @@ return data['data']
         var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto'},
+            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object)},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object}
+            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object)}
         }
     }
 

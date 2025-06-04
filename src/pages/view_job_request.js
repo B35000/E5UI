@@ -972,7 +972,7 @@ class ViewJobRequestPage extends Component {
     show_add_comment_bottomsheet(){
         var object = this.state.request_item;
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message() : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'request', this.state.contractor_object['id'])
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'request', this.state.contractor_object['id'], this.state.entered_text)
     }
   
 
@@ -1590,7 +1590,11 @@ class ViewJobRequestPage extends Component {
     }
 
     when_entered_text_input_field_changed(text){
-        this.setState({entered_text: text})
+        if(text.length > this.props.app_state.max_input_text_length){
+            this.show_add_comment_bottomsheet()
+        }else{
+            this.setState({entered_text: text})
+        }
     }
 
     add_message_to_stack(){

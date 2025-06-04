@@ -1190,12 +1190,24 @@ class home_page extends Component {
         var posts_to_load = []
         var searched_data = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
-        // if(searched_data != null){
-        //     posts_to_load = [searched_data].concat(posts_to_load)
-        // }
+        
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
+        var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
+        contained_words_in_string.forEach(word => {
+            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
+                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+            }
+        });
+        var the_other_words = searched_data.split(' ')
+        the_other_words.forEach(word => {
+            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            if(trimmed_word.length > 3){
+                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+            }
+        });
         this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data)
     }
 
@@ -2980,6 +2992,7 @@ class home_page extends Component {
 
     filter_using_searched_text(objects){
         var return_objs = []
+        var other_objs = []
         var id = this.get_page_id();
         var searched_input = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
@@ -2987,17 +3000,76 @@ class home_page extends Component {
         if(searched_input == null) searched_input = ''
         if(searched_tags == null) searched_tags = []
 
+        var searched_string_words = searched_input.trim().split(/\s+/).filter(word => word.length >= 3)
+
         objects.forEach(object => {
-            var entered_title_text = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            if(entered_title_text == null) entered_title_text = ''
+            var entered_title_text = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text;
+            if(entered_title_text == null) entered_title_text = '';
+            var entered_symbol_text = '';
+            if(object['id'] == 3){
+                entered_title_text = object['e5']
+                entered_symbol_text = 'END'
+            }
+            if(object['id'] == 5){
+                entered_title_text = object['e5'].replace('E', '3')
+                entered_symbol_text = 'SPEND'
+            }
+
+            var is_valid_video_or_audiopost = false;
+            if(object['ipfs'] != null && object['ipfs'].videos != null){
+                object['ipfs'].videos.forEach(video => {
+                    var video_title = video['video_title'];
+                    var video_composer = video['video_composer']
+                    console.log('get_searched_video_items', video_title, video_composer, searched_string_words)
+                    if(
+                        this.containsAllWords(video_title, searched_string_words) || 
+                        this.containsAllWords(video_composer, searched_string_words)
+                    ){
+                        is_valid_video_or_audiopost = true;
+                    }
+                });
+            }
+            else if(object['ipfs'] != null && object['ipfs'].songs != null){
+                object['ipfs'].songs.forEach(song => {
+                    var song_title = song['song_title']
+                    var song_composer = song['song_composer']
+                    if(
+                        this.containsAllWords(song_title, searched_string_words) || 
+                        this.containsAllWords(song_composer, searched_string_words)
+                    ){
+                        is_valid_video_or_audiopost = true;
+                    }
+                });
+            }
+
             var object_author = object['author'] == null ? '0' : object['author']
-            if(object['id'].toString() == (searched_input) || entered_title_text.toLowerCase().includes(searched_input.toLowerCase()) || this.get_searched_input_account_id(searched_input) == object_author.toString()){
-                if(this.check_if_object_includes_tags(object, searched_tags)){
+            if(
+                object['id'].toString() == (searched_input) || 
+                entered_title_text.toLowerCase().includes(searched_input.toLowerCase()) || 
+                this.get_searched_input_account_id(searched_input) == object_author.toString() ||
+                entered_symbol_text.toLowerCase().includes(searched_input.toLowerCase()) ||
+                is_valid_video_or_audiopost == true
+            ){
+                if(this.check_if_object_includes_tags(object, searched_tags) && !return_objs.includes(object)){
                     return_objs.push(object)
                 }
             }
+            else if(this.containsAllWords(entered_title_text, searched_string_words)){
+                if(this.check_if_object_includes_tags(object, searched_tags) && !return_objs.includes(object)){
+                    other_objs.push(object)
+                }
+            }
         });
-        return return_objs;
+        return return_objs.concat(other_objs)
+    }
+
+    containsAllWords(text, requiredWords) {
+        const lowerText = text.toLowerCase();
+        if(requiredWords.length > 1){
+            const matchCount = requiredWords.filter(word => lowerText.includes(word.toLowerCase())).length;
+            return matchCount >= 2;
+        }
+        return requiredWords.some(word => lowerText.includes(word.trim().toLowerCase()));
     }
 
     get_searched_input_account_id(name){
@@ -3008,7 +3080,18 @@ class home_page extends Component {
     check_if_object_includes_tags(object, searched_tags){
         var return_value = true
         searched_tags.forEach(tag => {
-            var obj_tags = object['ipfs'] == null ? [] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+            var entered_title_text = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text;
+            if(entered_title_text == null) entered_title_text = '';
+            var entered_symbol_text = ''
+            if(object['id'] == 3){
+                entered_title_text = object['e5']
+                entered_symbol_text = 'END'
+            }
+            if(object['id'] == 5){
+                entered_title_text = object['e5'].replace('E', '3')
+                entered_symbol_text = 'SPEND'
+            }
+            var obj_tags = object['ipfs'] == null ? [] : [object['e5'], entered_title_text, entered_symbol_text ].concat(object['ipfs'].entered_indexing_tags)
             if(!obj_tags.includes(tag)){
                 return_value = false;
             }
@@ -3449,7 +3532,16 @@ class home_page extends Component {
 
     search_string(){
         var typed_word = this.state.typed_tag.trim();
-        this.when_search_button_tapped(typed_word)
+        if(typed_word != ''){
+            this.render_top_notification(this.props.app_state.loc['1264ar']/* 'Searching...' */, 1300)
+        }
+        if(this.search_time == null){
+            this.search_time = 0 
+        }
+        if((Date.now() - this.search_time) > (1530)){
+            this.when_search_button_tapped(typed_word)
+            this.search_time = Date.now()
+        }
     }
 
 
@@ -3459,6 +3551,8 @@ class home_page extends Component {
 
 
     render_post_list_group2(size, p, list_section, h){
+        var id = this.get_page_id()
+        var searched_data = this.state.page_search_data[id]
         return(
             <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.render_top_notification.bind(this)}
             
@@ -3479,6 +3573,8 @@ class home_page extends Component {
 
             get_searched_account_data_trimmed={this.props.get_searched_account_data_trimmed.bind(this)} when_link_object_clicked={this.props.when_link_object_clicked.bind(this)} play_album_from_list_section={this.play_album_from_list_section.bind(this)} play_videopost_from_list_section={this.play_videopost_from_list_section.bind(this)}
             show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
+
+            current_search={searched_data} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} play_video={this.props.play_video.bind(this)}
             />
         )
     }

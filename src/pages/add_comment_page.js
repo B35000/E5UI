@@ -99,6 +99,12 @@ class AddCommentPage extends Component {
 
 
 
+    set_comment_data(object, focused_message_id, page, contractor_object, starting_text){
+        var text = starting_text == null ? '' : starting_text
+        this.setState({object: object, focused_message_id: focused_message_id, page: page, contractor_object: contractor_object, entered_title_text: text})
+    }
+
+
 
 
 
@@ -829,9 +835,7 @@ return data['data']
 
 
 
-    set_comment_data(object, focused_message_id, page, contractor_object){
-        this.setState({object: object, focused_message_id: focused_message_id, page: page, contractor_object: contractor_object})
-    }
+    
 
     set_focused_message_target_account(account_or_address){
         this.setState({award_target_account_or_address_on_my_e5: account_or_address})
