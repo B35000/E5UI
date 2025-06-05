@@ -3020,7 +3020,6 @@ class home_page extends Component {
                 object['ipfs'].videos.forEach(video => {
                     var video_title = video['video_title'];
                     var video_composer = video['video_composer']
-                    console.log('get_searched_video_items', video_title, video_composer, searched_string_words)
                     if(
                         this.containsAllWords(video_title, searched_string_words) || 
                         this.containsAllWords(video_composer, searched_string_words)
@@ -3574,7 +3573,7 @@ class home_page extends Component {
             get_searched_account_data_trimmed={this.props.get_searched_account_data_trimmed.bind(this)} when_link_object_clicked={this.props.when_link_object_clicked.bind(this)} play_album_from_list_section={this.play_album_from_list_section.bind(this)} play_videopost_from_list_section={this.play_videopost_from_list_section.bind(this)}
             show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
 
-            current_search={searched_data} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} play_video={this.props.play_video.bind(this)}
+            current_search={searched_data} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} play_video={this.props.play_video.bind(this)} play_song_from_list_section={this.play_song_from_list_section.bind(this)} play_video_from_list_section={this.play_video_from_list_section.bind(this)} 
             />
         )
     }
@@ -3907,14 +3906,55 @@ class home_page extends Component {
         }
     }
 
-    play_album_from_list_section(object){
+    play_album_from_list_section = async(object) =>{
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             // this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }else{
             var items = this.get_songs_to_display(object)
             var item = items[0]
+            if(!this.has_file_loaded(item['track'])){
+                this.render_top_notification(this.props.app_state.loc['1264as']/* 'Loading...' */, 1000)
+                await this.props.fetch_uploaded_files_for_object(object)
+            }
             this.props.play_song(item, object, this.get_audio_items(''), this.is_page_my_collection_page(), false)
         }
+    }
+
+    play_song_from_list_section = async (item, object, audio_items, is_page_my_collection_page, should_shuffle) => {
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        else{
+            if(!this.has_file_loaded(item['track'])){
+                this.render_top_notification(this.props.app_state.loc['1264as']/* 'Loading...' */, 1000)
+                await this.props.fetch_uploaded_files_for_object(object)
+            }
+            this.props.play_song(item, object, audio_items, is_page_my_collection_page, should_shuffle)
+        }
+        
+    }
+
+    has_file_loaded(file){
+        var ecid_obj = this.get_cid_split(file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false;
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null || data['data'] == null) return false
+        return true
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
     get_songs_to_display(object){
@@ -3986,7 +4026,7 @@ class home_page extends Component {
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
     }
 
-    play_videopost_from_list_section(object){
+    play_videopost_from_list_section = async (object) => {
         var items = this.get_videos_to_display(object)
         var item = items[0]
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
@@ -3995,6 +4035,22 @@ class home_page extends Component {
             // this.render_top_notification(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
+            this.props.play_video(item, object)
+        }
+    }
+
+    play_video_from_list_section = async (item, object) => {
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        else if(!this.is_video_available_for_viewing(item)){
+            this.render_top_notification(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+        }
+        else{
+            if(!this.has_file_loaded(item['video'])){
+                this.render_top_notification(this.props.app_state.loc['1264as']/* 'Loading...' */, 1000)
+                await this.props.fetch_uploaded_files_for_object(object)
+            }
             this.props.play_video(item, object)
         }
     }
@@ -4239,7 +4295,7 @@ class home_page extends Component {
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
                 connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_audiopost={this.props.repost_audiopost.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)} repost_post={this.props.repost_post.bind(this)}
 
-                perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} open_vote_in_poll_ui={this.props.show_view_vote_poll_bottomsheet.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)}
+                perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} open_vote_in_poll_ui={this.props.show_view_vote_poll_bottomsheet.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}
                 />
             </div>
         )

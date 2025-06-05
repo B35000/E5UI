@@ -358,7 +358,7 @@ class BagDetailsSection extends Component {
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var delivery_location = object['ipfs'].delivery_location
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'sender_account':{'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':delivery_location, 'size':'l'},
@@ -1937,7 +1937,9 @@ class BagDetailsSection extends Component {
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list} select_deselect_tag={this.props.select_deselect_tag.bind(this)}
+                
+                />
             </div>
         )
 

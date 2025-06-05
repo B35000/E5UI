@@ -2027,7 +2027,7 @@ return data['data']
         if(items.length == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few moments.' */})}
                     {this.render_detail_item('10', {'text':entry_text, 'textsize':'9px', 'font':this.props.app_state.font})}
                     <div style={{height:10}}/>
                     {this.render_empty_object()}
@@ -2036,7 +2036,7 @@ return data['data']
         }
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few.' */})}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few moments.' */})}
                 {this.render_detail_item('10', {'text':entry_text, 'textsize':'9px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <div style={{overflow: 'auto'}}>
@@ -2097,6 +2097,14 @@ return data['data']
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
+
+        if(!this.can_sender_view_poll(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
             return(
@@ -2120,6 +2128,29 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    can_sender_view_poll(object){
+        var viewers = object['ipfs'].viewers
+        if(viewers.length == 0) return true;
+        var my_active_accounts = this.load_my_active_accounts(object)
+        return my_active_accounts.some(r=> viewers.includes(r))
+    }
+
+    load_my_active_accounts(object){
+        var active_e5s = []
+        var preferred_e5s = object['ipfs'].poll_e5s
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true && preferred_e5s.includes(e5)){
+                var id = this.props.app_state.user_account_id[e5]
+                if(id != null && id != 1){
+                    var account = e5+':'+id
+                    active_e5s.push(account)
+                }
+            }
+        }
+        return active_e5s
     }
 
     when_link_object_clicked = async (index, object, object_type) => {

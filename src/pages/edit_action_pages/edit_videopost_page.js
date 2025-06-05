@@ -59,6 +59,18 @@ function makeid(length) {
     return result;
 }
 
+function make_number_id(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return parseInt(result);
+}
+
 class EditVideoPage extends Component {
     
     state = {
@@ -2873,7 +2885,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['b311v']/* 'You need to add a video track.' */, 3800)
         }
         else{
-            var video = {'video_id':makeid(8), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles, 'release_time':video_availability_timestamp}
+            var video = {'video_id':make_number_id(12), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles, 'release_time':video_availability_timestamp}
 
             var clone = this.state.videos.slice()
             if(this.state.edit_video_item_pos != -1){

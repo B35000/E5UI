@@ -1037,112 +1037,112 @@ class StackPage extends Component {
 
         if(selected_item == 'e'){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_stack_run_section()}
                 </div>
             )    
         }
         else if(selected_item == this.props.app_state.loc['1408']/* 'stack 📥' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_stack_transactions_part()}
                 </div>
             )    
         }
         else if(selected_item == this.props.app_state.loc['1409']/* 'history 📜' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_run_history_items()}
                 </div>
             )    
         }
         else if(selected_item == this.props.app_state.loc['1410']/* 'settings ⚙️' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_settings_section()}
                 </div>
             ) 
         }
         else if(selected_item == this.props.app_state.loc['1411']/* 'wallet 👛' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_wallet_settings_section()}
                 </div>
             ) 
         }
         else if(selected_item == this.props.app_state.loc['1413']/* 'contacts 👤' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_contacts_section()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1412']/* 'alias 🏷️' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_alias_stuff()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1414']/* 'blacklisted 🚫' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_blacklisted_section()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593x']/* 'Watch 👁️' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_watched_account_ui()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593ak']/* 'sign' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_sign_data_ui()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593al']/* 'verify' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_verify_data_ui()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593ba']/* 'storage 💾' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_storage_settings_ui()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593cr']/* 'gateway 🚧' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_set_custom_ipfs_gateway()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593df']/* 'following 👥' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_set_following_moderator()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593dq']/* 'Censor 🚫' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_censor_keywords_ui()}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */){
             return(
-                <div>
+                <div key={selected_item}>
                     {this.render_contextual_transfers_ui()}
                 </div>
             )
@@ -3763,6 +3763,25 @@ return data['data']
                     adds.push([])
                     ints.push(obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3030b']/* 'video-comment-messages' */){
+                    var message_obj = await this.format_video_comment_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                    
+                    var message_transfers = this.get_message_transfers(txs[i], ints);
+                    if(message_transfers.transfers_included == true){
+                        for(var x=0; x<message_transfers.create_account_array.length; x++){
+                            strs.push([])
+                            adds.push([message_transfers.create_address_array[x]])
+                            ints.push(message_transfers.create_account_array[x]);
+                        }
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_transfers.transfers_obj);
+                    }
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -4544,6 +4563,13 @@ return data['data']
                     }
                     ipfs_index_object[txs[i].id] = poll_result_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':poll_result_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3030b']/* 'video-comment-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                        ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
+                    }
                 }
             }
         }
@@ -7806,6 +7832,38 @@ return data['data']
         return {int: obj, str: string_obj}
     }
 
+    format_video_comment_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 26/* 26(video_comment_object_container) */
+            var context = isNaN(t.messages_to_deliver[i]['id']) ? await this.props.stringToBigNumber(t.messages_to_deliver[i]['id']) : t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
+
 
 
 
@@ -9645,6 +9703,7 @@ return data['data']
         if(size == 's'){
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_my_balances_horizontal()}
                 </div>
             )
@@ -9796,17 +9855,17 @@ return data['data']
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
                 </div>
-                <div style={{height: 10}}/>
+                <div style={{height: 20}}/>
                 
                 {this.render_reload_wallet_if_wallet_is_set()}
-                <div style={{height: 10}}/>
+                
                 {this.render_my_balances_if_small_screen_size()}
             </div>
         )
     }
 
     render_reload_wallet_if_wallet_is_set(){
-        if(this.props.app_state.has_wallet_been_set || this.props.app_state.accounts[this.props.app_state.selected_e5] != null){
+        if(this.props.app_state.has_wallet_been_set || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1 || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != null){
             return(
                 <div style={{'padding':'0px 5px 0px 5px'}} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
@@ -11689,7 +11748,19 @@ return data['data']
         for(var i=0; i<all_nitros.length; i++){
             var obj = all_nitros[i]
             var state = this.props.app_state.nitro_node_details[obj['e5_id']]
-            if(obj['bought'] == true && state != null && state != 'unavailable') my_bought_nitros.push(obj)
+            var available = false;
+            if(obj['bought'] == true){
+                available = true
+            }
+            if(state != null && state != 'unavailable' && state['free_default_storage'] != 0){
+                var my_balance = this.props.app_state.account_balance[state['target_account_e5']]
+                if(my_balance != null && bigInt(my_balance).greater(bigInt(0))){
+                    available = true
+                }
+            }
+            if(available == true){
+                my_bought_nitros.push(obj)
+            }
         }
         return my_bought_nitros
     }
@@ -11828,10 +11899,17 @@ return data['data']
         else if(selected_item == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
             if(this.state.selected_nitro_item != null){
                 var node_details = this.props.app_state.nitro_node_storage_payment_info[this.state.selected_nitro_item]
-                if(node_details != null){
-                    var available_space = parseFloat(node_details['acquired_space']) - parseFloat(node_details['utilized_space'])
+                var state = this.props.app_state.nitro_node_details[this.state.selected_nitro_item]
 
+                if(node_details != null && node_details != 'unavailable'){
+                    var available_space = parseFloat(node_details['acquired_space']) - parseFloat(node_details['utilized_space'])
                     max_size = (available_space * 1024 * 1024)
+                }
+                else if(state != null && state != 'unavailable' && state['free_default_storage'] != 0){
+                    var my_balance = this.props.app_state.account_balance[state['target_account_e5']]
+                    if(my_balance != null && bigInt(my_balance).greater(bigInt(0))){
+                        max_size = (state['free_default_storage']  * 1024 * 1024)
+                    }
                 }
             }
         }
@@ -12417,7 +12495,8 @@ return data['data']
             }else{
                 if(this.state.selected_nitro_item == null){
                    this.props.notify(this.props.app_state.loc['1593coz']/* 'You need to select a nitro node first.' */, 9000) 
-                }else if(!this.props.app_state.has_wallet_been_set){
+                }
+                else if(!this.props.app_state.has_wallet_been_set){
                     this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 9000)
                 }
                 else{
@@ -12435,7 +12514,6 @@ return data['data']
                         this.props.upload_multiple_files_to_nitro_node(this.files, this.selected_files_type, obj, node_details)
                     }
                 }
-                
             }
         }
         else{

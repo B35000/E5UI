@@ -2654,13 +2654,13 @@ class PostListSection extends Component {
     can_sender_view_poll(object){
         var viewers = object['ipfs'].viewers
         if(viewers.length == 0) return true;
-        var my_active_accounts = this.load_my_active_accounts()
+        var my_active_accounts = this.load_my_active_accounts(object)
         return my_active_accounts.some(r=> viewers.includes(r))
     }
 
-    load_my_active_accounts(){
+    load_my_active_accounts(object){
         var active_e5s = []
-        var preferred_e5s = this.state.poll_object['ipfs'].poll_e5s
+        var preferred_e5s = object['ipfs'].poll_e5s
         for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
             var e5 = this.props.app_state.e5s['data'][i]
             if(this.props.app_state.e5s[e5].active == true && preferred_e5s.includes(e5)){
@@ -3402,7 +3402,7 @@ class PostListSection extends Component {
             if(me == null) me = 1
             
             if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
-                this.props.play_song(item, object, this.get_preferred_audio_items(), this.is_page_my_collection_page(), false)
+                this.props.play_song_from_list_section(item, object, this.get_preferred_audio_items(), this.is_page_my_collection_page(), false)
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'audio')
             }
@@ -3969,7 +3969,7 @@ return data['data']
             if(me == null) me = 1
             var index = 0
             if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
-                this.props.play_video(item, object)
+                this.props.play_video_from_list_section(item, object)
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'video')
             }

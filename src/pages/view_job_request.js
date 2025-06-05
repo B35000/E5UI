@@ -654,7 +654,7 @@ class ViewJobRequestPage extends Component {
 
 
     componentDidMount() {
-        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
     }
 
     componentWillUnmount() {
@@ -997,7 +997,7 @@ class ViewJobRequestPage extends Component {
         var object = this.state.request_item;
         var has_scrolled = this.has_user_scrolled[object['job_request_id']]
         if(has_scrolled == null){
-            // this.scroll_to_bottom()
+            this.scroll_to_bottom()
         }
     }
 

@@ -979,7 +979,7 @@ return data['data']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         var purchase_recipient = object['ipfs'] == null ? '000' :object['ipfs'].purchase_recipient
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed',   'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
             
@@ -1164,6 +1164,14 @@ return data['data']
     }
 
     render_song(item, object, index, type){
+        var audio_file = item['track']
+        if(!this.has_file_loaded(audio_file)){
+            return(
+                <div>
+                    {this.render_empty_views(1)}
+                </div>
+            )
+        }
         var border_radius = '7px';
         var text_align = 'left'
         var padding = '10px 15px 10px 15px'
@@ -1201,6 +1209,14 @@ return data['data']
                 </div>
             </div>
         )
+    }
+
+    has_file_loaded(audio_file){
+        var ecid_obj = this.get_cid_split(audio_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false;
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null || data['data'] == null) return false
+        return true
     }
 
     longest_word_length(text) {
@@ -2827,7 +2843,7 @@ return data['data']
 
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list} select_deselect_tag={this.props.select_deselect_tag.bind(this)} />
             </div>
         )
 

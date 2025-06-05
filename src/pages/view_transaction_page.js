@@ -236,7 +236,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3068ac']/* 'iTransfer' */ && 
             item.type != this.props.app_state.loc['3068af']/* 'bill' */ &&
             item.type != this.props.app_state.loc['3071j']/* 'bill-payment' */ &&
-            item.type != this.props.app_state.loc['3074bq']/* 'poll-result' */
+            item.type != this.props.app_state.loc['3074bq']/* 'poll-result' */ &&
+            item.type != this.props.app_state.loc['3030b']/* 'video-comment-messages' */
         ){
             return(
                 <div>
@@ -517,21 +518,21 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['1509']/* 'mail-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Mail Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979b']/* 'Mail Messages' */)}
                     </div>
                 ) 
             }
             else if(tx.type == this.props.app_state.loc['1510']/* 'channel-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Channel Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979c']/* 'Channel Messages' */)}
                     </div>
                 )   
             }
             else if(tx.type == this.props.app_state.loc['1511']/* 'post-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Post Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979d']/* 'Post Messages' */)}
                     </div>
                 )   
             }  
@@ -552,14 +553,14 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['1514']/* 'job-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Job Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['']/* 'Job Messages' */)}
                     </div>
                 )    
             }
             else if(tx.type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Proposal Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979e']/* 'Proposal Messages' */)}
                     </div>
                 )    
             }
@@ -601,14 +602,14 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['1501']/* 'bag-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Bag Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979f']/* 'Bag Messages' */)}
                     </div>
                 )
             }
             else if(tx.type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Storefront Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979g']/* 'Storefront Messages' */)}
                     </div>
                 )
             }
@@ -636,7 +637,7 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Job Request Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979h']/* 'Job Request Messages' */)}
                     </div>
                 )
             }
@@ -755,7 +756,7 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['1593cc']/* 'audio-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Audiopost Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979i']/* 'Audiopost Messages' */)}
                     </div>
                 )   
             }
@@ -776,7 +777,7 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['1593ct']/* 'video-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Videopost Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979j']/* 'Videopost Messages' */)}
                     </div>
                 )   
             }
@@ -797,7 +798,7 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
                 return(
                     <div>
-                        {this.render_mail_message_data('Nitropost Messages')}
+                        {this.render_mail_message_data(this.props.app_state.loc['1979k']/* 'Nitropost Messages' */)}
                     </div>
                 )   
             }
@@ -863,6 +864,13 @@ class ViewTransactionPage extends Component {
                         {this.render_poll_result()}
                     </div>
                 )
+            }
+            else if(tx.type == this.props.app_state.loc['3030b']/* 'video-comment-messages' */){
+                return(
+                    <div>
+                        {this.render_mail_message_data(this.props.app_state.loc['1979l']/* 'Video Comment Messages' */)}
+                    </div>
+                )   
             }
         }
     }
@@ -4561,7 +4569,7 @@ return data['data']
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_message_name_title(item)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
@@ -4591,6 +4599,12 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    get_message_name_title(item){
+        const bucket = this.props.app_state.alias_bucket[item['sender_e5']]
+        var alias = (bucket[item['sender']] == null ? '' : `${item['sender']}, ${bucket[item['sender']]}`)
+        return alias
     }
 
     format_message(message){

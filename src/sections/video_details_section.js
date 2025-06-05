@@ -327,11 +327,11 @@ class VideoDetailsSection extends Component {
     }
 
     render_repost_videopost_ui(object){
-        var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
+        var reposted_posts = this.props.app_state.posts_reposted_by_me
         var title = this.props.app_state.loc['b2527o']/* 'Repost Videopost.' */
         var details = this.props.app_state.loc['b2527p']/*  Add this videopost to your promoted list. */
         
-        if(clone['video'].includes(object['e5_id'])){
+        if(reposted_posts['video'].includes(object['e5_id'])){
             title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
             details = this.props.app_state.loc['b2527q']/*  Remove this videopost from your promoted list. */
         }
@@ -726,7 +726,7 @@ class VideoDetailsSection extends Component {
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
             
@@ -876,6 +876,13 @@ class VideoDetailsSection extends Component {
     render_video(item, object, index){
         var video_file = item['video']
         var ecid_obj = this.get_cid_split(video_file)
+        if(!this.has_file_loaded(video_file)){
+            return(
+                <div>
+                    {this.render_empty_views(1)}
+                </div>
+            )
+        }
         if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
             var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
             return(
@@ -889,6 +896,14 @@ class VideoDetailsSection extends Component {
                 {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
+    }
+
+    has_file_loaded(video_file){
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false;
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null || data['data'] == null) return false
+        return true
     }
 
     get_videos_to_display(object){
@@ -2312,7 +2327,7 @@ class VideoDetailsSection extends Component {
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list}/>
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list} select_deselect_tag={this.props.select_deselect_tag.bind(this)}/>
             </div>
         )
 

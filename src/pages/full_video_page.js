@@ -19,6 +19,14 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import TextInput from './../components/text_input';
+
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import Linkify from "linkify-react";
 
 var bigInt = require("big-integer");
 
@@ -31,6 +39,18 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 function start_and_end(str) {
   if (str.length > 13) {
     return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
@@ -38,28 +58,73 @@ function start_and_end(str) {
   return str;
 }
 
+function TreeNode(data) {
+    this.data     = data;
+    this.parent   = null;
+    this.children = [];
+}
+
+TreeNode.comparer = function (a, b) { 
+return a.data.sort < b.data.sort ? 0 : 1; 
+};
+
+TreeNode.prototype.sortRecursive = function () {
+this.children.sort(TreeNode.comparer);
+for (var i=0, l=this.children.length; i<l; i++) {
+    this.children[i].sortRecursive();
+}
+return this;
+};
+
+function toTree(data) {
+var nodeById = {}, i = 0, l = data.length, node;
+
+nodeById[0] = new TreeNode(); // that's the root node
+
+for (i=0; i<l; i++) {  // make TreeNode objects for each item
+    nodeById[ data[i].index ] = new TreeNode(data[i]);
+}
+for (i=0; i<l; i++) {  // link all TreeNode objects
+    node = nodeById[ data[i].index ];
+    node.parent = nodeById[node.data.parent];
+    node.parent.children.push(node);
+}
+return nodeById[0].sortRecursive();
+}
+
 class FullVideoPage extends Component {
     
     state = {
         selected: 0, videos:null, object:null, pos:null,
         detials_or_queue_tags:this.detials_or_queue_tags(), is_player_resetting:false,
-        subtitle_option_tags:null
+        subtitle_option_tags:null, queue_or_comments_tags:this.queue_or_comments_tags(),
+        entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
     };
 
 
     componentDidMount(){
         this.setState({screen_width: this.screen.current.offsetWidth})
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
     }
 
     componentWillUnmount(){
         this.video_player.current?.removeEventListener('leavepictureinpicture', this.when_pip_closed);
         this.video_player.current?.removeEventListener('timeupdate', this.when_time_updated);
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.state.object != null){
+            this.props.load_video_messages(this.state.videos[this.state.pos], this.state.object)
+        }
     }
 
     constructor(props) {
         super(props);
         this.screen = React.createRef()
         this.video_player = React.createRef();
+        this.messagesEnd = React.createRef();
+        this.has_user_scrolled = {}
     }
 
 
@@ -69,14 +134,45 @@ class FullVideoPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['3026']/* 'details' */, this.props.app_state.loc['3027']/* 'queue' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['3026']/* 'details' */, this.props.app_state.loc['3027']/* 'queue' */, this.props.app_state.loc['3030a']/* 'comments' */], [1]
             ],
         };
     }
 
 
+    queue_or_comments_tags(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['3027']/* 'queue' */, this.props.app_state.loc['3030a']/* 'comments' */], [1]
+            ],
+        };
+    }
+
+    get_comment_structure_tags(){
+        return{
+            'i':{
+                active:'e',
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
+            ],
+        };
+    }
+
+
+
+
+
     set_data(videos, object, pos){
         this.setState({videos:videos, object:object, pos:pos, is_player_resetting:true, subtitle_option_tags: this.subtitle_option_tags(videos[pos]['subtitles'] == null ? [] : videos[pos]['subtitles']) })
+
+        this.props.load_video_messages(videos[pos], object)
+        if (this.messagesEnd.current){
+            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        }
     }
 
     render(){
@@ -95,7 +191,7 @@ class FullVideoPage extends Component {
             return(
                 <div>
                     {this.render_player()}
-                    <div style={{height: 1}}/>
+                    <div style={{height: 5}}/>
                     {this.render_details_or_queue_tags_then_option()}
                 </div>
             )
@@ -104,13 +200,13 @@ class FullVideoPage extends Component {
             return(
                 <div>
                     {this.render_player()}
-                    <div style={{height: 1}}/>
+                    <div style={{height: 5}}/>
                     <div className="row">
                         <div className="col-6" style={{}}>
                             {this.render_video_details()}
                         </div>
                         <div className="col-6" style={{}}>
-                            {this.render_queue()}
+                            {this.render_queue_then_comments_tags_option()}
                         </div>
                     </div>
                 </div>
@@ -119,13 +215,13 @@ class FullVideoPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-7" style={{}}>
+                    <div className="col-8" style={{}}>
                         {this.render_player()}
-                        <div style={{height: 1}}/>
+                        <div style={{height: 5}}/>
                         {this.render_video_details()}
                     </div>
-                    <div className="col-5" style={{}}>
-                        {this.render_queue()}
+                    <div className="col-4" style={{}}>
+                        {this.render_queue_then_comments_tags_option()}
                     </div>
                 </div>
                 
@@ -167,6 +263,49 @@ class FullVideoPage extends Component {
                     {this.render_queue()}
                 </div>
             )  
+        }
+        else if(selected_item == this.props.app_state.loc['3030a']/* 'comments' */){
+            return(
+                <div>
+                    {this.render_comments_section()}
+                </div>
+            ) 
+        }
+    }
+
+
+
+    render_queue_then_comments_tags_option(){
+        return(
+            <div>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.queue_or_comments_tags} tag_size={'l'} when_tags_updated={this.when_queue_or_comments_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
+                <div style={{height: 10}}/>
+                {this.render_queue_or_comments()}
+            </div>
+        )
+    }
+
+    when_queue_or_comments_tags_object_updated(tags_obj){
+        this.setState({queue_or_comments_tags: tags_obj})
+    }
+
+    render_queue_or_comments(){
+        var selected_item = this.get_selected_item(this.state.queue_or_comments_tags, this.state.queue_or_comments_tags['i'].active)
+
+        if(selected_item == this.props.app_state.loc['3027']/* 'queue' */){
+            return(
+                <div>
+                    {this.render_queue()}
+                </div>
+            )  
+        }
+        else if(selected_item == this.props.app_state.loc['3030a']/* 'comments' */){
+            return(
+                <div>
+                    {this.render_comments_section()}
+                </div>
+            ) 
         }
     }
 
@@ -382,8 +521,8 @@ class FullVideoPage extends Component {
                 
                 <div style={{height:'1px', 'background-color':this.props.theme['line_color'], 'margin': '20px 20px 10px 20px', 'border-radius': '1px'}}/>
 
-                {this.render_detail_item('1', item['tags'])}
-                <div style={{height: 10}}/>
+                {/* {this.render_detail_item('1', item['tags'])}
+                <div style={{height: 10}}/> */}
                 {this.render_detail_item('3', item['id'])}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', item['listing_type'])}
@@ -655,7 +794,7 @@ class FullVideoPage extends Component {
         var object_item = this.get_post_details_data(object)
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
-                <div style={{padding:'0px 10px 5px 10px'}}>
+                <div style={{padding:'0px 5px 5px 5px'}}>
                     {this.render_detail_item('8', object_item['id2'])}
                     {this.render_detail_item('0')}
                     <div>
@@ -672,6 +811,16 @@ class FullVideoPage extends Component {
     }
 
     render_video(item, object, index){
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+            var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+            return(
+                <div onClick={() => this.when_video_item_clicked(item, object, index)}>
+                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_video_item_clicked(item, object, index)}>
                 {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
@@ -715,6 +864,804 @@ class FullVideoPage extends Component {
 
 
 
+
+
+
+    render_comments_section(){
+        if(this.state.object == null) return;
+        var he = this.props.height-180
+        if(this.get_focused_message() != null) he = this.props.height-250
+        var size = this.props.screensize
+        var ww = '80%'
+        if(size == 'l') ww = '90%'
+        if(this.props.app_state.width > 1100){
+            ww = '80%'
+        }
+        return(
+            <div>
+                {this.render_top_title()}
+                {this.render_detail_item('0')}
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 0px', width: '99%'}}>
+                    <div style={{'margin':'1px 5px 0px 0px'}}>
+                        {/* {this.render_image_picker()} */}
+                        <div>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked()}>
+                                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{width:10}}/>
+                    <div className="row" style={{width:ww}}>
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                            <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                <img alt="" className="text-end" onClick={()=>this.add_message_to_stack()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {this.render_focused_message()}
+                <div style={{height:5}}/>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                    <div onScroll={event => this.handleScroll(event)} style={{ 'overflow-y': 'auto', height: 'auto', padding:'0px 0px 5px 0px'}}>
+                        {this.render_sent_received_messages()}
+                    </div>
+                </div>
+            </div> 
+        )
+    }
+
+    when_circle_clicked = () => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.scroll_to_bottom()
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.show_add_comment_bottomsheet()
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    scroll_to_bottom(){
+        this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    handleScroll = (event) => {
+        var video = this.state.videos[this.state.pos];      
+        this.has_user_scrolled[video['video_id']] = true
+    };
+
+    render_focused_message(){
+        var item = this.get_focused_message();
+        if(item != null){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'5px 70px 0px 60px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message()}> 
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 35)}</p>
+                </div>
+            )
+        }
+    }
+
+    when_comment_structure_tags_updated(tag_obj){
+        this.setState({comment_structure_tags: tag_obj})
+    }
+
+    show_add_comment_bottomsheet(){
+        var object = this.state.object
+        var video = this.state.videos[this.state.pos]; 
+        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message() : 0
+        this.props.show_add_comment_bottomsheet(video, focused_message_id, 'video-comment', object['id'], this.state.entered_text)
+    }
+
+    render_top_title(){
+        var video = this.state.videos[this.state.pos]
+        var object = this.state.object
+        return(
+            <div style={{padding:'0px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.truncate(video['video_title'], 40), 'details':this.truncate(object['ipfs'].entered_title_text, 40), 'size':'l'})} 
+            </div>
+        )
+    }
+
+    componentDidUpdate(){
+        if(this.state.videos != null){
+            var video = this.state.videos[this.state.pos];      
+            var has_scrolled = this.has_user_scrolled[video['video_id']]
+            if(has_scrolled == null){
+                // this.scroll_to_bottom()
+            }
+        }
+    }
+
+    render_sent_received_messages(){
+        // var middle = this.props.height-240;
+        // if(this.get_focused_message() != null) middle = this.props.height-290
+        // var size = this.props.size;
+        // if(size == 'm'){
+        //     middle = this.props.height-100;
+        // }
+        var items = [].concat(this.get_convo_messages())
+        var stacked_items = [].concat(this.get_stacked_items()).reverse()
+        var final_items = stacked_items.concat(items)
+
+        if(items.length == 0 && stacked_items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        else{
+            var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
+            if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
+                return(
+                <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div ref={this.messagesEnd}/>
+                        {this.render_messages(final_items)}
+                    </ul>
+                </div>
+            )
+            }else{
+                return(
+                    <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            <div ref={this.messagesEnd}/>
+                            {this.render_all_comments()}
+                        </ul>
+                    </div>
+                )
+            }
+        }
+    }
+
+    render_messages(items){
+        var middle = this.props.height-200;        
+        if(items.length == 0){
+            var items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                            <div >
+                                {this.render_message_as_focused_if_so(item)}
+                                <div style={{height:3}}/>
+                            </div>
+                        </li>
+                    ))}    
+                </div>
+            )
+        }
+        
+    }
+
+    focus_message(item){
+        var clone = JSON.parse(JSON.stringify(this.state.focused_message))
+        var video = this.state.videos[this.state.pos];
+
+        if(this.state.focused_message[video['video_id']] != item){
+            clone[video['video_id']] = item
+            if(clone['tree'][video['video_id']] == null) {
+                clone['tree'][video['video_id']] = []
+            }
+            // if(!this.includes_function(clone['tree'][object['job_request_id']], item)){
+            //     console.log('pushing item')
+            // }
+            clone['tree'][video['video_id']].push(item)
+        }
+        this.setState({focused_message: clone})
+    }
+
+    unfocus_message(){
+        var clone = JSON.parse(JSON.stringify(this.state.focused_message))
+        var video = this.state.videos[this.state.pos];
+        if(clone['tree'][video['video_id']] != null){
+            var index = this.get_index_of_item()
+            if(index != -1){
+                clone['tree'][video['video_id']].splice(index, 1)
+            }
+        }
+
+        var latest_message = clone['tree'][video['video_id']].length > 0 ? clone['tree'][video['video_id']][clone['tree'][video['video_id']].length -1] : null
+        clone[video['video_id']] = latest_message
+        this.setState({focused_message: clone})
+    }
+
+    get_index_of_item(){
+        var video = this.state.videos[this.state.pos];
+        var focused_item = this.state.focused_message[video['video_id']]
+        var focused_items = this.state.focused_message['tree'][video['video_id']]
+        var pos = -1
+        for(var i=0; i<focused_items.length; i++){
+            if(focused_items[i]['message_id'] == focused_item['message_id']){
+                pos = i
+                break
+            }
+        }
+        return pos
+    }
+
+
+    render_message_as_focused_if_so(item){
+        return(
+            <div>
+                <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            action: () => this.focus_message(item)
+                            }}
+                            swipeRight={{
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
+                            action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['3030b']/* 'video-comment-messages' */)
+                            }}
+                            >
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+            </div>
+        )
+    }
+
+    when_message_clicked = (event, item, focused_message) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            me.when_message_double_tapped(item)
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
+    }
+
+    when_message_double_tapped(item){
+        var message = item['message'];
+        this.copy_to_clipboard(message)
+    }
+
+    copy_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify(this.props.app_state.loc['1692']/* 'Copied message to clipboard.' */, 1600)
+    }
+
+
+    render_stack_message_item(item){
+        if(this.is_sender_in_blocked_accounts(item)){
+            return(
+                <div>
+                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        var size = item['size'] == null ? '11px' : item['size'];
+        var font = item['font'] == null ? this.props.app_state.font : item['font']
+        var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
+        var e5 = item['sender_e5'] == null ? item['e5'] : item['sender_e5']
+        var line_color = item['sender'] == this.props.app_state.user_account_id[e5] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
+        var text = this.format_message(item['message'])
+        // const parts = text.split(/(\d+)/g);
+        const parts = this.split_text(text);
+        return(
+            <div>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                            <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} > {this.get_sender_title_text(item)}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                                </div>
+                            </div>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{
+                                parts.map((part, index) => {
+                                    const num = parseInt(part, 10);
+                                    const isId = !isNaN(num) && num > 1000;
+                                    if (isId) {
+                                        return (
+                                            <span
+                                                key={index}
+                                                style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
+                                                onClick={() => this.when_e5_link_tapped(num)}>
+                                                    {part}
+                                            </span>
+                                        );
+                                    }
+                                    return <span key={index}>{part}</span>;
+                                })
+                            }</Linkify></p>
+                            {this.render_markdown_in_message_if_any(item)}
+                            {this.render_images_if_any(item)}
+                            {this.get_then_render_my_awards(item)}
+                            {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} {this.props.app_state.loc['1693']} </p> */}
+                        </div>
+                    </div>
+                </div>
+                    
+                {this.render_pdfs_if_any(item)}
+                {this.render_response_if_any(item)}
+            </div>
+        )
+    }
+
+    split_text(text){
+        if(text == null) return []
+        var split = text.split(' ')
+        var final_string = []
+        split.forEach((word, index) => {
+            final_string.push(word)
+            if(split.length-1 != index){
+                final_string.push(' ')
+            }
+        });
+        return final_string
+    }
+
+    when_e5_link_tapped(id){
+        this.props.when_e5_link_tapped(id)
+    }
+
+    longest_word_length(text) {
+        return text
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
+    }
+
+    render_response_if_any(_item){
+        if(_item['focused_message_id'] == 0) return;
+        // if(this.get_focused_message(object) != null) return;
+        var message_items = this.get_convo_messages().concat(this.get_stacked_items())
+        var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
+        if(item == null) return;
+        var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
+        if(selected_view_option == this.props.app_state.loc['1672']/* 'comment-structure' */) return
+        var size = item['size'] == null ? '11px' : item['size'];
+        var font = item['font'] == null ? this.props.app_state.font : item['font']
+        return(
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
+                <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}}>{this.get_sender_title_text(item)}</p>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                    </div>
+                </div>
+                <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
+
+                {/* {this.render_award_object_if_any(_item)} */}
+                {this.get_then_render_my_awards(item)}
+            </div>
+        )
+    }
+
+    render_award_object_if_any(item){
+        if(item['award_tier'] != null && item['award_tier'] != ''){
+            return(
+                <div style={{'font-size': '8px'}}>
+                    <p>{item['award_tier']['label']['title']}</p>
+                </div>
+            )
+        }
+    }
+
+    get_then_render_my_awards(item){
+        var message_items = this.get_convo_messages().concat(this.get_stacked_items())
+        var award_obj = {}
+        message_items.forEach(message => {
+            if(message['focused_message_id'] == item['message_id']){
+                if(message['award_tier'] != null && message['award_tier'] != ''){
+                    if(award_obj[message['award_tier']['label']['title']] == null){
+                       award_obj[message['award_tier']['label']['title']] = 0
+                    }
+                    award_obj[message['award_tier']['label']['title']]++
+                }
+            }
+        });
+        if(Object.keys(award_obj).length > 0){
+            var text = ''
+            for(const award in award_obj){
+                if(award_obj.hasOwnProperty(award)){
+                    if(text != ''){
+                        text = text + ' '
+                    }
+                    if(award_obj[award] > 1){
+                        text = `${text}${award}x${award_obj[award]}`
+                    }else{
+                        text = `${text}${award}`
+                    }
+                }
+            }
+            var font = item['font'] == null ? this.props.app_state.font : item['font']
+            return(
+                <div>
+                    <p style={{'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'font-size': '8px'}}>{text}</p>
+                </div>
+            )
+        }
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_item_in_message_array(message_id, object_array){
+        var object = object_array.find(x => x['message_id'] === message_id);
+        return object
+    }
+
+    is_sender_in_blocked_accounts(item){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(item['sender'])){
+            return true
+        }
+        return false
+    }
+
+    render_images_if_any(item){
+        if(item.type == 'image'){
+            return(
+                <div>
+                    {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_if_any(item){
+        if(item.type == 'image' && item['pdf-data'] != null && item['pdf-data'].length > 0){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_pdfs_part(item['pdf-data'])}
+                    <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+    render_markdown_in_message_if_any(item){
+        if(item['markdown'] != null && item['markdown'] != ''){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('13', {'source':item['markdown']})}
+                </div>
+            )
+        }
+    }
+
+    get_sender_title_text(item){
+        var e5 = item['sender_e5'] == null ? item['e5'] : item['sender_e5']
+        if(item['sender'] == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var sender = item['sender']
+            var alias = obj[sender] == null ? sender.toString() : obj[sender]
+            return alias
+        }
+    }
+
+    format_message(message){
+        if(message == ''){
+            return '...'
+        }
+        return message
+    }
+
+    get_convo_messages(){
+        var video = this.state.videos[this.state.pos];
+        var messages = this.props.app_state.object_messages[video['video_id']]
+        if(messages == null) return [];
+        return this.filter_messages_for_blocked_accounts(messages)
+    }
+
+    filter_messages_for_blocked_accounts(objects){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+        var filtered_objects = [];
+        objects.forEach(object => {
+            if(!blocked_accounts.includes(object['sender'])){
+                filtered_objects.push(object)
+            }
+        })
+
+        if(this.props.app_state.masked_content == 'hide'){
+            return filtered_objects
+        }
+        return objects;
+    }
+
+    get_stacked_items(){
+        var video = this.state.videos[this.state.pos];
+        var convo_id = video['video_id']
+
+        var stack = this.props.app_state.stack_items
+        var stacked_items = []
+        for(var i=0; i<stack.length; i++){
+            if(stack[i].type == this.props.app_state.loc['3030b']/* 'video-comment-messages' */){
+                for(var e=0; e<stack[i].messages_to_deliver.length; e++){
+                    var message_obj = stack[i].messages_to_deliver[e]
+                    if(message_obj['id'] == convo_id){
+                        stacked_items.push(message_obj)
+                    }
+                }
+            }
+        }
+        return stacked_items
+    }
+
+    get_focused_message_replies(){
+        var focused_message = this.get_focused_message()
+        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+        var replies = []
+        for(var i=0; i<all_messages.length; i++){
+            if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
+                replies.push(all_messages[i])
+            }
+        }
+        return replies
+    }
+
+    get_message_replies(item){
+        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+        var replies = []
+        for(var i=0; i<all_messages.length; i++){
+            if(all_messages[i]['focused_message_id'] != null && item['message_id'] != null &&  all_messages[i]['focused_message_id'] == item['message_id']){
+                replies.push(all_messages[i])
+            }
+        }
+        return replies
+    }
+
+    get_focused_message(){
+        var video = this.state.videos[this.state.pos];
+        return this.state.focused_message[video['video_id']]
+    }
+
+    when_entered_text_input_field_changed(text){
+        if(text.length > this.props.app_state.max_input_text_length){
+            this.show_add_comment_bottomsheet()
+        }else{
+            this.setState({entered_text: text})
+        }
+    }
+
+    add_message_to_stack(){
+        var message = this.state.entered_text.trim()
+        var video = this.state.videos[this.state.pos];
+        var object = this.state.object
+        var message_id = Date.now()
+        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+
+        var comments_disabled_option = this.get_selected_item2(object['ipfs'].get_disabled_comments_section, 'e')
+        var posts_author = object['author']
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(comments_disabled_option == 1 && me != posts_author){
+            this.props.notify(this.props.app_state.loc['2759']/* The comment section has been disabled by the posts author. */, 4500)
+            return
+        }
+
+        if(message == ''){
+            this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 1600)
+        }
+        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
+        }
+        else{
+            var tx = {'id':video['video_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'videopost_id':object['id'], 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5}
+
+            this.props.add_video_message_to_stack_object(tx)
+
+            this.setState({entered_text:''})
+            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
+            
+            if (this.messagesEnd.current){
+                this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+            }
+        }
+    }
+
+
+
+
+
+
+    render_all_comments(){
+        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
+        return(
+            <div>
+                {sorted_messages_in_tree.children.map((item, index) => (
+                    <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
+                        <div >
+                            {this.render_main_comment(item, 0)}
+                            <div style={{height:3}}/>
+                        </div>
+                    </li>
+                ))}    
+            </div>
+        )
+    }
+
+    render_main_comment(comment, depth){
+        return(
+            <div>
+                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message)}>
+                    {this.render_message_as_focused_if_so(comment.data.message)}
+                </div>
+
+                {this.render_message_children(comment, depth)}
+            </div>
+        )
+    }
+
+    render_message_children(comment, depth){
+        var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
+        if(!this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
+            return(
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
+                    <div style={{width:'100%'}}>
+                        <ul style={{ 'padding': padding, 'listStyle':'none'}}>
+                            {comment.children.map((item, index) => (
+                                <li style={{'padding': '4px 0px 0px 0px'}}>
+                                    <div>
+                                        {this.render_main_comment(item, depth+1)}
+                                        <div style={{height:3}}/>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_message_item_clicked(message){
+        var clone = this.state.hidden_message_children_array.slice();
+        
+        if(clone.includes(message['message_id'])){
+            var index = clone.indexOf(message['message_id']);
+            if(index > -1){
+                clone.splice(index, 1);
+            }
+        }else{
+            clone.push(message['message_id'])
+        }
+
+        this.setState({hidden_message_children_array:clone})
+    }
+
+    get_message_replies_in_sorted_object(){
+        var messages = this.get_convo_messages().concat(this.get_stacked_items())
+        var data = []
+        messages.forEach(message => {
+            data.push({ index : message['message_id'], sort : message['time'], parent : message['focused_message_id'], message: message })
+        });
+        var tree = toTree(data);
+        return tree;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
 
 
     render_empty_views(size){

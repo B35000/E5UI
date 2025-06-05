@@ -62,7 +62,9 @@ class ConfigureNitroNodePage extends Component {
 
         entered_app_key_text:'',entered_backup_text:'', entered_filename_text:'', entered_backup_file_text:'', entered_address_text:'',
         entered_ipfs_provider_text:'', entered_web3_text:'', entered_start_block_text:'', entered_iteration_text:'', 
-        max_buyable_capacity:0, exchange_id:'', price_amount:0, price_data:[], recipient_id:'', entered_subscription_text:'', entered_dialer_enpoint_text:''
+        max_buyable_capacity:0, exchange_id:'', price_amount:0, price_data:[], recipient_id:'', entered_subscription_text:'', entered_dialer_enpoint_text:'',
+
+        default_free_storage:0
     };
 
 
@@ -95,7 +97,7 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' */, this.props.app_state.loc['3054cl']/* 'Recipient' *//* , this.props.app_state.loc['3054cu'] *//* 'free-storage' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' */, this.props.app_state.loc['3054cl']/* 'Recipient' */, this.props.app_state.loc['3054dm']/* 'free-default-storage' *//* , this.props.app_state.loc['3054cu'] *//* 'free-storage' */], [1]
             ],
         };
     }
@@ -174,44 +176,8 @@ class ConfigureNitroNodePage extends Component {
 
 
     render_everything(){
-        var size = this.props.app_state.size
         if(this.state.nitro_object == null) return;
-        if(size == 's'){
-            return(
-                <div>
-                    {this.render_the_views()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_the_views()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
-                
-            )
-        }
-        else if(size == 'l'){
-            return(
-                <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_the_views()}
-                    </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
 
-    render_the_views(){
         var selected_item = this.get_selected_item(this.state.get_configure_nitro_node_title_tags_object, this.state.get_configure_nitro_node_title_tags_object['i'].active)
 
         if(selected_item == 'e'){
@@ -294,12 +260,44 @@ class ConfigureNitroNodePage extends Component {
     }
 
 
+
+
+
     render_my_nitro_node_details(){
-        return(
-            <div>
-                {this.render_nitro_node_details(this.state.nitro_object)}
-            </div>
-        )
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_nitro_node_details(this.state.nitro_object)}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_nitro_node_details(this.state.nitro_object)}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_nitro_node_details(this.state.nitro_object)}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
     }
 
     render_nitro_node_details(object){
@@ -527,9 +525,44 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
-
     render_boot_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_boot_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_boot_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_boot_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_boot_ui_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3051']/* 'Boot the node to begin the syncronization process.' */})}
@@ -572,8 +605,44 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
     render_restore_nitro_node_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_restore_nitro_node_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_restore_nitro_node_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_restore_nitro_node_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_restore_nitro_node_ui_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054l']/* 'Restore the node to a previous back up.' */})}
@@ -708,8 +777,44 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
     render_backup_nitro_node_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_backup_nitro_node_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_backup_nitro_node_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_backup_nitro_node_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_backup_nitro_node_ui_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054v']/* 'Manually back up the node at this time.' */})}
@@ -736,8 +841,43 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
     render_new_e5_in_node_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_new_e5_in_node_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_new_e5_in_node_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_new_e5_in_node_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+    render_new_e5_in_node_ui_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054v']/* 'Manually back up the node at this time.' */})}
@@ -899,8 +1039,44 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
     render_delete_e5_in_node(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_delete_e5_in_node_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_delete_e5_in_node_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_delete_e5_in_node_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_delete_e5_in_node_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054bi']/* 'Delete an E5 and its events from the node.' */})}
@@ -936,8 +1112,44 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
     render_change_iteration_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_change_iteration_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_change_iteration_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_change_iteration_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_change_iteration_ui_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054bm']/* 'Change the node\'s block syncronization iteration value.' */})}
@@ -1028,9 +1240,44 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
-
     render_change_provider_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_change_provider_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_change_provider_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_change_provider_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_change_provider_ui_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054bx']/* 'Change the Web3 provider url.' */})}
@@ -1074,9 +1321,45 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
-
     render_boot_storage(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_boot_storage_data()}
+                    {this.render_boot_storage_data2()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_boot_storage_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_boot_storage_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_boot_storage_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_boot_storage_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_boot_storage_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054ca']/* 'Boot and enable storage capabilities in your node.' */})}
@@ -1104,15 +1387,31 @@ class ConfigureNitroNodePage extends Component {
                 {this.load_account_suggestions()}
                 <div style={{height:10}}/>
 
+
+
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054dl']/* 'Default Free Storage' */, 'subtitle':this.format_power_figure(this.state.default_free_storage), 'barwidth':this.get_number_width(this.state.default_free_storage), 'number':`${this.format_account_balance_figure(this.state.default_free_storage)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_default_free_storage_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <div style={{height:10}}/>
+                
+            </div>
+        )
+    }
+
+    render_boot_storage_data2(){
+        return(
+            <div>
                 {this.render_set_token_and_amount_part()}
-
-
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']/* 'Free Basic Storage' */, 'details':this.props.app_state.loc['3054ct']/* 'If set to enabled, users will be able to store post metadata in your node for free.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                
-                
+
+
 
                 <div style={{height:20}}/>
                 <div onClick={()=> this.when_boot_storage_tapped()}>
@@ -1120,6 +1419,10 @@ class ConfigureNitroNodePage extends Component {
                 </div>
             </div>
         )
+    }
+
+    when_default_free_storage_set(number){
+        this.setState({default_free_storage: number})
     }
 
     when_max_buyable_capacity_set(number){
@@ -1417,6 +1720,7 @@ class ConfigureNitroNodePage extends Component {
         var selected_e5 = this.state.selected_e5
         var price_per_megabyte = this.state.price_data
         var target_storage_purchase_recipient_account = this.state.recipient_id
+        var default_free_storage = this.state.default_free_storage
         
         // var selected_basic_storage_setting = this.get_selected_item(this.state.basic_storage_enabled_tags_object, this.state.basic_storage_enabled_tags_object['i'].active) === this.props.app_state.loc['3054cr']/* enabled */
         var selected_basic_storage_setting = true
@@ -1436,7 +1740,7 @@ class ConfigureNitroNodePage extends Component {
                 prices.push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
             });
 
-            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, prices, target_storage_purchase_recipient_account, selected_basic_storage_setting, this.state.nitro_object)
+            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, prices, target_storage_purchase_recipient_account, selected_basic_storage_setting, this.state.nitro_object, default_free_storage)
         }
     }
 
@@ -1445,9 +1749,44 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-
-
     reconfigure_storage(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.reconfigure_storage_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.reconfigure_storage_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.reconfigure_storage_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    reconfigure_storage_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054cm']/* 'Change the current setting for the storage service in the node.' */})}
@@ -1520,6 +1859,13 @@ class ConfigureNitroNodePage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3054dm']/* 'free-default-storage' */){
+            return(
+                <div>
+                    {this.render_free_default_storage_picker()}
+                </div>
+            )
+        }
     }
 
 
@@ -1546,12 +1892,34 @@ class ConfigureNitroNodePage extends Component {
         var max_buyable_capacity = this.state.max_buyable_capacity
         var selected_e5 = this.state.selected_e5
 
-        if(max_buyable_capacity == 0){
-            this.props.notify(this.props.app_state.loc['3054cf']/* 'You need to specify a maximum amount of storage that can be bought' */, 4000)
-        }
-        else{
-            this.props.update_storage_config(entered_backup_text, 'max_buyable_capacity', parseInt(max_buyable_capacity), selected_e5, this.state.nitro_object)
-        }
+        this.props.update_storage_config(entered_backup_text, 'max_buyable_capacity', parseInt(max_buyable_capacity), selected_e5, this.state.nitro_object)
+    }
+
+
+    render_free_default_storage_picker(){
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054dl']/* 'Default Free Storage' */, 'subtitle':this.format_power_figure(this.state.default_free_storage), 'barwidth':this.get_number_width(this.state.default_free_storage), 'number':`${this.format_account_balance_figure(this.state.default_free_storage)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_default_free_storage_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{height:20}}/>
+                <div onClick={()=> this.when_update_free_default_storage_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3054cn']/* 'Update Capacity' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_update_free_default_storage_tapped(){
+        var entered_backup_text = this.state.entered_backup_text
+        var default_free_storage = this.state.default_free_storage
+        var selected_e5 = this.state.selected_e5
+
+        this.props.update_storage_config(entered_backup_text, 'free_default_storage', parseInt(default_free_storage), selected_e5, this.state.nitro_object)
     }
 
 
