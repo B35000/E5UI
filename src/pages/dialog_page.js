@@ -1386,6 +1386,22 @@ return data['data']
                     </div>
                 )
             }
+            else if(data['type'] == 'lyric'){
+                var img = this.props.app_state.static_assets['lyric_icon']
+                return(
+                    <div>
+                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var img = this.props.app_state.static_assets['subtitle_icon']
+                return(
+                    <div>
+                        {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
+                    </div>
+                )
+            }
         }
     }
 
@@ -3393,6 +3409,14 @@ return data['data']
                 <div onClick={() => this.when_file_type_selected('video')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bs']/* 'Pick Video' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055cp']/* 'Pick Lyric File.' */, 'details':this.props.app_state.loc['3055cq']/* 'Lyric files with the .lrc extensions are supported.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_file_type_selected('lyric')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055cp']/* 'Pick Lyric File.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
             </div>
         )
     }
@@ -3411,6 +3435,14 @@ return data['data']
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('zip')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bw']/* 'Pick Zip' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055cr']/* 'Pick Subtitle File.' */, 'details':this.props.app_state.loc['3055cs']/* 'Subtitle files with the .vtt extensions are supported' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_file_type_selected('subtitle')}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055cr']/* 'Pick Subtitle File.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
             </div>
         )

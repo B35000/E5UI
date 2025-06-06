@@ -3202,6 +3202,9 @@ class PostListSection extends Component {
         items.forEach(song => {
             if(!this.searched_data.includes(song['song']['track'])){
                 data_to_search.push(song['song']['track'])
+                if(song['song']['subtitle_type'] == 'upload'){
+                    data_to_search.push(song['song']['lyrics'])
+                }
                 this.searched_data.push(song['song']['track'])
             }
         });

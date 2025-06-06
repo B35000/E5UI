@@ -841,7 +841,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1593bk']/* all */, this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */, this.props.app_state.loc['1593cd']/* 'documents' */, this.props.app_state.loc['1593ed']/* 'zip' */], [1]
+                ['or','',0], ['e',/* this.props.app_state.loc['1593bk'] all */ this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */, this.props.app_state.loc['1593cd']/* 'documents' */, this.props.app_state.loc['1593ed']/* 'zip' */, this.props.app_state.loc['1593hb']/* 'lyric' */, this.props.app_state.loc['1593hc']/* 'subtitle' */], [0]
             ],
         };
     }
@@ -1939,14 +1939,14 @@ class StackPage extends Component {
     }
 
     format_data_size(size){
-        if(size > 1_000_000_000){
-            return {'size':this.round_off(size/1_000_000_000), 'unit':'GBs'}
+        if(size > (1_024 * 1_024 * 1_024)){
+            return {'size':this.round_off(size/(1_024 * 1_024 * 1_024)), 'unit':'GBs'}
         }
-        else if(size > 1_000_000){
-            return {'size':this.round_off(size/1_000_000), 'unit':'MBs'}
+        else if(size > (1_024 * 1_024)){
+            return {'size':this.round_off(size/(1_024 * 1_024)), 'unit':'MBs'}
         }
-        else if(size > 1_000){
-            return {'size':this.round_off(size/1_000), 'unit':'KBs'}
+        else if(size > 1_024){
+            return {'size':this.round_off(size/1_024), 'unit':'KBs'}
         }
         else{
             return {'size':size, 'unit':'bytes'}
@@ -4642,8 +4642,26 @@ return data['data']
 
         if(this.props.app_state.update_data_in_E5){
             var uploaded_data = this.props.app_state.uploaded_data_cids
+            var return_items = []
+            uploaded_data.forEach(ecid => {
+                const data = this.get_cid_split(ecid)
+                if(data != null){
+                    if(this.props.app_state.uploaded_data[data['filetype']] != null){
+                        const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
+                        if(file_data != null){
+                            const time = file_data['id']
+                            return_items.push({'data':ecid, 'time':time})
+                        }
+                    }
+                }
+            });
+            var sorted_items = this.sortByAttributeDescending(return_items, 'time')
+            var final_items = []
+            sorted_items.forEach(item => {
+                final_items.push(item['data'])
+            });
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
-            var data = JSON.stringify({'data':uploaded_data})
+            var data = JSON.stringify({'data':final_items})
             var encrypted_obj = this.props.encrypt_data_object(data, key)
 
             var data = {'cids': encrypted_obj, 'time':Date.now(), 'encrypted':true}
@@ -11586,7 +11604,7 @@ return data['data']
         var ts = total_size['size']+' '+total_size['unit']
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593bc']/* 'File Upload Limit.' */, 'details':fs, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593bc']/* 'File Upload Limit.' */, 'details':`~ ${fs}`, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -11959,12 +11977,19 @@ return data['data']
 
                 if(node_details != null && node_details != 'unavailable'){
                     var available_space = parseFloat(node_details['acquired_space']) - parseFloat(node_details['utilized_space'])
+                    // if(available_space > 5){
+                    //     available_space -= 5
+                    // }
                     max_size = (available_space * 1024 * 1024)
                 }
                 else if(state != null && state != 'unavailable' && state['free_default_storage'] != 0){
                     var my_balance = this.props.app_state.account_balance[state['target_account_e5']]
                     if(my_balance != null && bigInt(my_balance).greater(bigInt(0))){
-                        max_size = (state['free_default_storage']  * 1024 * 1024)
+                        var free_storage_amount = state['free_default_storage']
+                        // if(free_storage_amount > 5){
+                        //     free_storage_amount -= 5
+                        // }
+                        max_size = (free_storage_amount  * 1024 * 1024)
                     }
                 }
             }
@@ -12006,6 +12031,7 @@ return data['data']
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1593bj']/* 'Upload a file to storage.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
                 {this.render_message_if_no_storage_option_is_selected()}
                 {this.render_detail_item('0')}
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_file_data_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_file_data_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 {this.render_encryption_file_message_if_wallet_not_set()}
                 {this.render_uploaded_files()}
             </div>
@@ -12052,6 +12078,8 @@ return data['data']
         this.video_input = React.createRef()
         this.pdf_input = React.createRef()
         this.zip_input = React.createRef()
+        this.lrc_input = React.createRef()
+        this.vtt_input = React.createRef()
     }
 
     render_open_options_picker_upload_button(){
@@ -12066,6 +12094,10 @@ return data['data']
                 <input ref={this.pdf_input} style={{display: 'none'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)} multiple/>
 
                 <input ref={this.zip_input} style={{display: 'none'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)} multiple/>
+
+                <input ref={this.lrc_input} style={{display: 'none'}} id="upload" type="file" accept =".lrc" onChange ={this.when_lrc_picked.bind(this)} multiple/>
+
+                <input ref={this.vtt_input} style={{display: 'none'}} id="upload" type="file" accept =".vtt" onChange ={this.when_vtt_picked.bind(this)} multiple/>
 
                 <div onClick={() => this.props.show_dialog_bottomsheet({}, 'file_type_picker')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gj']/* 'Upload File.' */, 'action':''})}
@@ -12089,6 +12121,12 @@ return data['data']
         }
         else if(type == 'zip'){
             this.zip_input.current?.click()
+        }
+        else if(type == 'lyric'){
+            this.lrc_input.current?.click()
+        }
+        else if(type == 'subtitle'){
+            this.vtt_input.current?.click()
         }
     }
 
@@ -12282,6 +12320,25 @@ return data['data']
         return;
     }
 
+    when_lrc_picked = (e) => {
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            this.when_file_picked_for_arweave(e, 'lyric')
+            return;
+        }
+        this.when_file_picked(e, 'lyric')
+        return;
+    }
+
+    when_vtt_picked = (e) =>{
+        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+            this.when_file_picked_for_arweave(e, 'subtitle')
+            return;
+        }
+        this.when_file_picked(e, 'subtitle')
+        return;
+    }
 
 
 
@@ -12355,6 +12412,14 @@ return data['data']
                 else if(type == 'zip'){
                     var zipFile = e.target.files[i];
                     reader.readAsDataURL(zipFile);
+                }
+                else if(type == 'lyric'){
+                    var lyricFile = e.target.files[i];
+                    reader.readAsDataURL(lyricFile);
+                }
+                else if(type == 'subtitle'){
+                    var subtitleFile = e.target.files[i];
+                    reader.readAsDataURL(subtitleFile);
                 }
 
                 while (this.is_loading_file == true) {
@@ -12454,6 +12519,14 @@ return data['data']
             else if(type == 'zip'){
                 var zipFile = e.target.files[0];
                 reader.readAsArrayBuffer(zipFile);
+            }
+            else if(type == 'lyric'){
+                var lyricFile = e.target.files[0];
+                reader.readAsArrayBuffer(lyricFile);
+            }
+            else if(type == 'subtitle'){
+                var subtitleFile = e.target.files[0];
+                reader.readAsArrayBuffer(subtitleFile);
             }
         }
     }
@@ -12658,7 +12731,7 @@ return data['data']
         var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
         
         var file_type = ''
-        if(selected_item == this.props.app_state.loc['1593bk']/* all */ || selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
+        if(selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
             file_type = 'image'
         }
         else if(selected_item == this.props.app_state.loc['1593bm']/* 'audio' */){
@@ -12673,12 +12746,18 @@ return data['data']
         else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
             file_type = 'zip'
         }
+        else if(selected_item == this.props.app_state.loc['1593hb']/* 'lyric' */){
+            file_type = 'lyric'
+        }
+        else if(selected_item == this.props.app_state.loc['1593hc']/* 'subtitle' */){
+            file_type = 'subtitle'
+        }
 
         var items = this.props.app_state.uploaded_data_cids
         var return_items = []
         items.forEach(ecid => {
             const data = this.get_cid_split(ecid)
-            if(data != null && (data['filetype'] == file_type || selected_item == this.props.app_state.loc['1593bk']/* all */)){
+            if(data != null && (data['filetype'] == file_type || selected_item == 'e')){
                 if(this.props.app_state.uploaded_data[data['filetype']] != null){
                     const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
                     if(file_data != null){
@@ -12795,6 +12874,30 @@ return data['data']
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
                 var details = data['name']
                 var thumbnail = this.props.app_state.static_assets['zip_file']
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'lyric'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = this.props.app_state.static_assets['lyric_icon']
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = this.props.app_state.static_assets['subtitle_icon']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}

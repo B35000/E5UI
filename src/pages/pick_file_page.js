@@ -82,6 +82,12 @@ class PickFilePage extends Component {
         else if(type == 'zip'){
             return['e', this.props.app_state.loc['1593ed']/* 'zip' */]
         }
+        else if(type == 'lyric'){
+            return['e', this.props.app_state.loc['1593hb']/* 'lyric' */]
+        }
+        else if(type == 'subtitle'){
+            return['e', this.props.app_state.loc['1593hc']/* 'subtitle' */]
+        }
         else{
             return ['e', this.props.app_state.loc['2957']/* 'video' */]
         }
@@ -200,12 +206,25 @@ class PickFilePage extends Component {
             t = t.replaceAll('an zip','a zip')
             return t
         }
+        else if(type == 'lyric'){
+            var text = this.props.app_state.loc['2958']/* 'Pick one or multiple zip files from your storage.To see an audio file here, you need to upload it in the stack page.' */
+            var t = text.replaceAll(this.props.app_state.loc['2955']/* image */,this.props.app_state.loc['1593hb']/* 'lyric' */)
+            t = t.replaceAll('an lyric','a lyric')
+            return t
+        }
+        else if(type == 'subtitle'){
+            var text = this.props.app_state.loc['2958']/* 'Pick one or multiple zip files from your storage.To see an audio file here, you need to upload it in the stack page.' */
+            var t = text.replaceAll(this.props.app_state.loc['2955']/* image */,this.props.app_state.loc['1593hc']/* 'subtitle' */)
+            t = t.replaceAll('an subtitle','a subtitle')
+            return t
+        }
         else{
             var text = this.props.app_state.loc['2958']/* 'Pick one or multiple video files from your storage.To see an video here, you need to upload it in the stack page.' */
             var t = text.replaceAll(this.props.app_state.loc['2955']/* image */, this.props.app_state.loc['2957']/* 'video' */)
             t = t.replaceAll('an video','a video')
             return t 
         }
+        
     }
 
     render_uploaded_files(){
@@ -392,6 +411,42 @@ class PickFilePage extends Component {
                 var title = data['name']
                 var size = 'l'
                 var thumbnail = this.props.app_state.static_assets['zip_file']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'lyric'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['lyric_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['subtitle_icon']
                 if(minified == true){
                     details = fs
                     title = start_and_end(title)

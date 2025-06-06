@@ -35,6 +35,8 @@ import EndImg from './assets/end_token_icon.png';
 import SpendImg from './assets/spend_token_icon.png';
 import json_icon from './assets/json_file.png'
 import csv_icon from './assets/csv_file.png'
+import lyric_icon from './assets/lrc_file.png'
+import subtitle_icon from './assets/subtitle_file.png'
 
 import alert_icon from './assets/alert_icon.png'
 import add_icon from './assets/add_icon.png'
@@ -907,7 +909,9 @@ class App extends Component {
       'end_img':EndImg,
       'spend_img':SpendImg,
       'csv_file':csv_icon,
-      'json_file':json_icon
+      'json_file':json_icon,
+      'lyric_icon':lyric_icon,
+      'subtitle_icon': subtitle_icon,
     }
   }
 
@@ -4014,19 +4018,18 @@ class App extends Component {
   }
 
   update_data_in_db = async (data, id) => {
+    const encrypted_data = this.encrypt_storage_object(data, {})
     try {
       const db = new Dexie('twentythreeinreverse');
       db.version(2).stores({
         data: 'id, data', // Primary key and indexed props
       });
-
       try{
         await db.data.delete(id)
       }catch(e){
         console.log(`Failed to delete data in db: `, e);
       }
-      await db.data.add({ id, data });
-      
+      await db.data.add({ id, encrypted_data });
     } catch (error) {
       console.log(`Failed to do something in db: `,error);
     }
@@ -4040,7 +4043,7 @@ class App extends Component {
       });
       var data = await db.data.get({id: id})
       if(data == null) return
-return data['data']
+      return this.decrypt_storage_object(data['data'])
     }catch(e){
       console.log(`Failed : ${e}`);
       return null
@@ -15146,7 +15149,7 @@ return data['data']
       this.edit_storefront_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_contractor_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_videopost_page.current?.when_image_gif_files_picked(picked_files)
-      this.edit_videopost_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_audiopost_page.current?.when_image_gif_files_picked(picked_files)
 
       this.add_comment_page.current?.when_image_gif_files_picked(picked_files)
       this.send_job_request_page.current?.when_image_gif_files_picked(picked_files)
@@ -15172,7 +15175,7 @@ return data['data']
       this.edit_storefront_page.current?.when_banner_selected(picked_files)
       this.edit_contractor_page.current?.when_banner_selected(picked_files)
       this.edit_videopost_page.current?.when_banner_selected(picked_files)
-      this.edit_videopost_page.current?.when_banner_selected(picked_files)
+      this.edit_audiopost_page.current?.when_banner_selected(picked_files)
     }
     else if(function_name == 'create_storefront_variant_image'){
       this.new_token_page.current?.when_variant_image_gif_files_picked(picked_files)
@@ -15217,7 +15220,7 @@ return data['data']
       this.edit_storefront_page.current?.when_pdf_files_picked(picked_files)
       this.edit_contractor_page.current?.when_pdf_files_picked(picked_files)
       this.edit_videopost_page.current?.when_pdf_files_picked(picked_files)
-      this.edit_videopost_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_audiopost_page.current?.when_pdf_files_picked(picked_files)
 
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
       this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
@@ -15243,11 +15246,19 @@ return data['data']
       this.edit_storefront_page.current?.when_zip_files_picked(picked_files)
       this.edit_contractor_page.current?.when_zip_files_picked(picked_files)
       this.edit_videopost_page.current?.when_zip_files_picked(picked_files)
-      this.edit_videopost_page.current?.when_zip_files_picked(picked_files)
+      this.edit_audiopost_page.current?.when_zip_files_picked(picked_files)
     }
     else if(function_name == 'create_video_pick_video_file'){
       this.new_video_page.current?.when_video_file_picked(picked_files)
       this.edit_videopost_page.current?.when_video_file_picked(picked_files)
+    }
+    else if(function_name == 'select_subtitle_file'){
+      this.edit_videopost_page.current?.when_subtitle_file_selected_from_bottomsheet(picked_files)
+      this.new_video_page.current?.when_subtitle_file_selected_from_bottomsheet(picked_files)
+    }
+    else if(function_name == 'select_lyric_file'){
+      this.new_audio_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
+      this.edit_audiopost_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
     }
 
     
@@ -16780,17 +16791,27 @@ return data['data']
 
   load_queue = async (queue, pos) => {
     var songs_to_load = []
-    
+    var lyrics_to_load = []
     for(var i=pos; i<queue.length; i++){
       var song = queue[i]
       if(songs_to_load.length < 3){
         songs_to_load.push(song['track'])
+        if(song['subtitle_type'] == 'upload'){
+          lyrics_to_load.push(song['lyrics'])
+        }else{
+          lyrics_to_load.push('')
+        }
       }
     }
 
     for(var i=0; i<songs_to_load.length; i++){
       var song = songs_to_load[i]
-      await this.fetch_uploaded_data_from_ipfs([song], false)
+      var lyrics = lyrics_to_load[i]
+      if(lyrics != ''){
+        await this.fetch_uploaded_data_from_ipfs([song, lyrics], false)
+      }else{
+        await this.fetch_uploaded_data_from_ipfs([song], false)
+      }
       if(i == 0){
         //if its the song thats to be played
         await this.wait(750)
@@ -17227,17 +17248,29 @@ return data['data']
 
   load_video_queue = async (queue, pos) => {
     var videos_to_load = []
-    
+    var video_subtitles_to_load = []
     for(var i=pos; i<queue.length; i++){
       var video = queue[i]
       if(videos_to_load.length < 1){
         videos_to_load.push(video['video'])
+        var subtitles = video['subtitles'] == null ? [] : video['subtitles']
+        subtitles.forEach(subtitle => {
+          if(subtitle['subtitle_type'] == 'upload'){
+            video_subtitles_to_load.push(subtitle['subtitle_file'])
+          }
+        });
       }
     }
 
     for(var i=0; i<videos_to_load.length; i++){
       var video = videos_to_load[i]
-      await this.fetch_uploaded_data_from_ipfs([video], false)
+      if(video_subtitles_to_load.length != 0){
+        var every_item_to_load = [video].concat(video_subtitles_to_load)
+        await this.fetch_uploaded_data_from_ipfs(every_item_to_load, false)
+      }else{
+        await this.fetch_uploaded_data_from_ipfs([video], false)
+      }
+      
       if(i == 0){
         //if its the video thats to be played
         await this.wait(750)
@@ -21488,7 +21521,7 @@ return data['data']
         }
       });
       console.log('apppage', 'loaded uplpaded cid datas', clone)
-      this.fetch_uploaded_data_from_ipfs(clone.reverse(), true)
+      this.fetch_uploaded_data_from_ipfs(clone, true)
     }else{
       if(this.uploaded_data_user != account && this.uploaded_data_user != null && this.uploaded_data_user != 1){
         this.setState({uploaded_data_cids:[]})
@@ -21538,7 +21571,7 @@ return data['data']
       }
     }
     if(nitro_cid_data.length != null){
-      this.fetch_multiple_file_datas_from_nitro_storage(nitro_cid_data, selected_cids)
+      await this.fetch_multiple_file_datas_from_nitro_storage(nitro_cid_data, selected_cids)
     }
 
     // console.log('apppage', 'starting loaded cid objects...')
@@ -21691,6 +21724,21 @@ return data['data']
           }
         });
       }
+      var songs = object['ipfs'].songs == null ? [] : object['ipfs'].songs
+      if(songs.length > 0){
+        songs.forEach(song => {
+          var song_data_link = song['track']
+          if(this.is_ecid(song_data_link)) ecids.push(song_data_link)
+        });
+      }
+
+      var videos = object['ipfs'].videos == null ? [] : object['ipfs'].videos
+      if(videos.length > 0){
+        videos.forEach(video => {
+          var video_data_link = video['video']
+          if(this.is_ecid(video_data_link)) ecids.push(video_data_link)
+        });
+      }
     }
 
     if(object['image-data'] != null){
@@ -21717,7 +21765,15 @@ return data['data']
   }
 
   is_ecid(ecid){
-    if(ecid.startsWith('image') || ecid.startsWith('audio') || ecid.startsWith('video') || ecid.startsWith('pdf')|| ecid.startsWith('zip')){
+    if(
+      ecid.startsWith('image') || 
+      ecid.startsWith('audio') || 
+      ecid.startsWith('video') || 
+      ecid.startsWith('pdf') || 
+      ecid.startsWith('zip') || 
+      ecid.startsWith('lyric')|| 
+      ecid.startsWith('subtitle')
+    ){
       return true;
     }else{
       return false
@@ -29982,7 +30038,14 @@ return data['data']
               cid_data['hash'] = nitro_cid2
             }
           }
-          if(cid_data != null) this.store_in_local_storage(search_data_cids[nitro_cid], cid_data);
+          if(filetype == 'lyric'){
+            cid_data['lyrics'] = await this.load_lyric_subtitle_data(cid_data, true)
+          }
+          else if(filetype == 'subtitle'){
+            cid_data['subtitles'] = await this.load_lyric_subtitle_data(cid_data, false)
+          }
+
+          this.store_in_local_storage(search_data_cids[nitro_cid], cid_data);
           if(filetype == 'video'){
             this.load_and_store_video_thumbnail(search_data_cids[nitro_cid], cid_data)
           }
@@ -30008,6 +30071,50 @@ return data['data']
     return all_nitro_pointer_mappings[e5_id]
   }
 
+  load_lyric_subtitle_data = async (cid_data, is_lyric) => {
+    var link = cid_data['data']
+    try {
+      // Fetch the image as a blob
+      const response = await fetch(link);
+      if (!response.ok) {
+          throw new Error("Failed to fetch lyric data");
+      }
+      var plaintext = await response.text()
+      if(is_lyric == true){
+        return this.parseLyric(plaintext)
+      }
+      return plaintext
+    } catch (error) {
+      console.error("Error downloading the lyric data:", error);
+    }
+  }
+
+  parseLyric(lrc) {
+    const regex = /^\[(?<time>\d{2}:\d{2}(.\d{2})?)\](?<text>.*)/;
+    // split lrc string to individual lines
+    const lines = lrc.split("\n");
+    const output = [];
+
+    lines.forEach(line => {
+        const match = line.match(regex);
+        if (match == null) return;
+        const { time, text } = match.groups;
+        output.push({
+            time: this.parseTime(time),
+            text: text.trim()
+        });
+    });
+    return output
+  }
+
+  parseTime(time) {
+    const minsec = time.split(":");
+
+    const min = parseInt(minsec[0]) * 60;
+    const sec = parseFloat(minsec[1]);
+
+    return min + sec;
+  }
 
 
 
@@ -30593,7 +30700,6 @@ return data['data']
         var originalText = bytes.toString(CryptoJS.enc.Utf8);
         return originalText
       } else {
-        
         return data
       }
     }catch(e){
@@ -30647,6 +30753,8 @@ return data['data']
     var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
     return ciphertext
   }
+
+
 
 
 

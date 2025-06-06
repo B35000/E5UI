@@ -391,15 +391,25 @@ class FullVideoPage extends Component {
             }
             var tracks = []
             subtitles.forEach(subtitle_track => {
-                tracks.push({kind: 'subtitles', src: this.get_subtitle_file(subtitle_track), srcLang: subtitle_track['subtitle_language_object']['code']})
+                tracks.push({
+                    kind: 'subtitles', 
+                    label: subtitle_track['subtitle_language_name'],
+                    src: this.get_subtitle_file(subtitle_track),
+                    srcLang: subtitle_track['subtitle_language_object']['code']
+                })
             });
             return(
                 <div style={{}}>
                     <video ref={this.video_player} width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
                         <source src={video} type="video/mp4"/>
                         <source src={video} type="video/ogg"/>
-                        {subtitles.map((item, index) => (
-                            <track label={item['subtitle_language_name']} kind="subtitles" srclang={item['subtitle_language_object']['code']} src={this.get_subtitle_file(item)}/>
+                        {tracks.map((item, index) => (
+                            <track
+                                label={item.label} 
+                                kind="subtitles" 
+                                srclang={item.srcLang} 
+                                src={item.src}
+                            />
                         ))}
                         Your browser does not support the video tag.
                     </video>
@@ -412,8 +422,20 @@ class FullVideoPage extends Component {
     }
 
     get_subtitle_file(item){
-        const blob = new Blob([item['subtitle_file']], { type: 'text/vtt' });
-        return URL.createObjectURL(blob);
+        if(item['subtitle_type'] == 'upload'){
+            const ecid_obj = this.get_cid_split(item['subtitle_file'])
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file_lyrics = data['subtitles']
+                const blob = new Blob([file_lyrics], { type: 'text/vtt' });
+                return URL.createObjectURL(blob);
+            }else{
+                return null
+            }
+        }else{
+            const blob = new Blob([item['subtitle_file']], { type: 'text/vtt' });
+            return URL.createObjectURL(blob);
+        }
     }
 
     start_playing(){

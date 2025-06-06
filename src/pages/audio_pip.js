@@ -174,9 +174,9 @@ class AudioPip extends Component {
             var current_song = this.state.songs[this.state.pos]
             var current_song_length = current_song['basic_data']['metadata']['format']['duration']
             var buffer = (loaded / current_song_length) * 100
-            if(this.state.buffer == 0 && (this.props.app_state.os == 'iOS' || this.props.app_state.os == 'Android')){
-                this.play_pause()
-            }
+            // if(this.state.buffer == 0 && (this.props.app_state.os == 'iOS' || this.props.app_state.os == 'Android')){
+            //     this.play_pause()
+            // }
             this.setState({buffer: buffer});
             this.props.when_buffer_updated(buffer)
         }

@@ -332,7 +332,17 @@ class FullAudioPage extends Component {
         this.setState({value: time})
         var song = this.state.songs[this.state.pos]
         if(song != null && song['lyrics'] != null){
-            const index = this.syncLyric(song['lyrics'], time);
+            var file_lyrics = null
+            if(song['subtitle_type'] == 'upload'){
+                const ecid_obj = this.get_cid_split(song['lyrics'])
+                if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                    file_lyrics = data['lyrics']
+                }
+            }else{
+                file_lyrics = song['lyrics']
+            }
+            const index = this.syncLyric(file_lyrics, time);
             if (this.itemRefs[index] != null && this.state.active_lyric != index && !this.state.has_scrolled){
                 this.itemRefs[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
@@ -627,8 +637,19 @@ class FullAudioPage extends Component {
 
     render_lyrics(){
         var song = this.state.songs[this.state.pos]
+        var file_lyrics = null
         
-        if(song['lyrics'] == null){
+        if(song['subtitle_type'] == 'upload'){
+            const ecid_obj = this.get_cid_split(song['lyrics'])
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                file_lyrics = data['lyrics']
+            }
+        }else{
+            file_lyrics = song['lyrics']
+        }
+    
+        if(file_lyrics == null){
             return(
                 <div>
                     {this.render_empty_views(4)}
@@ -636,7 +657,7 @@ class FullAudioPage extends Component {
             )
         }else{
             var middle = this.state.has_scrolled == true ? this.props.height-200 : this.props.height-180
-            var items = song['lyrics']
+            var items = file_lyrics
             return(
                 <div>
                     {this.render_reset_button()}
@@ -758,14 +779,6 @@ class FullAudioPage extends Component {
         return text.toString()
             .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
             .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
-    }
-
-    is_song_available_for_adding_to_playlist(song){
-        var my_songs = this.props.app_state.my_tracks
-        if(my_songs.includes(song['song_id'])){
-            return true
-        }
-        return false
     }
 
     render_upcoming_songs(){

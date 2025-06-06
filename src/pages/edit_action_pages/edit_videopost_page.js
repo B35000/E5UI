@@ -2726,12 +2726,14 @@ return data['data']
 
     render_video_subtitle_picker_ui(){
         return(
-            <div>
+            <div style={{'display': 'flex','flex-direction': 'row',}}>
                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 10px'}}>
                     <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                     
                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".vtt" onChange ={this.when_subtitle_file_picked.bind(this)}/>
                 </div>
+                <div style={{width:10}}/>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('subtitle', 'select_subtitle_file', 1)}/>
             </div>
         )
     }
@@ -2742,13 +2744,21 @@ return data['data']
                 let reader = new FileReader();
                 reader.onload = function(ev){
                     var data = ev.target.result
-                    this.setState({video_subtitle_file: data})
+                    this.setState({video_subtitle_file: data, subtitle_type:'file'})
                 }.bind(this);
                 var subtitleFile = e.target.files[i];
                 this.setState({video_subtitle_file_name: subtitleFile['name']})
                 reader.readAsText(subtitleFile);
             }
         }
+    }
+
+    when_subtitle_file_selected_from_bottomsheet(files){
+        var file_object = files[0]
+        const ecid_obj = this.get_cid_split(file_object)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        this.setState({video_subtitle_file: file_object, video_subtitle_file_name: data['name'], subtitle_type:'upload'})
     }
 
     render_selected_subtitle_file(){
@@ -2761,7 +2771,17 @@ return data['data']
             )
         }else{
             var title = this.state.video_subtitle_file_name
-            var details = number_with_commas(this.lengthInUtf8Bytes(this.state.video_subtitle_file)) + this.props.app_state.loc['b311ab']/* ' bytes' */
+            var details = ''
+            if(this.state.subtitle_type == 'upload'){
+                const ecid_obj = this.get_cid_split(selected_subtitle_file)
+                if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                    var formatted_size = this.format_data_size(data['size'])
+                    details = formatted_size['size']+' '+formatted_size['unit']
+                }
+            }else{
+                details = number_with_commas(this.lengthInUtf8Bytes(this.state.video_subtitle_file)) + this.props.app_state.loc['b311ab']/* ' bytes' */
+            }
             return(
                 <div onClick={() => this.when_subtitle_file_tapped()}>
                     {this.render_detail_item('3', {'details':details,'title':title, 'size':'l'})}
@@ -2785,6 +2805,7 @@ return data['data']
         var video_subtitle_file_name = this.state.video_subtitle_file_name
         var video_subtitle_file = this.state.video_subtitle_file
         var selected_subtitle_language = this.state.selected_subtitle_language;
+        var subtitle_type = this.state.subtitle_type
 
         if(video_subtitle_file == null){
            this.props.notify(this.props.app_state.loc['b311af']/* 'Please add a subtitle file first.' */, 5200); 
@@ -2802,7 +2823,10 @@ return data['data']
             var selected_language_object = language_obj_list[0]
 
             var clone = this.state.subtitles.slice()
-            clone.push({'subtitle_file_name':video_subtitle_file_name, 'subtitle_file':video_subtitle_file, 'subtitle_language_object':selected_language_object, 'subtitle_language_name':selected_subtitle_language})
+            clone.push({
+                'subtitle_file_name':video_subtitle_file_name, 'subtitle_file':video_subtitle_file, 'subtitle_language_object':selected_language_object, 'subtitle_language_name':selected_subtitle_language,
+                'subtitle_type':subtitle_type
+            })
             this.setState({subtitles: clone})
         }
     }

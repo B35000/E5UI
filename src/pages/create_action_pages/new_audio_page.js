@@ -2746,12 +2746,14 @@ return data['data']
 
     render_audio_lyric_picker_ui(){
         return(
-            <div>
+            <div style={{'display': 'flex','flex-direction': 'row',}}>
                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 10px'}}>
                     <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                     
                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".lrc" onChange ={this.when_lyric_file_picked.bind(this)}/>
                 </div>
+                <div style={{width:10}}/>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('lyric', 'select_lyric_file', 1)}/>
             </div>
         )
     }
@@ -2763,12 +2765,21 @@ return data['data']
                 reader.onload = function(ev){
                     var data = ev.target.result
                     var lyrics_data = this.parseLyric(data)
-                    this.setState({song_lyrics: lyrics_data})
+                    this.setState({song_lyrics: lyrics_data, subtitle_type:'file'})
                 }.bind(this);
                 var audioFile = e.target.files[i];
+                this.setState({track_lyric_file_name: audioFile['name']})
                 reader.readAsText(audioFile);
             }
         }
+    }
+
+    when_lyric_file_selected_from_bottomsheet(files){
+        var file_object = files[0]
+        const ecid_obj = this.get_cid_split(file_object)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        this.setState({song_lyrics: file_object, track_lyric_file_name: data['name'], subtitle_type:'upload'})
     }
 
     parseLyric(lrc) {
@@ -2807,8 +2818,19 @@ return data['data']
                 </div>
             )
         }else{
-            var title = this.props.app_state.loc['a311bk']/* 'Lyrics Added' */
-            var details = song_lyrics.length + this.props.app_state.loc['a311bj']/* ' lines.' */
+            var title = this.state.track_lyric_file_name
+            var details = ''
+            if(this.state.subtitle_type == 'upload'){
+                const ecid_obj = this.get_cid_split(song_lyrics)
+                if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                    var formatted_size = this.format_data_size(data['size'])
+                    details = formatted_size['size']+' '+formatted_size['unit']
+                }
+            }else{
+                details = song_lyrics.length + this.props.app_state.loc['a311bj']/* ' lines.' */
+            }
+            
             return(
                 <div>
                     {this.render_detail_item('3', {'details':details,'title':title, 'size':'l'})}
@@ -2825,6 +2847,8 @@ return data['data']
         var audio_file = this.state.audio_file
         var songs_free_plays_count = this.state.songs_free_plays_count
         var song_lyrics = this.state.song_lyrics
+        var subtitle_type = this.state.subtitle_type
+        var track_lyric_file_name = this.state.track_lyric_file_name
         var song_credits = this.state.song_credits
         var explicit = this.state.get_explicit_selector_tags_object
 
@@ -2838,7 +2862,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['a311w']/* 'You need to add an audio track.' */, 3800)
         }
         else{
-            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics, 'credits':song_credits, 'explicit':explicit}
+            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics, 'subtitle_type':subtitle_type, 'track_lyric_file_name':track_lyric_file_name, 'credits':song_credits, 'explicit':explicit}
 
             var clone = this.state.songs.slice()
             if(this.state.edit_song_item_pos != -1){
@@ -2969,7 +2993,7 @@ return data['data']
 
     set_focused_song_data(item_pos){
         var song = this.state.songs[item_pos]
-        this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics'], song_credits: song['credits'], get_explicit_selector_tags_object: song['explicit']});
+        this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics'], song_credits: song['credits'], get_explicit_selector_tags_object: song['explicit'], track_lyric_file_name: song['track_lyric_file_name'], subtitle_type: song['subtitle_type']});
     }
 
 
