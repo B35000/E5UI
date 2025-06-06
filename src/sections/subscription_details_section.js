@@ -61,7 +61,7 @@ class SubscriptionDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,this.props.app_state.loc['2643']/* 'search' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,this.props.app_state.loc['2643']/* '🔎 search' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
           ],
           'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2644']/* 'payments' */, this.props.app_state.loc['2645']/* 'cancellations' */, this.props.app_state.loc['2646']/* 'collections' */,this.props.app_state.loc['2647']/* 'modifications' */], [1], [1]
@@ -238,7 +238,6 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
 
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
@@ -275,7 +274,6 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     
                     {this.render_revoke_author_privelages_event(object)}
-                    <div style={{height: 10}}/>
 
                     {this.render_income_stream_chart(object)}
 
@@ -549,124 +547,140 @@ class SubscriptionDetailsSection extends Component {
     
 
     render_income_stream_chart(object){
-        var events = object['all_payment_history_events'] == null ? [] : this.filter_events_for_last_week(object['all_payment_history_events'])
+        var subscription_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['author'] != my_account && subscription_config[0] != my_account){
+            return;
+        }
+        var events = object['all_payment_history_events'] == null ? [] : object['all_payment_history_events']
         var modification_events = object['all_subscription_modification_events']
         
         if(events != null && events.length > 0){
             var data_point_data = this.get_income_stream_data_points(events, modification_events, object)
-            var total_payment_data = Object.keys(data_point_data.total_payment_data)
+            var total_payment_data = data_point_data.total_payment_data
+            var total_payment_data_keys = Object.keys(data_point_data.total_payment_data)
             return(
                 <div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2695b']/* Subscription Payment Value Transfer' */, 'details':this.props.app_state.loc['2695c']/* `Chart containing the amount of value that has been transfered over time from maturing subscription payments made.` */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2695b']/* Subscription Income Stream' */, 'details':this.props.app_state.loc['2695c']/* `Chart containing the amount of value that has been transfered from maturing subscription payments made in the last week.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':data_point_data.dps, 'interval':110})}
+                    {this.render_detail_item('6', {'dataPoints':data_point_data.dps, 'interval':120, 'hide_label':true})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695a']/* 'Y-Axis: Average Value Transfer' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {total_payment_data.map((item, index) => (
-                            <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':total_payment_data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                        {total_payment_data_keys.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':total_payment_data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                                 {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':this.format_power_figure(total_payment_data[item]), 'barwidth':this.calculate_bar_width(total_payment_data[item]), 'number':this.format_account_balance_figure(total_payment_data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
-                            </li>
+                            </div>
                         ))}
                     </div>
-                    {this.render_detail_item('0')}
                 </div>
             )
         }
     }
 
-    filter_events_for_last_week(events){
-        var filter_value = 60*60*24*7
-        var data = []
-        var cutoff_time = Date.now()/1000 - filter_value
-        events.forEach(event => {
-            if(event.returnValues.p5/* timestamp */ > cutoff_time){
-                data.push(event)
-            }
-        });
-        return data
-    }
-
     get_income_stream_data_points(events, modification_events, object){
         const price_data_snapshots = this.get_price_data_snapshots(modification_events, object)
         var data = []
+        var total_payment_data = {}
         const steps = 60*60/* 60 minutes */
-        try{
-            const payment_history = {}
-            for(var j=0; j<events.length; j++){
-                const time_units_bought = events[j].returnValues.p3/* time_units_paid_for */
-                const paying_account = events[j].returnValues.p2/* sender_acc_id */
-                const paying_time = events[j].returnValues.p5/* timestamp */
-                if(payment_history[paying_account] == null){
-                    payment_history[paying_account] = []
-                }
-                const price_snapshot = price_data_snapshots.find(e => (paying_time > e['from'] && paying_time < e['to']))
-                if(price_snapshot != null){
-                    const time_unit = price_snapshot['time_unit']
-                    const prices_used = price_snapshot['prices']
-                    if(payment_history[paying_account].length == 0){
-                        const to = bigInt(paying_time).plus((bigInt(time_units_bought).multiply(bigInt(time_unit))))
-                        payment_history[paying_account].push({'from':paying_time, 'to':to, 'prices':prices_used})
-                    }else{
-                        const last_payment_item = payment_history[paying_account][payment_history[paying_account].length -1]
-                        if(last_payment_item['to'] > paying_time){
-                            //account added to ther existing subscription before expiry
-                            const to = bigInt(last_payment_item['to']).plus((bigInt(time_units_bought).multiply(bigInt(time_unit))))
-                            payment_history[paying_account].push({'from':paying_time, 'to':to, 'prices':prices_used})
-                        }else{
-                            // account returned to pay subscription after expiry
+        const filter_value = 60*60*24*7
+        // const starting_time = parseInt(object['event'].returnValues.p4)/* timestamp */
+        const starting_time = Math.floor(Date.now()/1000) - filter_value
+        if(this.income_stream_details == null){
+            this.income_stream_details = {}
+        }
+
+        if(this.income_stream_details[object['e5_id']] != null && (Date.now() - this.income_stream_details[object['e5_id']]['time']) < (1000*60*15) ){
+            data = this.income_stream_details[object['e5_id']]['data']
+            total_payment_data = this.income_stream_details[object['e5_id']]['total_payment_data']
+        }else{
+            try{
+                const payment_history = {}
+                for(var j=0; j<events.length; j++){
+                    const time_units_bought = events[j].returnValues.p3/* time_units_paid_for */
+                    const paying_account = events[j].returnValues.p2/* sender_acc_id */
+                    const paying_time = parseInt(events[j].returnValues.p5/* timestamp */)
+                    if(payment_history[paying_account] == null){
+                        payment_history[paying_account] = []
+                    }
+                    const price_snapshot = price_data_snapshots.find(e => (paying_time > e['from'] && paying_time < e['to']))
+                    if(price_snapshot != null){
+                        const time_unit = price_snapshot['time_unit']
+                        const prices_used = price_snapshot['prices']
+                        if(payment_history[paying_account].length == 0){
                             const to = bigInt(paying_time).plus((bigInt(time_units_bought).multiply(bigInt(time_unit))))
                             payment_history[paying_account].push({'from':paying_time, 'to':to, 'prices':prices_used})
+                        }else{
+                            const last_payment_item = payment_history[paying_account][payment_history[paying_account].length -1]
+                            if(last_payment_item['to'] > paying_time){
+                                //account added to ther existing subscription before expiry
+                                const to = bigInt(last_payment_item['to']).plus((bigInt(time_units_bought).multiply(bigInt(time_unit))))
+                                
+                                payment_history[paying_account].push({'from':paying_time, 'to':to, 'prices':prices_used})
+                            }else{
+                                // account returned to pay subscription after expiry
+                                const to = bigInt(paying_time).plus((bigInt(time_units_bought).multiply(bigInt(time_unit))))
+                                payment_history[paying_account].push({'from':paying_time, 'to':to, 'prices':prices_used})
+                            }
                         }
                     }
                 }
-            }
-            
-            // const starting_time = object['event'].returnValues.p4/* timestamp */
-            const starting_time = Math.floor(Date.now()/1000) - (60*60*24*7)
-            const time_steps = []
-            for(var l=0; l<steps; l++){
-                var start = starting_time + (steps * l)
-                var end = starting_time + (steps * l) + (steps-1)
-                time_steps.push({'start_time':start, 'end_time':end})
-            }
-            for(var i=0; i<time_steps.length; i++){
-                const focused_step = time_steps[i]
-                const valid_user_keys = Object.fromEntries(
-                    Object.entries(payment_history).filter(([key, value]) => {
-                            return payment_history[key].filter(function (payment_object) {
-                                return (payment_object['from'] > focused_step['start_time'] && payment_object['to'] > focused_step['end_time'])
-                              })
+                const time_steps = []
+                const steps_to_use = Math.floor((Math.floor(Date.now()/1000) - starting_time) / steps)
+                for(var l=0; l<steps_to_use; l++){
+                    var start = time_steps.length == 0 ? starting_time + (steps * l) : time_steps[time_steps.length -1]['end_time']+1
+                    var end = start + (steps-1)
+                    time_steps.push({'start_time':start, 'end_time':end})
+                }
+                // console.log('income_stream_data_points', 'time_steps', time_steps.length)
+                for(var i=0; i<time_steps.length; i++){
+                    const focused_step = time_steps[i]
+                    const valid_user_keys = Object.entries(payment_history).filter(([key, value]) => {
+                            var result = value.filter(function (payment_object) {
+                                return (
+                                    bigInt(focused_step['start_time']).greaterOrEquals(bigInt(payment_object['from'])) && bigInt(focused_step['start_time']).lesserOrEquals(bigInt(payment_object['to']))
+                                )
+                            })
+                            return result.length > 0
                         }
-                    )
-                );
-                const price_snapshot = price_data_snapshots.find(e => (focused_step['start_time'] >= e['from'] && focused_step['end_time'] <= e['to']))
-
-                data.push({'count':valid_user_keys, 'price_data':price_snapshot})
+                    );
+                    const price_snapshot = price_data_snapshots.find(e => ( focused_step['start_time'] >= e['from'] && focused_step['end_time'] <= e['to'] ) )
+                    
+                    if(price_snapshot != null){
+                        // const number_count = Object.keys(valid_user_keys).length
+                        const number_count = valid_user_keys.length
+                        data.push({'count':number_count, 'price_data':price_snapshot})
+                    }
+                }
+            }catch(e){
             }
-        }catch(e){
 
-        }
-
-        const total_payment_data = {}
-        for(var w=0; w<data.length; w++){
-            const focused_data_point = data[w]
-            const focused_time_unit = focused_data_point['price_data']['time_unit']
-            const focused_payment_exchange_items = focused_data_point['price_data']['prices']
-            const paying_accounts = focused_data_point['count']
-            const time_share = steps / focused_time_unit
-            if(total_payment_data == null){
+            for(var w=0; w<data.length; w++){
+                const focused_data_point = data[w]
+                const focused_time_unit = focused_data_point['price_data']['time_unit']
+                const focused_payment_exchange_items = focused_data_point['price_data']['prices']
+                const paying_accounts = focused_data_point['count']
+                const time_share = steps / focused_time_unit
+                if(total_payment_data == null){
+                    focused_payment_exchange_items.forEach(price_object => {
+                        total_payment_data[price_object['id']] = bigInt(0)
+                    });
+                }
                 focused_payment_exchange_items.forEach(price_object => {
-                    total_payment_data[price_object['id']] = bigInt(0)
+                    var total_amount_for_period = Math.floor((bigInt(paying_accounts).multiply(price_object['amount'])) * time_share)
+                    total_payment_data[price_object['id']] = bigInt(total_payment_data[price_object['id']]).plus(bigInt(total_amount_for_period))
                 });
             }
-            focused_payment_exchange_items.forEach(price_object => {
-                var total_amount_for_period = Math.floor((bigInt(paying_accounts).multiply(price_object['amount'])) * time_share)
-                total_payment_data[price_object['id']] = bigInt(total_payment_data[price_object['id']]).plus(bigInt(total_amount_for_period))
-            });
+
+            if(this.income_stream_details[object['e5_id']] == null){
+                this.income_stream_details[object['e5_id']] = {'data':data, 'total_payment_data':total_payment_data, 'time':Date.now()}
+            }
         }
+
+        // console.log('income_stream_data_points', 'total_payment_data', total_payment_data)
+        // console.log('income_stream_data_points', 'max_count', max_count)
         
         // data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
 
@@ -674,11 +688,16 @@ class SubscriptionDetailsSection extends Component {
         var dps = [];
         var noOfDps = 100;
         var factor = Math.round(data.length/noOfDps) +1;
-        // var noOfDps = data.length
         var largest_number = this.get_total_supply_interval_figure(data)
+        // console.log('income_stream_data_points','largest_number', largest_number)
         for(var v = 0; v < noOfDps; v++) {
-            const focused_data_point = data[factor * xVal]
-            yVal = parseInt(bigInt(focused_data_point['count']).multiply(100).divide(largest_number))
+            var pos = factor * xVal
+            const focused_data_point = data[pos]
+            yVal = 0
+            if(focused_data_point != null && focused_data_point['count'] != 0 && largest_number != 0){
+                yVal = parseInt(bigInt(focused_data_point['count']).multiply(100).divide(largest_number))
+            }
+            
             // yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null && focused_data_point != null){
@@ -692,13 +711,13 @@ class SubscriptionDetailsSection extends Component {
                                 selected_price_item = price_item
                             }
                         }
-                    }    
+                    }
                     const final_price_amount = bigInt(selected_price_item['amount']).multiply(focused_data_point['count'])
                     const token_name = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_price_item['id']]
 
-                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(final_price_amount)+` ${token_name}`});//
+                    dps.push({x: xVal,y: (yVal+10), indexLabel: ""+this.format_account_balance_figure(final_price_amount)+` ${token_name}`});//
                 }else{
-                    dps.push({x: xVal, y: yVal});//
+                    dps.push({x: xVal, y: (yVal+10)});//
                 }
                 xVal++;
             }
@@ -719,8 +738,8 @@ class SubscriptionDetailsSection extends Component {
 
     get_price_data_snapshots(modification_events, object){
         const original_price_data = object['ipfs'].price_data
-        const original_time_unit = object['ipfs'].time_unit
-        const original_time = object['event'].returnValues.p4/* timestamp */
+        const original_time_unit = object['ipfs'].time_unit == 0 ? 60*53 : object['ipfs'].time_unit
+        const original_time = parseInt(object['event'].returnValues.p4/* timestamp */)
         const now = Math.floor(Date.now()/1000)
         const snapshots = [{'from':original_time, 'prices':original_price_data, 'time_unit':original_time_unit, 'to':now}]
 
@@ -728,7 +747,7 @@ class SubscriptionDetailsSection extends Component {
             const config_item_array = event.returnValues.p3/* config_item_array */
             const config_item_pos = event.returnValues.p4/* config_item_pos */
             const new_config_item = event.returnValues.p5/* new_config_item */
-            const timestamp = event.returnValues.p6/* timestamp */
+            const timestamp = parseInt(event.returnValues.p6/* timestamp */)
 
             const last_configuration = structuredClone(snapshots[snapshots.length -1])
             if(config_item_array == 3/* amounts_for_buying */){
@@ -738,7 +757,7 @@ class SubscriptionDetailsSection extends Component {
                 snapshots.push(last_configuration)
             }
             else if(config_item_array == 1 && config_item_pos == 5/* <5>time_unit */){
-                last_configuration['time_unit'] = new_config_item
+                last_configuration['time_unit'] = new_config_item == 0 ? 60*53 : new_config_item
                 last_configuration['from'] = timestamp
                 snapshots[snapshots.length -1]['to'] = timestamp - 1
                 snapshots.push(last_configuration)
@@ -782,11 +801,12 @@ class SubscriptionDetailsSection extends Component {
             return logs
         }else{
             var filtered_logs = []
-            logs.forEach(log => {
-                var account = log['returnValues']['p2']
-                var account2 = log['returnValues']['p3']
+            console.log('filter_my_logs', logs)
+            logs.forEach(log_item => {
+                var account = log_item['event'].returnValues.p2
+                var account2 = log_item['event'].returnValues.p3
                 if(me == account || me == account2){
-                    filtered_logs.push(log)
+                    filtered_logs.push(log_item)
                 }
             });
             return filtered_logs

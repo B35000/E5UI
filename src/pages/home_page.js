@@ -5706,7 +5706,7 @@ class home_page extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2821']/* 'Estimated Gas.' */, 'details':this.props.app_state.loc['2822']/* 'The estimated gas set to be consumed in your next run.' */, 'size':'l'})}
                     <div style={{height: 5}}/>
                     {this.render_stack_gas_figure()}
-                    <div style={{height: 10}}/>
+                    
                     {this.render_stack_run_space_utilization_if_non_zero()}
                     
 
@@ -6022,6 +6022,7 @@ class home_page extends Component {
             }
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593go']/* 'Stack Run Storage Utilization' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':this.format_account_balance_figure(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
 
@@ -6033,6 +6034,7 @@ class home_page extends Component {
         else if(this.props.app_state.stack_size_in_bytes == -1){
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1593gq']/* 'Calculating Stack Run Storage Utilization...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 </div>
             )
@@ -6066,7 +6068,6 @@ class home_page extends Component {
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
                 </div>
-                <div style={{height: 10}}/>
                 {this.render_arweave_network_fee_if_selected()}
             </div>
         )
