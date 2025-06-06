@@ -135,6 +135,30 @@ class ViewJobRequestPage extends Component {
         };
     }
 
+    set_object(request_item, contractor_object){
+        if(this.state.request_item['job_request_id'] != request_item['job_request_id']){
+            this.setState({
+                selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8), contractor_object: null,
+                entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
+            })
+        }
+        this.setState({request_item: request_item, contractor_object: contractor_object, e5: request_item['e5']})
+        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'], request_item['key_data'])
+
+        if(request_item['is_response_accepted']){
+            this.setState({accept_job_request_title_tags_object: this.get_accepted_job_request_title_tags_object()})
+        }
+        if (this.messagesEnd.current){
+            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }
+
+
+
+
+
+    
+
     render(){
         if(this.state.request_item['title_description'] == null) return;
         return(
@@ -198,6 +222,21 @@ class ViewJobRequestPage extends Component {
             )
         }
         else if(size == 'l'){
+            if(!this.is_ok_to_show_contracts()){
+                return(
+                    <div className="row">
+                        <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_title_details_part()}
+                        </div>
+                        <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_messages_parts()}
+                        </div>
+                        <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_empty_views(3)}
+                        </div>
+                    </div> 
+                )
+            }
             return(
                 <div className="row">
                     <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
@@ -209,10 +248,32 @@ class ViewJobRequestPage extends Component {
                     <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_messages_parts()}
                     </div>
-                </div>
-                
+                </div> 
             )
         }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
 
@@ -271,6 +332,17 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }
+    }
+
+    is_ok_to_show_contracts(){
+        var object = this.state.contractor_object
+        var request_item = this.state.request_item
+        if(object == null || request_item == null) return;
+
+        if(object['event'].returnValues.p5 != this.props.app_state.user_account_id[object['e5']] || request_item['is_response_accepted'] == true){
+            return false
+        }
+        return true
     }
 
 
@@ -634,23 +706,7 @@ class ViewJobRequestPage extends Component {
     }
 
 
-    set_object(request_item, contractor_object){
-        if(this.state.request_item['job_request_id'] != request_item['job_request_id']){
-            this.setState({
-                selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8), contractor_object: null,
-                entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
-            })
-        }
-        this.setState({request_item: request_item, contractor_object: contractor_object, e5: request_item['e5']})
-        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'], request_item['key_data'])
-
-        if(request_item['is_response_accepted']){
-            this.setState({accept_job_request_title_tags_object: this.get_accepted_job_request_title_tags_object()})
-        }
-        if (this.messagesEnd.current){
-            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        }
-    }
+    
 
 
     componentDidMount() {

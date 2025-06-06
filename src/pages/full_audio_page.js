@@ -516,6 +516,7 @@ class FullAudioPage extends Component {
         var track_url = this.get_audio_file()
         return(
             <div>
+                {this.render_buy_album_button()}
                 {this.render_detail_item('3', {'title':object['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2977']/* Taken from */, 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -570,6 +571,47 @@ class FullAudioPage extends Component {
         else{
             return {'size':size, 'unit':'bytes'}
         }
+    }
+
+
+    is_song_available_for_playing(song){
+        var plays = this.props.app_state.song_plays[song['song_id']] == null ? 0 : this.props.app_state.song_plays[song['song_id']].length
+        if(!this.is_song_available_for_adding_to_playlist(song) && plays >= song['songs_free_plays_count']){
+            return false
+        }
+        return true
+    }
+    
+    is_song_available_for_adding_to_playlist(song){
+        var my_songs = this.props.app_state.my_tracks
+        if(my_songs.includes(song['song_id'])){
+            return true
+        }
+        return false
+    }
+
+    render_buy_album_button(){
+        var song = this.state.songs[this.state.pos]
+        var object = song['object']
+        if(this.is_song_available_for_playing(song)){
+            return;
+        }
+        var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var title = this.props.app_state.loc['a2527e']/* 'Buy' */+ ' '+listing_type
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['a2527f']/* `Purchase unlimited access to add it to your collection and playlists.` */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.open_purchase_album_ui(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527e']/* 'Buy' */, 'action':''})}
+                </div>
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    open_purchase_album_ui(object){
+        this.props.open_purchase_album_ui(object)
     }
 
 

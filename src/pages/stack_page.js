@@ -103,6 +103,7 @@ class StackPage extends Component {
         get_minified_content_setting_object:this.get_minified_content_setting_object(),
         get_auto_run_setting_object:this.get_auto_run_setting_object(),
         get_explore_display_type_setting_object:this.get_explore_display_type_setting_object(),
+        get_audiplayer_position_setting_object:this.get_audiplayer_position_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -1004,6 +1005,36 @@ class StackPage extends Component {
 
     set_selected_explore_display_type_setting_tag(){
         this.setState({get_explore_display_type_setting_object: this.get_explore_display_type_setting_object(),})
+    }
+
+
+
+
+
+
+
+
+
+    get_audiplayer_position_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593gz']/* 'bottom-right' */, this.props.app_state.loc['1593ha']/* 'bottom-left' */,], [this.get_selected_audiplayer_position_setting_option()]
+            ], 
+        }
+    }
+
+    get_selected_audiplayer_position_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593gz']/* 'bottom-right' */] = 1
+        obj[this.props.app_state.loc['1593ha']/* 'bottom-left' */] = 2
+        return obj[this.props.app_state.audiplayer_position]
+    }
+
+    set_selected_audiplayer_position_setting_tag(){
+        this.setState({get_audiplayer_position_setting_object: this.get_audiplayer_position_setting_object(),})
     }
 
 
@@ -2370,6 +2401,10 @@ return data['data']
 
 
 
+    set_can_switch_e5_value(value){
+        this.setState({can_switch_e5s: value})
+        this.props.set_can_switch_e5_value(value)
+    }
     
     set_calculate_stack_complete(e5){
         var clone = structuredClone(this.state.is_calculating_stack)
@@ -2487,7 +2522,8 @@ return data['data']
     run_transactions = async (calculate_gas, silently) => {
         const txs = this.props.app_state.stack_items
         const e5 = this.props.app_state.selected_e5
-        this.setState({can_switch_e5s: false})
+        // this.setState({can_switch_e5s: false})
+        this.set_can_switch_e5_value(false)
         if(!calculate_gas){
             var is_running = this.props.app_state.is_running[e5]
             if(is_running == null) is_running = false
@@ -2495,7 +2531,8 @@ return data['data']
                 if(!silently){
                     this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
                 }
-                this.setState({can_switch_e5s: true})
+                // this.setState({can_switch_e5s: true})
+                this.set_can_switch_e5_value(true)
                 return;
             }
             this.props.lock_run(true)
@@ -2527,13 +2564,15 @@ return data['data']
         
         if(ipfs_index == ''){
             this.props.lock_run(false)
-            this.setState({can_switch_e5s: true})
+            // this.setState({can_switch_e5s: true})
+            this.set_can_switch_e5_value(true)
             return;
         }
 
         if(ipfs_index == 'large'){
             if(!silently) this.props.show_dialog_bottomsheet({'stack_size':this.current_object_size}, 'invalid_stack_size_dialog_box')
-            this.setState({can_switch_e5s: true})
+            // this.setState({can_switch_e5s: true})
+            this.set_can_switch_e5_value(true)
             this.props.lock_run(false)
             return;
         }
@@ -4207,7 +4246,8 @@ return data['data']
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
             this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, this.set_max_priority_per_gas(), this.set_max_fee_per_gas())
         }
-        this.setState({can_switch_e5s: true})
+        // this.setState({can_switch_e5s: true})
+        this.set_can_switch_e5_value(true)
     }
 
     get_ipfs_index_object = async (txs, now, calculate_gas) => {
@@ -9160,6 +9200,16 @@ return data['data']
 
                 {this.render_auto_run_setting_if_not_ios()}
 
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
+
             </div>
         )
     }
@@ -9506,6 +9556,12 @@ return data['data']
         this.setState({get_explore_display_type_setting_object: tag_obj})
         var selected_item = this.get_selected_item(this.state.get_explore_display_type_setting_object, 'e')
         this.props.when_explore_display_type_changed(selected_item)
+    }
+
+    when_get_audiplayer_position_setting_object_updated(tag_obj){
+        this.setState({get_audiplayer_position_setting_object: tag_obj})
+        var selected_item = this.get_selected_item(this.state.get_audiplayer_position_setting_object, 'e')
+        this.props.when_audiplayer_position_changed(selected_item)
     }
 
 
@@ -11950,11 +12006,21 @@ return data['data']
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1593bj']/* 'Upload a file to storage.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
                 {this.render_message_if_no_storage_option_is_selected()}
                 {this.render_detail_item('0')}
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fk']/* 'Your files are encypted with your wallets private key. So you need to set your wallet to see them here.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
-                <div style={{height: 10}}/>
+                {this.render_encryption_file_message_if_wallet_not_set()}
                 {this.render_uploaded_files()}
             </div>
         )
+    }
+
+    render_encryption_file_message_if_wallet_not_set(){
+        if(!this.props.app_state.has_wallet_been_set){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fk']/* 'Your files are encypted with your wallets private key. So you need to set your wallet to see them here.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
     }
 
     render_message_if_no_storage_option_is_selected(){

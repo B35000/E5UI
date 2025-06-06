@@ -1156,7 +1156,6 @@ return data['data']
                                 <div style={{height:5}}/>
                             </div>
                         ))}
-                        {this.render_empty_views(3)}
                     </div>
                 </div>
             </div>

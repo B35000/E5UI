@@ -799,7 +799,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -872,7 +872,7 @@ class App extends Component {
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
 
-    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}
+    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true
   };
 
   get_static_assets(){
@@ -3015,6 +3015,7 @@ class App extends Component {
 
       auto_run:this.state.auto_run,
       explore_display_type:this.state.explore_display_type,
+      audiplayer_position:this.state.audiplayer_position,
     }
   }
 
@@ -3140,7 +3141,8 @@ class App extends Component {
         loc = this.state.loc
       }
       var auto_run = state.auto_run == null ? 'e' : state.auto_run
-      var explore_display_type = state.auto_run == null ? this.getLocale()['1593gv']/* 'default' */:explore_display_type
+      var explore_display_type = state.explore_display_type == null ? this.state.explore_display_type: state.explore_display_type
+      var audiplayer_position = state.audiplayer_position == null ? this.state.audiplayer_position: state.audiplayer_position
 
       this.setState({
         theme: theme,
@@ -3200,6 +3202,7 @@ class App extends Component {
         should_update_posts_reposted_by_me:should_update_posts_reposted_by_me,
         auto_run: auto_run,
         explore_display_type: explore_display_type,
+        audiplayer_position: audiplayer_position,
       })
       var me = this;
       setTimeout(function() {
@@ -3242,6 +3245,7 @@ class App extends Component {
       me.stack_page.current?.set_selected_preferred_currency_type_tag()
       me.stack_page.current?.set_selected_minified_content_setting_tag()
       me.stack_page.current?.set_selected_auto_run_setting_tag()
+      me.stack_page.current?.set_selected_audiplayer_position_setting_tag()
     }, (1 * 1000));
   }
 
@@ -5183,7 +5187,7 @@ return data['data']
 
           load_bag_storefront_items={this.load_bag_storefront_items.bind(this)} show_view_notification_log_bottomsheet={this.show_view_notification_log_bottomsheet.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} get_searched_account_data_trimmed={this.get_searched_account_data_trimmed.bind(this)}
 
-          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} show_view_vote_poll_bottomsheet={this.show_view_vote_poll_bottomsheet.bind(this)} get_objects_votes={this.get_objects_votes.bind(this)} get_poll_results={this.get_poll_results.bind(this)} show_view_calculate_poll_result_bottomsheet={this.show_view_calculate_poll_result_bottomsheet.bind(this)}
+          when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} show_view_vote_poll_bottomsheet={this.show_view_vote_poll_bottomsheet.bind(this)} get_objects_votes={this.get_objects_votes.bind(this)} get_poll_results={this.get_poll_results.bind(this)} show_view_calculate_poll_result_bottomsheet={this.show_view_calculate_poll_result_bottomsheet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} fetch_uploaded_data_from_ipfs={this.fetch_uploaded_data_from_ipfs.bind(this)}
 
 
 
@@ -6946,7 +6950,8 @@ return data['data']
       when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
-      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)}
+      calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
+      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)}
       
       />
     )
@@ -7504,9 +7509,21 @@ return data['data']
     }, (1 * 1000));
   }
 
+  when_audiplayer_position_changed(item){
+    this.setState({audiplayer_position: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+      me.reset_background_sync()
+    }, (1 * 1000));
+  }
 
 
 
+
+  set_can_switch_e5_value(value){
+    this.setState({can_switch_e5s: value})
+}
 
   lock_run(value){
     var clone = structuredClone(this.state.is_running)
@@ -16568,6 +16585,10 @@ return data['data']
     var x_pos = this.state.width - (player_size + 12)
     var y_pos = this.state.height - (player_size + 12)
 
+    if(this.state.audiplayer_position == this.getLocale()['1593ha']/* 'bottom-left' */ && size != 'l'){
+      x_pos = 12
+    }
+
     if(size == 's'){
       y_pos = y_pos - 75
     }
@@ -16887,7 +16908,9 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <FullAudioPage ref={this.full_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)} repeat_current_song={this.repeat_current_song.bind(this)} shuffle_songs_in_pip={this.shuffle_songs_in_pip.bind(this)}/>
+            <FullAudioPage ref={this.full_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)} repeat_current_song={this.repeat_current_song.bind(this)} shuffle_songs_in_pip={this.shuffle_songs_in_pip.bind(this)} open_purchase_album_ui={this.show_buy_album_bottomsheet.bind(this)}
+            
+            />
       </div>
     )
   }
@@ -21485,6 +21508,39 @@ return data['data']
     if(is_my_cids){
       this.setState({uploaded_data_cids: cids})
     }
+    var nitro_cid_data = []
+    var selected_cids = []
+    for(var e=0; e<cids.length; e++){
+      var ecid_obj = this.get_cid_split(cids[e])
+      var id = ecid_obj['cid']
+      var filetype = ecid_obj['filetype']
+      var storage_id = ecid_obj['storage']
+      var file_name = ecid_obj['file_name']
+      if(storage_id == 'ni'){
+        var data = await this.fetch_from_storage(cids[e])
+        if(data == null){
+          nitro_cid_data.push(ecid_obj)
+          selected_cids.push(cids[e])
+        }else{
+          if(filetype == 'video'){
+            this.load_and_store_video_thumbnail(cids[e], data)
+          }
+          var clone = structuredClone(this.state.uploaded_data)
+          try{
+            if(clone[filetype] == null) clone[filetype] = {}
+            clone[filetype][cids[e]] = data
+            this.setState({uploaded_data: clone})
+            // console.log('apppage', 'set one cid object in memory.')
+          }catch(e){
+            console.log('datas', e)
+          }
+        }
+      }
+    }
+    if(nitro_cid_data.length != null){
+      this.fetch_multiple_file_datas_from_nitro_storage(nitro_cid_data, selected_cids)
+    }
+
     // console.log('apppage', 'starting loaded cid objects...')
     for(var i=0; i<cids.length; i++){
       // console.log('datas', 'fetching', cids[i])
@@ -29751,8 +29807,9 @@ return data['data']
 
   fetch_file_data_from_respective_storage = async (cid, storage_id, file_name, depth) => {
     if(storage_id == 'ni'){
-      console.log('datas', 'file is a nitro object, fetching from nitro storage instead...')
-      return await this.fetch_file_data_from_nitro_storage(cid, depth)
+      // console.log('datas', 'file is a nitro object, fetching from nitro storage instead...')
+      // return await this.fetch_file_data_from_nitro_storage(cid, depth)
+      return;
     }
     await this.wait(this.state.ipfs_delay)
     var gateways = [
@@ -29805,17 +29862,92 @@ return data['data']
     }
   }
 
-  fetch_file_data_from_nitro_storage = async (cid, depth) => {
-    await this.wait(this.state.ipfs_delay)
-    var split_cid_array = cid.split('-');
-    var e5_id = split_cid_array[0]
-    var nitro_cid = split_cid_array[1]
+  // fetch_file_data_from_nitro_storage = async (cid, depth) => {
+  //   await this.wait(this.state.ipfs_delay)
+  //   var split_cid_array = cid.split('-');
+  //   var e5_id = split_cid_array[0]
+  //   var nitro_cid = split_cid_array[1]
 
-    var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
-    if(nitro_url == null) return
+  //   var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
+  //   if(nitro_url == null) return
 
+  //   const params = new URLSearchParams({
+  //     arg_string:JSON.stringify({hashes:[nitro_cid]}),
+  //   });
+  //   var request = `${nitro_url}/data?${params.toString()}`
+  //   try{
+  //     const response = await fetch(request);
+  //     if (!response.ok) {
+  //       console.log('datas',response)
+  //       throw new Error(`Failed to retrieve data. Status: ${response}`);
+  //     }
+  //     var data = await response.text();
+  //     var obj = JSON.parse(data);
+  //     var object_data = obj['data']
+  //     var cid_data = object_data[nitro_cid]
+  //     // console.log('datas','fetching_file_from_nitro_storage', cid_data)
+  //     if(cid_data != null){
+  //       var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+  //       if(confirmation_hash != nitro_cid){
+  //         console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
+  //         return null
+  //       }
+  //       var file_pointer_link = cid_data['data']
+  //       if(file_pointer_link.includes('-')){
+  //         var split_cid_array2 = file_pointer_link.split('-');
+  //         var e5_id2 = split_cid_array2[0]
+  //         var nitro_cid2 = split_cid_array2[1]
+
+  //         var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
+  //         var content_type = this.get_file_extension(cid_data['name'])
+  //         if(nitro_url != null){
+  //           cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
+  //           cid_data['hash'] = nitro_cid2
+  //         }
+  //       }
+  //       // console.log('datas','final cid object with link', cid_data)
+  //       return cid_data
+  //     }
+  //   }
+  //   catch(e){
+  //     console.log('datas', 'error', e)
+  //     if(depth < 3){
+  //       await this.fetch_file_data_from_nitro_storage(cid, depth+1)
+  //     }
+  //   }
+  // }
+
+  fetch_multiple_file_datas_from_nitro_storage = async (ecid_objs, original_cids) => {
+    var search_data = {}
+    var search_data_file_types = {}
+    var search_data_cids = {}
+    ecid_objs.forEach((ecid_obj, index) => {
+      var cid = ecid_obj['cid']
+      var filetype = ecid_obj['filetype']
+      var split_cid_array = cid.split('-');
+      var e5_id = split_cid_array[0]
+      var nitro_cid = split_cid_array[1]
+      var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
+      if(nitro_url != null){
+        if(search_data[nitro_url] == null){
+          search_data[nitro_url] = []
+        }
+        search_data[nitro_url].push(nitro_cid)
+        search_data_file_types[nitro_cid] = filetype
+        search_data_cids[nitro_cid] = original_cids[index]
+      }
+    });
+
+    const nitro_keys = Object.keys(search_data)
+    nitro_keys.forEach(nitro_url => {
+      const cids = search_data[nitro_url]
+      this.fetch_multiple_file_datas_from_one_nitro_storage(nitro_url, cids, search_data_file_types, search_data_cids)
+    });
+  }
+
+  fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids) => {
     const params = new URLSearchParams({
-      arg_string:JSON.stringify({hashes:[nitro_cid]}),
+      arg_string:JSON.stringify({hashes:nitro_cids}),
     });
     var request = `${nitro_url}/data?${params.toString()}`
     try{
@@ -29827,36 +29959,47 @@ return data['data']
       var data = await response.text();
       var obj = JSON.parse(data);
       var object_data = obj['data']
-      var cid_data = object_data[nitro_cid]
-      // console.log('datas','fetching_file_from_nitro_storage', cid_data)
-      if(cid_data != null){
-        var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
-        if(confirmation_hash != nitro_cid){
-          console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
-          return null
-        }
-        var file_pointer_link = cid_data['data']
-        if(file_pointer_link.includes('-')){
-          var split_cid_array2 = file_pointer_link.split('-');
-          var e5_id2 = split_cid_array2[0]
-          var nitro_cid2 = split_cid_array2[1]
+      for(var s=0; s<nitro_cids.length; s++){
+        const nitro_cid = nitro_cids[s]
+        const filetype = search_data_file_types[nitro_cid]
+        var cid_data = object_data[nitro_cid]
+        if(cid_data != null){
+          var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+          if(confirmation_hash != nitro_cid){
+            console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
+            return null
+          }
+          var file_pointer_link = cid_data['data']
+          if(file_pointer_link.includes('-')){
+            var split_cid_array2 = file_pointer_link.split('-');
+            var e5_id2 = split_cid_array2[0]
+            var nitro_cid2 = split_cid_array2[1]
 
-          var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
-          var content_type = this.get_file_extension(cid_data['name'])
-          if(nitro_url != null){
-            cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
-            cid_data['hash'] = nitro_cid2
+            var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
+            var content_type = this.get_file_extension(cid_data['name'])
+            if(nitro_url != null){
+              cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
+              cid_data['hash'] = nitro_cid2
+            }
+          }
+          if(cid_data != null) this.store_in_local_storage(search_data_cids[nitro_cid], cid_data);
+          if(filetype == 'video'){
+            this.load_and_store_video_thumbnail(search_data_cids[nitro_cid], cid_data)
+          }
+          var clone = structuredClone(this.state.uploaded_data)
+          try{
+            if(clone[filetype] == null) clone[filetype] = {}
+            clone[filetype][search_data_cids[nitro_cid]] = cid_data
+            this.setState({uploaded_data: clone})
+          }catch(e){
+            console.log('datas', e)
           }
         }
-        // console.log('datas','final cid object with link', cid_data)
-        return cid_data
       }
+      
     }
     catch(e){
       console.log('datas', 'error', e)
-      if(depth < 3){
-        await this.fetch_file_data_from_nitro_storage(cid, depth+1)
-      }
     }
   }
 

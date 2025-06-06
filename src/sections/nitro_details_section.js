@@ -654,6 +654,8 @@ class NitroDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':node_details['booted'].toString(), 'details':this.props.app_state.loc['c2527k']/* 'Booted' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
+                    {this.render_version_if_available(node_details)}
+                    
                     {this.render_detail_item('3', {'title':''+(new Date(node_details['start_up_time'])), 'details':this.props.app_state.loc['c2527l']/* 'Start Up Time' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
@@ -661,6 +663,17 @@ class NitroDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_version_if_available(node_details){
+        if(node_details['version'] == null) return;
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':node_details['version'], 'details':this.props.app_state.loc['c2527bv']/* 'Nitro Version.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+            </div>
+        )
     }
 
 

@@ -107,7 +107,7 @@ class home_page extends Component {
         
         page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[],
 
-        details_container_width:0, typed_tag:'', search_visible:true, posts_container_width:0,
+        details_container_width:0, typed_tag:{}, search_visible:true, posts_container_width:0,
     };
 
     constructor(props) {
@@ -1201,7 +1201,7 @@ class home_page extends Component {
                 if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
             }
         });
-        var the_other_words = searched_data.split(' ')
+        var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
         the_other_words.forEach(word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             if(trimmed_word.length > 3){
@@ -3483,7 +3483,7 @@ class home_page extends Component {
                     <div style={{'background-color': 'transparent', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 10px 5px 10px','border-radius': '15px' }}>
                         <div className="row" style={{width:'100%'}}>
                             <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1264ad']/* 'Search by ID or Title..' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
+                                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1264ad']/* 'Search by ID or Title..' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.get_typed_text()} theme={this.props.theme}/>
                             </div>
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_string()}>
                                 <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
@@ -3525,12 +3525,27 @@ class home_page extends Component {
         }
     }
 
+    get_typed_text(){
+        var id = this.get_page_id()
+        var searched_data = this.state.typed_tag[id]
+        if(searched_data == null){
+            return ''
+        }
+        return searched_data
+    }
+
     when_tag_input_field_changed(text){
-        this.setState({typed_tag: text})
+        var id = this.get_page_id()
+        var searched_data_clone = structuredClone(this.state.page_search_data)
+        searched_data_clone[id] = text
+        this.setState({typed_tag: searched_data_clone})
+        if(text == ''){
+            this.search_string()
+        }
     }
 
     search_string(){
-        var typed_word = this.state.typed_tag.trim();
+        var typed_word = this.get_typed_text().trim();
         if(typed_word != ''){
             this.render_top_notification(this.props.app_state.loc['1264ar']/* 'Searching...' */, 1300)
         }
@@ -3573,7 +3588,7 @@ class home_page extends Component {
             get_searched_account_data_trimmed={this.props.get_searched_account_data_trimmed.bind(this)} when_link_object_clicked={this.props.when_link_object_clicked.bind(this)} play_album_from_list_section={this.play_album_from_list_section.bind(this)} play_videopost_from_list_section={this.play_videopost_from_list_section.bind(this)}
             show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
 
-            current_search={searched_data} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} play_video={this.props.play_video.bind(this)} play_song_from_list_section={this.play_song_from_list_section.bind(this)} play_video_from_list_section={this.play_video_from_list_section.bind(this)} 
+            current_search={searched_data} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} play_video={this.props.play_video.bind(this)} play_song_from_list_section={this.play_song_from_list_section.bind(this)} play_video_from_list_section={this.play_video_from_list_section.bind(this)} fetch_uploaded_data_from_ipfs={this.props.fetch_uploaded_data_from_ipfs.bind(this)}
             />
         )
     }
@@ -4044,6 +4059,7 @@ class home_page extends Component {
             this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
         else if(!this.is_video_available_for_viewing(item)){
+            this.props.open_purchase_video_ui(object)
             this.render_top_notification(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
@@ -5747,15 +5763,15 @@ class home_page extends Component {
             <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
                             {this.render_e5_item(item)}
                         </li>
                     ))}
-                    {/* {items2.map(() => (
+                    {items2.map(() => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                             {this.render_empty_horizontal_list_item()}
                         </li>
-                    ))} */}
+                    ))}
                 </ul>
             </div>
         )
@@ -5791,6 +5807,14 @@ class home_page extends Component {
                 </div>
             )
         }
+    }
+
+    when_e5_clicked(item){
+        if(this.props.app_state.can_switch_e5s == false){
+            this.render_top_notification(this.props.app_state.loc['1593gr']/* Wait a bit.' */, 1200)
+            return;
+        }
+        this.props.when_selected_e5_changed(item)
     }
 
 

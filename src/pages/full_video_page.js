@@ -517,7 +517,7 @@ class FullVideoPage extends Component {
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
             <div>
-                {this.render_detail_item('3', {'details':current_video['video_composer'], 'title':current_video['video_title'], 'size':'l'})}
+                {this.render_video_element(current_video)}
                 
                 <div style={{height:'1px', 'background-color':this.props.theme['line_color'], 'margin': '20px 20px 10px 20px', 'border-radius': '1px'}}/>
 
@@ -547,6 +547,24 @@ class FullVideoPage extends Component {
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_video_element(item){
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+            var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+            return(
+                <div>
+                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
     }
@@ -972,10 +990,9 @@ class FullVideoPage extends Component {
 
     render_top_title(){
         var video = this.state.videos[this.state.pos]
-        var object = this.state.object
         return(
             <div style={{padding:'0px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.truncate(video['video_title'], 40), 'details':this.truncate(object['ipfs'].entered_title_text, 40), 'size':'l'})} 
+                {this.render_video_element(video)} 
             </div>
         )
     }

@@ -3195,6 +3195,20 @@ class PostListSection extends Component {
         if(items.length == 0){
             return;
         }
+        var data_to_search = []
+        if(this.searched_data == null){
+            this.searched_data = []
+        }
+        items.forEach(song => {
+            if(!this.searched_data.includes(song['song']['track'])){
+                data_to_search.push(song['song']['track'])
+                this.searched_data.push(song['song']['track'])
+            }
+        });
+        if(data_to_search.length > 0){
+            this.props.fetch_uploaded_data_from_ipfs(data_to_search, false)
+        }
+
         return(
             <div>
                 {items.map((item, index) => (
@@ -3250,6 +3264,14 @@ class PostListSection extends Component {
     }
 
     render_song(item, object, index, type){
+        var audio_file = item['track']
+        if(!this.has_file_loaded(audio_file)){
+            return(
+                <div>
+                    {this.render_small_empty_object()}
+                </div>
+            )
+        }
         var border_radius = '10px';
         var text_align = 'left'
         var padding = '10px 15px 10px 15px'
@@ -3880,6 +3902,20 @@ return data['data']
         if(items.length == 0){
             return;
         }
+        var data_to_search = []
+        if(this.searched_data == null){
+            this.searched_data = []
+        }
+        items.forEach(song => {
+            if(!this.searched_data.includes(song['video']['video'])){
+                data_to_search.push(song['video']['video'])
+                this.searched_data.push(song['video']['video'])
+            }
+        });
+        if(data_to_search.length > 0){
+            this.props.fetch_uploaded_data_from_ipfs(data_to_search, false)
+        }
+
         return(
             <div>
                 {items.map((item, index) => (
@@ -3891,6 +3927,14 @@ return data['data']
                 <div style={{height:10}}/>
             </div>
         )
+    }
+
+    has_file_loaded(file){
+        var ecid_obj = this.get_cid_split(file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false;
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null || data['data'] == null) return false
+        return true
     }
 
     get_searched_video_items(videoposts){
@@ -3937,6 +3981,15 @@ return data['data']
     }
 
     render_video(item, object, index){
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(!this.has_file_loaded(video_file)){
+            return(
+                <div>
+                    {this.render_small_empty_object()}
+                </div>
+            )
+        }
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
         return(
