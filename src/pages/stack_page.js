@@ -128,7 +128,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -148,7 +148,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1261']/* 'settings-data' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */, this.props.app_state.loc['1593ba']/* 'storage 💾' *//* , this.props.app_state.loc['1593cr'] *//* 'gateway 🚧' */, ], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' *//* , this.props.app_state.loc['1593cr'] *//* 'gateway 🚧' */, ], [1],[1]
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'Censor 🚫' */], [1],[1]
@@ -2107,7 +2107,8 @@ return data['data']
         var events = this.filter_proportion_ratio_events(event_data)
         var data = []
         for(var i=0; i<events.length; i++){
-            data.push(parseInt(events[i].returnValues.p7)/1000_000_000)
+            var point = parseInt(events[i].returnValues.p7)/1_000_000_000
+            if(point > 0) data.push(point)
         }
 
         data = data.reverse();
@@ -4643,6 +4644,7 @@ return data['data']
         if(this.props.app_state.update_data_in_E5){
             var uploaded_data = this.props.app_state.uploaded_data_cids
             var return_items = []
+            var unloaded_items = []
             uploaded_data.forEach(ecid => {
                 const data = this.get_cid_split(ecid)
                 if(data != null){
@@ -4652,6 +4654,8 @@ return data['data']
                             const time = file_data['id']
                             return_items.push({'data':ecid, 'time':time})
                         }
+                    }else{
+                        unloaded_items.push(ecid)
                     }
                 }
             });
@@ -4661,7 +4665,7 @@ return data['data']
                 final_items.push(item['data'])
             });
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
-            var data = JSON.stringify({'data':final_items})
+            var data = JSON.stringify({'data':final_items.concat(unloaded_items)})
             var encrypted_obj = this.props.encrypt_data_object(data, key)
 
             var data = {'cids': encrypted_obj, 'time':Date.now(), 'encrypted':true}
@@ -11600,6 +11604,8 @@ return data['data']
         var video_count = upload_metrics['video_count']+''
         var pdf_count = upload_metrics['pdf_count']+''
         var zip_count = upload_metrics['zip_count']+''
+        var lyric_count = upload_metrics['lyric_count']+''
+        var subtitle_count = upload_metrics['subtitle_count']+''
         var total_size = this.format_data_size(upload_metrics['total_size'])
         var ts = total_size['size']+' '+total_size['unit']
         return(
@@ -11627,6 +11633,14 @@ return data['data']
                         </li>
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                             {this.render_detail_item('3', {'details':this.props.app_state.loc['1593ee']/* 'Uploaded Zips.' */, 'title':this.format_number(zip_count), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1593fl']/* 'Uploaded Lyrics.' */, 'title':this.format_number(lyric_count), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1593fm']/* 'Uploaded Subtitles.' */, 'title':this.format_number(subtitle_count), 'size':'l'})}
                             <div style={{width: 10}}/>
                         </li>
                     </ul>
@@ -11942,6 +11956,8 @@ return data['data']
         var videos = 0;
         var pdfs = 0;
         var zips = 0;
+        var lyric = 0
+        var subtitle = 0
         var total_size = 0;
 
         var items = this.props.app_state.uploaded_data_cids
@@ -11955,10 +11971,12 @@ return data['data']
                 else if(data['type'] == 'video') videos++
                 else if(data['type'] == 'pdf') pdfs++
                 else if(data['type'] == 'zip') zips++
+                else if(data['type'] == 'subtitle') subtitle++
+                else if(data['type'] == 'lyric') lyric++
             }
         });
 
-        return {'image_count':images, 'audio_count':audios, 'video_count':videos, 'total_size':total_size, 'pdf_count':pdfs, 'zip_count':zips}
+        return {'image_count':images, 'audio_count':audios, 'video_count':videos, 'total_size':total_size, 'pdf_count':pdfs, 'zip_count':zips, 'lyric_count':lyric, 'subtitle_count':subtitle}
     }
 
     get_upload_file_size_limit(){
@@ -12099,11 +12117,44 @@ return data['data']
 
                 <input ref={this.vtt_input} style={{display: 'none'}} id="upload" type="file" accept =".vtt" onChange ={this.when_vtt_picked.bind(this)} multiple/>
 
-                <div onClick={() => this.props.show_dialog_bottomsheet({}, 'file_type_picker')}>
+                <div onClick={() => this.when_upload_file_button_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gj']/* 'Upload File.' */, 'action':''})}
                 </div>
             </div>
         )
+    }
+
+    when_upload_file_button_tapped(){
+        var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
+
+        var file_type = ''
+        if(selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
+            file_type = 'image'
+        }
+        else if(selected_item == this.props.app_state.loc['1593bm']/* 'audio' */){
+            file_type = 'audio'
+        }
+        else if(selected_item == this.props.app_state.loc['1593bn']/* 'video' */){
+            file_type = 'video'
+        }
+        else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
+            file_type = 'pdf'
+        }
+        else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
+            file_type = 'zip'
+        }
+        else if(selected_item == this.props.app_state.loc['1593hb']/* 'lyric' */){
+            file_type = 'lyric'
+        }
+        else if(selected_item == this.props.app_state.loc['1593hc']/* 'subtitle' */){
+            file_type = 'subtitle'
+        }
+
+        if(file_type == ''){
+            this.props.show_dialog_bottomsheet({}, 'file_type_picker')
+        }else{
+            this.call_input_function(file_type)
+        }
     }
 
     call_input_function(type){
@@ -12274,7 +12325,7 @@ return data['data']
         return;
     }
 
-    get_audio_file_image(metadata){
+    get_audio_file_image = (metadata) => {
         console.log('stackpage',metadata);
         const picture = metadata.common.picture;
 
@@ -12285,8 +12336,40 @@ return data['data']
             return albumArtUrl
         } else {
             console.log('No album art found.');
-            return this.props.app_state.static_assets['music_label']
+            // return this.props.app_state.static_assets['music_label']
+            return ''
         }
+    }
+
+    compressImageFromFile(image_url) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          const maxWidth = 200 
+      
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+      
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+            const image_size = 35 * 1024
+            canvas.toBlob(blob => {
+                var quality = 1.0
+                var blob_size = blob.size
+                if(blob_size > image_size){
+                    quality = image_size / blob_size
+                }
+                var return_blob = canvas.toDataURL("image/jpeg", quality);
+                resolve(return_blob);
+            }, "image/jpeg")
+          };
+      
+          img.src = image_url;
+          img.onerror = reject;
+        });
     }
 
     /* called when videos have been picked from picker */
@@ -12390,10 +12473,12 @@ return data['data']
                     var audioFile = e.target.files[i];
                     var me = this
                     parseBlob(audioFile).then(metadata => {
-                        this.audio_file_images.push(me.get_audio_file_image(metadata))
-                        this.audio_file_metadatas.push(metadata)
-                        this.audio_file_metadatas[this.audio_file_metadatas.length - 1].common.picture = null
-                        reader.readAsDataURL(audioFile);
+                        me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
+                            me.audio_file_images.push(metadata_image)
+                            me.audio_file_metadatas.push(me.process_metadata(metadata))
+                            me.audio_file_metadatas[me.audio_file_metadatas.length - 1].common.picture = null
+                            reader.readAsDataURL(audioFile);
+                        })
                     }).catch(err => {
                         console.error('Error parsing metadata:', err);
                         this.audio_file_images.push(this.props.app_state.static_assets['music_label'])
@@ -12431,6 +12516,26 @@ return data['data']
         }
     }
 
+    process_metadata(metadata){
+        var metadata_clone = {common:{}, format:{}}
+        if(metadata != null){
+            if(metadata['common'] != null){
+                metadata_clone['common']['composer'] = metadata['common']['composer']
+            }
+            if(metadata['format'] != null){
+                metadata_clone['format']['bitrate'] = metadata['format']['bitrate']
+                metadata_clone['format']['codec'] = metadata['format']['codec']
+                metadata_clone['format']['codecProfile'] = metadata['format']['codecProfile']
+                metadata_clone['format']['container'] = metadata['format']['container']
+                metadata_clone['format']['lossless'] = metadata['format']['lossless']
+                metadata_clone['format']['numberOfChannels'] = metadata['format']['numberOfChannels']
+                metadata_clone['format']['numberOfSamples'] = metadata['format']['numberOfSamples']
+                metadata_clone['format']['sampleRate'] = metadata['format']['sampleRate']
+            } 
+        }
+        return metadata_clone
+    }
+
     extractFirstFrame(videoUrl) {
         return new Promise((resolve, reject) => {
           const video = document.createElement("video");
@@ -12458,9 +12563,8 @@ return data['data']
                 if(blob_size > image_size){
                     quality = image_size / blob_size
                 }
-                canvas.toDataURL(blob => {
-                    resolve(blob);
-                }, "image/jpeg", quality);
+                var return_blob = canvas.toDataURL("image/jpeg", quality);
+                resolve(return_blob);
             }, "image/jpeg")
           });
     
@@ -12496,10 +12600,12 @@ return data['data']
                 var audioFile = e.target.files[0];
                 var me = this
                 parseBlob(audioFile).then(metadata => {
-                    this.audio_file_image = (me.get_audio_file_image(metadata))
-                    this.audio_file_metadata = (metadata)
-                    this.audio_file_metadata.common.picture = null
-                    reader.readAsArrayBuffer(audioFile);
+                    me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
+                        me.audio_file_image = metadata_image
+                        me.audio_file_metadata = me.process_metadata(metadata)
+                        me.audio_file_metadata.common.picture = null
+                        reader.readAsArrayBuffer(audioFile);
+                    })
                 }).catch(err => {
                     console.error('Error parsing metadata:', err);
                     this.audio_file_image = (this.props.app_state.static_assets['music_label'])
@@ -12603,7 +12709,7 @@ return data['data']
           viewport: viewport,
         };
         await firstPage.render(renderContext).promise;
-        const thumbnailDataUrl = canvas.toDataURL('image/png');
+        const thumbnailDataUrl = canvas.toDataURL('image/png', 0.3);
         return thumbnailDataUrl
     }
 
@@ -12815,7 +12921,7 @@ return data['data']
                 var fs = formatted_size['size']+' '+formatted_size['unit']
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
                 var details = data['name']
-                var thumbnail = data['thumbnail']
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
@@ -12833,28 +12939,35 @@ return data['data']
                     var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
                     return(
                         <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                            {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
                         </div>
                     )
                 }
-                return(
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
-                            <div>
-                                <video height="50" style={{'border-radius':'7px'}}>
-                                    <source src={video} type="video/mp4"/>
-                                    <source src={video} type="video/ogg"/>
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-                            <div style={{'margin':'0px 0px 0px 10px'}}>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                // return(
+                //     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                //         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                //             <div>
+                //                 <video height="50" style={{'border-radius':'7px'}}>
+                //                     <source src={video} type="video/mp4"/>
+                //                     <source src={video} type="video/ogg"/>
+                //                     Your browser does not support the video tag.
+                //                 </video>
+                //             </div>
+                //             <div style={{'margin':'0px 0px 0px 10px'}}>
+                //                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
                                 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
-                            </div>
-                        </div>
-                    </div>
-                )
+                //                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                //             </div>
+                //         </div>
+                //     </div>
+                // )
             }
             else if(data['type'] == 'pdf'){
                 var formatted_size = this.format_data_size(data['size'])

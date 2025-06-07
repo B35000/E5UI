@@ -37,6 +37,7 @@ import json_icon from './assets/json_file.png'
 import csv_icon from './assets/csv_file.png'
 import lyric_icon from './assets/lrc_file.png'
 import subtitle_icon from './assets/subtitle_file.png'
+import pdf_icon from './assets/pdf_image.png'
 
 import alert_icon from './assets/alert_icon.png'
 import add_icon from './assets/add_icon.png'
@@ -912,6 +913,7 @@ class App extends Component {
       'json_file':json_icon,
       'lyric_icon':lyric_icon,
       'subtitle_icon': subtitle_icon,
+      'pdf_icon':pdf_icon,
     }
   }
 
@@ -14409,7 +14411,7 @@ class App extends Component {
       'account_options':600,
       'confirm_pay_bill':350,
       'invalid_stack_size_dialog_box':350,
-      'file_type_picker':450,
+      'file_type_picker':550,
       'home_page_view_options': 300,
       'view_json_example':550,
       'poll_results':600,
@@ -30363,6 +30365,12 @@ return data['data']
 
 
   get_file_mimetype(extension){
+    if(extension == 'lrc'){
+      return 'text/plain'
+    }
+    else if(extension == 'vtt'){
+      return 'text/vtt'
+    }
     const mime = require("mime-types");
     return mime.lookup(extension)
   }
@@ -30378,8 +30386,11 @@ return data['data']
   upload_multiple_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details, total_size, file_sizes) => {
     var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
     if(block_hash_and_signature == null){
+      console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'failed to load block hash and signature')
       return null;
     }
+
+    console.log('apppage', 'filetypes', file_types, this.get_file_mimetype(this.get_file_extension(file_types[0])))
 
     if(total_size < (5.3 * 1024 * 1024)){
       var node_url = nitro_object['ipfs'].node_url
@@ -30408,6 +30419,7 @@ return data['data']
         var data = await response.text();
         var obj = JSON.parse(data);
         if(obj.success == false){
+          console.log('apppage','Upload was not successful', obj)
           return null
         }else{
           obj.files.forEach(async (encoded_data_name, index) => {
@@ -30562,6 +30574,7 @@ return data['data']
   upload_file_objects_to_nitro = async (file_objects, nitro_object, node_details) => {
     var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
     if(block_hash_and_signature == null){
+      console.log('apppage','upload_file_objects_to_nitro', 'failed to load block hash and signature')
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return;
     }

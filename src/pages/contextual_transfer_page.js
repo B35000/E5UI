@@ -206,6 +206,8 @@ class ContextualTransferPage extends Component {
             return(
                 <div>
                     {this.render_create_itransfer_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_create_itransfer_data2()}
                     {this.render_set_prices_list_part()}
                 </div>
             )
@@ -215,8 +217,11 @@ class ContextualTransferPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_create_itransfer_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_empty_views(4)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_create_itransfer_data2()}
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -228,8 +233,11 @@ class ContextualTransferPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_create_itransfer_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_empty_views(4)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_create_itransfer_data2()}
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -247,18 +255,21 @@ class ContextualTransferPage extends Component {
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_identifier_input_field_changed.bind(this)} text={this.state.identifier} theme={this.props.theme}/>
                 {/* {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.iTransfer_identifier_size - this.state.identifier.length)})} */}
 
-                <div style={{height:20}}/>
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3068g']/* 'Set the recipient of the iTransfer action.' */, 'title':this.props.app_state.loc['1024']/* 'Recipient of action' */})}
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
                 {this.load_account_suggestions('create_itransfer')}
+                
+            </div>
+        )
+    }
 
-
-
-                {this.render_detail_item('0')}
-
+    render_create_itransfer_data2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1180']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1181']/* 'Select an exchange by its id, then the desired amount and click add.' */, 'size':'l'})}
 
                 <div style={{height:10}}/>

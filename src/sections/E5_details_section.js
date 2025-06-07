@@ -370,7 +370,7 @@ class E5DetailsSection extends Component {
 
             'absolute_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[30]), 'details':this.props.app_state.loc['2259']/* 'Absolute Proposal Expiry Duration Limit' */, 'size':'l'},
 
-            'invite_only_e5': {'title':this.enabled_disabled(contract_config[32]), 'details':'Invite Only E5', 'size':'l'},
+            'invite_only_e5': {'title':this.enabled_disabled(contract_config[32]), 'details':this.props.app_state.loc['2336h']/* Invite Only E5  */, 'size':'l'},
 
             'primary_tx_account': {'title':contract_config[39], 'details':this.props.app_state.loc['2260']/* 'Primary Transaction Account' */, 'size':'l'},
 
@@ -1486,9 +1486,9 @@ class E5DetailsSection extends Component {
 
     enabled_disabled(value){
         if(value == 1){
-            return 'enabled'
+            return this.props.app_state.loc['2336i']/* 'enabled' */
         }
-        return 'disabled'
+        return this.props.app_state.loc['2336j']/* 'disabled' */
     }
 
 }

@@ -341,7 +341,7 @@ class PickFilePage extends Component {
                 var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
                 var title = data['name']
                 var size = 'l'
-                var thumbnail = data['thumbnail']
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
                  if(minified == true){
                     details = fs
                     title = start_and_end(title)
@@ -367,24 +367,40 @@ class PickFilePage extends Component {
                     font_size = ['12px', '10px', 16];
                     video_height = "40"
                 }
-                return(
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
-                        <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
-                            <div>
-                                <video height={video_height} style={{'border-radius':'7px'}}>
-                                    <source src={video} type="video/mp4"/>
-                                    <source src={video} type="video/ogg"/>
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-                            <div style={{'margin':'0px 0px 0px 10px'}}>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
-                                
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
-                            </div>
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
                         </div>
-                    </div>
-                )
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+                // return(
+                //     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
+                //         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                //             <div>
+                //                 <video height={video_height} style={{'border-radius':'7px'}}>
+                //                     <source src={video} type="video/mp4"/>
+                //                     <source src={video} type="video/ogg"/>
+                //                     Your browser does not support the video tag.
+                //                 </video>
+                //             </div>
+                //             <div style={{'margin':'0px 0px 0px 10px'}}>
+                //                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                                
+                //                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                //             </div>
+                //         </div>
+                //     </div>
+                // )
             }
             else if(data['type'] == 'pdf'){
                 var formatted_size = this.format_data_size(data['size'])

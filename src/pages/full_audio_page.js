@@ -887,14 +887,6 @@ class FullAudioPage extends Component {
         )
     }
 
-    is_song_available_for_playing(song){
-        var plays = this.props.app_state.song_plays[song['song_id']] == null ? 0 : this.props.app_state.song_plays[song['song_id']].length
-        if(!this.is_song_available_for_adding_to_playlist(song) && plays >= song['songs_free_plays_count']){
-            return false
-        }
-        return true
-    }
-
     when_song_item_clicked(item){
         var object = item['object']
         let me = this;

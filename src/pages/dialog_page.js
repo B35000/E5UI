@@ -1340,7 +1340,7 @@ return data['data']
                 )
             }
             else if(data['type'] == 'audio'){
-                var img = data['thumbnail']
+                var img = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
                 return(
                     <div>
                         {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
@@ -1352,6 +1352,13 @@ return data['data']
                 console.log('videoimage', ''+video)
                 if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
                     var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':thumbnail, 'width_height':'auto', 'height':wh, 'border_radius':'15px'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
                     return(
                         <div>
                             {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':thumbnail, 'width_height':'auto', 'height':wh, 'border_radius':'15px'})}
@@ -3360,6 +3367,7 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_file_type_picker_buttons()}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_file_type_picker_buttons2()}
@@ -3375,6 +3383,7 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_file_type_picker_buttons()}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_file_type_picker_buttons2()}
@@ -3390,21 +3399,21 @@ return data['data']
     render_file_type_picker_buttons(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bo']/* 'Pick Image' */, 'details':this.props.app_state.loc['3055bp']/* 'Images with the .png .jpg and .jpeg extensions are supported as well as .gif files.' */, 'size':'l'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['3055bo']/* 'Pick Image' */, 'details':this.props.app_state.loc['3055bp']/* 'Images with the .png .jpg and .jpeg extensions are supported as well as .gif files.' */, 'size':'l', 'image':this.props.app_state.static_assets['empty_image'],'border_radius':'9px'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('image')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bo']/* 'Pick Image' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bq']/* 'Pick Audio' */, 'details':this.props.app_state.loc['3055br']/* 'Audio files with the .mp3 extensions are supported.' */, 'size':'l'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['3055bq']/* 'Pick Audio' */, 'details':this.props.app_state.loc['3055br']/* 'Audio files with the .mp3 extensions are supported.' */, 'size':'l', 'image':this.props.app_state.static_assets['music_label'],'border_radius':'9px'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('audio')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bq']/* 'Pick Audio' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bs']/* 'Pick Video' */, 'details':this.props.app_state.loc['3055bt']/* 'Video files with the .mp4 extensions are supported.' */, 'size':'l'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['3055bs']/* 'Pick Video' */, 'details':this.props.app_state.loc['3055bt']/* 'Video files with the .mp4 extensions are supported.' */, 'size':'l', 'image':this.props.app_state.static_assets['video_label'],'border_radius':'9px'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('video')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bs']/* 'Pick Video' */, 'action':'', 'font':this.props.app_state.font})}
@@ -3412,7 +3421,7 @@ return data['data']
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055cp']/* 'Pick Lyric File.' */, 'details':this.props.app_state.loc['3055cq']/* 'Lyric files with the .lrc extensions are supported.' */, 'size':'l'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['3055cp']/* 'Pick Lyric File.' */, 'details':this.props.app_state.loc['3055cq']/* 'Lyric files with the .lrc extensions are supported.' */, 'size':'l', 'image':this.props.app_state.static_assets['lyric_icon'],'border_radius':'9px'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('lyric')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055cp']/* 'Pick Lyric File.' */, 'action':'', 'font':this.props.app_state.font})}
@@ -3424,14 +3433,14 @@ return data['data']
     render_file_type_picker_buttons2(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bu']/* 'Pick PDF' */, 'details':this.props.app_state.loc['3055bv']/* 'Pdf files with the .pdf extensions are supported.' */, 'size':'l'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['3055bu']/* 'Pick PDF' */, 'details':this.props.app_state.loc['3055bv']/* 'Pdf files with the .pdf extensions are supported.' */, 'size':'l', 'image':this.props.app_state.static_assets['pdf_icon'],'border_radius':'9px'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('pdf')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bu']/* 'Pick PDF' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bw']/* 'Pick Zip' */, 'details':this.props.app_state.loc['3055bx']/* 'Compressed files with the .zip extensions are supported.' */, 'size':'l'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['3055bw']/* 'Pick Zip' */, 'details':this.props.app_state.loc['3055bx']/* 'Compressed files with the .zip extensions are supported.' */, 'size':'l', 'image':this.props.app_state.static_assets['zip_file'],'border_radius':'9px'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('zip')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bw']/* 'Pick Zip' */, 'action':'', 'font':this.props.app_state.font})}
@@ -3439,7 +3448,7 @@ return data['data']
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055cr']/* 'Pick Subtitle File.' */, 'details':this.props.app_state.loc['3055cs']/* 'Subtitle files with the .vtt extensions are supported' */, 'size':'l'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['3055cr']/* 'Pick Subtitle File.' */, 'details':this.props.app_state.loc['3055cs']/* 'Subtitle files with the .vtt extensions are supported' */, 'size':'l', 'image':this.props.app_state.static_assets['subtitle_icon'],'border_radius':'9px'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_file_type_selected('subtitle')}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055cr']/* 'Pick Subtitle File.' */, 'action':'', 'font':this.props.app_state.font})}

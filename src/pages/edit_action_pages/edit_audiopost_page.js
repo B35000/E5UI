@@ -535,7 +535,6 @@ class EditAudioPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
                 
@@ -543,7 +542,6 @@ class EditAudioPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['311h']/* Post Anonymously. */, 'details':this.props.app_state.loc['311i']/* If set to enabled, your alias and account id will be masked in your posts details and comment section. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_anonymously_tags_option} tag_size={'l'} when_tags_updated={this.when_get_post_anonymously_tags_option_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -555,7 +553,6 @@ class EditAudioPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ak']/* 'Post Listing.' */, 'details':this.props.app_state.loc['476']/* 'If set to delisted, the item will not be visible for purchasing' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_album_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_album_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -564,7 +561,6 @@ class EditAudioPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'details':this.props.app_state.loc['476']/* 'Set the type of post your'e uploading to the audioport section.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_listing_type_tags_option} tag_size={'l'} when_tags_updated={this.when_get_listing_type_tags_option_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -573,7 +569,6 @@ class EditAudioPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
                 {this.render_detail_item('0')}
@@ -724,6 +719,9 @@ class EditAudioPage extends Component {
     }
 
     when_icon_image_tapped(){
+        if (this.state.album_art) {
+            URL.revokeObjectURL(this.state.album_art); // release memory from browser
+        }
         this.setState({album_art: null})
     }
 
@@ -2613,7 +2611,7 @@ return data['data']
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311k']/* 'Audio Title.' */, 'details':this.props.app_state.loc['513']/* 'Set the details for a new audio item in your album.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311k']/* 'Audio Title.' */, 'details':this.props.app_state.loc['a311l']/* 'Set a title for the audio item in the album.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311m']/* 'Title...' */} when_text_input_field_changed={this.when_song_title_input_field_changed.bind(this)} text={this.state.song_title} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
@@ -2704,13 +2702,124 @@ return data['data']
 
         if(this.state.album_art == null){
             var ecid_obj = this.get_cid_split(files[0])
-            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null){
+                console.log('file doesnt exist in uploaded data')
+                return
+            }
             var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
             var thumbnail = data['thumbnail']
             if(thumbnail != null){
-                this.setState({album_art: thumbnail})
+                this.compress_then_set_image(thumbnail)
+            }else{
+                console.log('thumbnail is null')
             }
+        }else{
+            console.log('album art is not null')
         }
+    }
+
+    compress_then_set_image(thumbnail){
+        console.log('attempting to compress image...')
+        var me = this
+        this.compressImageFromFile(thumbnail).then(compressed_thumbnail => {
+            me.setState({album_art: compressed_thumbnail})
+        })
+        .catch(error => {
+            console.error('Image compression failed:', error);
+        });
+    }
+    
+    // compress_image_from_file = async (image_url) => {
+    //     const img = new Image();
+    //     const maxWidth = 200 
+    //     var return_blob = null
+    //     var is_loading_file = true
+
+    //     img.onload = async () => {
+    //         console.log('image data loaded in src...')
+    //         var is_calculating_scale = true
+    //         const canvas = document.createElement('canvas');
+    //         const scale = maxWidth / img.width;
+
+    //         canvas.width = maxWidth;            
+    //         canvas.height = img.height * scale;
+      
+    //         const ctx = canvas.getContext('2d');
+    //         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+    //         const image_size = 35 * 1024
+    //         var quality = 1.0
+    //         canvas.toBlob(blob => {
+    //             console.log('image data loaded in src...')
+    //             var blob_size = blob.size
+    //             if(blob_size > image_size){
+    //                 console.log('blob size greater than max size...')
+    //                 quality = image_size / blob_size
+    //             }
+    //             console.log('quality being used -> ', quality)
+    //             is_calculating_scale = false
+    //         }, "image/jpeg")
+
+    //         while (is_calculating_scale == true) {
+    //             if (is_calculating_scale == false) break
+    //             console.log('Waiting for compression quality to be processed...')
+    //             await new Promise(resolve => setTimeout(resolve, 1000))
+    //         }
+            
+    //         console.log('quality has been calculated at: ', quality)
+    //         return_blob = canvas.toDataURL("image/jpeg", quality);
+    //         is_loading_file = false
+    //       };
+    //     img.src = image_url;
+    //     img.onerror = () => {
+    //         console.log('something went wrong')
+    //         is_loading_file == false
+    //     }
+
+    //     while (is_loading_file == true) {
+    //         if (is_loading_file == false) break
+    //         console.log('Waiting for image to be processed...')
+    //         await new Promise(resolve => setTimeout(resolve, 1000))
+    //     }
+
+    //     return return_blob
+    // }
+
+    compressImageFromFile(image_url) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          const maxWidth = 200 
+          img.src = image_url;
+          
+          img.onload = () => {
+            console.log('image data loaded in src...')
+            const canvas = document.createElement('canvas');
+            const canvas2 = document.createElement('canvas');
+            const scale = maxWidth / img.width;
+
+            canvas.width = maxWidth;            
+            canvas.height = img.height * scale;
+      
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            const image_size = 35 * 1024
+            var quality = 1.0
+            canvas.toBlob(blob => {
+                console.log('image data loaded in src...')
+                var blob_size = blob.size
+                if(blob_size > image_size){
+                    console.log('blob size greater than max size...')
+                    quality = image_size / blob_size
+                }
+                console.log('quality being used -> ', quality)
+                var return_blob = canvas.toDataURL("image/jpeg", quality);
+                resolve(return_blob);
+            }, "image/jpeg")
+            
+          };
+          img.onerror = reject;
+        });
     }
 
     render_song_audio(){
@@ -2894,10 +3003,24 @@ return data['data']
     get_song_basic_data(audio_file){
         var ecid_obj = this.get_cid_split(audio_file)
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        var clone = structuredClone(data)
-        clone['thumbnail'] = null
-        clone['data'] = null
-        return clone
+        var metadata_clone = {common:{}, format:{}}
+        if(data['metadata'] != null){
+            var metadata = data['metadata']
+            if(metadata['common'] != null){
+                metadata_clone['common']['composer'] = metadata['common']['composer']
+            }
+            if(metadata['format'] != null){
+                metadata_clone['format']['bitrate'] = metadata['format']['bitrate']
+                metadata_clone['format']['codec'] = metadata['format']['codec']
+                metadata_clone['format']['codecProfile'] = metadata['format']['codecProfile']
+                metadata_clone['format']['container'] = metadata['format']['container']
+                metadata_clone['format']['lossless'] = metadata['format']['lossless']
+                metadata_clone['format']['numberOfChannels'] = metadata['format']['numberOfChannels']
+                metadata_clone['format']['numberOfSamples'] = metadata['format']['numberOfSamples']
+                metadata_clone['format']['sampleRate'] = metadata['format']['sampleRate']
+            } 
+        }
+        return metadata_clone
     }
 
 

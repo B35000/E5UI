@@ -2614,14 +2614,14 @@ class home_page extends Component {
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
-            // var my_added_album_ids = this.props.app_state.my_albums.reverse()
-            // var all_audios = this.get_all_sorted_objects(this.props.app_state.created_audios)
-            // var my_acquired_albums = []
-            // for(var i=0; i<my_added_album_ids.length; i++){
-            //     var obj = this.get_item_in_array(my_added_album_ids[i], all_audios)
-            //     if(obj != null) my_acquired_albums.push(obj)
-            // }
-            var my_acquired_albums = this.props.app_state.my_acquired_audios.reverse()
+            var my_added_album_ids = this.get_stack_albums().reverse()
+            var all_audios = this.get_all_sorted_objects(this.props.app_state.created_audios)
+            var my_acquired_albums_in_stack = []
+            for(var i=0; i<my_added_album_ids.length; i++){
+                var obj = this.get_item_in_array2(my_added_album_ids[i], all_audios)
+                if(obj != null) my_acquired_albums_in_stack.push(obj)
+            }
+            var my_acquired_albums = my_acquired_albums_in_stack.concat(this.props.app_state.my_acquired_audios.reverse())
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264m']/* 'playlists' */){
@@ -2662,6 +2662,21 @@ class home_page extends Component {
         }
     }
 
+    get_stack_albums(){
+        const txs = this.props.app_state.stack_items
+        var albums = []
+        txs.forEach(transaction => {
+            if(transaction.type == this.props.app_state.loc['2962']/* 'buy-album' */){
+                var existing_bought_item = this.props.app_state.my_acquired_audios.find(e => e['e5_id'] === transaction.album['e5_id'])
+                if(existing_bought_item == null){
+                    albums.push(transaction.album['e5_id'])
+                }
+            }
+        });
+
+        return albums
+    }
+
     get_video_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
@@ -2696,14 +2711,14 @@ class home_page extends Component {
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
-            // var my_added_videopost_ids = this.props.app_state.my_videoposts.reverse()
-            // var all_videos = this.get_all_sorted_objects(this.props.app_state.created_videos)
-            // var my_acquired_albums = []
-            // for(var i=0; i<my_added_videopost_ids.length; i++){
-            //     var obj = this.get_item_in_array(my_added_videopost_ids[i], all_videos)
-            //     if(obj != null) my_acquired_albums.push(obj)
-            // }
-            var my_acquired_albums = this.props.app_state.my_acquired_videos.reverse()
+            var my_added_videopost_ids = this.get_stack_videposts().reverse()
+            var all_videos = this.get_all_sorted_objects(this.props.app_state.created_videos)
+            var my_stacked_videoposts = []
+            for(var i=0; i<my_added_videopost_ids.length; i++){
+                var obj = this.get_item_in_array2(my_added_videopost_ids[i], all_videos)
+                if(obj != null) my_stacked_videoposts.push(obj)
+            }
+            var my_acquired_albums = my_stacked_videoposts.concat(this.props.app_state.my_acquired_videos.reverse())
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
@@ -2738,6 +2753,21 @@ class home_page extends Component {
             }
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_videos)))))
         }
+    }
+
+    get_stack_videposts(){
+        const txs = this.props.app_state.stack_items
+        var videoposts = []
+        txs.forEach(transaction => {
+            if(transaction.type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+                var existing_bought_item = this.props.app_state.my_acquired_videos.find(e => e['e5_id'] === transaction.videopost['e5_id'])
+                if(existing_bought_item == null){
+                    videoposts.push(transaction.videopost['e5_id'])
+                }
+            }
+        });
+
+        return videoposts
     }
 
     get_nitro_items(all){

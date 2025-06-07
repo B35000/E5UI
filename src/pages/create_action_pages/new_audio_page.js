@@ -511,7 +511,6 @@ class NewAudioPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['311e']/* Masked for Outsiders. */, 'details':this.props.app_state.loc['311f']/* If set to masked, your post will not be visible to users without accounts. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_from_outsiders_option} tag_size={'l'} when_tags_updated={this.when_get_masked_from_outsiders_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -811,6 +810,9 @@ class NewAudioPage extends Component {
     }
 
     when_icon_image_tapped(){
+        if (this.state.album_art) {
+            URL.revokeObjectURL(this.state.album_art); // release memory from browser
+        }
         this.setState({album_art: null})
     }
 
@@ -2600,7 +2602,7 @@ return data['data']
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311k']/* 'Audio Title.' */, 'details':this.props.app_state.loc['513']/* 'Set the details for a new audio item in your album.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311k']/* 'Audio Title.' */, 'details':this.props.app_state.loc['a311l']/* 'Set a title for the audio item in the album.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311m']/* 'Title...' */} when_text_input_field_changed={this.when_song_title_input_field_changed.bind(this)} text={this.state.song_title} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
@@ -2696,9 +2698,47 @@ return data['data']
             var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
             var thumbnail = data['thumbnail']
             if(thumbnail != null){
-                this.setState({album_art: thumbnail})
+                this.compress_then_set_image(thumbnail)
             }
         }
+    }
+
+    compress_then_set_image(thumbnail){
+        var me = this
+        this.compressImageFromFile(thumbnail).then(compressed_thumbnail => {
+            me.setState({album_art: compressed_thumbnail})
+        })
+    }
+
+    compressImageFromFile(image_url) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          const maxWidth = 200 
+      
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+      
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+            const image_size = 35 * 1024
+            canvas.toBlob(blob => {
+                var quality = 1.0
+                var blob_size = blob.size
+                if(blob_size > image_size){
+                    quality = image_size / blob_size
+                }
+                var return_blob = canvas.toDataURL("image/jpeg", quality);
+                resolve(return_blob);
+            }, "image/jpeg")
+          };
+      
+          img.src = image_url;
+          img.onerror = reject;
+        });
     }
 
     render_song_audio(){
@@ -2880,10 +2920,24 @@ return data['data']
     get_song_basic_data(audio_file){
         var ecid_obj = this.get_cid_split(audio_file)
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        var clone = structuredClone(data)
-        clone['thumbnail'] = null
-        clone['data'] = null
-        return clone
+        var metadata_clone = {common:{}, format:{}}
+        if(data['metadata'] != null){
+            var metadata = data['metadata']
+            if(metadata['common'] != null){
+                metadata_clone['common']['composer'] = metadata['common']['composer']
+            }
+            if(metadata['format'] != null){
+                metadata_clone['format']['bitrate'] = metadata['format']['bitrate']
+                metadata_clone['format']['codec'] = metadata['format']['codec']
+                metadata_clone['format']['codecProfile'] = metadata['format']['codecProfile']
+                metadata_clone['format']['container'] = metadata['format']['container']
+                metadata_clone['format']['lossless'] = metadata['format']['lossless']
+                metadata_clone['format']['numberOfChannels'] = metadata['format']['numberOfChannels']
+                metadata_clone['format']['numberOfSamples'] = metadata['format']['numberOfSamples']
+                metadata_clone['format']['sampleRate'] = metadata['format']['sampleRate']
+            } 
+        }
+        return metadata_clone
     }
 
 

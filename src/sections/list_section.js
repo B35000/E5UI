@@ -3458,6 +3458,7 @@ class PostListSection extends Component {
         var col = Math.round(400 / 200)
         var w = (this.state.screen_width / 2) - 5
         var rowHeight = w+40;
+        var my_stacked_albums = this.get_stack_albums()
         if(items.length == 0){
             var items = ['1','1']
             return(
@@ -3483,7 +3484,7 @@ class PostListSection extends Component {
                         {items.map((item, index) => (
                             <ImageListItem key={index}>
                                 <div>
-                                    {this.render_bought_audio_item_plus_buttons(item, index, w)}
+                                    {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)}
                                 </div>
                             </ImageListItem>
                         ))}
@@ -3493,9 +3494,10 @@ class PostListSection extends Component {
         }
     }
 
-    render_bought_audio_item_plus_buttons(object, index, w){
+    render_bought_audio_item_plus_buttons(object, index, w, my_stacked_albums){
+        var opacity = my_stacked_albums.includes(object['e5_id']) ? 0.7 : 1.0
         return(
-            <div style={{'position': 'relative'}}>
+            <div style={{'position': 'relative', 'opacity':opacity}}>
                 <div onClick={() => this.when_audio_item_clicked(index, object)} style={{width:w, height:'auto', 'z-index':'1', 'position': 'absolute',}}>
                     {this.render_my_bought_audio_item(object, index, w)}
                 </div>
@@ -3523,6 +3525,21 @@ class PostListSection extends Component {
                 <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin':'0px'}}>{this.truncate(author, 20)}</p>
             </div>
         )
+    }
+
+    get_stack_albums(){
+        const txs = this.props.app_state.stack_items
+        var albums = []
+        txs.forEach(transaction => {
+            if(transaction.type == this.props.app_state.loc['2962']/* 'buy-album' */){
+                var existing_bought_item = this.props.app_state.my_acquired_audios.find(e => e['e5_id'] === transaction.album['e5_id'])
+                if(existing_bought_item == null){
+                    albums.push(transaction.album['e5_id'])
+                }
+            }
+        });
+
+        return albums
     }
 
 
@@ -4040,6 +4057,7 @@ return data['data']
         var col = Math.round(400 / 200)
         var w = (this.state.screen_width / 2) - 5
         var rowHeight = w+40;
+        var stacked_videoposts = this.get_stack_videposts()
         if(items.length == 0){
             var items = ['1','1']
             return(
@@ -4065,7 +4083,7 @@ return data['data']
                         {items.map((item, index) => (
                             <ImageListItem key={index}>
                                 <div onClick={() => this.when_video_item_clicked(index, item)}>
-                                    {this.render_my_bought_video_item(item, index, w)}
+                                    {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
                                 </div> 
                             </ImageListItem>
                         ))}
@@ -4075,14 +4093,30 @@ return data['data']
         }
     }
 
-    render_my_bought_video_item(object, index, w){
+    get_stack_videposts(){
+        const txs = this.props.app_state.stack_items
+        var videoposts = []
+        txs.forEach(transaction => {
+            if(transaction.type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+                var existing_bought_item = this.props.app_state.my_acquired_videos.find(e => e['e5_id'] === transaction.videopost['e5_id'])
+                if(existing_bought_item == null){
+                    videoposts.push(transaction.videopost['e5_id'])
+                }
+            }
+        });
+
+        return videoposts
+    }
+
+    render_my_bought_video_item(object, index, w, stacked_videoposts){
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
         var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
         var author = sender
+        var opacity = stacked_videoposts.includes(object['e5_id']) ? 0.6 : 1.0
         return(
-            <div style={{width:w, height:'auto'}}>
+            <div style={{width:w, height:'auto', 'opacity':opacity}}>
                 <img src={this.get_image_from_file(image)} alt="" style={{height:w ,width:w,'border-radius': '10px'}}/>
                 <div style={{height:5}}/>
                 <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '12px', 'margin':'0px'}} className="fw-bold">{this.truncate(title, 20)}</p>
