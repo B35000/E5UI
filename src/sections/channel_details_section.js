@@ -263,6 +263,7 @@ class ChannelDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_post_state(object)}
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -296,6 +297,24 @@ class ChannelDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_post_state(object){
+        const country_data = this.props.app_state.country_data
+        const object_country = object['ipfs'].device_country
+        const country_item_data = country_data.find(e => e.name === object_country)
+        if(country_item_data != null){
+            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+            var country_color = obj[country_item_data.color[0]]
+            var title = country_item_data.code /* +' '+country_item_data.emoji */
+            var details = country_color+' '+country_item_data.call_code
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_follow_unfollow_author_button(object){

@@ -40,6 +40,9 @@ import NsfwPage from './nsfw_warning_page'
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 
 var bigInt = require("big-integer");
 
@@ -260,7 +263,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1205']/* 'applied' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ],
           'contracts':[
-              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1332e']/* 'main' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1332e']/* 'main ⭐' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ],
           'contractors':[
               ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
@@ -280,7 +283,7 @@ class home_page extends Component {
         };
 
         obj[this.props.app_state.loc['1196']/* 'jobs' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1205']/* 'applied' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1205']/* 'applied' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */], [1],[1]
           ];
 
         obj[this.props.app_state.loc['1197']/* 'contracts' */] = [
@@ -299,7 +302,7 @@ class home_page extends Component {
             ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */, /* this.props.app_state.loc['1264f'] *//* 'mail-notifications' */], [1],[1]
         ]
         obj[this.props.app_state.loc['1264s']/* 'nitro' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1264s']/* 'nitro' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1264t']/* 'bought' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
+            ['xor','e',1], [this.props.app_state.loc['1264s']/* 'nitro' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1264t']/* 'bought' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
         ]
 
         return obj;
@@ -342,25 +345,25 @@ class home_page extends Component {
               ['xor','',0], [this.props.app_state.loc['1212']/* 'E5s' */,this.props.app_state.loc['1220']/* 'info ℹ️' */,this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1213']/* 'posts' */] = [
-              ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following 👥' */, this.props.app_state.loc['1264ah']/* 'tag-targeted 🎯' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned 📌' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1214']/* 'channels' */] = [
-              ['xor','',0], [this.props.app_state.loc['1214']/* 'channels' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1214']/* 'channels' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1215']/* 'storefront' */] = [
-              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1216']/* 'bags' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264ae']/* 'my-responses' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264ae']/* 'my-responses' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1264k']/* 'audioport' */] = [
-              ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists 💽' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired ✅' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
         ]
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
         ]
         return obj
       }
@@ -1208,7 +1211,7 @@ class home_page extends Component {
                 if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
             }
         });
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data)
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data, [])
     }
 
     get_selected_page(){
@@ -1440,7 +1443,7 @@ class home_page extends Component {
             //if viewing my collection or my playlists, load my albums first
             posts_to_load = posts_to_load.concat(this.props.app_state.my_albums)
         }
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data)
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, [])
 
         var me = this;
         setTimeout(function() {
@@ -1459,7 +1462,7 @@ class home_page extends Component {
             //if viewing my collection or my playlists, load my albums first
             posts_to_load = posts_to_load.concat(this.props.app_state.my_albums)
         }
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data)
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, [])
     }
 
     
@@ -1926,6 +1929,19 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
             return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bags))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_bags)
+            var my_objects = this.props.app_state.my_objects
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_objects.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+        }
         else {
             var my_bags = []
             var all_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
@@ -1986,6 +2002,19 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
             return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_channels))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_channels)
+            var my_channels = this.props.app_state.my_channels
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_channels.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
         }
         else {
             var my_channels = []
@@ -2184,6 +2213,19 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
             return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_jobs))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var my_objects = this.props.app_state.my_objects
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_objects.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+        }
         else {
             var my_jobs = []
             var all_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
@@ -2355,6 +2397,19 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
             return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_posts))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var my_objects = this.props.app_state.my_objects
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_objects.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+        }
         else {
             var my_posts = []
             var all_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
@@ -2480,6 +2535,19 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
             return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_stores))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_stores)
+            var my_objects = this.props.app_state.my_objects
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_objects.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
         }
         else {
             var my_stores = []
@@ -2739,6 +2807,19 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
             return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_videos))))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_videos)
+            var my_objects = this.props.app_state.my_objects
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_objects.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+        }
         else {
             var my_videos = []
             var all_videos = this.get_all_sorted_objects(this.props.app_state.created_videos)
@@ -2807,6 +2888,19 @@ class home_page extends Component {
             }
             
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+            var my_objects = this.props.app_state.my_objects
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_objects.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
         }
         else {
             var my_nitros = []
@@ -2928,6 +3022,19 @@ class home_page extends Component {
                 }
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+            var my_participated_objects = []
+            var all_objects = this.get_all_sorted_objects(this.props.app_state.created_polls)
+            var my_polls = this.props.app_state.my_polls
+            for(var i=0; i<all_objects.length; i++){
+                var object = all_objects[i]
+                var id = object['e5'] + ':' + object['id']
+                if(my_polls.includes(id)){
+                    my_participated_objects.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
         }
         else {
             var my_posts = []
@@ -3181,7 +3288,10 @@ class home_page extends Component {
     sort_feed_based_on_my_section_tags2(objects){
         const feed_objs = []
         const feed_objs_2 = []
-        const all_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
+        var all_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
+        if(all_tags == null){
+            all_tags = { current_tags:[], extra_tags:[] }
+        }
         const section_tags = all_tags.current_tags
         const exra_tags = all_tags.extra_tags
 
@@ -3227,7 +3337,12 @@ class home_page extends Component {
         var feed_objs = []
         var like_tags = []
 
-        var section_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
+        var all_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
+        if(all_tags == null){
+            all_tags = { current_tags:[], extra_tags:[] }
+        }
+        const section_tags = all_tags.current_tags
+        const exra_tags = all_tags.extra_tags
 
         if(this.props.app_state.section_tags_setting == this.props.app_state.loc['1202']/* 'all' */){
             return objects
@@ -3939,7 +4054,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
     }
 
     when_playlist_selected(song, index){
@@ -4068,7 +4183,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
     }
 
     play_videopost_from_list_section = async (object) => {
@@ -4341,7 +4456,7 @@ class home_page extends Component {
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
                 connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_audiopost={this.props.repost_audiopost.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)} repost_post={this.props.repost_post.bind(this)}
 
-                perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} open_vote_in_poll_ui={this.props.show_view_vote_poll_bottomsheet.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}
+                perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} open_vote_in_poll_ui={this.props.show_view_vote_poll_bottomsheet.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} when_catalogue_storefront_item_clicked={this.when_catalogue_storefront_item_clicked.bind(this)}
                 />
             </div>
         )
@@ -4525,7 +4640,7 @@ class home_page extends Component {
         var e5 = object['e5']
         this.setState({selected_audio_item: id+e5})
         this.set_detail_data()
-        this.add_to_tab(id+e5, id)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264k']/* 'audioport' */)
         this.reset_post_detail_object()
         var viewed_audios_clone = this.state.viewed_audios.slice()
         var pos = viewed_audios_clone.indexOf(id)
@@ -4538,8 +4653,9 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_post_award_data(id, e5)
+        this.props.get_object_censored_keywords_and_accounts(object)
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
     }
 
     when_discography_video_item_clicked(object){
@@ -4548,7 +4664,7 @@ class home_page extends Component {
 
         this.setState({selected_video_item: id+e5})
         this.set_detail_data()
-        this.add_to_tab(id+e5, id)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264p']/* 'videoport' */)
         this.reset_post_detail_object()
         var viewed_videos_clone = this.state.viewed_videos.slice()
         var pos = viewed_videos_clone.indexOf(id)
@@ -4561,8 +4677,30 @@ class home_page extends Component {
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5)
         this.props.get_post_award_data(id, e5)
+        this.props.get_object_censored_keywords_and_accounts(object)
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '')
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
+    }
+
+    when_catalogue_storefront_item_clicked(object){
+        var id = object['id']
+        var e5 = object['e5']
+        this.setState({selected_storefront_item: id+e5})
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1215']/* 'storefront' */)
+        this.reset_post_detail_object()
+        var viewed_storefront_clone = this.state.viewed_stores.slice()
+        var pos = viewed_storefront_clone.indexOf(id)
+        if(pos == -1){
+            viewed_storefront_clone.push(id)
+            this.setState({viewed_stores: viewed_storefront_clone})
+            this.update_cookies()
+        }
+
+        this.props.fetch_uploaded_files_for_object(object)
+        this.props.get_direct_purchase_events(id, e5)
+        this.props.get_objects_messages(id, e5)
+        this.props.get_object_censored_keywords_and_accounts(object)
+        
     }
 
 
@@ -5733,10 +5871,13 @@ class home_page extends Component {
             <div>
                 <div style={{'padding':'10px 10px 10px 10px', 'margin':'0px 0px 0px 5px', 'background-color':this.props.theme['card_background_color'],'border-radius': '15px', height:h, 'overflow-y': 'auto',}}>
 
+                    {this.render_now_playing_media_if_any()}
+
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2817']/* 'Available E5s.' */, 'details':this.props.app_state.loc['2818']/* 'The E5s that are currently in use.' */, 'size':'l'})}
                     {this.load_preferred_e5_ui()}
                     {this.render_detail_item('0')} 
 
+                    {this.render_notifications_if_any()}
 
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2819']/* 'Active Wallets.' */, 'details':this.props.app_state.loc['2820']/* 'Your wallet ethers and coins that have balances.' */, 'size':'l'})}
                     {this.render_my_balances()}
@@ -5774,6 +5915,106 @@ class home_page extends Component {
             </div>
         )
     }
+
+    render_notifications_if_any(){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            return;
+        }
+        var work_notifications = this.get_all_work_notification_items([]).length
+        var explore_notifications = this.get_all_explore_notification_items([]).length
+        var wallet_notifications = this.get_all_wallet_notification_items([]).length
+
+        return(
+            <div>
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1264au']/* 'Notifications 🔔' */, 'details':this.props.app_state.loc['1264av']/* 'Notifications for activity under your account should show here.' */, 'size':'l'})}
+                <div style={{height: 5}}/>
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.show_notifications('?')}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1264aw']/* '???? 💼' */, 'title':this.format_number(work_notifications), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.show_notifications('e')}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1264ax']/* 'Explore 🧭' */, 'title':this.format_number(explore_notifications), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.show_notifications('w')}>
+                            {this.render_detail_item('3', {'details':this.props.app_state.loc['1264ay']/* 'Wallet 🏦'' */, 'title':this.format_number(wallet_notifications), 'size':'l'})}
+                            <div style={{width: 10}}/>
+                        </li>
+                    </ul>
+                </div>
+                {this.render_detail_item('0')} 
+            </div>
+        )
+    }
+
+    show_notifications(item){
+        this.props.show_view_notification_log_bottomsheet(item)
+    }
+
+    format_number(number){
+        if(number == 0){
+            return '000'
+        }
+        return number
+    }
+
+    get_all_work_notification_items(types){
+        const notification_object = this.props.app_state.notification_object
+        const mail = notification_object['mail'] == null ? [] : notification_object['mail']
+        const message = notification_object['message'] == null ? [] : notification_object['message']
+        const proposal = notification_object['proposal'] == null ? [] : notification_object['proposal']
+        const job_application = notification_object['job_application'] == null ? [] : notification_object['job_application']
+        const job_request = notification_object['job_request'] == null ? [] : notification_object['job_request']
+        const job_application_response = notification_object['job_application_response'] == null ? [] : notification_object['job_application_response']
+        const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
+        const contract = notification_object['contract'] == null ? [] : notification_object['contract']
+        
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract)
+
+        const filtered_events = all_events.filter(function (event) {
+            return (types.includes(event['event_type'])  || types.length == 0)
+        });
+
+        return this.sortByAttributeDescending(filtered_events, 'time')
+    }
+
+    get_all_explore_notification_items(types){
+        const notification_object = this.props.app_state.notification_object
+        const bag = notification_object['bag'] == null ? [] : notification_object['bag']
+        const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
+        const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
+        
+        const all_events = bag.concat(bag_application_response, storefront)
+
+        const filtered_events = all_events.filter(function (event) {
+            return (types.includes(event['event_type'])  || types.length == 0)
+        });
+
+        return this.sortByAttributeDescending(filtered_events, 'time')
+    }
+
+    get_all_wallet_notification_items(types){
+        const notification_object = this.props.app_state.notification_object
+        const token = notification_object['token'] == null ? [] : notification_object['token']
+        const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
+        
+        
+        const all_events = token.concat(bill_request)
+
+        const filtered_events = all_events.filter(function (event) {
+            return (types.includes(event['event_type'])  || types.length == 0)
+        });
+
+        return this.sortByAttributeDescending(filtered_events, 'time')
+    }
+
+
+
+
+
+
 
     load_active_e5s(){
         var active_e5s = []
@@ -5845,6 +6086,87 @@ class home_page extends Component {
             return;
         }
         this.props.when_selected_e5_changed(item)
+    }
+
+
+
+
+
+
+
+    render_now_playing_media_if_any(){
+        if(this.props.app_state.is_audio_pip_showing == true && this.props.app_state.queue.length > 0){
+            var item = this.props.app_state.queue[this.props.app_state.pos]
+            return(
+                <div>
+                    <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dz']/* Stop */}</p>,
+                            action: () => this.props.close_audio_pip()
+                            }}>
+                            <div style={{width:'100%', 'background-color':this.props.theme['card_background_color']}}>
+                                {this.render_song_item(item)}
+                            </div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+                    {this.render_detail_item('0')} 
+                </div>
+            )
+        }
+    }
+
+    render_song_item(item){
+        var object = item['object']
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+
+        var border_radius = '7px';
+        var text_align = 'left'
+        var padding = '10px 15px 10px 15px'
+        var font_size = ['15px', '12px', 19, 50];
+        var song_title = item['song_title']
+        var song_details = item['song_composer']
+        return(
+            <div>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
+                    <img onClick={()=>this.props.open_full_screen_viewer()} src={this.get_image_from_file(image)} alt="" style={{height:43 ,width:43, 'border-radius': '10px'}}/>
+                    <div style={{width:10}}/>
+                    <div style={{width:'80%'}}>
+                        <div style={{'padding':'3px 0px 0px 0px'}}>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word', 'overflow-wrap':'break-word', 'word-break': 'break-all', 'text-align':text_align}}>{song_title}</p>
+
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
+                        </div>
+                    </div>
+                    <div style={{width:10}}/>
+                    <div style={{padding:'9px 0px 0px 0px'}}>
+                        {this.render_pause_button()}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return this.props.app_state.static_assets['music_label'];
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return this.props.app_state.static_assets['music_label'];
+        return data['data']
+    }
+
+    render_pause_button(){
+        var image = this.props.app_state.play_pause_state == 1/* playing */ ? this.props.theme['pause']: this.props.theme['play']     
+        return(
+            <img onClick={()=>this.play_pause_from_here()} alt="" src={image} style={{height:25 ,width:'auto', 'text-align':'center'}}/>
+        )
+    }
+
+    play_pause_from_here(){
+        this.props.play_pause_from_stack()
     }
 
 
@@ -6080,7 +6402,7 @@ class home_page extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593go']/* 'Stack Run Storage Utilization' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':this.format_account_balance_figure(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593gp']/* 'Run Storage Utilization Proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage, 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593gp']/* 'Run Storage Utilization Proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':Math.floor(percentage)+'%', 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
                     </div>
                 </div>
             )
@@ -6280,7 +6602,7 @@ class home_page extends Component {
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2838']/* 'Total E5 Transfers.' */, 'subtitle':this.format_power_figure(transfer_events), 'barwidth':this.calculate_bar_width(transfer_events), 'number':this.format_account_balance_figure(transfer_events), 'barcolor':'', 'relativepower':this.props.app_state.loc['2839']/* 'transfers' */, })}
                 </div>
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2840']/* E5 Traffic Distribution. */}</p>
@@ -6299,7 +6621,6 @@ class home_page extends Component {
             </div>
         )
     }
-
 
     load_all_event_data(chart_id){
         var all_objects = []

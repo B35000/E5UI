@@ -232,6 +232,7 @@ class NitroDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_post_state(object)}
 
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -278,6 +279,24 @@ class NitroDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_post_state(object){
+        const country_data = this.props.app_state.country_data
+        const object_country = object['ipfs'].device_country
+        const country_item_data = country_data.find(e => e.name === object_country)
+        if(country_item_data != null){
+            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+            var country_color = obj[country_item_data.color[0]]
+            var title = country_item_data.code /* +' '+country_item_data.emoji */
+            var details = country_color+' '+country_item_data.call_code
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
 

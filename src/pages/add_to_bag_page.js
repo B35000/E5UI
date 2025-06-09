@@ -438,9 +438,10 @@ class AddToBagPage extends Component {
                 </div>
             )
         }else{
+            var image = this.props.app_state.static_assets['empty_image']
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
                 </div>
             )
         }

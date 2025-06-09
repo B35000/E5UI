@@ -516,9 +516,10 @@ class ViewGroups extends Component {
         else if(item_id=='11'){/* banner */
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
             var caption = object_data != null ? object_data['caption']:{'text':'E5', 'textsize':'10px', 'font':'Times New Roman'}
+            var image_border_radius = '9px'
             return(
                 <div style={{width:'90%', margin:'0px 0px 0px 10px'}}>
-                    <img alt="" src={this.get_image_from_file(img)} style={{height:'auto' ,width:'90%'}} />
+                    <img alt="" src={this.get_image_from_file(img)} style={{height:'auto' ,width:'90%', 'border-radius': image_border_radius}} />
                     {this.render_detail_item('10', caption)}
                 </div>
             )

@@ -389,15 +389,16 @@ class FullVideoPage extends Component {
                     </div>
                 )
             }
-            var tracks = []
-            subtitles.forEach(subtitle_track => {
+            const tracks = []
+            for(var t=0; t<subtitles.length; t++){
+                const subtitle_track = subtitles[t]
                 tracks.push({
                     kind: 'subtitles', 
                     label: subtitle_track['subtitle_language_name'],
-                    src: this.get_subtitle_file(subtitle_track),
+                    src: this.get_subtitle_file(subtitle_track, current_video),
                     srcLang: subtitle_track['subtitle_language_object']['code']
                 })
-            });
+            }
             return(
                 <div style={{}}>
                     <video ref={this.video_player} width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
@@ -421,20 +422,28 @@ class FullVideoPage extends Component {
         
     }
 
-    get_subtitle_file(item){
+    get_subtitle_file(item, current_video){
         if(item['subtitle_type'] == 'upload'){
             const ecid_obj = this.get_cid_split(item['subtitle_file'])
             if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
-                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-                var file_lyrics = data['subtitles']
-                const blob = new Blob([file_lyrics], { type: 'text/vtt' });
-                return URL.createObjectURL(blob);
+                const data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                const file_lyrics = data['subtitles']
+                return file_lyrics
             }else{
                 return null
             }
         }else{
+            const id = current_video['video_id']+item['subtitle_language_name']
+            if(this.subtitles_container == null){
+                this.subtitles_container = {}
+            }
+            if(this.subtitles_container[id] != null){
+                return this.subtitles_container[id]
+            }
             const blob = new Blob([item['subtitle_file']], { type: 'text/vtt' });
-            return URL.createObjectURL(blob);
+            const subtitle_url = URL.createObjectURL(blob);
+            this.subtitles_container[id] = subtitle_url
+            return subtitle_url
         }
     }
 
@@ -478,10 +487,12 @@ class FullVideoPage extends Component {
     when_subtitle_option_tags_object_updated(tags_obj){
         this.setState({subtitle_option_tags: tags_obj})
         var selected_item = this.get_selected_item(tags_obj, tags_obj['i'].active)
-        this.hideTracks()
         var me = this;
+        this.hideTracks()
         setTimeout(function() {
-            if(selected_item !== 'e') me.show_selected_track(selected_item)
+            if(selected_item != 'e'){
+                me.show_selected_track(selected_item)
+            } 
         }, (1 * 500));
     }
 

@@ -2447,6 +2447,10 @@ return data['data']
                 {this.render_detail_item('0')}
 
 
+
+                {this.render_delete_edited_item_if_selected()}
+
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['b311n']/* 'Video Title.' */, 'details':this.props.app_state.loc['b311o']/* 'Set the title for the new video item in your show.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311m']/* 'Title...' */} when_text_input_field_changed={this.when_video_title_input_field_changed.bind(this)} text={this.state.video_title} theme={this.props.theme}/>
@@ -2513,6 +2517,25 @@ return data['data']
 
             </div>
         )
+    }
+
+    render_delete_edited_item_if_selected(){
+        if(this.state.edit_video_item_pos == -1) return;
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['b311am']/* 'Delete Selected Video.' */, 'details':this.props.app_state.loc['b311an']/* 'Remove the selected video from your videopost.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_delete_selected_video_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['b311ao']/* 'Delete Video' */, 'action':''})}
+                </div>
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_delete_selected_video_tapped(){
+        var index = this.state.edit_video_item_pos
+        this.remove_tab_item(index)
     }
 
     when_new_dat_time_value_set(value){
@@ -2683,7 +2706,7 @@ return data['data']
                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".vtt" onChange ={this.when_subtitle_file_picked.bind(this)}/>
                 </div>
                 <div style={{width:10}}/>
-                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('subtitle', 'select_subtitle_file', 1)}/>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('subtitle', 'select_subtitle_file', 1)}/>
             </div>
         )
     }
@@ -2969,8 +2992,15 @@ return data['data']
             if(this.is_tab_active(index) && prev_index > -1){
                 this.focus_tab(prev_index)
             }
+            else if(prev_index == -1 && this.is_tab_active(index)){
+                this.reset_views()
+            }
             this.setState({videos: cloned_array})
         }
+    }
+
+    reset_views(){
+        this.setState({video_title:'', video_composer:'', price_data2:[], edit_video_item_pos: -1, video_file:null, subtitles:[]})
     }
 
 

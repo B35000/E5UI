@@ -163,7 +163,7 @@ class AudioPip extends Component {
     get_bar_length(){
         var current_time = this.state.value
         var current_song = this.state.songs[this.state.pos]
-        var current_song_length = current_song['basic_data']['metadata']['format']['duration']
+        var current_song_length = current_song['basic_data']['format']['duration']
 
         return ((current_time * 100) / current_song_length)
     }
@@ -172,7 +172,7 @@ class AudioPip extends Component {
         if (this.audio.current?.buffered.length > 0) {
             const loaded = this.audio.current?.buffered.end(this.audio.current?.buffered.length - 1); // Last buffered time
             var current_song = this.state.songs[this.state.pos]
-            var current_song_length = current_song['basic_data']['metadata']['format']['duration']
+            var current_song_length = current_song['basic_data']['format']['duration']
             var buffer = (loaded / current_song_length) * 100
             // if(this.state.buffer == 0 && (this.props.app_state.os == 'iOS' || this.props.app_state.os == 'Android')){
             //     this.play_pause()
@@ -194,7 +194,7 @@ class AudioPip extends Component {
     get_remaining_time(){
         var current_time = parseInt(this.state.value)
         var current_song = this.state.songs[this.state.pos]
-        var current_song_length = parseInt(current_song['basic_data']['metadata']['format']['duration'])
+        var current_song_length = parseInt(current_song['basic_data']['format']['duration'])
         
         var remaining_time = current_song_length - current_time
         var min = Math.floor(parseInt(remaining_time) / 60)
@@ -320,7 +320,7 @@ class AudioPip extends Component {
         if(this.audio.current == null) return
         var new_value = number.target.value
         var current_song = this.state.songs[this.state.pos]
-        var current_song_length = parseInt(current_song['basic_data']['metadata']['format']['duration'])
+        var current_song_length = parseInt(current_song['basic_data']['format']['duration'])
         
         var new_time = (new_value / 100) * current_song_length
         this.audio.current.currentTime = parseFloat(new_time)

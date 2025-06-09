@@ -178,7 +178,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','a','i','o','u','?','$','%','#','!'], [1]
+                ['xor','',0], ['e','a','i','o','u','?','$','%','#','!', ',', '.', ';',':','-','+'], [1]
             ],
         };
     }
@@ -1808,7 +1808,7 @@ class StackPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593go']/* 'Stack Run Storage Utilization' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':this.format_account_balance_figure(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593gp']/* 'Run Storage Utilization Proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage, 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593gp']/* 'Run Storage Utilization Proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':Math.floor(percentage)+'%', 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
                     </div>
                     <div style={{height:10}}/>
                 </div>
@@ -2007,21 +2007,14 @@ class StackPage extends Component {
         )
     }
 
-    set_media_data(queue, song_pos, unshuffled_songs, is_shuffling){
-        // console.log('stack_part','queue loaded', queue)
-        // this.setState({queue: queue, pos: song_pos, original_song_list: unshuffled_songs, is_shuffling: is_shuffling})
-    }
-
     get_image_from_file(ecid){
         if(!ecid.startsWith('image')) return ecid
         var ecid_obj = this.get_cid_split(ecid)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return this.props.app_state.static_assets['music_label'];
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
 
-        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
-
-        if(data == null) return
-return data['data']
+        if(data == null) return this.props.app_state.static_assets['music_label'];
+        return data['data']
     }
 
     render_pause_button(){
@@ -2032,46 +2025,7 @@ return data['data']
     }
 
     play_pause_from_here(){
-        // this.play_pause()
         this.props.play_pause_from_stack()
-    }
-
-    play_pause(){
-        // if(this.state.play_pause_state == 0/* paused */){
-        //     this.setState({play_pause_state: 1/* playing */})
-        // }else{
-        //     this.setState({play_pause_state: 0/* paused */})
-        // }
-    }
-
-    when_next_track_reached(){
-        // if(this.state.pos != this.state.queue.length - 1){
-        //     this.setState({pos: this.state.pos +1})
-        // }
-    }
-
-    play_previous(){
-        // if(this.state.pos != 0){
-        //     this.setState({pos: this.state.pos -1})
-        // }
-    }
-
-    play_next(){
-        // if(this.state.pos != this.state.queue.length - 1){
-        //     this.setState({pos: this.state.pos +1})
-        // }
-    }
-
-    skip_to(index){
-        // this.setState({pos: index})
-    }
-
-    shuffle_songs_in_stack(shuffle_list, its_pos){
-        // if(this.state.is_shuffling == true){
-        //     this.setState({is_shuffling: !this.state.is_shuffling, queue: shuffle_list, pos:its_pos})
-        // }else{
-        //     this.setState({is_shuffling: !this.state.is_shuffling, queue: shuffle_list})
-        // }
     }
 
 
@@ -2578,6 +2532,10 @@ return data['data']
             return;
         }
 
+        
+        var newly_participated_channels = []
+        var newly_participated_polls = []
+        var newly_participated_objects = []
         var new_transaction_index_obj={}
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
@@ -3214,6 +3172,10 @@ return data['data']
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
                     }
+
+                    if(message_obj.participated_channels.length > 0){
+                        newly_participated_channels = newly_participated_channels.concat(message_obj.participated_channels);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
                     var message_obj = await this.format_post_comment_object(txs[i], calculate_gas, ipfs_index)
@@ -3232,6 +3194,16 @@ return data['data']
                         strs.push([])
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
+                    }
+
+                    const participated_objects = []
+                    for(var c=0; c<txs[i].messages_to_deliver.length; c++){
+                        var object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
+                    }
+
+                    if(participated_objects.length > 0){
+                        newly_participated_objects = newly_participated_objects.concat(participated_objects);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
@@ -3272,6 +3244,16 @@ return data['data']
                         strs.push([])
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
+                    }
+
+                    const participated_objects = []
+                    for(var c=0; c<txs[i].messages_to_deliver.length; c++){
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
+                    }
+
+                    if(participated_objects.length > 0){
+                        newly_participated_objects = newly_participated_objects.concat(participated_objects);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
@@ -3389,6 +3371,16 @@ return data['data']
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
                     }
+
+                    const participated_objects = []
+                    for(var c=0; c<txs[i].messages_to_deliver.length; c++){
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
+                    }
+
+                    if(participated_objects.length > 0){
+                        newly_participated_objects = newly_participated_objects.concat(participated_objects);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                     var message_obj = await this.format_storefront_comment_object(txs[i], calculate_gas, ipfs_index)
@@ -3407,6 +3399,16 @@ return data['data']
                         strs.push([])
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
+                    }
+
+                    const participated_objects = []
+                    for(var c=0; c<txs[i].messages_to_deliver.length; c++){
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
+                    }
+
+                    if(participated_objects.length > 0){
+                        newly_participated_objects = newly_participated_objects.concat(participated_objects);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1503']/* 'contractor' */){
@@ -3599,6 +3601,16 @@ return data['data']
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
                     }
+
+                    const participated_objects = []
+                    for(var c=0; c<txs[i].messages_to_deliver.length; c++){
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
+                    }
+
+                    if(participated_objects.length > 0){
+                        newly_participated_objects = newly_participated_objects.concat(participated_objects);
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
                     var buy_album_obj = await this.format_buy_album_songs(txs[i], calculate_gas, ints, ipfs_index)
@@ -3649,6 +3661,16 @@ return data['data']
                         strs.push([])
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
+                    }
+
+                    const participated_objects = []
+                    for(var c=0; c<txs[i].messages_to_deliver.length; c++){
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
+                    }
+
+                    if(participated_objects.length > 0){
+                        newly_participated_objects = newly_participated_objects.concat(participated_objects);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
@@ -3716,6 +3738,16 @@ return data['data']
                         strs.push([])
                         adds.push([])
                         ints.push(message_transfers.transfers_obj);
+                    }
+
+                    const participated_objects = []
+                    for(var c=0; c<txs[i].messages_to_deliver.length; c++){
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
+                    }
+
+                    if(participated_objects.length > 0){
+                        newly_participated_objects = newly_participated_objects.concat(participated_objects);
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['3031']/* 'buy-storage' */){
@@ -3795,6 +3827,8 @@ return data['data']
                     strs.push(obj.str)
                     adds.push([])
                     ints.push(obj.int)
+
+                    newly_participated_polls = newly_participated_polls.concat(obj.participated_polls)
                 }
                 else if(txs[i].type == this.props.app_state.loc['3074bq']/* 'poll-result' */){
                     var obj = await this.format_poll_update_object(txs[i], calculate_gas, ipfs_index)
@@ -4192,6 +4226,64 @@ return data['data']
         //context ->> 13 in use!!!!!!!
 
 
+        if(newly_participated_channels.length > 0){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [14], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+            var newly_participated_channels_data = newly_participated_channels.concat(this.props.app_state.my_channels)
+            const data = {'data': newly_participated_channels_data, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'participatedchannels');
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+        if(newly_participated_polls.length > 0){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [15], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+            var newly_participated_poll_data = newly_participated_polls.concat(this.props.app_state.my_polls)
+            const data = {'data': newly_participated_poll_data, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'participatedpolls');
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+        if(newly_participated_objects.length > 0){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [16], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+            var newly_participated_object_data = newly_participated_objects.concat(this.props.app_state.my_objects)
+            const data = {'data': newly_participated_object_data, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'participatedobjects');
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
+
         var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
         console.log('rundata',optimized_run)
         ints = optimized_run['ints']
@@ -4261,6 +4353,9 @@ return data['data']
         const ipfs_index_array = []
         console.log('stack_page_ipfs', 'initial object data', ipfs_index_object)
         const pushed_txs = []
+        const newly_participated_channels = []
+        const newly_participated_polls = []
+        const newly_participated_objects = []
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 console.log('stackitem', 'pushing type', txs[i].type)
@@ -4284,6 +4379,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1510']/* 'channel-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const channel_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_channels.includes(channel_e5_id)){
+                            newly_participated_channels.push(channel_e5_id)
+                        }
                         var message_obj = t.messages_to_deliver[m]
                         if(message_obj['key_to_use'] != ''){
                             const key = message_obj['key_to_use']
@@ -4298,6 +4397,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const object_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
@@ -4318,6 +4421,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1514']/* 'job-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const object_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }  
@@ -4390,6 +4497,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const object_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
@@ -4397,6 +4508,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const object_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
@@ -4509,6 +4624,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1593cc']/* 'audio-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const object_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
@@ -4523,6 +4642,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1593ct']/* 'video-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const object_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
@@ -4537,6 +4660,10 @@ return data['data']
                 else if(txs[i].type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
                     var t = txs[i]
                     for(var m=0; m<t.messages_to_deliver.length; m++){
+                        const object_e5_id = t.messages_to_deliver[m]['e5']+':'+t.messages_to_deliver[m]['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
+                        }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }   
@@ -4611,6 +4738,11 @@ return data['data']
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
                         ipfs_index_array.push({'id':t.messages_to_deliver[m]['message_id'], 'data':t.messages_to_deliver[m]})
                     }
+                }
+                else if(txs[i].type == this.props.app_state.loc['3073']/* 'vote-poll' */){
+                    const t = txs[i]
+                    const poll_e5_id = t.e5+':'+t.poll_object['id']
+                    newly_participated_polls.push(poll_e5_id)
                 }
             }
         }
@@ -4763,6 +4895,27 @@ return data['data']
             var data = {'data': posts_reposted_by_me, 'time':Date.now()}
             ipfs_index_object['promoted'] = data
             ipfs_index_array.push({'id':'promoted', 'data':data})
+        }
+
+        if(newly_participated_channels.length > 0){
+            var newly_participated_channels_data = newly_participated_channels.concat(this.props.app_state.my_channels)
+            const data = {'data': newly_participated_channels_data, 'time':Date.now()}
+            ipfs_index_object['participatedchannels'] = data
+            ipfs_index_array.push({'id':'participatedchannels', 'data':data})
+        }
+
+        if(newly_participated_polls.length > 0){
+            var newly_participated_polls_data = newly_participated_polls.concat(this.props.app_state.my_polls)
+            const data = {'data': newly_participated_polls_data, 'time':Date.now()}
+            ipfs_index_object['participatedpolls'] = data
+            ipfs_index_array.push({'id':'participatedpolls', 'data':data})
+        }
+
+        if(newly_participated_objects.length > 0){
+            var newly_participated_polls_data = newly_participated_objects.concat(this.props.app_state.my_objects)
+            const data = {'data': newly_participated_polls_data, 'time':Date.now()}
+            ipfs_index_object['participatedobjects'] = data
+            ipfs_index_array.push({'id':'participatedobjects', 'data':data})
         }
 
 
@@ -6193,14 +6346,15 @@ return data['data']
         ]
 
         var string_obj = [[]]
+        var participated_channels = []
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            // var target_id = t.messages_to_deliver[i]['id']
-            // var context = 35
-            // var int_data = 0
+            var channel_e5_id = t.messages_to_deliver[i]['e5']+':'+t.messages_to_deliver[i]['id']
             var target_id = 17/* shadow_object_container */
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
+
+            if(!participated_channels.includes(channel_e5_id)) participated_channels.push(channel_e5_id);
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
@@ -6212,7 +6366,7 @@ return data['data']
             string_obj[0].push(string_data)
         }
 
-        return {int: obj, str: string_obj}
+        return {int: obj, str: string_obj, participated_channels:participated_channels}
     }
 
     format_post_comment_object = async (t, calculate_gas, ipfs_index) =>{
@@ -7852,7 +8006,9 @@ return data['data']
         ]
 
         var string_obj = [[]]
-
+        var poll_e5_id = t.e5+':'+t.poll_object['id']
+        var participated_polls = [poll_e5_id]
+        
         var context = t.poll_object['id']
         var int_data = parseInt(t.e5.replace('E',''))
         var vote_string = []
@@ -7867,7 +8023,7 @@ return data['data']
 
         string_obj[0].push(string_data)
 
-        return {int: obj, str: string_obj}
+        return {int: obj, str: string_obj, participated_polls: participated_polls}
     }
 
     format_poll_update_object = async (t, calculate_gas, ipfs_index) =>{
@@ -11878,10 +12034,10 @@ return data['data']
     when_nitro_item_clicked(item){
         if(item['e5_id'] == this.state.selected_nitro_item){
             this.setState({selected_nitro_item: null})
-            this.props.set_my_nitro_selection(null)
+            this.props.set_my_nitro_selection(null, null)
         }else{
             this.setState({selected_nitro_item: item['e5_id']})
-            this.props.set_my_nitro_selection(item['e5_id'])
+            this.props.set_my_nitro_selection(item['e5_id'], item)
             this.props.load_nitro_node_details(item, false)
             this.props.load_my_account_storage_info(item)
         }
@@ -12517,7 +12673,7 @@ return data['data']
     }
 
     process_metadata(metadata){
-        var metadata_clone = {common:{}, format:{}}
+        var metadata_clone = {'common':{}, 'format':{}}
         if(metadata != null){
             if(metadata['common'] != null){
                 metadata_clone['common']['composer'] = metadata['common']['composer']
@@ -12531,6 +12687,7 @@ return data['data']
                 metadata_clone['format']['numberOfChannels'] = metadata['format']['numberOfChannels']
                 metadata_clone['format']['numberOfSamples'] = metadata['format']['numberOfSamples']
                 metadata_clone['format']['sampleRate'] = metadata['format']['sampleRate']
+                metadata_clone['format']['duration'] = metadata['format']['duration']
             } 
         }
         return metadata_clone

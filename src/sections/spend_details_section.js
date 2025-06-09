@@ -283,7 +283,7 @@ class SpendDetailSection extends Component {
         var author = selected_object['event'] != null ? this.get_senders_name(selected_object['event'].returnValues.p3, selected_object) :this.props.app_state.loc['1591']/* 'Unknown' */
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{'overflow-y': 'auto', width:'100%', height: he,padding:'0px 10px 0px 10px'}}>      
+                <div style={{'overflow-y': 'auto', width:'100%', height: he,padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height:10}}/>
@@ -291,6 +291,7 @@ class SpendDetailSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
+                    {this.render_post_state(selected_object)}
                     {this.render_object_age(selected_object, item)}
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                     {this.render_detail_item('0')}
@@ -441,6 +442,24 @@ class SpendDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_post_state(object){
+        const country_data = this.props.app_state.country_data
+        const object_country = object['ipfs'].device_country
+        const country_item_data = country_data.find(e => e.name === object_country)
+        if(country_item_data != null){
+            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+            var country_color = obj[country_item_data.color[0]]
+            var title = country_item_data.code /* +' '+country_item_data.emoji */
+            var details = country_color+' '+country_item_data.call_code
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_transfer_button(selected_object){

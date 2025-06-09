@@ -2416,6 +2416,7 @@ return data['data']
             return(
                 <div style={{'overflow-x':'hidden'}}>
                     {this.render_song_details_picker_part()}
+                    {this.render_detail_item('0')}
                     {this.render_enter_item_price_part()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -2453,6 +2454,11 @@ return data['data']
     render_enter_item_price_part(){
         return(
             <div style={{}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311cy']/* 'Explicit Track.' */, 'details':this.props.app_state.loc['a311cz']/* 'Specify if your track contains strong or offensive language.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explicit_selector_tags_object} tag_size={'l'} when_tags_updated={this.when_get_explicit_selector_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
                 {this.render_set_token_and_amount_part2()}
                 <div style={{height: 20}}/>
                 {this.render_set_prices_list_part2()}
@@ -2611,6 +2617,11 @@ return data['data']
                 {this.render_detail_item('0')}
 
 
+
+                {this.render_delete_edited_item_if_selected()}
+
+
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311k']/* 'Audio Title.' */, 'details':this.props.app_state.loc['a311l']/* 'Set a title for the audio item in the album.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['a311m']/* 'Title...' */} when_text_input_field_changed={this.when_song_title_input_field_changed.bind(this)} text={this.state.song_title} theme={this.props.theme}/>
@@ -2639,7 +2650,7 @@ return data['data']
 
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bh']/* 'Audio Lyrics.' */, 'details':this.props.app_state.loc['a311bi']/* 'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bh']/* 'Audio Lyrics.' */, 'details':this.props.app_state.loc['a311bi']/* 'You may add lyrics to your uploaded track. Keep in mind that the file has to be a .lrc file. Grey stages from your computer, and black stages from your uploaded files.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_audio_lyric_picker_ui()}
                 <div style={{height:10}}/>
@@ -2654,14 +2665,27 @@ return data['data']
                 </div>
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_free_plays_amount_picked.bind(this)} theme={this.props.theme} power_limit={0}/>
 
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311cy']/* 'Explicit Track.' */, 'details':this.props.app_state.loc['a311cz']/* 'Specify if your track contains strong or offensive language.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explicit_selector_tags_object} tag_size={'l'} when_tags_updated={this.when_get_explicit_selector_tags_object_updated.bind(this)} theme={this.props.theme}/>
             </div>
         )
+    }
+
+    render_delete_edited_item_if_selected(){
+        if(this.state.edit_song_item_pos == -1) return;
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311de']/* 'Delete Selected Track.' */, 'details':this.props.app_state.loc['a311df']/* 'Remove the selected track from your audiopost.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_delete_selected_song_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['a311dg']/* 'Delete Track' */, 'action':''})}
+                </div>
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_delete_selected_song_tapped(){
+        var index = this.state.edit_song_item_pos
+        this.remove_tab_item(index)
     }
 
     when_get_explicit_selector_tags_object_updated(tag_obj){
@@ -2873,7 +2897,7 @@ return data['data']
                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".lrc" onChange ={this.when_lyric_file_picked.bind(this)}/>
                 </div>
                 <div style={{width:10}}/>
-                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('lyric', 'select_lyric_file', 1)}/>
+                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto'}} onClick={() => this.props.show_pick_file_bottomsheet('lyric', 'select_lyric_file', 1)}/>
             </div>
         )
     }
@@ -3003,7 +3027,7 @@ return data['data']
     get_song_basic_data(audio_file){
         var ecid_obj = this.get_cid_split(audio_file)
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        var metadata_clone = {common:{}, format:{}}
+        var metadata_clone = {'common':{}, 'format':{}}
         if(data['metadata'] != null){
             var metadata = data['metadata']
             if(metadata['common'] != null){
@@ -3018,6 +3042,7 @@ return data['data']
                 metadata_clone['format']['numberOfChannels'] = metadata['format']['numberOfChannels']
                 metadata_clone['format']['numberOfSamples'] = metadata['format']['numberOfSamples']
                 metadata_clone['format']['sampleRate'] = metadata['format']['sampleRate']
+                metadata_clone['format']['duration'] = metadata['format']['duration']
             } 
         }
         return metadata_clone
@@ -3115,13 +3140,20 @@ return data['data']
             if(this.is_tab_active(index) && prev_index > -1){
                 this.focus_tab(prev_index)
             }
+            else if(prev_index == -1 && this.is_tab_active(index)){
+                this.reset_views()
+            }
             this.setState({songs: cloned_array})
         }
     }
 
+    reset_views(){
+        this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object()})
+    }
+
     focus_tab(item_pos){
         if(this.is_tab_active(item_pos)){
-            this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0, song_credits:''})
+            this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object()})
         }else{
             this.props.notify(this.props.app_state.loc['a311x']/* 'Editing that Track.' */, 2000)
             this.set_focused_song_data(item_pos)

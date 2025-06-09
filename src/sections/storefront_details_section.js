@@ -115,7 +115,7 @@ class StorefrontDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2695d']/* 'catalogue' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
           ],
           'direct-purchases':[
               ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
@@ -123,8 +123,8 @@ class StorefrontDetailsSection extends Component {
         }
 
         obj[this.props.app_state.loc['2603']] = [
-              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
-          ]
+            ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
+        ]
 
         return obj
     }
@@ -194,12 +194,20 @@ class StorefrontDetailsSection extends Component {
                     {this.render_storefront_main_details_section(object)}
                 </div>
             )
-        }else if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
+        }
+        else if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
             return(
                 <div>
                     {this.render_storefront_message_activity(object)}
                 </div>
             ) 
+        }
+        else if(selected_item == this.props.app_state.loc['2695d']/* 'catalogue' */){
+            return(
+                <div>
+                    {this.render_storefront_authors_catalogue(object)}
+                </div>
+            )
         }
         else if(selected_item == this.props.app_state.loc['1426']/* 'all' */ || selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */ || selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
             return(
@@ -230,6 +238,7 @@ class StorefrontDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_post_state(object)}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -288,6 +297,24 @@ class StorefrontDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_post_state(object){
+        const country_data = this.props.app_state.country_data
+        const object_country = object['ipfs'].device_country
+        const country_item_data = country_data.find(e => e.name === object_country)
+        if(country_item_data != null){
+            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+            var country_color = obj[country_item_data.color[0]]
+            var title = country_item_data.code /* +' '+country_item_data.emoji */
+            var details = country_color+' '+country_item_data.call_code
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_follow_unfollow_author_button(object){
@@ -497,6 +524,13 @@ class StorefrontDetailsSection extends Component {
     }
 
 
+
+
+
+
+
+
+
     render_direct_purchases_if_any(object){
         var purchases = this.props.app_state.direct_purchases[object['id']] == null ? [] : this.props.app_state.direct_purchases[object['id']]
         if(purchases.length == 0) return
@@ -543,9 +577,10 @@ class StorefrontDetailsSection extends Component {
                 </div>
             )
         }else{
+            var image = this.props.app_state.static_assets['empty_image']
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
                 </div>
             )
         }
@@ -1122,7 +1157,6 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
-
     render_fulfilment_signature_if_any(item, object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
@@ -1141,6 +1175,283 @@ class StorefrontDetailsSection extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    render_storefront_authors_catalogue(object){
+        var he = this.props.height-45
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2695f']/* 'Catalogue.' */, 'details':this.props.app_state.loc['2695e']/* 'Storefronts by ' */+this.get_senders_name(object['event'].returnValues.p5, object), 'size':'l'})}
+                        </div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_author_catalogue_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_author_catalogue_items(object){
+        var items = [].concat(this.get_authors_catalogue(object))
+
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            return ( 
+                <div style={{overflow: 'auto'}}>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '0px'}}>
+                                    {this.render_storefront_object(item, index)}
+                                    <div style={{height: 4}}/>
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
+                </div>
+            );
+        }
+    }
+
+    render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
+        return(
+            <div style={{height:120, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:45 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                </div>
+            </div>
+        );
+    }
+
+    render_storefront_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        if(this.is_object_sender_blocked(object) || !this.is_item_listed(object) || this.is_object_blocked_for_sender(object)){
+            return;
+        }
+        var image = object['ipfs'].storefront_item_art == null ? this.props.app_state.static_assets['empty_image']: object['ipfs'].storefront_item_art
+        var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
+        title = this.truncate(title, 35)
+        var sender = this.get_senders_name2(object['event'].returnValues.p5, object);
+        
+        var variants_available = this.props.app_state.loc['2509j']/* $ variants available. */.replace('$', object['ipfs'].variants.length)
+        var e5_img = this.props.app_state.e5s[object['e5']].e5_img
+        return(
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px'}}>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
+                    <div style={{'padding':'1px 0px 0px 0px'}}>
+                        <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:90, 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_catalogue_item_clicked(index, object)}/>
+                    </div>
+                    <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_catalogue_item_clicked(index, object)}>
+                        <div style={{height: 3}}/>
+
+                        <p style={{'font-size': '14px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{title}</p>
+                        <div style={{height: 3}}/>
+
+                        <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 0px', width: '99%'}}>
+                            <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1.5px 0px 0px 0px'}}>
+                                <img src={e5_img} alt={object['e5']} style={{height:15,width:15}}/>
+                                <div style={{width:2}}/>
+                            </div>
+                            <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{object['id']+sender}</p>
+                        </div>
+                        
+                        <div style={{height: 3}}/>
+
+                        <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{variants_available}</p>
+                        <div style={{height: 3}}/>
+
+                        {this.render_storefront_price_data(object)}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    is_object_sender_blocked(object){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(object['author'])){
+            return true
+        }
+        return false
+    }
+
+    is_object_blocked_for_sender(object){
+        var is_object_blocked_for_sender = false;
+        if(this.props.app_state.posts_blocked_by_my_following.includes(object['e5_id'])){
+            is_object_blocked_for_sender = true
+        }
+        var author = object['author']
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1
+        if(author == myid){
+            is_object_blocked_for_sender = false
+        }
+
+
+        return is_object_blocked_for_sender
+    }
+
+    is_item_listed(object){
+        if(object['ipfs'].get_storefront_item_listing_option == null) return true
+
+        var selected_option = this.get_selected_item2(object['ipfs'].get_storefront_item_listing_option, 'e')
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1
+        if(selected_option == 2 && object['event'].returnValues.p5 != myid){
+            return false
+        }
+        return true
+    }
+
+    get_senders_name2(sender, object){
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    get_image_from_file(ecid){
+        if(!ecid.startsWith('image')) return ecid
+        var ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+
+        if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
+
+        if(data == null) return
+        return data['data']
+    }
+
+    render_storefront_price_data(object){
+        var variants = object['ipfs'].variants
+        var spend_price = 0;
+        variants.forEach(variant => {
+            var price_data = variant['price_data']
+            price_data.forEach(price_item => {
+                if(price_item['id'] == 5){
+                    if(price_item['amount'] < spend_price || spend_price == 0){
+                        spend_price = price_item['amount']
+                    }
+                }
+            });
+        });
+
+        if(spend_price == 0){
+            var id = ''
+            variants.forEach(variant => {
+                var price_data = variant['price_data']
+                price_data.forEach(price_item => {
+                    if(spend_price == 0){
+                        spend_price = price_item['amount']
+                        id = price_item['id']
+                    }
+                });
+            });
+            var text = this.props.app_state.loc['2509i']/* From $ SPEND */
+            text = text.replace('$', this.format_account_balance_figure(spend_price))
+            text = text.replace('SPEND', this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[id])
+            
+            return(
+                <div>
+                    <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{text}</p>
+                </div>
+            )
+        }
+        var text = this.props.app_state.loc['2509i']/* From $ SPEND */.replace('$', this.format_account_balance_figure(spend_price))
+        return(
+            <div>
+                <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{text}</p>
+            </div>
+        )
+    }
+
+
+
+
+    get_authors_catalogue(object){
+        return this.filter_for_taken_down_posts(this.sort_by_author(this.props.get_storefront_items('catalogue'), object))
+    }
+
+    when_catalogue_item_clicked(index, object){
+        this.setState({get_navigate_storefront_list_detail_tags_object_tags: this.get_navigate_storefront_list_detail_tags_object_tags()})
+        var me = this;
+        setTimeout(function() {
+            me.props.when_catalogue_storefront_item_clicked(object)
+        }, (1 * 500));
+        
+    }   
+
+    sort_by_author(objects, current_album){
+        var filtered_objects = [];
+        filtered_objects = objects.filter(function (object) {
+            return (current_album['author'] == object['author'] && current_album['e5_id'] != object['e5_id'])
+        });
+        return filtered_objects
+    }
+
+    filter_for_taken_down_posts(objects){
+        var filtered_objects = []
+        objects.forEach(object => {
+            if(!this.is_post_taken_down_for_sender(object)){
+                filtered_objects.push(object)
+            }
+        });
+        return filtered_objects
+    }
+
+    is_post_taken_down_for_sender(object){
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(post_author == me) return false
+
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
 
 
 

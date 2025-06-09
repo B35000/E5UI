@@ -294,7 +294,7 @@ class FullAudioPage extends Component {
     get_bar_length(){
         var current_time = this.state.value
         var current_song = this.state.songs[this.state.pos]
-        var current_song_length = current_song['basic_data']['metadata']['format']['duration']
+        var current_song_length = current_song['basic_data']['format']['duration']
 
         return ((current_time * 100) / current_song_length)
     }
@@ -315,7 +315,7 @@ class FullAudioPage extends Component {
     get_remaining_time(){
         var current_time = parseInt(this.state.value)
         var current_song = this.state.songs[this.state.pos]
-        var current_song_length = parseInt(current_song['basic_data']['metadata']['format']['duration'])
+        var current_song_length = parseInt(current_song['basic_data']['format']['duration'])
         
         var remaining_time = current_song_length - current_time
         var min = Math.floor(parseInt(remaining_time) / 60)
@@ -370,7 +370,7 @@ class FullAudioPage extends Component {
     handleNumber = (number) => {
         var new_value = number.target.value
         var current_song = this.state.songs[this.state.pos]
-        var current_song_length = parseInt(current_song['basic_data']['metadata']['format']['duration'])
+        var current_song_length = parseInt(current_song['basic_data']['format']['duration'])
         
         var new_time = (new_value / 100) * current_song_length
         this.setState({value: new_time})
@@ -511,7 +511,7 @@ class FullAudioPage extends Component {
         var object = song['object']
         // console.log('song', song)
 
-        var metadata = song['basic_data']['metadata']
+        var metadata = song['basic_data']
         var formatted_size = this.format_data_size(song['basic_data']['size'])
         var fs = formatted_size['size']+' '+formatted_size['unit']
         if(metadata == null){
@@ -702,7 +702,7 @@ class FullAudioPage extends Component {
     when_lyric_clicked(item){
         var time = parseInt(item['time'])+1
         var current_song = this.state.songs[this.state.pos]
-        var current_song_length = parseInt(current_song['basic_data']['metadata']['format']['duration'])
+        var current_song_length = parseInt(current_song['basic_data']['format']['duration'])
         var number = parseInt((time * 100) / current_song_length)
         
         var amount = { target: {value: number } }
@@ -849,8 +849,8 @@ class FullAudioPage extends Component {
 
     get_song_duration(item){
         var duration = '0:00'
-        if(item['metadata'] != null && item['metadata']['format'] != null){
-            var format = item['metadata']['format']
+        if(item != null && item['format'] != null){
+            var format = item['format']
             if(format['duration'] != null){
                var min = Math.floor(parseInt(format['duration']) / 60)
                var sec = parseInt(format['duration']) % 60

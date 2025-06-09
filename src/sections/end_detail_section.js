@@ -290,6 +290,7 @@ class EndDetailSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
+                    {this.render_post_state(selected_object)}
                     {this.render_object_age(selected_object, item)}
 
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
@@ -436,6 +437,24 @@ class EndDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_post_state(object){
+        const country_data = this.props.app_state.country_data
+        const object_country = object['ipfs'].device_country
+        const country_item_data = country_data.find(e => e.name === object_country)
+        if(country_item_data != null){
+            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+            var country_color = obj[country_item_data.color[0]]
+            var title = country_item_data.code /* +' '+country_item_data.emoji */
+            var details = country_color+' '+country_item_data.call_code
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_transfer_button(selected_object){
