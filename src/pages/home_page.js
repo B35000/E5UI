@@ -2148,7 +2148,7 @@ class home_page extends Component {
             }
         }
 
-        return this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
+        return this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
     }
 
     get_job_items(all){
@@ -2858,7 +2858,7 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_nitros)))))
         }
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_nitros)))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_nitros)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_nitros = []
@@ -2868,7 +2868,7 @@ class home_page extends Component {
                 if(obj != null) my_viewed_nitros.push(obj)
             }
             
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought' */){
             var my_bought_nitros = []
@@ -2877,7 +2877,7 @@ class home_page extends Component {
                 var obj = all_nitros[i]
                 if(obj['bought'] == true) my_bought_nitros.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bought_nitros))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bought_nitros))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_nitros = []
@@ -2887,7 +2887,7 @@ class home_page extends Component {
                 if(obj != null) my_viewed_nitros.push(obj)
             }
             
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -2900,7 +2900,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
         }
         else {
             var my_nitros = []
@@ -3269,6 +3269,25 @@ class home_page extends Component {
         });
 
         return return_objs;
+    }
+
+    filter_by_content_channeling2(objects){
+        var return_objs = []
+        var device_country = this.props.app_state.device_country
+
+        objects.forEach(object => {
+            var ipfs = object['ipfs']
+            if(
+                ipfs == null || 
+                ipfs.spend_exchange_allowed_countries == null || 
+                ipfs.spend_exchange_allowed_countries.includes(device_country) || 
+                ipfs.spend_exchange_allowed_countries.length == 0
+            ){
+                return_objs.push(object)
+            }
+        });
+        
+        return return_objs
     }
 
     filter_by_blocked_posts(objects){

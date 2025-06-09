@@ -86,7 +86,9 @@ class NewTokenPage extends Component {
 
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
 
-        page:0, custom_page:0, e5: this.props.app_state.selected_e5
+        page:0, custom_page:0, e5: this.props.app_state.selected_e5,
+
+        spend_exchange_allowed_countries:[], typed_spend_country_name:''
     };
 
     get_new_token_page_tags_object(){
@@ -194,6 +196,9 @@ class NewTokenPage extends Component {
 
 
     set_edit_data(){
+        if(this.state.spend_exchange_allowed_countries == null){
+            this.setState({spend_exchange_allowed_countries:[], typed_spend_country_name:''})
+        }
         this.setState({new_token_page_tags_object: this.get_new_token_page_tags_object(), type:this.props.app_state.loc['761']/* 'edit-token' */})
     }
 
@@ -239,10 +244,6 @@ class NewTokenPage extends Component {
 
     render_everything(){
         var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'e')
-
-        // if(this.state.new_token_page_tags_object['i'].active == 'custom'){
-        //     selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'custom')
-        // }
 
         if(selected_item == 'e' || selected_item == this.props.app_state.loc['761']/* 'edit-token' */){
             return(
@@ -290,6 +291,10 @@ class NewTokenPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -300,10 +305,9 @@ class NewTokenPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -313,10 +317,9 @@ class NewTokenPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
-                </div>
-                
+                </div>  
             )
         }
     }
@@ -363,16 +366,131 @@ class NewTokenPage extends Component {
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part()}
+            </div>
+        )
+    }
 
-
+    render_title_tags_part2(){
+        return(
+            <div>
+                {this.render_specific_country_selector()}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
-                
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+    when_spend_country_input_field_changed(text){
+        this.setState({typed_spend_country_name: text})
+    }
+
+    get_countries_from_typed_text2(){
+        var selected_countries = []
+        var all_countries = this.props.app_state.country_data
+        var typed_text = this.state.typed_spend_country_name
+        var already_included_countries = this.state.spend_exchange_allowed_countries.map(e => e.toLowerCase())
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el['name'].toLowerCase().includes(typed_text.toLowerCase())) && 
+                !already_included_countries.includes(el['name'].toLowerCase())
+            });
+        }else{
+            selected_countries = all_countries.filter(function (el) {
+                return (!already_included_countries.includes(el['name'].toLowerCase()))
+            });
+        }
+
+        var selected = []
+        var l = selected_countries.length > 7 ? 7 : selected_countries.length
+        for(var i=0; i<l; i++){
+            selected.push(selected_countries[i]['name'])
+        }
+        return selected;
+    }
+
+    when_spend_country_selected(tag, pos){
+        if(tag != 'e'){
+            var clone = this.state.spend_exchange_allowed_countries.slice()
+            clone.push(tag)
+            this.setState({spend_exchange_allowed_countries: clone})
+        }
+    }
+
+    get_included_countries_from_typed_text2(){
+        var selected_countries = []
+        var all_countries = this.state.spend_exchange_allowed_countries
+        var typed_text = this.state.typed_spend_country_name
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el.toLowerCase().startsWith(typed_text.toLowerCase()))
+            });
+        }else{
+            selected_countries = all_countries.filter(function (el) {
+                return (true)
+            });
+        }
+
+        return selected_countries
+    }
+
+    when_spend_included_country_selected(tag, pos){
+        if(tag != 'e'){
+            var clone = this.state.spend_exchange_allowed_countries.slice()
+            var index = clone.indexOf(tag)
+            if(index != -1){
+                clone.splice(index, 1)
+            }
+            this.setState({spend_exchange_allowed_countries: clone, typed_spend_country_name:''})
+        }
+    }
+
+    add_all_countries(){
+        var all_countries = this.props.app_state.country_data
+        var selected = []
+        for(var i=0; i<all_countries.length; i++){
+            selected.push(all_countries[i]['name'])
+        }
+        this.setState({spend_exchange_allowed_countries: selected, typed_spend_country_name:''})
+    }
+
+    remove_all_countries(){
+       this.setState({spend_exchange_allowed_countries: [], typed_spend_country_name:''}) 
+    }
+
+
+
+
+    render_specific_country_selector(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a273t']/* 'Specify State Limits.' */, 'details':this.props.app_state.loc['a273u']/* 'You can restrict your object to specific states.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Search filter country'} when_text_input_field_changed={this.when_spend_country_input_field_changed.bind(this)} text={this.state.typed_spend_country_name} theme={this.props.theme}/>
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_country_selected'})}
+                <div style={{height:15}}/>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['a273v']/* 'Tap a state to remove it from the list.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_included_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_included_country_selected'})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.add_all_countries()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a273w']/* 'Add all' */, 'action':''})}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.remove_all_countries()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a273x']/* 'remove all' */, 'action':''})}
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -878,7 +996,6 @@ class NewTokenPage extends Component {
         this.number_picker_ref = React.createRef();
     }
 
-
     reset_the_number_picker(){
         var me = this;
         setTimeout(function() {
@@ -892,488 +1009,8 @@ class NewTokenPage extends Component {
 
 
 
-    render_custom_configuration_token_part(){
-        return(
-            <div>
-                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':'Create a custom E5 token'})}
-                <div style={{height:20}}/>
-                {this.render_custom_token_section_parts()}
 
-                <div style={{height:20}}/>
-                <div className="row">
-                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
-                        {this.show_custom_previous_button()}
-                    </div>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.show_custom_next_button()}
-                    </div>
-                </div>
-                
-            </div>
-        )
-    }
 
-    show_custom_next_button(){
-        var page = this.state.custom_page
-        if(page < 22){
-            return(
-                <div style={{'padding': '5px'}} onClick={()=>this.enter_custom_next_page()}>
-                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
-                </div>
-            )
-        }
-    }
-
-    show_custom_previous_button(){
-        var page = this.state.custom_page
-        if(page != 0){
-            return(
-                <div style={{'padding': '5px'}} onClick={()=>this.enter_custom_previous_page()}>
-                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
-                </div>
-            )
-        }
-    }
-
-
-    render_custom_token_section_parts(){
-         var page = this.state.custom_page
-
-        if(page == 0){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Set the token type', 'details':'Capped token (with limited supply) or uncapped token (with unlimited supply)', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_type_tags_object.bind(this)} theme={this.props.theme}/>
-
-                </div>
-            )
-        }
-        else if(page == 1){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Token Supply', 'details':'The supply of a capped token available for buying (for capped tokens)', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 100,000,000e2', 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 2){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Buy Limit', 'details':'the maximum amount of tokens that can be bought in one transaction.', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
-                </div>
-            )
-        }
-        else if(page == 3){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Sell Limit', 'details':'The maximum amount of your new token a sender can sell in a transaction.', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
-                </div>
-            )
-        }
-        else if(page == 4){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Minimum Time Between Swap', 'details':'the minimum amount of time a sender has to wait between making a swap for a given token.', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.minimum_time_between_swap), 'details':'Minimum Time Between Swap', 'size':'l'})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 5){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Trust Fee', 'details':'proportion or percentage fee enforced on all contract spending that takes place using token.', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 3.5%', 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
-                    
-                </div>
-            )
-        }
-        else if(page == 6){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Minimum Transactions Between Swap', 'details':'the minimum number of transactions sender has to make between swaps for your new token.', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_transactions_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_transactions_between_swap), 'barcolor':'', 'relativepower':'transactions', })}
-                    </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 7){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Minimum Blocks Between Swap', 'details':'the minimum number of blocks sender has to wait between making a swap for your new token.', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Blocks Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_blocks_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_blocks_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_blocks_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
-                    </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_blocks_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 8){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Minimum Entered Contracts Between Swap', 'details':'the minimum amount of contracts sender should enter before interacting with your new exchange again.', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
-                    </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 9){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Minimum Transactions For First Buy', 'details':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_transactions_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_transactions_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
-                    </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 10){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Minimum Entered Contracts For First Buy', 'details':'The minimum number of contracts sender should have entered before first buy.', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
-                    </div>
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
-                    
-                </div>
-            )
-        }
-        else if(page == 11){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Unlocked Liquidity', 'details':'If set to unlocked, You have direct access to the token exchanges liquidity', 'size':'l'})}
-
-                    <div style={{height:20}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_unlocked_liquidity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_liquidity_tags_object.bind(this)} theme={this.props.theme}/>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: unlocked', 'textsize':'10px', 'font':this.props.app_state.font})}
-                    
-                </div>
-            )
-        }
-        else if(page == 12){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Unlocked Supply', 'details':'If set to unlocked, you can mint more of the token outside the exchange', 'size':'l'})}
-
-                    <div style={{height:20}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_unlocked_supply_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_supply_tags_object.bind(this)} theme={this.props.theme}/>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: locked', 'textsize':'10px', 'font':this.props.app_state.font})}
-                    
-                </div>
-            )
-        }
-        else if(page == 13){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Fully Custom', 'details':'If set to fully-custom, you have full access to the token exchanges configuration', 'size':'l'})}
-
-                    <div style={{height:20}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_fully_custom_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_fully_custom_tags_object.bind(this)} theme={this.props.theme}/>
-                    
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: fully-custom', 'textsize':'10px', 'font':this.props.app_state.font})}
-                </div>
-            )
-        }
-        else if(page == 14){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Block Limit(For Uncapped Spend Tokens)', 'details':'the maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Block Limit', 'subtitle':this.format_power_figure(this.state.block_limit), 'barwidth':this.calculate_bar_width(this.state.block_limit), 'number':this.format_account_balance_figure(this.state.block_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-                    
-                </div>
-            )
-        }
-        else if(page == 15){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Halving type (for Uncapped Spend Tokens)', 'details':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.', 'size':'l'})}
-
-                    <div style={{height:20}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: Spread', 'textsize':'10px', 'font':this.props.app_state.font})}
-                </div>
-            )
-        }
-        else if(page == 16){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Maturity Limit(For Uncapped Spend Tokens)', 'details':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is less than its default set value.', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Maturity Limit', 'subtitle':this.format_power_figure(this.state.maturity_limit), 'barwidth':this.calculate_bar_width(this.state.maturity_limit), 'number':this.format_account_balance_figure(this.state.maturity_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit * 100), 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maturity_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 17){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Internal Block Halving(For Uncapped Spend Tokens)', 'details':'proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.internal_block_halfing_proportion), 'details':'Internal Block Halving Proportion', 'size':'l'})}
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 40% - 51%', 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
-                </div>
-            )
-        }
-        else if(page == 18){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Block Limit Reduction(For Uncapped Spend Tokens)', 'details':'proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.block_limit_reduction_proportion), 'details':'Block Limit Reduction Proportion', 'size':'l'})}
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 65% - 91%', 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
-                </div>
-            )
-        }
-        else if(page == 19){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Block Reset Limit(For Uncapped Spend Tokens)', 'details':'the maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Block Reset Limit', 'subtitle':this.format_power_figure(this.state.block_reset_limit), 'barwidth':this.calculate_bar_width(this.state.block_reset_limit), 'number':this.format_account_balance_figure(this.state.block_reset_limit), 'barcolor':'', 'relativepower':'blocks', })}
-                    </div>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 4', 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_block_reset_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 20){
-            return(
-                <div>
-                    
-                    {this.render_detail_item('3', {'title':'Block Limit Sensitivity (for Uncapped Spend Tokens)', 'details':'The sensitivity of your new exchange to increasing demand', 'size':'l'})}
-
-                    <div style={{height:20}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 3', 'textsize':'10px', 'font':this.props.app_state.font})}
-                </div>
-            )
-        }
-        else if(page == 21){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Exchange Ratio X', 'details':'The buy output exchange ratio X for your new token (formula used: xy = k)', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio X', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_x), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_x), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_x), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_x.bind(this)} theme={this.props.theme} power_limit={63}/>
-                    
-                </div>
-            )
-        }
-        else if(page == 22){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Exchange Ratio Y', 'details':'The buy input exchange ratio Y for your new token (formula being: x * y = k)', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_y), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_y), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_y), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':this.props.app_state.font})}
-
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-    }
-
-    enter_custom_next_page(){
-        var page = this.state.custom_page
-        if(page < 22){
-            this.setState({custom_page: this.state.custom_page+1})
-            this.reset_the_number_picker()
-        }
-    }
-
-    enter_custom_previous_page(){
-        var page = this.state.custom_page
-        if(page > 0){
-            this.setState({custom_page: this.state.custom_page-1})
-            this.reset_the_number_picker()
-        }
-    }
-
-
-
-
-
-
-
-    render_token_authorities_part(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_exchange_authority_trust_fee_target()}
-                    {this.render_moderator_interactible_ui()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_exchange_authority_trust_fee_target()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_moderator_interactible_ui()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }  
-
-    render_exchange_authority_trust_fee_target(){
-        return(
-            <div style={{}}>
-
-                {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the exchange will be restricted to moderators and specified accounts', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':'Exchange Authority ID', 'details':'The account set to control the exchange', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={'Set Exchange Authority ID'} when_text_input_field_changed={this.when_exchange_authority_input_field_changed.bind(this)} text={this.state.exchange_authority} theme={this.props.theme}/>
-                
-                {this.load_account_suggestions('exchange_authority')}
-                <div style={{height: 20}}/>
-
-                {this.render_detail_item('3', {'title':'Trust Fee Target ID', 'details':'The account set to receive trust fee when collected from contract spend actions', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={'Set Trust Fee Target ID'} when_text_input_field_changed={this.when_trust_fee_target_input_field_changed.bind(this)} text={this.state.trust_fee_target} theme={this.props.theme}/>
-
-                {this.load_account_suggestions('trust_fee_target')}
-                <div style={{height: 20}}/>
-
-                {this.render_detail_item('0')}
-
-                
-            </div>
-        )
-    }
-
-    when_exchange_authority_input_field_changed(text){
-        this.setState({exchange_authority: text})
-    }
-
-    when_trust_fee_target_input_field_changed(text){
-        this.setState({trust_fee_target: text})
-    }
-
-    when_new_token_access_rights_tags_object(tag_obj){
-        this.setState({new_token_access_rights_tags_object: tag_obj})
-    }
 
 
     load_account_suggestions(target_type){
@@ -1492,440 +1129,15 @@ class NewTokenPage extends Component {
     }
 
 
-    render_moderator_interactible_ui(){
-        return(
-            <div>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_moderator_or_interactible_setting()}
-            </div>
-        )
-    }
-
-    when_new_token_interactible_moderator_tags_object(tag_obj){
-        this.setState({new_token_interactible_moderator_tags_object: tag_obj})
-    }
-
-    render_moderator_or_interactible_setting(){
-        var selected_item = this.get_selected_item(this.state.new_token_interactible_moderator_tags_object, this.state.new_token_interactible_moderator_tags_object['i'].active)
-
-        if(selected_item == 'moderators' || selected_item == 'e'){
-            return(
-                <div>
-                    {this.render_moderator_settings()}
-                </div>
-            )    
-        }
-        else if(selected_item == 'interactible'){
-            return(
-                <div>
-                    {this.render_interactible_settings()}
-                </div>
-            ) 
-        }
-    }
-
-
-    render_moderator_settings(){
-        return(
-            <div>
-                <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
-
-                {this.load_account_suggestions('moderator_id')}
-
-                <div style={{height: 10}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
-                </div>
-
-                {this.render_added_moderators()}
-            </div>
-        )
-    }
-
-    when_moderator_id_input_field_changed(text){
-        this.setState({moderator_id: text})
-    }
-
-    when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id.toString().trim()
-        if(isNaN(moderator_id) || parseInt(moderator_id) < 0 || moderator_id == ''){
-            this.props.notify('please put a valid account id', 600)
-        }
-        else{
-            var moderators_clone = this.state.moderators.slice()
-            moderators_clone.push(parseInt(moderator_id))
-            this.setState({moderators: moderators_clone});
-            this.props.notify('added moderator!', 400)
-        }
-    }
-
-    render_added_moderators(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = [].concat(this.state.moderators)
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item, 'details':'Account ID', 'size':'l'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    when_moderator_account_clicked(item){
-        var cloned_array = this.state.moderators.slice()
-        const index = cloned_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({moderators: cloned_array})
-    }
-
-    render_interactible_settings(){
-        return(
-            <div>
-                <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={'Interactible ID'} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
-
-                {this.load_account_suggestions('interactible_id')}
-
-                <div style={{height:20}}/>
-
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
-                    <CssBaseline />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
-                    </LocalizationProvider>
-                </ThemeProvider>
-
-                <div style={{height:20}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Interactible Account', 'action':''})}
-                </div>
-                
-                <div style={{height:20}}/>
-                {this.render_set_interactible_accounts()}
-            </div>
-        )
-    }
-
-    when_interactible_id_input_field_changed(text){
-        this.setState({interactible_id: text})
-    }
-
-    when_new_dat_time_value_set(value){
-        const selectedDate = value instanceof Date ? value : new Date(value);
-        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
-        this.setState({interactible_timestamp: timeInSeconds})
-    }
-
-    when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id.toString().trim()
-        if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
-            this.props.notify('please put a valid account id', 600)
-        }
-        else{
-            var interactibles_clone = this.state.interactibles.slice()
-            interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
-            this.setState({interactibles: interactibles_clone});
-            this.props.notify('added interactible account!', 400)
-        }
-    }
-
-    render_set_interactible_accounts(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = [].concat(this.state.interactibles)
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Interactible Account ID: '+item['id'], 'details':'Until: '+(new Date(item['timestamp']*1000)), 'size':'l'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    when_interactible_account_clicked(item){
-        var cloned_array = this.state.interactibles.slice()
-        const index = cloned_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({interactibles: cloned_array})
-    }
-
-
-
-
-    render_set_token_prices_list(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_set_token_and_amount_part()}
-                    <div style={{height: 20}}/>
-                    {this.render_set_prices_list_part()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_set_token_and_amount_part()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_set_prices_list_part()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
-
-    render_set_token_and_amount_part(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired price and click add', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
-
-                {this.load_token_suggestions('exchange_id')}
-                <div style={{height: 20}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
-                </div>
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
-                </div>
-            </div>
-        )
-    }
-
-    load_token_suggestions(target_type){
-        var items = [].concat(this.get_suggested_tokens())
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('14', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
-        )
-    }
-
-   get_suggested_tokens(){
-        var items = [
-            {'id':'3', 'label':{'title':'END', 'details':this.state.e5, 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].end_image, 'img_size':30}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':this.state.e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].spend_image, 'img_size':30}},
-        ];
-        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
-        var sorted_token_exchange_data = []
-        // var myid = this.props.app_state.user_account_id
-        for (let i = 0; i < exchanges_from_sync.length; i++) {
-            var exchange_e5 = exchanges_from_sync[i]['e5']
-            var myid = this.props.app_state.user_account_id[exchange_e5]
-
-            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
-            if(author_account == myid.toString()){
-                sorted_token_exchange_data.push(exchanges_from_sync[i])
-            }
-        }
-        sorted_token_exchange_data.reverse()
-        for (let i = 0; i < exchanges_from_sync.length; i++) {
-            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
-                sorted_token_exchange_data.push(exchanges_from_sync[i])
-            }
-        }
-
-        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
-            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['ipfs'].entered_symbol_text, 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s', 'image':(sorted_token_exchange_data[i]['ipfs'].token_image == null ? (sorted_token_exchange_data[i]['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img']:this.props.app_state.static_assets['spend_img']) : sorted_token_exchange_data[i]['ipfs'].token_image), 'img_size':30}})
-        }
-
-        return items;
-    }
-
-    when_price_suggestion_clicked(item, pos, target_type){
-        this.setState({exchange_id: item['id']})
-    }
-
-    when_exchange_id_input_field_changed(text){
-        this.setState({exchange_id: text})
-    }
-
-    when_price_amount(amount){
-        this.setState({price_amount: amount})
-    }
-
-    when_add_price_set(){
-        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
-        var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 2600)
-        }
-        else if(amount == 0){
-            this.props.notify('please put a valid amount', 2600)
-        }
-        else{
-            var price_data_clone = this.state.price_data.slice()
-            price_data_clone.push({'id':exchange_id, 'amount':amount})
-            this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 1400)
-        }
-    }
-
-    does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
-            return false
-        }
-        return true
-    }
-
-    get_token_id_from_symbol(typed_search){
-        if(!isNaN(typed_search)){
-            return typed_search
-        }
-        var id = this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()]
-
-        return id
-    }
-
-    render_set_prices_list_part(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = [].concat(this.state.price_data)
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
-                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-        
-    }
-
-    when_amount_clicked(item){
-        var cloned_array = this.state.price_data.slice()
-        const index = cloned_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({price_data: cloned_array})
-    }
-
-
 
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}
+                when_spend_country_selected={this.when_spend_country_selected.bind(this)} when_spend_included_country_selected={this.when_spend_included_country_selected.bind(this)}
+                />
             </div>
         )
 

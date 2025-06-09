@@ -73,7 +73,9 @@ class EditNitroPage extends Component {
         get_content_channeling_object:this.get_content_channeling_object(),
         get_take_down_option: this.get_take_down_option(),
 
-        entered_pdf_objects:[], markdown:'', entered_node_url_text:'', node_url:'', album_art:null, entered_node_key_text:'', encrypted_key:'', entered_zip_objects:[]
+        entered_pdf_objects:[], markdown:'', entered_node_url_text:'', node_url:'', album_art:null, entered_node_key_text:'', encrypted_key:'', entered_zip_objects:[],
+
+        spend_exchange_allowed_countries:[], typed_spend_country_name:''
         
     };
 
@@ -164,6 +166,9 @@ class EditNitroPage extends Component {
         }
         if(this.state.get_markdown_preview_or_editor_object == null){
             this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
+        }
+        if(this.state.spend_exchange_allowed_countries == null){
+            this.setState({spend_exchange_allowed_countries:[], typed_spend_country_name:''})
         }
 
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
@@ -269,6 +274,8 @@ class EditNitroPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
                 </div>
             )
         }
@@ -279,7 +286,7 @@ class EditNitroPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -292,7 +299,7 @@ class EditNitroPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -334,20 +341,9 @@ class EditNitroPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-
-
-
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-
-
 
 
 
@@ -377,6 +373,20 @@ class EditNitroPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part2()}
 
+            </div>
+        )
+    }
+
+    render_title_tags_part2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_detail_item('0')}
+                {this.render_specific_country_selector()}
 
 
                 {this.render_detail_item('0')}
@@ -387,6 +397,117 @@ class EditNitroPage extends Component {
             </div>
         )
     }
+
+    render_specific_country_selector(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a273t']/* 'Specify State Limits.' */, 'details':this.props.app_state.loc['a273u']/* 'You can restrict your nitro object to specific states.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Search filter country'} when_text_input_field_changed={this.when_spend_country_input_field_changed.bind(this)} text={this.state.typed_spend_country_name} theme={this.props.theme}/>
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_country_selected'})}
+                <div style={{height:15}}/>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['a273v']/* 'Tap a state to remove it from the list.' */, 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_included_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_included_country_selected'})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.add_all_countries()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a273w']/* 'Add all' */, 'action':''})}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.remove_all_countries()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a273x']/* 'remove all' */, 'action':''})}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    when_spend_country_input_field_changed(text){
+        this.setState({typed_spend_country_name: text})
+    }
+
+    get_countries_from_typed_text2(){
+        var selected_countries = []
+        var all_countries = this.props.app_state.country_data
+        var typed_text = this.state.typed_spend_country_name
+        var already_included_countries = this.state.spend_exchange_allowed_countries.map(e => e.toLowerCase())
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el['name'].toLowerCase().includes(typed_text.toLowerCase())) && 
+                !already_included_countries.includes(el['name'].toLowerCase())
+            });
+        }else{
+            selected_countries = all_countries.filter(function (el) {
+                return (!already_included_countries.includes(el['name'].toLowerCase()))
+            });
+        }
+
+        var selected = []
+        var l = selected_countries.length > 7 ? 7 : selected_countries.length
+        for(var i=0; i<l; i++){
+            selected.push(selected_countries[i]['name'])
+        }
+        return selected;
+    }
+
+    when_spend_country_selected(tag, pos){
+        if(tag != 'e'){
+            var clone = this.state.spend_exchange_allowed_countries.slice()
+            clone.push(tag)
+            this.setState({spend_exchange_allowed_countries: clone})
+        }
+    }
+
+    get_included_countries_from_typed_text2(){
+        var selected_countries = []
+        var all_countries = this.state.spend_exchange_allowed_countries
+        var typed_text = this.state.typed_spend_country_name
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el.toLowerCase().startsWith(typed_text.toLowerCase()))
+            });
+        }else{
+            selected_countries = all_countries.filter(function (el) {
+                return (true)
+            });
+        }
+
+        return selected_countries
+    }
+
+    when_spend_included_country_selected(tag, pos){
+        if(tag != 'e'){
+            var clone = this.state.spend_exchange_allowed_countries.slice()
+            var index = clone.indexOf(tag)
+            if(index != -1){
+                clone.splice(index, 1)
+            }
+            this.setState({spend_exchange_allowed_countries: clone, typed_spend_country_name:''})
+        }
+    }
+
+    add_all_countries(){
+        var all_countries = this.props.app_state.country_data
+        var selected = []
+        for(var i=0; i<all_countries.length; i++){
+            selected.push(all_countries[i]['name'])
+        }
+        this.setState({spend_exchange_allowed_countries: selected, typed_spend_country_name:''})
+    }
+
+    remove_all_countries(){
+       this.setState({spend_exchange_allowed_countries: [], typed_spend_country_name:''}) 
+    }
+
+
+
 
     when_get_take_down_option(tag_obj){
         this.setState({get_take_down_option: tag_obj})
@@ -1714,7 +1835,9 @@ return data['data']
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}  />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)} 
+                when_spend_country_selected={this.when_spend_country_selected.bind(this)} when_spend_included_country_selected={this.when_spend_included_country_selected.bind(this)}
+                />
             </div>
         )
 

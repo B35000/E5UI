@@ -819,7 +819,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2),
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -4161,36 +4161,6 @@ class App extends Component {
   }
 
   /* gets the screensize in three categories, small medium and large */
-  // getScreenSize() {
-  //     var width = this.state.width;
-  //     var height = this.state.height;
-
-     
-  //     if(width<350 || height <550){
-  //         return 's';
-  //     }
-  //     else if(width == 1366 && height == 1024){
-  //         return 'e';//l
-  //     }
-
-  //     else if(width > 1250){
-  //         return 'e';
-  //     }
-  //     else if(width > 1020){
-  //         return 'e';//l
-  //     }
-  //     else if(width > 730){
-  //         return 'e'; //m
-  //     }else{
-  //         if(width < 280){
-  //             return 's';
-  //         }
-  //         return 's';
-          
-  //     }
-
-  // }
-
   getScreenSize() {
     var width = this.state.width;
     var height = this.state.height;
@@ -4217,163 +4187,6 @@ class App extends Component {
     }
 
   }
-
-  // get_theme_data(theme){
-  //   //this.props.theme['']
-  //   if(theme == this.getLocale()['1417']/* 'light' */){
-  //     return{
-  //       'name':this.getLocale()['1417']/* 'light' */,
-  //       'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'#dddddd', 'button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1',
-        
-  //       'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
-        
-  //       'primary_text_color':'#393e46','secondary_text_color':'grey',
-        
-  //       'navbar_button_selected_color':'#f2f2f2','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
-        
-  //       'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white',
-        
-  //       'chart_color':'#FCFCFC','chart_background_color':'#D5D5D5',
-  
-  //       'number_picker_label_color':'#D5D5D5','number_picker_label_shadow':'#c9c9c9',
-  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
-  //       'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
-        
-  //       'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light',
-
-  //       'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
-
-  //       'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24',
-  //       'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu',
-  //       'add_text':'https://bafybeih7uo6hedtxgdge4digebt6o5gocacajgcbq2lc4nlfyb2uu55zma.ipfs.w3s.link/add_text_input_item.png',
-        
-  //       'play':'https://bafkreid5yges52pk6hbs6tlfjtnxebbqffc6cwjoxoxrc4ebqyguj3tufq.ipfs.w3s.link/',
-  //       'pause':'https://bafkreiee5y4hq4xnhf44ubuhbycokfczhaxghlexzb7pg6ld3a3cwwhyia.ipfs.w3s.link/',
-  //       'previous':'https://bafkreicjrx4etkijgxfvtmopoex5uxijbic5nsu44k2ogfg7wnmcyqd7yi.ipfs.w3s.link/',
-  //       'next':'https://bafkreiblnp7g25ngh3mjot4ejjr7n34l2zm6wzwrhjrdfk3lgj3pjcihzy.ipfs.w3s.link/',
-  //       'shuffle':'https://bafkreiclbvrwjghnqjh3pkqyj5dr2zjkh336db64ex2dtc55v6c3b2n7xy.ipfs.w3s.link/',
-  //       'repeat':'https://bafkreia6gpgcsv742esoa2g3mfadgumxogwpzbcslx3espbe2h5ohn2h7u.ipfs.w3s.link/',
-  //     }
-  //   }
-  //   else if(theme == this.getLocale()['1418']/* 'dark' */){
-  //     return{
-  //       'name':this.getLocale()['1418']/* 'dark' */,
-  //       'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444','button_color':'#444444', 'button_text_color':'white', 'line_color':'#C1C1C1',
-        
-  //       'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
-
-  //       'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
-        
-  //       'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
-
-  //       'view_group_card_item_background':'#2e2e2e','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white',
-
-  //       'chart_color':'#333333','chart_background_color':'#232323',
-
-  //       'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#262626',
-  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
-  //       'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
-        
-  //       'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark',
-
-  //       'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
-        
-  //       'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
-  //       'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
-  //       'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
-
-  //       'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
-  //       'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
-  //       'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
-  //       'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
-  //       'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
-  //       'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
-  //     }
-  //   }
-  //   else if(theme == this.getLocale()['2740']/* midnight */){
-  //     return{
-  //       'name':this.getLocale()['2740']/* midnight */,
-  //       'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'white', 'line_color':'#C1C1C1',
-        
-  //       'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
-
-  //       'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
-        
-  //       'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
-
-  //       'view_group_card_item_background':'#1a1a1a','tag_background_color':'#303030', 'indexed_tag_background':'#242424', 'tag_shadow':'#303030', 'tag_text_color':'white',
-
-  //       'chart_color':'#1a1a1a','chart_background_color':'#0a0a0a',
-
-  //       'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
-  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
-  //       'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
-        
-  //       'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark',
-
-
-  //       'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
-
-  //       'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
-  //       'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
-  //       'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
-
-  //       'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
-  //       'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
-  //       'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
-  //       'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
-  //       'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
-  //       'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
-  //     }
-  //   }
-  //   else if(theme == this.getLocale()['2741']/* green */){
-  //     return{
-  //       'name':this.getLocale()['2741']/* green */,
-  //       'bar_shadow':'#01c664','bar_color':'#01c601', 'bar_background_color':'#bef4d9','nav_bar_color':'#1a1a1a','button_color':'#171717', 'button_text_color':'#71fc71', 'line_color':'#71fc71',
-        
-  //       'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
-
-  //       'primary_text_color':'#71fc71', 'secondary_text_color':'#5bc15b',
-        
-  //       'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#5bc15b','secondary_navbar_text_color':'#5bc15b','card_shadow_color':'#013f01',
-  //       'navbar_text_shadow_color':'#5bc15b',
-
-  //       'view_group_card_item_background':'#141e0a','tag_background_color':'#203f00', 'indexed_tag_background':'#002100', 'tag_shadow':'#004f00', 'tag_text_color':'#71fc71',
-
-  //       'chart_color':'#01c601','chart_background_color':'#141e0a',
-
-  //       'number_picker_label_color':'#171717','number_picker_label_shadow':'#013f01',
-  //       'number_picker_power_color':'white','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#5bc15b', 'number_picker_picked_label_text_color':'white',
-  //       'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
-        
-  //       'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark',
-
-
-  //       'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli',
-
-  //       'close':'https://nftstorage.link/ipfs/bafkreidjlt2fejd5t2urmawpfg5xgtm55zlctx2zek3bqxwikehoyq6whe',
-  //       'clear':'https://nftstorage.link/ipfs/bafkreicdhnkw75k4k7m4hwiwaebgsiv2mf6zix5d6ctr2shpa7jtuy5bke',
-  //       'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link',
-
-  //       'play':'https://bafkreih3refhk4wbrhbimtenvrg4juwzy6jpmtnqnfnimrkrz5e2amwqhu.ipfs.w3s.link/',
-  //       'pause':'https://bafkreiaxygqglibofkh73qerfxo6v4ojyjmcvyr2h6pa44sbcowyow4wly.ipfs.w3s.link/',
-  //       'previous':'https://bafkreigoe7wibzhews6b77rqnbfqrd3qvyvzsehvielxdkn2pulml27u2q.ipfs.w3s.link/',
-  //       'next':'https://bafkreidxr7vonmydvrxz6k43alvy5hhbqm6i5diwqw37qohhijm3llom7a.ipfs.w3s.link/',
-  //       'shuffle':'https://bafkreidgx3rq45hdlfpo7xqciuzjxt3kcw3trxpqydpqkoaqea5qhccsie.ipfs.w3s.link/',
-  //       'repeat':'https://bafkreihn4dag5j7fisuk6q7hzsfczpacj2szvsm5seovljvbq776tpihbm.ipfs.w3s.link/',
-  //     }
-  //   }
-
-
-
-
-  //   else if(theme == this.getLocale()['1593a']/* 'auto' */){
-  //     var obj = this.get_theme_data(this.get_time_of_day_theme())
-  //     obj['name'] = this.getLocale()['1593a']/* 'auto' */
-
-  //     return obj
-  //   }
-  // }
 
   get_theme_data(theme){
     //this.props.theme['']
@@ -4509,7 +4322,7 @@ class App extends Component {
         'navbar_button_selected_color':'#203f00','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'#013f01',
         'navbar_text_shadow_color':'#5bc15b',
 
-        'view_group_card_item_background':'#13190c','tag_background_color':'#203f00', 'indexed_tag_background':'#0f230f', 'tag_shadow':'#013f01', 'tag_text_color':'#8af7a2',
+        'view_group_card_item_background':'#13190c','tag_background_color':'#203f00', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2',
 
         'chart_color':'#01c601','chart_background_color':'#141e0a',
 
@@ -4549,7 +4362,7 @@ class App extends Component {
         
         'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#c5e8d6',
         
-        'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'#c5e8d6','tag_text_color':'white',
+        'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white',
         
         'chart_color':'#01c601','chart_background_color':'#d4e2cc',
   
@@ -4590,7 +4403,7 @@ class App extends Component {
         'navbar_button_selected_color':'#332020','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'#3f0101',
         'navbar_text_shadow_color':'#511616',
 
-        'view_group_card_item_background':'#190c0c','tag_background_color':'#3f0600', 'indexed_tag_background':'#210000', 'tag_shadow':'#3f0101', 'tag_text_color':'#f78a8a',
+        'view_group_card_item_background':'#190c0c','tag_background_color':'#3f0600', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a',
 
         'chart_color':'#f70404','chart_background_color':'#190c0c',
 
@@ -4630,7 +4443,7 @@ class App extends Component {
         
         'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9d1d1',
         
-        'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'#f9d1d1','tag_text_color':'white',
+        'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white',
         
         'chart_color':'#c60b01','chart_background_color':'#e2cdcc',
   
@@ -4671,7 +4484,7 @@ class App extends Component {
         'navbar_button_selected_color':'#202c33','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'#183651',
         'navbar_text_shadow_color':'#171651',
 
-        'view_group_card_item_background':'#0d0c19','tag_background_color':'#13293d', 'indexed_tag_background':'#010021', 'tag_shadow':'#183651', 'tag_text_color':'#2587f7',
+        'view_group_card_item_background':'#0d0c19','tag_background_color':'#13293d', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7',
 
         'chart_color':'#0079ff','chart_background_color':'#0d0c19',
 
@@ -4711,7 +4524,7 @@ class App extends Component {
         
         'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#d1ebf9',
         
-        'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'#d1ebf9','tag_text_color':'white',
+        'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white',
         
         'chart_color':'#0181c6','chart_background_color':'#ccdce2',
   
@@ -4752,7 +4565,7 @@ class App extends Component {
         'navbar_button_selected_color':'#333220','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'#505118',
         'navbar_text_shadow_color':'#505116',
 
-        'view_group_card_item_background':'#19190c','tag_background_color':'#7c7a26', 'indexed_tag_background':'#202100', 'tag_shadow':'#505118', 'tag_text_color':'#f7f38a',
+        'view_group_card_item_background':'#19190c','tag_background_color':'#7c7a26', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a',
 
         'chart_color':'#f3f704','chart_background_color':'#19190c',
 
@@ -4792,7 +4605,7 @@ class App extends Component {
         
         'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
         
-        'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'#DCDCDC','tag_text_color':'white',
+        'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'transparent','tag_text_color':'white',
         
         'chart_color':'#9ba003','chart_background_color':'#e2e2cc',
   
@@ -4833,7 +4646,7 @@ class App extends Component {
         'navbar_button_selected_color':'#312033','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#e058ef','secondary_navbar_text_color':'#c94cef','card_shadow_color':'#491851',
         'navbar_text_shadow_color':'#481651',
 
-        'view_group_card_item_background':'#160c19','tag_background_color':'#6a267c', 'indexed_tag_background':'#190021', 'tag_shadow':'#491851', 'tag_text_color':'#e58af7',
+        'view_group_card_item_background':'#160c19','tag_background_color':'#6a267c', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7',
 
         'chart_color':'#e704f7','chart_background_color':'#160c19',
 
@@ -4873,7 +4686,7 @@ class App extends Component {
         
         'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f2d1f9',
         
-        'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'#f2d1f9','tag_text_color':'white',
+        'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'transparent','tag_text_color':'white',
         
         'chart_color':'#af01c6','chart_background_color':'#decce2',
   
@@ -4914,7 +4727,7 @@ class App extends Component {
         'navbar_button_selected_color':'#332c20','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efb358','secondary_navbar_text_color':'#efa04c','card_shadow_color':'#513a18',
         'navbar_text_shadow_color':'#513d16',
 
-        'view_group_card_item_background':'#19130c','tag_background_color':'#7c5326', 'indexed_tag_background':'#211100', 'tag_shadow':'#513a18', 'tag_text_color':'#f7c28a',
+        'view_group_card_item_background':'#19130c','tag_background_color':'#7c5326', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a',
 
         'chart_color':'#f78204','chart_background_color':'#19130c',
 
@@ -4954,7 +4767,7 @@ class App extends Component {
         
         'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9ebd1',
         
-        'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'#f9ebd1','tag_text_color':'white',
+        'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'transparent','tag_text_color':'white',
         
         'chart_color':'#c67b01','chart_background_color':'#e2d7cc',
   
@@ -29180,19 +28993,19 @@ return data['data']
     var target_type = this.get_target_type_from_page(page)
     if(target_type == 0) return;
 
-    if(this.fetch_object_history == null){
-      this.fetch_object_history = {}
-    }
+    // if(this.fetch_object_history == null){
+    //   this.fetch_object_history = {}
+    // }
 
-    var search_index = JSON.stringify({'tags':searched_tags, 'page':page, 'search':search, 'accounts':accounts})
+    // var search_index = JSON.stringify({'tags':searched_tags, 'page':page, 'search':search, 'accounts':accounts})
 
-    const now = Date.now()
+    // const now = Date.now()
 
-    if(this.fetch_object_history[search_index] != null && (now - this.fetch_object_history[search_index]) > this.state.fetch_object_time_limit){
-      return;
-    }else{
-      this.fetch_object_history[search_index] = now
-    }
+    // if(this.fetch_object_history[search_index] != null && (now - this.fetch_object_history[search_index]) > this.state.fetch_object_time_limit){
+    //   return;
+    // }else{
+    //   this.fetch_object_history[search_index] = now
+    // }
 
     var searched_tags_including_prioritized_tags = (this.load_selected_tags(page)).concat(searched_tags)
 
