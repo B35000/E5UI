@@ -3918,10 +3918,17 @@ class StackPage extends Component {
 
         var index_data_strings = [ [], [] ]
 
+        var setting = {}
+        setting[this.props.app_state.loc['1231']/* 'local' */] = 'local'
+        setting[this.props.app_state.loc['1232']/* 'language' */] = 'language'
+        setting[this.props.app_state.loc['1233']/* 'international' */ ] = 'international'
+
         for(var i=0; i<pushed_txs.length; i++){
             if(
-                pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
-                pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || 
@@ -3932,17 +3939,14 @@ class StackPage extends Component {
                 pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
                 pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */
             ){
-                // var tx_tags = pushed_txs[i].entered_indexing_tags
+                var identifier = setting[pushed_txs[i].content_channeling_setting]
+                if(identifier == 'local'){
+                    identifier = this.props.app_state.device_country
+                }
                 index_data_in_tags[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 index_data_in_tags[2].push(35)
-                index_data_strings[0].push('en')
+                index_data_strings[0].push(identifier)
                 index_data_strings[1].push('')
-                // for(var t=0; t<tx_tags.length; t++){
-                //     index_data_in_tags[1].push(i)
-                //     index_data_in_tags[2].push(35)
-                //     index_data_strings[0].push(tx_tags[t])
-                //     index_data_strings[1].push('')
-                // }
             }
         }
 

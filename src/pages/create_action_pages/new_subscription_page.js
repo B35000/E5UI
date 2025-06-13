@@ -71,6 +71,7 @@ class NewSubscriptionPage extends Component {
 
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
+        get_content_channeling_object:this.get_content_channeling_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
         
         exchange_id:'', price_amount:0, price_data:[],
@@ -132,6 +133,39 @@ class NewSubscriptionPage extends Component {
             ],
         };
     }
+
+
+    get_content_channeling_object(){
+        const channeling_setting = this.props.app_state.get_content_channeling_tags_object
+        var obj = {
+            'local-only':['e', this.props.app_state.loc['1231']/* 'local' */], 
+            
+            'local-language':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */ ], 
+            
+            'all':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1233']/* 'international' */ ]
+        }
+        var setting = {}
+        setting[this.props.app_state.loc['1231']/* 'local' */] = 1
+        setting[this.props.app_state.loc['1232']/* 'language' */] = 2
+        setting[this.props.app_state.loc['1233']/* 'international' */ ] = 3
+        var pos = setting[this.props.app_state.content_channeling]
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], obj[channeling_setting], [pos]
+            ],
+        };
+    }
+
+
+
+
+
+
+
+
 
     render(){
         return(
@@ -308,6 +342,12 @@ class NewSubscriptionPage extends Component {
 
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
@@ -370,6 +410,11 @@ class NewSubscriptionPage extends Component {
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
         // this.props.notify('tag removed', 200)
+    }
+
+    when_get_content_channeling_object_updated(tag_obj){
+        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
     }
 
 

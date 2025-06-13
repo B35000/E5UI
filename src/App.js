@@ -3919,8 +3919,6 @@ class App extends Component {
 
 
   get_key = async () => {
-    // 0xD637CBbc18fa589bd9d3708ecA90bf71e2A8B243 <----dont use this address
-
     var seed = ''+process.env.REACT_APP_SEED_API_KEY
     var web3_url = this.get_web3_url_from_e5('E55')
     var account = this.get_account_from_seed(seed, web3_url)
@@ -3930,13 +3928,12 @@ class App extends Component {
     const web3 = new Web3(web3_url);
     var balance = await web3.eth.getBalance(account.address)
     // var gas_price = await web3.eth.getGasPrice();
-    console.log('get_key','-----------------get_key------------------------')
-    console.log('get_key','deploy account balance: ',(balance/10**18))
+    // console.log('get_key','deploy account balance: ',(balance/10**18))
     // console.log('get_key','chain gas price: ', gas_price)
 
 
 
-    var recipientAddress = '0xa88FcDa55dFE3929E3f089FbEce6Ce2728f8bf3a'
+    var recipientAddress = ''
     const me = this;
     web3.eth.accounts.wallet.add(account.privateKey);
 
@@ -23124,12 +23121,37 @@ return data['data']
 
 
 
-
+  
 
   get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items) => {
-    var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
+    var created_subscription_events = null
+    var my_paid_subscription_events = null
+    var created_index_events = null
 
-    var my_paid_subscription_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account })
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ }],
+        [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account }],
+        [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+
+      created_subscription_events = all_events[0]
+      my_paid_subscription_events = all_events[1]
+      created_index_events = all_events[2]
+    }
+    else{
+      created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
+
+      my_paid_subscription_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account })
+
+      created_index_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)})
+    }
+
+    var valid_ids = this.get_ids_from_events(created_index_events)
+    var created_subscription_events = created_subscription_events.filter(function (event) {
+      return (valid_ids.includes(event.returnValues.p1))
+    })
 
     var my_paid_subs = []
     my_paid_subscription_events.forEach(event => {
@@ -23515,9 +23537,34 @@ return data['data']
   }
 
   get_contract_data = async (contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items) => {
-    var created_contract_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ })
+    var created_contract_events = null
+    var entered_contract_events = null
+    var created_index_events = null
 
-    var entered_contract_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3})
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ }],
+        [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3}],
+        [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)}],
+      ]
+      var all_events = await this.load_multiple_events_from_nitro(event_params)
+
+      created_contract_events = all_events[0]
+      entered_contract_events = all_events[1]
+      created_index_events = all_events[2]
+    }
+    else{
+      created_contract_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ })
+
+      entered_contract_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3})
+
+      created_index_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)})
+    }
+
+    var valid_ids = this.get_ids_from_events(created_index_events)
+    var created_contract_events = created_contract_events.filter(function (event) {
+      return (valid_ids.includes(event.returnValues.p1))
+    })
 
     var entered_contracts = []
     entered_contract_events.forEach(event => {
@@ -24088,7 +24135,12 @@ return data['data']
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
 
-    // this.load_my_bills(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account)
+    var created_index_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 31/* token_exchange */, p1:this.get_valid_post_index(web3)})
+
+    var valid_ids = this.get_ids_from_events(created_index_events)
+    var created_token_events = created_token_events.filter(function (event) {
+      return (valid_ids.includes(event.returnValues.p1))
+    })
 
     var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5)
     var my_posted_events = created_token_events.filter(function (event) {
@@ -24141,6 +24193,7 @@ return data['data']
       });
       created_token_events = my_events
     }
+
 
     var token_registry = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:19/* 19(token_symbol_registry) */});
     var registered_token_names = {}
@@ -24633,8 +24686,39 @@ return data['data']
     // return JSON.parse(JSON.stringify(page_data))
   }
 
+  is_post_index_valid(emitted_index, web3){
+    var setting = {}
+    setting[this.getLocale()['1231']/* 'local' */] = 'local'
+    setting[this.getLocale()['1232']/* 'language' */] = 'language'
+    setting[this.getLocale()['1233']/* 'international' */ ] = 'international'
+    
+    var content_channeling = setting[this.state.content_channeling]
+    if(content_channeling == 'local'){
+      content_channeling = this.state.device_country
+    }
+    var hash = web3.utils.keccak256(content_channeling).toString()
+    var hash2 = web3.utils.keccak256('en').toString()
+    return hash == emitted_index || hash2 == emitted_index
+  }
+
+  get_valid_post_index(web3){
+    var setting = {}
+    setting[this.getLocale()['1231']/* 'local' */] = 'local'
+    setting[this.getLocale()['1232']/* 'language' */] = 'language'
+    setting[this.getLocale()['1233']/* 'international' */ ] = 'international'
+    
+    var content_channeling = setting[this.state.content_channeling]
+    if(content_channeling == 'local'){
+      content_channeling = this.state.device_country
+    }
+    if(this.state.e5s['E25'].e5_address =='0xF3895fe95f423A4EBDdD16232274091a320c5284'){
+      return web3.utils.keccak256('en').toString()
+    }
+    return web3.utils.keccak256(content_channeling).toString()
+  }
+
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
-    var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */})
+    var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */, p1:this.get_valid_post_index(web3)})
     created_post_events = created_post_events.reverse()
 
     //prioritize my content first
@@ -24709,7 +24793,7 @@ return data['data']
     for(var i=0; i<created_post_events.length; i++){
       var id = created_post_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_post_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_post_events[i].returnValues.p1.toString(), web3)){
         var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         
         created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
@@ -24731,7 +24815,7 @@ return data['data']
   }
 
   get_channel_data = async (E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
-    var created_channel_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */})
+    var created_channel_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */, p1:this.get_valid_post_index(web3)})
     created_channel_events = created_channel_events.reverse()
 
     //prioritize my content first
@@ -24807,7 +24891,7 @@ return data['data']
     for(var i=0; i<created_channel_events.length; i++){
       var id = created_channel_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_channel_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_channel_events[i].returnValues.p1.toString(), web3)){
         var channel_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
 
         // var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */})
@@ -24898,7 +24982,7 @@ return data['data']
   }
 
   get_job_data = async (E52contractInstance, web3, e5, contract_addresses, account, loop_count, prioritized_accounts, specific_items) => {
-    var created_job_events =  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */})
+    var created_job_events =  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */, p1:this.get_valid_post_index(web3)})
     created_job_events = created_job_events.reverse()
 
     //prioritize my content first
@@ -25007,7 +25091,7 @@ return data['data']
     for(var i=0; i<created_job_events.length; i++){
       var id = created_job_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_job_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_job_events[i].returnValues.p1.toString(), web3)){
         var job_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(job_data != null){
           var response_count = response_data[id] == null ? [] : response_data[id]
@@ -25260,7 +25344,7 @@ return data['data']
   }
 
   get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts, load_prioritized_accounts_exclusively, specific_items) => {
-    var created_store_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */})
+    var created_store_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */, p1:this.get_valid_post_index(web3)})
     created_store_events = created_store_events.reverse()
 
     //prioritize my content first
@@ -25332,7 +25416,7 @@ return data['data']
     for(var i=0; i<created_store_events.length; i++){
       var id = created_store_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_store_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_store_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_store_events[i].returnValues.p1.toString(), web3)){
         var data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(data != null){
           if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false)
@@ -25652,7 +25736,7 @@ return data['data']
   }
 
   get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3, account, prioritized_accounts, specific_items) => {
-    var created_contractor_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */ })
+    var created_contractor_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */, p1:this.get_valid_post_index(web3)})
     created_contractor_events = created_contractor_events.reverse()
 
     //prioritize my content first
@@ -25733,7 +25817,7 @@ return data['data']
     for(var i=0; i<created_contractor_events.length; i++){
       var id = created_contractor_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_contractor_events[i].returnValues.p1.toString(), web3)){
         var contractor_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
         if(contractor_data != null){
@@ -25792,7 +25876,7 @@ return data['data']
   }
 
   get_audio_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
-    var created_audio_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */})
+    var created_audio_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */, p1:this.get_valid_post_index(web3)})
     created_audio_events = created_audio_events.reverse()
 
     //prioritize my content first
@@ -25884,7 +25968,7 @@ return data['data']
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_audio_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_audio_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_audio_events[i].returnValues.p1.toString(), web3)){
         var audio_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
         if(audio_data != null){
@@ -25942,7 +26026,7 @@ return data['data']
   }
 
   get_video_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
-    var created_video_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */})
+    var created_video_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */, p1:this.get_valid_post_index(web3)})
     created_video_events = created_video_events.reverse()
 
     //prioritize my content first
@@ -26033,7 +26117,7 @@ return data['data']
     for(var i=0; i<created_video_events.length; i++){
       var id = created_video_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_video_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_video_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_video_events[i].returnValues.p1.toString(), web3)){
         var video_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         console.log('video_data', video_data)
         if(video_data != null){
@@ -26220,7 +26304,7 @@ return data['data']
     for(var i=0; i<created_nitro_events.length; i++){
       var id = created_nitro_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_nitro_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_nitro_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_nitro_events[i].returnValues.p1.toString(), web3) || true){
         var nitro_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         if(nitro_data != null){
           if(nitro_data.album_art != null && nitro_data.album_art.startsWith('image')) {
@@ -26275,7 +26359,7 @@ return data['data']
   }
 
   get_poll_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
-    var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */})
+    var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */, p1:this.get_valid_post_index(web3)})
     console.log('poll_loader', created_post_events)
     created_post_events = created_post_events.reverse()
 
@@ -26348,7 +26432,7 @@ return data['data']
     for(var i=0; i<created_post_events.length; i++){
       var id = created_post_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
+      if(created_post_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_post_events[i].returnValues.p1.toString(), web3)){
         var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
 
         created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
@@ -30002,60 +30086,6 @@ return data['data']
     }
   }
 
-  // fetch_file_data_from_nitro_storage = async (cid, depth) => {
-  //   await this.wait(this.state.ipfs_delay)
-  //   var split_cid_array = cid.split('-');
-  //   var e5_id = split_cid_array[0]
-  //   var nitro_cid = split_cid_array[1]
-
-  //   var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
-  //   if(nitro_url == null) return
-
-  //   const params = new URLSearchParams({
-  //     arg_string:JSON.stringify({hashes:[nitro_cid]}),
-  //   });
-  //   var request = `${nitro_url}/data?${params.toString()}`
-  //   try{
-  //     const response = await fetch(request);
-  //     if (!response.ok) {
-  //       console.log('datas',response)
-  //       throw new Error(`Failed to retrieve data. Status: ${response}`);
-  //     }
-  //     var data = await response.text();
-  //     var obj = JSON.parse(data);
-  //     var object_data = obj['data']
-  //     var cid_data = object_data[nitro_cid]
-  //     // console.log('datas','fetching_file_from_nitro_storage', cid_data)
-  //     if(cid_data != null){
-  //       var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
-  //       if(confirmation_hash != nitro_cid){
-  //         console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
-  //         return null
-  //       }
-  //       var file_pointer_link = cid_data['data']
-  //       if(file_pointer_link.includes('-')){
-  //         var split_cid_array2 = file_pointer_link.split('-');
-  //         var e5_id2 = split_cid_array2[0]
-  //         var nitro_cid2 = split_cid_array2[1]
-
-  //         var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
-  //         var content_type = this.get_file_extension(cid_data['name'])
-  //         if(nitro_url != null){
-  //           cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
-  //           cid_data['hash'] = nitro_cid2
-  //         }
-  //       }
-  //       // console.log('datas','final cid object with link', cid_data)
-  //       return cid_data
-  //     }
-  //   }
-  //   catch(e){
-  //     console.log('datas', 'error', e)
-  //     if(depth < 3){
-  //       await this.fetch_file_data_from_nitro_storage(cid, depth+1)
-  //     }
-  //   }
-  // }
 
   fetch_multiple_file_datas_from_nitro_storage = async (ecid_objs, original_cids) => {
     var search_data = {}

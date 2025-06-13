@@ -2574,7 +2574,7 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_subscriptions))))
+            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_subscriptions)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_subscriptions = []
@@ -2583,7 +2583,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions)))
+            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_subscriptions = []
@@ -2592,7 +2592,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions)))
+            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions))))
         }
         else if(selected_option_name == this.props.app_state.loc['1207']/* 'paid' */){
             var my_paid_subscriptions = []
@@ -2603,7 +2603,7 @@ class home_page extends Component {
                     my_paid_subscriptions.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))
+            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264b']/* upcoming */){
             var my_paid_subscriptions = []
@@ -2619,7 +2619,7 @@ class home_page extends Component {
                     my_paid_subscriptions.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))
+            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions))))
         }
         else if(selected_option_name == this.props.app_state.loc['1332f']/* 'history' */){
             var my_paid_subscriptions = []
@@ -2630,7 +2630,7 @@ class home_page extends Component {
                     my_paid_subscriptions.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))
+            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions))))
         }
         else {
             var my_subscriptions = []
