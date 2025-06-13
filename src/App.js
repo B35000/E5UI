@@ -817,7 +817,7 @@ class App extends Component {
     created_contractors:{},created_audios:{}, created_audio_mappings:{},
     mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false, blocked_accounts:{}, should_update_blocked_accounts_onchain: false,
 
-    web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
+    web3:'', e5_address:'',
     
     sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2),
 
@@ -23335,8 +23335,11 @@ return data['data']
         }
       }
 
-      created_subscription_object_data.push(subscription_object)
-      created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
+      if(subscription_data != null){
+        created_subscription_object_data.push(subscription_object)
+        created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
+      }
+      
 
       if(is_first_time){
         var created_subscription_object_data_clone = structuredClone(this.state.created_subscriptions)
@@ -24008,21 +24011,40 @@ return data['data']
     for(var i=0; i<my_proposal_ids.length; i++){
       var proposals_data = all_data[my_proposal_ids[i]] == null ? await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses) : all_data[my_proposal_ids[i]]
       var event = my_proposals_events[i]
-      // var end_balance = /* await this.get_balance_in_exchange(3, my_proposal_ids[i], e5, contract_addresses); */ balances[i][0]
-      // var spend_balance = /* await this.get_balance_in_exchange(5, my_proposal_ids[i], e5, contract_addresses); */ balances[i][1]
-
-      // var proposal_modify_target_type = /* await E52contractInstance.methods.f135(created_proposal_data[i][1][9]).call((error, result) => {}); */ proposal_modify_target_type_data[i]
-
-      // var senders_vote_in_proposal = /* await G52contractInstance.methods.f237([my_proposal_ids[i]], [[account]]).call((error, result) => {}); */ senders_vote_in_proposal_for_all_proposals[i]
-
-      // var proposal_voters = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p2/* consensus_id */:my_proposal_ids[i]})
-
-      // var archive_participants = []
-      // for(var o=0; o<proposal_voters.length; o++){
-      //   if(!archive_participants.includes(proposal_voters[o].returnValues.p3)){
-      //     archive_participants.push(proposal_voters[o].returnValues.p3)
-      //   }
-      // }
+      
+      if(proposals_data == null){
+        proposals_data = {
+            selected: 0, id: makeid(8), object_type:32, type:this.getLocale()['312'], e5:this.state.selected_e5,
+            contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
+            entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'Malformed!',
+    
+            page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
+            proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
+            
+            modify_target_id:'', modify_target_data:null,
+            
+            spend_target_input_text:'', spend_token_input_text:'', 
+            spend_amount:0, spend_actions:[], 
+            
+            reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
+            reconfig_values:[],
+    
+            exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
+    
+            bounty_exchange_target:'', bounty_amount:0, bounty_values:[],
+    
+            content_channeling_setting: this.state.content_channeling, 
+            device_language_setting: this.state.device_language, 
+            device_country: this.state.device_country,
+    
+            entered_text_objects:[], entered_image_objects:[],
+            entered_objects:[], entered_text:'',
+    
+            typed_link_text:'', link_search_results:[], added_links:[], 
+            edit_text_item_pos:-1, new_price_number:0, entered_pdf_objects:[],
+            markdown:'', entered_zip_objects:[]
+        }
+      }
 
       var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':0/* end_balance */, 'spend_balance':0/* spend_balance */, 'consensus_data':[0,0,0]/* consensus_data[i] */, 'modify_target_type':0/* proposal_modify_target_type */, 'account_vote':0/* senders_vote_in_proposal[0] */, 'archive_accounts':[]/* archive_participants */, 'e5':e5, 'timestamp':parseInt(event.returnValues.p5), 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5, 'pos':created_proposal_object_data.length, 'loaded_extra':false, 'is_part_of_contract':false}
 
@@ -24134,13 +24156,6 @@ return data['data']
 
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
-
-    var created_index_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 31/* token_exchange */, p1:this.get_valid_post_index(web3)})
-
-    var valid_ids = this.get_ids_from_events(created_index_events)
-    var created_token_events = created_token_events.filter(function (event) {
-      return (valid_ids.includes(event.returnValues.p1))
-    })
 
     var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5)
     var my_posted_events = created_token_events.filter(function (event) {
@@ -24787,7 +24802,7 @@ return data['data']
     var created_posts = []
     var is_first_time = this.state.created_posts[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events, ), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
     console.log('all_data', all_data)
 
     for(var i=0; i<created_post_events.length; i++){
@@ -24881,7 +24896,7 @@ return data['data']
     var created_channel = []
     var is_first_time = this.state.created_channels[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     const privateKey = this.state.accounts['E25'].privateKey
@@ -25076,7 +25091,7 @@ return data['data']
     var my_job_ids = []
     var is_first_time = this.state.created_jobs[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     var all_response_count = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
     var response_data = {}
@@ -25411,7 +25426,7 @@ return data['data']
     const my_stores = []
     var is_first_time = this.state.created_stores[e5] == null
 
-    const all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events), web3, e5, contract_addresses)
+    const all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     for(var i=0; i<created_store_events.length; i++){
       var id = created_store_events[i].returnValues.p2
@@ -25787,7 +25802,7 @@ return data['data']
     var my_contractor_posts = []
     var is_first_time = this.state.created_contractors[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     var all_requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:38})
     var all_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:39})
@@ -25946,7 +25961,7 @@ return data['data']
     var is_first_time = this.state.created_audios[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
@@ -26095,7 +26110,7 @@ return data['data']
     var is_first_time = this.state.created_videos[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     var sales_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
@@ -26426,7 +26441,7 @@ return data['data']
     var created_posts = []
     var is_first_time = this.state.created_polls[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
     console.log('all_data', all_data)
 
     for(var i=0; i<created_post_events.length; i++){
@@ -26575,7 +26590,7 @@ return data['data']
     var ids = []
     events.forEach(event => {
       var id = event.returnValues.p2
-      if(ids.length <= this.state.max_post_bulk_load_count) ids.push(id);
+      ids.push(id);
     });
     return ids
   }
