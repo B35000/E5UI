@@ -3943,6 +3943,9 @@ class StackPage extends Component {
                 if(identifier == 'local'){
                     identifier = this.props.app_state.device_country
                 }
+                if(this.props.app_state.e5s[this.props.app_state.selected_e5].e5_address =='0xF3895fe95f423A4EBDdD16232274091a320c5284'){
+                    identifier = 'en'
+                }
                 index_data_in_tags[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 index_data_in_tags[2].push(35)
                 index_data_strings[0].push(identifier)

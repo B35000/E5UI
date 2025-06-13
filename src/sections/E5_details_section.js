@@ -232,13 +232,15 @@ class E5DetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'number':this.props.app_state.end_balance_of_burn_account[e5], 'relativepower':'END'})}>
                         {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':'END'})}
                     </div>
-
                     <div style={{height:10}}/>
+
+                    {this.render_end_to_spend_use_ratio(obj)}
+
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2234']}</p>
                     
-                        {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.props.app_state.E5_balance[e5]/10**18), 'relativepower':'Ether'})}
+                        {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'relativepower':'Ether'})}
 
                         {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
                     </div>
@@ -276,6 +278,10 @@ class E5DetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    round_off_to_nearest_gwei(number){
+        return (Math.round(number * 10**9) / 10**9)
     }
 
     when_address_tapped(obj){
@@ -378,6 +384,90 @@ class E5DetailsSection extends Component {
         }
     }
 
+
+    render_end_to_spend_use_ratio(obj){
+        var e5_chart_data = this.props.app_state.all_data[obj['id']]
+        if(e5_chart_data != null){
+            var transfer_events = this.filter_transfer_events_for_end_and_spend_transactions(e5_chart_data['transfer'])
+
+            var total = transfer_events.end_events.length + transfer_events.spend_events.length
+
+            var end_percentage = this.round_off((transfer_events.end_events.length / total) * 100)
+            var spend_percentage = this.round_off((transfer_events.spend_events.length / total) * 100)
+
+            var end_barwidth = end_percentage
+            var spend_barwidth = spend_percentage
+
+            if(end_barwidth > 97){
+                end_barwidth = 97
+            }
+            else if(end_barwidth < 3){
+                end_barwidth = 3
+            }
+
+            if(spend_barwidth > 97){
+                spend_barwidth = 97
+            }
+            else if(spend_barwidth < 3){
+                spend_barwidth = 3
+            }
+
+            return (
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        <div style={{'margin': '5px 20px 0px 15px'}}>
+                            <div className="row">
+                                <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.app_state.font}} className="fw-bold">END</p>
+                                </div>
+                                <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.app_state.font}} className="text-end">SPEND</p>
+                                </div>
+                            </div>
+                            
+                            <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
+                                <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
+                                    <div className="progress-bar" role="progressbar" style={{ width: end_barwidth+'%', 'background-image': 'none','background-color': 'black', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+
+                                    <div className="progress-bar" role="progressbar" style={{ width: spend_barwidth+'%', 'background-image': 'none','background-color': 'white', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.app_state.font}} className="fw-bold">{end_percentage+'%'}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.app_state.font}} className="text-end">{spend_percentage+'%'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            );
+        }
+    }
+
+    round_off(number){
+        return (Math.round(number * 100) / 100)
+    }
+
+    filter_transfer_events_for_end_and_spend_transactions(events){
+        var end_events = []
+        var spend_events = []
+
+        events.forEach(event => {
+            if(event.returnValues.p1 == 3){
+                end_events.push(event)
+            }
+            else if(event.returnValues.p1 == 5){
+                spend_events.push(event)
+            }
+        });
+
+        return {end_events, spend_events}
+    }
     
     
     

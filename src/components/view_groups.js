@@ -159,7 +159,7 @@ class ViewGroups extends Component {
                   </div>
               );
             }else{
-                return ( 
+                return (
                     <div style={{'margin': '5px 20px 0px 15px'}}>
                         <div className="row">
                             <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
