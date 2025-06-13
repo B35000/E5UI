@@ -2218,7 +2218,7 @@ return data['data']
 
 
     load_token_suggestions(target_type){
-        var items = [].concat(this.get_suggested_tokens())
+        var items = [].concat(this.get_suggested_tokens(target_type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -2234,12 +2234,16 @@ return data['data']
         )
     }
 
-    get_suggested_tokens(){
+    get_suggested_tokens(target_type){
         var items = [
             {'id':'3', 'label':{'title':'END', 'details':this.state.e5, 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].end_image, 'img_size':30}},
             {'id':'5', 'label':{'title':'SPEND', 'details':this.state.e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
+        if(exchanges_from_sync == null) exchanges_from_sync = []
+        exchanges_from_sync = exchanges_from_sync.filter(function (exchange) {
+            return (this.is_exchange_searched(exchange, target_type))
+        })
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
@@ -2253,7 +2257,7 @@ return data['data']
         sorted_token_exchange_data.reverse()
         for (let i = 0; i < exchanges_from_sync.length; i++) {
             if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
-                sorted_token_exchange_data.push(exchanges_from_sync[i])
+                if(this.is_exchange_searched(exchanges_from_sync[i], target_type))sorted_token_exchange_data.push(exchanges_from_sync[i])
             }
         }
 
@@ -2264,33 +2268,26 @@ return data['data']
         return items;
     }
 
+    is_exchange_searched(exchange, target_type){
+        var filter_text = this.state.exchange_id
+
+        if(filter_text == ''){
+            return true
+        }
+        var token_name = exchange['ipfs'].entered_title_text
+        var entered_symbol_text = exchange['ipfs'].entered_symbol_text
+        if(token_name.toLowerCase().includes(filter_text.toLowerCase()) || entered_symbol_text.toLowerCase().includes(filter_text.toLowerCase())){
+            return true
+        }
+        else if(!isNaN(filter_text) && exchange['id'].startsWith(filter_text)){
+            return true
+        }
+        return false
+    }
+
     when_price_suggestion_clicked(item, pos, target_type){
         this.setState({exchange_id: item['id']})
         this.reset_the_number_picker()
-    }
-
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
     }
 
 

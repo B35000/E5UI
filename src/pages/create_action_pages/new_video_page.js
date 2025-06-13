@@ -2188,7 +2188,7 @@ return data['data']
     }
 
     load_token_suggestions(target_type){
-        var items = [].concat(this.get_suggested_tokens())
+        var items = [].concat(this.get_suggested_tokens(target_type))
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
@@ -2202,13 +2202,16 @@ return data['data']
         )
     }
 
-    get_suggested_tokens(){
+    get_suggested_tokens(target_type){
         var items = [
             {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         if(exchanges_from_sync == null) exchanges_from_sync = []
+        exchanges_from_sync = exchanges_from_sync.filter(function (exchange) {
+            return (this.is_exchange_searched(exchange, target_type))
+        })
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
@@ -2222,7 +2225,7 @@ return data['data']
         sorted_token_exchange_data.reverse()
         for (let i = 0; i < exchanges_from_sync.length; i++) {
             if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
-                sorted_token_exchange_data.push(exchanges_from_sync[i])
+                if(this.is_exchange_searched(exchanges_from_sync[i], target_type))sorted_token_exchange_data.push(exchanges_from_sync[i])
             }
         }
 
@@ -2231,6 +2234,29 @@ return data['data']
         }
 
         return items;
+    }
+
+    is_exchange_searched(exchange, target_type){
+        var filter_text = ''
+        if(target_type == 'exchange_id') {
+            return this.state.exchange_id
+        }
+        else if(target_type == 'exchange_id2'){
+            return this.state.exchange_id2
+        }
+
+        if(filter_text == ''){
+            return true
+        }
+        var token_name = exchange['ipfs'].entered_title_text
+        var entered_symbol_text = exchange['ipfs'].entered_symbol_text
+        if(token_name.toLowerCase().includes(filter_text.toLowerCase()) || entered_symbol_text.toLowerCase().includes(filter_text.toLowerCase())){
+            return true
+        }
+        else if(!isNaN(filter_text) && exchange['id'].startsWith(filter_text)){
+            return true
+        }
+        return false
     }
 
     when_price_suggestion_clicked(item, pos, target_type){
