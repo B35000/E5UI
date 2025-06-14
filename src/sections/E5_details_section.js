@@ -129,6 +129,7 @@ class E5DetailsSection extends Component {
         var item = this.get_e5_details_data(obj)
         // var obj = this.get_e5_data()[this.props.selected_e5_item]
         var e5 = obj['id']
+        var spent_end = bigInt('1e72').minus(bigInt('1e70')).minus(bigInt(this.props.app_state.end_balance_of_E5[e5]))
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -231,6 +232,11 @@ class E5DetailsSection extends Component {
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'number':this.props.app_state.end_balance_of_burn_account[e5], 'relativepower':'END'})}>
                         {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':'END'})}
+                    </div>
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'number':spent_end, 'relativepower':'END'})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'subtitle':this.format_power_figure(spent_end), 'barwidth':this.calculate_bar_width(spent_end), 'number':this.format_account_balance_figure(spent_end), 'relativepower':'END'})}
                     </div>
                     <div style={{height:10}}/>
 

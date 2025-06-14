@@ -23132,7 +23132,7 @@ return data['data']
       var event_params = [
         [web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ }],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account }],
-        [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)}],
+        [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3)}],
       ]
       var all_events = await this.load_multiple_events_from_nitro(event_params)
 
@@ -23332,6 +23332,7 @@ return data['data']
           subscription_object['hidden'] = previous_obj['hidden']
           subscription_object['all_payment_history_events'] = previous_obj['all_payment_history_events']
           subscription_object['all_subscription_modification_events'] = previous_obj['all_subscription_modification_events']
+          subscription_object['income_stream_data_points'] = previous_obj['income_stream_data_points']
         }
       }
 
@@ -23440,20 +23441,38 @@ return data['data']
     var all_payment_history_events = null
     var all_subscription_modification_events = null
     var moderator_data = null
+    var income_stream_data_points = null;
 
     if(this.state.beacon_node_enabled == true){
-      var event_params = [
-        [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}],
-        [web3, F5contractInstance, 'e1', e5, {p1/* subscription_id */:id}],
-        [web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */:id}],
-        [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */}],
-      ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
-
-      payment_history_events = all_events[0]
-      all_payment_history_events = all_events[1]
-      all_subscription_modification_events = all_events[2]
-      moderator_data = all_events[3]
+      var subscription_config = object['data'][1]
+      var my_account = this.state.user_account_id[e5]
+      if(object['author'] == my_account || subscription_config[0] == my_account){
+        income_stream_data_points = await this.fetch_subscription_income_stream_data_from_nitro(object)
+      }
+      
+      if(income_stream_data_points == null){
+        var event_params = [
+          [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}],
+          [web3, F5contractInstance, 'e1', e5, {p1/* subscription_id */:id}],
+          [web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */:id}],
+          [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */}],
+        ]
+        var all_events = await this.load_multiple_events_from_nitro(event_params)
+        payment_history_events = all_events[0]
+        all_payment_history_events = all_events[1]
+        all_subscription_modification_events = all_events[2]
+        moderator_data = all_events[3]
+      }else{
+        var event_params = [
+          [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}],
+          [web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */:id}],
+          [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */}],
+        ]
+        var all_events = await this.load_multiple_events_from_nitro(event_params)
+        payment_history_events = all_events[0]
+        all_subscription_modification_events = all_events[1]
+        moderator_data = all_events[2]
+      }
     }
     else{
       payment_history_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account})
@@ -23503,6 +23522,7 @@ return data['data']
     object['last_expiration_time'] = last_expiration_time
     object['all_payment_history_events'] = all_payment_history_events
     object['all_subscription_modification_events'] = all_subscription_modification_events
+    object['income_stream_data_points'] = income_stream_data_points
 
     if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
       object['hidden'] = true;
@@ -23521,6 +23541,49 @@ return data['data']
     created_subscription_object_mapping_clone[e5][created_subscriptions[i]+e5] = object
 
     this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
+  }
+
+  fetch_subscription_income_stream_data_from_nitro = async (subscription_object) => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+
+    const arg_obj = {
+      subscription_object: subscription_object,
+      steps: 60*60,
+      filter_value: 60*60*24*7,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${beacon_node}/subscription_income_stream_datapoints`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      console.log('fetch_subscription_income_stream', obj)
+      if(obj.success == false){
+        return null
+      }else{
+        return obj.data
+      }
+    }
+    catch(e){
+      console.log('fetch_subscription_income_stream', e)
+      return null
+    }
   }
 
   get_last_expiration_time(payment_history_events, subscription_id, time_unit, expiration_time){

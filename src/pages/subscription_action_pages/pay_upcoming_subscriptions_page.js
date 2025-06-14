@@ -62,7 +62,7 @@ class PayUpcomingSubscriptions extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['2896']/* 'upcoming-subscription' */], [0]
+                ['xor','',0], ['e',this.props.app_state.loc['2896']/* 'upcoming-subscription' */], [1]
             ],
         };
     }

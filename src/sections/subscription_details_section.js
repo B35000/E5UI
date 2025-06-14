@@ -573,17 +573,27 @@ class SubscriptionDetailsSection extends Component {
         }
         var events = object['all_payment_history_events'] == null ? [] : object['all_payment_history_events']
         var modification_events = object['all_subscription_modification_events']
-        
-        if(events != null && events.length > 0){
-            var data_point_data = this.get_income_stream_data_points(events, modification_events, object)
-            var total_payment_data = data_point_data.total_payment_data
-            var total_payment_data_keys = Object.keys(data_point_data.total_payment_data)
+        var income_stream_data_points = object['income_stream_data_points']
+        if(events.length > 0 || income_stream_data_points != null){
+            var total_payment_data = null
+            var total_payment_data_keys = null
+            var datapoints = null
+            if(income_stream_data_points != null){
+                total_payment_data = income_stream_data_points.total_payment_data
+                total_payment_data_keys = Object.keys(total_payment_data)
+                datapoints = income_stream_data_points.dps
+            }else{
+                var data_point_data = this.get_income_stream_data_points(events, modification_events, object)
+                total_payment_data = data_point_data.total_payment_data
+                total_payment_data_keys = Object.keys(total_payment_data)
+                datapoints = data_point_data.dps
+            }
             return(
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695b']/* Subscription Income Stream' */, 'details':this.props.app_state.loc['2695c']/* `Chart containing the amount of value that has been transfered from maturing subscription payments made in the last week.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':data_point_data.dps, 'interval':120, 'hide_label':true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints, 'interval':120, 'hide_label':true})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695a']/* 'Y-Axis: Average Value Transfer' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
