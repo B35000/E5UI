@@ -67,7 +67,9 @@ class NewChannelPage extends Component {
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], e5: this.props.app_state.selected_e5, get_channel_locked_tag_setting_object: this.get_channel_locked_tag_setting_object(), edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'', entered_zip_objects:[], participant_id:'', participants:[], channel_keys:[], blocked_participant_id:'', blocked_participants:[]
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'', entered_zip_objects:[], participant_id:'', participants:[], channel_keys:[], blocked_participant_id:'', blocked_participants:[],
+
+        creator_id:'', creators:[], selected_creator_group_subscriptions:[], subscription_search:'', nitro_search:'', selected_creator_group_nitros:[],
     };
 
     get_new_job_page_tags_object(){
@@ -76,7 +78,7 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['162s']/* participants */,this.props.app_state.loc['162t']/* blocked */, this.props.app_state.loc['298']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['162s']/* participants */,this.props.app_state.loc['162t']/* blocked *//* this.props.app_state.loc['298'] */, this.props.app_state.loc['162aj']/* creators */, this.props.app_state.loc['162ak']/* creator-subscriptions */, this.props.app_state.loc['162as']/* nitro-restrictions */], [0]
             ],
             'authorities':[
               ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
@@ -208,6 +210,9 @@ class NewChannelPage extends Component {
         if(this.state.participants == null){
             this.setState({participant_id:'', participants:[], channel_keys:[], blocked_participant_id:'', blocked_participants:[]})
         }
+        if(this.state.creators == null){
+            this.setState({creator_id:'', creators:[], selected_creator_group_subscriptions:[], subscription_search:'', nitro_search:'', selected_creator_group_nitros:[],})
+        }
     }
 
 
@@ -319,6 +324,27 @@ class NewChannelPage extends Component {
             return(
                 <div>
                     {this.render_blocked_accounts_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162aj']/* creators */){
+            return(
+                <div>
+                    {this.render_creators_section()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162ak']/* creator-subscriptions */){
+            return(
+                <div>
+                    {this.render_creator_group_subscriptions_section()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['162as']/* nitro-restrictions */){
+            return(
+                <div>
+                    {this.render_nitro_restrictions_section()}
                 </div>
             )
         }
@@ -2375,6 +2401,879 @@ return data['data']
 
 
 
+
+
+
+
+
+    render_creators_section(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_creators_ui()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_creators_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_creators_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_select_creators_ui(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['162al']/* 'Creator Group Accounts' */, 'details':this.props.app_state.loc['162am']/* If this is a creator group, you can specify the accounts for the creators part of the group. */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311g']/* Account... */} when_text_input_field_changed={this.when_creator_id_input_field_changed.bind(this)} text={this.state.creator_id} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.load_account_suggestions('creator_id')}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_creator_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311h']/* Add Account. */, 'action':''})}
+                </div>
+
+                <div style={{height: 10}}/>
+                {this.render_added_creators()}
+            </div>
+        )   
+    }
+
+    when_creator_id_input_field_changed(text){
+        this.setState({creator_id: text})
+    }
+
+    when_add_creator_button_tapped(){
+        var typed_text = this.state.creator_id.trim()
+        if(typed_text.includes(',')){
+            this.add_multiple_participants(typed_text)
+            return;
+        }
+        var participant_id = this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
+        var final_value = participant_e5+':'+participant_id
+        var participants_clone = this.state.creators.slice()
+        if(typed_text == ''){
+            this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
+        }
+        if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else if(participants_clone.includes(final_value)){
+            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        }
+        else{
+            participants_clone.push(final_value)
+            this.setState({creators: participants_clone, creator_id:''});
+        }
+    }
+
+    add_multiple_participants(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        var participants_clone = this.state.creators.slice()
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5) && this.props.app_state.e5s[e5].active == true){
+                        if(!isNaN(account) && parseInt(account) < 10**16 && parseInt(account)>1000){
+                            var final_value = e5+':'+parseInt(account)
+                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
+                                final_obj.push(final_value)
+                                account_entries++
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            participants_clone = participants_clone.concat(final_obj)
+            this.setState({creators: participants_clone, creator_id:''});
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+
+    get_alias_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    render_added_creators(){
+        var items = [].concat(this.state.creators)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_creator_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '3px'}}>
+                                            {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        } 
+    }
+
+    get_senders_name(item){
+        var data_item = this.get_data(item)
+        var sender = data_item.id
+        var e5 = data_item.e5
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.props.app_state.alias_bucket[e5]
+            var alias = (obj[sender] == null ? this.props.app_state.loc['c311m']/* 'Account' */ : obj[sender])
+            return alias
+        }
+    }
+
+    when_added_creator_clicked(item, index){
+        var cloned_array = this.state.creators.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({creators: cloned_array})
+    }
+
+
+
+
+
+
+    render_creator_group_subscriptions_section(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_subscriptions_ui()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_subscriptions_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_selected_subscriptions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_subscriptions_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_selected_subscriptions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_select_subscriptions_ui(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['162an']/* 'Creator Group Subscriptions.' */, 'details':this.props.app_state.loc['162ao']/* If this is a creator group, youll need to specify the subscriptions they are to point their audience to to access their content. */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['162ap']/* 'Search by ID...' */} when_text_input_field_changed={this.when_subscription_search_input_filed_changed.bind(this)} text={this.state.subscription_search} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_subscription()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_minified_selected_subscriptions()}
+                <div style={{height:10}}/>
+                {this.render_select_subscriptions()}
+            </div>
+        )
+    }
+
+    when_subscription_search_input_filed_changed(text){
+        if(text == ''){
+            this.setState({subscription_search: text, current_searched_subscription: ''})
+        }else{
+            this.setState({subscription_search: text})
+        }
+    }
+
+    search_subscription(){
+        var search_id = this.state.subscription_search
+        if(isNaN(search_id)){
+            this.props.notify(this.props.app_state.loc['162aq']/* That search id is invalid. */, 1500)
+        }else{
+            this.props.notify(this.props.app_state.loc['162ar']/* Searching... */, 1500)
+            this.props.search_for_object(search_id)
+            this.setState({current_searched_subscription: search_id})
+        }
+    }
+
+    render_select_subscriptions(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.get_creator_group_subscription_items())
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        else{
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_creator_group_subscription_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    get_creator_group_subscription_items(){
+        var my_subscriptions = []
+        var my_searched_subscriptions = []
+        var created_subs = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+        for(var i = 0; i < created_subs.length; i++){
+            var post_author = created_subs[i]['author']
+            var myid = this.props.app_state.user_account_id[created_subs[i]['e5']]
+            if(myid == null) myid = 1;
+            if(post_author.toString() == myid.toString()){
+                my_subscriptions.push(created_subs[i])
+            }
+            else if(created_subs[i]['id'] == this.state.current_searched_subscription){
+                my_searched_subscriptions.push(created_subs[i])
+            }
+        }
+
+        if(my_searched_subscriptions.length > 0){
+            return my_searched_subscriptions
+        }
+
+        return my_searched_subscriptions.concat(my_subscriptions)
+    }
+
+    get_selected_creator_group_subscription_items(){
+        var my_subscriptions = []
+        var created_subs = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+        for(var i = 0; i < created_subs.length; i++){
+            var object = created_subs[i]
+            if(this.state.selected_creator_group_subscriptions.includes(object['e5_id'])){
+                my_subscriptions.push(object)
+            }
+        }
+
+        return my_subscriptions
+    }
+
+    render_creator_group_subscription_object(object, index, ignore_opacity){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        if(this.is_post_taken_down_for_sender(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        var item = this.format_subscription_item(object)
+        var alpha = this.state.selected_creator_group_subscriptions.includes(object['e5_id']) ? 0.6 : 1.0
+        if(ignore_opacity != null && ignore_opacity == true){
+            alpha = 1.0
+        }
+        return(
+            <div onClick={() => this.when_creator_group_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'opacity':alpha}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    format_subscription_item(object){
+        var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var sender = this.get_senders_name2(object['event'].returnValues.p3, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    when_creator_group_subscription_item_clicked(object){
+        var selected_clone = this.state.selected_creator_group_subscriptions.slice()
+        if(!selected_clone.includes(object['e5_id'])){
+            selected_clone.push(object['e5_id'])
+        }else{
+            const index = selected_clone.indexOf(object['e5_id']);
+            if (index > -1) { // only splice array when item is found
+                selected_clone.splice(index, 1); // 2nd parameter means remove one item only
+            }
+        }
+        this.setState({selected_creator_group_subscriptions:selected_clone})
+    }
+
+    render_minified_selected_subscriptions(){
+        var size = this.props.app_state.size
+        if(size != 's'){
+            return;
+        }
+        var items = [].concat(this.get_selected_creator_group_subscription_items())
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_selected_subscription_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_selected_subscription_item(object){
+        var item = this.format_subscription_item(object)
+        return(
+            <div onClick={() => this.when_creator_group_subscription_item_clicked(object)}>
+                {this.render_detail_item('3', item['id'])}
+            </div>
+        )
+    }
+
+    render_selected_subscriptions(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.get_selected_creator_group_subscription_items())
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{}}>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['162av']/* 'Your selected subscriptions will be shown below.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        else{
+            return ( 
+                <div style={{}}>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['162av']/* 'Your selected subscriptions will be shown below.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_creator_group_subscription_object(item, index, true)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    
+    render_nitro_restrictions_section(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_nitro_restriction_ui()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_nitro_restriction_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_selected_nitros()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_nitro_restriction_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_selected_nitros()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_nitro_restriction_ui(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['162at']/* 'Nitro Restrictions.' */, 'details':this.props.app_state.loc['162au']/* If you set nitro restrictions below, creators will be required to use the specified nitro nodes. Otherwise their content\'s view and streaming data will be discounted. */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['162ay']/* 'If you dont do this, your creators will be free to use any nitro node to host their content.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
+
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['162ap']/* 'Search by ID...' */} when_text_input_field_changed={this.when_nitro_search_input_filed_changed.bind(this)} text={this.state.nitro_search} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_nitro()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                <div style={{height:10}}/>
+                {this.render_minified_selected_nitros()}
+                <div style={{height:10}}/>
+                {this.render_select_nitros()}
+            </div>
+        )
+    }
+
+
+    when_nitro_search_input_filed_changed(text){
+        this.setState({nitro_search: text})
+        if(text == ''){
+            this.setState({nitro_search: text, current_searched_nitro: ''})
+        }else{
+            this.setState({nitro_search: text})
+        }
+    }
+
+    search_nitro(){
+        var search_id = this.state.nitro_search
+        if(isNaN(search_id)){
+            this.props.notify(this.props.app_state.loc['162aq']/* That search id is invalid. */, 1500)
+        }else{
+            this.props.notify(this.props.app_state.loc['162ar']/* Searching... */, 1500)
+            this.props.search_for_object(search_id)
+            this.setState({current_searched_nitro: search_id})
+        }
+    }
+
+    render_minified_selected_nitros(){
+        var size = this.props.app_state.size
+        if(size != 's'){
+            return;
+        }
+        var items = [].concat(this.get_selected_creator_group_nitro_items())
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_selected_nitro_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_creator_group_nitro_items(){
+        var my_nitros = []
+        var my_searched_nitros = []
+        var created_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        for(var i = 0; i < created_nitros.length; i++){
+            if(created_nitros[i]['id'] == this.state.current_searched_subscription){
+                my_searched_nitros.push(created_nitros[i])
+            }
+            else{
+                my_nitros.push(created_nitros[i])
+            }
+        }
+        if(my_searched_nitros.length > 0){
+            return my_searched_nitros
+        }
+        return my_searched_nitros.concat(my_nitros)
+    }
+
+    get_selected_creator_group_nitro_items(){
+        var my_nitros = []
+        var created_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        for(var i = 0; i < created_nitros.length; i++){
+            var object = created_nitros[i]
+            if(this.state.selected_creator_group_nitros.includes(object['e5_id'])){
+                my_nitros.push(object)
+            }
+        }
+
+        return my_nitros
+    }
+
+    render_selected_nitro_item(object){
+        var item = this.format_nitro_item(object)
+        return(
+            <div onClick={() => this.when_creator_group_nitro_item_clicked(object)}>
+                {this.render_detail_item('8', item['min'])}
+            </div>
+        )
+    }
+
+    format_nitro_item(object){
+        var tags = object['ipfs'] == null ? ['NitroPost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'NitroPost ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name3(object['event'].returnValues.p5, object);
+        var author = sender
+        var default_image = this.props.app_state.static_assets['end_img']
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image}
+        }
+    }
+
+    get_senders_name3(sender, object){
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    when_creator_group_nitro_item_clicked(object){
+        var selected_clone = this.state.selected_creator_group_nitros.slice()
+        if(!selected_clone.includes(object['e5_id'])){
+            selected_clone.push(object['e5_id'])
+        }else{
+            const index = selected_clone.indexOf(object['e5_id']);
+            if (index > -1) { // only splice array when item is found
+                selected_clone.splice(index, 1); // 2nd parameter means remove one item only
+            }
+        }
+        this.setState({selected_creator_group_nitros:selected_clone})
+    }
+
+    render_select_nitros(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.get_creator_group_nitro_items())
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        else{
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_creator_group_nitro_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    render_creator_group_nitro_object(object, index, ignore_opacity){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_nitro_item(object)
+        if(this.is_post_taken_down_for_sender(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        var alpha = this.state.selected_creator_group_nitros.includes(object['e5_id']) ? 0.6 : 1.0
+        if(ignore_opacity != null && ignore_opacity == true){
+            alpha = 1.0
+        }
+        return(
+            <div onClick={() => this.when_creator_group_nitro_item_clicked(object)}  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'opacity':alpha}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('8', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} >
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    render_selected_nitros(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.get_selected_creator_group_nitro_items())
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{}}>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['162aw']/* 'Your selected nitros will be shown below.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        else{
+            return ( 
+                <div style={{}}>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['162aw']/* 'Your selected nitros will be shown below.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_creator_group_nitro_object(item, index, true)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    is_post_taken_down_for_sender(object){
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(post_author == me) return false
+
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
+
+    render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
+        return(
+            <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                </div>
+            </div>
+        );
+    }
+
+
+
+
+
+
     
 
 
@@ -2993,17 +3892,18 @@ return data['data']
         this.setState({selected_subscriptions:selected_clone})
     }
 
-    format_subscription_item(object){
-        var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
-        var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
-        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
-        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
-        }
-    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     get_number_width(number){
         var last_two_digits = number.toString().slice(0, 1)+'0';
@@ -3055,14 +3955,6 @@ return data['data']
         }
     }
     
-
-
-
-
-
-
-
-
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
@@ -3081,6 +3973,8 @@ return data['data']
         var texts = this.state.entered_text_objects
         var images = this.state.entered_image_objects
         var id = Math.round(new Date().getTime()/1000);
+        var creators = this.state.creators 
+        var selected_creator_group_subscriptions = this.state.selected_creator_group_subscriptions
 
         if(index_tags.length == 0){
             this.props.notify(this.props.app_state.loc['160'], 2700)
@@ -3090,6 +3984,9 @@ return data['data']
         }
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['162'], 2700)
+        }
+        else if(creators.length > 0 && selected_creator_group_subscriptions.length == 0){
+            this.props.notify(this.props.app_state.loc['162ax']/* 'You need to set your creator group subscriptions for your creators to use.' */, 6700)
         }
         else{
             

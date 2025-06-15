@@ -7949,7 +7949,7 @@ class App extends Component {
     }
     else if(target == '7'/* channels */){
       return(
-        <NewChannelPage ref={this.new_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)}
+        <NewChannelPage ref={this.new_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} search_for_object={this.search_for_object.bind(this)}
         />
       )
     }
@@ -7970,12 +7970,16 @@ class App extends Component {
     }
     else if(target == '10'/* audioport */){
       return(
-        <NewAudioPage ref={this.new_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+        <NewAudioPage ref={this.new_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+        search_for_object={this.search_for_object.bind(this)}
+        />
       )
     }
     else if(target == '11'/* videoport */){
       return(
-        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)}/>
+        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)} search_for_object={this.search_for_object.bind(this)}
+        
+        />
       )
     }
     else if(target == '12'/* nitro */){
@@ -8140,6 +8144,24 @@ class App extends Component {
     return { data: hash, account_entries}
   }
 
+  search_for_object = (subscription_id) => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.get_web3_url_from_e5(e5)
+      var e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != ''){
+        const web3 = new Web3(web3_url);
+        var contract_addresses = this.state.addresses[e5]
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        this.load_id_type_then_object(subscription_id, E52contractInstance, e5) 
+      }
+    }
+  }
+  
+
 
 
 
@@ -8237,7 +8259,9 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+                          <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+                          search_for_object={this.search_for_object.bind(this)}
+                          />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8249,7 +8273,9 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_channel_bottomsheet.bind(this)} open={this.state.edit_channel_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+            <EditChannelPage ref={this.edit_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)}
+            
+            />
           </div>
       </SwipeableBottomSheet>
     )
@@ -8724,8 +8750,8 @@ class App extends Component {
     
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-          <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} />
-        </div>
+        <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)}/>
+      </div>
     )
   }
 
@@ -8809,8 +8835,8 @@ class App extends Component {
     
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-          <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} />
-        </div>
+        <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} />
+      </div>
     )
   }
 
@@ -23217,8 +23243,8 @@ return data['data']
     this.record_number_of_items(e5, 'subscriptions', created_subscriptions.length)
 
     var created_subscription_data = await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
-    var created_subscription_object_data = []
-    var created_subscription_object_mapping = {}
+    var created_subscription_object_data = this.state.created_subscriptions[e5] == null ? [] : this.state.created_subscriptions[e5].slice()
+    var created_subscription_object_mapping = this.state.created_subscription_object_mapping[e5] == null ? {} : structuredClone(this.state.created_subscription_object_mapping[e5])
     var is_first_time = this.state.created_subscriptions[e5] == null
     
 
@@ -23312,16 +23338,6 @@ return data['data']
 
       var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0], 'paid_accounts':[]/* paid_accounts */, 'paid_amounts':[]/* paid_amounts */, 'moderators':[]/* moderators */, 'access_rights_enabled':false/* interactible_checker_status_values[0] */, 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3, 'last_expiration_time':last_expiration_time, 'hidden':true, 'pos':created_subscription_object_data.length}
 
-      // if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){
-      //   subscription_object['hidden'] = true;
-      // }
-      // else if(my_blocked_time_value/* [0] */[0] > Date.now()/1000){
-      //   subscription_object['hidden'] = true;
-      // }
-      // else{
-      //   subscription_object['hidden'] = false;
-      // }
-
       if(this.homepage.current?.state.selected_subscription_item == created_subscriptions[i]+e5){
         const previous_obj = this.state.created_subscriptions[e5].find(e => e['e5_id'] == created_subscriptions[i]+e5)
         if(previous_obj != null){
@@ -23337,12 +23353,17 @@ return data['data']
       }
 
       if(subscription_data != null){
-        created_subscription_object_data.push(subscription_object)
+        const index = created_subscription_object_data.findIndex(item => item['e5_id'] === subscription_object['e5_id']);
+        if(index != -1){
+          created_subscription_object_data[index] = subscription_object
+        }else{
+          created_subscription_object_data.push(subscription_object)
+        }
         created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
       }
       
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_subscription_object_data_clone = structuredClone(this.state.created_subscriptions)
         created_subscription_object_data_clone[e5] = created_subscription_object_data
         
@@ -23703,8 +23724,8 @@ return data['data']
     var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
     
-    var created_contract_object_data = []
-    var created_contract_mapping = {}
+    var created_contract_object_data = this.state.created_contracts[e5] == null ? [] : this.state.created_contracts[e5].slice()
+    var created_contract_mapping = this.state.created_contract_mapping[e5] == null ? {} : structuredClone(this.state.created_contract_mapping[e5])
     var is_first_time = this.state.created_contracts[e5].length <= 1 ? true : false
 
 
@@ -23808,22 +23829,16 @@ return data['data']
         }
       }
 
-      created_contract_object_data.push(contract_obj)
+      const index = created_contract_object_data.findIndex(item => item['e5_id'] === contract_obj['e5_id']);
+      if(index != -1){
+        created_contract_object_data[index] = contract_obj
+      }else{
+        created_contract_object_data.push(contract_obj)
+      }
       created_contract_mapping[created_contracts[i]] = contract_obj
 
-      
-      // if(contract_obj['author'] == account){
-      //   for(var e=0; e<entered_accounts.length; e++){
-      //     enter_exit_accounts_notifications.push({'type':'contract_entry_notification', 'event':entered_accounts[e], 'e5':e5, 'timestamp':entered_accounts[e].returnValues.p7})
-      //   }
 
-      //   var exited_accounts = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:11/* exit_contract(11) */,p1/* contract_id */:created_contracts[i]})
-      //   for(var e=0; e<exited_accounts.length; e++){
-      //     enter_exit_accounts_notifications.push({'type':'contract_exit_notification', 'event':exited_accounts[e],'e5':e5, 'timestamp':exited_accounts[e].returnValues.p7})
-      //   }
-      // }
-
-      if(is_first_time){
+      if(is_first_time || true){
         var created_contract_object_data_clone = structuredClone(this.state.created_contracts)
         created_contract_object_data_clone[e5] = created_contract_object_data
 
@@ -24044,7 +24059,7 @@ return data['data']
     // }
     
 
-    var created_proposal_object_data = []
+    var created_proposal_object_data = this.state.my_proposals[e5] == null ? [] : this.state.my_proposals[e5].slice()
     var created_proposal_data = await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
     // var consensus_data = await G52contractInstance.methods.f266(my_proposal_ids, [], 0).call((error, result) => {});
     var is_first_time = this.state.my_proposals[e5] == null
@@ -24125,9 +24140,14 @@ return data['data']
         }
       }
 
-      created_proposal_object_data.push(obj)
+      const index = created_proposal_object_data.findIndex(item => item['e5_id'] === obj['e5_id']);
+      if(index != -1){
+        created_proposal_object_data[index] = obj
+      }else{
+        created_proposal_object_data.push(obj)
+      }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var my_proposals_clone = structuredClone(this.state.my_proposals)
         my_proposals_clone[e5] = created_proposal_object_data
         this.setState({my_proposals: my_proposals_clone})
@@ -24330,8 +24350,8 @@ return data['data']
 
     // var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
-    var created_token_object_data = []
-    var created_token_object_mapping = {}
+    var created_token_object_data = this.state.created_tokens[e5] || []
+    var created_token_object_mapping = this.state.created_token_object_mapping[e5] || {}
     var is_first_time = this.state.created_tokens[e5] == null
 
     // var account_as_list = []
@@ -24346,10 +24366,11 @@ return data['data']
     // var my_blocked_time_value_for_all_tokens = await E52contractInstance.methods.f256(created_tokens, account_as_list, 0,3).call((error, result) => {});
 
 
-    var token_symbol_directory = {}
-    var token_name_directory = {}
-    var token_thumbnail_directory = {}
-    var end_tokens = []
+    var token_symbol_directory = this.state.token_directory[e5] == null ? {} : structuredClone(this.state.token_directory[e5])
+    var token_name_directory = this.state.token_name_directory[e5] == null ? {} : structuredClone(this.state.token_name_directory[e5])
+    var token_thumbnail_directory = this.state.token_thumbnail_directory[e5] == null ? {} : structuredClone(this.state.token_thumbnail_directory[e5])
+    var end_tokens = this.state.end_tokens[e5] == null ? [] : this.state.end_tokens[e5].slice()
+
     token_symbol_directory[0] = 'wei'
     token_symbol_directory['wei'] = 0
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
@@ -24462,7 +24483,12 @@ return data['data']
       }
 
       if(tokens_data != null || (created_tokens[i] == 3 || created_tokens[i] == 5)){
-        created_token_object_data.push(token_obj)
+        const index = created_token_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']);
+        if(index != -1){
+          created_token_object_data[index] = token_obj
+        }else{
+          created_token_object_data.push(token_obj)
+        }
         created_token_object_mapping[created_tokens[i]] = token_obj
       }
       
@@ -24483,7 +24509,7 @@ return data['data']
       token_name_directory[e5+token_id] = token_title;
 
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_tokens_clone = structuredClone(this.state.created_tokens)
         created_tokens_clone[e5] = created_token_object_data
 
@@ -24862,7 +24888,7 @@ return data['data']
 
     
     this.record_number_of_items(e5, 'posts', created_post_events.length)
-    var created_posts = []
+    var created_posts = this.state.created_posts[e5] == null ? [] : this.state.created_posts[e5].slice()
     var is_first_time = this.state.created_posts[e5] == null
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
@@ -24874,10 +24900,17 @@ return data['data']
       if(created_post_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_post_events[i].returnValues.p1.toString(), web3)){
         var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         
-        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
+        const obj = {'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5}
+
+        const index = created_posts.findIndex(item => item['e5_id'] === obj['e5_id']);
+        if(index != -1){
+          created_posts[index] = obj
+        }else{
+          created_posts.push(obj)
+        }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_posts_clone = structuredClone(this.state.created_posts)
         created_posts_clone[e5] = created_posts
         this.setState({created_posts: created_posts_clone}) 
@@ -24956,7 +24989,7 @@ return data['data']
     }
 
     this.record_number_of_items(e5, 'channels', created_channel_events.length)
-    var created_channel = []
+    var created_channel = this.state.created_channels[e5] == null ? [] : this.state.created_channels[e5].slice()
     var is_first_time = this.state.created_channels[e5] == null
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
@@ -24972,43 +25005,8 @@ return data['data']
       if(created_channel_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_channel_events[i].returnValues.p1.toString(), web3)){
         var channel_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
 
-        // var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */})
-        // var old_moderators = []
-
-        // for(var e=0; e<moderator_data.length; e++){
-        //   var mod_id = moderator_data[e].returnValues.p3
-        //   old_moderators.push(mod_id)
-        // }
-
-        // var mod_status_values = await E52contractInstance.methods.f255([id], [old_moderators]).call((error, result) => {});
-
-        // var moderators = []
-        // for(var e=0; e<old_moderators.length; e++){
-        //   var their_status = mod_status_values[0][e]
-        //   if(their_status == true){
-        //     moderators.push(old_moderators[e])
-        //   }
-        // }
-
-        // var interactible_checker_status_values = await E52contractInstance.methods.f254([id],0).call((error, result) => {});
-
-        // var my_interactable_time_value = await E52contractInstance.methods.f256([id], [[account]], 0,2).call((error, result) => {});
-
-        // var my_blocked_time_value = await E52contractInstance.methods.f256([id], [[account]], 0,3).call((error, result) => {});
-
         var channel_obj = {'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':[], 'access_rights_enabled':false, 'my_interactible_time_value':0, 'my_blocked_time_value':0,'e5':e5, 'timestamp':parseInt(created_channel_events[i].returnValues.p6), 'author':created_channel_events[i].returnValues.p5, 'e5_id':id+e5, 'hidden':false }
 
-        // if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 || !moderators.includes(account))){
-        //   channel_obj['hidden'] = true
-        // }
-        // else if(my_blocked_time_value[0][0] > Date.now()/1000){
-        //   channel_obj['hidden'] = true
-        // }
-        // else{
-        //   channel_obj['hidden'] = false
-        // }
-
-        // console.log('apppage', 'channel keys',channel_data.entered_title_text, channel_data['channel_keys'])
         if(channel_data['channel_keys'] != null && channel_data['channel_keys'].length > 0){
           var active_key = channel_data['channel_keys'].length - 1;
           var encrypted_key = channel_data['channel_keys'][active_key][my_unique_crosschain_identifier]
@@ -25027,10 +25025,17 @@ return data['data']
           channel_obj['unencrypted_keys'] = unencrypted_keys
           console.log('apppage', 'channel keys',channel_data.entered_title_text, unencrypted_keys)
         }
-        created_channel.push(channel_obj);
+
+
+        const index = created_channel.findIndex(item => item['e5_id'] === channel_obj['e5_id']);
+        if(index != -1){
+          created_channel[index] = channel_obj
+        }else{
+          created_channel.push(channel_obj)
+        }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_channels_clone = structuredClone(this.state.created_channels)
         created_channels_clone[e5] = created_channel
         this.setState({created_channels: created_channels_clone})
@@ -25148,8 +25153,8 @@ return data['data']
     // console.log('created_job_events', created_job_events)
     this.record_number_of_items(e5, 'jobs', created_job_events.length)
 
-    var created_job = []
-    var created_job_mappings = {}
+    var created_job = this.state.created_jobs[e5] == null ? [] : this.state.created_jobs[e5].slice()
+    var created_job_mappings = this.state.created_job_mappings[e5] == null ? {} : structuredClone(this.state.created_job_mappings[e5])
     var my_jobs = []
     var my_job_ids = []
     var is_first_time = this.state.created_jobs[e5] == null
@@ -25174,7 +25179,15 @@ return data['data']
         if(job_data != null){
           var response_count = response_data[id] == null ? [] : response_data[id]
           var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
-          created_job.push(job)
+          
+          
+          const index = created_job.findIndex(item => item['e5_id'] === job['e5_id']);
+          if(index != -1){
+            created_job[index] = job
+          }else{
+            created_job.push(job)
+          }
+
           created_job_mappings[id] = job
 
           if(job['author'] == account){
@@ -25184,7 +25197,7 @@ return data['data']
         }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_jobs_clone = structuredClone(this.state.created_jobs)
         created_jobs_clone[e5] = created_job
 
@@ -25484,8 +25497,8 @@ return data['data']
     }
 
     this.record_number_of_items(e5, 'storefront', created_store_events.length)
-    const created_stores = []
-    const created_store_mappings = {}
+    const created_stores = this.state.created_stores[e5] == null ? [] : this.state.created_stores[e5].slice()
+    const created_store_mappings = this.state.created_store_mappings[e5] == null ? {} : structuredClone(this.state.created_store_mappings[e5])
     const my_stores = []
     var is_first_time = this.state.created_stores[e5] == null
 
@@ -25500,7 +25513,13 @@ return data['data']
           if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false)
 
           var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':parseInt(created_store_events[i].returnValues.p6), 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5}
-          created_stores.push(obj)
+          
+          const index = created_stores.findIndex(item => item['e5_id'] === obj['e5_id']);
+          if(index != -1){
+            created_stores[index] = obj
+          }else{
+            created_stores.push(obj)
+          }
           created_store_mappings[id] = obj
 
           if(obj['author'] == account){
@@ -25512,7 +25531,7 @@ return data['data']
           }
         }
       }
-      if(is_first_time){
+      if(is_first_time || true){
         var created_stores_clone = structuredClone(this.state.created_stores)
         created_stores_clone[e5] = created_stores
 
@@ -25635,8 +25654,8 @@ return data['data']
     }
 
     this.record_number_of_items(e5, 'bags', created_bag_events.length)
-    const my_created_bags = []
-    var my_created_bag_ids = []
+    const my_created_bags = this.state.created_bags[e5] == null ? [] : this.state.created_bags[e5].slice()
+    var my_created_bag_ids =  []
     var is_first_time = this.state.created_bags[e5] == null
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events), web3, e5, contract_addresses)
@@ -25666,23 +25685,16 @@ return data['data']
       console.log('bag_data', 'id', id, data)
       var response_count = response_data[id] == null ? [] : response_data[id]
       var responded_to = response_data2[id] == null ? [] : response_data2[id]
-      // response_count_data.forEach(event => {
-      //   if(event.returnValues.p1 == id){
-      //     response_count.push(event)
-      //     if(event.returnValues.p2/* sender_acc_id */ == account){
-      //       //sender is author of response
-      //       responded_to = true
-      //     }
-      //   }
-      // });
-
-      // console.log('all_data2', 'loaded data for ', id)
       
       if(data != null && id != 1523 && id != 1538){
-        
         const bag = {'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':parseInt(created_bag_events[i].returnValues.p4), 'author':created_bag_events[i].returnValues.p3, 'e5_id':id+e5, 'responses':response_count.length, 'responded_to':responded_to}
         
-        my_created_bags.push(bag)
+        const index = my_created_bags.findIndex(item => item['e5_id'] === bag['e5_id']);
+        if(index != -1){
+          my_created_bags[index] = bag
+        }else{
+          my_created_bags.push(bag)
+        }
 
         var images = this.get_bag_images(bag)
         // console.log('all_data2', 'staged images for bag ', bag, images)
@@ -25698,7 +25710,7 @@ return data['data']
           my_bag_responses = my_bag_responses.concat(response_count)
         }
       }
-      if(is_first_time){
+      if(is_first_time || true){
         var created_bags_clone = structuredClone(this.state.created_bags)
         created_bags_clone[e5] = my_created_bags
         this.setState({created_bags: created_bags_clone})
@@ -25861,7 +25873,7 @@ return data['data']
     }
 
     this.record_number_of_items(e5, 'contractor', created_contractor_events.length)
-    var created_contractor = []
+    var created_contractor = this.state.created_contractors[e5] == null ? [] : this.state.created_contractors[e5].slice()
     var my_contractor_posts = []
     var is_first_time = this.state.created_contractors[e5] == null
 
@@ -25899,27 +25911,18 @@ return data['data']
         var contractor_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
         if(contractor_data != null){
-          // var requests = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:38})
           var requests = request_data[id] == null ? [] : request_data[id]
           var clients = clients_data[id] == null ? [] : clients_data[id]
-          // all_requests.forEach(request => {
-          //   if(request.returnValues.p1 == id){
-          //     requests.push(request)
-          //     if(!clients.includes(request.returnValues.p2)){
-          //       clients.push(request.returnValues.p2)
-          //     }
-          //   }
-          // });
           var responses = response_data[id] == null ? [] : response_data[id]
-          // all_responses.forEach(response => {
-          //   if(response.returnValues.p1 == id){
-          //     responses.push(response)
-          //   }
-          // });
 
           var post = {'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':parseInt(created_contractor_events[i].returnValues.p6), 'author':created_contractor_events[i].returnValues.p5, 'e5_id':id+e5, 'requests':requests.length, 'responses': responses.length, 'clients': clients.length}
           
-          created_contractor.push(post)
+          const index = created_contractor.findIndex(item => item['e5_id'] === post['e5_id']);
+          if(index != -1){
+            created_contractor[index] = post
+          }else{
+            created_contractor.push(post)
+          }
 
           if(post['author'] == account){
             my_contractor_posts.push(id)
@@ -25927,7 +25930,7 @@ return data['data']
         }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_contractors_clone = structuredClone(this.state.created_contractors)
         created_contractors_clone[e5] = created_contractor
         this.setState({created_contractors: created_contractors_clone,})
@@ -26019,7 +26022,7 @@ return data['data']
     
     this.record_number_of_items(e5, 'audio', created_audio_events.length)
     var created_audios = this.state.created_audios[e5] == null ? [] : this.state.created_audios[e5].slice()
-    var my_acquired_audios = []
+    var my_acquired_audios = this.state.my_acquired_audios.slice()
     var created_audio_mappings = this.state.created_audio_mappings[e5] == null ? {} : structuredClone(this.state.created_audio_mappings[e5])
     var is_first_time = this.state.created_audios[e5] == null
     is_first_time = true
@@ -26054,37 +26057,31 @@ return data['data']
 
           var album_sales = album_sale_data[id] == null ? 0 : album_sale_data[id]
           var song_sales = song_sale_data[id] == null ? 0 : song_sale_data[id]
-          // requests.forEach(event => {
-          //   if(event.returnValues.p3/* context */ == id){
-          //     if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
-          //       album_sales++
-          //     }else{
-          //       song_sales++
-          //     }
-          //   }
-          // });
 
           const data = {'id':id, 'ipfs':audio_data, 'event': created_audio_events[i], 'e5':e5, 'timestamp':parseInt(created_audio_events[i].returnValues.p6), 
           'author':created_audio_events[i].returnValues.p5, 'e5_id':id+e5, 'album_sales':album_sales, 'song_sales':song_sales
           }
 
-          var obj = this.get_item_in_array(created_audios, id)
-          if(obj == null){
-            created_audios.push(data)
+          const index = created_audios.findIndex(item => item['e5_id'] === data['e5_id']);
+          if(index != -1){
+            created_audios[index] = data
           }else{
-            var pos = created_audios.indexOf(obj)
-            if(pos != -1){
-              created_audios[pos] = data
-            }
+            created_audios.push(data)
           }
           created_audio_mappings[id] = data
+
           if(this.state.my_albums.includes(id)){
-            my_acquired_audios.push(data)
+            const index2 = my_acquired_audios.findIndex(item => item['e5_id'] === data['e5_id']);
+            if(index2 != -1){
+              my_acquired_audios[index] = data
+            }else{
+              my_acquired_audios.push(data)
+            }
           }
         }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_audios_clone = structuredClone(this.state.created_audios)
         var created_audio_mappings_clone = structuredClone(this.state.created_audio_mappings)
         created_audios_clone[e5] = created_audios
@@ -26169,7 +26166,7 @@ return data['data']
     this.record_number_of_items(e5, 'video', created_video_events.length)
     var created_videos = this.state.created_videos[e5] == null ? [] : this.state.created_videos[e5].slice()
     var created_video_mappings = this.state.created_video_mappings[e5] == null ? {} : structuredClone(this.state.created_video_mappings[e5])
-    var my_acquired_videos = []
+    var my_acquired_videos = this.state.my_acquired_videos.slice()
     var is_first_time = this.state.created_videos[e5] == null
     is_first_time = true
 
@@ -26205,41 +26202,36 @@ return data['data']
 
           var videopost_sales = videopost_sale_data[id] == null ? 0 : videopost_sale_data[id]
           var video_sales = video_sale_data[id] == null ? 0 : video_sale_data[id]
-          // sales_events.forEach(event => {
-          //   if(event.returnValues.p3/* context */ == id){
-          //     if(event.returnValues.p5/* sales_type */ == 0/* entire_album */){
-          //       videopost_sales++
-          //     }else{
-          //       video_sales++
-          //     }
-          //   }
-          // });
 
           const data = {'id':id, 'ipfs':video_data, 'event': created_video_events[i], 'e5':e5, 'timestamp':parseInt(created_video_events[i].returnValues.p6), 
           'author':created_video_events[i].returnValues.p5, 'e5_id':id+e5, 'videopost_sales':videopost_sales, 'video_sales':video_sales,
           }
 
-          var obj = this.get_item_in_array(created_videos, id)
-          if(obj == null){
-            created_videos.push(data)
+          const index = created_videos.findIndex(item => item['e5_id'] === data['e5_id']);
+          if(index != -1){
+            created_videos[index] = data
           }else{
-            var pos = created_videos.indexOf(obj)
-            if(pos != -1){
-              created_videos[pos] = data
-            }
+            created_videos.push(data)
           }
+
           created_video_mappings[id] = data
           if(this.state.my_videoposts.includes(id)){
-            my_acquired_videos.push(data)
+            const index2 = my_acquired_videos.findIndex(item => item['e5_id'] === data['e5_id']);
+            if(index2 != -1){
+              my_acquired_videos[index] = data
+            }else{
+              my_acquired_videos.push(data)
+            }
           }
         }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_videos_clone = structuredClone(this.state.created_videos)
         var created_video_mappings_clone = structuredClone(this.state.created_video_mappings)
         created_videos_clone[e5] = created_videos
         created_video_mappings_clone[e5] = created_video_mappings
+
         this.setState({created_videos: created_videos_clone, created_video_mappings: created_video_mappings_clone, my_acquired_videos: my_acquired_videos})   
         // await this.wait(150)     
       }
@@ -26399,20 +26391,17 @@ return data['data']
             this.load_my_account_storage_info(data)
           }
 
-          var obj = this.get_item_in_array(created_nitros, id)
-          if(obj == null){
-            created_nitros.push(data)
+          const index = created_nitros.findIndex(item => item['e5_id'] === data['e5_id']);
+          if(index != -1){
+            created_nitros[index] = data
           }else{
-            var pos = created_nitros.indexOf(obj)
-            if(pos != -1){
-              created_nitros[pos] = data
-            }
+            created_nitros.push(data)
           }
           created_nitro_mappings[id] = data
         }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_nitros_clone = structuredClone(this.state.created_nitros)
         var created_nitro_mappings_clone = structuredClone(this.state.created_nitro_mappings)
         
@@ -26501,7 +26490,7 @@ return data['data']
 
     
     this.record_number_of_items(e5, 'poll', created_post_events.length)
-    var created_posts = []
+    var created_posts = this.state.created_polls[e5] == null ? [] : this.state.created_polls[e5].slice()
     var is_first_time = this.state.created_polls[e5] == null
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
@@ -26513,12 +26502,17 @@ return data['data']
       if(created_post_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_post_events[i].returnValues.p1.toString(), web3)){
         var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
 
-        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5})
+        const data = {'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5}
 
-        console.log('poll_loader', created_posts)
+        const index = created_posts.findIndex(item => item['e5_id'] === data['e5_id']);
+        if(index != -1){
+          created_posts[index] = data
+        }else{
+          created_posts.push(data)
+        }
       }
 
-      if(is_first_time){
+      if(is_first_time || true){
         var created_polls_clone = structuredClone(this.state.created_polls)
         created_polls_clone[e5] = created_posts
         this.setState({created_polls: created_polls_clone}) 
@@ -33837,6 +33831,8 @@ return data['data']
     var hash = web3.utils.keccak256(data.toString())
     return hash
   }
+
+
 
 
 

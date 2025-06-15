@@ -94,6 +94,8 @@ class NewAudioPage extends Component {
         album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
         markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), song_credits:'', entered_zip_objects:[],
         get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(),
+
+        channel_search:'',
     };
 
     get_new_job_page_tags_object(){
@@ -102,7 +104,7 @@ class NewAudioPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['a311bg']/* 'metadata' */,this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298'], this.props.app_state.loc['a311b']/* 'album-fee' */, this.props.app_state.loc['a311c']/* 'track-list' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['a311bg']/* 'metadata' */,this.props.app_state.loc['110'], this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['298']/* 'subscription-lock */, this.props.app_state.loc['a311dh']/* 'creator-group' */, this.props.app_state.loc['a311b']/* 'album-fee' */, this.props.app_state.loc['a311c']/* 'track-list' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -376,6 +378,13 @@ class NewAudioPage extends Component {
             return(
                 <div>
                     {this.render_enter_zip_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311dh']/* 'creator-group' */){
+            return(
+                <div>
+                    {this.render_set_creator_group_part()}
                 </div>
             )
         }
@@ -1025,11 +1034,11 @@ class NewAudioPage extends Component {
 
     get_subscription_items(){
         var my_subscriptions = []
-        var myid = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
-        if(myid == null) myid = 1;
-        var created_subs = this.get_all_sorted_objects(this.props.app_state.my_created_subscriptions)
+        var created_subs = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
         for(var i = 0; i < created_subs.length; i++){
-            var post_author = created_subs[i]['event'] == null ? 0 : created_subs[i]['event'].returnValues.p3
+            var post_author = created_subs[i]['author']
+            var myid = this.props.app_state.user_account_id[created_subs[i]['e5']]
+            if(myid == null) myid = 1;
             if(post_author.toString() == myid.toString()){
                 my_subscriptions.push(created_subs[i])
             }
@@ -1061,31 +1070,17 @@ class NewAudioPage extends Component {
       });
     }
 
-    render_subscription_object(object, index){
+    render_subscription_object(object, index, ignore_opacity){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
 
-        if(this.state.selected_subscriptions.includes(object['id']+object['e5'])){
-            return(
-                <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                    <div style={{'padding': '5px 0px 5px 5px'}}>
-                        {this.render_detail_item('1', item['tags'])}
-                        <div style={{height: 10}}/>
-                        <div style={{'padding': '0px 0px 0px 0px'}}>
-                            {this.render_detail_item('3', item['id'])}
-                        </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}}>
-                            {this.render_detail_item('2', item['age'])}
-                        </div>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
-                    </div>         
-                </div>
-            )
+        var alpha = this.state.selected_creator_group_subscriptions.includes(object['e5_id']) ? 0.6 : 1.0
+        if(ignore_opacity != null && ignore_opacity == true){
+            alpha = 1.0
         }
         return(
-            <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'opacity':alpha}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1118,10 +1113,21 @@ class NewAudioPage extends Component {
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var sender = this.get_senders_name2(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
         }
     }
 
@@ -3107,6 +3113,317 @@ return data['data']
         var song = this.state.songs[item_pos]
         this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics'], song_credits: song['credits'], get_explicit_selector_tags_object: song['explicit'], track_lyric_file_name: song['track_lyric_file_name'], subtitle_type: song['subtitle_type']});
     }
+
+
+
+
+
+
+
+
+
+    render_set_creator_group_part(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_creator_group_ui()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_creator_group_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_creator_group_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_select_creator_group_ui(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311di']/* 'Creator Group Subscription Lock.' */, 'details':this.props.app_state.loc['a311dj']/* If your part of a creator group, specify the ID of the channel to automatically add all the subscriptions set. */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['a311dn']/* 'If you set your creator group, it will take precedence over subscription lock settings and audiopost prices. This setting cannot be changed after runtime.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
+
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['162ap']/* 'Search by ID...' */} when_text_input_field_changed={this.when_channel_search_input_filed_changed.bind(this)} text={this.state.channel_search} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_channel()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_previously_used_channels_suggestions()}
+                <div style={{height:10}}/>
+                {this.render_selected_channel_message_if_any()}
+                {this.render_select_channel_objects()}
+            </div>
+        )
+    }
+
+    render_previously_used_channels_suggestions(){
+        var items = [].concat(this.get_previously_used_channels())
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_previously_used_channel_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3',{'title':this.get_id_from_object(item['channel_id']), 'details':this.props.app_state.loc['a311dm']/* '$ subscriptions.' */.replace('$', item['subscriptions'].length),'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_previously_used_channel_suggestion_clicked(item, index){
+        var channel_id = this.get_id_from_object(item['channel_id'])
+        this.setState({channel_search: channel_id})
+        var me = this;
+        setTimeout(function() {
+            me.search_channel()
+        }, (1 * 500));
+    }
+
+    get_id_from_object(item){
+        if(!item.includes('E')){
+            return item
+        }
+        return item.split('E')[0]
+    }
+
+    add_to_previously_used_channels(selected_channel_id, selected_channel_subscriptions){
+        var previously_used_channels = localStorage.getItem("creatorgroupsuggestions");
+        if(previously_used_channels != null && previously_used_channels != ""){
+            previously_used_channels = JSON.parse(previously_used_channels)
+        }else{
+            previously_used_channels = {'data':[]}
+        }
+        var obj = { 'channel_id':selected_channel_id, 'subscriptions':selected_channel_subscriptions, 'time': Date.now() }
+
+        if(!this.previously_used_channels_includes(previously_used_channels['data'], obj)){
+            previously_used_channels['data'].push(obj)
+        }
+
+        localStorage.setItem("creatorgroupsuggestions", JSON.stringify(previously_used_channels));
+    }
+
+    get_previously_used_channels(){
+        var previously_used_channels = localStorage.getItem("creatorgroupsuggestions");
+        if(previously_used_channels != null && previously_used_channels != ""){
+            previously_used_channels = JSON.parse(previously_used_channels)
+        }else{
+            return []
+        }
+        return previously_used_channels['data']
+    }
+
+    previously_used_channels_includes(array, item){
+        var includes = false
+        array.forEach(element => {
+            if(element['channel_id'] == item['channel_id']){
+                includes = true
+            }
+        });
+
+        return includes
+    }
+
+
+
+    render_selected_channel_message_if_any(){
+        if(this.state.creator_group_subscriptions != null){
+            var length = this.state.creator_group_subscriptions.length
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['a311dk']/* '$ subscriptions set.' */.replace('$', length), 'textsize':'13px', 'font':this.props.app_state.font})}
+                    {this.render_warning_if_selected_files_will_not_be_counted()}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_warning_if_selected_files_will_not_be_counted(){
+        var selected_channel_supported_nitros = this.state.selected_channel_supported_nitros == null ? [] : this.state.selected_channel_supported_nitros
+        if(selected_channel_supported_nitros.length == 0){
+            return;
+        }
+        var invalid_items = []
+        this.state.songs.forEach(song => {
+            var track_nitro = song['track']['nitro']
+            if(track_nitro == null || !selected_channel_supported_nitros.includes(track_nitro)){
+                invalid_items.push(song)
+            }
+        });
+
+        if(invalid_items.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['a311dl']/* '⚠️ $ of your selected songs are using nitro nodes that are not supported by the creator group.' */.replace('$', invalid_items.length), 'textsize':'10px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
+    fetch_searched_channel_objects(){
+        var searched_id = this.state.current_searched_channel
+        var selected_channel = this.state.selected_channel
+        var channels = []
+        if(searched_id != null){
+            var created_channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
+            channels = created_channels.filter(function (object) {
+                return (object['id'] == searched_id || object['e5_id'] == selected_channel)
+            })
+        }
+        return channels
+    }
+
+    when_channel_search_input_filed_changed(text){
+        if(text == ''){
+            this.setState({channel_search: text, current_searched_channel: ''})
+        }else{
+            this.setState({channel_search: text})
+        }
+        
+    }
+
+    search_channel(){
+        var search_id = this.state.channel_search
+        if(isNaN(search_id)){
+            this.props.notify(this.props.app_state.loc['162aq']/* That search id is invalid. */, 1500)
+        }else{
+            this.props.notify(this.props.app_state.loc['162ar']/* Searching... */, 1500)
+            this.props.search_for_object(search_id)
+            this.setState({current_searched_channel: search_id})
+        }
+    }
+
+    render_select_channel_objects(){
+        var background_color = this.props.theme['card_background_color']
+        var items = [].concat(this.fetch_searched_channel_objects())
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        else{
+            return ( 
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_creator_group_channel_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    render_creator_group_channel_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_channel_item(object)
+
+        var alpha = this.state.selected_channel == object['e5_id'] ? 0.6 : 1.0
+        return(
+            <div onClick={() => this.when_channel_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'opacity':alpha}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    when_channel_item_clicked(object){
+        var channels_subscriptions = object['ipfs'].selected_creator_group_subscriptions == null ? [] : object['ipfs'].selected_creator_group_subscriptions
+
+        var selected_channel_supported_nitros = object['ipfs'].selected_creator_group_nitros == null ? [] : object['ipfs'].selected_creator_group_nitros
+
+        var selected_object_identifier = {'e5':object['e5'] , 'id':object['id']}
+
+        if(this.state.selected_channel == object['e5_id']){
+            this.setState({selected_channel: null, creator_group_subscriptions: null, selected_channel_supported_nitros:null, selected_object_identifier: null})
+        }else{
+            this.setState({selected_channel: object['e5_id'], creator_group_subscriptions: channels_subscriptions, selected_channel_supported_nitros: object, selected_object_identifier: selected_object_identifier})
+            this.add_to_previously_used_channels(object['e5_id'], channels_subscriptions)
+        } 
+    }
+
+    format_channel_item(object){
+        var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var sender = this.get_senders_name2(object['event'].returnValues.p3, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

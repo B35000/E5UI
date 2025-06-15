@@ -2537,6 +2537,15 @@ class StackPage extends Component {
         var newly_participated_polls = []
         var newly_participated_objects = []
         var new_transaction_index_obj={}
+
+        const creator_group_updates = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            []/* contexts */, 
+            []/* int_data */
+        ]
+        const creator_group_updates_strings = [ [] ]
+
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
                 var new_tx_index = -1
@@ -3300,24 +3309,24 @@ class StackPage extends Component {
 
                     var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location  }
 
-                    var metadata_action = [ /* set metadata */
+                    const bag_metadata_action = [ /* set metadata */
                         [20000, 1, 0],
                         [], [],/* target objects */
                         []/* contexts */, 
                         []/* int_data */
                     ]
-                    var metadata_strings = [ [] ]
-                    metadata_action[1].push(new_tx_index)
-                    metadata_action[2].push(35)
-                    metadata_action[3].push(0)
-                    metadata_action[4].push(0)
+                    const bag_metadata_strings = [ [] ]
+                    bag_metadata_action[1].push(new_tx_index)
+                    bag_metadata_action[2].push(35)
+                    bag_metadata_action[3].push(0)
+                    bag_metadata_action[4].push(0)
                     var ipfs_obj = await this.get_object_ipfs_index(final_bag_object, calculate_gas, ipfs_index, txs[i].id);
-                    metadata_strings[0].push(ipfs_obj.toString())
+                    bag_metadata_strings[0].push(ipfs_obj.toString())
 
                     should_optimize_run = false
 
-                    ints.push(metadata_action)
-                    strs.push(metadata_strings)
+                    ints.push(bag_metadata_action)
+                    strs.push(bag_metadata_strings)
                     adds.push([])
                 }
                 else if(txs[i].type == this.props.app_state.loc['1497']/* 'bag-response' */){
@@ -3519,6 +3528,48 @@ class StackPage extends Component {
                             strs.push(string_obj)
                             adds.push([])
                             ints.push(transaction_obj)
+                        }
+                    }
+
+                    if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
+                        const selected_channel = txs[i].selected_channel
+                        if(selected_channel != null){
+                            const selected_object_identifier = txs[i].selected_object_identifier
+                            const selected_channel_e5 = selected_object_identifier['e5']
+                            const selected_channel_id = selected_object_identifier['id']
+    
+                            const selected_channel_target_id = 27/* 27(creator_group_channel_container) */
+                            const creator_group_context = selected_channel_id
+                            const creator_group_int_data = parseInt(selected_channel_e5.replace('E',''))
+
+                            const creator_group_record = {'e':[]}
+                            if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
+                                const previous_songs = txs[i].previous_songs
+                                txs[i].songs.forEach(song => {
+                                    const includes = previous_songs.find(e => e['track'] === song['track'])
+                                    if(includes == null){
+                                        creator_group_record['e'].push(song['track'])
+                                    }
+                                });
+                            }else{
+                                const previous_videos = txs[i].previous_videos
+                                txs[i].videos.forEach(video => {
+                                    const includes = previous_videos.find(e => e['video'] === song['video'])
+                                    if(includes == null){
+                                        creator_group_record['e'].push(video['video'])
+                                    }
+                                });
+                            }
+                            if(creator_group_record['e'].length > 0){
+                                creator_group_updates[1].push(selected_channel_target_id)
+                                creator_group_updates[2].push(23)
+                                creator_group_updates[3].push(creator_group_context)
+                                creator_group_updates[4].push(creator_group_int_data)
+
+                                const creator_group_post_identifier = 'creatorgroup'+txs[i].id
+                                const string_data = await this.get_object_ipfs_index(creator_group_record, calculate_gas, ipfs_index, creator_group_post_identifier);
+                                creator_group_updates_strings[0].push(string_data)
+                            }
                         }
                     }
                 }
@@ -3861,17 +3912,19 @@ class StackPage extends Component {
                 pushed_txs.push(txs[i])
                 if(new_tx_index != -1) new_transaction_index_obj[txs[i].id] = new_tx_index
             }
-            
         }
 
 
-        var metadata_action = [ /* set metadata */
+        const metadata_action = [ /* set metadata */
             [20000, 1, 0],
             [], [],/* target objects */
             []/* contexts */, 
             []/* int_data */
         ]
-        var metadata_strings = [ [] ]
+        const metadata_strings = [[]]
+
+
+        
 
 
         for(var i=0; i<pushed_txs.length; i++){
@@ -3894,8 +3947,43 @@ class StackPage extends Component {
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
                 metadata_action[4].push(0)
+
                 var ipfs_obj = await this.get_object_ipfs_index(pushed_txs[i], calculate_gas, ipfs_index, pushed_txs[i].id);
                 metadata_strings[0].push(ipfs_obj.toString())
+
+                if(pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                    const selected_channel = pushed_txs[i].selected_channel
+                    if(selected_channel != null){
+                        const selected_object_identifier = pushed_txs[i].selected_object_identifier
+                        const selected_channel_e5 = selected_object_identifier['e5']
+                        const selected_channel_id = selected_object_identifier['id']
+
+                        const selected_channel_target_id = 27/* 27(creator_group_channel_container) */
+                        const creator_group_context = selected_channel_id
+                        const creator_group_int_data = parseInt(selected_channel_e5.replace('E',''))
+
+                        const creator_group_record = {'e':[]}
+                        if(pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
+                            pushed_txs[i].songs.forEach(song => {
+                                creator_group_record['e'].push(song['track'])
+                            });
+                        }else{
+                            pushed_txs[i].videos.forEach(video => {
+                                creator_group_record['e'].push(video['video'])
+                            });
+                        }
+
+                        creator_group_updates[1].push(selected_channel_target_id)
+                        creator_group_updates[2].push(23)
+                        creator_group_updates[3].push(creator_group_context)
+                        creator_group_updates[4].push(creator_group_int_data)
+
+                        const creator_group_post_identifier = 'creatorgroup'+pushed_txs[i].id
+                        const string_data = await this.get_object_ipfs_index(creator_group_record, calculate_gas, ipfs_index, creator_group_post_identifier);
+                        creator_group_updates_strings[0].push(string_data)
+                        
+                    }
+                }
             }
         }
 
@@ -3904,6 +3992,14 @@ class StackPage extends Component {
             strs.push(metadata_strings)
             adds.push([])
         }
+
+        if(creator_group_updates[1].length != 0){
+            ints.push(creator_group_updates)
+            strs.push(creator_group_updates_strings)
+            adds.push([])
+        }
+
+
         
 
 
@@ -4605,6 +4701,35 @@ class StackPage extends Component {
                     const all_final_elements = all_elements.map(word => word.toLowerCase());
                     obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type}
                     ipfs_index_array.push({'id':t.id, 'data':t})
+
+                    if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                        const selected_channel = t.selected_channel
+                        if(selected_channel != null){
+                            const creator_group_record = {'e':[]}
+                            if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
+                                const previous_songs = txs[i].previous_songs
+                                txs[i].songs.forEach(song => {
+                                    const includes = previous_songs.find(e => e['track'] === song['track'])
+                                    if(includes == null){
+                                        creator_group_record['e'].push(song['track'])
+                                    }
+                                });
+                            }else{
+                                const previous_videos = txs[i].previous_videos
+                                txs[i].videos.forEach(video => {
+                                    const includes = previous_videos.find(e => e['video'] === song['video'])
+                                    if(includes == null){
+                                        creator_group_record['e'].push(video['video'])
+                                    }
+                                });
+                            }
+                            if(creator_group_record['e'].length > 0){
+                                const creator_group_post_identifier = 'creatorgroup'+t.id
+                                ipfs_index_object[creator_group_post_identifier] = creator_group_record
+                                ipfs_index_array.push({'id':creator_group_post_identifier, 'data':creator_group_record})
+                            }
+                        }
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
                     var t = txs[i]
@@ -4722,6 +4847,25 @@ class StackPage extends Component {
                     const all_final_elements = all_elements.map(word => word.toLowerCase());
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type}
                     ipfs_index_array.push({'id':data.id, 'data':data})
+
+                    if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                        const selected_channel = data.selected_channel
+                        if(selected_channel != null){
+                            const creator_group_record = {'e':[]}
+                            if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
+                                data.songs.forEach(song => {
+                                    creator_group_record['e'].push(song['track'])
+                                });
+                            }else{
+                                data.videos.forEach(video => {
+                                    creator_group_record['e'].push(video['video'])
+                                });
+                            }
+                            const creator_group_post_identifier = 'creatorgroup'+data.id
+                            ipfs_index_object[creator_group_post_identifier] = creator_group_record
+                            ipfs_index_array.push({'id':creator_group_post_identifier, 'data':creator_group_record})
+                        }
+                    }
                 }
                 else if(txs[i].type == 'admin'){
                     ipfs_index_object[txs[i].id] = txs[i]
@@ -11827,6 +11971,10 @@ class StackPage extends Component {
     }
 
     when_get_upload_storage_option_tags_object_updated(tag_obj){
+        if(this.is_preparing_files != null && this.is_preparing_files == true){
+            this.props.notify(this.props.app_state.loc['1593gr']/* Wait a bit.' */, 1200)
+            return;
+        }
         this.setState({get_upload_storage_option_tags_object: tag_obj})
     }
 
@@ -12591,6 +12739,7 @@ class StackPage extends Component {
     when_file_picked = async (e, type) => {
         if(e.target.files && e.target.files[0]){
             this.props.notify(this.props.app_state.loc['1593by']/* 'Preparing Files...' */, 2000)
+            this.selected_nitro_item = this.state.selected_nitro_item
 
             this.selected_files_count = e.target.files.length
             this.selected_files_type = type
@@ -12600,12 +12749,13 @@ class StackPage extends Component {
 
             this.files = []
             this.too_big_files = []
+            this.is_preparing_files = true;
             for(var i = 0; i < e.target.files.length; i++){
                 this.is_loading_file = true
                 let reader = new FileReader();
                 reader.onload = async function(ev){
                     var thumb = type == 'video' ? await this.extractFirstFrame(ev.target.result) : ''
-                    var obj = {'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':''}
+                    var obj = {'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':'', 'nitro':this.selected_nitro_item}
 
                     if(ev.total < this.get_upload_file_size_limit()){
                         this.files.push(obj)
@@ -12616,12 +12766,13 @@ class StackPage extends Component {
                     if(this.files.length + this.too_big_files.length == this.selected_files_count){
                         //were done loading the files
                         if(this.too_big_files.length == 0){
-                            this.upload_files()
+                            this.upload_files(this.selected_nitro_item)
                         }else{
                             var formatted_size = this.format_data_size(this.get_upload_file_size_limit())
                             var fs = formatted_size['size']+' '+formatted_size['unit']
                             this.props.notify(this.props.app_state.loc['1593bw']/* 'One of the files exceeds the current file size limit of ' */+fs, 6000)
                         }
+                        this.is_preparing_files = false
                     }
                     this.is_loading_file = false
                 }.bind(this);
@@ -12882,7 +13033,7 @@ class StackPage extends Component {
         // this.props.upload_file_to_web3_or_chainsafe(obj, type)
     }
 
-    upload_files = async () => {
+    upload_files = async (nitro_id) => {
         var size_total = 0
         for(var i = 0; i<this.file_names.length; i++){
             this.files[i]['name'] = this.file_names[i]
@@ -12902,7 +13053,7 @@ class StackPage extends Component {
             if(size_total > this.get_upload_file_size_limit()){
                 this.props.notify(this.props.app_state.loc['1593cy']/* 'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.' */, 9000)
             }else{
-                if(this.state.selected_nitro_item == null){
+                if(nitro_id == null){
                    this.props.notify(this.props.app_state.loc['1593coz']/* 'You need to select a nitro node first.' */, 9000) 
                 }
                 else if(!this.props.app_state.has_wallet_been_set){
@@ -12910,8 +13061,8 @@ class StackPage extends Component {
                 }
                 else{
                     var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
-                    var obj = this.get_item_in_array2(this.state.selected_nitro_item, all_nitros)
-                    var node_details = this.props.app_state.nitro_node_details[this.state.selected_nitro_item]
+                    var obj = this.get_item_in_array2(nitro_id, all_nitros)
+                    var node_details = this.props.app_state.nitro_node_details[nitro_id]
                     
                     if(obj == null){
                         this.props.notify(this.props.app_state.loc['1593da']/* 'Please wait a few moments for E5 to syncronize fully.' */, 5000)

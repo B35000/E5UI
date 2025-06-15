@@ -89,6 +89,8 @@ class EditAudioPage extends Component {
 
         album_art:null, markdown:'', song_credits:'', entered_zip_objects:[],
         get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(),
+
+        channel_search:'',
     };
 
     get_new_job_page_tags_object(){
@@ -276,7 +278,10 @@ class EditAudioPage extends Component {
         if(this.state.get_explicit_selector_tags_object == null){
             this.setState({get_explicit_selector_tags_object:this.get_explicit_selector_tags_object()})
         }
-        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, edit_song_item_pos:-1, get_explicit_selector_tags_object:this.get_explicit_selector_tags_object()})
+        if(this.state.channel_search == null){
+            this.setState({channel_search:'',})
+        }
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, edit_song_item_pos:-1, get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(), previous_songs:this.state.songs})
     }
 
 
@@ -1030,11 +1035,11 @@ class EditAudioPage extends Component {
 
     get_subscription_items(){
         var my_subscriptions = []
-        var myid = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
-        if(myid == null) myid = 1;
-        var created_subs = this.get_all_sorted_objects(this.props.app_state.my_created_subscriptions)
+        var created_subs = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
         for(var i = 0; i < created_subs.length; i++){
-            var post_author = created_subs[i]['event'] == null ? 0 : created_subs[i]['event'].returnValues.p3
+            var post_author = created_subs[i]['author']
+            var myid = this.props.app_state.user_account_id[created_subs[i]['e5']]
+            if(myid == null) myid = 1;
             if(post_author.toString() == myid.toString()){
                 my_subscriptions.push(created_subs[i])
             }
@@ -1071,26 +1076,9 @@ class EditAudioPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
 
-        if(this.state.selected_subscriptions.includes(object['id']+object['e5'])){
-            return(
-                <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                    <div style={{'padding': '5px 0px 5px 5px'}}>
-                        {this.render_detail_item('1', item['tags'])}
-                        <div style={{height: 10}}/>
-                        <div style={{'padding': '0px 0px 0px 0px'}}>
-                            {this.render_detail_item('3', item['id'])}
-                        </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}}>
-                            {this.render_detail_item('2', item['age'])}
-                        </div>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
-                    </div>         
-                </div>
-            )
-        }
+        var alpha = this.state.selected_creator_group_subscriptions.includes(object['e5_id']) ? 0.6 : 1.0
         return(
-            <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div onClick={() => this.when_subscription_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'opacity':alpha}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1123,10 +1111,21 @@ class EditAudioPage extends Component {
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var sender = this.get_senders_name2(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
         }
     }
 
@@ -3190,6 +3189,14 @@ return data['data']
         var song = this.state.songs[item_pos]
         this.setState({song_title: song['song_title'], song_composer: song['song_composer'], price_data2: song['price_data'], audio_file: song['track'], edit_song_item_pos: item_pos, songs_free_plays_count: song['songs_free_plays_count'], song_lyrics: song['lyrics'], song_credits: (song['credits'] == null ? '':song['credits']), get_explicit_selector_tags_object: (song['explicit'] == null ? this.get_explicit_selector_tags_object(): song['explicit']), track_lyric_file_name: song['track_lyric_file_name'], subtitle_type: song['subtitle_type'] });
     }
+
+
+
+
+
+
+
+
 
 
 
