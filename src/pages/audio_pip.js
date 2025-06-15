@@ -277,7 +277,7 @@ class AudioPip extends Component {
                 <div style={{'position': 'relative'}}>
                     <div style={{width:this.props.player_size, height:40, 'margin':'0px 0px 0px 0px', 'z-index':'3', 'position': 'absolute'}}/>
                     <div style={{width:2, height:2, 'margin':'px 0px 0px 0px', 'z-index':'2', 'position': 'absolute'}}>
-                        <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} onProgress={this.onProgress} controls ref={this.audio}>
+                        <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} onProgress={this.onProgress} controlsList="nodownload" controls ref={this.audio}>
                             <source src={this.get_audio_file()} type="audio/ogg"></source>
                             <source src={this.get_audio_file()} type="audio/mpeg"></source>
                             <source src={this.get_audio_file()} type="audio/wav"></source>
@@ -531,10 +531,66 @@ class AudioPip extends Component {
 
     is_song_available_for_playing(){
         var song = this.state.songs[this.state.pos]
-        var plays = this.props.app_state.song_plays[song['song_id']] == null ? 0 : this.props.app_state.song_plays[song['song_id']].length
-        if(!this.is_song_available_for_adding_to_playlist(song) && plays >= song['songs_free_plays_count']){
-            return false
+        var song_object = song['object']
+        if(this.does_subscriptions_exist_in_object(song_object)){
+            return this.check_if_sender_has_paid_subscriptions(song_object)
+        }else{
+            var plays = this.props.app_state.song_plays[song['song_id']] == null ? 0 : this.props.app_state.song_plays[song['song_id']].length
+            if(!this.is_song_available_for_adding_to_playlist(song) && plays >= song['songs_free_plays_count']){
+                return false
+            }
+            return true
         }
+        
+    }
+
+    does_subscriptions_exist_in_object(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+            return true
+        }
+        return false
+    }
+
+    check_if_sender_has_paid_subscriptions(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs=  true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
+    }
+
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
+        if(my_payment == null || my_payment == 0) return false;
         return true
     }
     

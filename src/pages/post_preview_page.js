@@ -138,9 +138,15 @@ class PostPreview extends Component {
     get_post_object_subscriptions(){
         var subscriptions = []
         var item = this.state.post_object
-        var required_subscriptions = item['ipfs'].selected_subscriptions
-        required_subscriptions.forEach(subscription_id => {
-            var subscription_item = this.get_all_sorted_objects_mappings(this.props.app_state.created_subscription_object_mapping)[subscription_id]
+        var required_subscriptions = (item['ipfs'].selected_subscriptions != null && item['ipfs'].selected_subscriptions.length > 0) ? item['ipfs'].selected_subscriptions : item['ipfs'].selected_subscriptions
+        required_subscriptions.forEach(subscription_e5_id => {
+            var subscription_id = subscription_e5_id
+            var subscription_e5 = 'E25'
+            if(subscription_e5_id.includes('E')){
+                subscription_id = subscription_e5_id.split('E')[0]
+                subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+            }
+            var subscription_item = this.props.app_state.created_subscription_object_mapping[subscription_e5][subscription_id]
             subscriptions.push(subscription_item)
         });
         return subscriptions

@@ -1424,6 +1424,7 @@ return data['data']
             var name = data['name']
             var link = data['data'].startsWith('http') ? encodeURI(data['data']) : ''
             var hash = data['hash']
+            
             return(
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3055x']/* File Details. */}</h4>
@@ -1436,6 +1437,10 @@ return data['data']
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['3055p']/* 'File Size.' */, 'title':size, 'size':'l'})}
 
+                    {this.render_streamed_bytes_if_any(data)}
+
+                    {this.render_file_stream_count_if_any(data)}
+
                     {this.render_detail_item('0')}
                     {this.render_not_on_e5_message(ecid_obj)}
                     {this.render_file_verified_message(ecid_obj)}
@@ -1447,6 +1452,65 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    render_file_stream_count_if_any(data){
+        var view_count = this.get_file_view_count(data)
+        var view_count_message = ''
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':view_count_message, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_streamed_bytes_if_any(data){
+        var stream_bytes_count = this.calculate_total_streaming(data)
+        if(stream_bytes_count != 0){
+            var formatted_size = this.format_data_size(stream_bytes_count)
+            var size = formatted_size['size']+' '+formatted_size['unit']
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['2509p']/* 'Streamed.' */, 'title':size, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    calculate_total_streaming(data){
+        var file = data['hash']
+        var stream_data = this.props.app_state.file_streaming_data[file]
+        if(stream_data != null){
+            var stream_data_object = stream_data.files_stream_count
+            var time_keys = Object.keys(stream_data_object)
+            var bytes_treamed = 0
+            time_keys.forEach(key => {
+                bytes_treamed += stream_data_object[key]
+            });
+
+            return bytes_treamed
+        }
+        return 0
+    }
+
+    get_file_view_count(data){
+        var file = data['hash']
+        var stream_data = this.props.app_state.file_streaming_data[file]
+        if(stream_data != null){
+            return stream_data.files_view_count
+        }
+        return 0
     }
 
     render_not_on_e5_message(ecid_obj){

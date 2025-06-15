@@ -401,7 +401,7 @@ class FullVideoPage extends Component {
             }
             return(
                 <div style={{}}>
-                    <video ref={this.video_player} width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
+                    <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
                         <source src={video} type="video/mp4"/>
                         <source src={video} type="video/ogg"/>
                         {tracks.map((item, index) => (
@@ -587,17 +587,27 @@ class FullVideoPage extends Component {
     render_video_element(item){
         var video_file = item['video']
         var ecid_obj = this.get_cid_split(video_file)
+        var view_count = this.get_file_view_count(video_file)
+        var view_count_message = ''
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+        }
+
         if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
             var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
             return(
                 <div>
-                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    {this.render_detail_item('8', {'details':item['video_composer']+view_count_message,'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
                 </div>
             )
         }
         return(
             <div>
-                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
+                {this.render_detail_item('3', {'details':item['video_composer']+view_count_message, 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
     }
@@ -864,19 +874,42 @@ class FullVideoPage extends Component {
     render_video(item, object, index){
         var video_file = item['video']
         var ecid_obj = this.get_cid_split(video_file)
+
+        var view_count = this.get_file_view_count(video_file)
+        var view_count_message = ''
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+        }
         if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
             var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
             return(
                 <div onClick={() => this.when_video_item_clicked(item, object, index)}>
-                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    {this.render_detail_item('8', {'details':item['video_composer']+view_count_message,'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
                 </div>
             )
         }
         return(
             <div onClick={() => this.when_video_item_clicked(item, object, index)}>
-                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
+                {this.render_detail_item('3', {'details':item['video_composer']+view_count_message, 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
+    }
+
+    get_file_view_count(track){
+        var ecid_obj = this.get_cid_split(track)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+            var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+            var file = data['hash']
+            var stream_data = this.props.app_state.file_streaming_data[file]
+            if(stream_data != null){
+                return stream_data.files_view_count
+            }
+        }
+        return 0
     }
 
     when_video_item_clicked(video, object, index){

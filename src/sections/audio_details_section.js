@@ -321,6 +321,7 @@ class AudioDetailSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_sream_and_view_count_if_any(object)}
                     {this.render_post_state(object)}
                     {this.render_detail_item('3', item['genre'])}
                     <div style={{height: 10}}/>
@@ -997,6 +998,8 @@ return data['data']
         var default_image = this.props.app_state.static_assets['music_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         var purchase_recipient = object['ipfs'] == null ? '000' :object['ipfs'].purchase_recipient
+
+        
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed',   'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
@@ -1019,6 +1022,70 @@ return data['data']
             'album_sales':{'title':number_with_commas(object['album_sales']), 'details':this.props.app_state.loc['2973']/* 'Album Sales' */, 'size':'l'},
             'song_sales':{'title':number_with_commas(object['song_sales']), 'details':this.props.app_state.loc['2974']/* 'Song Sales' */, 'size':'l'},
         }
+    }
+
+    render_sream_and_view_count_if_any(object){
+        var view_count = this.get_audio_files_view_counts(object)
+        var stream_bytes_count = this.calculate_total_streaming(object)
+
+        if(stream_bytes_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            var title =  `${number_with_commas(view_count)} ${views_text}`
+            var formatted_size = this.format_data_size(stream_bytes_count)
+            var size = formatted_size['size']+' '+formatted_size['unit']
+            var details = this.props.app_state.loc['2509q']/* '$ streamed' */.replace('$', size)
+            return(
+                <div>
+                    {this.render_detail_item('3', {'details':details, 'title':title, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    calculate_total_streaming(object){
+        var bytes_treamed = 0
+        var songs = object['ipfs'].songs
+        songs.forEach(song => {
+            const track = song['track']
+            var ecid_obj = this.get_cid_split(track)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file = data['hash']
+                var stream_data = this.props.app_state.file_streaming_data[file]
+                if(stream_data != null){
+                    var stream_data_object = stream_data.files_stream_count
+                    var time_keys = Object.keys(stream_data_object)
+                    time_keys.forEach(key => {
+                        bytes_treamed += stream_data_object[key]
+                    });
+                }
+            }
+        });
+        return bytes_treamed
+    }
+
+    get_audio_files_view_counts(object){
+        var view_count = 0
+        var songs = object['ipfs'].songs
+        songs.forEach(song => {
+            const track = song['track']
+            var ecid_obj = this.get_cid_split(track)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file = data['hash']
+                var stream_data = this.props.app_state.file_streaming_data[file]
+                if(stream_data != null){
+                    const views = stream_data.files_view_count
+                    view_count+= views
+                }
+            }
+        });
+
+        return view_count
     }
 
     render_album_sales_data(object, item){
@@ -1206,6 +1273,7 @@ return data['data']
             text_color = this.props.theme['primary_text_color']
         }
         var word_wrap_value = this.longest_word_length(song_title) > 53 ? 'break-word' : 'normal'
+        var view_count = this.get_file_view_count(audio_file)
         return(
             <div onClick={() => this.when_song_item_clicked_selector(item, object, type)}>
                 <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
@@ -1222,11 +1290,38 @@ return data['data']
                                 </div>
                             </div>
                             <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '-3px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':text_align}} >{song_details}</p>
+                            {this.render_views_text_if_not_zero(view_count)}
                         </div>
                     </div>
                 </div>
             </div>
         )
+    }
+
+    render_views_text_if_not_zero(view_count){
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            var details = `${number_with_commas(view_count)} ${views_text}`
+            return(
+                <p style={{'font-size': '10px','color': this.props.theme['secondary_text_color'],'margin': '-3px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':'left'}} >{details}</p>
+            )
+        }
+    }
+
+    get_file_view_count(track){
+        var ecid_obj = this.get_cid_split(track)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+            var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+            var file = data['hash']
+            var stream_data = this.props.app_state.file_streaming_data[file]
+            if(stream_data != null){
+                return stream_data.files_view_count
+            }
+        }
+        return 0
     }
 
     has_file_loaded(audio_file){
@@ -1555,20 +1650,42 @@ return data['data']
     }
 
     check_if_sender_has_paid_subscriptions(object){
-        var has_sender_paid_all_subs = true
         var required_subscriptions = object['ipfs'].selected_subscriptions
-        if(required_subscriptions == null) return true
-        required_subscriptions.forEach(subscription_id => {
-            if(!this.has_paid_subscription(parseInt(subscription_id))){
-                has_sender_paid_all_subs=  false
-            }
-        });
-
-        return has_sender_paid_all_subs
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs=  true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
     }
 
-    has_paid_subscription(required_subscription_set){
-        var my_payment = this.get_all_sorted_objects_mappings(this.props.app_state.my_subscription_payment_mappings)[required_subscription_set]
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
         if(my_payment == null || my_payment == 0) return false;
         return true
     }

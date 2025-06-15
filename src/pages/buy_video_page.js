@@ -64,7 +64,61 @@ class BuyVideoPage extends Component {
 
 
     set_data(videopost){
-        this.setState({videopost: videopost, e5: videopost['e5']})
+        var ignore_transfers = false;
+        if(this.does_subscriptions_exist_in_object(videopost) && this.check_if_sender_has_paid_subscriptions(videopost)){
+            ignore_transfers = true
+        }
+        this.setState({videopost: videopost, e5: videopost['e5'], ignore_transfers:ignore_transfers})
+    }
+
+    does_subscriptions_exist_in_object(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+            return true
+        }
+        return false
+    }
+
+    check_if_sender_has_paid_subscriptions(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs=  true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
+    }
+
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
+        if(my_payment == null || my_payment == 0) return false;
+        return true
     }
 
 
@@ -422,7 +476,7 @@ class BuyVideoPage extends Component {
         var exchange_amounts = data.exchange_amounts
         var e5 = this.state.e5
 
-        if(exchanges_used.length == 0){
+        if(exchanges_used.length == 0 || this.state.ignore_transfers == true){
             return(
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                     {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
@@ -498,7 +552,7 @@ class BuyVideoPage extends Component {
         if(selected_videos.length == 0){
             this.props.notify(this.props.app_state.loc['a2962k']/* 'Please pick a video to purchase.' */, 4500)
         }
-        else if(!this.check_if_sender_can_afford_payments(data)){
+        else if(!this.check_if_sender_can_afford_payments(data) && this.state.ignore_transfers == false){
             this.props.notify(this.props.app_state.loc['2970']/* 'You don\'t have enough money to fulfil this purchase.' */, 4500)
         }
         else{

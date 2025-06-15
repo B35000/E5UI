@@ -3554,7 +3554,7 @@ class StackPage extends Component {
                             }else{
                                 const previous_videos = txs[i].previous_videos
                                 txs[i].videos.forEach(video => {
-                                    const includes = previous_videos.find(e => e['video'] === song['video'])
+                                    const includes = previous_videos.find(e => e['video'] === video['video'])
                                     if(includes == null){
                                         creator_group_record['e'].push(video['video'])
                                     }
@@ -3666,16 +3666,18 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
                     var buy_album_obj = await this.format_buy_album_songs(txs[i], calculate_gas, ints, ipfs_index)
                     
-                    if(buy_album_obj.depth_swap_obj[1].length > 0){
-                        strs.push([])
-                        adds.push([])
-                        ints.push(buy_album_obj.depth_swap_obj)
-                    }
+                    if(txs[i].ignore_transfers == false){
+                        if(buy_album_obj.depth_swap_obj[1].length > 0){
+                            strs.push([])
+                            adds.push([])
+                            ints.push(buy_album_obj.depth_swap_obj)
+                        }
 
-                    if(buy_album_obj.transfers_obj[1].length > 0){
-                        strs.push([])
-                        adds.push([])
-                        ints.push(buy_album_obj.transfers_obj)
+                        if(buy_album_obj.transfers_obj[1].length > 0){
+                            strs.push([])
+                            adds.push([])
+                            ints.push(buy_album_obj.transfers_obj)
+                        }
                     }
                     
                     strs.push(buy_album_obj.string_obj)
@@ -3727,16 +3729,18 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
                     var buy_album_obj = await this.format_buy_videopost_videos(txs[i], calculate_gas, ints, ipfs_index)
                     
-                    if(buy_album_obj.depth_swap_obj[1].length > 0){
-                        strs.push([])
-                        adds.push([])
-                        ints.push(buy_album_obj.depth_swap_obj)
-                    }
+                    if(txs[i].ignore_transfers == false){
+                        if(buy_album_obj.depth_swap_obj[1].length > 0){
+                            strs.push([])
+                            adds.push([])
+                            ints.push(buy_album_obj.depth_swap_obj)
+                        }
 
-                    if(buy_album_obj.transfers_obj[1].length > 0){
-                        strs.push([])
-                        adds.push([])
-                        ints.push(buy_album_obj.transfers_obj)
+                        if(buy_album_obj.transfers_obj[1].length > 0){
+                            strs.push([])
+                            adds.push([])
+                            ints.push(buy_album_obj.transfers_obj)
+                        }
                     }
                     
                     strs.push(buy_album_obj.string_obj)
@@ -4057,8 +4061,19 @@ class StackPage extends Component {
 
 
 
-        var runs = this.props.app_state.E5_runs[e5] == null ? [] : this.props.app_state.E5_runs[e5]
+        
 
+        const account_data_object = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        const account_data_string_obj = [[]]
+
+
+        const runs = this.props.app_state.E5_runs[e5] == null ? [] : this.props.app_state.E5_runs[e5]
         if(runs.length == 0){
             //if its the first time running a transaction
             const obj = [ /* set data */
@@ -4070,11 +4085,17 @@ class StackPage extends Component {
 
             const string_obj = [[]]
             var pub_key_link = calculate_gas == true ? "TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw==" : await this.get_account_public_key()
-            string_obj[0].push(pub_key_link)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3].push(0)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(pub_key_link)
+
+            // string_obj[0].push(pub_key_link)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(obj)
         }
 
         if(this.props.app_state.should_update_contacts_onchain){
@@ -4089,11 +4110,17 @@ class StackPage extends Component {
             var contacts_clone = structuredClone(this.props.app_state.contacts)
             const data = {'all_contacts':contacts_clone, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'contacts');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(1)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_blocked_accounts_onchain){
@@ -4108,11 +4135,17 @@ class StackPage extends Component {
             var blocked_accounts = structuredClone(this.props.app_state.blocked_accounts)
             const data = {'all_blocked_accounts':blocked_accounts, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blocked');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(2)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_section_tags_onchain){
@@ -4128,11 +4161,17 @@ class StackPage extends Component {
             var explore_section_tags = this.props.app_state.explore_section_tags
             const data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'tags');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(3)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.update_data_in_E5){
@@ -4147,11 +4186,17 @@ class StackPage extends Component {
             var uploaded_data = this.props.app_state.uploaded_data_cids
             const data = {'cids': uploaded_data, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'ciddata');
-            string_obj[0].push(string_data)
 
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(4)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         var added_song_album_data = this.get_songs_and_albums_to_add(pushed_txs);
@@ -4176,11 +4221,17 @@ class StackPage extends Component {
 
             const data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myaudio');
-            string_obj[0].push(string_data)
 
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(5)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_playlists_in_E5 == true){
@@ -4195,11 +4246,18 @@ class StackPage extends Component {
             var my_playlists = this.props.app_state.my_playlists
             const data = {'playlists': my_playlists, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplaylists');
-            string_obj[0].push(string_data)
 
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(6)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_song_plays == true){
@@ -4214,11 +4272,17 @@ class StackPage extends Component {
             var song_plays = this.props.app_state.song_plays
             const data = {'plays': song_plays, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myplays');
-            string_obj[0].push(string_data)
 
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(7)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_followed_accounts == true){
@@ -4233,11 +4297,17 @@ class StackPage extends Component {
             var followed_accounts = this.props.app_state.followed_accounts
             const data = {'followed_accounts': followed_accounts, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'following');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(8)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_posts_blocked_by_me == true){
@@ -4252,11 +4322,17 @@ class StackPage extends Component {
             var posts_blocked_by_me = this.props.app_state.posts_blocked_by_me
             const data = {'posts_blocked_by_me': posts_blocked_by_me, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blockedposts');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(9)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_censored_keyword_phrases == true){
@@ -4271,11 +4347,18 @@ class StackPage extends Component {
             var censored_keyword_phrases = this.props.app_state.censored_keyword_phrases
             const data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'censoredkeywords');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(10)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         var added_video_data = this.get_videos_to_add(pushed_txs);
@@ -4319,11 +4402,17 @@ class StackPage extends Component {
             var posts_reposted_by_me = this.props.app_state.posts_reposted_by_me
             const data = {'data': posts_reposted_by_me, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'promoted');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(12)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         //context ->> 13 in use!!!!!!!
@@ -4341,11 +4430,17 @@ class StackPage extends Component {
             var newly_participated_channels_data = newly_participated_channels.concat(this.props.app_state.my_channels)
             const data = {'data': newly_participated_channels_data, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'participatedchannels');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(14)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(newly_participated_polls.length > 0){
@@ -4360,11 +4455,17 @@ class StackPage extends Component {
             var newly_participated_poll_data = newly_participated_polls.concat(this.props.app_state.my_polls)
             const data = {'data': newly_participated_poll_data, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'participatedpolls');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(15)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(newly_participated_objects.length > 0){
@@ -4379,11 +4480,26 @@ class StackPage extends Component {
             var newly_participated_object_data = newly_participated_objects.concat(this.props.app_state.my_objects)
             const data = {'data': newly_participated_object_data, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'participatedobjects');
-            string_obj[0].push(string_data)
-            
-            strs.push(string_obj)
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(16)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
+        }
+
+
+
+        if(account_data_object[1].length > 0){
+            strs.push(account_data_string_obj)
             adds.push([])
-            ints.push(transaction_obj)
+            ints.push(account_data_object)
         }
 
 
@@ -4717,7 +4833,7 @@ class StackPage extends Component {
                             }else{
                                 const previous_videos = txs[i].previous_videos
                                 txs[i].videos.forEach(video => {
-                                    const includes = previous_videos.find(e => e['video'] === song['video'])
+                                    const includes = previous_videos.find(e => e['video'] === video['video'])
                                     if(includes == null){
                                         creator_group_record['e'].push(video['video'])
                                     }
@@ -13237,6 +13353,17 @@ class StackPage extends Component {
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
                 var details = data['name']
                 var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                
+                var view_count = this.get_file_view_count(data)
+                var view_count_message = ''
+                if(view_count > 0){
+                    var views_text = this.props.app_state.loc['2509n']/* views */
+                    if(view_count == 1){
+                        views_text = this.props.app_state.loc['2509o']/* view */
+                    }
+                    view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+                }
+                details = details + view_count_message
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
@@ -13250,6 +13377,18 @@ class StackPage extends Component {
                 var fs = formatted_size['size']+' '+formatted_size['unit']
                 var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var title = data['name']
+
+                var view_count = this.get_file_view_count(data)
+                var view_count_message = ''
+                if(view_count > 0){
+                    var views_text = this.props.app_state.loc['2509n']/* views */
+                    if(view_count == 1){
+                        views_text = this.props.app_state.loc['2509o']/* view */
+                    }
+                    view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+                }
+                details = details + view_count_message
+
                 if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
                     var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
                     return(
@@ -13265,24 +13404,6 @@ class StackPage extends Component {
                         </div>
                     )
                 }
-                // return(
-                //     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px', opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                //         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
-                //             <div>
-                //                 <video height="50" style={{'border-radius':'7px'}}>
-                //                     <source src={video} type="video/mp4"/>
-                //                     <source src={video} type="video/ogg"/>
-                //                     Your browser does not support the video tag.
-                //                 </video>
-                //             </div>
-                //             <div style={{'margin':'0px 0px 0px 10px'}}>
-                //                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
-                                
-                //                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
-                //             </div>
-                //         </div>
-                //     </div>
-                // )
             }
             else if(data['type'] == 'pdf'){
                 var formatted_size = this.format_data_size(data['size'])
@@ -13334,6 +13455,16 @@ class StackPage extends Component {
             }
         }
     }
+
+    get_file_view_count(data){
+        var file = data['hash']
+        var stream_data = this.props.app_state.file_streaming_data[file]
+        if(stream_data != null){
+            return stream_data.files_view_count
+        }
+        return 0
+    }
+    
 
     when_file_clicked(ecid_obj){
         this.props.when_file_tapped(ecid_obj)

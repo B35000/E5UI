@@ -6589,7 +6589,7 @@ return data['data']
         var exchange_amounts = data.exchange_amounts
         var e5 = transaction_item.e5
 
-        if(exchanges_used.length == 0){
+        if(exchanges_used.length == 0  || transaction_item.ignore_transfers == true){
             return(
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                     {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
@@ -6669,13 +6669,6 @@ return data['data']
         return object[option][2][0]
     }
 
-
-
-
-
-
-
-
     render_selected_video_tabs(){
         var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-100;
@@ -6742,7 +6735,7 @@ return data['data']
         var exchange_amounts = data.exchange_amounts
         var e5 = transaction_item.e5
 
-        if(exchanges_used.length == 0){
+        if(exchanges_used.length == 0 || transaction_item.ignore_transfers == true){
             return(
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                     {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}

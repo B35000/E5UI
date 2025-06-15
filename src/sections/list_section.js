@@ -1918,14 +1918,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
 
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
 
         var selector_item = type == 31/* token */ || type == 19/* audioport */ || type == 20/* videoport */ || type == 21/* nitro */ ? '8' : '3'
         
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || this.is_post_preview_enabled(object) || post_author == me){
             if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
                 return(
                     <div onClick={() => this.when_link_object_clicked(index, object, type)}>
@@ -2015,19 +2014,17 @@ class PostListSection extends Component {
             this.props.when_link_object_clicked(object, object_type)
         }
         else if(object_type == 18/* post */){
-            var required_subscriptions = object['ipfs'].selected_subscriptions
             var post_author = object['event'].returnValues.p5
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'post')
             }
         }
         else if(object_type == 36/* channel */){
-            var required_subscriptions = object['ipfs'].selected_subscriptions
             var post_author = object['event'].returnValues.p5
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
@@ -2046,11 +2043,7 @@ class PostListSection extends Component {
                 return;
             }
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
-                this.props.when_link_object_clicked(object, object_type)
-            }else{
-                this.props.show_post_item_preview_with_subscription(object, 'channel')
-            }
+            this.props.when_link_object_clicked(object, object_type)
         }
         else if(object_type == 27/* storefront */){
             this.props.when_link_object_clicked(object, object_type)
@@ -2062,12 +2055,11 @@ class PostListSection extends Component {
             this.props.when_link_object_clicked(object, object_type)
         }
         else if(object_type == 19/* audioport */){
-            var required_subscriptions = object['ipfs'].selected_subscriptions
             var post_author = object['event'].returnValues.p5
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.when_link_object_clicked(object, object_type)
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'audio')
@@ -2079,7 +2071,7 @@ class PostListSection extends Component {
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'video')
@@ -2185,11 +2177,10 @@ class PostListSection extends Component {
 
 
     render_post_object_if_locked(item, index){
-        var required_subscriptions = item['ipfs'].selected_subscriptions
         var post_author = item['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[item['e5']]
         if(me == null) me = 1
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(item) || this.is_post_preview_enabled(item) || post_author == me){
             return this.render_post_object(item, index)
         }
         else{
@@ -2206,25 +2197,43 @@ class PostListSection extends Component {
         }
     }
 
-    check_if_sender_has_paid_subscriptions(required_subscriptions){
-        var has_sender_paid_all_subs = true
-        if(required_subscriptions == null) return true
-        required_subscriptions.forEach(subscription_id => {
-            // var subscription_item = this.get_all_sorted_objects_mappings(this.props.app_state.created_subscription_object_mapping)[subscription_id]
-            // if(subscription_item == null) return false
-            // if(subscription_item['payment'] == 0){
-            //     has_sender_paid_all_subs = false
-            // }
-            if(!this.has_paid_subscription(parseInt(subscription_id))){
-                has_sender_paid_all_subs=  false
-            }
-        });
-
-        return has_sender_paid_all_subs
+    check_if_sender_has_paid_subscriptions(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs=  true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
     }
 
-    has_paid_subscription(required_subscription_set){
-        var my_payment = this.get_all_sorted_objects_mappings(this.props.app_state.my_subscription_payment_mappings)[required_subscription_set]
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
         if(my_payment == null || my_payment == 0) return false;
         return true
     }
@@ -2329,11 +2338,10 @@ class PostListSection extends Component {
         if(this.is_post_nsfw(object)){
             extra = extra+'🔞'
         }
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != '') extra = extra + ' '
@@ -2359,12 +2367,11 @@ class PostListSection extends Component {
     }
 
     when_post_item_clicked(index, object){
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
             this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'post')
@@ -2442,7 +2449,6 @@ class PostListSection extends Component {
     }
 
     render_channel_object(object, index){
-        var required_subscriptions = object['ipfs'].selected_subscriptions == null ? [] : object['ipfs'].selected_subscriptions
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_channel_item(object)
@@ -2456,7 +2462,7 @@ class PostListSection extends Component {
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || this.is_post_preview_enabled(object) || post_author == me){
             if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
                 return(
                     <div onClick={() => this.when_channel_item_clicked(index, object)}>
@@ -2503,11 +2509,10 @@ class PostListSection extends Component {
         if(object['ipfs']['blocked_data'] != null){
             extra = extra+'🗝️'
         }
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != ''){
@@ -2525,7 +2530,6 @@ class PostListSection extends Component {
     }
 
     when_channel_item_clicked = async (index, object) => {
-        var required_subscriptions = object['ipfs'].selected_subscriptions == null ? [] : object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
@@ -2544,11 +2548,7 @@ class PostListSection extends Component {
             return;
         }
 
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
-            this.props.when_channel_item_clicked(index, object['id'], object['e5'], object)
-        }else{
-            this.props.show_post_item_preview_with_subscription(object, 'channel')
-        }
+        this.props.when_channel_item_clicked(index, object['id'], object['e5'], object)
         
     }
 
@@ -3421,12 +3421,11 @@ class PostListSection extends Component {
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }else{
-            var required_subscriptions = object['ipfs'].selected_subscriptions
             var post_author = object['event'].returnValues.p5
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.play_song_from_list_section(item, object, this.get_preferred_audio_items(), this.is_page_my_collection_page(), false)
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'audio')
@@ -3495,7 +3494,10 @@ class PostListSection extends Component {
     }
 
     render_bought_audio_item_plus_buttons(object, index, w, my_stacked_albums){
-        var opacity = my_stacked_albums.includes(object['e5_id']) ? 0.7 : 1.0
+        var opacity = my_stacked_albums.includes(object['e5_id']) ? 0.6 : 1.0
+        if(!this.check_if_sender_has_paid_subscriptions(object)){
+            opacity = 0.6
+        }
         return(
             <div style={{'position': 'relative', 'opacity':opacity}}>
                 <div onClick={() => this.when_audio_item_clicked(index, object)} style={{width:w, height:'auto', 'z-index':'1', 'position': 'absolute',}}>
@@ -3678,11 +3680,10 @@ return data['data']
     }
 
     render_audio_object_if_locked(item, index){
-        var required_subscriptions = item['ipfs'].selected_subscriptions
         var post_author = item['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[item['e5']]
         if(me == null) me = 1
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(item) || this.is_post_preview_enabled(item) || post_author == me){
             return this.render_audio_object(item, index)
         }
         else{
@@ -3726,11 +3727,10 @@ return data['data']
             var e5_img = this.props.app_state.e5s[object['e5']].e5_img
 
             var extra = ''
-            var required_subscriptions = object['ipfs'].selected_subscriptions
             var post_author = object['event'].returnValues.p5
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
-            if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
                 extra = extra+'🔏'
             }
             if(extra != '') extra = extra + ' '
@@ -3739,6 +3739,8 @@ return data['data']
             var year = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_year_recorded_text
 
             var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+
+            var view_count_message = this.get_audio_files_view_counts(object)
 
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
@@ -3765,7 +3767,7 @@ return data['data']
                             <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{songs_available}</p>
                             <div style={{height: 3}}/>
 
-                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ year}</p>
+                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ year+view_count_message}</p>
                         </div>
                     </div>
                 </div>
@@ -3789,17 +3791,45 @@ return data['data']
         )
     }
 
+    get_audio_files_view_counts(object){
+        var view_count = 0
+        var songs = object['ipfs'].songs
+        songs.forEach(song => {
+            const track = song['track']
+            var ecid_obj = this.get_cid_split(track)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file = data['hash']
+                var stream_data = this.props.app_state.file_streaming_data[file]
+                if(stream_data != null){
+                    const views = stream_data.files_view_count
+                    view_count+= views
+                }
+            }
+        });
+
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            return ` • ${number_with_commas(view_count)} ${views_text}`
+        }
+        else{
+            return ''
+        }
+    }
+
     format_audio_item(object){
         var tags = object['ipfs'] == null ? ['Audiopost'] : [].concat(object['ipfs'].entered_indexing_tags)
         if(object['ipfs'].audio_type != null){
             tags = [object['ipfs'].audio_type].concat(tags)
         }
         var extra = ''
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != '') extra = extra + ' '
@@ -3814,21 +3844,21 @@ return data['data']
         var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
         var default_image = this.props.app_state.static_assets['music_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var view_count_message = this.get_audio_files_view_counts(object)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object},
+            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object}
+            'min':{'details': author+' • '+this.get_time_difference(time)+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object}
         }
     }
 
     when_audio_item_clicked(index, object){
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
             this.props.when_audio_item_clicked(index, object['id'], object['e5'], object)
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'audio')
@@ -3836,12 +3866,11 @@ return data['data']
     }
 
     when_audio_image_clicked(object){
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         var index = 0
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
             this.props.when_audio_item_clicked(index, object['id'], object['e5'], object)
             this.props.play_album_from_list_section(object)
         }else{
@@ -4036,12 +4065,11 @@ return data['data']
             this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
-            var required_subscriptions = object['ipfs'].selected_subscriptions
             var post_author = object['event'].returnValues.p5
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             var index = 0
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.play_video_from_list_section(item, object)
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'video')
@@ -4130,11 +4158,10 @@ return data['data']
     }
 
     render_video_object_if_locked(item, index){
-        var required_subscriptions = item['ipfs'].selected_subscriptions
         var post_author = item['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[item['e5']]
         if(me == null) me = 1
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(item) || this.is_post_preview_enabled(item) || post_author == me){
             return this.render_video_object(item, index)
         }
         else{
@@ -4181,11 +4208,10 @@ return data['data']
             var e5_img = this.props.app_state.e5s[object['e5']].e5_img
 
             var extra = ''
-            var required_subscriptions = object['ipfs'].selected_subscriptions
             var post_author = object['event'].returnValues.p5
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
-            if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+            if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
                 extra = extra+'🔏'
             }
             if(extra != '') extra = extra + ' '
@@ -4195,6 +4221,8 @@ return data['data']
 
             var time = object['event'] == null ? 0 : object['event'].returnValues.p6
             var blur = this.is_post_nsfw(object)
+
+            var view_count_message = this.get_video_files_view_counts(object)
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
@@ -4220,7 +4248,7 @@ return data['data']
                             <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{videos_available}</p>
                             <div style={{height: 3}}/>
 
-                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ this.get_time_difference(time)}</p>
+                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ this.get_time_difference(time)+view_count_message}</p>
                         </div>
                     </div>
                 </div>
@@ -4242,6 +4270,35 @@ return data['data']
                 </div>         
             </div>
         )
+    }
+
+    get_video_files_view_counts(object){
+        var view_count = 0
+        var videos = object['ipfs'].videos
+        videos.forEach(video => {
+            const video_link = video['video']
+            var ecid_obj = this.get_cid_split(video_link)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file = data['hash']
+                var stream_data = this.props.app_state.file_streaming_data[file]
+                if(stream_data != null){
+                    const views = stream_data.files_view_count
+                    view_count+= views
+                }
+            }
+        });
+
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            return ` • ${number_with_commas(view_count)} ${views_text}`
+        }
+        else{
+            return ''
+        }
     }
 
     render_video_image(image, object, blur){
@@ -4266,11 +4323,10 @@ return data['data']
             tags = [object['ipfs'].video_type].concat(tags)
         }
         var extra = ''
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != '') extra = extra + ' '
@@ -4284,11 +4340,12 @@ return data['data']
         }
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
+        var view_count_message = this.get_video_files_view_counts(object)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object)},
+            'id':{'title':author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object)},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object)}
+            'min':{'details': author+' • '+this.get_time_difference(time)+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object)}
         }
     }
 
@@ -4303,12 +4360,11 @@ return data['data']
     }
 
     when_video_item_clicked(index, object){
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
             this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'video')
@@ -4316,12 +4372,11 @@ return data['data']
     }
 
     when_video_image_clicked(object){
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         var index = 0
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
             this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
             this.props.play_videopost_from_list_section(object)
         }else{
@@ -4330,12 +4385,11 @@ return data['data']
     }
 
     when_video_text_clicked(object){
-        var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         var index = 0
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
             this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
         }else{
             this.props.show_post_item_preview_with_subscription(object, 'video')

@@ -262,6 +262,7 @@ class VideoDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_sream_and_view_count_if_any(object)}
                     {this.render_post_state(object)}
                     {this.render_detail_item('3', item['listing_type'])}
                     <div style={{height: 10}}/>
@@ -761,6 +762,70 @@ class VideoDetailsSection extends Component {
         }
     }
 
+    render_sream_and_view_count_if_any(object){
+        var view_count = this.get_video_files_view_counts(object)
+        var stream_bytes_count = this.calculate_total_streaming(object)
+
+        if(stream_bytes_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            var title =  `${number_with_commas(view_count)} ${views_text}`
+            var formatted_size = this.format_data_size(stream_bytes_count)
+            var size = formatted_size['size']+' '+formatted_size['unit']
+            var details = this.props.app_state.loc['2509q']/* '$ streamed' */.replace('$', size)
+            return(
+                <div>
+                    {this.render_detail_item('3', {'details':details, 'title':title, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    calculate_total_streaming(object){
+        var bytes_treamed = 0
+        var videos = object['ipfs'].videos
+        videos.forEach(video => {
+            const track = video['video']
+            var ecid_obj = this.get_cid_split(track)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file = data['hash']
+                var stream_data = this.props.app_state.file_streaming_data[file]
+                if(stream_data != null){
+                    var stream_data_object = stream_data.files_stream_count
+                    var time_keys = Object.keys(stream_data_object)
+                    time_keys.forEach(key => {
+                        bytes_treamed += stream_data_object[key]
+                    });
+                }
+            }
+        });
+        return bytes_treamed
+    }
+
+    get_video_files_view_counts(object){
+        var view_count = 0
+        var videos = object['ipfs'].videos
+        videos.forEach(video => {
+            const video_link = video['video']
+            var ecid_obj = this.get_cid_split(video_link)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file = data['hash']
+                var stream_data = this.props.app_state.file_streaming_data[file]
+                if(stream_data != null){
+                    const views = stream_data.files_view_count
+                    view_count+= views
+                }
+            }
+        });
+
+        return view_count
+    }
+
     render_video_sales_data(object, item){
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
@@ -902,19 +967,42 @@ class VideoDetailsSection extends Component {
                 </div>
             )
         }
+        var view_count = this.get_file_view_count(video_file)
+        var view_count_message = ''
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+        }
+
         if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
             var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
             return(
                 <div onClick={() => this.when_video_item_clicked(item, object)}>
-                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    {this.render_detail_item('8', {'details':item['video_composer']+view_count_message,'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
                 </div>
             )
         }
         return(
             <div onClick={() => this.when_video_item_clicked(item, object)}>
-                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
+                {this.render_detail_item('3', {'details':item['video_composer']+view_count_message, 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
+    }
+
+    get_file_view_count(track){
+        var ecid_obj = this.get_cid_split(track)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+            var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+            var file = data['hash']
+            var stream_data = this.props.app_state.file_streaming_data[file]
+            if(stream_data != null){
+                return stream_data.files_view_count
+            }
+        }
+        return 0
     }
 
     has_file_loaded(video_file){
@@ -960,12 +1048,21 @@ class VideoDetailsSection extends Component {
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
-        else if(!this.is_video_available_for_viewing(item)){
+        else if(!this.is_video_available_for_viewing(item) && (this.does_subscriptions_exist_in_object(object) && !this.check_if_sender_has_paid_subscriptions(object))){
             this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
             this.props.play_video(item, object)
         }
+    }
+
+    does_subscriptions_exist_in_object(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+            return true
+        }
+        return false
     }
 
 
@@ -1042,20 +1139,42 @@ class VideoDetailsSection extends Component {
     }
 
     check_if_sender_has_paid_subscriptions(object){
-        var has_sender_paid_all_subs = true
         var required_subscriptions = object['ipfs'].selected_subscriptions
-        if(required_subscriptions == null) return true
-        required_subscriptions.forEach(subscription_id => {
-            if(!this.has_paid_subscription(parseInt(subscription_id))){
-                has_sender_paid_all_subs=  false
-            }
-        });
-
-        return has_sender_paid_all_subs
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs=  true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
     }
 
-    has_paid_subscription(required_subscription_set){
-        var my_payment = this.get_all_sorted_objects_mappings(this.props.app_state.my_subscription_payment_mappings)[required_subscription_set]
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
         if(my_payment == null || my_payment == 0) return false;
         return true
     }

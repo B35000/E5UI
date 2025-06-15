@@ -819,7 +819,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2), file_load_step_count:23,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -875,7 +875,7 @@ class App extends Component {
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
 
-    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[],
+    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}
   };
 
   get_static_assets(){
@@ -16646,18 +16646,37 @@ return data['data']
     for(var i=0; i<songs_to_load.length; i++){
       var song = songs_to_load[i]
       var lyrics = lyrics_to_load[i]
+
+      var has_played = false;
+      if(i == 0 && this.has_file_loaded(song) == true){
+        //if its the song thats to be played
+        await this.wait(750)
+        this.audio_pip_page.current?.start_playing()
+        this.setState({play_pause_state: 1/* playing */})
+        has_played = true
+      }
+      
       if(lyrics != ''){
         await this.fetch_uploaded_data_from_ipfs([song, lyrics], false)
       }else{
         await this.fetch_uploaded_data_from_ipfs([song], false)
       }
-      if(i == 0){
+      if(i == 0 && !has_played){
         //if its the song thats to be played
         await this.wait(750)
         this.audio_pip_page.current?.start_playing()
         this.setState({play_pause_state: 1/* playing */})
       }
     }
+  }
+
+  has_file_loaded(audio_file){
+    var ecid_obj = this.get_cid_split(audio_file)
+    if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false
+    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(data == null) return false
+    if(data['data'] == null) return false
+    return true
   }
 
   open_full_player(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list, buffer){
@@ -26046,6 +26065,8 @@ return data['data']
       }
     });
 
+    var songs_to_load = []
+
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -26053,7 +26074,16 @@ return data['data']
         var audio_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
         if(audio_data != null){
-          if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false)
+          if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false);
+
+          audio_data.songs.forEach(song => {
+            songs_to_load.push(song['track'])
+          });
+
+          if(i % this.state.file_load_step_count == 0 || i == created_audio_events.length -1){
+            this.fetch_uploaded_data_from_ipfs(songs_to_load, false)
+            songs_to_load = []
+          }
 
           var album_sales = album_sale_data[id] == null ? 0 : album_sale_data[id]
           var song_sales = song_sale_data[id] == null ? 0 : song_sale_data[id]
@@ -26189,6 +26219,8 @@ return data['data']
       }
     });
 
+    var videos_to_load = []
+
     for(var i=0; i<created_video_events.length; i++){
       var id = created_video_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -26198,6 +26230,15 @@ return data['data']
         if(video_data != null){
           if(video_data.album_art != null && video_data.album_art.startsWith('image')) {
             this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
+          }
+          
+          video_data.videos.forEach(video => {
+            videos_to_load.push(video['video'])
+          });
+
+          if(i % this.state.file_load_step_count == 0 || i == created_video_events.length -1){
+            this.fetch_uploaded_data_from_ipfs(videos_to_load, false)
+            videos_to_load = []
           }
 
           var videopost_sales = videopost_sale_data[id] == null ? 0 : videopost_sale_data[id]
@@ -30215,6 +30256,7 @@ return data['data']
       var data = await response.text();
       var obj = JSON.parse(data);
       var object_data = obj['data']
+      var files_to_fetch_view_data = []
       for(var s=0; s<nitro_cids.length; s++){
         const nitro_cid = nitro_cids[s]
         const filetype = search_data_file_types[nitro_cid]
@@ -30236,6 +30278,10 @@ return data['data']
             if(nitro_url != null){
               cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}`
               cid_data['hash'] = nitro_cid2
+
+              if(cid_data['data_type'] == 'audio' || cid_data['data_type'] == 'video' || true){
+                if(!files_to_fetch_view_data.includes(nitro_cid2)) files_to_fetch_view_data.push(nitro_cid2);
+              }
             }
           }
           if(filetype == 'lyric'){
@@ -30261,10 +30307,52 @@ return data['data']
         }
       }
       this.fetch_index[search_index]['successful']++
+      if(files_to_fetch_view_data.length > 0){
+        this.fetch_multiple_file_viewcounts_from_one_nitro_storage(nitro_url, files_to_fetch_view_data)
+      }
     }
     catch(e){
       console.log('datas', 'error', e)
       this.fetch_index[search_index]['successful']++
+    }
+  }
+
+  fetch_multiple_file_viewcounts_from_one_nitro_storage = async (nitro_url, files_to_fetch_view_data) => {
+    const arg_obj = {
+      files: files_to_fetch_view_data,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${nitro_url}/streams`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      console.log('fetch_view_data', obj)
+      if(obj.success != false){
+        var file_streaming_data_clone = structuredClone(this.state.file_streaming_data)
+        for(var f=0; f<files_to_fetch_view_data.length; f++){
+          const file = files_to_fetch_view_data[f]
+          const files_view_count = obj.views[file]
+          const files_stream_count = obj.streams[file]
+          file_streaming_data_clone[file] = {files_view_count, files_stream_count}
+        }
+        this.setState({file_streaming_data: file_streaming_data_clone})
+      }
+    }
+    catch(e){
+      console.log('fetch_view_data', e)
     }
   }
 

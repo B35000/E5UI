@@ -524,11 +524,17 @@ class FullAudioPage extends Component {
            metadata['format'] = {} 
         }
         var track_url = this.get_audio_file()
+
+        var audio_file = song['track']
+        var view_count = this.get_file_view_count(audio_file)
+        
         return(
             <div>
                 {this.render_buy_album_button()}
                 {this.render_detail_item('3', {'title':object['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2977']/* Taken from */, 'size':'l'})}
                 <div style={{height:10}}/>
+
+                {this.render_views_if_any(view_count)}
 
                 {this.render_detail_item('3', {'title':fs, 'details':this.props.app_state.loc['2978']/* File size */, 'size':'l'})}
                 <div style={{height:10}}/>
@@ -566,6 +572,24 @@ class FullAudioPage extends Component {
                 {/* {this.render_detail_item('4', {'text':track_url, 'textsize':'13px', 'font':'Sans-serif'})} */}
             </div>
         )
+    }
+
+    render_views_if_any(view_count){
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            var view_count_message = `${number_with_commas(view_count)} ${views_text}`
+
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':view_count_message, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+        
     }
 
     format_data_size(size){
@@ -877,14 +901,37 @@ class FullAudioPage extends Component {
     }
 
     render_song(item){
+        var audio_file = item['track']
         var song_title = item['song_title'] + (this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
         var song_details = item['song_composer']
         var image = item['album_art']
+        var view_count = this.get_file_view_count(audio_file)
+        var view_count_message = ''
+        if(view_count > 0){
+            var views_text = this.props.app_state.loc['2509n']/* views */
+            if(view_count == 1){
+                views_text = this.props.app_state.loc['2509o']/* view */
+            }
+            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+        }
         return(
             <div style={{'opacity':(this.is_song_available_for_playing(item) == true ? 1.0 : 0.4)}} onClick={() => this.when_song_item_clicked(item)}>
-                {this.render_detail_item('8', {'title':song_title, 'details':song_details, 'size':'l', 'image':image, 'border_radius':'7px'})}
+                {this.render_detail_item('8', {'title':song_title, 'details':song_details+view_count_message, 'size':'l', 'image':image, 'border_radius':'7px'})}
             </div>
         )
+    }
+
+    get_file_view_count(track){
+        var ecid_obj = this.get_cid_split(track)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+            var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+            var file = data['hash']
+            var stream_data = this.props.app_state.file_streaming_data[file]
+            if(stream_data != null){
+                return stream_data.files_view_count
+            }
+        }
+        return 0
     }
 
     when_song_item_clicked(item){

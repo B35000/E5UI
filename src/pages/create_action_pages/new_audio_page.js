@@ -3385,6 +3385,16 @@ return data['data']
     }
 
     when_channel_item_clicked(object){
+        var channel_creators = object['ipfs'].creators
+        if(channel_creators == null){
+            this.props.notify(this.props.app_state.loc['a311dp']/* 'You cant use that creator group.' */, 4000);
+            return;
+        }
+        else if(!this.can_sender_use_creator_group(channel_creators)){
+            this.props.notify(this.props.app_state.loc['a311dq']/* 'Youre not part of that creator group.' */, 4000);
+            return;
+        }
+
         var channels_subscriptions = object['ipfs'].selected_creator_group_subscriptions == null ? [] : object['ipfs'].selected_creator_group_subscriptions
 
         var selected_channel_supported_nitros = object['ipfs'].selected_creator_group_nitros == null ? [] : object['ipfs'].selected_creator_group_nitros
@@ -3394,9 +3404,30 @@ return data['data']
         if(this.state.selected_channel == object['e5_id']){
             this.setState({selected_channel: null, creator_group_subscriptions: null, selected_channel_supported_nitros:null, selected_object_identifier: null})
         }else{
-            this.setState({selected_channel: object['e5_id'], creator_group_subscriptions: channels_subscriptions, selected_channel_supported_nitros: object, selected_object_identifier: selected_object_identifier})
+            this.setState({selected_channel: object['e5_id'], creator_group_subscriptions: channels_subscriptions, selected_channel_supported_nitros: selected_channel_supported_nitros, selected_object_identifier: selected_object_identifier})
             this.add_to_previously_used_channels(object['e5_id'], channels_subscriptions)
         } 
+    }
+
+    can_sender_use_creator_group(creators){
+        if(creators == 0) return true;
+        var my_active_accounts = this.load_my_active_accounts()
+        return my_active_accounts.some(r=> creators.includes(r))
+    }
+
+    load_my_active_accounts(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                var id = this.props.app_state.user_account_id[e5]
+                if(id != null && id != 1){
+                    var account = e5+':'+id
+                    active_e5s.push(account)
+                }
+            }
+        }
+        return active_e5s
     }
 
     format_channel_item(object){
