@@ -4707,15 +4707,6 @@ return data['data']
         }
     }
 
-    get_number_width(number){
-        if(number == null) return '0%'
-        var last_two_digits = number.toString().slice(0, 1)+'0';
-        if(number > 10){
-            last_two_digits = number.toString().slice(0, 2);
-        }
-        return last_two_digits+'%'
-    }
-
     when_ether_object_clicked(index, item){
         this.props.when_ether_object_clicked(index, item['id'])
     }
@@ -5131,6 +5122,14 @@ return data['data']
 
 
 
+    get_number_width(number){
+        if(number == null) return '0%'
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
 
     render_small_empty_object(){
         return(

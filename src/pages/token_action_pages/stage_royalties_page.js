@@ -89,7 +89,7 @@ class StageRoyaltiesPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['2850']/* 'staged-transactions' */], [0]
+                ['xor','',0], ['e',this.props.app_state.loc['2850']/* 'staged-transactions' */], [1]
             ],
         };
     }

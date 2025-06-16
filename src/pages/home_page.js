@@ -3938,6 +3938,7 @@ class home_page extends Component {
         this.props.get_channel_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
+        this.props.get_channel_creator_file_records(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -4475,7 +4476,7 @@ class home_page extends Component {
                 when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)}
                 connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_audiopost={this.props.repost_audiopost.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)} repost_post={this.props.repost_post.bind(this)}
 
-                perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} open_vote_in_poll_ui={this.props.show_view_vote_poll_bottomsheet.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} when_catalogue_storefront_item_clicked={this.when_catalogue_storefront_item_clicked.bind(this)}
+                perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} open_vote_in_poll_ui={this.props.show_view_vote_poll_bottomsheet.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} when_catalogue_storefront_item_clicked={this.when_catalogue_storefront_item_clicked.bind(this)} open_stage_creator_ui={this.props.open_stage_creator_ui.bind(this)}
                 />
             </div>
         )
@@ -6438,14 +6439,41 @@ class home_page extends Component {
     }
 
     format_data_size(size){
-        if(size > 1_000_000_000){
-            return {'size':this.round_off(size/1_000_000_000), 'unit':'GBs'}
+        if(bigInt(size).greater(bigInt(1024).pow(8))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
         }
-        else if(size > 1_000_000){
-            return {'size':this.round_off(size/1_000_000), 'unit':'MBs'}
+        else if(bigInt(size).greater(bigInt(1024).pow(7))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
         }
-        else if(size > 1_000){
-            return {'size':this.round_off(size/1_000), 'unit':'KBs'}
+        else if(bigInt(size).greater(bigInt(1024).pow(6))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(5))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
+        }
+        else if(size > (1024^4)){
+            return {'size':Math.round(size/(1024^4)), 'unit':'TBs'}
+        }
+        else if(size > (1024^3)){
+            return {'size':Math.round(size/(1024^3)), 'unit':'GBs'}
+        }
+        else if(size > (1024^2)){
+            return {'size':Math.round(size/(1024^2)), 'unit':'MBs'}
+        }
+        else if(size > 1024){
+            return {'size':Math.round(size/1024), 'unit':'KBs'}
         }
         else{
             return {'size':size, 'unit':'bytes'}

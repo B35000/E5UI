@@ -410,14 +410,41 @@ class ChannelDetailsSection extends Component {
     }
 
     format_data_size(size){
-        if(size > 1_000_000_000){
-            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        if(bigInt(size).greater(bigInt(1024).pow(8))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
         }
-        else if(size > 1_000_000){
-            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        else if(bigInt(size).greater(bigInt(1024).pow(7))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
         }
-        else if(size > 1_000){
-            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        else if(bigInt(size).greater(bigInt(1024).pow(6))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(5))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
+        }
+        else if(size > (1024^4)){
+            return {'size':Math.round(size/(1024^4)), 'unit':'TBs'}
+        }
+        else if(size > (1024^3)){
+            return {'size':Math.round(size/(1024^3)), 'unit':'GBs'}
+        }
+        else if(size > (1024^2)){
+            return {'size':Math.round(size/(1024^2)), 'unit':'MBs'}
+        }
+        else if(size > 1024){
+            return {'size':Math.round(size/1024), 'unit':'KBs'}
         }
         else{
             return {'size':size, 'unit':'bytes'}
@@ -648,6 +675,11 @@ class ChannelDetailsSection extends Component {
         }
     }
 
+    open_moderator_ui(object){
+        // var object = this.get_channel_items()[this.props.selected_channel_item];
+        this.props.open_moderator_ui(object)
+    }
+
 
     render_edit_object_button(object){
         // var object = this.get_channel_items()[this.props.selected_channel_item];
@@ -668,16 +700,13 @@ class ChannelDetailsSection extends Component {
         }
     }
 
-
     open_edit_channel_ui(object){
         // var object = this.get_channel_items()[this.props.selected_channel_item];
         this.props.open_edit_object('7', object)
     }
 
-    open_moderator_ui(object){
-        // var object = this.get_channel_items()[this.props.selected_channel_item];
-        this.props.open_moderator_ui(object)
-    }
+
+    
 
     get_channel_items(){
         return this.props.get_channel_items('')
@@ -694,7 +723,6 @@ class ChannelDetailsSection extends Component {
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
     }
-
 
     render_revoke_author_privelages_event(object){
         // var object = this.get_channel_items()[this.props.selected_channel_item];
@@ -802,6 +830,32 @@ class ChannelDetailsSection extends Component {
         return events.length
     }
 
+
+
+
+    render_stage_creator_payout_button(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        var subscriptions = object['e5'].selected_creator_group_subscriptions
+        var creators = object['e5'].creators
+
+        if(object['event'].returnValues.p5 == my_account && creators != null && creators.length > 0 && subscriptions != null && subscriptions.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2117a']/* 'Stage Creator Payouts.' */, 'details':this.props.app_state.loc['2117b']/* 'Stage payouts for the creators in your creator group.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_stage_creator_payout_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2081']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_stage_creator_payout_ui(object){
+        this.props.open_stage_creator_ui(object)
+    }
 
 
 

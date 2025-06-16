@@ -1357,14 +1357,41 @@ class NewPollPage extends Component {
     }
 
     format_data_size(size){
-        if(size > 1_000_000_000){
-            return {'size':Math.round(size/1_000_000_000), 'unit':'GBs'}
+        if(bigInt(size).greater(bigInt(1024).pow(8))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
         }
-        else if(size > 1_000_000){
-            return {'size':Math.round(size/1_000_000), 'unit':'MBs'}
+        else if(bigInt(size).greater(bigInt(1024).pow(7))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
         }
-        else if(size > 1_000){
-            return {'size':Math.round(size/1_000), 'unit':'KBs'}
+        else if(bigInt(size).greater(bigInt(1024).pow(6))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(5))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
+        }
+        else if(size > (1024^4)){
+            return {'size':Math.round(size/(1024^4)), 'unit':'TBs'}
+        }
+        else if(size > (1024^3)){
+            return {'size':Math.round(size/(1024^3)), 'unit':'GBs'}
+        }
+        else if(size > (1024^2)){
+            return {'size':Math.round(size/(1024^2)), 'unit':'MBs'}
+        }
+        else if(size > 1024){
+            return {'size':Math.round(size/1024), 'unit':'KBs'}
         }
         else{
             return {'size':size, 'unit':'bytes'}

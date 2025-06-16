@@ -1805,9 +1805,26 @@ return data['data']
         return this.props.app_state.exchange_events[object['id']][event]
     }
 
+    filter_for_my_logs(logs, p, object){
+        var me = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+        if(me == object['author']){
+            return logs
+        }else{
+            var filtered_logs = []
+            logs.forEach(log => {
+                var account = log['returnValues'][p]
+                if(me == account){
+                    filtered_logs.push(log)
+                }
+            });
+            return filtered_logs
+        }
+    }
+
     render_updated_exchange_ratio_item_logs(object){
         var middle = this.props.height - 120;
-        var items = [].concat(this.get_item_logs(object, 'exchange_ratio'))
+        var logs = this.get_item_logs(object, 'exchange_ratio')
+        var items = [].concat(this.filter_for_my_logs(logs, 'p3', object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1864,7 +1881,7 @@ return data['data']
             return (
                 <div>
                     <div onClick={() => this.when_exchange_ratio_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': '???'/* this.get_sender_title_text(item.returnValues.p3, object) */, 'details': this.props.app_state.loc['2400']/* 'Swapping Account ID' */, 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)/*  */, 'details': this.props.app_state.loc['2400']/* 'Swapping Account ID' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': action, 'details': this.props.app_state.loc['2400']/* 'Action' */, 'size': 'l' })}
@@ -1902,7 +1919,7 @@ return data['data']
         } else {
             return (
                 <div onClick={() => this.when_exchange_ratio_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p9)/* this.get_sender_title_text(item.returnValues.p3, object) */, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)/*  */, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
                 </div>
             )
         }
@@ -2402,7 +2419,8 @@ return data['data']
 
     render_update_balance_item_logs(object){
         var middle = this.props.height - 120;
-        var items = [].concat(this.get_item_logs(object, 'update_balance'))
+        var logs = this.get_item_logs(object, 'update_balance')
+        var items = [].concat(this.filter_for_my_logs(logs, 'p2', object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2453,7 +2471,7 @@ return data['data']
             return (
                 <div>
                     <div onClick={() => this.when_update_balance_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': '???'/* this.get_sender_title_text(item.returnValues.p2, object) */, 'details': this.props.app_state.loc['2447n']/* 'Receiver Account' */, 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2447n']/* 'Receiver Account' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2422']/* 'New Balance ' */, 'number':new_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
@@ -2469,7 +2487,7 @@ return data['data']
         } else {
             return (
                 <div onClick={() => this.when_update_balance_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title':this.get_time_difference(item.returnValues.p4)/* this.get_sender_title_text(item.returnValues.p2, object) */, 'details': this.format_account_balance_figure(new_balance)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title':this.get_sender_title_text(item.returnValues.p2, object)/*  */, 'details': this.format_account_balance_figure(new_balance)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
                 </div>
             )
         }
