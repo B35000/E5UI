@@ -507,16 +507,16 @@ class ProposalDetailsSection extends Component {
             return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
         }
         else if(size > (1024^4)){
-            return {'size':Math.round(size/(1024^4)), 'unit':'TBs'}
+            return {'size':parseFloat(size/(1024^4)).toFixed(3), 'unit':'TBs'}
         }
         else if(size > (1024^3)){
-            return {'size':Math.round(size/(1024^3)), 'unit':'GBs'}
+            return {'size':parseFloat(size/(1024^3)).toFixed(3), 'unit':'GBs'}
         }
         else if(size > (1024^2)){
-            return {'size':Math.round(size/(1024^2)), 'unit':'MBs'}
+            return {'size':parseFloat(size/(1024^2)).toFixed(3), 'unit':'MBs'}
         }
         else if(size > 1024){
-            return {'size':Math.round(size/1024), 'unit':'KBs'}
+            return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
         }
         else{
             return {'size':size, 'unit':'bytes'}
