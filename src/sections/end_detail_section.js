@@ -382,6 +382,11 @@ class EndDetailSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['depth_minted']['title'], 'number':item['depth_minted']['n'], 'relativepower':item['depth_minted']['relativepower']})}>
+                        {this.render_detail_item('2', item['depth_minted'])}
+                    </div>
+                    <div style={{height:10}}/>
+
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
 
                     {this.show_y_aggregate_chart(selected_object, symbol)}
@@ -879,6 +884,7 @@ class EndDetailSection extends Component {
         }
         var max_supply = this.calculate_maximum_supply(selected_object)
         var wallet_dominance = this.calculate_wallet_dominance(max_supply, selected_object)
+        var total_depthminted = this.get_total_depthminted_amount(selected_object)
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
@@ -916,11 +922,27 @@ class EndDetailSection extends Component {
             'max_supply':{'style':'l','title':this.props.app_state.loc['2381']/* 'Tokens Total Supply' */, 'subtitle':this.format_power_figure(max_supply), 'barwidth':this.calculate_bar_width(max_supply), 'number':this.format_account_balance_figure(max_supply), 'relativepower':symbol, 'n':max_supply},
             
             'wallet_dominance':{'style':'l','title':this.props.app_state.loc['2447a']/* 'Wallet Dominance' */, 'subtitle':this.format_power_figure(wallet_dominance), 'barwidth':this.calculate_bar_width(wallet_dominance), 'number':(wallet_dominance)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */},
+
+            'depth_minted':{'style':'l','title':this.props.app_state.loc['2447o']/* 'Total Depth Minted Amount' */, 'subtitle':this.format_power_figure(total_depthminted), 'barwidth':this.calculate_bar_width(total_depthminted), 'number':this.format_account_balance_figure(total_depthminted), 'relativepower':symbol},
             '':{},
             '':{},
             '':{},
 
         }
+    }
+
+    get_total_depthminted_amount(object){
+        var depth_mints = this.get_item_logs(object, 'depth_mint')
+        var total = bigInt(0)
+
+        depth_mints.forEach(item => {
+            var amount = item.returnValues.p5
+            var depth = item.returnValues.p4
+            var amount_string = this.get_actual_number(amount, depth)
+            total = bigInt(total).plus(bigInt(amount_string))
+        });
+
+        return total
     }
 
     calculate_wallet_dominance(max_supply, object){

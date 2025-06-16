@@ -837,8 +837,10 @@ class ChannelDetailsSection extends Component {
         var my_account = this.props.app_state.user_account_id[object['e5']]
         var subscriptions = object['e5'].selected_creator_group_subscriptions
         var creators = object['e5'].creators
+        var object_creation_time = object['event'].returnValues.p6/* timestamp */
+        var now = Date.now()/1000
 
-        if(object['event'].returnValues.p5 == my_account && creators != null && creators.length > 0 && subscriptions != null && subscriptions.length > 0){
+        if(object['event'].returnValues.p5 == my_account && creators != null && creators.length > 0 && subscriptions != null && subscriptions.length > 0 && (now-object_creation_time) > (60*60*24*32)){
             return(
                 <div>
                     {this.render_detail_item('0')}
