@@ -876,7 +876,7 @@ class App extends Component {
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
 
-    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}
+    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{},
   };
 
   get_static_assets(){
@@ -5008,7 +5008,7 @@ class App extends Component {
           when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} get_object_censored_keywords_and_accounts={this.get_object_censored_keywords_and_accounts.bind(this)} repost_audiopost={this.repost_audiopost.bind(this)} repost_videopost={this.repost_videopost.bind(this)} repost_post={this.repost_post.bind(this)} perform_bill_object_payment_search={this.perform_bill_object_payment_search.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} show_view_vote_poll_bottomsheet={this.show_view_vote_poll_bottomsheet.bind(this)} get_objects_votes={this.get_objects_votes.bind(this)} get_poll_results={this.get_poll_results.bind(this)} show_view_calculate_poll_result_bottomsheet={this.show_view_calculate_poll_result_bottomsheet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} fetch_uploaded_data_from_ipfs={this.fetch_uploaded_data_from_ipfs.bind(this)}
 
           close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} open_stage_creator_ui={this.show_view_stage_creator_payout_result_bottomsheet.bind(this)}
-          get_channel_creator_file_records={this.get_channel_creator_file_records.bind(this)}
+          get_channel_creator_file_records={this.get_channel_creator_file_records.bind(this)} get_channel_creator_payout_stagings={this.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.get_channel_payout_records.bind(this)}
 
         />
         {this.render_homepage_toast()}
@@ -11228,7 +11228,9 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
         <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} />
+            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} 
+            calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+            />
         </div>
     )
   }
@@ -14198,7 +14200,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)}
         
         />
       </div>
@@ -14255,6 +14257,7 @@ class App extends Component {
       'home_page_view_options': 300,
       'view_json_example':550,
       'poll_results':600,
+      'channel_payout_results':600,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -14794,6 +14797,23 @@ class App extends Component {
     this.open_dialog_bottomsheet()
     this.prompt_top_notification(this.getLocale()['3055cm']/* 'Reloading in progress...' */, 4000)
     this.homepage.current?.reload_section_data(data['id'], data['selected_page'])
+  }
+
+  add_creator_payouts_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -18059,7 +18079,7 @@ return data['data']
     this.set_cookies_after_stack_action(stack_clone)
   }
 
-  calcualte_creator_payouts = async (channel_object, file_view_data) => {
+  calcualte_creator_payouts = async (channel_object, file_view_data, filter_value) => {
     var now = Date.now()
     var last_run_time = this.state.creator_payout_calculation_times[channel_object['e5_id']]
     if(last_run_time != null && (now - last_run_time) > this.state.calculate_creator_payout_time_limit){
@@ -18085,7 +18105,7 @@ return data['data']
     const arg_obj = {
       subscription_objects: subscription_mapping,
       steps: 60*60,
-      filter_value: 60*60*24*31,
+      filter_value: filter_value,
       file_view_data:file_view_data,
     }
 
@@ -32811,6 +32831,107 @@ return data['data']
     });
 
     return events
+  }
+
+  get_channel_creator_payout_stagings = async (object) => {
+    const author = object['author']
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const created_results_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:44, p2/* sender_acc_id */:author})).reverse()
+
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_results_data, 0, 'p4')
+    }
+
+    const result_objects = []
+    var is_first_time = this.state.channel_payout_stagings[e5_id] == null ? true : false
+    for(var i=0; i<created_results_data.length; i++){
+      const event = created_results_data[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      const obj = {'ipfs':ipfs, 'event':event}
+      result_objects.push(obj)
+      if(is_first_time == true){
+        const channel_payout_stagings_clone = structuredClone(this.state.channel_payout_stagings)
+        channel_payout_stagings_clone[e5_id] = result_objects
+        this.setState({channel_payout_stagings: channel_payout_stagings_clone})
+      }
+    }
+
+    const channel_payout_stagings_clone = structuredClone(this.state.channel_payout_stagings)
+    channel_payout_stagings_clone[e5_id] = result_objects
+    this.setState({channel_payout_stagings: channel_payout_stagings_clone})
+  }
+
+  get_channel_payout_records = async (object) => {
+    const all_object_comment_events = await this.get_channel_creator_payout_events(object)
+    const clone = structuredClone(this.state.channel_creator_payout_records)
+    clone[object['e5_id']] = all_object_comment_events
+    this.setState({channel_creator_payout_records: clone})
+  }
+
+  get_channel_creator_payout_events = async (object) => {
+    const all_unsorted_events = []
+    const id = object['id']
+    const e5 = object['e5']
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params = []
+      const used_e5s = []
+      for(var i=0; i<object['ipfs'].poll_e5s.length; i++){
+        const focused_e5 = object['ipfs'].poll_e5s[i]
+        if(this.state.addresses[focused_e5] != null){
+          used_e5s.push(focused_e5)
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const account_id = this.state.user_account_id[focused_e5]
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = this.state.addresses[focused_e5][1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+          var e5_id = parseInt(e5.replace('E',''))
+          event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 28 /* 28(creator_group_payout_record_container) */, p3/* context */:id, p5: e5_id, p2/* sender_acc_id */:account_id}])
+        }
+      }
+      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      all_events.forEach((event_array, index)=> {       
+        for(var l=0; l<event_array.length; l++){
+          const event = event_array[l]
+          const focused_e5 = 'E'+event.returnValues.p5
+          event['e5'] = focused_e5
+          all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+        }
+      });
+    }else{
+      for(var i=0; i<object['ipfs'].poll_e5s.length; i++){
+        const focused_e5 = object['ipfs'].poll_e5s[i]
+        if(this.state.addresses[focused_e5] != null){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const account_id = this.state.user_account_id[focused_e5]
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = this.state.addresses[focused_e5][1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+          const e5_id = parseInt(e5.replace('E',''))
+          
+          const created_comment_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 28 /* 28(creator_group_payout_record_container) */, p3/* context */:id, p5: e5_id, p2/* sender_acc_id */:account_id}))
+          var m = 0
+          for(var k=0; k<created_comment_data.length; k++){
+            const event = created_comment_data[k]
+            event['e5'] = 'E'+event.returnValues.p5
+            all_unsorted_events.push({'time':event.returnValues.p6/* timestamp */, 'event':event})
+          }
+        }
+      }
+    }
+
+    if(all_unsorted_events.length > 0){
+      const sorted_object_events = this.sortByAttributeDescending(all_unsorted_events, 'time').reverse()
+      return sorted_object_events
+    }
+    return []
   }
 
 

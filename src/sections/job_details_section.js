@@ -863,7 +863,6 @@ class JobDetailsSection extends Component {
 
     render_job_post_responses(object){
         var he = this.props.height-45
-
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>

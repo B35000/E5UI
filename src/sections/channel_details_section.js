@@ -126,7 +126,7 @@ class ChannelDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' *//* , 'e.'+this.props.app_state.loc['2065']'e.moderator-events' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' */, this.props.app_state.loc['2117c']/* 'creator-payouts' */, /* , 'e.'+this.props.app_state.loc['2065']'e.moderator-events' */],[1]
           ],
           'moderator-events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2065']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
@@ -135,7 +135,7 @@ class ChannelDetailsSection extends Component {
 
         obj[this.props.app_state.loc['2065']/* moderator-events */] = [
                 ['xor', 'e', 1], [this.props.app_state.loc['2065']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
-            ]
+        ]
 
         return obj
     }
@@ -214,7 +214,6 @@ class ChannelDetailsSection extends Component {
                         {this.render_channel_activity(object)}
                     </div>
                 )
-                
             }
             else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
                 return(
@@ -241,6 +240,13 @@ class ChannelDetailsSection extends Component {
                 return(
                     <div>
                         {this.render_blocked_accounts_logs(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == this.props.app_state.loc['2117c']/* 'creator-payouts' */){
+                return(
+                    <div>
+                        {this.render_creator_payout_data(object)}
                     </div>
                 )
             }
@@ -859,6 +865,112 @@ class ChannelDetailsSection extends Component {
         this.props.open_stage_creator_ui(object)
     }
 
+
+
+
+
+
+
+
+    render_creator_payout_data(object){
+        var he = this.props.height-45
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div style={{padding:'5px 5px 5px 5px'}}>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2117d']/* 'Staged Creator Payouts' */, 'details':this.props.app_state.loc['2117e']/* 'All the staged creator payouts are shown below.' */, 'size':'l'})} 
+                    </div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_creator_payout_events(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_creator_payout_events(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.get_creator_payout_events(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_payout_result_item(item, object)}
+                                </div>
+                            </li> 
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_creator_payout_events(object){
+        var results_obj = this.props.app_state.channel_payout_stagings[object['e5_id']]
+        if(results_obj == null || !this.can_sender_view_payout_data(object)) return [];
+        return results_obj
+    }
+
+    can_sender_view_payout_data(object){
+        var viewers = object['ipfs'].creators
+        if(viewers.length == 0) return true;
+        var my_active_accounts = this.load_my_active_accounts(object)
+        return my_active_accounts.some(r=> viewers.includes(r))
+    }
+
+    load_my_active_accounts(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                var id = this.props.app_state.user_account_id[e5]
+                if(id != null && id != 1){
+                    var account = e5+':'+id
+                    active_e5s.push(account)
+                }
+            }
+        }
+        return active_e5s
+    }
+
+    render_payout_result_item(item){
+        var time = item['event'].returnValues.p6/* timestamp */
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.get_time_difference(time), 'title':''+(new Date(time * 1000)), 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_payout_item_clicked(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'channel_payout_results')
+    }
 
 
 

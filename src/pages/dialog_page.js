@@ -19,6 +19,8 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import TextInput from './../components/text_input';
+
 import { from } from "@iotexproject/iotex-address-ts";
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
@@ -50,6 +52,7 @@ class DialogPage extends Component {
         data:null,
         id:'',
         ignored_bills:[],
+        searched_user:'',
     };
 
 
@@ -206,6 +209,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_poll_results()}
+                </div>
+            )
+        }
+        else if(option == 'channel_payout_results'){
+            return(
+                <div>
+                    {this.render_creator_payout_info()}
                 </div>
             )
         }
@@ -4176,6 +4186,664 @@ return data['data']
             </div>
         )
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_creator_payout_info(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_creator_payout_ui()}
+                    {this.render_detail_item('0')}
+                    {this.render_creator_payout_ui2()}
+                    {this.render_detail_item('0')}
+                    {this.render_make_payout_button()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_creator_payout_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_make_payout_button()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_creator_payout_ui2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_creator_payout_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_make_payout_button()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_creator_payout_ui2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_creator_payout_ui(){
+        const object = this.state.data['object']
+        const focused_item = this.state.data['item']
+        const payout_information = focused_item['ipfs'].payout_information
+        const payout_transaction_data = focused_item['ipfs'].payout_transaction_data
+        const payout_subscriptions_used = focused_item['ipfs'].payout_subscriptions_used
+
+        const final_payment_info = payout_information.final_payment_info
+        const total_payment_data_for_subscriptions = payout_information.total_payment_data_for_subscriptions
+        const start_time = payout_information.start_time
+        const end_time = payout_information.end_time
+        const total_data_bytes_streamed = payout_information.total_data_bytes_streamed
+
+        const formatted_size = this.format_data_size(total_data_bytes_streamed)
+        const fs = formatted_size['size']+' '+formatted_size['unit']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075j']/* 'Starting Time.' */, 'title':''+(new Date(start_time)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075k']/* 'Ending Time.' */, 'title':''+(new Date(end_time)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075l']/* 'Total Data Streamed.' */, 'title':fs, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('0')}
+                {this.render_total_payment_data_for_subscriptions_data(total_payment_data_for_subscriptions, payout_subscriptions_used)}
+
+            </div>
+        )
+    }
+
+    render_creator_payout_ui2(){
+        const object = this.state.data['object']
+        const focused_item = this.state.data['item']
+        const payout_information = focused_item['ipfs'].payout_information
+        const payout_transaction_data = focused_item['ipfs'].payout_transaction_data
+        const payout_subscriptions_used = focused_item['ipfs'].payout_subscriptions_used
+
+        const final_payment_info = payout_information.final_payment_info
+        const total_data_bytes_streamed = payout_information.total_data_bytes_streamed
+        const valid_user_stream_data = payout_information.valid_user_stream_data
+
+        return(
+            <div>
+                {this.render_final_payment_info(final_payment_info, valid_user_stream_data, total_data_bytes_streamed)}
+            </div>
+        )
+    }
+
+
+
+
+    render_total_payment_data_for_subscriptions_data(total_payment_data_for_subscriptions, payout_subscriptions_used){
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075m']/* 'Subscription Payout Amounts.' */, 'title':this.props.app_state.loc['3075n']/* 'The total amount of tokens collected from each subscription is shown below.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_subscriptions2(payout_subscriptions_used)}
+                <div style={{height:10}}/>
+                {this.render_total_subscription_payment_data_for_specific_subscription(total_payment_data_for_subscriptions, payout_subscriptions_used)}
+            </div>
+        )
+    }
+
+    render_subscriptions2(items){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_used_subscription_clicked(item)}>
+                            {this.render_subscription_item2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_used_subscription_clicked(item){
+        if(item == this.state.selected_subscription_item){
+            this.setState({selected_subscription_item: null})
+        }else{
+            this.setState({selected_subscription_item: item})
+        }
+    }
+
+    render_subscription_item2(item, pos){
+        var e5 = 'E'+item.split('E')[1]
+        var id = item.split('E')[0]
+        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5][id]
+        var e5_id = item
+        var opacity = 0.7
+        var details = '????';
+        if(subscription_item != null){
+            opacity = 1.0
+            details = this.truncate(subscription_item['ipfs'].entered_title_text, 17)
+        }
+        
+        if(this.state.selected_subscription_item == e5_id || (pos == 0 && this.state.selected_subscription_item == null)){
+            return(
+                <div style={{'opacity':opacity}}>
+                    {this.render_detail_item('3', {'title':' • '+id, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[e5].e5_img})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div style={{'opacity':opacity}}>
+                {this.render_detail_item('3', {'title':' • '+id, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[e5].e5_img})}
+            </div>
+        )
+    }
+
+    render_total_subscription_payment_data_for_specific_subscription(total_payment_data_for_subscriptions, payout_subscriptions_used){
+        const default_subscription = payout_subscriptions_used.selected_creator_group_subscriptions[0]
+        const selected_subscription_e5_id = this.state.selected_subscription_item == null ? default_subscription : this.state.selected_subscription_item
+        const specific_subscription_data = total_payment_data_for_subscriptions[selected_subscription_e5_id]
+        if(specific_subscription_data == null || Object.keys(specific_subscription_data).length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        const e5 = 'E'+selected_subscription_e5_id.split('E')[1]
+        const focused_exchanges = Object.keys(specific_subscription_data)
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {focused_exchanges.map((item, index) => (
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':specific_subscription_data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(specific_subscription_data[item]), 'barwidth':this.calculate_bar_width(specific_subscription_data[item]), 'number':this.format_account_balance_figure(specific_subscription_data[item]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+
+    get_data(item){
+        var obj = item.split(':')
+        return { e5: obj[0], id: obj[1]}
+    }
+
+    get_senders_name3(item){
+        var data_item = this.get_data(item)
+        var sender = data_item.id
+        var e5 = data_item.e5
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.props.app_state.alias_bucket[e5]
+            var alias = (obj[sender] == null ? this.props.app_state.loc['c311m']/* 'Account' */ : obj[sender])
+            return alias
+        }
+    }
+
+
+
+    render_final_payment_info(final_payment_info, valid_user_stream_data, total_data_bytes_streamed){
+        var user_id_keys = this.filter_user_id_keys_by_searched_text(Object.keys(final_payment_info))
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075o']/* 'Creator Payout Info' */, 'title':this.props.app_state.loc['3075p']/* 'Below is the payout information for each creator.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['904']/* 'Account ID' */} when_text_input_field_changed={this.when_searched_user_input_changed.bind(this)} text={this.state.searched_user} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                {this.render_creators2(user_id_keys)}
+                <div style={{height:10}}/>
+                {this.render_selected_creator_payout_information(final_payment_info, valid_user_stream_data, total_data_bytes_streamed)}
+            </div>
+        )
+    }
+
+    filter_user_id_keys_by_searched_text(user_id_keys){
+        var selected_keys = []
+        var searched_text = this.state.searched_user
+        user_id_keys.forEach(user_id => {
+            if(searched_text == ''){
+                selected_keys.push(user_id)
+            }else{
+                var user_name = this.get_senders_name3(user_id)
+                var account_id = this.get_data(user_id).id
+                if(user_name.toLowerCase().startsWith(searched_text.toLowerCase())){
+                    selected_keys.push(user_id)
+                }
+                else if(account_id.startsWith(searched_text)){
+                    selected_keys.push(user_id)
+                }
+            }
+        });
+
+        return selected_keys
+    }
+
+    when_searched_user_input_changed(text){
+        this.setState({searched_user: text})
+    }
+
+    render_creators2(items){
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.reverse().map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_creator_item_clicked(item)}>
+                            {this.render_creator_item2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_creator_item2(item, pos){
+        if(this.state.selected_creator_item == item || (pos == 0 && this.state.selected_creator_item == null)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name3(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name3(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+            </div>
+        )
+    }
+
+    when_creator_item_clicked(item){
+        if(item == this.state.selected_creator_item){
+            this.setState({selected_creator_item: null})
+        }else{
+            this.setState({selected_creator_item: item})
+        }
+    }
+
+    render_selected_creator_payout_information(final_payment_info, valid_user_stream_data, total_data_bytes_streamed){
+        const all_creators = Object.keys(final_payment_info)
+        if(all_creators.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        const selected_creator_item = this.state.selected_creator_item == null ? all_creators[0] : this.state.selected_creator_item
+        const selected_creator_payout_data = final_payment_info[selected_creator_item]
+        const selected_creator_payout_exchanges = Object.keys(selected_creator_payout_data)
+        const selected_creator_streaming_total = valid_user_stream_data[selected_creator_item]
+        var proportion = bigInt(selected_creator_streaming_total).multiply(100).divide(total_data_bytes_streamed)
+        if(bigInt(selected_creator_streaming_total).lesser(bigInt('1e14')) && bigInt(total_data_bytes_streamed).lesser(bigInt('1e14'))){
+            proportion = ((selected_creator_streaming_total * 100) / total_data_bytes_streamed).toFixed(2)
+        }
+        if(proportion >= 100){
+            proportion = 99.99
+        }
+        const formatted_size = this.format_data_size(selected_creator_streaming_total)
+        const fs = formatted_size['size']+' '+formatted_size['unit']
+
+        var transfer_data = []
+        selected_creator_payout_exchanges.forEach(exchange_e5_id => {
+            var item_data = this.get_data(exchange_e5_id)
+            var transfer_amount = selected_creator_payout_data[exchange_e5_id]
+            transfer_data.push({'exchange':item_data.id, 'e5':item_data.e5, 'amount':transfer_amount})
+        });
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075r']/* 'Total Data Sreamed for Creators Files.' */, 'title':fs, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3075q']/* 'Streaming proportion' */, 'subtitle':this.format_power_figure(proportion), 'barwidth':Math.floor(proportion)+'%', 'number':proportion+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */,})}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {transfer_data.map((item, index) => (
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+item['exchange']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+
+
+    render_make_payout_button(){
+        const object = this.state.data['object']
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+
+        if(object['author'] != my_account){
+            return;
+        }
+
+        const focused_item = this.state.data['item']
+        const payout_transaction_data = focused_item['ipfs'].payout_transaction_data
+
+        const payout_e5s_used = Object.keys(payout_transaction_data)
+        const focused_e5 = this.state.selected_payout_e5 == null ? payout_e5s_used[0] : this.state.selected_payout_e5
+
+        var focused_e5_transaction_info = payout_transaction_data[focused_e5]
+        var recorded_batches = this.get_recorded_batches()
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2117f']/* 'E5s Used.' */, 'details':this.props.app_state.loc['2117g']/* 'Below are the E5s used in the payouts.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.load_creator_payout_e5s(payout_e5s_used)}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['2117h']/* 'You also need to select a batch and its set transfers.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height: 10}}/>
+                {this.load_transfer_batches_staged(focused_e5_transaction_info, recorded_batches)}
+                <div style={{height: 10}}/>
+
+                {this.render_total_batch_transfers_and_my_balances(focused_e5, focused_e5_transaction_info)}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2117j']/* 'Stack transfers.' */, 'details':this.props.app_state.loc['2117k']/* 'Stack the transfers for the selected batch in your selected E5.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_stack_transfers_tapped(recorded_batches)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2117l']/* Stack transfers */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    load_creator_payout_e5s(items){
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item3()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item3(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        if(this.state.selected_payout_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked(item){
+        this.setState({selected_payout_e5: item})
+    }
+
+
+    load_transfer_batches_staged(focused_e5_transaction_info, recorded_batches){
+        var items = Object.keys(focused_e5_transaction_info)
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_transfer_batch_clicked(item)}>
+                            {this.render_batch_item(item, focused_e5_transaction_info[item].length, recorded_batches)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_batch_item(item, count, recorded_batches){
+        var details = this.props.app_state.loc['2117i']/* '$ transfers.' */.replace('$', count)
+        var opacity = recorded_batches.includes(item) ? 0.6 : 1.0
+        if(this.state.selected_batch_item == item){
+            return(
+                <div style={{'opacity': opacity}}>
+                    {this.render_detail_item('3', {'title':item, 'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'opacity': opacity}}>
+                    {this.render_detail_item('3', {'title':item, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    get_recorded_batches(){
+        const object = this.state.data['object']
+        const records = this.props.app_state.channel_creator_payout_records[object['e5_id']]
+        const recorded_batches = []
+        if(records != null && records.length > 0){
+            records.forEach(record => {
+                var batch_id = record['event'].returnValues.p4/* string_data */
+                if(!recorded_batches.includes(batch_id)) recorded_batches.push(batch_id);
+            });
+        }
+        return recorded_batches
+    }
+
+    when_transfer_batch_clicked(item){
+        if(this.state.selected_batch_item == item){
+            this.setState({selected_batch_item: null})
+        }else{
+            this.setState({selected_batch_item: item})
+        }
+        
+    }
+
+    render_total_batch_transfers_and_my_balances(e5, payout_transaction_data){
+        const selected_batch_id = this.state.selected_batch_item
+        if(selected_batch_id != null){
+            const transfer_data = payout_transaction_data[e5][selected_batch_id]
+            const total_transfer_obj = {}
+            transfer_data.forEach(transfer_object => {
+                if(total_transfer_obj[transfer_object['exchange']] == null){
+                    total_transfer_obj[transfer_object['exchange']] = bigInt(0)
+                }
+                total_transfer_obj[transfer_object['exchange']] = bigInt(total_transfer_obj[transfer_object['exchange']]).plus(bigInt(transfer_object['amount']))
+            });
+
+            const exchanges_used = Object.keys(total_transfer_obj)
+            const my_balances = {}
+            exchanges_used.forEach(exchange_id => {
+                my_balances[exchange_id] = this.props.calculate_actual_balance(e5, exchange_id)
+            });
+            if(exchanges_used.length == 0){
+                return(
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055ct']/* 'The total amounts to be tranferred.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                            {exchanges_used.map((item, index) => (
+                                <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':total_transfer_obj[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(total_transfer_obj[item]), 'barwidth':this.calculate_bar_width((total_transfer_obj[item])), 'number':this.format_account_balance_figure((total_transfer_obj[item])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div> 
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055cu']/* 'Your balances for the exchanges used.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                            {exchanges_used.map((item, index) => (
+                                <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':my_balances[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(my_balances[item]), 'barwidth':this.calculate_bar_width((my_balances[item])), 'number':this.format_account_balance_figure((my_balances[item])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div> 
+                    <div style={{height: 10}}/>
+                </div> 
+            )
+        }
+    }
+
+
+
+
+    when_stack_transfers_tapped(recorded_batches){
+        const object = this.state.data['object']
+        const focused_e5 = this.state.selected_payout_e5
+        const selected_batch_id = this.state.selected_batch_item
+        const focused_item = this.state.data['item']
+        const payout_transaction_data = focused_item['ipfs'].payout_transaction_data
+
+        if(focused_e5 == null){
+            this.props.notify(this.props.app_state.loc['2117n']/* 'You need to select an E5 to use.' */, 6700)
+        }
+        else if(selected_batch_id == null){
+            this.props.notify(this.props.app_state.loc['2117m']/* 'You need to select a batch first.' */, 6700)
+        }
+        else if(recorded_batches.includes(selected_batch_id)){
+            this.props.notify(this.props.app_state.loc['3075ac']/* 'You already made the transfers for that batch.' */, 6700)
+        }
+        else{
+            const transfer_data_array = payout_transaction_data[focused_e5][selected_batch_id]
+            if(!this.check_if_sender_can_afford_payouts(transfer_data_array, focused_e5)){
+                this.props.notify(this.props.app_state.loc['2117o']/* 'Your account balance is insufficient to make all of the transfers.' */, 6700)
+                return;
+            }
+            else if(!this.can_sender_make_creator_payout_staged(selected_batch_id, focused_e5)){
+                this.props.notify(this.props.app_state.loc['2117r']/* 'You cant stack the same payout batch twice.' */, 7700)
+                return;
+            }
+
+            const obj = {
+                id: selected_batch_id, 
+                type: this.props.app_state.loc['2117p']/* 'creator-payout' */,
+                entered_indexing_tags:[
+                    this.props.app_state.loc['3075z']/* 'creator' */,
+                    this.props.app_state.loc['3075y']/* 'payout' */,
+                    this.props.app_state.loc['2117q']/* 'transfers' */, 
+                ],
+                e5: focused_e5, 
+                payout_transfers_array: transfer_data_array, 
+                channel_object: object
+            }
+
+            this.props.add_creator_payouts_to_stack(obj)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+        }
+    }
+
+    check_if_sender_can_afford_payouts(transfer_data, e5){
+        var total_transfer_obj = {}
+
+        transfer_data.forEach(transfer_object => {
+            if(total_transfer_obj[transfer_object['exchange']] == null){
+                total_transfer_obj[transfer_object['exchange']] = bigInt(0)
+            }
+            total_transfer_obj[transfer_object['exchange']] = bigInt(total_transfer_obj[transfer_object['exchange']]).plus(bigInt(transfer_object['amount']))
+        });
+
+        var exchanges_used = Object.keys(total_transfer_obj)
+
+        var can_pay = true;
+        for(var i=0; i<exchanges_used.length; i++){
+            var token_id = exchanges_used[i]
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
+            var final_amount = total_transfer_obj[token_id]
+
+            if(bigInt(token_balance).lesser(bigInt(final_amount))){
+                can_pay = false
+            }
+        }
+        return can_pay
+    }
+
+    can_sender_make_creator_payout_staged(selected_batch_id, e5_used){
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == this.props.app_state.loc['2117p']/* 'creator-payout' */ && stack_transactions[i].id == selected_batch_id && stack_transactions[i].e5 == e5_used){
+                return false
+            }
+        }
+        return true
+    }
+
+
+
 
 
 

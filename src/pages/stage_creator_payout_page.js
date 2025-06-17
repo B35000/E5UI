@@ -48,7 +48,7 @@ function makeid(length) {
 class StageCreatorPayoutPage extends Component {
     
     state = {
-        selected: 0, channel_obj:null, get_new_creator_payout_action_page_tags_object:this.get_new_creator_payout_action_page_tags_object(), batch_size:23, searched_user:'',
+        selected: 0, id:makeid(8), channel_obj:null, get_new_creator_payout_action_page_tags_object:this.get_new_creator_payout_action_page_tags_object(), batch_size:23, searched_user:'',
     };
 
     set_data(channel_obj){
@@ -76,17 +76,7 @@ class StageCreatorPayoutPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                
-                <div className="row">
-                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_creator_payout_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_creator_payout_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
-                        </div>
-                    </div>
-                </div>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_creator_payout_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_creator_payout_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 
                 {this.render_everything()}
             </div>
@@ -106,6 +96,10 @@ class StageCreatorPayoutPage extends Component {
             return(
                 <div>
                     {this.render_stage_creator_payout_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_payout_information()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -114,9 +108,11 @@ class StageCreatorPayoutPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_stage_creator_payout_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_payout_information()}
                     </div>
                 </div>
                 
@@ -127,9 +123,11 @@ class StageCreatorPayoutPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_stage_creator_payout_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_payout_information()}
                     </div>
                 </div>
             )
@@ -218,8 +216,25 @@ class StageCreatorPayoutPage extends Component {
             }
         });
 
+        const existing_stagings = this.props.app_state.channel_payout_stagings[this.state.channel_obj['e5_id']]
+        var filter_value = 60*60*24*31
+        if(existing_stagings != null && existing_stagings.length > 0){
+            const record_end_time = existing_stagings[0]['ipfs'].payout_information.end_time
+            
+            const now = new Date();
+            const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const last_month_date = new Date(firstOfThisMonth.getTime() - 1);
+            const difference = last_month_date.getTime() - record_end_time
+            filter_value = Math.floor(difference/1000);
+        }
+
+        if(filter_value < (60*60*24*31)){
+            this.props.notify(this.props.app_state.loc['3075ab']/* 'Youve already staged a payout within the last month.' */, 7300);
+            return;
+        }
+
         this.props.notify(this.props.app_state.loc['3075h']/* 'Sending payout data request...' */, 2300);
-        this.props.calcualte_creator_payouts(this.state.channel_obj, file_view_data)
+        this.props.calcualte_creator_payouts(this.state.channel_obj, file_view_data, filter_value)
     }
     
     get_file_view_data(file_link){
@@ -484,10 +499,12 @@ class StageCreatorPayoutPage extends Component {
                 
                 {this.render_detail_item('0')}
                 {this.render_final_payment_info(final_payment_info, valid_user_stream_data, total_data_bytes_streamed)}
+
+                {this.render_detail_item('0')}
+                {this.render_finish_button()}
             </div>
         )
     }
-
 
     render_total_payment_data_for_subscriptions_data(total_payment_data_for_subscriptions){
         return(
@@ -517,16 +534,17 @@ class StageCreatorPayoutPage extends Component {
     }
 
     when_used_subscription_clicked(item){
-        if(item['e5_id'] == this.state.selected_subscription_item){
+        if(item == this.state.selected_subscription_item){
             this.setState({selected_subscription_item: null})
         }else{
-            this.setState({selected_subscription_item: item['e5_id']})
+            this.setState({selected_subscription_item: item})
         }
     }
 
-    render_subscription_item2(subscription_item, pos){
-        var e5 = subscription_item['e5']
-        var id = subscription_item['id']
+    render_subscription_item2(item, pos){
+        var e5 = 'E'+item.split('E')[1]
+        var id = item.split('E')[0]
+        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5][id]
         var e5_id = subscription_item['e5_id']
         var details = this.truncate(subscription_item['ipfs'].entered_title_text, 17)
         if(this.state.selected_subscription_item == e5_id || (pos == 0 && this.state.selected_subscription_item == null)){
@@ -545,7 +563,7 @@ class StageCreatorPayoutPage extends Component {
     }
 
     render_total_subscription_payment_data_for_specific_subscription(total_payment_data_for_subscriptions){
-        const default_subscription = this.state.channel_obj['ipfs'].selected_creator_group_subscriptions
+        const default_subscription = this.state.channel_obj['ipfs'].selected_creator_group_subscriptions[0]
         const selected_subscription_e5_id = this.state.selected_subscription_item == null ? default_subscription : this.state.selected_subscription_item
         const specific_subscription_data = total_payment_data_for_subscriptions[selected_subscription_e5_id]
         if(specific_subscription_data == null || Object.keys(specific_subscription_data).length == 0){
@@ -679,7 +697,6 @@ class StageCreatorPayoutPage extends Component {
         }
     }
 
-
     render_selected_creator_payout_information(final_payment_info, valid_user_stream_data, total_data_bytes_streamed){
         const all_creators = Object.keys(final_payment_info)
         if(all_creators.length == 0){
@@ -732,6 +749,101 @@ class StageCreatorPayoutPage extends Component {
     }
 
 
+
+    render_finish_button(){
+        return (
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3075s']/* 'Stage Payout Data.' */, 'details':this.props.app_state.loc['3075t']/* 'Post this payout data in your channel for the creators to see.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_record_payout_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3075u']/* Stage Payout */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_record_payout_tapped(){
+        const batch_size = this.state.batch_size
+        if(batch_size == 0){
+            this.props.notify(this.props.app_state.loc['3075v']/* 'You cant use a batch size of 0.' */, 4700)
+            return;
+        }
+        else if(!this.can_sender_make_creator_payout_with_this_channel()){
+            this.props.notify(this.props.app_state.loc['3075aa']/* 'You cant stage a creator payout with the same channel twice in one run.' */, 7700)
+            return;
+        }
+
+        const object = this.state.channel_obj
+        const payout_information = this.props.app_state.stage_creator_payout_results[object['e5_id']]
+        const final_payment_info = payout_information.final_payment_info
+        const user_account_data = payout_information.user_account_data
+        const all_creators = Object.keys(final_payment_info)
+        const creator_groups = this.split_array(all_creators, batch_size)
+
+        const payout_info = {}
+        for(var i=0; i<creator_groups.length; i++){
+            const focused_creator_group = creator_groups[i]
+            const focused_creator_group_id = makeid(7)
+            
+            for(var j=0; j<focused_creator_group.length; j++){
+                const creator_e5_id = all_creators[i]
+                const creator_info = user_account_data[creator_e5_id]
+                const selected_creator_payout_data = final_payment_info[creator_e5_id]
+                const selected_creator_payout_exchanges = Object.keys(selected_creator_payout_data)
+
+                selected_creator_payout_exchanges.forEach(exchange_e5_id => {
+                    var item_data = this.get_data(exchange_e5_id)
+                    var transfer_amount = selected_creator_payout_data[exchange_e5_id]
+                    if(payout_info[item_data.e5] == null){
+                        payout_info[item_data.e5] = {}
+                    }
+                    if(payout_info[item_data.e5][focused_creator_group_id] == null){
+                        payout_info[item_data.e5][focused_creator_group_id] = []
+                    }
+                    const creator_account_id = creator_info['accounts'][item_data.e5]
+                    const creator_account_address = creator_info['address']
+                    
+                    payout_info[item_data.e5][focused_creator_group_id].push({'exchange':item_data.id, 'e5':item_data.e5, 'amount':transfer_amount, 'recipient_account':creator_account_id, 'recipient_address':creator_account_address})
+                });
+            }
+        }
+        
+        const obj = {
+            id:this.state.id, type: this.props.app_state.loc['3075w']/* 'stage-creator-payout' */,
+            entered_indexing_tags:[
+                this.props.app_state.loc['3075x']/* 'stage' */, 
+                this.props.app_state.loc['3075z']/* 'creator' */,
+                this.props.app_state.loc['3075y']/* 'payout' */,
+                this.props.app_state.loc['3074bs']/* 'result' */, 
+            ],
+            e5: this.state.channel_obj['e5'], 
+            payout_information: payout_information, 
+            channel_obj: this.state.channel_obj,
+            payout_transaction_data: payout_info,
+        }
+
+        this.props.add_staging_result_transaction_to_stack(obj)
+        this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+    }
+
+    split_array(arr, chunkSize) {
+        const chunks = [];
+        for (let i = 0; i < arr.length; i += chunkSize) {
+          chunks.push(arr.slice(i, i + chunkSize));
+        }
+        return chunks;
+    }
+
+    can_sender_make_creator_payout_with_this_channel(){
+        var stack_transactions = this.props.app_state.stack_items
+        const object = this.state.channel_obj
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == this.props.app_state.loc['3075w']/* 'stage-creator-payout' */ && stack_transactions[i].channel_obj['e5_id'] == object['e5_id']){
+                return false
+            }
+        }
+        return true
+    }
 
 
 

@@ -3938,6 +3938,39 @@ class StackPage extends Component {
                         ints.push(message_transfers.transfers_obj);
                     }
                 }
+                else if(txs[i].type == this.props.app_state.loc['3075w']/* 'stage-creator-payout' */){
+                    var obj = await this.format_creator_payout_update_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(obj.str)
+                    adds.push([])
+                    ints.push(obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['2117p']/* 'creator-payout' */){
+                    var creator_payout_data_object = this.get_creator_payout_transfers(txs[i], ints);
+                    if(creator_payout_data_object.depth_swap_obj[1].length > 0){
+                        /* push any depth swap actions */
+                        strs.push([])
+                        adds.push([])
+                        ints.push(creator_payout_data_object.depth_swap_obj)
+                    }
+                    for(var x=0; x<creator_payout_data_object.create_account_array.length; x++){
+                        /* push any create account actions */
+                        strs.push([])
+                        adds.push([creator_payout_data_object.create_address_array[x]])
+                        ints.push(creator_payout_data_object.create_account_array[x]);
+                    }
+
+                    /* push the transfer object after */
+                    strs.push([])
+                    adds.push([])
+                    ints.push(creator_payout_data_object.transfers_obj);
+
+                    /* finally push the transfer record */
+                    var payout_record_transaction = this.format_creator_payout_record_object(txs[i])
+                    strs.push(payout_record_transaction.str)
+                    adds.push([])
+                    ints.push(payout_record_transaction.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -5037,6 +5070,15 @@ class StackPage extends Component {
                     const t = txs[i]
                     const poll_e5_id = t.e5+':'+t.poll_object['id']
                     newly_participated_polls.push(poll_e5_id)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3075w']/* 'stage-creator-payout' */){
+                    const payout_result_data = {
+                        payout_information: txs[i].payout_information,
+                        payout_transaction_data: txs[i].payout_transaction_data,
+                        payout_subscriptions_used: txs[i].channel_obj['ipfs'].selected_creator_group_subscriptions,
+                    }
+                    ipfs_index_object[txs[i].id] = payout_result_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':payout_result_data})
                 }
             }
         }
@@ -8372,6 +8414,137 @@ class StackPage extends Component {
 
             string_obj[0].push(string_data)
         }
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_creator_payout_update_object = async (t, calculate_gas, ipfs_index) =>{
+        var target = t.channel_obj['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [target], [23],/*  */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = 44
+        var int_data = 0
+        
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    get_creator_payout_transfers(t, ints){
+        var ints_clone = ints.slice()
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+        const create_account_array = []
+        const create_address_array = []
+        const isEthereumAddress = (input) => /^0x[a-fA-F0-9]{40}$/.test(input);
+        
+        for(var i=0; i<t.payout_transfers_array.length; i++){
+            if(t.payout_transfers_array[i]['amount'] != 0 && t.payout_transfers_array[i]['recipient_account'] != null){
+                var receiver = (t.payout_transfers_array[i]['recipient_account'] < 1000 || t.payout_transfers_array[i]['recipient_account'] == null) ? t.payout_transfers_array[i]['recipient_address'] : t.payout_transfers_array[i]['recipient_account'].toString().toLocaleString('fullwide', {useGrouping:false})
+                
+                var amount = t.payout_transfers_array[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+                
+                var exchange = t.payout_transfers_array[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+                if(isEthereumAddress(receiver) == true){
+                    //receiver doesnt have an account in my e5, so I need to create one for them
+                    var obj = [/* custom object */
+                        [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 29 /* 29(account_obj_id) */, 0]
+                    ]
+                    create_account_array.push(obj)
+                    create_address_array.push(receiver)
+                }
+
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, transfers_obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+                for(var f=0; f<transfer_actions.length; f++){
+                    transfers_obj[1].push(exchange)
+                    transfers_obj[2].push(23)
+                    transfers_obj[3].push(receiver)
+
+                    var receiver_type = isEthereumAddress(receiver) ? 35 : 23
+                    transfers_obj[4].push(receiver_type)
+
+                    transfers_obj[5].push(transfer_actions[f]['amount'])
+                    transfers_obj[6].push(transfer_actions[f]['depth'])
+                }
+            }
+        }
+
+        var create_account_pos = ints.length
+        if(depth_swap_obj[1].length > 0){
+            create_account_pos++
+        }
+        var transfer_receivers = transfers_obj[3]
+        for(var x=0; x<transfer_receivers.length; x++){
+            var receiver = transfer_receivers[x]
+            if(isEthereumAddress(receiver) == true){
+                var pos = create_account_pos + create_address_array.indexOf(receiver)
+                transfers_obj[3][x] = pos
+            }
+        }
+        
+        return {transfers_obj, create_account_array, create_address_array, depth_swap_obj}
+    }
+
+    format_creator_payout_record_object = (t) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [], [],/*  */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var target_id = 28 /* 28(creator_group_payout_record_container) */
+        var context = t.channel_object['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+        var int_data = (parseInt(t.channel_object['e5'].replace('E',''))).toString().toLocaleString('fullwide', {useGrouping:false})
+        var string_data = t.id
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
     }

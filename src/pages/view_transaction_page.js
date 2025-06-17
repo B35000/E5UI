@@ -237,7 +237,9 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3068af']/* 'bill' */ &&
             item.type != this.props.app_state.loc['3071j']/* 'bill-payment' */ &&
             item.type != this.props.app_state.loc['3074bq']/* 'poll-result' */ &&
-            item.type != this.props.app_state.loc['3030b']/* 'video-comment-messages' */
+            item.type != this.props.app_state.loc['3030b']/* 'video-comment-messages' */ &&
+            item.type != this.props.app_state.loc['3075w']/* 'stage-creator-payout' */ &&
+            item.type != this.props.app_state.loc['2117p']/* 'creator-payout' */
         ){
             return(
                 <div>
@@ -871,6 +873,20 @@ class ViewTransactionPage extends Component {
                         {this.render_mail_message_data(this.props.app_state.loc['1979l']/* 'Video Comment Messages' */)}
                     </div>
                 )   
+            }
+            else if(tx.type == this.props.app_state.loc['3075w']/* 'stage-creator-payout' */){
+                return(
+                    <div>
+                        {this.render_stage_creator_payout_info()}
+                    </div>
+                )   
+            }
+            else if(tx.type == this.props.app_state.loc['2117p']/* 'creator-payout' */){
+                return(
+                    <div>
+                        {this.render_creator_payout_info()}
+                    </div>
+                )
             }
         }
     }
@@ -7112,6 +7128,281 @@ return data['data']
             )
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_stage_creator_payout_info(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var subscriptions = transaction_item.channel_obj['ipfs'].selected_creator_group_subscriptions
+        const payout_information = transaction_item.payout_information
+        const start_time = payout_information.start_time
+        const end_time = payout_information.end_time
+        const total_data_bytes_streamed = payout_information.total_data_bytes_streamed
+
+        const formatted_size = this.format_data_size(total_data_bytes_streamed)
+        const fs = formatted_size['size']+' '+formatted_size['unit']
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1979m']/* 'Creator Payout.' */, 'details':this.props.app_state.loc['1979n']/* 'Below is the details for the stacked creator payout info to be staged.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_channel_object()}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['3075g']/* '$ subscriptions used.' */.replace('$', subscriptions.length)})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2874']/* 'transactions per batch' */, 'number':transaction_item.batch_size, 'relativepower':this.props.app_state.loc['2867']/* 'transactions' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2874']/* 'transactions per batch' */, 'subtitle':this.format_power_figure(transaction_item.batch_size), 'barwidth':this.calculate_bar_width(transaction_item.batch_size), 'number':this.format_account_balance_figure(transaction_item.batch_size), 'barcolor':'', 'relativepower':this.props.app_state.loc['2867']/* 'transactions' */, })}
+                </div>
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075j']/* 'Starting Time.' */, 'title':''+(new Date(start_time)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075k']/* 'Ending Time.' */, 'title':''+(new Date(end_time)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075l']/* 'Total Data Streamed.' */, 'title':fs, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_total_payment_data_for_subscriptions_data(total_payment_data_for_subscriptions)}
+            </div>
+        )
+    }
+
+    render_channel_object(){
+        var object = this.state.channel_obj
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_channel_item(object)
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    format_channel_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var extra = ''
+        if(object['ipfs']['blocked_data'] != null){
+            extra = extra+'🗝️'
+        }
+        
+        if(extra != ''){
+            extra = extra+' '
+        }
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name4(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
+        }
+    }
+
+    get_senders_name4(sender, object){
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : ' • '+this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+
+    render_total_payment_data_for_subscriptions_data(total_payment_data_for_subscriptions){
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075m']/* 'Subscription Payout Amounts.' */, 'title':this.props.app_state.loc['3075n']/* 'The total amount of tokens collected from each subscription is shown below.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_subscriptions2()}
+                <div style={{height:10}}/>
+                {this.render_total_subscription_payment_data_for_specific_subscription(total_payment_data_for_subscriptions)}
+            </div>
+        )
+    }
+
+    render_subscriptions2(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.channel_obj['ipfs'].selected_creator_group_subscriptions
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_used_subscription_clicked(item)}>
+                            {this.render_subscription_item2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_used_subscription_clicked(item){
+        if(item == this.state.selected_subscription_item){
+            this.setState({selected_subscription_item: null})
+        }else{
+            this.setState({selected_subscription_item: item})
+        }
+    }
+
+    render_subscription_item2(item, pos){
+        var e5 = 'E'+item.split('E')[1]
+        var id = item.split('E')[0]
+        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5][id]
+        var e5_id = subscription_item['e5_id']
+        var details = this.truncate(subscription_item['ipfs'].entered_title_text, 17)
+        if(this.state.selected_subscription_item == e5_id || (pos == 0 && this.state.selected_subscription_item == null)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':' • '+id, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[e5].e5_img})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':' • '+id, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[e5].e5_img})}
+            </div>
+        )
+    }
+
+    render_total_subscription_payment_data_for_specific_subscription(total_payment_data_for_subscriptions){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const default_subscription = transaction_item.channel_obj['ipfs'].selected_creator_group_subscriptions[0]
+        const selected_subscription_e5_id = this.state.selected_subscription_item == null ? default_subscription : this.state.selected_subscription_item
+        const specific_subscription_data = total_payment_data_for_subscriptions[selected_subscription_e5_id]
+        if(specific_subscription_data == null || Object.keys(specific_subscription_data).length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        const e5 = 'E'+selected_subscription_e5_id.split('E')[1]
+        const focused_exchanges = Object.keys(specific_subscription_data)
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {focused_exchanges.map((item, index) => (
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':specific_subscription_data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(specific_subscription_data[item]), 'barwidth':this.calculate_bar_width(specific_subscription_data[item]), 'number':this.format_account_balance_figure(specific_subscription_data[item]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_creator_payout_info(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1979m']/* 'Creator Payout.' */, 'details':this.props.app_state.loc['1979o']/* 'Below are the all the transfers set to be made for the stacked creator payout.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_total_batch_transfers_and_my_balances(transaction_item.e5, transaction_item.payout_transfers_array, transaction_item.id)}
+
+            </div>
+        )
+    }
+
+    render_total_batch_transfers_and_my_balances(e5, transfer_data, selected_batch_id){
+        if(selected_batch_id != null){
+            const total_transfer_obj = {}
+            transfer_data.forEach(transfer_object => {
+                if(total_transfer_obj[transfer_object['exchange']] == null){
+                    total_transfer_obj[transfer_object['exchange']] = bigInt(0)
+                }
+                total_transfer_obj[transfer_object['exchange']] = bigInt(total_transfer_obj[transfer_object['exchange']]).plus(bigInt(transfer_object['amount']))
+            });
+
+            const exchanges_used = Object.keys(total_transfer_obj)
+            const my_balances = {}
+            exchanges_used.forEach(exchange_id => {
+                my_balances[exchange_id] = this.props.calculate_actual_balance(e5, exchange_id)
+            });
+            if(exchanges_used.length == 0){
+                return(
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055ct']/* 'The total amounts to be tranferred.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                            {exchanges_used.map((item, index) => (
+                                <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':total_transfer_obj[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(total_transfer_obj[item]), 'barwidth':this.calculate_bar_width((total_transfer_obj[item])), 'number':this.format_account_balance_figure((total_transfer_obj[item])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div> 
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055cu']/* 'Your balances for the exchanges used.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                            {exchanges_used.map((item, index) => (
+                                <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':my_balances[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(my_balances[item]), 'barwidth':this.calculate_bar_width((my_balances[item])), 'number':this.format_account_balance_figure((my_balances[item])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div> 
+                    <div style={{height: 10}}/>
+                </div> 
+            )
+        }
+    }
+
+
 
 
 
