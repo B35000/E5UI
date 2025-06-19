@@ -2892,6 +2892,7 @@ return data['data']
             return(
                 <div>
                     {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
+                    {this.render_warning_if_already_in_another_channel(audio_file)}
                 </div>
             )
         }
@@ -2938,6 +2939,25 @@ return data['data']
             return {'size':size, 'unit':'bytes'}
         }
     }
+
+    render_warning_if_already_in_another_channel(file){
+        if(this.state.selected_object_identifier == null){
+            return;
+        }
+        const records = this.props.app_state.my_channel_files_directory
+        const selected_channel_hash_id = this.props.app_state.channel_id_hash_directory[this.state.selected_object_identifier['id']]
+
+        if(records[file] != null && records[file].toString() != selected_channel_hash_id.toString()){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['b311ar']/* '⚠️ Youve already used this file in another post targeted for a different creatorgroup.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
+
 
 
     render_audio_lyric_picker_ui(){

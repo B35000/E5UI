@@ -185,7 +185,8 @@ class StageCreatorPayoutPage extends Component {
     }
 
     render_calculate_payout_button_if_ready(proportion){
-        if(proportion == 100 && this.has_all_subscriptions_loaded()){
+        const existing_stagings = this.props.app_state.channel_payout_stagings[this.state.channel_obj['e5_id']]
+        if(proportion == 100 && this.has_all_subscriptions_loaded() && existing_stagings != null){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -217,20 +218,28 @@ class StageCreatorPayoutPage extends Component {
         });
 
         const existing_stagings = this.props.app_state.channel_payout_stagings[this.state.channel_obj['e5_id']]
+        const now = new Date();
+        const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const last_month_date = new Date(firstOfThisMonth.getTime() - 1);
+
         var filter_value = 60*60*24*31
         if(existing_stagings != null && existing_stagings.length > 0){
             const record_end_time = existing_stagings[0]['ipfs'].payout_information.end_time
-            
-            const now = new Date();
-            const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-            const last_month_date = new Date(firstOfThisMonth.getTime() - 1);
             const difference = last_month_date.getTime() - record_end_time
             filter_value = Math.floor(difference/1000);
-        }
 
-        if(filter_value < (60*60*24*31)){
-            this.props.notify(this.props.app_state.loc['3075ab']/* 'Youve already staged a payout within the last month.' */, 7300);
-            return;
+            if(filter_value < (60*60*24*31)){
+                this.props.notify(this.props.app_state.loc['3075ab']/* 'Youve already staged a payout within the last month.' */, 9300);
+                return;
+            }
+        }else{
+            const channel_creation_time = this.state.channel_obj['event'].returnValues.p6/* timestamp */
+            filter_value = Math.floor(last_month_date.getTime()/1000) - channel_creation_time
+
+            if(filter_value < (60*60*24*31)){
+                this.props.notify(this.props.app_state.loc['3075ad']/* 'You need to wait at least a month after the creation of the channel first.' */, 9300);
+                return;
+            }
         }
 
         this.props.notify(this.props.app_state.loc['3075h']/* 'Sending payout data request...' */, 2300);

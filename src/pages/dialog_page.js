@@ -4666,6 +4666,9 @@ return data['data']
     render_batch_item(item, count, recorded_batches){
         var details = this.props.app_state.loc['2117i']/* '$ transfers.' */.replace('$', count)
         var opacity = recorded_batches.includes(item) ? 0.6 : 1.0
+        if(this.does_batch_exist_in_stack(item)){
+            opacity = 0.6
+        }
         if(this.state.selected_batch_item == item){
             return(
                 <div style={{'opacity': opacity}}>
@@ -4680,6 +4683,20 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    does_batch_exist_in_stack(selected_batch_id){
+        const focused_item = this.state.data['item']
+        const payout_transaction_data = focused_item['ipfs'].payout_transaction_data
+        const payout_e5s_used = Object.keys(payout_transaction_data)
+        const e5_used = this.state.selected_payout_e5 == null ? payout_e5s_used[0] : this.state.selected_payout_e5
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == this.props.app_state.loc['2117p']/* 'creator-payout' */ && stack_transactions[i].id == selected_batch_id && stack_transactions[i].e5 == e5_used){
+                return true
+            }
+        }
+        return false
     }
 
     get_recorded_batches(){

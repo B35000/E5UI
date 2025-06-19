@@ -2817,6 +2817,7 @@ return data['data']
             return(
                 <div>
                     {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
+                    {this.render_warning_if_already_in_another_channel(audio_file)}
                 </div>
             )
         }
@@ -2861,6 +2862,23 @@ return data['data']
         }
         else{
             return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    render_warning_if_already_in_another_channel(file){
+        if(this.state.selected_object_identifier == null){
+            return;
+        }
+        const records = this.props.app_state.my_channel_files_directory
+        const selected_channel_hash_id = this.props.app_state.channel_id_hash_directory[this.state.selected_object_identifier['id']]
+
+        if(records[file] != null && records[file].toString() != selected_channel_hash_id.toString()){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['b311ar']/* '⚠️ Youve already used this file in another post targeted for a different creatorgroup.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                </div>
+            )
         }
     }
 
@@ -3304,9 +3322,15 @@ return data['data']
         }
         var invalid_items = []
         this.state.songs.forEach(song => {
-            var track_nitro = song['track']['nitro']
-            if(track_nitro == null || !selected_channel_supported_nitros.includes(track_nitro)){
-                invalid_items.push(song)
+            var ecid_obj = this.get_cid_split(song['track'])
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                if(data != null){
+                    var track_nitro = data['nitro']
+                    if(track_nitro == null || !selected_channel_supported_nitros.includes(track_nitro)){
+                        invalid_items.push(song)
+                    }
+                }
             }
         });
 
@@ -3314,6 +3338,26 @@ return data['data']
             return(
                 <div>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['a311dl']/* '⚠️ $ of your selected songs are using nitro nodes that are not supported by the creator group.' */.replace('$', invalid_items.length), 'textsize':'10px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
+    render_warning_if_selected_files_is_already_in_another_creator_group(){
+        var invalid_items = []
+        const records = this.props.app_state.my_channel_files_directory
+        const selected_channel_hash_id = this.props.app_state.channel_id_hash_directory[this.state.selected_object_identifier['id']]
+        this.state.songs.forEach(song => {
+            var track_file_id = song['video']
+            if(records[track_file_id] != null && records[track_file_id].toString() != selected_channel_hash_id.toString()){
+                invalid_items.push(song)
+            }
+        });
+
+        if(invalid_items.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['a311dr']/* '⚠️ $ of your selected songs included files that have already been recorded under other channels.' */.replace('$', invalid_items.length), 'textsize':'10px', 'font':this.props.app_state.font})}
                 </div>
             )
         }
@@ -3433,6 +3477,7 @@ return data['data']
         }else{
             this.setState({selected_channel: object['e5_id'], creator_group_subscriptions: channels_subscriptions, selected_channel_supported_nitros: selected_channel_supported_nitros, selected_object_identifier: selected_object_identifier})
             this.add_to_previously_used_channels(object['e5_id'], channels_subscriptions)
+            this.props.set_selected_channel_hash_id(object['id'])
         } 
     }
 

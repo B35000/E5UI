@@ -2667,25 +2667,15 @@ return data['data']
                 return(
                     <div>
                         {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                        {this.render_warning_if_already_in_another_channel(video_file)}
                     </div>
                 )
             }
+            var thumbnail = this.props.app_state.static_assets['video_label']
             return(
-                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': '8px'}}>
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
-                        <div>
-                            <video height="50" style={{'border-radius':'7px'}}>
-                                <source src={video} type="video/mp4"/>
-                                <source src={video} type="video/ogg"/>
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                        <div style={{'margin':'0px 0px 0px 10px'}}>
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
-                            
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
-                        </div>
-                    </div>
+                <div>
+                    {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    {this.render_warning_if_already_in_another_channel(video_file)}
                 </div>
             )
         }
@@ -2730,6 +2720,23 @@ return data['data']
         }
         else{
             return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    render_warning_if_already_in_another_channel(file){
+        if(this.state.selected_object_identifier == null){
+            return;
+        }
+        const records = this.props.app_state.my_channel_files_directory
+        const selected_channel_hash_id = this.props.app_state.channel_id_hash_directory[this.state.selected_object_identifier['id']]
+
+        if(records[file] != null && records[file].toString() != selected_channel_hash_id.toString()){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['b311ar']/* '⚠️ Youve already used this file in another post targeted for a different creatorgroup.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                </div>
+            )
         }
     }
 

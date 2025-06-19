@@ -3566,7 +3566,7 @@ class StackPage extends Component {
                             const selected_channel_id = selected_object_identifier['id']
     
                             const selected_channel_target_id = 27/* 27(creator_group_channel_container) */
-                            const creator_group_context = selected_channel_id
+                            const creator_group_context = await this.props.channel_id_to_hashed_id(selected_channel_id)
                             const creator_group_int_data = parseInt(selected_channel_e5.replace('E',''))
 
                             const creator_group_record = {'e':[]}
@@ -3574,7 +3574,7 @@ class StackPage extends Component {
                                 const previous_songs = txs[i].previous_songs
                                 txs[i].songs.forEach(song => {
                                     const includes = previous_songs.find(e => e['track'] === song['track'])
-                                    if(includes == null){
+                                    if(includes == null && this.can_log_file_in_channel(song['track'], txs[i].selected_object_identifier)){
                                         creator_group_record['e'].push(song['track'])
                                     }
                                 });
@@ -3582,7 +3582,7 @@ class StackPage extends Component {
                                 const previous_videos = txs[i].previous_videos
                                 txs[i].videos.forEach(video => {
                                     const includes = previous_videos.find(e => e['video'] === video['video'])
-                                    if(includes == null){
+                                    if(includes == null && this.can_log_file_in_channel(video['video'], txs[i].selected_object_identifier)){
                                         creator_group_record['e'].push(video['video'])
                                     }
                                 });
@@ -4023,29 +4023,30 @@ class StackPage extends Component {
                         const selected_channel_id = selected_object_identifier['id']
 
                         const selected_channel_target_id = 27/* 27(creator_group_channel_container) */
-                        const creator_group_context = selected_channel_id
+                        const creator_group_context = await this.props.channel_id_to_hashed_id(selected_channel_id)
                         const creator_group_int_data = parseInt(selected_channel_e5.replace('E',''))
 
                         const creator_group_record = {'e':[]}
                         if(pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
                             pushed_txs[i].songs.forEach(song => {
-                                creator_group_record['e'].push(song['track'])
+                                if(this.can_log_file_in_channel(song['track'], pushed_txs[i].selected_object_identifier)) creator_group_record['e'].push(song['track']);
                             });
                         }else{
                             pushed_txs[i].videos.forEach(video => {
-                                creator_group_record['e'].push(video['video'])
+                                if(this.can_log_file_in_channel(video['video'], pushed_txs[i].selected_object_identifier)) creator_group_record['e'].push(video['video'])
                             });
                         }
 
-                        creator_group_updates[1].push(selected_channel_target_id)
-                        creator_group_updates[2].push(23)
-                        creator_group_updates[3].push(creator_group_context)
-                        creator_group_updates[4].push(creator_group_int_data)
+                        if(creator_group_record['e'].length > 0){
+                            creator_group_updates[1].push(selected_channel_target_id)
+                            creator_group_updates[2].push(23)
+                            creator_group_updates[3].push(creator_group_context)
+                            creator_group_updates[4].push(creator_group_int_data)
 
-                        const creator_group_post_identifier = 'creatorgroup'+pushed_txs[i].id
-                        const string_data = await this.get_object_ipfs_index(creator_group_record, calculate_gas, ipfs_index, creator_group_post_identifier);
-                        creator_group_updates_strings[0].push(string_data)
-                        
+                            const creator_group_post_identifier = 'creatorgroup'+pushed_txs[i].id
+                            const string_data = await this.get_object_ipfs_index(creator_group_record, calculate_gas, ipfs_index, creator_group_post_identifier);
+                            creator_group_updates_strings[0].push(string_data)
+                        }
                     }
                 }
             }
@@ -4886,7 +4887,7 @@ class StackPage extends Component {
                                 const previous_songs = txs[i].previous_songs
                                 txs[i].songs.forEach(song => {
                                     const includes = previous_songs.find(e => e['track'] === song['track'])
-                                    if(includes == null){
+                                    if(includes == null && this.can_log_file_in_channel(song['track'], txs[i].selected_object_identifier)){
                                         creator_group_record['e'].push(song['track'])
                                     }
                                 });
@@ -4894,7 +4895,7 @@ class StackPage extends Component {
                                 const previous_videos = txs[i].previous_videos
                                 txs[i].videos.forEach(video => {
                                     const includes = previous_videos.find(e => e['video'] === video['video'])
-                                    if(includes == null){
+                                    if(includes == null && this.can_log_file_in_channel(video['video'], txs[i].selected_object_identifier)){
                                         creator_group_record['e'].push(video['video'])
                                     }
                                 });
@@ -5030,16 +5031,22 @@ class StackPage extends Component {
                             const creator_group_record = {'e':[]}
                             if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
                                 data.songs.forEach(song => {
-                                    creator_group_record['e'].push(song['track'])
+                                    if(this.can_log_file_in_channel(song['track'], data.selected_object_identifier)){
+                                        creator_group_record['e'].push(song['track'])
+                                    }
                                 });
                             }else{
                                 data.videos.forEach(video => {
-                                    creator_group_record['e'].push(video['video'])
+                                    if(this.can_log_file_in_channel(video['video'], data.selected_object_identifier)){
+                                        creator_group_record['e'].push(video['video'])
+                                    }
                                 });
                             }
-                            const creator_group_post_identifier = 'creatorgroup'+data.id
-                            ipfs_index_object[creator_group_post_identifier] = creator_group_record
-                            ipfs_index_array.push({'id':creator_group_post_identifier, 'data':creator_group_record})
+                            if(creator_group_record['e'].length > 0){
+                                const creator_group_post_identifier = 'creatorgroup'+data.id
+                                ipfs_index_object[creator_group_post_identifier] = creator_group_record
+                                ipfs_index_array.push({'id':creator_group_post_identifier, 'data':creator_group_record})
+                            }
                         }
                     }
                 }
@@ -5279,6 +5286,19 @@ class StackPage extends Component {
         }
         console.log('stack_page_ipfs', 'link', link)
         return link
+    }
+
+    can_log_file_in_channel(file, selected_object_identifier){
+        if(selected_object_identifier == null){
+            return true;
+        }
+        const records = this.props.app_state.my_channel_files_directory
+        const selected_channel_hash_id = this.props.app_state.channel_id_hash_directory[selected_object_identifier['id']]
+
+        if(records[file] != null && records[file].toString() != selected_channel_hash_id.toString()){
+            return false
+        }
+        return true;
     }
 
     get_encrypted_bill_object = async (t) =>{

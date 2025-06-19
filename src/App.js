@@ -876,7 +876,7 @@ class App extends Component {
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
 
-    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{},
+    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{}
   };
 
   get_static_assets(){
@@ -6769,7 +6769,7 @@ class App extends Component {
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
-      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)}
+      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)}
       
       />
     )
@@ -7736,6 +7736,20 @@ class App extends Component {
     return num;
   }
 
+  channel_id_to_hashed_id = async (id) => {
+    const encoder = new TextEncoder();
+    const str = `${id},${process.env.REACT_APP_HASH_KEY}`
+    const data = encoder.encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBytes = new Uint8Array(hashBuffer);
+
+    let result = bigInt(0);
+    for (let i = 0; i < hashBytes.length; i++) {
+      result = result.shiftLeft(8).add(hashBytes[i]);
+    }
+    return bigInt(result).mod(bigInt('1e36'));
+  }
+
 
 
 
@@ -7973,13 +7987,13 @@ class App extends Component {
     else if(target == '10'/* audioport */){
       return(
         <NewAudioPage ref={this.new_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        search_for_object={this.search_for_object.bind(this)}
+        search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)}
         />
       )
     }
     else if(target == '11'/* videoport */){
       return(
-        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)} search_for_object={this.search_for_object.bind(this)}
+        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)} search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)}
         
         />
       )
@@ -8161,6 +8175,13 @@ class App extends Component {
         this.load_id_type_then_object(subscription_id, E52contractInstance, e5) 
       }
     }
+  }
+
+  set_selected_channel_hash_id = async (channel_id) => {
+    const channel_id_hash = await this.channel_id_to_hashed_id(channel_id)
+    const clone = structuredClone(this.state.channel_id_hash_directory)
+    clone[channel_id] = channel_id_hash
+    this.setState({channel_id_hash_directory: clone})
   }
   
 
@@ -8752,7 +8773,9 @@ class App extends Component {
     
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)}/>
+        <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} 
+        
+        />
       </div>
     )
   }
@@ -8784,16 +8807,25 @@ class App extends Component {
 
   open_edit_audiopost_object(target, object){
     this.open_edit_audiopost_bottomsheet()
+    this.set_mediapost_creatorgroup_hash(object)
     var me = this;
     setTimeout(function() {
       if(me.edit_audiopost_page.current){
-      me.edit_audiopost_page.current?.setState(object['ipfs'])
-      me.edit_audiopost_page.current?.setState({type:me.getLocale()['2975']/* 'edit-audio' */})
-      me.edit_audiopost_page.current?.setState({object_id: object['id']})
-      me.edit_audiopost_page.current?.set()
-    }
+        me.edit_audiopost_page.current?.setState(object['ipfs'])
+        me.edit_audiopost_page.current?.setState({type:me.getLocale()['2975']/* 'edit-audio' */})
+        me.edit_audiopost_page.current?.setState({object_id: object['id']})
+        me.edit_audiopost_page.current?.set()
+      }
     }, (1 * 500));
     this.load_my_subscriptions() 
+  }
+
+  set_mediapost_creatorgroup_hash(object){
+    const selected_channel_e5_id = object['ipfs'].selected_object_identifier
+    if(selected_channel_e5_id != null){
+      const channel_id = selected_channel_e5_id['id']
+      this.set_selected_channel_hash_id(channel_id)
+    }
   }
 
 
@@ -8837,7 +8869,8 @@ class App extends Component {
     
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} />
+        <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} 
+        />
       </div>
     )
   }
@@ -8869,6 +8902,7 @@ class App extends Component {
 
   open_edit_videopost_object(target, object){
     this.open_edit_videopost_bottomsheet()
+    this.set_mediapost_creatorgroup_hash(object)
     var me = this;
     setTimeout(function() {
       if(me.edit_videopost_page.current){
@@ -21220,6 +21254,18 @@ return data['data']
 
 
 
+
+
+    /* ------------------------------------ CHANNEL FILE UPLOAD RECROD DATA-------------------------- */
+    this.load_my_channel_file_records(web3, E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
+
     /* ---------------------------------------- SUBSCRIPTION DATA ------------------------------------------- */
     
 
@@ -22313,6 +22359,31 @@ return data['data']
       if(parseInt(this.my_object_timestamp) < parseInt(timestamp)){
         this.setState({my_objects: loaded_objects})
         this.my_object_timestamp = timestamp
+      }
+    }
+  }
+
+  load_my_channel_file_records = async (web3, E52contractInstance, e5, account) => {
+    const object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account})
+
+    if(object_event_data.length > 0){
+      if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+        await this.fetch_multiple_cids_from_nitro(object_event_data, 0, 'p4')
+      }
+
+      for(var i=0; i<object_event_data.length; i++){
+        const event = object_event_data[i]
+        const object_data = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+        if(object_data != null){
+          const hashed_channel_id = event.returnValues.p3/* context */
+          const my_added_files = object_data['e']
+          
+          var clone = structuredClone(this.state.my_channel_files_directory)
+          my_added_files.forEach(file_id => {
+            clone[file_id] = hashed_channel_id 
+          });
+          this.setState({my_channel_files_directory: clone})
+        }
       }
     }
   }
@@ -32753,6 +32824,7 @@ return data['data']
   get_channel_creator_file_events = async (id, e5) => {
     var all_unsorted_events = []
     const cutoff_timestamp = 0
+    const creator_group_context = await this.channel_id_to_hashed_id(id)
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       const event_params = []
       const used_e5s = []
@@ -32765,7 +32837,7 @@ return data['data']
           const E52_address = this.state.addresses[focused_e5][1];
           const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
           var e5_id = parseInt(e5.replace('E',''))
-          event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p3/* context */:id, p5: e5_id,}])
+          event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p3/* context */:creator_group_context, p5: e5_id,}])
         }
       }
       const all_events = await this.load_multiple_events_from_nitro(event_params)
@@ -32799,7 +32871,7 @@ return data['data']
           const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
           const e5_id = parseInt(e5.replace('E',''))
           
-          const created_comment_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p3/* context */:id, p5: e5_id,}))
+          const created_comment_data = (await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p3/* context */:creator_group_context, p5: e5_id,}))
           console.log('apppage', 'loaded_events for e5',focused_e5, created_comment_data)
           var m = 0
           for(var k=0; k<created_comment_data.length; k++){
