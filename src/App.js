@@ -876,7 +876,9 @@ class App extends Component {
     verified_file_statuses:{}, tracked_contextual_transfer_identifier:'', stack_contextual_transfer_data:{}, tracked_contextual_transfer_e5:'E25',
     e5_ether_override:'e', get_objects_votes:{}, poll_consensus_results:{}, count_poll_times:{}, poll_results:{}, created_polls:{}, object_votes:{},
 
-    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{}
+    stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
+
+    is_reloading_stack_due_to_ios_run:false,
   };
 
   get_static_assets(){
@@ -4020,7 +4022,7 @@ class App extends Component {
   }
 
   update_data_in_db = async (data, id) => {
-    const encrypted_data = this.encrypt_storage_object(data, {})
+    const encrypted_data = this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     try {
       const db = new Dexie('twentythreeinreverse');
       db.version(2).stores({
@@ -4045,7 +4047,7 @@ class App extends Component {
       });
       var data = await db.data.get({id: id})
       if(data == null) return
-      return this.decrypt_storage_object(data['data'])
+      return this.decrypt_storage_object_using_provided_key(data['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     }catch(e){
       console.log(`Failed : ${e}`);
       return null
@@ -6761,6 +6763,13 @@ class App extends Component {
 
   render_stack_item(size){
     // if(!this.state.show_stack) return;
+    if(this.state.is_reloading_stack_due_to_ios_run == true){
+      return(
+        <div style={{height: '100%', width:'100%','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+            <img src={this.state.theme['letter']} style={{height:'auto',width:'18%'}} />
+        </div>
+      );
+    }
     return(
       <StackPage os={getOS()} ref={this.stack_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
       encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} 
@@ -7462,9 +7471,9 @@ class App extends Component {
     var os = getOS()
     if(os == 'iOS'){
       setTimeout(function() {
-        me.open_stack_bottomsheet()
+        me.setState({is_reloading_stack_due_to_ios_run: true})
         setTimeout(function() {
-          me.open_stack_bottomsheet()
+          me.setState({is_reloading_stack_due_to_ios_run: false})
         }, (1 * 500));
       }, (1 * 1000));
     }
@@ -31207,6 +31216,45 @@ return data['data']
     const compressed = pako.deflate(base64ToUint8Array(ciphertext))/* Im not sure if compressing data then converting it to base64 makes much of a difference in the long run for storage efficiency. Im yet to actually gauge if this a good thing since storage objects cant exceeed the limit i've set in the state of about 350Kb... */
     var final_obj = {'ciphertext':uint8ArrayToBase64(compressed), 'tags':tags_obj, 'c'/* compressed */: true}
     return JSON.stringify(final_obj)
+  }
+
+  encrypt_storage_object_using_provided_key(data, tags_obj, key){
+    const APP_KEY = key
+    var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
+    const compressed = pako.deflate(base64ToUint8Array(ciphertext))/* Im not sure if compressing data then converting it to base64 makes much of a difference in the long run for storage efficiency. Im yet to actually gauge if this a good thing since storage objects cant exceeed the limit i've set in the state of about 350Kb... */
+    var final_obj = {'ciphertext':uint8ArrayToBase64(compressed), 'tags':tags_obj, 'c'/* compressed */: true}
+    return JSON.stringify(final_obj)
+  }
+
+  decrypt_storage_object_using_provided_key(data, key){
+    const APP_KEY = key
+    var cipher_text = data
+    try{
+      var json_object = JSON.parse(data)
+      cipher_text = json_object['ciphertext']
+      if(json_object['c'] != null && json_object['c'] == true){
+        //the object was compressed
+        // console.log('apppage', 'found compressed object...')
+        cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
+        // console.log('apppage', 'uncompressed ciphertext', cipher_text)
+      }
+      // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
+    }catch(f){
+      // console.log('apppage', f)
+    }
+    try{
+      var bytes = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
+      console.log('sigbytes', bytes.sigBytes)
+      if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        return originalText
+      } else {
+        return data
+      }
+    }catch(e){
+      console.error('apppage',"Decryption failed:", e);
+      return data
+    }
   }
 
   decrypt_storage_object(data){
