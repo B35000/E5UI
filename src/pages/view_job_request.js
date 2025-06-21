@@ -865,7 +865,7 @@ class ViewJobRequestPage extends Component {
 
         if(this.is_object_picked_contract(object)){
             return(
-                <div onClick={() => this.when_contract_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div onClick={() => this.when_contract_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'opacity':0.6}}>
                     <div style={{'padding': '5px 0px 5px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
@@ -875,8 +875,6 @@ class ViewJobRequestPage extends Component {
                         <div style={{'padding': '20px 0px 0px 0px'}}>
                             {this.render_detail_item('2', item['age'])}
                         </div>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
                     </div>         
                 </div>
             )

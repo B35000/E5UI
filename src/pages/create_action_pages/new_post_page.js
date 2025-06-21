@@ -28,6 +28,8 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
 
+var bigInt = require("big-integer");
+
 
 function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -728,6 +730,28 @@ class NewPostPage extends Component {
         // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
         var m = encodeURIComponent(str).match(/%[89ABab]/g);
         return str.length + (m ? m.length : 0);
+    }
+
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return 'e0'
+        }
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
+        }
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
     }
    
 

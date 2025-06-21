@@ -1633,7 +1633,8 @@ class App extends Component {
         '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d',
         'SPDDSC21KS91Y9FANB2X4T6NDRX0HRPD401EDRV2',
         'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U',
-        '0x9abd642fd75a4dfd26bbc3c3d39d38776336df5adb204355864caebd17e169d3'
+        '0x9abd642fd75a4dfd26bbc3c3d39d38776336df5adb204355864caebd17e169d3',
+        'celestia18tux8kpx82v6z0p9mgc6s6kym352486l480dkg',
     ]
     return default_addresses
   }

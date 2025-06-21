@@ -207,12 +207,8 @@ class PostPreview extends Component {
 
 
 
-    render_subscription_objects(items){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
+    render_subscription_objects(subscriptions){
+        const items = this.sort_subscriptions(subscriptions)
         return ( 
             <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -226,23 +222,30 @@ class PostPreview extends Component {
         );
     }
 
+    sort_subscriptions(items){
+        var my_selected_e5 = this.props.app_state.selected_e5
+        var my_selected_e5_subscriptions = []
+        var subscriptions_with_account = []
+        var other_subscriptions = []
+        items.forEach(subscription => {
+            if(subscription['e5'] == my_selected_e5){
+                my_selected_e5_subscriptions.push(subscription)
+            }
+            else if(this.props.app_state.user_account_id[subscription['e5']] != null && this.props.app_state.user_account_id[subscription['e5']] != 1){
+                subscriptions_with_account.push(subscription)
+            }
+            else{
+                other_subscriptions.push(subscription)
+            }
+        });
+        return my_selected_e5_subscriptions.concat(subscriptions_with_account, other_subscriptions)
+    }
+
 
     render_subscription_object(object, index){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
-        if(this.is_object_sender_blocked(object)){
-            return(
-                <div>
-                    <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                        <div style={{'margin':'10px 20px 0px 0px'}}>
-                            <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                            <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>

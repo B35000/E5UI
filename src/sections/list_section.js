@@ -3813,10 +3813,25 @@ return data['data']
             if(view_count == 1){
                 views_text = this.props.app_state.loc['2509o']/* view */
             }
-            return ` • ${number_with_commas(view_count)} ${views_text}`
+            return ` • ${this.format_view_count(view_count)} ${views_text}`
         }
         else{
             return ''
+        }
+    }
+
+    format_view_count(view_count){
+        if(view_count > 1_000_000_000){
+            return `${(view_count/1_000_000_000).toFixed(1)}B`
+        } 
+        else if(view_count > 1_000_000){
+            return `${(view_count/1_000_000).toFixed(1)}M`
+        }
+        else if(view_count > 1_000){
+            return `${(view_count/1_000).toFixed(1)}K`
+        }
+        else {
+            return view_count
         }
     }
 
@@ -4294,7 +4309,7 @@ return data['data']
             if(view_count == 1){
                 views_text = this.props.app_state.loc['2509o']/* view */
             }
-            return ` • ${number_with_commas(view_count)} ${views_text}`
+            return ` • ${this.format_view_count(view_count)} ${views_text}`
         }
         else{
             return ''

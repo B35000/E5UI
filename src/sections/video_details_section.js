@@ -1001,7 +1001,7 @@ class VideoDetailsSection extends Component {
             if(view_count == 1){
                 views_text = this.props.app_state.loc['2509o']/* view */
             }
-            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+            view_count_message = ` • ${this.format_view_count(view_count)} ${views_text}`
         }
 
         if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
@@ -1017,6 +1017,21 @@ class VideoDetailsSection extends Component {
                 {this.render_detail_item('3', {'details':item['video_composer']+view_count_message, 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
+    }
+
+    format_view_count(view_count){
+        if(view_count > 1_000_000_000){
+            return `${(view_count/1_000_000_000).toFixed(1)}B`
+        } 
+        else if(view_count > 1_000_000){
+            return `${(view_count/1_000_000).toFixed(1)}M`
+        }
+        else if(view_count > 1_000){
+            return `${(view_count/1_000).toFixed(1)}K`
+        }
+        else {
+            return view_count
+        }
     }
 
     get_file_view_count(track){

@@ -1331,10 +1331,25 @@ return data['data']
             if(view_count == 1){
                 views_text = this.props.app_state.loc['2509o']/* view */
             }
-            var details = `${number_with_commas(view_count)} ${views_text}`
+            var details = `${this.format_view_count(view_count)} ${views_text}`
             return(
                 <p style={{'font-size': '10px','color': this.props.theme['secondary_text_color'],'margin': '-3px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':'left'}} >{details}</p>
             )
+        }
+    }
+
+    format_view_count(view_count){
+        if(view_count > 1_000_000_000){
+            return `${(view_count/1_000_000_000).toFixed(1)}B`
+        } 
+        else if(view_count > 1_000_000){
+            return `${(view_count/1_000_000).toFixed(1)}M`
+        }
+        else if(view_count > 1_000){
+            return `${(view_count/1_000).toFixed(1)}K`
+        }
+        else {
+            return view_count
         }
     }
 

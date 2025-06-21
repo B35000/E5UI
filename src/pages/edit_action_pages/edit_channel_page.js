@@ -613,13 +613,13 @@ class NewChannelPage extends Component {
     }
 
     format_data_size2(size){
-        if(size > 1_000_000_000){
+        if(size > 1_024*1_024*1_024){
             return {'size':this.round_off(parseFloat(size)/(1_024*1_024*1_024)), 'unit':'GBs'}
         }
-        else if(size > 1_000_000){
+        else if(size > 1_024*1_024){
             return {'size':this.round_off(parseFloat(size)/(1_024*1_024)), 'unit':'MBs'}
         }
-        else if(size > 1_000){
+        else if(size > 1024){
             return {'size':this.round_off(parseFloat(size)/1024), 'unit':'KBs'}
         }
         else{
@@ -635,6 +635,28 @@ class NewChannelPage extends Component {
         // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
         var m = encodeURIComponent(str).match(/%[89ABab]/g);
         return str.length + (m ? m.length : 0);
+    }
+
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return 'e0'
+        }
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
+        }
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
     }
 
     render_new_job_object(){
@@ -2482,7 +2504,7 @@ return data['data']
         if(typed_text == ''){
             this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
         }
-        if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
+        else if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
             this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
         }
         else if(participants_clone.includes(final_value)){
@@ -2703,7 +2725,7 @@ return data['data']
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -2901,7 +2923,7 @@ return data['data']
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -3149,7 +3171,7 @@ return data['data']
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -3219,7 +3241,7 @@ return data['data']
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -3639,6 +3661,20 @@ return data['data']
         var items = [].concat(this.get_suggested_accounts(target_type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
@@ -3649,6 +3685,19 @@ return data['data']
                       ))}
                   </ul>
                 </div>
+        )
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
         )
     }
 
@@ -3795,7 +3844,7 @@ return data['data']
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>

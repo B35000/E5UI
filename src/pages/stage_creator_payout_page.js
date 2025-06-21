@@ -483,7 +483,8 @@ class StageCreatorPayoutPage extends Component {
         }
 
         const final_payment_info = payout_information.final_payment_info
-        const total_payment_data_for_subscriptions = payout_information.total_payment_data_for_subscriptions
+        const total_payment_data_for_subscriptions = 
+        payout_information.total_payment_data_for_subscriptions
         const start_time = payout_information.start_time
         const end_time = payout_information.end_time
         const total_data_bytes_streamed = payout_information.total_data_bytes_streamed
