@@ -399,9 +399,30 @@ class FullVideoPage extends Component {
                     srcLang: subtitle_track['subtitle_language_object']['code']
                 })
             }
+            if(this.props.app_state.os == 'iOS'){
+                return(
+                    <div style={{}}>
+                        <video ref={this.video_player} preload="metadata" controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls disablePictureInPicture>
+                            <source src={video} type="video/mp4"/>
+                            <source src={video} type="video/ogg"/>
+                            {tracks.map((item, index) => (
+                                <track
+                                    label={item.label} 
+                                    kind={item.kind}
+                                    srclang={item.srcLang} 
+                                    src={item.src}
+                                />
+                            ))}
+                            Your browser does not support the video tag.
+                        </video>
+                        <div style={{height:10}}/>
+                        {this.render_subtitle_options(subtitles)}
+                    </div>
+                )
+            }
             return(
                 <div style={{}}>
-                    <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
+                    <video ref={this.video_player} preload="metadata" controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
                         <source src={video} type="video/mp4"/>
                         <source src={video} type="video/ogg"/>
                         {tracks.map((item, index) => (
@@ -448,19 +469,19 @@ class FullVideoPage extends Component {
     }
 
     start_playing(){
-        console.log('full_video_page', 'started playing')
         this.setState({is_player_resetting:false})
         var me = this;
         setTimeout(function() {
-            var current_video_id = me.state.videos[me.state.pos]['video_id']
-            var last_time = me.props.app_state.video_timestamp_data[current_video_id]
+            // var current_video_id = me.state.videos[me.state.pos]['video_id']
+            // var last_time = me.props.app_state.video_timestamp_data[current_video_id]
             
-            if(last_time != null && last_time != 0 && me.video_player.current != null){
-                me.video_player.current.currentTime = last_time 
-            }
+            // if(last_time != null && last_time != 0 && me.video_player.current != null){
+            //     me.video_player.current.currentTime = last_time 
+            // }
             me.video_player.current?.play()
             me.video_player.current?.addEventListener('leavepictureinpicture', me.when_pip_closed);
             me.video_player.current?.addEventListener('timeupdate', me.when_time_updated);
+            me.video_player.current?.addEventListener('loadedmetadata', me.when_metadata_loaded);
         }, (1 * 300));
     }
 
@@ -472,6 +493,18 @@ class FullVideoPage extends Component {
         var time = this.video_player.current?.currentTime
         this.props.update_video_time_for_future_reference(time, this.state.videos[this.state.pos])
     }
+
+    when_metadata_loaded = () => {
+        var current_video_id = this.state.videos[this.state.pos]['video_id']
+        var last_time = this.props.app_state.video_timestamp_data[current_video_id]
+        
+        if(last_time != null && last_time != 0 && this.video_player.current != null){
+            const watch_time_proportion = last_time / this.video_player.current.duration
+            if(watch_time_proportion < 0.96) this.video_player.current.currentTime = last_time;
+        }
+    }
+
+
 
 
     render_subtitle_options(subtitles){
