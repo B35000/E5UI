@@ -610,11 +610,41 @@ class FullVideoPage extends Component {
                 
                 <div style={{height: 10}}/>
                 {this.render_markdown_if_any(object)}
+                
+                <div style={{height: 10}}/>
+                {this.render_track_nitro()}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    render_track_nitro(){
+        var current_video = this.state.videos[this.state.pos]
+        var video_file = current_video['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data != null && data['data'] == null) return null
+        var nitro_e5_id = data['nitro']
+        if(nitro_e5_id == null) return;
+        var nitro_id = nitro_e5_id.split('E')[0]
+        var nitro_e5 = nitro_e5_id.split('E')[1]
+
+        var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]
+
+        if(object != null){
+            var default_image = this.props.app_state.static_assets['empty_image']
+            var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+            var title = object['e5']+' • '+object['id']
+            var details = object['ipfs'] == null ? 'Nitropost ID' : (object['ipfs'].entered_title_text)
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image, 'details':details, 'size':'s', 'border_radius':'9px'})}
+                </div>
+            )
+        }
     }
 
     render_video_element(item){
@@ -942,7 +972,7 @@ class FullVideoPage extends Component {
             if(view_count == 1){
                 views_text = this.props.app_state.loc['2509o']/* view */
             }
-            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+            view_count_message = ` • ${this.format_view_count(view_count)} ${views_text}`
         }
         if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
             var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
@@ -957,6 +987,27 @@ class FullVideoPage extends Component {
                 {this.render_detail_item('3', {'details':item['video_composer']+view_count_message, 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
+    }
+
+    format_view_count(view_count){
+        if(view_count > 1_000_000_000){
+            var val = (view_count/1_000_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}B`
+        } 
+        else if(view_count > 1_000_000){
+            var val = (view_count/1_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}M`
+        }
+        else if(view_count > 1_000){
+            var val = (view_count/1_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}K`
+        }
+        else {
+            return view_count
+        }
     }
 
     get_file_view_count(track){

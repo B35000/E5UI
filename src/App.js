@@ -5013,6 +5013,8 @@ class App extends Component {
           close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} open_stage_creator_ui={this.show_view_stage_creator_payout_result_bottomsheet.bind(this)}
           get_channel_creator_file_records={this.get_channel_creator_file_records.bind(this)} get_channel_creator_payout_stagings={this.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.get_channel_payout_records.bind(this)}
 
+          hash_data_with_specific_e5={this.hash_data_with_specific_e5.bind(this)}
+
         />
         {this.render_homepage_toast()}
       </div>
@@ -18363,7 +18365,7 @@ return data['data']
 
 
   when_wallet_data_updated2(added_tags, set_salt, selected_item, is_synching){
-    var seed = added_tags.join(' | ') + set_salt + selected_item;
+    var seed = added_tags.join(' | ') + set_salt + selected_item;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
     this.generate_one_account_for_all_e5s(seed)
     this.generate_account_data_for_each_coin(seed)
     this.setState({
@@ -26687,7 +26689,7 @@ return data['data']
         created_nitros_clone[e5] = created_nitros
         created_nitro_mappings_clone[e5] = created_nitro_mappings
         
-        this.setState({created_nitros: created_nitros_clone, created_nitro_mappings:created_nitro_mappings_clone})   
+        this.setState({created_nitros: created_nitros_clone, created_nitro_mappings: created_nitro_mappings_clone})   
         // await this.wait(150)     
       }
     }
@@ -26827,9 +26829,10 @@ return data['data']
         /* 16 */[web3, contractInstance, 'e4', e5, {}],/* transaction */
         /* 17 */[web3, H52contractInstance, 'e1', e5, {}],/* transfer */
         /* 18 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */ }],
+        /* 19 */[web3, E52contractInstance, 'e2', e5, {}],
       ]
       var all_events = await this.load_multiple_events_from_nitro(event_params)
-      var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12], 'poll':all_events[18]}
+      var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12], 'poll':all_events[18], 'all_indexed_events':all_events[19]}
 
       var all_data_clone = structuredClone(this.state.all_data)
       all_data_clone[e5] = obj
@@ -26874,7 +26877,9 @@ return data['data']
       
       var poll_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */ })
 
-      var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events, 'video':created_video_events, 'nitro':created_nitro_events, 'poll':poll_events}
+      var all_indexed_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {})
+
+      var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events, 'transfer':transfer_events, 'audio':created_audio_events, 'video':created_video_events, 'nitro':created_nitro_events, 'poll':poll_events, 'all_indexed_events':all_indexed_events}
 
       var all_data_clone = structuredClone(this.state.all_data)
       all_data_clone[e5] = obj
@@ -33725,6 +33730,7 @@ return data['data']
           var exit_contract_event_data = null
           var record_proposal_vote_event_data = null
           var update_exchange_ratio_event_data = null
+          var accounts_token_transfer_event_data = null
 
           if(this.state.beacon_node_enabled == true){
             var event_params = [
@@ -33738,6 +33744,7 @@ return data['data']
               [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 11}],
               [web3, G52contractInstance, 'e1', e5, {p3/* voter_account_id */: id}],
               [web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id }],
+              [web3, H52contractInstance, 'e1', e5, {p2/* sender */: id }],
             ]
             var all_events = await this.load_multiple_events_from_nitro(event_params)
             make_object_event_data = all_events[0]
@@ -33750,6 +33757,7 @@ return data['data']
             exit_contract_event_data = all_events[7]
             record_proposal_vote_event_data = all_events[8]
             update_exchange_ratio_event_data = all_events[9]
+            accounts_token_transfer_event_data = all_events[10]
           }else{
             make_object_event_data = await this.load_event_data(web3, contractInstance, 'e1', e5, {p3/* sender_account_id */: id})
 
@@ -33770,6 +33778,9 @@ return data['data']
             record_proposal_vote_event_data = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p3/* voter_account_id */: id})
 
             update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id })
+
+            accounts_token_transfer_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p2/* sender */: id })
+            
           }
 
           var contract_token_event_data = await this.get_token_event_data(id, e5);
@@ -33789,7 +33800,7 @@ return data['data']
           var searched_accounts_exchange_interactions_data = await this.load_searched_accounts_exchange_interactions_data(id, e5)
 
           var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances, 'searched_accounts_exchange_interactions_data': searched_accounts_exchange_interactions_data, 'typed_search':typed_search,
-          'search_time':Date.now(),
+          'search_time':Date.now(), 'accounts_token_transfer_event_data':accounts_token_transfer_event_data
           }
 
           data.push(obj)
@@ -34438,6 +34449,12 @@ return data['data']
 
   hash_data(data){
     const web3 = new Web3(this.get_web3_url_from_e5('E25'));
+    var hash = web3.utils.keccak256(data.toString())
+    return hash
+  }
+
+  hash_data_with_specific_e5(data, e5){
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     var hash = web3.utils.keccak256(data.toString())
     return hash
   }

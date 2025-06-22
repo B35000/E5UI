@@ -134,7 +134,9 @@ class PostDetailSection extends Component {
             var selected_tag = this.props.detail_selected_tag
             if(selected_tag == this.props.app_state.loc['1212']/* 'E5s' */ || selected_tag == 'e' || selected_tag == null){
                 return(
-                    <E5DetailsSection ref={this.curent_post_section} app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} notify={this.props.notify.bind(this)} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)} get_e5_data={this.props.get_e5_data.bind(this)} view_number={this.props.view_number.bind(this)}/>
+                    <E5DetailsSection ref={this.curent_post_section} app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} notify={this.props.notify.bind(this)} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)} get_e5_data={this.props.get_e5_data.bind(this)} view_number={this.props.view_number.bind(this)} hash_data_with_specific_e5={this.props.hash_data_with_specific_e5.bind(this)}
+                    
+                    />
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1213']/* 'posts' */ ){

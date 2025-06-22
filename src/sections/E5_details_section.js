@@ -242,6 +242,8 @@ class E5DetailsSection extends Component {
 
                     {this.render_end_to_spend_use_ratio(obj)}
 
+                    {this.render_channeling_depth_data(obj)}
+
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2234']}</p>
@@ -474,9 +476,119 @@ class E5DetailsSection extends Component {
 
         return {end_events, spend_events}
     }
+
+
+
+
+
+
+    render_channeling_depth_data(obj){
+        var e5_chart_data = this.props.app_state.all_data[obj['id']]
+
+        if(e5_chart_data != null){
+            var transfer_events = this.filter_and_sort_channeling_events(e5_chart_data['all_indexed_events'], obj['id'])
+
+            var total = transfer_events.local_events.length + transfer_events.language_events.length + transfer_events.international_events.length
+
+            var local_percentage = this.round_off((transfer_events.local_events.length / total) * 100)
+            var language_percentage = this.round_off((transfer_events.language_events.length / total) * 100)
+            var international_percentage = this.round_off((transfer_events.international_events.length / total) * 100)
+
+            var local_barwidth = local_percentage
+            var language_barwidth = language_percentage
+            var international_barwidth = international_percentage
+
+            const color_obj_directory = {'g':'green', 'r':'red', 'b':'cyan', 'y':'yellow', 'o':'orange', 'p':'pink'}
+            const color_obj_icon_directory = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+            const country_data = this.props.app_state.country_data
+            const object_country = this.props.app_state.device_country
+            const country_item_data = country_data.find(e => e.name === object_country)
+            const country_color = country_item_data == null ? 'grey' : color_obj_directory[country_item_data.color[0]]
+            const country_color_circle = country_item_data == null ? '⚪' : color_obj_icon_directory[country_item_data.color[0]]
+            return (
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        <div style={{'margin': '5px 20px 0px 15px'}}>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2336l']/* 'Content Channeling Distribution.' */}</p>
+                            
+                            <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
+                                <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
+                                    <div className="progress-bar" role="progressbar" style={{ width: local_barwidth+'%', 'background-image': 'none','background-color': country_color, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+
+                                    <div className="progress-bar" role="progressbar" style={{ width: language_barwidth+'%', 'background-image': 'none','background-color': 'white', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+
+                                    <div className="progress-bar" role="progressbar" style={{ width: international_barwidth+'%', 'background-image': 'none','background-color': 'black', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <div style={{height:7}}/>
+
+                            <div className="row">
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2336m']/* 'Local Channeling Content' */}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.app_state.font}} className="text-end">{local_percentage+'%'}</p>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2336n']/* 'Language Channeling Content.' */}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.app_state.font}} className="text-end">{language_percentage+'%'}</p>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2336o']/* 'International Channeling Content.' */}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.app_state.font}} className="text-end">{international_percentage+'%'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            );
+        }
+    }
+
+    filter_and_sort_channeling_events(events, e5){
+        const local_events = []
+        const language_events = []
+        const international_events = []
+
+        const language_hash = this.props.hash_data_with_specific_e5('language', e5)
+        const international_hash = this.props.hash_data_with_specific_e5('international', e5)
+        const international_hash2 = this.props.hash_data_with_specific_e5('en', e5)
+
+        events.forEach(event => {
+            var index_string = event.returnValues.p1/* tag */
+            if(index_string == international_hash || index_string == international_hash2){
+                international_events.push(event)
+            }
+            else if(index_string == language_hash){
+                language_events.push(event)
+            }
+            else{
+                local_events.push(event)
+            }
+        });
+
+        return { local_events, language_events, international_events }
+    }
     
     
     
+
+
+
+
+
     
     
     load_E5_charts(obj){

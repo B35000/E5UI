@@ -615,6 +615,8 @@ class SearchedAccountPage extends Component {
                     </div>
                 </div>
 
+                {this.render_end_to_spend_use_ratio()}
+
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':run_data[0], 'details':this.props.app_state.loc['1717']/* 'Last Transaction Block' */, 'size':'l'})}
@@ -633,6 +635,92 @@ class SearchedAccountPage extends Component {
 
             </div>
         )
+    }
+
+    render_end_to_spend_use_ratio(){
+        var item = this.state.searched_account
+        var transfer_event_data = item['accounts_token_transfer_event_data']
+        if(transfer_event_data != null){
+            var transfer_events = this.filter_transfer_events_for_end_and_spend_transactions(transfer_event_data)
+
+            var total = transfer_events.end_events.length + transfer_events.spend_events.length
+
+            var end_percentage = this.round_off((transfer_events.end_events.length / total) * 100)
+            var spend_percentage = this.round_off((transfer_events.spend_events.length / total) * 100)
+
+            var end_barwidth = end_percentage
+            var spend_barwidth = spend_percentage
+
+            if(end_barwidth > 97){
+                end_barwidth = 97
+            }
+            else if(end_barwidth < 3){
+                end_barwidth = 3
+            }
+
+            if(spend_barwidth > 97){
+                spend_barwidth = 97
+            }
+            else if(spend_barwidth < 3){
+                spend_barwidth = 3
+            }
+
+            return (
+                <div>
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        <div style={{'margin': '5px 20px 0px 15px'}}>
+                            <div className="row">
+                                <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.app_state.font}} className="fw-bold">END</p>
+                                </div>
+                                <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.app_state.font}} className="text-end">SPEND</p>
+                                </div>
+                            </div>
+                            
+                            <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
+                                <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
+                                    <div className="progress-bar" role="progressbar" style={{ width: end_barwidth+'%', 'background-image': 'none','background-color': 'black', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+
+                                    <div className="progress-bar" role="progressbar" style={{ width: spend_barwidth+'%', 'background-image': 'none','background-color': 'white', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.app_state.font}} className="fw-bold">{end_percentage+'%'}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.app_state.font}} className="text-end">{spend_percentage+'%'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            );
+        }
+    }
+
+    round_off(number){
+        return (Math.round(number * 100) / 100)
+    }
+
+    filter_transfer_events_for_end_and_spend_transactions(events){
+        var end_events = []
+        var spend_events = []
+
+        events.forEach(event => {
+            if(event.returnValues.p1 == 3){
+                end_events.push(event)
+            }
+            else if(event.returnValues.p1 == 5){
+                spend_events.push(event)
+            }
+        });
+
+        return {end_events, spend_events}
     }
 
     copy_address_to_clipboard(signature_data){

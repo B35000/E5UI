@@ -567,11 +567,42 @@ class FullAudioPage extends Component {
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'details':(song['credits'] == null ? '': song['credits']), 'title':this.props.app_state.loc['a311bz']/* Credits */, 'size':'l'})}
-                <div style={{height:10}}/>
+                
+                {this.render_detail_item('0')} 
 
                 {/* {this.render_detail_item('4', {'text':track_url, 'textsize':'13px', 'font':'Sans-serif'})} */}
+
+                {this.render_track_nitro()}
+                <div style={{height:10}}/>
             </div>
         )
+    }
+
+    render_track_nitro(){
+        var current_song = this.state.songs[this.state.pos]
+        var audio_file = current_song['track']
+        var ecid_obj = this.get_cid_split(audio_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data != null && data['data'] == null) return null
+        var nitro_e5_id = data['nitro']
+        if(nitro_e5_id == null) return;
+        var nitro_id = nitro_e5_id.split('E')[0]
+        var nitro_e5 = nitro_e5_id.split('E')[1]
+
+        var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]
+
+        if(object != null){
+            var default_image = this.props.app_state.static_assets['empty_image']
+            var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+            var title = object['e5']+' • '+object['id']
+            var details = object['ipfs'] == null ? 'Nitropost ID' : (object['ipfs'].entered_title_text)
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image, 'details':details, 'size':'s', 'border_radius':'9px'})}
+                </div>
+            )
+        }
     }
 
     render_views_if_any(view_count){
@@ -939,13 +970,34 @@ class FullAudioPage extends Component {
             if(view_count == 1){
                 views_text = this.props.app_state.loc['2509o']/* view */
             }
-            view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+            view_count_message = ` • ${this.format_view_count(view_count)} ${views_text}`
         }
         return(
             <div style={{'opacity':(this.is_song_available_for_playing(item) == true ? 1.0 : 0.4)}} onClick={() => this.when_song_item_clicked(item)}>
                 {this.render_detail_item('8', {'title':song_title, 'details':song_details+view_count_message, 'size':'l', 'image':image, 'border_radius':'7px'})}
             </div>
         )
+    }
+
+    format_view_count(view_count){
+        if(view_count > 1_000_000_000){
+            var val = (view_count/1_000_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}B`
+        } 
+        else if(view_count > 1_000_000){
+            var val = (view_count/1_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}M`
+        }
+        else if(view_count > 1_000){
+            var val = (view_count/1_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}K`
+        }
+        else {
+            return view_count
+        }
     }
 
     get_file_view_count(track){

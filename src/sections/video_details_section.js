@@ -1021,13 +1021,19 @@ class VideoDetailsSection extends Component {
 
     format_view_count(view_count){
         if(view_count > 1_000_000_000){
-            return `${(view_count/1_000_000_000).toFixed(1)}B`
+            var val = (view_count/1_000_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}B`
         } 
         else if(view_count > 1_000_000){
-            return `${(view_count/1_000_000).toFixed(1)}M`
+            var val = (view_count/1_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}M`
         }
         else if(view_count > 1_000){
-            return `${(view_count/1_000).toFixed(1)}K`
+            var val = (view_count/1_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}K`
         }
         else {
             return view_count
