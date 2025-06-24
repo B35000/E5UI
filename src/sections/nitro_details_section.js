@@ -968,7 +968,13 @@ class NitroDetailsSection extends Component {
 
     render_buy_storage_button(object){
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-        if(node_details != null && node_details != 'unavailable' && node_details['max_buyable_capacity'] !== 0 && node_details['price_per_megabyte'] != null && node_details['price_per_megabyte'].length > 0){
+        if(
+            node_details != null && 
+            node_details != 'unavailable' && 
+            node_details['max_buyable_capacity'] !== 0 && 
+            node_details['price_per_megabyte'] != null && 
+            node_details['price_per_megabyte'][this.props.app_state.selected_e5] != null
+        ){
             return(
                 <div>
                     {this.render_detail_item('0')}

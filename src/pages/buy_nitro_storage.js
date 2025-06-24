@@ -66,7 +66,7 @@ class BuyNitroPage extends Component {
 
 
     set_data(object){
-        this.setState({nitro_object: object, e5: object['e5']})
+        this.setState({nitro_object: object, e5: this.props.app_state.selected_e5})
     }
 
 
@@ -186,7 +186,7 @@ class BuyNitroPage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3037']/* 'Final Fees.' */, 'details':this.props.app_state.loc['3038']/* 'The final price of the storage amounts you wish to purchase is shown.' */})}
                 <div style={{height:10}}/>
 
-                {this.render_price_amounts(node_details['price_per_megabyte'], node_details['target_account_e5'])}
+                {this.render_price_amounts(node_details['price_per_megabyte'][this.props.app_state.selected_e5], this.props.app_state.selected_e5)}
             </div>
         )
     }
@@ -274,7 +274,7 @@ class BuyNitroPage extends Component {
         }else{
             var object = this.state.nitro_object
             var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-            var amounts_to_transfer = this.get_final_amounts(node_details['price_per_megabyte'])
+            var amounts_to_transfer = this.get_final_amounts(node_details['price_per_megabyte'][this.props.app_state.selected_e5])
             
             this.setState({amounts_to_transfer: amounts_to_transfer})
 
@@ -294,7 +294,7 @@ class BuyNitroPage extends Component {
     check_if_sender_can_afford_payments(){
         var object = this.state.nitro_object
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-        var amounts_to_transfer = this.get_final_amounts(node_details['price_per_megabyte'])
+        var amounts_to_transfer = this.get_final_amounts(node_details['price_per_megabyte']['this.props.app_state.selected_e5'])
         var e5 = this.state.e5
 
         var can_pay = true;

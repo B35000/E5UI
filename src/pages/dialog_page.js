@@ -219,6 +219,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'confirm_upload_nitro_files'){
+            return(
+                <div>
+                    {this.render_confirm_upload_nitro_files()}
+                </div>
+            )
+        }
     }
 
 
@@ -4863,6 +4870,105 @@ return data['data']
 
 
 
+
+
+
+
+
+
+
+
+
+    render_confirm_upload_nitro_files(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_upload_nitro_files_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_upload_nitro_files_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_upload_nitro_files_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        } 
+    }
+
+    render_confirm_upload_nitro_files_data(){
+        var selected_files_type = this.state.data['selected_files_type']
+        var files = this.state.data['files']
+        var size_total = this.state.data['size_total']
+        var obj = this.state.data['obj']
+        var formatted_size = this.format_data_size(size_total)
+        var fs = formatted_size['size']+' '+formatted_size['unit']
+        var available_storage_space = this.state.data['available_storage_space']
+        var impact = this.round_off((size_total / available_storage_space) * 100)
+        return(
+            <div>
+                <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2027c']/* Confirmation */}</h3>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055']/* 'Upload File Confirmation.' */, 'details':this.props.app_state.loc['3055cv']/* 'Confirm that you wan to upload your selected files to nitro.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':number_with_commas(files.length.toString()), 'details':this.props.app_state.loc['3055cy']/* 'File Count.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':selected_files_type, 'details':this.props.app_state.loc['3055cw']/* 'Selected File Type' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055cx']/* 'Total Space to be Consumed' */, 'title':fs, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055cz']/* 'Impact on your Storage Space.' */, 'subtitle':'', 'barwidth':impact+'%', 'number':impact+'%', 'relativepower':this.props.app_state.loc['3055k']/* 'proportion' */})}
+                </div>
+                <div style={{height: 10}}/>
+                
+                {this.render_track_nitro(obj)}
+                <div style={{height: 10}}/>
+                
+
+                <div onClick={() => this.props.upload_file_to_nitro_confirmed(this.state.data)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055i']/* 'Upload File.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_track_nitro(object){
+        var default_image = this.props.app_state.static_assets['empty_image']
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+        var title = object['e5']+' • '+object['id']
+        var details = object['ipfs'] == null ? 'Nitropost ID' : (object['ipfs'].entered_title_text)
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':title, 'image':image, 'details':details, 'size':'l', 'border_radius':'9px'})}
+            </div>
+        )
+    }
 
 
 

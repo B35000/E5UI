@@ -14246,7 +14246,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)}
         
         />
       </div>
@@ -14304,6 +14304,7 @@ class App extends Component {
       'view_json_example':550,
       'poll_results':600,
       'channel_payout_results':600,
+      'confirm_upload_nitro_files':600,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -14862,6 +14863,16 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack_clone)
   }
 
+  upload_file_to_nitro_confirmed(data){
+    var selected_files_type = data['selected_files_type']
+    var files = data['files']
+    var size_total = data['size_total']
+    var obj = data['obj']
+    var node_details = data['node_details']
+
+    this.open_dialog_bottomsheet()
+    this.upload_multiple_files_to_nitro_node(files, selected_files_type, obj, node_details)
+  }
 
 
 
@@ -15848,7 +15859,7 @@ class App extends Component {
     }
   }
 
-  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_purchase_recipient_account, selected_basic_storage_setting, nitro_object, default_free_storage) => {
+  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, nitro_object, default_free_storage) => {
     this.prompt_top_notification(this.getLocale()['3054ci']/* Attempting to enable storage with your specified configuration... */, 1200)
     var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
@@ -15859,7 +15870,7 @@ class App extends Component {
       max_buyable_capacity: parseInt(max_buyable_capacity),
       price_per_megabyte: price_per_megabyte,
       target_account_e5: selected_e5,
-      target_storage_purchase_recipient_account: target_storage_purchase_recipient_account,
+      target_storage_recipient_accounts: target_storage_recipient_accounts,
       unlimited_basic_storage: selected_basic_storage_setting,
       free_default_storage: default_free_storage
     }
@@ -29962,7 +29973,7 @@ return data['data']
       return '';
     }
     var data = this.encrypt_storage_object(_data, tags_obj)
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
     if(block_hash_and_signature == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return '';
@@ -29973,6 +29984,7 @@ return data['data']
     var arg_obj = {
       signature_data: block_hash_and_signature.data,
       signature:block_hash_and_signature.signature,
+      e5: block_hash_and_signature.e5,
       file_datas: [file_object],
     }
 
@@ -30917,7 +30929,7 @@ return data['data']
   }
 
   upload_multiple_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details, total_size, file_sizes) => {
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
     if(block_hash_and_signature == null){
       console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'failed to load block hash and signature')
       return null;
@@ -30932,6 +30944,7 @@ return data['data']
         signature:block_hash_and_signature.signature,
         file_datas: file_datas,
         file_types: file_types,
+        e5: block_hash_and_signature.e5,
       }
 
       var body = {
@@ -30971,7 +30984,8 @@ return data['data']
     }else{
       const files = []
       for(var e=0; e<file_datas.length; e++){
-        const block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
+
+        const block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
         if(block_hash_and_signature == null){
           return null;
         }
@@ -30986,6 +31000,7 @@ return data['data']
         const arg_obj = {
           signature_data: block_hash_and_signature.data,
           signature: block_hash_and_signature.signature,
+          e5: block_hash_and_signature.e5,
           file_length: totalSize + (5 * 1024 * 1024),
           file_type: file_types[e],
           upload_extension: extension
@@ -31067,7 +31082,8 @@ return data['data']
     }
   }
 
-  get_block_hash_and_signature = async (e5) => {
+  get_block_hash_and_signature = async (target_storage_recipinet_accounts) => {
+    const e5 = Object.keys(target_storage_recipinet_accounts)[0]
     try{
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
       var current_block_number = parseInt(await web3.eth.getBlockNumber())
@@ -31079,7 +31095,7 @@ return data['data']
       var address = this.state.accounts[e5].address
       web3.eth.accounts.wallet.add(this.state.accounts[e5].privateKey);
       var signature = await web3.eth.sign(block_hash, address)
-      return {data: block_hash, signature: signature}
+      return {data: block_hash, signature: signature, e5: this.state.selected_e5}
     }catch(e){
       console.log(e)
       return null
@@ -31105,7 +31121,7 @@ return data['data']
   }
 
   upload_file_objects_to_nitro = async (file_objects, nitro_object, node_details) => {
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_account_e5'])
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
     if(block_hash_and_signature == null){
       console.log('apppage','upload_file_objects_to_nitro', 'failed to load block hash and signature')
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
@@ -31116,6 +31132,7 @@ return data['data']
     var arg_obj = {
       signature_data: block_hash_and_signature.data,
       signature:block_hash_and_signature.signature,
+      e5: block_hash_and_signature.e5,
       file_datas: file_objects,
     }
 
@@ -34331,7 +34348,8 @@ return data['data']
     var account = this.state.user_account_id[object['e5']]
     if(account != null && account != 1){
       var link = object['ipfs'] == null ? null : object['ipfs'].node_url
-      var request = `${link}/account_storage_data/${account}`
+      const e5_account = object['e5']+':'+account
+      var request = `${link}/account_storage_data/${e5_account}`
       try{
         const response = await fetch(request);
         if (!response.ok) {

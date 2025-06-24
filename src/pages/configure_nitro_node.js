@@ -64,7 +64,7 @@ class ConfigureNitroNodePage extends Component {
         entered_ipfs_provider_text:'', entered_web3_text:'', entered_start_block_text:'', entered_iteration_text:'', 
         max_buyable_capacity:0, exchange_id:'', price_amount:0, price_data:[], recipient_id:'', entered_subscription_text:'', entered_dialer_enpoint_text:'',
 
-        default_free_storage:0
+        default_free_storage:0, selected_e5: this.props.app_state.selected_e5, storage_price_data:{}
     };
 
 
@@ -97,7 +97,7 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' */, this.props.app_state.loc['3054cl']/* 'Recipient' */, this.props.app_state.loc['3054dm']/* 'free-default-storage' *//* , this.props.app_state.loc['3054cu'] *//* 'free-storage' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' *//* , this.props.app_state.loc['3054cl'] *//* 'Recipient' */, this.props.app_state.loc['3054dm']/* 'free-default-storage' *//* , this.props.app_state.loc['3054cu'] *//* 'free-storage' */], [1]
             ],
         };
     }
@@ -877,6 +877,7 @@ class ConfigureNitroNodePage extends Component {
             )
         }
     }
+
     render_new_e5_in_node_ui_data(){
         return(
             <div>
@@ -1382,14 +1383,6 @@ class ConfigureNitroNodePage extends Component {
                 <div style={{height:10}}/>
 
 
-                
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
-                {this.load_account_suggestions()}
-                <div style={{height:10}}/>
-
-
-
-
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054dl']/* 'Default Free Storage' */, 'subtitle':this.format_power_figure(this.state.default_free_storage), 'barwidth':this.get_number_width(this.state.default_free_storage), 'number':`${this.format_account_balance_figure(this.state.default_free_storage)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
                 </div>
@@ -1397,6 +1390,12 @@ class ConfigureNitroNodePage extends Component {
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_default_free_storage_set.bind(this)} theme={this.props.theme} power_limit={63}/>
                 <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']/* 'Free Basic Storage' */, 'details':this.props.app_state.loc['3054ct']/* 'If set to enabled, users will be able to store post metadata in your node for free.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 
             </div>
         )
@@ -1405,13 +1404,24 @@ class ConfigureNitroNodePage extends Component {
     render_boot_storage_data2(){
         return(
             <div>
-                {this.render_set_token_and_amount_part()}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']/* 'Free Basic Storage' */, 'details':this.props.app_state.loc['3054ct']/* 'If set to enabled, users will be able to store post metadata in your node for free.' */, 'size':'l'})}
+                {this.load_my_set_e5_price_data()}
                 <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                {this.load_account_suggestions()}
+                <div style={{height:10}}/>
 
+                {this.render_set_token_and_amount_part()}
+                
+                {this.render_detail_item('0')} 
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054dn']/* 'Set Price Data.' */, 'details':this.props.app_state.loc['3054do']/* 'Set the specified account and price data for your selected E5.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_add_price_data_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3054dp']/* 'Set Data' */, 'action':''},)}
+                </div>
+                
+                {this.render_detail_item('0')} 
 
                 <div style={{height:20}}/>
                 <div onClick={()=> this.when_boot_storage_tapped()}>
@@ -1714,13 +1724,82 @@ class ConfigureNitroNodePage extends Component {
         this.setState({recipient_id: parseInt(item['id']) })
     }
 
+
+
+    when_add_price_data_tapped(){
+        var set_prices = this.state.price_data
+        var selected_e5 = this.state.selected_e5
+        var typed_account_id = this.state.recipient_id
+
+        if(set_prices.length == 0){
+            this.props.notify(this.props.app_state.loc['3054dq']/* 'You need to set some prices per megabyte first.' */, 5000)
+        }
+        else if(typed_account_id == '' || isNaN(typed_account_id) || parseInt(typed_account_id) < 1000 || typed_account_id.includes('.')){
+            this.props.notify(this.props.app_state.loc['3054dr']/* 'The recipient accuont youve set is invalid.' */, 5000)
+        }
+        else{
+            var clone = structuredClone(this.state.storage_price_data)
+            clone[selected_e5] = {'set_prices': set_prices, 'recipient': typed_account_id}
+            this.setState({storage_price_data: clone, price_data:[], recipient_id:''})
+        }
+    }
+
+    load_my_set_e5_price_data(){
+        var items = Object.keys(this.state.storage_price_data)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_e5_storage_payment_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_e5_storage_payment_item(item){
+        var object_data = this.state.storage_price_data[item]
+        var image = this.props.app_state.e5s[item].e5_img
+        var title = object_data['recipient']
+        var details = this.props.app_state.loc['3054ds']/* $ price targets. */.replace('$', object_data['set_prices'].length)
+        return(
+            <div onClick={() => this.when_storage_payment_item_tapped(item)}>
+                {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+            </div>
+        )
+    }
+
+    when_storage_payment_item_tapped(item){
+        var clone = structuredClone(this.state.storage_price_data)
+        delete clone[item]
+        this.setState({storage_price_data: clone})
+    }
+
     when_boot_storage_tapped(){
         var entered_backup_text = this.state.entered_backup_text
         var max_buyable_capacity = this.state.max_buyable_capacity
         var selected_e5 = this.state.selected_e5
-        var price_per_megabyte = this.state.price_data
-        var target_storage_purchase_recipient_account = this.state.recipient_id
+        // var price_per_megabyte = this.state.price_data
+        // var target_storage_purchase_recipient_account = this.state.recipient_id
         var default_free_storage = this.state.default_free_storage
+        var storage_price_data = this.state.storage_price_data
         
         // var selected_basic_storage_setting = this.get_selected_item(this.state.basic_storage_enabled_tags_object, this.state.basic_storage_enabled_tags_object['i'].active) === this.props.app_state.loc['3054cr']/* enabled */
         var selected_basic_storage_setting = true
@@ -1728,19 +1807,23 @@ class ConfigureNitroNodePage extends Component {
         if(max_buyable_capacity == 0){
             this.props.notify(this.props.app_state.loc['3054cf']/* 'You need to specify a maximum amount of storage that can be bought' */, 4000)
         }
-        else if(price_per_megabyte.length == 0){
-            this.props.notify(this.props.app_state.loc['3054cg']/* 'You need to specify a price for your storage.' */, 4000)
-        }
-        else if(target_storage_purchase_recipient_account == ''){
-            this.props.notify(this.props.app_state.loc['3054ch']/* 'You need to specify a recipient for the storage purchases.' */, 4000)
+        else if(Object.keys(storage_price_data).length == 0){
+            this.props.notify(this.props.app_state.loc['3054cg']/* 'You need to specify price and recipient information for your storage configuration.' */, 7000)
         }
         else{
-            var prices = []
-            price_per_megabyte.forEach(item => {
-                prices.push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
+            const price_per_megabyte = {}
+            const target_storage_recipient_accounts = {}
+            Object.keys(storage_price_data).forEach(storage_e5 => {
+                storage_price_data[storage_e5]['set_prices'].forEach(item => {
+                    if(price_per_megabyte[storage_e5] == null){
+                        price_per_megabyte[storage_e5] = []
+                    }
+                    price_per_megabyte[storage_e5].push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
+                });
+                target_storage_recipient_accounts[storage_e5] = storage_price_data[storage_e5]['recipient']
             });
 
-            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, prices, target_storage_purchase_recipient_account, selected_basic_storage_setting, this.state.nitro_object, default_free_storage)
+            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, this.state.nitro_object, default_free_storage)
         }
     }
 
@@ -1812,12 +1895,19 @@ class ConfigureNitroNodePage extends Component {
         var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
         if(selected_item == this.props.app_state.loc['3054ck']/* 'Price' */){
             var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
-            var prices = []
-            node_details['price_per_megabyte'].forEach(item => {
-                prices.push({'exchange':parseInt(item['exchange']),'amount': bigInt(item['amount']) })
+
+            const clone = {}
+            Object.keys(node_details['price_per_megabyte']).forEach(set_e5 => {
+                const set_prices = []
+                node_details['price_per_megabyte'][set_e5].forEach(item => {
+                    set_prices.push({'exchange':parseInt(item['exchange']),'amount': bigInt(item['amount']) })
+                });
+                const set_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][set_e5]
+                
+                clone[set_e5] = {'set_prices': set_prices, 'recipient': set_recipient}
             });
 
-            this.setState({price_data: prices})
+            this.setState({storage_price_data: clone, price_data:[], recipient_id:''})
         }
         else if(selected_item == this.props.app_state.loc['3054cu']/* 'free-storage' */){
             var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
@@ -1845,13 +1935,13 @@ class ConfigureNitroNodePage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == this.props.app_state.loc['3054cl']/* 'Recipient' */){
-            return(
-                <div>
-                    {this.render_recipient_ui()}
-                </div>
-            ) 
-        }
+        // else if(selected_item == this.props.app_state.loc['3054cl']/* 'Recipient' */){
+        //     return(
+        //         <div>
+        //             {this.render_recipient_ui()}
+        //         </div>
+        //     ) 
+        // }
         else if(selected_item == this.props.app_state.loc['3054cu']/* 'free-storage' */){
             return(
                 <div>
@@ -1926,7 +2016,24 @@ class ConfigureNitroNodePage extends Component {
     render_price_picker(){
         return(
             <div>
+                {this.load_my_set_e5_price_data()}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                {this.load_account_suggestions()}
+                <div style={{height:10}}/>
+
                 {this.render_set_token_and_amount_part()}
+                
+                {this.render_detail_item('0')} 
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054dn']/* 'Set Price Data.' */, 'details':this.props.app_state.loc['3054do']/* 'Set the specified account and price data for your selected E5.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_add_price_data_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3054dp']/* 'Set Data' */, 'action':''},)}
+                </div>
+                
+                {this.render_detail_item('0')} 
 
                 <div style={{height:20}}/>
                 <div onClick={()=> this.when_change_storage_prices_tapped()}>
@@ -1939,17 +2046,25 @@ class ConfigureNitroNodePage extends Component {
     when_change_storage_prices_tapped(){
         var entered_backup_text = this.state.entered_backup_text
         var selected_e5 = this.state.selected_e5
-        var price_per_megabyte = this.state.price_data
+        var storage_price_data = this.state.storage_price_data
 
-        if(price_per_megabyte.length == 0){
-            this.props.notify(this.props.app_state.loc['3054cg']/* 'You need to specify a price for your storage.' */, 4000)
-        }else{
-            var prices = []
-            price_per_megabyte.forEach(item => {
-                prices.push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
+        if(Object.keys(storage_price_data).length == 0){
+            this.props.notify(this.props.app_state.loc['3054cg']/* 'You need to specify price and recipient information for your storage configuration.' */, 7000)
+        }
+        else{
+            const price_per_megabyte = {}
+            const target_storage_recipient_accounts = {}
+            Object.keys(storage_price_data).forEach(storage_e5 => {
+                storage_price_data[storage_e5]['set_prices'].forEach(item => {
+                    if(price_per_megabyte[storage_e5] == null){
+                        price_per_megabyte[storage_e5] = []
+                    }
+                    price_per_megabyte[storage_e5].push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
+                });
+                target_storage_recipient_accounts[storage_e5] = storage_price_data[storage_e5]['recipient']
             });
 
-            this.props.update_storage_config(entered_backup_text, 'price_per_megabyte', price_per_megabyte, selected_e5, this.state.nitro_object)
+            this.props.update_storage_config(entered_backup_text, 'price_per_megabyte', {price_per_megabyte, target_storage_recipient_accounts}, selected_e5, this.state.nitro_object)
         }
     }
 

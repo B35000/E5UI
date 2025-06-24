@@ -13407,7 +13407,8 @@ class StackPage extends Component {
                         this.props.notify(this.props.app_state.loc['1593db']/* 'Please wait a few moments for your selected node to come online.' */, 5000)
                     }
                     else{
-                        this.props.upload_multiple_files_to_nitro_node(this.files, this.selected_files_type, obj, node_details)
+                        this.props.show_dialog_bottomsheet({ 'files':this.files, 'selected_files_type':this.selected_files_type, 'obj':obj, 'node_details':node_details, 'size_total':size_total, 'available_storage_space':this.get_upload_file_size_limit() }, 'confirm_upload_nitro_files')
+                        // this.props.upload_multiple_files_to_nitro_node(this.files, this.selected_files_type, obj, node_details)
                     }
                 }
             }
