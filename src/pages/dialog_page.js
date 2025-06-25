@@ -45,6 +45,18 @@ function start_and_end(str) {
   return str;
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class DialogPage extends Component {
     
     state = {
@@ -53,6 +65,8 @@ class DialogPage extends Component {
         id:'',
         ignored_bills:[],
         searched_user:'',
+        ignored_nitro_files_items:[],
+        made_id:makeid(8),
     };
 
 
@@ -223,6 +237,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_confirm_upload_nitro_files()}
+                </div>
+            )
+        }
+        else if(option == 'renew_nitro_uploads'){
+            return(
+                <div>
+                    {this.render_renew_nitro_upload_ui()}
                 </div>
             )
         }
@@ -1488,6 +1509,7 @@ return data['data']
                     {this.render_detail_item('0')}
                     {this.render_not_on_e5_message(ecid_obj)}
                     {this.render_file_verified_message(ecid_obj)}
+                    {this.render_deleted_file_message_if_deleted(hash)}
                     {/* {this.render_detail_item('4', {'text':link, 'textsize':'10px', 'font':this.props.app_state.font})} */}
                     {/* <div onClick={() => this.props.delete_file(ecid_obj)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r'] 'Forget File.' , 'action':''})}
@@ -1596,8 +1618,19 @@ return data['data']
         }
     }
 
+    render_deleted_file_message_if_deleted(hash){
+        if(hash != null && !this.is_file_available(hash)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055di']/* '🗑️ File Deleted.' */, 'details':this.props.app_state.loc['3055dj']/* 'The file was deleted by youre nitro storage provider because you didnt renew the file.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
     render_verify_file_button(hash, ecid_obj){
-        if(hash != null){
+        if(hash != null && this.is_file_available(hash)){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055by']/* 'Verify File' */, 'details':this.props.app_state.loc['3055bz']/* 'Verify that the entire file has not been tampered with.' */, 'size':'l'})}
@@ -4970,6 +5003,338 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+
+
+
+    render_renew_nitro_upload_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_renew_nitro_upload_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_renew_nitro_upload_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_renew_nitro_upload_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        } 
+    }
+
+    render_renew_nitro_upload_data(){
+        const files_to_be_renewed_data = this.fetch_files_to_be_renewed()
+        const price_data_object = this.get_total_payments_to_be_made(files_to_be_renewed_data.files_to_renew)
+        var opacity = price_data_object.has_all_nitro_metadata_loaded == true ? 1.0 : 0.6
+        var has_all_objects_loaded = this.has_all_nitro_objects_loaded(files_to_be_renewed_data.files_to_renew)
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055dc']/* 'Below is the total amount of money youre set to pay for your files.' */, 'title':this.props.app_state.loc['1593hd']/* 'Renew Uploaded Files.' */})}
+                <div style={{height:10}}/>
+                {this.render_nitro_items(files_to_be_renewed_data.files_to_renew)}
+                <div style={{height:10}}/>
+                {this.render_total_payment_amounts_for_all_the_selected_nitros(price_data_object)}
+                <div style={{height:10}}/>
+                <div style={{'opacity':opacity}} onClick={()=> this.add_renew_files_transaction_to_stack(price_data_object, price_data_object.has_all_nitro_metadata_loaded, files_to_be_renewed_data.files_to_renew, has_all_objects_loaded)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593hf']/* 'Renew Files' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    has_all_nitro_objects_loaded(files_to_be_renewed_data){
+        var items = Object.keys(files_to_be_renewed_data)
+        var has_all_loaded = true
+
+        items.forEach(item => {
+            var nitro_id = item.split('E')[0]
+            var nitro_e5 = 'E'+item.split('E')[1]
+            var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]
+
+            if(object == null){
+                has_all_loaded = true
+            }
+        });
+
+        return has_all_loaded
+    }
+
+    fetch_files_to_be_renewed(){
+        var my_files = this.props.app_state.uploaded_data_cids
+        var files_to_renew = {}
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+        var has_files_all_loaded = true
+        var total_files_to_renew = 0
+        my_files.forEach(ecid => {
+            const data = this.get_cid_split(ecid)
+            if(data != null){
+                if(this.props.app_state.uploaded_data[data['filetype']] != null){
+                    const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
+                    if(file_data != null){
+                        const time = file_data['id']
+                        const nitro = file_data['nitro']
+                        const binary_size = file_data['binary_size']
+                        if(binary_size != null){
+                            if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash'])){
+                                if(files_to_renew[nitro] == null){
+                                    files_to_renew[nitro] = []
+                                }
+                                files_to_renew[nitro].push({'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size})
+                                total_files_to_renew++
+                            }
+                        }
+                        else{
+                            has_files_all_loaded = false
+                        }
+                    }
+                    else{
+                        has_files_all_loaded = false
+                    }
+                }
+                else{
+                    has_files_all_loaded = false
+                }
+            }
+            else{
+                has_files_all_loaded = false
+            }
+        });
+
+        return { files_to_renew, has_files_all_loaded, total_files_to_renew }
+    }
+
+    is_file_available(file){
+        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
+        return is_file_available
+    }
+
+    render_nitro_items(files_to_be_renewed_data){
+        var items = Object.keys(files_to_be_renewed_data)
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.reverse().map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_nitro_files_item(item, files_to_be_renewed_data[item], items.length)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_nitro_files_item(item, renew_data, nitro_count){
+        var nitro_id = item.split('E')[0]
+        var nitro_e5 = 'E'+item.split('E')[1]
+
+        var size_count = 0
+        renew_data.forEach(file_data => {
+            size_count += file_data['binary_size']
+        });
+
+        var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]
+
+        if(object != null){
+            var default_image = this.props.app_state.static_assets['empty_image']
+            var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+            var formatted_size = this.format_data_size(size_count)
+            var fs = formatted_size['size']+' '+formatted_size['unit']
+            var title = this.props.app_state.loc['3055da']/* '$ consumed.' */.replace('$', fs)
+            var details = this.props.app_state.loc['3055db']/* '$ files.' */.replace('$', number_with_commas(renew_data.length))
+
+            var opacity = this.state.ignored_nitro_files_items.includes(item) ? 0.6 : 1.0
+            return(
+                <div style={{'opacity': opacity}} onClick={() => this.when_nitro_file_item_clicked(item, nitro_count)}>
+                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_horizontal_list_item2()}
+                </div>
+            )
+        }
+    }
+
+    when_nitro_file_item_clicked(item, nitro_count){
+        return;
+        var clone = this.state.ignored_nitro_files_items.slice()
+        const index = clone.indexOf(item)
+        if(index != -1){
+            clone.splice(index, 1)
+        }
+        else{
+            clone.push(item)
+            if(clone.length == nitro_count){
+                this.props.notify(this.props.app_state.loc['3055dd']/* You cant ignore all of the nodes. */, 4000)
+                return;
+            }
+        }
+        
+        this.setState({ignored_nitro_files_items: clone})
+    }
+
+    render_total_payment_amounts_for_all_the_selected_nitros(price_data_object){
+        const total_price_amounts = price_data_object.total_price_amounts
+        const items = Object.keys(total_price_amounts)
+        const e5 = this.props.app_state.selected_e5
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style-type': 'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':this.get_amount(total_price_amounts[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(this.get_amount(total_price_amounts[item])), 'barwidth':this.calculate_bar_width(this.get_amount(total_price_amounts[item])), 'number':this.format_account_balance_figure(this.get_amount(total_price_amounts[item])), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_total_payments_to_be_made(files_to_be_renewed_data){
+        var items = Object.keys(files_to_be_renewed_data)
+        var selected_items = []
+        items.forEach(nitro_e5_id => {
+            if(!this.state.ignored_nitro_files_items.includes(nitro_e5_id)){
+                selected_items.push(nitro_e5_id)
+            }
+        });
+        var has_all_nitro_metadata_loaded = true;
+        var total_price_amounts = {}
+        selected_items.forEach(nitro_e5_id => {
+            var nitro_node_data = this.props.app_state.nitro_node_details[nitro_e5_id]
+            var total_storage_consumed_in_mbs = 0.0
+            files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
+                total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
+            });
+            if(nitro_node_data != null && nitro_node_data != 'unavailable'){
+                var price_data = nitro_node_data['price_per_megabyte'][this.props.app_state.selected_e5]
+                if(price_data != null){
+                    price_data.forEach(price_item => {
+                        var exchange = price_item['exchange']
+                        var amount = price_item['amount']
+                        if(total_price_amounts[exchange] == null){
+                            total_price_amounts[exchange] = bigInt(0)
+                        }
+                        total_price_amounts[exchange] = bigInt(total_price_amounts[exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
+                    });
+                }
+                else{
+                    has_all_nitro_metadata_loaded = false;
+                }
+            }
+        });
+
+        return { total_price_amounts, has_all_nitro_metadata_loaded }
+    }
+
+    add_renew_files_transaction_to_stack(price_data_object, has_all_price_data_loaded, files_to_renew, has_all_objects_loaded){
+        if(has_all_price_data_loaded == false || has_all_objects_loaded == false){
+            this.props.notify(this.props.app_state.loc['3055de']/* You need to wait for all the nodes to finish loading first. */, 5000)
+            return;
+        }
+
+        const total_payments_with_recepients = this.get_total_payments_to_be_made_with_recipients(files_to_renew)
+
+        const amounts_to_transfer = []
+        const nitro_storage_account_recipients = {}
+        Object.keys(total_payments_with_recepients).forEach(nitro_e5_id => {
+            var node_details = this.props.app_state.nitro_node_details[nitro_e5_id]
+            var purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][this.props.app_state.selected_e5]
+            nitro_storage_account_recipients[nitro_e5_id] = purchase_recipient
+            
+            Object.keys(total_payments_with_recepients[nitro_e5_id]).forEach(exchange_item => {
+                if(total_payments_with_recepients[nitro_e5_id][exchange_item] != 0){
+                    amounts_to_transfer.push({
+                        'exchange':exchange_item, 
+                        'amount':total_payments_with_recepients[nitro_e5_id][exchange_item], 
+                        'recipient': purchase_recipient,
+                    })
+                }
+            });
+        });
+
+        const obj = {
+            id:this.state.made_id, type:this.props.app_state.loc['3055df']/* 'nitro-renewal' */,
+            entered_indexing_tags:[this.props.app_state.loc['3055dg']/* 'nitro' */, this.props.app_state.loc['3055dh']/* 'renewal' */, this.props.app_state.loc['3068ah']/* 'payment' */],
+            e5:this.props.app_state.selected_e5, price_data_object, files_to_renew, ignored_nitros: this.state.ignored_nitro_files_items, amounts_to_transfer, total_payments_with_recepients, nitro_storage_account_recipients
+        }
+        this.props.add_nitro_renewal_transaction_to_stack(obj)
+        this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+    }
+
+    get_total_payments_to_be_made_with_recipients(files_to_be_renewed_data){
+        var items = Object.keys(files_to_be_renewed_data)
+        var selected_items = []
+        items.forEach(nitro_e5_id => {
+            if(!this.state.ignored_nitro_files_items.includes(nitro_e5_id)){
+                selected_items.push(nitro_e5_id)
+            }
+        });
+        var has_all_nitro_metadata_loaded = true;
+        var total_price_amounts = {}
+        selected_items.forEach(nitro_e5_id => {
+            var nitro_node_data = this.props.app_state.nitro_node_details[nitro_e5_id]
+            var total_storage_consumed_in_mbs = 0.0
+            files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
+                total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
+            });
+            if(nitro_node_data != null && nitro_node_data != 'unavailable'){
+                var price_data = nitro_node_data['price_per_megabyte'][this.props.app_state.selected_e5]
+                if(price_data != null){
+                    if(total_price_amounts[nitro_e5_id] == null){
+                        total_price_amounts[nitro_e5_id] = {}
+                    }
+                    price_data.forEach(price_item => {
+                        var exchange = price_item['exchange']
+                        var amount = price_item['amount']
+                        if(total_price_amounts[nitro_e5_id][exchange] == null){
+                            total_price_amounts[nitro_e5_id][exchange] = bigInt(0)
+                        }
+                        total_price_amounts[nitro_e5_id][exchange] = bigInt(total_price_amounts[nitro_e5_id][exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
+                    });
+                }
+                else{
+                    has_all_nitro_metadata_loaded = false;
+                }
+            }
+        });
+
+        return { total_price_amounts, has_all_nitro_metadata_loaded }
+    }
 
 
 

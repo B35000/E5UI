@@ -1451,6 +1451,7 @@ class ConfigureNitroNodePage extends Component {
         return(
             <div style={{'overflow-x':'hidden'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cc']/* 'Storage Price.' */, 'details':this.props.app_state.loc['3054cd']/* 'Set the price per megabyte of storage for your node in your preferred tokens.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3054dt']/* The prices you set below will also be used as yearly renewal fees per megabyte consumed. */, 'textsize':'11px', 'font':this.props.app_state.font})}
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['237']} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
@@ -1623,106 +1624,6 @@ class ConfigureNitroNodePage extends Component {
         this.setState({price_data: cloned_array})
     }
 
-
-    load_token_suggestions(target_type){
-        var items = [].concat(this.get_suggested_tokens())
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('14', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
-        )
-    }
-
-    get_suggested_tokens(){
-        var items = [
-            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
-        ];
-        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
-        var sorted_token_exchange_data = []
-        // var myid = this.props.app_state.user_account_id
-        for (let i = 0; i < exchanges_from_sync.length; i++) {
-            var exchange_e5 = exchanges_from_sync[i]['e5']
-            var myid = this.props.app_state.user_account_id[exchange_e5]
-
-            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
-            if(author_account == myid.toString()){
-                sorted_token_exchange_data.push(exchanges_from_sync[i])
-            }
-        }
-        sorted_token_exchange_data.reverse()
-        for (let i = 0; i < exchanges_from_sync.length; i++) {
-            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
-                sorted_token_exchange_data.push(exchanges_from_sync[i])
-            }
-        }
-
-        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
-            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['ipfs'].entered_symbol_text, 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s', 'image':(sorted_token_exchange_data[i]['ipfs'].token_image == null ? (sorted_token_exchange_data[i]['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img']:this.props.app_state.static_assets['spend_img']) : sorted_token_exchange_data[i]['ipfs'].token_image), 'img_size':30}})
-        }
-
-        return items;
-    }
-
-    when_price_suggestion_clicked(item, pos, target_type){
-        this.setState({exchange_id: item['id']})
-        this.reset_the_number_picker()
-    }
-
-
-
-    load_account_suggestions(){
-        var items = [].concat(this.get_suggested_accounts())
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
-                            {this.render_detail_item('3', item['label'])}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-    get_suggested_accounts(){
-        var account = this.props.app_state.user_account_id[this.state.selected_e5]
-        return[
-            {'id':account, 'label':{'title':this.props.app_state.loc['854']/* 'My Account' */, 'details':this.props.app_state.loc['857']/* 'Account' */, 'size':'s'}},
-            {'id':'2', 'label':{'title':this.props.app_state.loc['855']/* 'Main Contract' */, 'details':this.props.app_state.loc['858']/* 'Contract ID 2' */, 'size':'s'}},
-        ].concat(this.get_account_suggestions())
-    }
-
-    get_account_suggestions(){
-        var contacts = this.props.app_state.contacts[this.state.selected_e5]
-        if(contacts == null) contacts = [];
-        var return_array = []
-        contacts.forEach(contact => {
-            if(contact['id'].toString().includes(this.state.recipient_id)){
-                return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
-            }
-        });
-        return return_array;
-    }
-
-    get_contact_alias(contact){
-        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
-    }
-
-    when_suggestion_clicked(item, pos){
-        this.setState({recipient_id: parseInt(item['id']) })
-    }
 
 
 
@@ -2121,6 +2022,122 @@ class ConfigureNitroNodePage extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    load_token_suggestions(target_type){
+        var items = [].concat(this.get_suggested_tokens())
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('14', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_tokens(){
+        var items = [
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
+        ];
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        var sorted_token_exchange_data = []
+        // var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['ipfs'].entered_symbol_text, 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s', 'image':(sorted_token_exchange_data[i]['ipfs'].token_image == null ? (sorted_token_exchange_data[i]['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img']:this.props.app_state.static_assets['spend_img']) : sorted_token_exchange_data[i]['ipfs'].token_image), 'img_size':30}})
+        }
+
+        return items;
+    }
+
+    when_price_suggestion_clicked(item, pos, target_type){
+        this.setState({exchange_id: item['id']})
+        this.reset_the_number_picker()
+    }
+
+
+
+    load_account_suggestions(){
+        var items = [].concat(this.get_suggested_accounts())
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_suggested_accounts(){
+        var account = this.props.app_state.user_account_id[this.state.selected_e5]
+        return[
+            {'id':account, 'label':{'title':this.props.app_state.loc['854']/* 'My Account' */, 'details':this.props.app_state.loc['857']/* 'Account' */, 'size':'s'}},
+            {'id':'2', 'label':{'title':this.props.app_state.loc['855']/* 'Main Contract' */, 'details':this.props.app_state.loc['858']/* 'Contract ID 2' */, 'size':'s'}},
+        ].concat(this.get_account_suggestions())
+    }
+
+    get_account_suggestions(){
+        var contacts = this.props.app_state.contacts[this.state.selected_e5]
+        if(contacts == null) contacts = [];
+        var return_array = []
+        contacts.forEach(contact => {
+            if(contact['id'].toString().includes(this.state.recipient_id)){
+                return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+            }
+        });
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
+    }
+
+    when_suggestion_clicked(item, pos){
+        this.setState({recipient_id: parseInt(item['id']) })
+    }
 
 
 

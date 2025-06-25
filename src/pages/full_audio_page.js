@@ -588,7 +588,7 @@ class FullAudioPage extends Component {
         var nitro_e5_id = data['nitro']
         if(nitro_e5_id == null) return;
         var nitro_id = nitro_e5_id.split('E')[0]
-        var nitro_e5 = nitro_e5_id.split('E')[1]
+        var nitro_e5 = 'E'+nitro_e5_id.split('E')[1]
 
         var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]
 

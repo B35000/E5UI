@@ -239,7 +239,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3074bq']/* 'poll-result' */ &&
             item.type != this.props.app_state.loc['3030b']/* 'video-comment-messages' */ &&
             item.type != this.props.app_state.loc['3075w']/* 'stage-creator-payout' */ &&
-            item.type != this.props.app_state.loc['2117p']/* 'creator-payout' */
+            item.type != this.props.app_state.loc['2117p']/* 'creator-payout' */ &&
+            item.type != this.props.app_state.loc['3055df']/* 'nitro-renewal' */
         ){
             return(
                 <div>
@@ -885,6 +886,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_creator_payout_info()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3055df']/* 'nitro-renewal' */){
+                return(
+                    <div>
+                        {this.render_nitro_renewal_info()}
                     </div>
                 )
             }
@@ -7404,6 +7412,109 @@ return data['data']
         }
     }
 
+
+
+
+
+
+
+
+    render_nitro_renewal_info(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const price_data_object = transaction_item.price_data_object;
+        const files_to_renew = transaction_item.files_to_renew;
+        const ignored_nitros = transaction_item.ignored_nitros;
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1979q']/* 'Below is the total amount of money youll be paying for renewing your files in your selected nitro nodes.' */, 'title':this.props.app_state.loc['1979p']/* 'File Renewal Payments.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_nitro_items(files_to_renew, ignored_nitros)}
+                <div style={{height:10}}/>
+
+                {this.render_total_payment_amounts_for_all_the_selected_nitros(price_data_object)}
+            </div>
+        )
+    }
+
+    render_nitro_items(files_to_be_renewed_data, ignored_nitros){
+        var unfiltered_items = Object.keys(files_to_be_renewed_data)
+        var items = []
+        unfiltered_items.forEach(nitro_e5_id => {
+            if(!ignored_nitros.includes(nitro_e5_id)){
+                items.push(nitro_e5_id)
+            }
+        });
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.reverse().map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_nitro_files_item(item, files_to_be_renewed_data[item], items.length)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_nitro_files_item(item, renew_data, nitro_count){
+        var nitro_id = item.split('E')[0]
+        var nitro_e5 = 'E'+item.split('E')[1]
+
+        var size_count = 0
+        renew_data.forEach(file_data => {
+            size_count += file_data['binary_size']
+        });
+
+        var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]
+
+        if(object != null){
+            var default_image = this.props.app_state.static_assets['empty_image']
+            var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+            var formatted_size = this.format_data_size(size_count)
+            var fs = formatted_size['size']+' '+formatted_size['unit']
+            var title = this.props.app_state.loc['3055da']/* '$ consumed.' */.replace('$', fs)
+            var details = this.props.app_state.loc['3055db']/* '$ files.' */.replace('$', number_with_commas(renew_data.length))
+
+            var opacity = this.state.ignored_nitro_files_items.includes(item) ? 0.6 : 1.0
+            return(
+                <div style={{'opacity': opacity}} onClick={() => this.when_nitro_file_item_clicked(item, nitro_count)}>
+                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_horizontal_list_item2()}
+                </div>
+            )
+        }
+    }
+
+    render_total_payment_amounts_for_all_the_selected_nitros(price_data_object){
+        const total_price_amounts = price_data_object.total_price_amounts
+        const items = Object.keys(total_price_amounts)
+        const e5 = this.props.app_state.selected_e5
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style-type': 'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':this.get_amount(total_price_amounts[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(this.get_amount(total_price_amounts[item])), 'barwidth':this.calculate_bar_width(this.get_amount(total_price_amounts[item])), 'number':this.format_account_balance_figure(this.get_amount(total_price_amounts[item])), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    
 
 
 

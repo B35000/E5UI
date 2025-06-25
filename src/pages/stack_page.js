@@ -3971,6 +3971,24 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(payout_record_transaction.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3055df']/* 'nitro-renewal' */){
+                    var buy_album_obj = this.format_renew_nitro_object(txs[i], ints)
+                    if(buy_album_obj.depth_swap_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.depth_swap_obj)
+                    }
+
+                    if(buy_album_obj.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.transfers_obj)
+                    }
+                    
+                    strs.push(buy_album_obj.string_obj)
+                    adds.push([])
+                    ints.push(buy_album_obj.obj)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -8084,7 +8102,7 @@ class StackPage extends Component {
         var ints_clone = ints.slice()
         var object = t.nitro_object
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-        var purchase_recipient = node_details['target_storage_purchase_recipient_account']
+        var purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][this.props.app_state.selected_e5]
         var post_id = t.nitro_object['id'];
 
         var depth_swap_obj = [
@@ -8568,6 +8586,80 @@ class StackPage extends Component {
 
         return {int: obj, str: string_obj}
     }
+
+    format_renew_nitro_object = (t, ints) => {
+        var ints_clone = ints.slice()
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+        
+        const data = t.amounts_to_transfer
+
+        for(var i=0; i<data.length; i++){
+            var exchange = data[i]['exchange']
+            var amount = (data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+            var purchase_recipient = data[i]['recipient']
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, transfers_obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var u=0; u<transfer_actions.length; u++){
+                transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(transfer_actions[u]['amount'])
+                transfers_obj[6].push(transfer_actions[u]['depth'])
+            }
+        }
+
+        const obj = [ /* add data */
+            [20000, 13, 0],
+            [], [],/* 29(nitro_node_storage_update) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        const string_obj = [[]]
+        const string_data = 'renewal'
+
+        var nitro_ids = Object.keys(t.total_payments_with_recepients)
+        nitro_ids.forEach(item => {
+            var nitro_id = item.split('E')[0]
+            obj[1].push(29)/* 29(nitro_node_storage_update) */
+            obj[2].push(23)
+            obj[3].push(nitro_id)
+            obj[4].push(t.nitro_storage_account_recipients[item])
+            string_obj[0].push(string_data)
+        });
+
+
+        return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj, obj:obj, string_obj:string_obj}
+    }
+
+    
 
 
 
@@ -12698,6 +12790,7 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_file_data_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_file_data_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 {this.render_encryption_file_message_if_wallet_not_set()}
+                {this.render_renew_nitro_file_uploads_button()}
                 {this.render_uploaded_files()}
             </div>
         )
@@ -13091,7 +13184,7 @@ class StackPage extends Component {
                 let reader = new FileReader();
                 reader.onload = async function(ev){
                     var thumb = type == 'video' ? await this.extractFirstFrame(ev.target.result) : ''
-                    var obj = {'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':'', 'nitro':this.selected_nitro_item}
+                    var obj = { 'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':'', 'nitro':this.selected_nitro_item, 'binary_size':this.get_file_sizes(ev.target.result) }
 
                     if(ev.total < this.get_upload_file_size_limit()){
                         this.files.push(obj)
@@ -13164,6 +13257,12 @@ class StackPage extends Component {
                 }
             }
         }
+    }
+
+    get_file_sizes(dataURL){
+        const base64Data = dataURL.split(",")[1];
+        const binaryData = Buffer.from(base64Data, "base64");
+        return binaryData.length
     }
 
     process_metadata(metadata){
@@ -13459,6 +13558,63 @@ class StackPage extends Component {
 
 
 
+
+
+    render_renew_nitro_file_uploads_button(){
+        const files_to_be_renewed = this.fetch_files_to_be_renewed()
+        const current_month = new Date().getMonth()
+        if(Object.keys(files_to_be_renewed).length == 0 || current_month > 5){
+            return;
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1593he']/* 'Renew your uploaded files to keep them online in your used nitro nodes.' */, 'title':this.props.app_state.loc['1593hd']/* 'Renew Uploaded Files.' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.open_renew_nitro_files()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593hf']/* 'Renew Files' */, 'action':''},)}
+                </div>
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    open_renew_nitro_files(){
+        this.props.show_dialog_bottomsheet({}, 'renew_nitro_uploads')
+    }
+
+    fetch_files_to_be_renewed(){
+        var my_files = this.props.app_state.uploaded_data_cids
+        var files_to_renew = {}
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+        my_files.forEach(ecid => {
+            const data = this.get_cid_split(ecid)
+            if(data != null){
+                if(this.props.app_state.uploaded_data[data['filetype']] != null){
+                    const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
+                    if(file_data != null){
+                        const time = file_data['id']
+                        const nitro = file_data['nitro']
+                        if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash'])){
+                            if(files_to_renew[nitro] == null){
+                                files_to_renew[nitro] = []
+                            }
+                            files_to_renew[nitro].push({'data':data, 'file_data':file_data, 'time':time})
+                        }
+                    }
+                }
+            }
+        });
+
+        return files_to_renew
+    }
+
+    is_file_available(file){
+        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
+        return is_file_available
+    }
+
+
+
     
 
     render_uploaded_files(){
@@ -13555,6 +13711,9 @@ class StackPage extends Component {
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         var opacity = this.props.app_state.uncommitted_upload_cids.includes(ecid_obj['full']) ? 0.6 : 1.0
+        if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+            opacity = 0.4
+        }
         if(data != null){
             if(data['type'] == 'image'){
                 var img = data['data']
