@@ -5251,10 +5251,10 @@ return data['data']
                         }
                         total_price_amounts[exchange] = bigInt(total_price_amounts[exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
                     });
-                }
-                else{
-                    has_all_nitro_metadata_loaded = false;
-                }
+                } 
+            }
+            else{
+                has_all_nitro_metadata_loaded = false;
             }
         });
 
@@ -5264,6 +5264,10 @@ return data['data']
     add_renew_files_transaction_to_stack(price_data_object, has_all_price_data_loaded, files_to_renew, has_all_objects_loaded){
         if(has_all_price_data_loaded == false || has_all_objects_loaded == false){
             this.props.notify(this.props.app_state.loc['3055de']/* You need to wait for all the nodes to finish loading first. */, 5000)
+            return;
+        }
+        else if(!this.check_if_sender_can_afford_renewal_payouts(price_data_object)){
+            this.props.notify(this.props.app_state.loc['2117o']/* 'Your account balance is insufficient to make all of the transfers.' */, 6700)
             return;
         }
 
@@ -5327,14 +5331,32 @@ return data['data']
                         total_price_amounts[nitro_e5_id][exchange] = bigInt(total_price_amounts[nitro_e5_id][exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
                     });
                 }
-                else{
-                    has_all_nitro_metadata_loaded = false;
-                }
+            }
+            else{
+                has_all_nitro_metadata_loaded = false;
             }
         });
 
         return { total_price_amounts, has_all_nitro_metadata_loaded }
     }
+
+    check_if_sender_can_afford_renewal_payouts(price_data_object){
+        var exchanges_used = Object.keys(price_data_object)
+        const e5 = this.props.app_state.selected_e5
+        var can_pay = true;
+        for(var i=0; i<exchanges_used.length; i++){
+            var token_id = exchanges_used[i]
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
+            var final_amount = price_data_object[token_id]
+
+            if(bigInt(token_balance).lesser(bigInt(final_amount))){
+                can_pay = false
+            }
+        }
+        return can_pay
+    }
+
+
 
 
 

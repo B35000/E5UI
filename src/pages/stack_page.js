@@ -13563,7 +13563,9 @@ class StackPage extends Component {
     render_renew_nitro_file_uploads_button(){
         const files_to_be_renewed = this.fetch_files_to_be_renewed()
         const current_month = new Date().getMonth()
-        if(Object.keys(files_to_be_renewed).length == 0 || current_month > 5){
+        const last_renewal_time = this.props.app_state.latest_file_renewal_time * 1000
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+        if(Object.keys(files_to_be_renewed).length == 0 || current_month > 5 || last_renewal_time >= startOfYear){
             return;
         }
         return(

@@ -878,7 +878,7 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false,
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:0
   };
 
   get_static_assets(){
@@ -18424,6 +18424,7 @@ return data['data']
       my_polls:[],
       my_objects:[],
       notification_object:{},
+      latest_file_renewal_time:0,
     });
 
     this.get_blocked_accounts_data_e5_timestamp = 0
@@ -21305,6 +21306,14 @@ return data['data']
 
 
 
+    /* ------------------------------------ NITRO FILE RENEWAL RECROD DATA-------------------------- */
+    this.load_my_file_renewal_records(web3,E52contractInstance, e5, account)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
 
     /* ---------------------------------------- SUBSCRIPTION DATA ------------------------------------------- */
     
@@ -22424,6 +22433,18 @@ return data['data']
           });
           this.setState({my_channel_files_directory: clone})
         }
+      }
+    }
+  }
+
+  load_my_file_renewal_records = async (web3, E52contractInstance, e5, account) => {
+    const object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 29/* 29(nitro_node_storage_update) */, p2/* sender_acc_id */:account})
+
+    if(object_event_data.length > 0){
+      const latest_event = object_event_data[object_event_data.length -1]
+
+      if(this.state.latest_file_renewal_time < latest_event.returnValues.p6/* timestamp */){
+        this.setState({latest_file_renewal_time: latest_event.returnValues.p6/* timestamp */})
       }
     }
   }

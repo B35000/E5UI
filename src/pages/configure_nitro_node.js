@@ -976,6 +976,17 @@ class ConfigureNitroNodePage extends Component {
 
     when_e5_clicked(item){
         this.setState({selected_e5: item})
+
+        var selected_item = this.get_selected_item(this.state.get_configure_nitro_node_title_tags_object, this.state.get_configure_nitro_node_title_tags_object['i'].active)
+
+        var selected_item2 = this.get_selected_item(this.state.reconfigure_storage_title_tags_object, this.state.reconfigure_storage_title_tags_object['i'].active)
+
+        if(this.state.recipient_id == '' && (selected_item == this.props.app_state.loc['3048']/* 'boot-storage' */ || (selected_item == this.props.app_state.loc['3049']/* 'reconfigure-storage' */ && selected_item2 == this.props.app_state.loc['3054ck']/* 'Price' */))){
+            var my_account_id = this.props.app_state.user_account_id[item]
+            if(my_account_id != null && my_account_id > 1000){
+                this.setState({recipient_id: my_account_id.toString()})
+            }
+        }
     }
 
     when_address_input_field_changed(text){
