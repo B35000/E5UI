@@ -67,6 +67,7 @@ class DialogPage extends Component {
         searched_user:'',
         ignored_nitro_files_items:[],
         made_id:makeid(8),
+        selected_e5_renewal_items:[this.props.app_state.selected_e5],
     };
 
 
@@ -5054,8 +5055,7 @@ return data['data']
 
     render_renew_nitro_upload_data(){
         const files_to_be_renewed_data = this.fetch_files_to_be_renewed()
-        const price_data_object = this.get_total_payments_to_be_made(files_to_be_renewed_data.files_to_renew)
-        var opacity = price_data_object.has_all_nitro_metadata_loaded == true ? 1.0 : 0.6
+        var opacity = files_to_be_renewed_data.has_all_nitro_metadata_loaded == true ? 1.0 : 0.6
         var has_all_objects_loaded = this.has_all_nitro_objects_loaded(files_to_be_renewed_data.files_to_renew)
         return(
             <div>
@@ -5063,14 +5063,82 @@ return data['data']
                 <div style={{height:10}}/>
                 {this.render_nitro_items(files_to_be_renewed_data.files_to_renew)}
                 <div style={{height:10}}/>
-                {this.render_total_payment_amounts_for_all_the_selected_nitros(price_data_object)}
+                {this.render_total_payment_amounts_for_all_the_selected_nitros_and_e5_selector(files_to_be_renewed_data.files_to_renew)}
                 <div style={{height:10}}/>
-                <div style={{'opacity':opacity}} onClick={()=> this.add_renew_files_transaction_to_stack(price_data_object, price_data_object.has_all_nitro_metadata_loaded, files_to_be_renewed_data.files_to_renew, has_all_objects_loaded)}>
+                <div style={{'opacity':opacity}} onClick={()=> this.add_renew_files_transaction_to_stack(files_to_be_renewed_data.has_all_nitro_metadata_loaded, files_to_be_renewed_data.files_to_renew, has_all_objects_loaded)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593hf']/* 'Renew Files' */, 'action':''},)}
                 </div>
             </div>
         )
     }
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    load_preferred_e5_ui(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked2(item)}>
+                            {this.render_e5_item2(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_e5_item2(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        if(this.state.selected_e5_renewal_items.includes(item)){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked2(item){
+        var clone = this.state.selected_e5_renewal_items.slice()
+        const index = clone.indexOf(item)
+        if(index != -1){
+            clone.splice(index, 1)
+        }
+        else{
+            clone.push(item)
+        }
+        if(clone.length != 0){
+            this.setState({selected_e5_renewal_items: clone})
+        }
+    }
+
+
+
 
     has_all_nitro_objects_loaded(files_to_be_renewed_data){
         var items = Object.keys(files_to_be_renewed_data)
@@ -5094,6 +5162,7 @@ return data['data']
         var files_to_renew = {}
         const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
         var has_files_all_loaded = true
+        var has_all_nitro_metadata_loaded = true;
         var total_files_to_renew = 0
         my_files.forEach(ecid => {
             const data = this.get_cid_split(ecid)
@@ -5105,12 +5174,20 @@ return data['data']
                         const nitro = file_data['nitro']
                         const binary_size = file_data['binary_size']
                         if(binary_size != null){
-                            if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash'])){
-                                if(files_to_renew[nitro] == null){
-                                    files_to_renew[nitro] = []
+                            if(nitro != null){
+                                const nitro_node_data = this.props.app_state.nitro_node_details[nitro]
+                                if(nitro_node_data != null && nitro_node_data != 'unavailable'){
+                                    if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash']) && !this.has_nitro_already_been_renewed(nitro)){
+                                        if(files_to_renew[nitro] == null){
+                                            files_to_renew[nitro] = []
+                                        }
+                                        files_to_renew[nitro].push({'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size})
+                                        total_files_to_renew++
+                                    }
                                 }
-                                files_to_renew[nitro].push({'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size})
-                                total_files_to_renew++
+                                else{
+                                    has_all_nitro_metadata_loaded = false;
+                                }
                             }
                         }
                         else{
@@ -5130,12 +5207,29 @@ return data['data']
             }
         });
 
-        return { files_to_renew, has_files_all_loaded, total_files_to_renew }
+        return { files_to_renew, has_files_all_loaded, total_files_to_renew, has_all_nitro_metadata_loaded}
     }
 
     is_file_available(file){
         var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
         return is_file_available
+    }
+
+    has_nitro_already_been_renewed(nitro){
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+        const latest_file_renewal_time = this.props.app_state.latest_file_renewal_time
+        var has_been_renewed = false;
+        const e5s = Object.keys(latest_file_renewal_time)
+        e5s.forEach(e5 => {
+            const renewal_data = latest_file_renewal_time[e5]
+            const paid_nitros = renewal_data['paid_nitros']
+            const time = renewal_data['time']
+
+            if(paid_nitros.includes(nitro) && time > startOfYear){
+                has_been_renewed = true
+            }
+        });
+        return has_been_renewed
     }
 
     render_nitro_items(files_to_be_renewed_data){
@@ -5188,7 +5282,6 @@ return data['data']
     }
 
     when_nitro_file_item_clicked(item, nitro_count){
-        return;
         var clone = this.state.ignored_nitro_files_items.slice()
         const index = clone.indexOf(item)
         if(index != -1){
@@ -5205,10 +5298,37 @@ return data['data']
         this.setState({ignored_nitro_files_items: clone})
     }
 
-    render_total_payment_amounts_for_all_the_selected_nitros(price_data_object){
-        const total_price_amounts = price_data_object.total_price_amounts
+
+
+
+    render_total_payment_amounts_for_all_the_selected_nitros_and_e5_selector(files_to_renew){
+        const price_data_object = this.get_total_payments_to_be_made(files_to_renew).total_price_amounts
+        var items = Object.keys(price_data_object)
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['3055dk']/* 'Youll need to select youre preferred E5s to make the renewal purchases.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                {this.load_preferred_e5_ui()}
+                <div style={{height:10}}/>
+                {items.map((item, index) => (
+                    <div>
+                        {this.render_total_payment_amounts_for_all_the_selected_nitros(price_data_object[item], item)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_total_payment_amounts_for_all_the_selected_nitros(total_price_amounts, e5){
         const items = Object.keys(total_price_amounts)
-        const e5 = this.props.app_state.selected_e5
+        
+        if(items.length == 0){
+            return(
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width((0)), 'number':this.format_account_balance_figure((0)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                </div>
+            )
+        }
         return(
             <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style-type': 'none'}}>
@@ -5232,8 +5352,8 @@ return data['data']
                 selected_items.push(nitro_e5_id)
             }
         });
-        var has_all_nitro_metadata_loaded = true;
         var total_price_amounts = {}
+        var ignored_nitro_e5_ids = []
         selected_items.forEach(nitro_e5_id => {
             var nitro_node_data = this.props.app_state.nitro_node_details[nitro_e5_id]
             var total_storage_consumed_in_mbs = 0.0
@@ -5241,62 +5361,89 @@ return data['data']
                 total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
             });
             if(nitro_node_data != null && nitro_node_data != 'unavailable'){
-                var price_data = nitro_node_data['price_per_megabyte'][this.props.app_state.selected_e5]
-                if(price_data != null){
-                    price_data.forEach(price_item => {
-                        var exchange = price_item['exchange']
-                        var amount = price_item['amount']
-                        if(total_price_amounts[exchange] == null){
-                            total_price_amounts[exchange] = bigInt(0)
+                var price_data_object = this.get_price_data_to_be_used(nitro_node_data)
+                if(price_data_object != null){
+                    var price_data = price_data_object.price_data
+                    var e5_used = price_data_object.e5
+                    if(price_data != null){
+                        if(total_price_amounts[e5_used] == null){
+                            total_price_amounts[e5_used] = {}
                         }
-                        total_price_amounts[exchange] = bigInt(total_price_amounts[exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
-                    });
-                } 
-            }
-            else{
-                has_all_nitro_metadata_loaded = false;
+                        price_data.forEach(price_item => {
+                            var exchange = price_item['exchange']
+                            var amount = price_item['amount']
+                            if(total_price_amounts[e5_used][exchange] == null){
+                                total_price_amounts[e5_used][exchange] = bigInt(0)
+                            }
+                            total_price_amounts[e5_used][exchange] = bigInt(total_price_amounts[e5_used][exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
+                        });
+                    } 
+                }
+                else{
+                    ignored_nitro_e5_ids.push(nitro_e5_id)
+                }
             }
         });
 
-        return { total_price_amounts, has_all_nitro_metadata_loaded }
+        return {total_price_amounts, ignored_nitro_e5_ids}
     }
 
-    add_renew_files_transaction_to_stack(price_data_object, has_all_price_data_loaded, files_to_renew, has_all_objects_loaded){
+    get_price_data_to_be_used(nitro_node_data){
+        var items = this.state.selected_e5_renewal_items
+        for(var i=0; i<items.length; i++){
+            const e5 = items[i]
+            if(nitro_node_data['price_per_megabyte'][e5]){
+                return { price_data: nitro_node_data['price_per_megabyte'][e5], e5}
+            }
+        }
+    }
+
+    add_renew_files_transaction_to_stack(has_all_price_data_loaded, files_to_renew, has_all_objects_loaded){
+        const price_data_object = this.get_total_payments_to_be_made(files_to_renew).total_price_amounts
         if(has_all_price_data_loaded == false || has_all_objects_loaded == false){
             this.props.notify(this.props.app_state.loc['3055de']/* You need to wait for all the nodes to finish loading first. */, 5000)
+            return;
+        }
+        else if(!this.check_if_transfers_exist(price_data_object)){
+            this.props.notify(this.props.app_state.loc['3055dl']/* 'No payments to make.' */, 4700)
             return;
         }
         else if(!this.check_if_sender_can_afford_renewal_payouts(price_data_object)){
             this.props.notify(this.props.app_state.loc['2117o']/* 'Your account balance is insufficient to make all of the transfers.' */, 6700)
             return;
         }
+        
+        const total_payments_with_recepients_data = this.get_total_payments_to_be_made_with_recipients(files_to_renew)
+        const e5s_used = Object.keys(total_payments_with_recepients_data)
 
-        const total_payments_with_recepients = this.get_total_payments_to_be_made_with_recipients(files_to_renew)
-
-        const amounts_to_transfer = []
-        const nitro_storage_account_recipients = {}
-        Object.keys(total_payments_with_recepients).forEach(nitro_e5_id => {
-            var node_details = this.props.app_state.nitro_node_details[nitro_e5_id]
-            var purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][this.props.app_state.selected_e5]
-            nitro_storage_account_recipients[nitro_e5_id] = purchase_recipient
-            
-            Object.keys(total_payments_with_recepients[nitro_e5_id]).forEach(exchange_item => {
-                if(total_payments_with_recepients[nitro_e5_id][exchange_item] != 0){
-                    amounts_to_transfer.push({
-                        'exchange':exchange_item, 
-                        'amount':total_payments_with_recepients[nitro_e5_id][exchange_item], 
-                        'recipient': purchase_recipient,
-                    })
-                }
+        e5s_used.forEach(e5_used => {
+            const total_payments_with_recepients = total_payments_with_recepients_data[e5_used]
+            const amounts_to_transfer = []
+            const nitro_storage_account_recipients = {}
+            Object.keys(total_payments_with_recepients).forEach(nitro_e5_id => {
+                var node_details = this.props.app_state.nitro_node_details[nitro_e5_id]
+                var purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][this.props.app_state.selected_e5]
+                nitro_storage_account_recipients[nitro_e5_id] = purchase_recipient
+                
+                Object.keys(total_payments_with_recepients[nitro_e5_id]).forEach(exchange_item => {
+                    if(total_payments_with_recepients[nitro_e5_id][exchange_item] != 0){
+                        amounts_to_transfer.push({
+                            'exchange':exchange_item, 
+                            'amount':total_payments_with_recepients[nitro_e5_id][exchange_item], 
+                            'recipient': purchase_recipient,
+                        })
+                    }
+                });
             });
-        });
 
-        const obj = {
-            id:this.state.made_id, type:this.props.app_state.loc['3055df']/* 'nitro-renewal' */,
-            entered_indexing_tags:[this.props.app_state.loc['3055dg']/* 'nitro' */, this.props.app_state.loc['3055dh']/* 'renewal' */, this.props.app_state.loc['3068ah']/* 'payment' */],
-            e5:this.props.app_state.selected_e5, price_data_object, files_to_renew, ignored_nitros: this.state.ignored_nitro_files_items, amounts_to_transfer, total_payments_with_recepients, nitro_storage_account_recipients
-        }
-        this.props.add_nitro_renewal_transaction_to_stack(obj)
+            const obj = {
+                id:e5_used+this.state.made_id, type:this.props.app_state.loc['3055df']/* 'nitro-renewal' */,
+                entered_indexing_tags:[this.props.app_state.loc['3055dg']/* 'nitro' */, this.props.app_state.loc['3055dh']/* 'renewal' */, this.props.app_state.loc['3068ah']/* 'payment' */],
+                e5:e5_used, price_data_object, files_to_renew, ignored_nitros: this.state.ignored_nitro_files_items, amounts_to_transfer, total_payments_with_recepients, nitro_storage_account_recipients
+            }
+            this.props.add_nitro_renewal_transaction_to_stack(obj)
+        });
+        
         this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
     }
 
@@ -5308,7 +5455,6 @@ return data['data']
                 selected_items.push(nitro_e5_id)
             }
         });
-        var has_all_nitro_metadata_loaded = true;
         var total_price_amounts = {}
         selected_items.forEach(nitro_e5_id => {
             var nitro_node_data = this.props.app_state.nitro_node_details[nitro_e5_id]
@@ -5317,43 +5463,68 @@ return data['data']
                 total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
             });
             if(nitro_node_data != null && nitro_node_data != 'unavailable'){
-                var price_data = nitro_node_data['price_per_megabyte'][this.props.app_state.selected_e5]
-                if(price_data != null){
-                    if(total_price_amounts[nitro_e5_id] == null){
-                        total_price_amounts[nitro_e5_id] = {}
-                    }
-                    price_data.forEach(price_item => {
-                        var exchange = price_item['exchange']
-                        var amount = price_item['amount']
-                        if(total_price_amounts[nitro_e5_id][exchange] == null){
-                            total_price_amounts[nitro_e5_id][exchange] = bigInt(0)
+                var price_data_object = this.get_price_data_to_be_used(nitro_node_data)
+                if(price_data_object != null){
+                    var price_data = price_data_object.price_data
+                    var e5_used = price_data_object.e5
+                    if(price_data != null){
+                        if(total_price_amounts[e5_used] == null){
+                            total_price_amounts[e5_used] = {}
                         }
-                        total_price_amounts[nitro_e5_id][exchange] = bigInt(total_price_amounts[nitro_e5_id][exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
-                    });
+                        if(total_price_amounts[e5_used][nitro_e5_id] == null){
+                            total_price_amounts[e5_used][nitro_e5_id] = {}
+                        }
+                        price_data.forEach(price_item => {
+                            var exchange = price_item['exchange']
+                            var amount = price_item['amount']
+                            if(total_price_amounts[e5_used][nitro_e5_id][exchange] == null){
+                                total_price_amounts[e5_used][nitro_e5_id][exchange] = bigInt(0)
+                            }
+                            total_price_amounts[e5_used][nitro_e5_id][exchange] = bigInt(total_price_amounts[e5_used][nitro_e5_id][exchange]).plus(bigInt(amount).multiply(bigInt(Math.ceil(total_storage_consumed_in_mbs))))
+                        });
+                    }
                 }
-            }
-            else{
-                has_all_nitro_metadata_loaded = false;
             }
         });
 
-        return { total_price_amounts, has_all_nitro_metadata_loaded }
+        return total_price_amounts
     }
 
     check_if_sender_can_afford_renewal_payouts(price_data_object){
-        var exchanges_used = Object.keys(price_data_object)
-        const e5 = this.props.app_state.selected_e5
+        var e5s_used = Object.keys(price_data_object)
+        
         var can_pay = true;
-        for(var i=0; i<exchanges_used.length; i++){
-            var token_id = exchanges_used[i]
-            var token_balance = this.props.calculate_actual_balance(e5, token_id)
-            var final_amount = price_data_object[token_id]
-
-            if(bigInt(token_balance).lesser(bigInt(final_amount))){
-                can_pay = false
+        for(var e=0; e<e5s_used.length; e++){
+            const e5 = e5s_used[e]
+            const exchanges_used = Object.keys(price_data_object[e5])
+            for(var i=0; i<exchanges_used.length; i++){
+                var token_id = exchanges_used[i]
+                var token_balance = this.props.calculate_actual_balance(e5, token_id)
+                var final_amount = price_data_object[e5][token_id]
+    
+                if(bigInt(token_balance).lesser(bigInt(final_amount))){
+                    can_pay = false
+                }
             }
         }
+        
         return can_pay
+    }
+
+    check_if_transfers_exist(price_data_object){
+        var e5s_used = Object.keys(price_data_object)
+        var transfers_exist = false;
+        for(var e=0; e<e5s_used.length; e++){
+            const e5 = e5s_used[e]
+            const exchanges_used = Object.keys(price_data_object[e5])
+            for(var i=0; i<exchanges_used.length; i++){
+                if(price_data_object[e5][exchanges_used[i]] != 0){
+                    transfers_exist = true;
+                }
+            }
+        }
+        
+        return transfers_exist
     }
 
 

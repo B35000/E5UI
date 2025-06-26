@@ -4573,6 +4573,8 @@ class StackPage extends Component {
             // ints.push(transaction_obj)
         }
 
+        //context ->> 17 in use!!!!
+
 
 
         if(account_data_object[1].length > 0){
@@ -5104,6 +5106,14 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[txs[i].id] = payout_result_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':payout_result_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3055df']/* 'nitro-renewal' */){
+                    const renewal_data = {
+                        'paid_nitros': Object.keys(txs[i].total_payments_with_recepients),
+                        'time': Date.now(),
+                    }
+                    ipfs_index_object[txs[i].id] = renewal_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':renewal_data})
                 }
             }
         }
@@ -8587,7 +8597,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_renew_nitro_object = (t, ints) => {
+    format_renew_nitro_object = async (t, ints, calculate_gas, ipfs_index) => {
         var ints_clone = ints.slice()
 
         var depth_swap_obj = [
@@ -8638,7 +8648,7 @@ class StackPage extends Component {
 
         const obj = [ /* add data */
             [20000, 13, 0],
-            [], [],/* 29(nitro_node_storage_update) */
+            [], [],
             [], /* contexts */
             [] /* int_data */
         ]
@@ -8651,9 +8661,18 @@ class StackPage extends Component {
             obj[1].push(29)/* 29(nitro_node_storage_update) */
             obj[2].push(23)
             obj[3].push(nitro_id)
-            obj[4].push(t.nitro_storage_account_recipients[item])
+            obj[4].push(t.nitro_storage_account_recipients[item].toString().toLocaleString('fullwide', {useGrouping:false}))
             string_obj[0].push(string_data)
         });
+
+
+        const personal_record_string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+        obj[1].push(0)
+        obj[2].push(53)
+        obj[3].push(17)
+        obj[4].push(0)
+        string_obj[0].push(personal_record_string_data)
+
 
 
         return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj, obj:obj, string_obj:string_obj}
@@ -12383,6 +12402,8 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'details':this.props.app_state.loc['1593bu']/* 'Total Storage Space Utilized.' */, 'title':ts, 'size':'l'})}
+                
+                {this.render_renew_nitro_file_uploads_button()}
 
                 {this.render_detail_item('0')}
 
@@ -12790,7 +12811,6 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_file_data_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_file_data_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 {this.render_encryption_file_message_if_wallet_not_set()}
-                {this.render_renew_nitro_file_uploads_button()}
                 {this.render_uploaded_files()}
             </div>
         )
@@ -13561,21 +13581,21 @@ class StackPage extends Component {
 
 
     render_renew_nitro_file_uploads_button(){
-        const files_to_be_renewed = this.fetch_files_to_be_renewed()
+        const files_to_be_renewed_data = this.fetch_files_to_be_renewed()
+        const files_to_be_renewed = files_to_be_renewed_data.files_to_renew
+        const space_used = files_to_be_renewed_data.total_spaces_used
         const current_month = new Date().getMonth()
-        const last_renewal_time = this.props.app_state.latest_file_renewal_time * 1000
-        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
-        if(Object.keys(files_to_be_renewed).length == 0 || current_month > 5 || last_renewal_time >= startOfYear){
+        if(Object.keys(files_to_be_renewed).length == 0 || current_month > 5 && !this.is_space_legible_for_renewal(space_used)){
             return;
         }
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1593he']/* 'Renew your uploaded files to keep them online in your used nitro nodes.' */, 'title':this.props.app_state.loc['1593hd']/* 'Renew Uploaded Files.' */})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1593he']/* 'Renew the files you uploaded prior to this year to keep them online in your used nitro nodes.' */, 'title':this.props.app_state.loc['1593hd']/* 'Renew Uploaded Files.' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.open_renew_nitro_files()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593hf']/* 'Renew Files' */, 'action':''},)}
                 </div>
-                <div style={{height:10}}/>
             </div>
         )
     }
@@ -13587,6 +13607,7 @@ class StackPage extends Component {
     fetch_files_to_be_renewed(){
         var my_files = this.props.app_state.uploaded_data_cids
         var files_to_renew = {}
+        var total_spaces_used = {}
         const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
         my_files.forEach(ecid => {
             const data = this.get_cid_split(ecid)
@@ -13596,23 +13617,54 @@ class StackPage extends Component {
                     if(file_data != null){
                         const time = file_data['id']
                         const nitro = file_data['nitro']
-                        if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash'])){
+                        const space = file_data['binary_size']
+                        if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash']) && !this.has_nitro_already_been_renewed(nitro)){
                             if(files_to_renew[nitro] == null){
                                 files_to_renew[nitro] = []
+                                total_spaces_used[nitro] = 0
                             }
                             files_to_renew[nitro].push({'data':data, 'file_data':file_data, 'time':time})
+                            if(space != null) total_spaces_used[nitro] += space;
                         }
                     }
                 }
             }
         });
 
-        return files_to_renew
+        return { files_to_renew, total_spaces_used }
     }
 
     is_file_available(file){
         var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
         return is_file_available
+    }
+
+    is_space_legible_for_renewal(space_data){
+        var keys = Object.keys(space_data)
+        var is_legible = false
+        keys.forEach(nitro => {
+            if(space_data[nitro] > (1024*1024)){
+                is_legible = true;
+            }
+        });
+        return is_legible
+    }
+
+    has_nitro_already_been_renewed(nitro){
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+        const latest_file_renewal_time = this.props.app_state.latest_file_renewal_time
+        var has_been_renewed = false;
+        const e5s = Object.keys(latest_file_renewal_time)
+        e5s.forEach(e5 => {
+            const renewal_data = latest_file_renewal_time[e5]
+            const paid_nitros = renewal_data['paid_nitros']
+            const time = renewal_data['time']
+
+            if(paid_nitros.includes(nitro) && time > startOfYear){
+                has_been_renewed = true
+            }
+        });
+        return has_been_renewed
     }
 
 

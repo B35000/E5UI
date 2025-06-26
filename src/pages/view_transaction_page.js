@@ -7424,6 +7424,7 @@ return data['data']
         const price_data_object = transaction_item.price_data_object;
         const files_to_renew = transaction_item.files_to_renew;
         const ignored_nitros = transaction_item.ignored_nitros;
+        const total_payments_with_recepients = transaction_item.total_payments_with_recepients
         return(
             <div>
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
@@ -7432,19 +7433,20 @@ return data['data']
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1979q']/* 'Below is the total amount of money youll be paying for renewing your files in your selected nitro nodes.' */, 'title':this.props.app_state.loc['1979p']/* 'File Renewal Payments.' */})}
                 <div style={{height:10}}/>
 
-                {this.render_nitro_items(files_to_renew, ignored_nitros)}
+                {this.render_nitro_items(files_to_renew, ignored_nitros, total_payments_with_recepients)}
                 <div style={{height:10}}/>
 
-                {this.render_total_payment_amounts_for_all_the_selected_nitros(price_data_object)}
+                {this.render_total_payment_amounts_for_all_the_selected_nitros(price_data_object[this.props.app_state.selected_e5])}
             </div>
         )
     }
 
-    render_nitro_items(files_to_be_renewed_data, ignored_nitros){
+    render_nitro_items(files_to_be_renewed_data, ignored_nitros, total_payments_with_recepients){
         var unfiltered_items = Object.keys(files_to_be_renewed_data)
+        var nitros_for_specific_e5 = Object.keys(total_payments_with_recepients)
         var items = []
         unfiltered_items.forEach(nitro_e5_id => {
-            if(!ignored_nitros.includes(nitro_e5_id)){
+            if(!ignored_nitros.includes(nitro_e5_id) && nitros_for_specific_e5.includes(nitro_e5_id)){
                 items.push(nitro_e5_id)
             }
         });
