@@ -232,7 +232,7 @@ class NitroDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_post_state(object)}
+                    {/* {this.render_post_state(object)} */}
 
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -453,14 +453,14 @@ class NitroDetailsSection extends Component {
             var value = mod+'.'+prim
             return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
         }
-        else if(size > (1024^4)){
-            return {'size':parseFloat(size/(1024^4)).toFixed(3), 'unit':'TBs'}
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
         }
-        else if(size > (1024^3)){
-            return {'size':parseFloat(size/(1024^3)).toFixed(3), 'unit':'GBs'}
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
         }
-        else if(size > (1024^2)){
-            return {'size':parseFloat(size/(1024^2)).toFixed(3), 'unit':'MBs'}
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
         }
         else if(size > 1024){
             return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
@@ -738,7 +738,7 @@ class NitroDetailsSection extends Component {
                     {this.render_detail_item('0')}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527bg']/* 'Total Space Utilized' */, 'subtitle':this.format_power_figure(node_details['total_space_utilized']), 'barwidth':this.get_number_width(node_details['total_space_utilized']), 'number':`${number_with_commas(node_details['total_space_utilized'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527bg']/* 'Total Space Utilized' */, 'subtitle':this.format_power_figure(node_details['total_space_utilized']), 'barwidth':this.get_number_width(node_details['total_space_utilized']), 'number':`${number_with_commas(node_details['total_space_utilized'].toFixed(3))}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
                     </div>
                     <div style={{height:10}}/>
 
@@ -764,11 +764,22 @@ class NitroDetailsSection extends Component {
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527s']/* 'Tracked E5s.' */})}
                     <div style={{height:10}}/>
                     {this.load_preferred_e5_ui(node_details['tracked_E5s'])}
+                    {this.render_price_per_megabyte_data(node_details)}
+                </div>
+            )
+        }
+    }
 
+    render_price_per_megabyte_data(node_details){
+        // console.log('price_per_megabyte', node_details['price_per_megabyte'])
+        var price_data = node_details['price_per_megabyte'][this.props.app_state.selected_e5]
+        if(price_data != null){
+            return(
+                <div>
                     <div style={{height:10}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527t']/* 'Price per Megabyte of Storage.' */})}
                     <div style={{height:10}}/>
-                    {this.render_price_amounts(node_details['price_per_megabyte'], node_details['target_account_e5'])}
+                    {this.render_price_amounts(price_data, this.props.app_state.selected_e5)}
                 </div>
             )
         }

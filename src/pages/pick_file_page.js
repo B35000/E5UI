@@ -241,7 +241,7 @@ class PickFilePage extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
-                            <div style={{'margin':'3px 0px 3px 0px'}} onClick={() => this.when_file_selected(item)}>
+                            <div style={{'margin':'3px 0px 3px 0px', 'opacity':this.get_opactiy_of_file(item)}} onClick={() => this.when_file_selected(item)}>
                                 {this.render_uploaded_file(item, index, false)}
                             </div>
                         ))}
@@ -251,25 +251,53 @@ class PickFilePage extends Component {
         }
     }
 
+    get_opactiy_of_file(ecid){
+        const ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+            return 0.4
+        }
+        return 1.0
+    }
+
     when_file_selected(ecid){
+        const ecid_obj = this.get_cid_split(ecid)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+            this.props.notify(this.props.app_state.loc['2961b']/* You cant use that file, its been deleted. */, 4000)
+            return;
+        }
         var clone = this.state.selected_ecids.slice()
         clone.push(ecid['full'])
         this.setState({selected_ecids: clone})
+    }
+
+    is_file_available(file){
+        if(file == null) return true;
+        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
+        return is_file_available
     }
 
     get_all_uploaded_file_item_cids(){
         var file_type = this.state.type
         var items = this.props.app_state.uploaded_data_cids
         var return_items = []
+        var deleted_return_items = []
         items.forEach(ecid => {
-            var data = this.get_cid_split(ecid)
+            const data = this.get_cid_split(ecid)
             if(data != null && data['filetype'] == file_type && !this.includes_function(this.state.selected_ecids, ecid)){
                 if(this.props.app_state.uploaded_data[data['filetype']] != null && this.props.app_state.uploaded_data[data['filetype']][data['full']] != null){
-                    var file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
-                    var title = file_data['name']
+                    const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
+                    const title = file_data['name']
                     const time = file_data['id']
                     if(title.includes(this.state.search_text)){
-                        return_items.push({'data':data, 'time':time})
+                        if(file_data['nitro'] != null && !this.is_file_available(file_data['hash'])){
+                            deleted_return_items.push({'data':data, 'time':time})
+                        }else{
+                            return_items.push({'data':data, 'time':time})
+                        }
                     }
                     else if(this.state.search_text === ''){
                         return_items.push({'data':data, 'time':time})
@@ -281,8 +309,12 @@ class PickFilePage extends Component {
         });
 
         var sorted_items = this.sortByAttributeDescending(return_items, 'time')
+        var sorted_deleted_items = this.sortByAttributeDescending(deleted_return_items, 'time')
         var final_items = []
         sorted_items.forEach(item => {
+            final_items.push(item['data'])
+        });
+        sorted_deleted_items.forEach(item => {
             final_items.push(item['data'])
         });
 
@@ -313,9 +345,11 @@ class PickFilePage extends Component {
     }
 
     render_uploaded_file(ecid_obj, index, minified){
-        var background_color = this.props.theme['view_group_card_item_background'];
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+            opacity = 0.4
+        }
         if(data != null){
             if(data['type'] == 'image'){
                 var img = data['data']
@@ -502,14 +536,14 @@ class PickFilePage extends Component {
             var value = mod+'.'+prim
             return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
         }
-        else if(size > (1024^4)){
-            return {'size':parseFloat(size/(1024^4)).toFixed(3), 'unit':'TBs'}
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
         }
-        else if(size > (1024^3)){
-            return {'size':parseFloat(size/(1024^3)).toFixed(3), 'unit':'GBs'}
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
         }
-        else if(size > (1024^2)){
-            return {'size':parseFloat(size/(1024^2)).toFixed(3), 'unit':'MBs'}
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
         }
         else if(size > 1024){
             return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}

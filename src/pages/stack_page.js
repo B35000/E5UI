@@ -1963,14 +1963,14 @@ class StackPage extends Component {
             var value = mod+'.'+prim
             return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
         }
-        else if(size > (1024^4)){
-            return {'size':parseFloat(size/(1024^4)).toFixed(3), 'unit':'TBs'}
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
         }
-        else if(size > (1024^3)){
-            return {'size':parseFloat(size/(1024^3)).toFixed(3), 'unit':'GBs'}
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
         }
-        else if(size > (1024^2)){
-            return {'size':parseFloat(size/(1024^2)).toFixed(3), 'unit':'MBs'}
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
         }
         else if(size > 1024){
             return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
@@ -12725,7 +12725,11 @@ class StackPage extends Component {
             var ecid_obj = this.get_cid_split(ecid)
             var data = this.props.app_state.uploaded_data[ecid_obj['filetype']] == null ? null : this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
             if(data != null){
-                total_size += data['size']
+                if(data['binary_size'] != null){
+                    total_size += data['binary_size']
+                }else{
+                    total_size += data['size']
+                }
                 if(data['type'] == 'image') images++
                 else if(data['type'] == 'audio') audios++
                 else if(data['type'] == 'video') videos++
@@ -13635,6 +13639,7 @@ class StackPage extends Component {
     }
 
     is_file_available(file){
+        if(file == null) return true;
         var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
         return is_file_available
     }
@@ -13723,6 +13728,7 @@ class StackPage extends Component {
 
         var items = this.props.app_state.uploaded_data_cids
         var return_items = []
+        var deleted_return_items = []
         items.forEach(ecid => {
             const data = this.get_cid_split(ecid)
             if(data != null && (data['filetype'] == file_type || selected_item == 'e')){
@@ -13730,15 +13736,23 @@ class StackPage extends Component {
                     const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
                     if(file_data != null){
                         const time = file_data['id']
-                        return_items.push({'data':data, 'time':time})
+                        if(file_data['nitro'] != null && !this.is_file_available(file_data['hash'])){
+                            deleted_return_items.push({'data':data, 'time':time})
+                        }else{
+                            return_items.push({'data':data, 'time':time})
+                        }
                     }
                 }
             }
         });
 
         var sorted_items = this.sortByAttributeDescending(return_items, 'time')
+        var sorted_deleted_items = this.sortByAttributeDescending(deleted_return_items, 'time')
         var final_items = []
         sorted_items.forEach(item => {
+            final_items.push(item['data'])
+        });
+        sorted_deleted_items.forEach(item => {
             final_items.push(item['data'])
         });
 
@@ -13761,7 +13775,6 @@ class StackPage extends Component {
     }
 
     render_uploaded_file(ecid_obj, index){
-        var background_color = this.props.theme['view_group_card_item_background'];
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         var opacity = this.props.app_state.uncommitted_upload_cids.includes(ecid_obj['full']) ? 0.6 : 1.0
@@ -13771,6 +13784,9 @@ class StackPage extends Component {
         if(data != null){
             if(data['type'] == 'image'){
                 var img = data['data']
+                if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+                    img = this.props.app_state.static_assets['empty_image']
+                }
                 var formatted_size = this.format_data_size(data['size'])
                 var fs = formatted_size['size']+' '+formatted_size['unit']
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */

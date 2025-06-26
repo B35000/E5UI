@@ -7236,7 +7236,7 @@ class App extends Component {
 
   remove_followed_account(item, index){
     var e5 = item.split(':')[0]
-    if(primary_following.includes(item) && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == null)){
+    if(primary_following.includes(item) && !this.do_i_have_an_account()){
       this.prompt_top_notification(this.getLocale()['1593dp']/* 'First make a transaction to remove that account.' */, 6300)
       return;
     }
@@ -7249,6 +7249,18 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+  }
+
+  do_i_have_an_account(){
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      if(this.state.e5s[e5].active == true){
+          if(this.state.user_account_id[e5] != null || this.state.user_account_id[e5] > 1000){
+            return true;
+          }
+      }
+    }
+    return false
   }
 
   censor_keyword(word_phrase){
@@ -15571,7 +15583,12 @@ class App extends Component {
     var me = this;
     setTimeout(async function() {
       if(me.configure_nitro_node_page.current != null){
-        var final_backup_key = await me.decrypt_nitro_node_key_with_my_public_key(object['ipfs'].encrypted_key, object['e5'])
+        if(me.back_up_keys == null){
+          me.back_up_keys = {}
+        }
+        var final_backup_key = me.back_up_keys[object['e5_id']] == null ? await me.decrypt_nitro_node_key_with_my_public_key(object['ipfs'].encrypted_key, object['e5']) : me.back_up_keys[object['e5_id']]
+
+        me.back_up_keys[object['e5_id']] = final_backup_key
         me.configure_nitro_node_page.current.set_data(object, final_backup_key)
       }
     }, (1 * 500));

@@ -1326,14 +1326,14 @@ return data['data']
             var value = mod+'.'+prim
             return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
         }
-        else if(size > (1024^4)){
-            return {'size':parseFloat(size/(1024^4)).toFixed(3), 'unit':'TBs'}
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
         }
-        else if(size > (1024^3)){
-            return {'size':parseFloat(size/(1024^3)).toFixed(3), 'unit':'GBs'}
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
         }
-        else if(size > (1024^2)){
-            return {'size':parseFloat(size/(1024^2)).toFixed(3), 'unit':'MBs'}
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
         }
         else if(size > 1024){
             return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
@@ -1399,6 +1399,9 @@ return data['data']
             
             if(data['type'] == 'image'){
                 var img = data['data']
+                if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+                    img = this.props.app_state.static_assets['empty_image']
+                }
                 return(
                     <div>
                         {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':'auto', 'height':wh, 'border_radius':'25px'})}
@@ -1623,7 +1626,7 @@ return data['data']
         if(hash != null && !this.is_file_available(hash)){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055di']/* '🗑️ File Deleted.' */, 'details':this.props.app_state.loc['3055dj']/* 'The file was deleted by youre nitro storage provider because you didnt renew the file.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055di']/* '🗑️ File Deleted.' */, 'details':this.props.app_state.loc['3055dj']/* 'The file was deleted by youre nitro storage provider.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                 </div>
             )
@@ -5211,6 +5214,7 @@ return data['data']
     }
 
     is_file_available(file){
+        if(file == null) return true;
         var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
         return is_file_available
     }

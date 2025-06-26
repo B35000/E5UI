@@ -347,7 +347,7 @@ class ConfigureNitroNodePage extends Component {
                     {this.render_detail_item('0')}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527bg']/* 'Total Space Utilized' */, 'subtitle':this.format_power_figure(node_details['total_space_utilized']), 'barwidth':this.get_number_width(node_details['total_space_utilized']), 'number':`${number_with_commas(node_details['total_space_utilized'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527bg']/* 'Total Space Utilized' */, 'subtitle':this.format_power_figure(node_details['total_space_utilized']), 'barwidth':this.get_number_width(node_details['total_space_utilized']), 'number':`${number_with_commas(node_details['total_space_utilized'].toFixed(3))}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
                     </div>
                     <div style={{height:10}}/>
 
@@ -1415,9 +1415,6 @@ class ConfigureNitroNodePage extends Component {
     render_boot_storage_data2(){
         return(
             <div>
-                {this.load_my_set_e5_price_data()}
-                <div style={{height:10}}/>
-
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
                 {this.load_account_suggestions()}
                 <div style={{height:10}}/>
@@ -1431,7 +1428,8 @@ class ConfigureNitroNodePage extends Component {
                 <div onClick={()=> this.when_add_price_data_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3054dp']/* 'Set Data' */, 'action':''},)}
                 </div>
-                
+                <div style={{height:10}}/>
+                {this.load_my_set_e5_price_data()}
                 {this.render_detail_item('0')} 
 
                 <div style={{height:20}}/>
@@ -1641,7 +1639,7 @@ class ConfigureNitroNodePage extends Component {
     when_add_price_data_tapped(){
         var set_prices = this.state.price_data
         var selected_e5 = this.state.selected_e5
-        var typed_account_id = this.state.recipient_id
+        var typed_account_id = this.state.recipient_id.toString().trim()
 
         if(set_prices.length == 0){
             this.props.notify(this.props.app_state.loc['3054dq']/* 'You need to set some prices per megabyte first.' */, 5000)
@@ -1653,6 +1651,7 @@ class ConfigureNitroNodePage extends Component {
             var clone = structuredClone(this.state.storage_price_data)
             clone[selected_e5] = {'set_prices': set_prices, 'recipient': typed_account_id}
             this.setState({storage_price_data: clone, price_data:[], recipient_id:''})
+            this.props.notify(this.props.app_state.loc['3054dv']/* 'Price data added..' */, 1200)
         }
     }
 
@@ -1808,24 +1807,28 @@ class ConfigureNitroNodePage extends Component {
         if(selected_item == this.props.app_state.loc['3054ck']/* 'Price' */){
             var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
 
-            const clone = {}
-            Object.keys(node_details['price_per_megabyte']).forEach(set_e5 => {
-                const set_prices = []
-                node_details['price_per_megabyte'][set_e5].forEach(item => {
-                    set_prices.push({'exchange':parseInt(item['exchange']),'amount': bigInt(item['amount']) })
-                });
-                const set_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][set_e5]
+            // const clone = {}
+            // Object.keys(node_details['price_per_megabyte']).forEach(set_e5 => {
+            //     const set_prices = []
+            //     node_details['price_per_megabyte'][set_e5].forEach(item => {
+            //         set_prices.push({'exchange':parseInt(item['exchange']),'amount': bigInt(item['amount']) })
+            //     });
+            //     const set_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][set_e5]
                 
-                clone[set_e5] = {'set_prices': set_prices, 'recipient': set_recipient}
-            });
+            //     clone[set_e5] = {'set_prices': set_prices, 'recipient': set_recipient}
+            // });
 
-            this.setState({storage_price_data: clone, price_data:[], recipient_id:''})
+            // this.setState({storage_price_data: clone, price_data:[], recipient_id:''})
         }
         else if(selected_item == this.props.app_state.loc['3054cu']/* 'free-storage' */){
             var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
             var unlimited_basic_storage = node_details['unlimited_basic_storage']
 
             this.setState({basic_storage_enabled_tags_object:this.basic_storage_enabled_tags_object(unlimited_basic_storage)})
+        }
+        else if(selected_item == this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */){
+            var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
+            this.setState({max_buyable_capacity: node_details['max_buyable_capacity']})
         }
     }
 
@@ -1928,9 +1931,6 @@ class ConfigureNitroNodePage extends Component {
     render_price_picker(){
         return(
             <div>
-                {this.load_my_set_e5_price_data()}
-                <div style={{height:10}}/>
-
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
                 {this.load_account_suggestions()}
                 <div style={{height:10}}/>
@@ -1944,10 +1944,12 @@ class ConfigureNitroNodePage extends Component {
                 <div onClick={()=> this.when_add_price_data_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3054dp']/* 'Set Data' */, 'action':''},)}
                 </div>
-                
+                <div style={{height:10}}/>
+                {this.load_my_set_e5_price_data()}
                 {this.render_detail_item('0')} 
 
-                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cp']/* 'Update Prices' */, 'details':this.props.app_state.loc['3054du']/* 'Update these price figures on your node.' */, 'size':'l'})}
+                <div style={{height:10}}/>
                 <div onClick={()=> this.when_change_storage_prices_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3054cp']/* 'Update Prices' */, 'action':''},)}
                 </div>

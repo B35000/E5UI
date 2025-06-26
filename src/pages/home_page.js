@@ -6465,14 +6465,14 @@ class home_page extends Component {
             var value = mod+'.'+prim
             return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
         }
-        else if(size > (1024^4)){
-            return {'size':parseFloat(size/(1024^4)).toFixed(3), 'unit':'TBs'}
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
         }
-        else if(size > (1024^3)){
-            return {'size':parseFloat(size/(1024^3)).toFixed(3), 'unit':'GBs'}
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
         }
-        else if(size > (1024^2)){
-            return {'size':parseFloat(size/(1024^2)).toFixed(3), 'unit':'MBs'}
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
         }
         else if(size > 1024){
             return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}

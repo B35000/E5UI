@@ -290,7 +290,7 @@ class EndDetailSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
-                    {this.render_post_state(selected_object)}
+                    {/* {this.render_post_state(selected_object)} */}
                     {this.render_object_age(selected_object, item)}
 
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
