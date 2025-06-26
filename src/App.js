@@ -23896,7 +23896,16 @@ return data['data']
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
 
+    var token_name_data = {}
+    var tokens = subscription_object['data'][2/* exchange_ids */]
+    var directory = this.get_all_sorted_objects_mappings(this.state.token_directory)
+    tokens.forEach(exchange_id => {
+      const token_name = directory[exchange_id]
+      token_name_data[exchange_id] = token_name
+    });
+
     const arg_obj = {
+      token_name_data,
       subscription_object: subscription_object,
       steps: 60*60,
       filter_value: 60*60*24*7,

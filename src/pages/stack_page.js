@@ -3850,7 +3850,7 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(buy_album_obj.obj)
                 }
-                else if(txs[i].type == 'admin'){
+                else if(txs[i].type == 'preliminaries'){
                     var obj = await this.format_admin_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(obj.str)
@@ -3972,7 +3972,7 @@ class StackPage extends Component {
                     ints.push(payout_record_transaction.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['3055df']/* 'nitro-renewal' */){
-                    var buy_album_obj = this.format_renew_nitro_object(txs[i], ints)
+                    var buy_album_obj = await this.format_renew_nitro_object(txs[i], ints, calculate_gas, ipfs_index)
                     if(buy_album_obj.depth_swap_obj[1].length > 0){
                         strs.push([])
                         adds.push([])
@@ -5070,7 +5070,7 @@ class StackPage extends Component {
                         }
                     }
                 }
-                else if(txs[i].type == 'admin'){
+                else if(txs[i].type == 'preliminaries'){
                     ipfs_index_object[txs[i].id] = txs[i]
                     ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
                 }

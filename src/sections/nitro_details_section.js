@@ -771,7 +771,6 @@ class NitroDetailsSection extends Component {
     }
 
     render_price_per_megabyte_data(node_details){
-        // console.log('price_per_megabyte', node_details['price_per_megabyte'])
         var price_data = node_details['price_per_megabyte'][this.props.app_state.selected_e5]
         if(price_data != null){
             return(

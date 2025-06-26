@@ -369,10 +369,22 @@ class ConfigureNitroNodePage extends Component {
                     <div style={{height:10}}/>
                     {this.load_preferred_e5_ui(node_details['tracked_E5s'])}
 
+                    {this.render_price_per_megabyte_data(node_details)}
+                </div>
+            )
+        }
+    }
+
+    render_price_per_megabyte_data(node_details){
+        console.log('price_per_megabyte', node_details['price_per_megabyte'])
+        var price_data = node_details['price_per_megabyte'][this.props.app_state.selected_e5]
+        if(price_data != null){
+            return(
+                <div>
                     <div style={{height:10}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527t']/* 'Price per Megabyte of Storage.' */})}
                     <div style={{height:10}}/>
-                    {this.render_price_amounts(node_details['price_per_megabyte'], node_details['target_account_e5'])}
+                    {this.render_price_amounts(price_data, this.props.app_state.selected_e5)}
                 </div>
             )
         }
@@ -1348,6 +1360,8 @@ class ConfigureNitroNodePage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_boot_storage_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_boot_storage_data2()}
@@ -1361,6 +1375,8 @@ class ConfigureNitroNodePage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_boot_storage_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_boot_storage_data2()}

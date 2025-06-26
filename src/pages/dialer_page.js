@@ -59,7 +59,7 @@ function makeid(length) {
 class DialerPage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), type:'admin', e5:this.props.app_state.selected_e5,entered_indexing_tags:['dialer', 'admin', 'update'],
+        selected: 0, id: makeid(8), type:'preliminaries', e5:this.props.app_state.selected_e5,entered_indexing_tags:['dialer', 'admin', 'update'],
 
         get_title_tags_object: this.get_title_tags_object(),
         typed_country_name:'', data:null, get_logo_title_tags_object:this.get_logo_title_tags_object(),

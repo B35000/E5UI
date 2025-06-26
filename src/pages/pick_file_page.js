@@ -347,9 +347,7 @@ class PickFilePage extends Component {
     render_uploaded_file(ecid_obj, index, minified){
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        if(data['nitro'] != null && !this.is_file_available(data['hash'])){
-            opacity = 0.4
-        }
+        
         if(data != null){
             if(data['type'] == 'image'){
                 var img = data['data']
