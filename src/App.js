@@ -878,7 +878,7 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}
   };
 
   get_static_assets(){
@@ -21056,6 +21056,10 @@ return data['data']
     var addresses_clone = structuredClone(this.state.addresses)
     addresses_clone[e5] = contract_addresses
     this.setState({addresses: addresses_clone})
+
+    var boot_time_clone = structuredClone(this.state.boot_times)
+    boot_time_clone[e5] = {'time': contract_addresses_events[0].returnValues.p3/* timestamp */, 'block':contract_addresses_events[0].returnValues.p4/* block_number */}
+    this.setState({boot_times: boot_time_clone})
 
     if(is_syncing){
       this.inc_synch_progress()

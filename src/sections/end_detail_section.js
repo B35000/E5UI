@@ -850,8 +850,8 @@ class EndDetailSection extends Component {
         // var selected_object = this.get_exchange_tokens(3)[selected_item]
         var title = selected_object['id'];
         var img = selected_object['img']
-        var age = selected_object['event'] == null ? 0 : selected_object['event'].returnValues.p5
-        var time = selected_object['event'] == null ? 0 : selected_object['event'].returnValues.p4
+        var age = selected_object['event'] == null ? this.props.app_state.boot_times[selected_object['e5']]['block'] : selected_object['event'].returnValues.p5
+        var time = selected_object['event'] == null ? this.props.app_state.boot_times[selected_object['e5']]['time'] : selected_object['event'].returnValues.p4
         
         var selected_obj_root_config = selected_object['data'][0];
         var selected_obj_config = selected_object['data'][1];

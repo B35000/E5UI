@@ -1000,8 +1000,8 @@ class PostListSection extends Component {
         var main_contract_tags = ['Contract', 'main', object['e5'] ]
         var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
-        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
-        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var age = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['block'] : object['event'].returnValues.p5
+        var time = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['time'] : object['event'].returnValues.p4
         var id_text = ' • '+object['id']
         if(object['id'] == 2) id_text = ' • '+'Main Contract'
         var sender = object['event'] == null ? '' : this.get_senders_name(object['event'].returnValues.p3, object);
@@ -4857,8 +4857,8 @@ return data['data']
         }
 
         var balance = item['balance']
-        var age = item['event'] == null ? 0 : item['event'].returnValues.p5
-        var time = item['event'] == null ? 0 : item['event'].returnValues.p4
+        var age = item['event'] == null ? this.props.app_state.boot_times[item['e5']]['block'] : item['event'].returnValues.p5
+        var time = item['event'] == null ? this.props.app_state.boot_times[item['e5']]['time'] : item['event'].returnValues.p4
         return{
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},

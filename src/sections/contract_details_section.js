@@ -823,8 +823,8 @@ class ContractDetailsSection extends Component {
         var main_contract_tags = ['Contract', 'main', object['e5'] ]
         var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
-        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
-        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var age = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['block'] : object['event'].returnValues.p5
+        var time = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['time'] : object['event'].returnValues.p4
         var contract_config = object['data'][1]
         var auto_wait = contract_config[8] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
         var can_modify_contract_as_moderator = contract_config[28] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
