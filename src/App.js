@@ -2733,6 +2733,7 @@ class App extends Component {
     this.has_posts_blocked_by_me_loaded = {}
     this.has_censored_keywords_by_me_loaded = {}
     this.has_promoted_posts_by_me_loaded = {}
+    this.alias_data = {}
 
     this.gateway_traffic_cache_pointers = {}
     this.gateway_traffic_cache_pointers_index = 0
@@ -18454,6 +18455,7 @@ return data['data']
     this.my_channel_timestamp = 0
     this.my_poll_timestamp = 0
     this.my_object_timestamp = 0
+    Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
     
     var me = this
     setTimeout(function() {
@@ -23351,33 +23353,65 @@ return data['data']
         alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
       } 
       var alias_sender = alias_events[i].returnValues.p2/* owner */
+      var alias_time = alias_events[i].returnValues.p6/* timestamp */
 
       if(alias_owners[alias_string] == null){
-        // console.log('setting alias: ',alias_string, ' for account: ',alias_sender)
         alias_owners[alias_string] = alias_sender
         alias_bucket[alias_sender] = alias_string 
-        alias_timestamp[alias_string] = alias_events[i].returnValues.p6
+        alias_timestamp[alias_string] = alias_time
 
         if(alias_sender == account){
           //my alias
           my_alias_events.push({'alias':alias_string, 'event':alias_events[i]})
         }
+
+        if(this.alias_data[alias_string] != null){
+          if(this.alias_data[alias_string]['time'] < alias_time){
+            //someone already initialized this alias in another e5 earler
+            delete alias_owners[alias_string]
+            delete alias_bucket[alias_sender]
+
+            const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
+            if(pos != -1){
+              my_alias_events.splice(pos, 1)
+            }
+          }else{
+            //we need to remove the previously set alias in the other e5 since this event is earler than that of the other e5
+            var invalid_data = this.alias_data[alias_string]
+
+            var alias_bucket_clone = structuredClone(this.state.alias_bucket)
+            delete alias_bucket_clone[invalid_data['e5']][invalid_data['id']]
+
+            var alias_owners_clone = structuredClone(this.state.alias_owners)
+            delete alias_owners_clone[invalid_data['e5']][invalid_data['name']]
+
+            var my_alias_events_clone = structuredClone(this.state.my_alias_events)
+            const pos = my_alias_events_clone[invalid_data['e5']].findIndex(obj => obj['alias'] == invalid_data['name'])
+            if(pos != -1){
+              my_alias_events_clone[invalid_data['e5']].splice(pos, 1)
+            }
+
+            var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
+            delete alias_timestamp_clone[invalid_data['e5']][invalid_data['name']]
+
+            this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
+
+            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+          }
+        }else{
+          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+        }
       }
       else if(alias_owners[alias_string] == alias_sender){
         //ownership was revoked
-        // console.log('revoking alias: ',alias_string, ' for account: ',alias_sender)
-        alias_owners[alias_string] = null
-        alias_bucket[alias_sender] = null
-        var pos = -1
-        for(var k=0; k<my_alias_events.length; k++){
-          if(my_alias_events[k]['alias'] == alias_string){
-            pos = k
-            break
-          }
-        }
+        delete alias_owners[alias_string]
+        delete alias_bucket[alias_sender]
+
+        const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
         if(pos != -1){
           my_alias_events.splice(pos, 1)
         }
+        delete this.alias_data[alias_string]
       }
       
       if(is_first_time){
