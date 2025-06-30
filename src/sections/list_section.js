@@ -1297,7 +1297,10 @@ class PostListSection extends Component {
     }
 
     when_pay_all_upcoming_subscriptions_button_tapped(items){
-        this.props.show_pay_upcoming_subscriptions_bottomsheet(items)
+        var my_valid_subscriptions = items.filter(function (object) {
+            return (bigInt(object['data'][1][3/* <3>maximum_buy_amount */]).greater(bigInt(0)))
+        })
+        this.props.show_pay_upcoming_subscriptions_bottomsheet(my_valid_subscriptions)
     }
 
     get_subscription_items(){

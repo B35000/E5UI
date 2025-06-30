@@ -402,9 +402,7 @@ class AddCommentPage extends Component {
 
 
     render_ratings_picker_if_enabled(){
-        var page = this.state.page
-        var accepted = ['storefront', 'audio', 'video']
-        if(!accepted.includes(page)) return;
+        if(!this.can_i_leave_rating_in_object()) return;
         var value = this.state.rating
         return(
             <div>
@@ -430,6 +428,40 @@ class AddCommentPage extends Component {
 
     when_rating_changed(newRating, name){
         this.setState({ rating: newRating });
+    }
+
+    can_i_leave_rating_in_object(){
+        const page = this.state.page
+        const object = this.state.object
+        if(page == 'storefront'){
+            const purchases = this.props.app_state.direct_purchases[object['id']]
+            if(purchases.length == 0) return false
+            for(var i=0; i<purchases.length; i++){
+                if(purchases[i]['sender_account'] == this.props.app_state.user_account_id[object['e5']]){
+                    return true
+                }
+            }
+            return false
+        }
+        else if(page == 'audio'){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+            if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+                return true
+            }
+            const my_albums = this.props.app_state.my_albums
+            return my_albums.includes(object['id'])
+        }
+        else if(page == 'video'){
+            var required_subscriptions = object['ipfs'].selected_subscriptions
+            var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+            if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+                return true
+            }
+            const my_videos = this.props.app_state.my_videoposts
+            return my_videos.includes(object['id'])
+        }
+        return false
     }
 
 
