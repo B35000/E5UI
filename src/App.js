@@ -27036,56 +27036,52 @@ return data['data']
 
       var obj = {'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'post':[], 'channel':[], 'job':[], 'store':[], 'bag':[], 'contractor':[], 'data':all_events[2], 'metadata':all_events[3], 'withdraw':all_events[4], 'transaction':all_events[5], 'transfer':all_events[6], 'audio':[], 'video':[], 'nitro':[], 'poll':[], 'all_indexed_events':all_events[1]}
 
-      all_events[0].forEach(event_array => {
-        event_array.forEach(event_item => {
-          if(event_item.returnValues.p2 == 33/* subscription_object */){
-            obj['subscription'].push(event_item)
-          }
-          else if(event_item.returnValues.p2 == 30/* contract_obj_id */){
-            obj['contract'].push(event_item)
-          }
-          else if(event_item.returnValues.p2 == 32/* 32(consensus_request) */){
-            obj['proposal'].push(event_item)
-          }
-          else if(event_item.returnValues.p2 == 31/* token_exchange */){
-            obj['exchange'].push(event_item)
-          }
-          else if(event_item.returnValues.p2 == 25/* 25(storefront_bag_object) */){
-            obj['bag'].push(event_item)
-          }
-        });
+      all_events[0].forEach(event_item => {
+        if(event_item.returnValues.p2 == 33/* subscription_object */){
+          obj['subscription'].push(event_item)
+        }
+        else if(event_item.returnValues.p2 == 30/* contract_obj_id */){
+          obj['contract'].push(event_item)
+        }
+        else if(event_item.returnValues.p2 == 32/* 32(consensus_request) */){
+          obj['proposal'].push(event_item)
+        }
+        else if(event_item.returnValues.p2 == 31/* token_exchange */){
+          obj['exchange'].push(event_item)
+        }
+        else if(event_item.returnValues.p2 == 25/* 25(storefront_bag_object) */){
+          obj['bag'].push(event_item)
+        }
       });
 
-      all_events[1].forEach(event_array => {
-        event_array.forEach(event_item => {
-          if(event_item.returnValues.p3 == 18/* 18(post object) */ ){
-            obj['post'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 36/* 36(type_channel_target) */){
-            obj['channel'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 17/* 17(job_object) */){
-            obj['job'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 27/* 27(storefront-item) */){
-            obj['store'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 26/* 26(contractor_object) */){
-            obj['contractor'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 19/* 19(audio_object) */){
-            obj['audio'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 20/* 20(video_object) */){
-            obj['video'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 21/* 21(nitro_object) */){
-            obj['nitro'].push(event_item)
-          }
-          else if(event_item.returnValues.p3 == 28/* 28(poll-object) */){
-            obj['poll'].push(event_item)
-          }
-        });
+      all_events[1].forEach(event_item => {
+        if(event_item.returnValues.p3 == 18/* 18(post object) */ ){
+          obj['post'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 36/* 36(type_channel_target) */){
+          obj['channel'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 17/* 17(job_object) */){
+          obj['job'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 27/* 27(storefront-item) */){
+          obj['store'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 26/* 26(contractor_object) */){
+          obj['contractor'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 19/* 19(audio_object) */){
+          obj['audio'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 20/* 20(video_object) */){
+          obj['video'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 21/* 21(nitro_object) */){
+          obj['nitro'].push(event_item)
+        }
+        else if(event_item.returnValues.p3 == 28/* 28(poll-object) */){
+          obj['poll'].push(event_item)
+        }
       });
 
       var all_data_clone = structuredClone(this.state.all_data)
