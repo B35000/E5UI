@@ -435,7 +435,7 @@ class AddCommentPage extends Component {
         const object = this.state.object
         if(page == 'storefront'){
             const purchases = this.props.app_state.direct_purchases[object['id']]
-            if(purchases.length == 0) return false
+            if(purchases == null || purchases.length == 0) return false
             for(var i=0; i<purchases.length; i++){
                 if(purchases[i]['sender_account'] == this.props.app_state.user_account_id[object['e5']]){
                     return true
