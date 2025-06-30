@@ -336,7 +336,7 @@ class VideoDetailsSection extends Component {
 
         return(
             <div>
-                {this.render_detail_item('15',{'rating': rating})}
+                {this.render_detail_item('15',{'rating': rating, 'rating_total':10.0})}
                 <div style={{height:10}}/>
             </div>
         )
@@ -2012,6 +2012,7 @@ class VideoDetailsSection extends Component {
                             {this.render_markdown_in_message_if_any(item)}
                             {this.render_images_if_any(item)}
                             {this.render_markdown_in_message_if_any(item)}
+                            {this.render_rating_if_valid(item)}
                             {this.get_then_render_my_awards(item, object)}
                             {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p> */}
                         </div>
@@ -2028,7 +2029,7 @@ class VideoDetailsSection extends Component {
         if(item['rating'] != null){
             return(
                 <div>
-                    {this.render_detail_item('15',{'rating': item['rating']})}
+                    {this.render_detail_item('15',{'rating': item['rating'], 'rating_total':item['rating_total']})}
                 </div>
             )
         }

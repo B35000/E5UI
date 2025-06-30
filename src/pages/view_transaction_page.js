@@ -4699,7 +4699,7 @@ return data['data']
         if(item['rating'] != null){
             return(
                 <div>
-                    {this.render_detail_item('15',{'rating': item['rating']})}
+                    {this.render_detail_item('15',{'rating': item['rating'], 'rating_total':item['rating_total']})}
                 </div>
             )
         }

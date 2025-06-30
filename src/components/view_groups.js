@@ -661,12 +661,14 @@ class ViewGroups extends Component {
         }
         else if(item_id=='15'){/* rating */
             var rating = object_data == null ? 5.0 : object_data['rating']
+            var rating_total = object_data == null ? 10.0 : object_data['rating_total']
             return(
                 <div style={{ width: '70%', display: 'flex', alignItems: 'center', 'margin': '0px 0px 0px 10px' }}>
                     <Rating 
                         initialRating={rating}
                         step={1}
                         fractions={10}
+                        stop={rating_total}
                         emptySymbol={<FaStar color={this.props.theme['bar_background_color']} size={25} />}
                         fullSymbol={<FaStar color={this.props.theme['slider_color']} size={25} />}
                         readonly={true}
