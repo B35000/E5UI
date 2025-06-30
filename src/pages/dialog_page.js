@@ -2043,6 +2043,22 @@ return data['data']
         else if(type == 'bill'){
             items = this.props.app_state.created_bills[e5]
         }
+        else if(type == 'comment'){
+            const id_type = event['id_type']
+            e5 = event['target_e5'] == null ? e5 : event['target_e5']
+            const dir = {
+                17/* 17(job object) */:this.props.app_state.created_jobs[e5], 
+                18/* 18(post object) */:this.props.app_state.created_posts[e5], 
+                19/* 19(audio_object) */:this.props.app_state.created_audios[e5], 
+                20/* 20(video_object) */:this.props.app_state.created_videos[e5],
+                21/* 21(nitro_object) */:this.props.app_state.created_nitros[e5], 
+                25/* 25(storefront_bag_object) */:this.props.app_state.created_bags[e5], 
+                27/* 27(storefront-item) */: this.props.app_state.created_stores[e5], 
+                32/* 32(consensus_request) */:this.props.app_state.my_proposals[e5], 
+                36/* 36(type_channel_target) */:this.props.app_state.created_channels[e5],
+            }
+            items = dir[id_type];
+        }
         console.log('when_event_clicked', items)
         if(items == null) items = [];
 
@@ -2078,6 +2094,36 @@ return data['data']
     }
 
     format_item(object, event){
+        if(this.state.data['type'] == 'comment'){
+            const id_type = event['id_type']
+            if(id_type == 17/* 17(job object) */){
+                return this.format_job_item(object)
+            }
+            else if(id_type == 18/* 18(post object) */){
+                return this.format_post_item(object)
+            }
+            else if(id_type == 19/* 19(audio_object) */){
+                return this.format_audio_item(object)
+            }
+            else if(id_type == 20/* 20(video_object) */){
+                return this.format_video_item(object)
+            }
+            else if(id_type == 21/* 21(nitro_object) */){
+                return this.format_nitro_item(object)
+            }
+            else if(id_type == 25/* 25(storefront_bag_object) */){
+                return this.format_bag_item(object)
+            }
+            else if(id_type == 27/* 27(storefront-item) */){
+                return this.format_storefront_item(object)
+            }
+            else if(id_type == 32/* 32(consensus_request) */){
+                return this.format_proposal_item(object)
+            }
+            else if(id_type == 36/* 36(type_channel_target) */){
+                return this.format_channel_item(object)
+            }
+        }
         var tags = []
         if(this.state.data['type'] == 'bag'){
             tags = [object['event'].returnValues.p3]
@@ -2139,7 +2185,7 @@ return data['data']
     }
 
     when_object_clicked(index, object){
-        this.props.when_notification_object_clicked(index, object, this.state.data)
+        this.props.when_notification_object_clicked(index, object, this.state.data, this.is_post_nsfw(object))
     }
 
 

@@ -239,7 +239,7 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
                     {this.render_post_state(object)}
-
+                    {this.render_ratings_if_any(object)}
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -297,6 +297,38 @@ class StorefrontDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_ratings_if_any(object){
+        var messages = this.get_convo_messages(object)
+        var rating = this.get_average_rating(messages)
+        if(rating == -1) return;
+
+        return(
+            <div>
+                {this.render_detail_item('15',{'rating': rating})}
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    get_average_rating(number_of_replies){
+        const account_rating_data = {}
+        number_of_replies.forEach(item => {
+            if(item['rating'] != null){
+                account_rating_data[item['sender_e5']+':'+item['sender']] = item['rating']
+            }
+        });
+        var total = 0
+        const keys = Object.keys(account_rating_data)
+        if(keys.length == 0){
+            return -1
+        }
+        keys.forEach(user => {
+            total += account_rating_data[user]
+        });
+
+        return total / keys.length
     }
 
     render_post_state(object){
@@ -1885,6 +1917,7 @@ class StorefrontDetailsSection extends Component {
                             }</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
                             {this.render_images_if_any(item)}
+                            {this.render_markdown_in_message_if_any(item)}
                             {this.get_then_render_my_awards(item, object)}
                             {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p> */}
                         </div>
@@ -1895,6 +1928,16 @@ class StorefrontDetailsSection extends Component {
             </div>
         )
         
+    }
+
+    render_rating_if_valid(item){
+        if(item['rating'] != null){
+            return(
+                <div>
+                    {this.render_detail_item('15',{'rating': item['rating']})}
+                </div>
+            )
+        }
     }
 
     split_text(text){

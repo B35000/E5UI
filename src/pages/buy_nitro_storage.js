@@ -271,7 +271,11 @@ class BuyNitroPage extends Component {
         }
         else if(!this.check_if_sender_can_afford_payments()){
             this.props.notify(this.props.app_state.loc['2970']/* 'You don\'t have enough money to fulfil this purchase.' */, 4500)
-        }else{
+        }
+        else if(this.check_if_buy_for_specific_storage_already_exists()){
+            this.props.notify(this.props.app_state.loc['3030d']/* 'You cant purchase storage from the same node twice in one run.' */, 6500)
+        }
+        else{
             var object = this.state.nitro_object
             var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
             var amounts_to_transfer = this.get_final_amounts(node_details['price_per_megabyte'][this.props.app_state.selected_e5])
@@ -321,6 +325,15 @@ class BuyNitroPage extends Component {
         return data
     }
 
+    check_if_buy_for_specific_storage_already_exists(){
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == this.props.app_state.loc['3031']/* 'buy-storage' */ && stack_transactions[i].nitro_object['e5_id'] == this.state.nitro_object['e5_id']){
+                return true
+            }
+        }
+        return false
+    }
 
 
 

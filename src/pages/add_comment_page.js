@@ -25,6 +25,10 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import imageCompression from 'browser-image-compression';
 
+// import Rating from '@mui/material/Rating'
+import Rating from 'react-rating';
+import { FaStar } from 'react-icons/fa';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -47,7 +51,8 @@ class AddCommentPage extends Component {
     
     state = {
         selected: 0, object: null, focused_message_id: 0, page: '', contractor_object: null,
-        entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), entered_pdf_objects:[], get_text_or_markdown_tags_object:this.get_text_or_markdown_tags_object(), markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()
+        entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), entered_pdf_objects:[], get_text_or_markdown_tags_object:this.get_text_or_markdown_tags_object(), markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), 
+        rating:0.0, is_setting_rating: false,
     };
 
     get_comment_font_size_settings_object(){
@@ -260,8 +265,9 @@ class AddCommentPage extends Component {
                 
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_pdfs_part()}
-                 <div style={{height:10}}/>
+                <div style={{height:10}}/>
                 {this.render_image_part()}
+                {this.render_ratings_picker_if_enabled()}
             </div>
         )
     }
@@ -387,6 +393,43 @@ class AddCommentPage extends Component {
 
     when_markdown_shortcut_clicked(text){
         this.setState({markdown: this.state.markdown+'\n'+text})
+    }
+
+
+
+
+
+
+
+    render_ratings_picker_if_enabled(){
+        var page = this.state.page
+        var accepted = ['storefront', 'audio', 'video']
+        if(!accepted.includes(page)) return;
+        var value = this.state.rating
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1042i']/* 'You can also leave a rating if youd like to.' */})}
+                <div style={{height:10}}/>
+                <div style={{ width: '70%', display: 'flex', alignItems: 'center', 'margin': '0px 0px 0px 10px' }}>
+                    <Rating 
+                        initialRating={value}
+                        onChange={(new_value) => this.when_rating_changed(new_value)}
+                        step={1}
+                        fractions={10}
+                        emptySymbol={<FaStar color={this.props.theme['bar_background_color']} size={35} />}
+                        fullSymbol={<FaStar color={this.props.theme['slider_color']} size={35} />}
+                    />
+                    {value > 0 && (
+                        <p style={{ 'margin': '2px 0px 0px 10px', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font, 'font-size': '15px' }} onClick={() => this.setState({rating: 0.0, is_setting_rating: false})} className="fw-bold">{value}</p>
+                    )}
+                </div>
+            </div>
+        )
+    }
+
+    when_rating_changed(newRating, name){
+        this.setState({ rating: newRating });
     }
 
 
@@ -907,6 +950,8 @@ class AddCommentPage extends Component {
             return;
         }
 
+        const rating = this.state.is_setting_rating == true ? this.state.rating : null
+
         if(page == 'channel'){
             var unencrypted_keys = object['unencrypted_keys']
             var key_to_use = ''
@@ -934,7 +979,7 @@ class AddCommentPage extends Component {
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
         }
         else if(page == 'storefront'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'rating':rating}
         }
         else if(page == 'bag'){
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
@@ -944,10 +989,10 @@ class AddCommentPage extends Component {
             tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'key_data':key_data}
         }
         else if(page == 'audio'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'rating':rating}
         }
         else if(page == 'video'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'rating':rating}
         }
         else if(page == 'nitro'){
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5}

@@ -5992,8 +5992,9 @@ class home_page extends Component {
         const job_application_response = notification_object['job_application_response'] == null ? [] : notification_object['job_application_response']
         const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
         const contract = notification_object['contract'] == null ? [] : notification_object['contract']
+        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)
@@ -6007,8 +6008,9 @@ class home_page extends Component {
         const bag = notification_object['bag'] == null ? [] : notification_object['bag']
         const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
         const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
+        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
         
-        const all_events = bag.concat(bag_application_response, storefront)
+        const all_events = bag.concat(bag_application_response, storefront, comment)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

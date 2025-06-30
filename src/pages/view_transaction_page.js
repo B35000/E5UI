@@ -4645,6 +4645,7 @@ return data['data']
 
                         {this.render_markdown_in_message_if_any(item)}
                         {this.render_detail_item('9',item['image-data'])}
+                        {this.render_rating_if_valid()}
                     </div>
                     {this.render_pdfs_if_any(item)}
                 </div>
@@ -4689,6 +4690,16 @@ return data['data']
                     <div style={{height:5}}/>
                     {this.render_pdfs_part(item['pdf-data'])}
                     <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+    render_rating_if_valid(item){
+        if(item['rating'] != null){
+            return(
+                <div>
+                    {this.render_detail_item('15',{'rating': item['rating']})}
                 </div>
             )
         }

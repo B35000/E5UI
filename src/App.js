@@ -14554,7 +14554,7 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  when_notification_object_clicked(index, object, data){
+  when_notification_object_clicked(index, object, data, post_nsfw){
     var type = data['type']
     if(type == 'storefront'){
       this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1215']/* 'storefront' */})
@@ -14607,6 +14607,64 @@ class App extends Component {
       this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264aj']/* 'bills' */})
       this.homepage.current?.when_bill_item_clicked(object, 'ignore')
       this.homepage.current?.reset_post_detail_object()
+    }
+    else if(type == 'comment'){
+      const id_types = data['id_types']
+      const id_type = id_types[object['id']]
+
+      if(id_type == 17/* 17(job object) */){
+        this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
+        this.homepage.current?.when_job_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 18/* 18(post object) */){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1213']/* 'posts' */})
+        this.homepage.current?.when_post_item_clicked(index, object['id'], object['e5'], post_nsfw, object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 19/* 19(audio_object) */){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264k']/* 'audioport' */})
+        this.homepage.current?.when_audio_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 20/* 20(video_object) */){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264p']/* 'videoport' */})
+        this.homepage.current?.when_video_item_clicked(index, object['id'], object['e5'], post_nsfw, object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 21/* 21(nitro_object) */){
+        this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1264s']/* 'nitro' */})
+        this.homepage.current?.when_nitro_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 25/* 25(storefront_bag_object) */){
+        var items_to_deliver = object['ipfs']['bag_orders']
+        var storefronts_to_load = []
+        items_to_deliver.forEach(item => {
+          var storefront_id = item['storefront_item_id']
+          if(!storefronts_to_load.includes(storefront_id)) storefronts_to_load.push(storefront_id);
+        });
+        this.load_storefront_data(storefronts_to_load)
+
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1216']/* 'bags' */})
+        this.homepage.current?.when_bag_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 27/* 27(storefront-item) */){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1215']/* 'storefront' */})
+        this.homepage.current?.when_storefront_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 32/* 32(consensus_request) */){
+        this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1199']/* 'proposals' */})
+        this.homepage.current?.when_proposal_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(id_type == 36/* 36(type_channel_target) */){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1214']/* 'channels' */})
+        this.homepage.current?.when_channel_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
     }
     this.open_dialog_bottomsheet()
     if(this.state.view_notification_log_bottomsheet == true) this.open_view_notification_log_bottomsheet();
@@ -17620,6 +17678,13 @@ return data['data']
     }
     else if(event_type == 'storefront'){
       this.load_specific_storefront_items(events)
+    }
+    else if(event_type == 'comment'){
+      const id_type = obj['id_type']
+      const event_object_id = obj['p']
+      const id_types_array_object = {}
+      id_types_array_object[id_type] = [event_object_id]
+      this.start_loading_objects_in_background(id_types_array_object)
     }
 
     var id = obj['notification_id']
@@ -26922,30 +26987,106 @@ return data['data']
 
   load_run_data = async (contractInstance, E52contractInstance, e5, web3, H52contractInstance) => {
     if(this.state.beacon_node_enabled == true){
-      var event_params = [
-        /* 0 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ }],
-        /* 1 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */}],
-        /* 2 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:32/* 32(consensus_request) */}],
-        /* 3 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}],
-        /* 4 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */ }],
-      /* 5 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */ }],
-        /* 6 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */}],
-        /* 7 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */}],
-      /* 8 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */}],
-        /* 9 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */}],
-        /* 10 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */}],
-        /* 11 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */}],
-        /* 12 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */}],
-        /* 13 */[web3, E52contractInstance, 'e4', e5, {}],/* data */
-        /* 14 */[web3, E52contractInstance, 'e5', e5, {}],/* metadata */
-        /* 15 */[web3, contractInstance, 'e2', e5, {}],/* withdraw */
-        /* 16 */[web3, contractInstance, 'e4', e5, {}],/* transaction */
-        /* 17 */[web3, H52contractInstance, 'e1', e5, {}],/* transfer */
-        /* 18 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */ }],
-        /* 19 */[web3, E52contractInstance, 'e2', e5, {}],
+      // var event_params = [
+      //   /* 0 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ }],
+      //   /* 1 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */}],
+      //   /* 2 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:32/* 32(consensus_request) */}],
+      //   /* 3 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}],
+
+      //   /* 4 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */ }],
+      // /* 5 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */ }],
+      //   /* 6 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */}],
+      //   /* 7 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */}],
+
+      // /* 8 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */}],
+
+      //   /* 9 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */}],
+      //   /* 10 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */}],
+      //   /* 11 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */}],
+      //   /* 12 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */}],
+
+      //   /* 13 */[web3, E52contractInstance, 'e4', e5, {}],/* data */
+      //   /* 14 */[web3, E52contractInstance, 'e5', e5, {}],/* metadata */
+      //   /* 15 */[web3, contractInstance, 'e2', e5, {}],/* withdraw */
+      //   /* 16 */[web3, contractInstance, 'e4', e5, {}],/* transaction */
+      //   /* 17 */[web3, H52contractInstance, 'e1', e5, {}],/* transfer */
+      //   /* 18 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */ }],
+      //   /* 19 */[web3, E52contractInstance, 'e2', e5, {}],
+      // ]
+
+      // var all_events = await this.load_multiple_events_from_nitro(event_params)
+      // var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12], 'poll':all_events[18], 'all_indexed_events':all_events[19]}
+
+      // var all_data_clone = structuredClone(this.state.all_data)
+      // all_data_clone[e5] = obj
+      // this.setState({all_data: all_data_clone})
+
+
+      var event_params2 = [
+        [web3, contractInstance, 'e1', e5, {}],
+        [web3, E52contractInstance, 'e2', e5, {}],
+        [web3, E52contractInstance, 'e4', e5, {}],/* data */
+        [web3, E52contractInstance, 'e5', e5, {}],/* metadata */
+        [web3, contractInstance, 'e2', e5, {}],/* withdraw */
+        [web3, contractInstance, 'e4', e5, {}],/* transaction */
+        [web3, H52contractInstance, 'e1', e5, {}],/* transfer */
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
-      var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12], 'poll':all_events[18], 'all_indexed_events':all_events[19]}
+
+      var all_events = await this.load_multiple_events_from_nitro(event_params2)
+
+      var obj = {'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'post':[], 'channel':[], 'job':[], 'store':[], 'bag':[], 'contractor':[], 'data':all_events[2], 'metadata':all_events[3], 'withdraw':all_events[4], 'transaction':all_events[5], 'transfer':all_events[6], 'audio':[], 'video':[], 'nitro':[], 'poll':[], 'all_indexed_events':all_events[1]}
+
+      all_events[0].forEach(event_array => {
+        event_array.forEach(event_item => {
+          if(event_item.returnValues.p2 == 33/* subscription_object */){
+            obj['subscription'].push(event_item)
+          }
+          else if(event_item.returnValues.p2 == 30/* contract_obj_id */){
+            obj['contract'].push(event_item)
+          }
+          else if(event_item.returnValues.p2 == 32/* 32(consensus_request) */){
+            obj['proposal'].push(event_item)
+          }
+          else if(event_item.returnValues.p2 == 31/* token_exchange */){
+            obj['exchange'].push(event_item)
+          }
+          else if(event_item.returnValues.p2 == 25/* 25(storefront_bag_object) */){
+            obj['bag'].push(event_item)
+          }
+        });
+      });
+
+      all_events[1].forEach(event_array => {
+        event_array.forEach(event_item => {
+          if(event_item.returnValues.p3 == 18/* 18(post object) */ ){
+            obj['post'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 36/* 36(type_channel_target) */){
+            obj['channel'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 17/* 17(job_object) */){
+            obj['job'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 27/* 27(storefront-item) */){
+            obj['store'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 26/* 26(contractor_object) */){
+            obj['contractor'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 19/* 19(audio_object) */){
+            obj['audio'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 20/* 20(video_object) */){
+            obj['video'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 21/* 21(nitro_object) */){
+            obj['nitro'].push(event_item)
+          }
+          else if(event_item.returnValues.p3 == 28/* 28(poll-object) */){
+            obj['poll'].push(event_item)
+          }
+        });
+      });
 
       var all_data_clone = structuredClone(this.state.all_data)
       all_data_clone[e5] = obj
@@ -29529,6 +29670,215 @@ return data['data']
     this.prompt_top_notification(prompt, 15000)
   }
 
+
+
+
+
+
+
+
+
+  load_and_notify_user_of_incoming_post_comments = async () => {
+    var all_unsorted_events = {}
+    var block_stamp = {}
+    var current_blocks = {}
+    const id_object_data_object = await this.load_my_post_ids()
+    const id_object_data = id_object_data_object.ids_data
+    const id_types = id_object_data_object.id_types_data
+    const id_types_data_arrays = id_object_data_object.id_types_data_arrays
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      var account = this.state.user_account_id[focused_e5]
+      if(this.state.addresses[focused_e5] != null && account > 1000){
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = this.state.addresses[focused_e5][1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var current_block_number = await web3.eth.getBlockNumber()
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
+
+        const ids = Object.values(id_object_data).flat()
+
+        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: { p3/* context */: ids, p1/* target_id */: 17/* shadow_object_container */ }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+        var filtered_all_received_on_chain_events = []
+        all_received_on_chain_events.forEach(event => {
+          const targeted_e5 = 'E'+event.returnValues.p5/* int_data */
+          if(id_object_data[targeted_e5].includes(event.returnValues.p3/* context */)){
+            filtered_all_received_on_chain_events.push(event)
+          }
+        });
+
+        all_unsorted_events[focused_e5] = filtered_all_received_on_chain_events
+        block_stamp[focused_e5] = current_block_number
+        current_blocks[focused_e5] = current_block_number
+      }
+    }
+
+    if(this.load_and_notify_user_times_post_comment == null){
+      this.load_and_notify_user_times_direct_storefront_order = {}
+    }
+
+    var notifs = []
+    var all_notifications = []
+    for(const e5 in all_unsorted_events){
+      if(all_unsorted_events.hasOwnProperty(e5)){
+        if(this.load_and_notify_user_times_post_comment[e5] == null){
+          this.load_and_notify_user_times_post_comment[e5] = block_stamp[e5]
+        }
+        var account = this.state.user_account_id[e5]
+        all_unsorted_events[e5].forEach(event => {
+          var event_block = event.returnValues.p6/* block_number */
+          if(event_block > this.load_and_notify_user_times_post_comment[e5]){
+            event['e5'] = e5
+            notifs.push(event)
+          }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p3/* context */
+          event['time'] = event.returnValues.p6/* timestamp */
+          event['block'] = event.returnValues.p7/* block_number */
+          event['sender'] = event.returnValues.p2/* sender_acc_id */
+          event['type'] = 'comment'
+          event['event_type'] = 'comment'
+          const target_e5 = Object.entries(id_object_data).find(([key, arr]) => arr.includes(event.returnValues.p3/* context */))?.[0];
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'comment', 'p':'p3', 'time':'p6','block':'p7', 'sender':'p2', 'id_type':id_types[event.returnValues.p3/* context */], 'target_e5':target_e5}
+          all_notifications.push(event)
+        });
+        this.load_and_notify_user_times_post_comment[e5] = block_stamp[e5]
+      }
+    }
+
+    if(notifs.length > 0){
+      console.log('notifier', 'found one comment to nofity', notifs)
+      this.handle_incoming_post_comment_notifications(notifs, id_types)
+      this.start_loading_objects_in_background(id_types_data_arrays)
+    }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['comment'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+  }
+
+  load_my_post_ids = async () => {
+    const accepted_object_types = [17/* 17(job object) */, 18/* 18(post object) */, 19/* 19(audio_object) */, 20/* 20(video_object) */, 21/* 21(nitro_object) */, 25/* 25(storefront_bag_object) */, 27/* 27(storefront-item) */, 32/* 32(consensus_request) */, 36/* 36(type_channel_target) */]
+
+    const ids_data = {}
+    const id_types_data = {}
+    const id_types_data_arrays = {}
+    if(this.state.beacon_node_enabled == true){
+      const event_params = []
+      const used_e5s = []
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const focused_e5 = this.state.e5s['data'][i]
+        const account = this.state.user_account_id[focused_e5]
+        if(account != null && account > 1000){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          var contract_addresses = this.state.addresses[focused_e5]
+          const contractArtifact = require('./contract_abis/E5.json');
+          const contractAddress = contract_addresses[0]
+          const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+          event_params.push([web3, contractInstance, 'e1', focused_e5, {p3/* sender_account_id */: account}])
+          used_e5s.push(focused_e5)
+        }
+      }
+      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      all_events.forEach((event_array, index) => {
+        const e5_used = used_e5s[index]
+        event_array.forEach(event => {
+          if(accepted_object_types.includes(event.returnValues.p2/* object_type */)){
+            if(ids_data[e5_used] == null){
+              ids_data[e5_used] = []
+            }
+            ids_data[e5_used].push(event.returnValues.p1/* object_id */)
+            id_types_data[event.returnValues.p1/* object_id */] = event.returnValues.p2/* object_type */
+            if(id_types_data_arrays[event.returnValues.p2/* object_type */] == null){
+              id_types_data_arrays[event.returnValues.p2/* object_type */] = []
+            }
+            id_types_data_arrays[event.returnValues.p2/* object_type */].push(event.returnValues.p1/* object_id */)
+          }
+        });
+      });
+    }else{
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const focused_e5 = this.state.e5s['data'][i]
+        const account = this.state.user_account_id[focused_e5]
+        if(account != null && account > 1000){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          var contract_addresses = this.state.addresses[focused_e5]
+          const contractArtifact = require('./contract_abis/E5.json');
+          const contractAddress = contract_addresses[0]
+          const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+          const event_array = await this.load_event_data(web3, contractInstance, 'e1', focused_e5, {p3/* sender_account_id */: account})
+          event_array.forEach(event => {
+            if(accepted_object_types.includes(event.returnValues.p2/* object_type */)){
+              if(ids_data[focused_e5] == null){
+                ids_data[focused_e5] = []
+              }
+              ids_data[focused_e5].push(event.returnValues.p1/* object_id */)
+              id_types_data[event.returnValues.p1/* object_id */] = event.returnValues.p2/* object_type */
+              if(id_types_data_arrays[event.returnValues.p2/* object_type */] == null){
+                id_types_data_arrays[event.returnValues.p2/* object_type */] = []
+              }
+              id_types_data_arrays[event.returnValues.p2/* object_type */].push(event.returnValues.p1/* object_id */)
+            }
+          });
+        }
+      }
+    }
+
+    return {ids_data, id_types_data, id_types_data_arrays}
+  }
+
+  handle_incoming_post_comment_notifications(events, id_types){
+    var senders = []
+    var and_more = false
+    events.forEach(event => {
+      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
+      if(senders.length < 5) senders.push(alias);
+      else and_more = true
+    });
+    var prompt = and_more == true ? this.getLocale()['2738aj']/* 'Incoming comments from $ and more.' */ : this.getLocale()['2738ai']/* 'Incoming comments from $' */;
+    prompt = prompt.replace('$', senders.toString())
+    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'comment', 'p':'p3', 'time':'p6','block':'p7', 'sender':'p2', 'id_types':id_types})
+  }
+
+  start_loading_objects_in_background(id_types_data_arrays){
+    var keys = Object.keys(id_types_data_arrays)
+    keys.forEach(id_type => {
+      const load_ids = id_types_data_arrays[id_type]
+      if(id_type == 17/* 17(job object) */){
+        this.load_jobs_data(load_ids)
+      }
+      else if(id_type == 18/* 18(post object) */){
+        this.load_post_data(load_ids)
+      }
+      else if(id_type == 19/* 19(audio_object) */){
+        this.load_audio_data(load_ids)
+      }
+      else if(id_type == 20/* 20(video_object) */){
+        this.load_video_data(load_ids)
+      }
+      else if(id_type == 21/* 21(nitro_object) */){
+        this.load_nitro_data(load_ids)
+      }
+      else if(id_type == 25/* 25(storefront_bag_object) */){
+        this.load_bag_data(load_ids)
+      }
+      else if(id_type == 27/* 27(storefront-item) */){
+        this.load_storefront_data(load_ids)
+      }
+      else if(id_type == 32/* 32(consensus_request) */){
+        this.load_proposal_data(load_ids)
+      }
+      else if(id_type == 36/* 36(type_channel_target) */){
+        this.load_channel_data(load_ids)
+      }
+    });
+  }
 
   
 

@@ -244,6 +244,8 @@ class E5DetailsSection extends Component {
 
                     {this.render_channeling_depth_data(obj)}
 
+                    {this.render_spend_bottom_80_dominance(obj)}
+
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2234']}</p>
@@ -581,6 +583,84 @@ class E5DetailsSection extends Component {
 
         return { local_events, language_events, international_events }
     }
+
+
+
+
+
+    render_spend_bottom_80_dominance(obj){
+        const e5_chart_data = this.props.app_state.all_data[obj['id']]
+        if(e5_chart_data != null){
+            const proportion = this.filter_transfer_events_for_end_and_spend_transactions2(e5_chart_data['transfer'])
+            if(proportion == 0) return;
+
+            return (
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2336p']/* 'Bottom 80% Income Earners Dominance.' */, 'subtitle':this.format_power_figure(proportion), 'barwidth':Math.floor(proportion)+'%', 'number':proportion+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */,})}
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            );
+        }
+    }
+
+    filter_transfer_events_for_end_and_spend_transactions2(events){
+        var spend_events = []
+        const time_limit = (Date.now()/1000) - (60*60*24*7*53)
+        const income_stream_data = {}
+        const income_stream_records = {}
+        var total_volume = bigInt(0)
+        events.forEach(event => {
+            if(event.returnValues.p1 == 5 && event.returnValues.p5/* timestamp */ > time_limit){
+                if(income_stream_records[event.returnValues.p2/* sender */] == null){
+                    income_stream_records[event.returnValues.p2/* sender */] = {}
+                }
+                if(income_stream_records[event.returnValues.p2/* sender */][event.returnValues.p3/* receiver */] == null){
+                    income_stream_records[event.returnValues.p2/* sender */][event.returnValues.p3/* receiver */] = []
+                }
+                const receivers_time_array = income_stream_records[event.returnValues.p2/* sender */][event.returnValues.p3/* receiver */]
+                if(receivers_time_array.length == 0 || event.returnValues.p5/* timestamp */ - receivers_time_array[receivers_time_array.length-1] > (60*60*2.3)){
+                    spend_events.push(event)
+                    if(income_stream_data[event.returnValues.p3/* receiver */] == null){
+                        income_stream_data[event.returnValues.p3/* receiver */] = bigInt(0) 
+                    }
+                    income_stream_data[event.returnValues.p3/* receiver */] = bigInt(income_stream_data[event.returnValues.p3/* receiver */]).plus(event.returnValues.p4/* amount */)
+                    total_volume = bigInt(total_volume).plus(event.returnValues.p4/* amount */)
+
+                    income_stream_records[event.returnValues.p2/* sender */][event.returnValues.p3/* receiver */].push(event.returnValues.p5/* timestamp */)
+                } 
+            }
+        });
+
+        if(spend_events.length == 0){
+            return 0
+        }
+
+        const filtered_income_stream_data = this.getBottomPercentAccounts(income_stream_data)
+        const bottom_volume = Object.values(filtered_income_stream_data).reduce((total, value) => bigInt(total).plus(bigInt(value)), bigInt(0));
+        
+        const proportion = bigInt(bottom_volume).multiply(bigInt(100)).divide(bigInt(total_volume))
+        const decimals = bigInt(bottom_volume).multiply(bigInt(100)).mod(bigInt(total_volume))
+
+        const percentage_string = proportion.toString().toLocaleString('fullwide', {useGrouping:false})+'.'+decimals.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        return parseFloat(percentage_string).toFixed(2)
+    }
+
+    getBottomPercentAccounts(obj) {
+        const percent = 0.8
+        const entries = Object.entries(obj);
+        
+        entries.sort((a, b) => a[1] - b[1]);
+        const count = Math.floor(entries.length * percent);
+        const bottomEntries = entries.slice(0, count);
+        
+        return Object.fromEntries(bottomEntries);
+    }
+    
+
+    
     
     
     

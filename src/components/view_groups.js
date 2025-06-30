@@ -29,6 +29,9 @@ import ImageListItem from '@mui/material/ImageListItem';
 import Linkify from "linkify-react";
 import Markdown from 'react-markdown'
 
+import Rating from 'react-rating';
+import { FaStar } from 'react-icons/fa';
+
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -655,6 +658,24 @@ class ViewGroups extends Component {
                     </div>
                 </div>
             );
+        }
+        else if(item_id=='15'){/* rating */
+            var rating = object_data == null ? 5.0 : object_data['rating']
+            return(
+                <div style={{ width: '70%', display: 'flex', alignItems: 'center', 'margin': '0px 0px 0px 10px' }}>
+                    <Rating 
+                        initialRating={rating}
+                        step={1}
+                        fractions={10}
+                        emptySymbol={<FaStar color={this.props.theme['bar_background_color']} size={25} />}
+                        fullSymbol={<FaStar color={this.props.theme['slider_color']} size={25} />}
+                        readonly={true}
+                    />
+                    {rating > 0 && (
+                        <p style={{ 'margin': '3px 0px 0px 7px', color: this.props.theme['primary_text_color'], 'font-family': this.props.font, 'font-size': '14px' }} className="fw-bold">{rating}</p>
+                    )}
+                </div>
+            )
         }
     }
 

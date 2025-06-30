@@ -57,7 +57,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067a']/* 'mail' */, this.props.app_state.loc['3067b']/* 'proposals' */, this.props.app_state.loc['3067c']/* 'jobs' */, this.props.app_state.loc['3067d']/* 'contractors' */, this.props.app_state.loc['3067e']/* 'contracts' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067a']/* 'mail' */, this.props.app_state.loc['3067b']/* 'proposals' */, this.props.app_state.loc['3067c']/* 'jobs' */, this.props.app_state.loc['3067d']/* 'contractors' */, this.props.app_state.loc['3067e']/* 'contracts' */, this.props.app_state.loc['3067y']/* 'work-comments' */ ], [0]
                 ],
             };
         }
@@ -68,7 +68,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067x']/* 'explore-comments' */], [0]
                 ],
             };
         }
@@ -200,6 +200,14 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3067y']/* 'work-comments' */){
+            return(
+                <div>
+                    {this.render_work_notifications(['comment'])}
+                </div>
+            )
+        }
+
         else if(selected_item == this.props.app_state.loc['3067f']/* 'bags' */){
             //bag, storefront, bag_application_response
             return(
@@ -215,6 +223,14 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3067x']/* 'explore-comments' */){
+            return(
+                <div>
+                    {this.render_explore_notifications(['comment'])}
+                </div>
+            )
+        }
+
         else if(selected_item == this.props.app_state.loc['3067']/* 'wallet' */){
             return(
                 <div>
@@ -269,6 +285,7 @@ class ViewNotificationLogPage extends Component {
             'job_application_response':this.props.app_state.loc['3067o'],/* '📲 $ responded to your application in their job.' */
             'job_request_response':this.props.app_state.loc['3067p'],/* '👷 $ accepted your job request in their contractor post' */
             'contract':this.props.app_state.loc['3067q'],/* '↪📑 $ entered your contract.' */
+            'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -298,8 +315,9 @@ class ViewNotificationLogPage extends Component {
         const job_application_response = notification_object['job_application_response'] == null ? [] : notification_object['job_application_response']
         const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
         const contract = notification_object['contract'] == null ? [] : notification_object['contract']
+        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)
@@ -370,6 +388,7 @@ class ViewNotificationLogPage extends Component {
             'bag':this.props.app_state.loc['3067r'],/* '🛍️ $ applied to fulfil one of your bags.' */
             'bag_application_response':this.props.app_state.loc['3067s'],/* '📥 $ accepted your bag application.' */
             'storefront':this.props.app_state.loc['3067t'],/* '🏪 $ purchased an item from one of your stores.' */
+            'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -390,8 +409,9 @@ class ViewNotificationLogPage extends Component {
         const bag = notification_object['bag'] == null ? [] : notification_object['bag']
         const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
         const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
+        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
         
-        const all_events = bag.concat(bag_application_response, storefront)
+        const all_events = bag.concat(bag_application_response, storefront, comment)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)
