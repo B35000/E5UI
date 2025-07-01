@@ -10762,14 +10762,27 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
+                {this.render_message_if_stack_not_empty()}
                 
                 <div style={{'padding':'0px 5px 0px 5px'}}>
                     {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
                 </div>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    render_message_if_stack_not_empty(){
+        if(this.props.app_state.stacked_ids != null && this.props.app_state.accounts[this.props.app_state.selected_e5] == null && this.state.has_wallet_been_set == false){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1593hg']/* 'Some transactions were loaded from your previous stack. Please set the address that was used to make them, otherwise they will be deleted.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
     }
 
     when_thyme_tags_updated(tag_group){

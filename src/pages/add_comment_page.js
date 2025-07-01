@@ -106,8 +106,8 @@ class AddCommentPage extends Component {
 
     set_comment_data(object, focused_message_id, page, contractor_object, starting_text){
         var text = starting_text == null ? '' : starting_text
-        var rating_total = page == 'storefront' ? 5.0 : 10.0
-        this.setState({object: object, focused_message_id: focused_message_id, page: page, contractor_object: contractor_object, entered_title_text: text, rating_total: rating_total})
+        var rating_total = page == 'storefront' ? 5.0 : 5.0
+        this.setState({object: object, focused_message_id: focused_message_id, page: page, contractor_object: contractor_object, entered_title_text: text, rating_total: rating_total, rating: 0.0, is_setting_rating: false})
     }
 
 
@@ -405,31 +405,33 @@ class AddCommentPage extends Component {
     render_ratings_picker_if_enabled(){
         if(!this.can_i_leave_rating_in_object()) return;
         var value = this.state.rating
+        var rating_total = this.state.rating_total
+        var percentage = Math.floor((value/rating_total) * 100)
         return(
             <div>
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1042i']/* 'You can also leave a rating if youd like to.' */})}
                 <div style={{height:10}}/>
-                <div style={{ width: '70%', display: 'flex', alignItems: 'center', 'margin': '0px 0px 0px 10px' }}>
+                <div style={{ width: '100%', display: 'flex', alignItems: 'center', 'margin': '0px 0px 0px 10px' }}>
                     <Rating 
                         initialRating={value}
                         onChange={(new_value) => this.when_rating_changed(new_value)}
                         step={1}
                         fractions={10}
-                        stop={this.state.rating_total}
+                        stop={rating_total}
                         emptySymbol={<FaStar color={this.props.theme['bar_background_color']} size={35} />}
-                        fullSymbol={<FaStar color={this.props.theme['slider_color']} size={35} />}
+                        fullSymbol={<FaStar color={this.props.theme['bar_color']} size={35} />}
                     />
                     {value > 0 && (
-                        <p style={{ 'margin': '2px 0px 0px 10px', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font, 'font-size': '15px' }} onClick={() => this.setState({rating: 0.0, is_setting_rating: false})} className="fw-bold">{value}</p>
+                        <p style={{ 'margin': '2px 0px 0px 10px', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font, 'font-size': '15px' }} onClick={() => this.setState({rating: 0.0, is_setting_rating: false})} className="fw-bold">{percentage}%</p>
                     )}
                 </div>
             </div>
         )
     }
 
-    when_rating_changed(newRating, name){
-        this.setState({ rating: newRating });
+    when_rating_changed(newRating){
+        this.setState({ rating: newRating, is_setting_rating: true });
     }
 
     can_i_leave_rating_in_object(){
@@ -443,6 +445,12 @@ class AddCommentPage extends Component {
                     return true
                 }
             }
+            var direct_purchase_option = object['ipfs'].purchase_option_tags_object == null ? 2/* 'disabled' */ : this.get_selected_item2(object['ipfs'].purchase_option_tags_object, 'e')
+
+            if(direct_purchase_option != 1/* 'enabled' */){
+                return true
+            }
+
             return false
         }
         else if(page == 'audio'){
@@ -1146,6 +1154,10 @@ class AddCommentPage extends Component {
             return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
         }
         
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
 

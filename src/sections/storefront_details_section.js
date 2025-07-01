@@ -301,15 +301,39 @@ class StorefrontDetailsSection extends Component {
 
     render_ratings_if_any(object){
         var messages = this.get_convo_messages(object)
-        var rating = this.get_average_rating(messages)
+        var rating_obj = this.get_average_rating(messages)
+        var rating = rating_obj.rating
+        var count = rating_obj.count
         if(rating == -1) return;
+        var message = this.props.app_state.loc['a2527bz']/* '$ Ratings.' */.replace('$', this.format_count(count))
 
         return(
             <div>
-                {this.render_detail_item('15',{'rating': rating, 'rating_total':5.0})}
+                {this.render_detail_item('15',{'rating': rating, 'rating_total':5.0, 'message':message})}
                 <div style={{height:10}}/>
             </div>
         )
+    }
+
+    format_count(view_count){
+        if(view_count > 1_000_000_000){
+            var val = (view_count/1_000_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}B`
+        } 
+        else if(view_count > 1_000_000){
+            var val = (view_count/1_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}M`
+        }
+        else if(view_count > 1_000){
+            var val = (view_count/1_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}K`
+        }
+        else {
+            return view_count
+        }
     }
 
     get_average_rating(number_of_replies){
@@ -322,13 +346,13 @@ class StorefrontDetailsSection extends Component {
         var total = 0
         const keys = Object.keys(account_rating_data)
         if(keys.length == 0){
-            return -1
+            return {rating: -1, count: keys}
         }
         keys.forEach(user => {
             total += account_rating_data[user]
         });
 
-        return total / keys.length
+        return {rating: (total / keys.length), count: keys}
     }
 
     render_post_state(object){
@@ -1916,9 +1940,8 @@ class StorefrontDetailsSection extends Component {
                                 })
                             }</Linkify></p>
                             {this.render_markdown_in_message_if_any(item)}
-                            {this.render_images_if_any(item)}
-                            {this.render_markdown_in_message_if_any(item)}
                             {this.render_rating_if_valid(item)}
+                            {this.render_images_if_any(item)}
                             {this.get_then_render_my_awards(item, object)}
                             {/* <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p> */}
                         </div>

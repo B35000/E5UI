@@ -193,8 +193,7 @@ class ViewTransactionPage extends Component {
                     <h5 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font}}>{this.props.app_state.loc['1786']/* Confirm Delete Action */}</h5>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1787']/* 'Are you sure?' */, 'details':'You cannot undo this action', 'size':'s'})}
-                    <div style={{height:20}}/>
-
+                    <div style={{height:10}}/>
                     <div onClick={()=> this.open_delete_action()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1785']/* 'Delete' */, 'action':''},)}
                     </div>
@@ -4615,6 +4614,8 @@ return data['data']
     }
 
     render_stack_message_item(item){
+        var size = item['size'] == null ? '15px' : item['size'];
+        var font = item['font'] == null ? this.props.app_state.font : item['font']
         if(item.type == 'message'){
             return(
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
@@ -4626,7 +4627,7 @@ return data['data']
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
                 </div>
             )
         }else{
@@ -4641,11 +4642,11 @@ return data['data']
                                 <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                             </div>
                         </div>
-                        <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                        <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
 
                         {this.render_markdown_in_message_if_any(item)}
+                        {this.render_rating_if_valid(item)}
                         {this.render_detail_item('9',item['image-data'])}
-                        {this.render_rating_if_valid()}
                     </div>
                     {this.render_pdfs_if_any(item)}
                 </div>

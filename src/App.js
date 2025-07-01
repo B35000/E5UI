@@ -3028,7 +3028,23 @@ class App extends Component {
       auto_run:this.state.auto_run,
       explore_display_type:this.state.explore_display_type,
       audiplayer_position:this.state.audiplayer_position,
+      address: this.get_account_address(),
+      stacked_ids: this.get_stacked_transaction_ids(),
     }
+  }
+  
+  get_account_address(){
+    if(this.props.app_state.accounts[this.props.app_state.selected_e5] != null){
+      return this.props.app_state.accounts[this.props.app_state.selected_e5]
+    }
+  }
+
+  get_stacked_transaction_ids(){
+    var ids = []
+    this.state.stack_items.forEach(transaction => {
+      ids.push(transaction.id)
+    });
+    return ids
   }
 
   get_persistent_data2 = async () => {
@@ -3156,6 +3172,9 @@ class App extends Component {
       var explore_display_type = state.explore_display_type == null ? this.state.explore_display_type: state.explore_display_type
       var audiplayer_position = state.audiplayer_position == null ? this.state.audiplayer_position: state.audiplayer_position
 
+      var stack_address = stack_items.length > 0 ? state.address : null
+      var stacked_ids = stack_items.length > 0 ? state.stacked_ids : null
+
       this.setState({
         theme: theme,
         stack_items: stack_items,
@@ -3215,6 +3234,8 @@ class App extends Component {
         auto_run: auto_run,
         explore_display_type: explore_display_type,
         audiplayer_position: audiplayer_position,
+        stack_address: stack_address,
+        stacked_ids: stacked_ids
       })
       var me = this;
       setTimeout(function() {
@@ -18521,6 +18542,19 @@ return data['data']
     this.my_poll_timestamp = 0
     this.my_object_timestamp = 0
     Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
+
+    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5] != this.state.stack_address && this.state.stacked_ids.length > 0){
+      //sender has set a different address from the previously used one, so delete the transactions they created with the other address
+      var stack = this.state.stack_items.slice()
+      var new_stack = []
+      for(var i=0; i<stack.length; i++){
+        if(!this.state.stacked_ids.includes(stack[i].id)){
+          new_stack.push(stack[i])
+        }
+      }
+      this.setState({stack_items: new_stack, stack_address: null, stacked_ids: null})
+      this.set_cookies_after_stack_action(new_stack)
+    }
     
     var me = this
     setTimeout(function() {

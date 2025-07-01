@@ -248,7 +248,7 @@ class ViewGroups extends Component {
                                 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} onClick={() => this.copy_id_to_clipboard(details)}>{
                                     parts.map((part, index) => {
-                                        return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
                                     })
                                 }</p>
                             </div>
@@ -267,7 +267,7 @@ class ViewGroups extends Component {
 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{
                                     parts.map((part, index) => {
-                                        return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
                                     })
                                     }</p>
                             </div>
@@ -467,6 +467,7 @@ class ViewGroups extends Component {
             var items = object_data == null ? [] :object_data['images'];
             var items_pos = object_data == null ? 0 : object_data['pos'];
 
+            if(items.length == 0) return;
             return (
                 <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 0px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'auto'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
@@ -662,19 +663,27 @@ class ViewGroups extends Component {
         else if(item_id=='15'){/* rating */
             var rating = object_data == null ? 5.0 : object_data['rating']
             var rating_total = object_data == null ? 10.0 : object_data['rating_total']
+            var message = object_data == null ? null : object_data['message']
+            var percentage = Math.floor((rating/rating_total) * 100)
+            if(rating_total == 10.0){
+                rating = (rating/rating_total) * 5
+            }
             return(
-                <div style={{ width: '70%', display: 'flex', alignItems: 'center', 'margin': '0px 0px 0px 10px' }}>
+                <div style={{ width: '100%', display: 'flex', alignItems: 'center', 'margin': '0px 0px 0px 0px' }}>
                     <Rating 
                         initialRating={rating}
                         step={1}
                         fractions={10}
-                        stop={rating_total}
-                        emptySymbol={<FaStar color={this.props.theme['bar_background_color']} size={25} />}
-                        fullSymbol={<FaStar color={this.props.theme['slider_color']} size={25} />}
+                        stop={5}
+                        emptySymbol={<FaStar color={this.props.theme['bar_background_color']} size={20} />}
+                        fullSymbol={<FaStar color={this.props.theme['bar_color']} size={20} />}
                         readonly={true}
                     />
                     {rating > 0 && (
-                        <p style={{ 'margin': '3px 0px 0px 7px', color: this.props.theme['primary_text_color'], 'font-family': this.props.font, 'font-size': '14px' }} className="fw-bold">{rating}</p>
+                        <p style={{ 'margin': '4px 0px 0px 7px', color: this.props.theme['primary_text_color'], 'font-family': this.props.font, 'font-size': '14px' }} className="fw-bold">{percentage}%</p>
+                    )}
+                    {message && (
+                        <p style={{ 'margin': '4px 0px 0px 7px', color: this.props.theme['secondary_text_color'], 'font-family': this.props.font, 'font-size': '14px' }}> • {message}</p>
                     )}
                 </div>
             )
