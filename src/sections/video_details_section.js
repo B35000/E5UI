@@ -1012,7 +1012,8 @@ class VideoDetailsSection extends Component {
         var he = this.props.height-45
         var items = this.get_videos_to_display(object)
         var object_item = this.get_post_details_data(object)
-        if(items.length == 0){
+        var items2 = this.get_videos_to_display_that_not_bought_if_in_my_collection_page(object)
+        if(items.length == 0 && items2.length == 0){
             return(
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'10px 10px 5px 10px'}}>
@@ -1036,12 +1037,30 @@ class VideoDetailsSection extends Component {
                             </div>
                         ))}
                     </div>
+                    {this.render_unadded_videos_if_in_my_collection_pag(object)}
                 </div>
             </div>
         )
     }
 
-    render_video(item, object, index){
+    render_unadded_videos_if_in_my_collection_pag(object){
+        var items = this.get_videos_to_display_that_not_bought_if_in_my_collection_page(object)
+        if(items.length == 0) return;
+
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {items.map((item, index) => (
+                    <div key={index}>
+                        {this.render_video(item, object, index, true)} 
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_video(item, object, index, is_other){
         var video_file = item['video']
         var ecid_obj = this.get_cid_split(video_file)
         if(!this.has_file_loaded(video_file)){
@@ -1061,16 +1080,17 @@ class VideoDetailsSection extends Component {
             view_count_message = ` • ${this.format_view_count(view_count)} ${views_text}`
         }
 
+        var opacity = is_other == true ? 0.7 : 1.0
         if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
             var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
             return(
-                <div onClick={() => this.when_video_item_clicked(item, object)}>
+                <div onClick={() => this.when_video_item_clicked(item, object)} style={{'opacity':opacity}}>
                     {this.render_detail_item('8', {'details':item['video_composer']+view_count_message,'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
                 </div>
             )
         }
         return(
-            <div onClick={() => this.when_video_item_clicked(item, object)}>
+            <div onClick={() => this.when_video_item_clicked(item, object)} style={{'opacity':opacity}}>
                 {this.render_detail_item('3', {'details':item['video_composer']+view_count_message, 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
             </div>
         )
@@ -1123,11 +1143,24 @@ class VideoDetailsSection extends Component {
             var videos_to_display = []
             var items = object['ipfs'].videos
             items.forEach(video => {
-                videos_to_display.push(video)
+                if(this.is_video_available_for_viewing(video)) videos_to_display.push(video)
             });
             return videos_to_display
         }else{
             return object['ipfs'].videos
+        }
+    }
+
+    get_videos_to_display_that_not_bought_if_in_my_collection_page(object){
+        if(this.is_page_my_collection_page()){
+            var videos_to_display = []
+            var items = object['ipfs'].videos
+            items.forEach(video => {
+                if(!this.is_video_available_for_viewing(video)) videos_to_display.push(video)
+            });
+            return videos_to_display
+        }else{
+            return []
         }
     }
 

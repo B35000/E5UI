@@ -929,11 +929,203 @@ class DialogPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3000']/* 'Play Last.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
 
+
+                {this.render_buy_track_option_if_unbought()}
+
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    render_buy_track_option_if_unbought(){
+        if(!this.can_show_buy_track_option()) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055dm']/* 'Buy Track.' */, 'details':this.props.app_state.loc['3055dn']/* 'Buy the track and add it to your collection.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.when_buy_track_option_clicked()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055dm']/* 'Buy Track.' */, 'action':'', 'font':this.props.app_state.font})}
+                </div>
+            </div>
+        )
+    }
+
+    can_show_buy_track_option(){
+        const available_songs_data = this.get_available_songs()
+        const song = this.state.data['item']['song_id']
+        return !available_songs_data.available_songs.includes(song)
+    }
+
+    get_available_songs(){
+        var object = this.state.data['object']
+        var txs = this.props.app_state.stack_items
+        var selected_songs = [].concat(this.props.app_state.my_tracks)
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(t.type == this.props.app_state.loc['2962']/* 'buy-album' */ && t.album['id'] == object['id']){
+                var its_selected_songs = t.selected_tracks;
+                its_selected_songs.forEach(song => {
+                    selected_songs.push(song['song_id'])
+                });
+            }
+        }
+
+        var items = object['ipfs'].songs
+        var available_songs = []
+        var unavailable_tracks = []
+        items.forEach(item => {
+            if(!selected_songs.includes(item['song_id'])){
+                available_songs.push(item)
+            }else{
+                unavailable_tracks.push(item)
+            }
+        });
+
+        return {available_songs:available_songs, unavailable_tracks:unavailable_tracks}
+    }
+
+    when_buy_track_option_clicked(){
+        var data = this.get_total_payment_amounts()
+        var exchanges_used = [].concat(data.exchanges_used)
+        var exchange_amounts = data.exchange_amounts
+        var ignore_transfers = false;
+        var object = this.state.data['object']
+        
+        if(this.does_subscriptions_exist_in_object(this.state.data['object']) && this.check_if_sender_has_paid_subscriptions(this.state.data['object'])){
+            ignore_transfers = true
+        }
+
+        if(!this.check_if_sender_can_afford_payments(data) && ignore_transfers == false){
+            this.props.notify(this.props.app_state.loc['2970']/* 'You don\'t have enough money to fulfil this purchase.' */, 4500)
+        }else{
+            var txs = this.props.app_state.stack_items
+            var existing_buy_object = null
+            for(var i=0; i<txs.length; i++){
+                var t = txs[i]
+                if(t.type == this.props.app_state.loc['2962']/* 'buy-album' */ && t.album['e5_id'] == object['e5_id']){
+                    existing_buy_object = structuredClone(t)
+                }
+            }
+
+            if(existing_buy_object == null){
+                existing_buy_object = {
+                    selected: 0, id: makeid(8), type:this.props.app_state.loc['2962']/* 'buy-album' */, entered_indexing_tags:[this.props.app_state.loc['2963']/* 'buy' */, this.props.app_state.loc['2964']/* 'album' */,this.props.app_state.loc['2965']/* 'track' */], selected_tracks:[this.state.data['item']], exchanges_used: exchanges_used, exchange_amounts: exchange_amounts, data: data, album: object, e5: object['e5']
+                }
+            }
+            else{
+                existing_buy_object.selected_tracks.push(this.state.data['item'])
+                existing_buy_object.exchanges_used = exchanges_used
+                existing_buy_object.exchange_amounts = exchange_amounts
+                existing_buy_object.data = data
+            }
+
+            this.props.add_buy_album_transaction_to_stack_from_dialog_page(existing_buy_object)
+            this.props.notify(this.props.app_state.loc['18'], 1700);
+        }
+    }
+
+    get_total_payment_amounts(){
+        var exchanges_used = []
+        var exchange_amounts = {}
+        var selected_tracks = [this.state.data['item']]
+        var object = this.state.data['object']
+
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(t.type == this.props.app_state.loc['2962']/* 'buy-album' */ && t.album['id'] == object['id']){
+                var its_selected_songs = t.selected_tracks;
+                its_selected_songs.forEach(song => {
+                    selected_tracks.push(song)
+                });
+            }
+        }
+
+        selected_tracks.forEach(track => {
+            var track_price_data = track['price_data']
+            track_price_data.forEach(price => {
+                var exchange_id = price['id']
+                var amount = price['amount']
+                if(!exchanges_used.includes(exchange_id)){
+                    exchanges_used.push(exchange_id)
+                    exchange_amounts[exchange_id] = bigInt(0)
+                }
+                exchange_amounts[exchange_id] = bigInt(exchange_amounts[exchange_id]).add(amount)
+            });
+        });
+
+        return {exchanges_used:exchanges_used, exchange_amounts:exchange_amounts}
+    }
+
+    check_if_sender_can_afford_payments(data){
+        var exchanges_used = [].concat(data.exchanges_used)
+        var exchange_amounts = data.exchange_amounts
+        var e5 = this.state.e5
+
+        var can_pay = true;
+        for(var i=0; i<exchanges_used.length; i++){
+            var token_id = exchanges_used[i]
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
+            var final_amount = exchange_amounts[token_id]
+
+            if(bigInt(token_balance).lesser(final_amount)){
+                can_pay = false
+            }
+        }
+        return can_pay
+    }
+
+    does_subscriptions_exist_in_object(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+            return true
+        }
+        return false
+    }
+
+    check_if_sender_has_paid_subscriptions(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs=  true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
+    }
+
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
+        if(my_payment == null || my_payment == 0) return false;
+        return true
     }
 
     

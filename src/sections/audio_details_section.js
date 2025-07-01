@@ -1328,12 +1328,30 @@ return data['data']
                             </div>
                         ))}
                     </div>
+                    {this.render_unadded_songs_if_in_my_collection_page(object)}
                 </div>
             </div>
         )
     }
 
-    render_song(item, object, index, type){
+    render_unadded_songs_if_in_my_collection_page(object){
+        var items = this.get_songs_to_display_if_in_my_collection_page(object)
+        if(items.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            {this.render_song(item, object, index, 'album', true)} 
+                            <div style={{height:5}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    render_song(item, object, index, type, is_other){
         var audio_file = item['track']
         if(!this.has_file_loaded(audio_file)){
             return(
@@ -1359,9 +1377,10 @@ return data['data']
         }
         var word_wrap_value = this.longest_word_length(song_title) > 53 ? 'break-word' : 'normal'
         var view_count = this.get_file_view_count(audio_file)
+        var opacity = is_other == true ? 0.7 : 1.0
         return(
             <div onClick={() => this.when_song_item_clicked_selector(item, object, type)}>
-                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius}}>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': border_radius, 'opacity':opacity}}>
                     {this.render_image_if_playlist_item(item, type)}
                     {this.render_space_if_playlist_item(type)}
                     <div style={{height:'100%', width:'100%'}}>
@@ -1561,6 +1580,22 @@ return data['data']
             return songs_to_display
         }else{
             return object['ipfs'].songs
+        }
+    }
+
+    get_songs_to_display_if_in_my_collection_page(object){
+        if(this.is_page_my_collection_page()){
+            var songs_to_display = []
+            var items = object['ipfs'].songs
+            items.forEach(song => {
+                if(!this.is_song_available_for_adding_to_playlist(song)){
+                    songs_to_display.push(song)
+                }
+            });
+            return songs_to_display
+        }
+        else{
+            return []
         }
     }
 
