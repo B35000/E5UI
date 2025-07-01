@@ -803,7 +803,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -3030,12 +3030,13 @@ class App extends Component {
       audiplayer_position:this.state.audiplayer_position,
       address: this.get_account_address(),
       stacked_ids: this.get_stacked_transaction_ids(),
+      rating_denomination: this.state.rating_denomination,
     }
   }
   
   get_account_address(){
-    if(this.props.app_state.accounts[this.props.app_state.selected_e5] != null){
-      return this.props.app_state.accounts[this.props.app_state.selected_e5]
+    if(this.state.accounts[this.state.selected_e5] != null){
+      return this.state.accounts[this.state.selected_e5]
     }
   }
 
@@ -3174,6 +3175,7 @@ class App extends Component {
 
       var stack_address = stack_items.length > 0 ? state.address : null
       var stacked_ids = stack_items.length > 0 ? state.stacked_ids : null
+      var rating_denomination = state.rating_denomination == null ? this.state.rating_denomination : state.rating_denomination
 
       this.setState({
         theme: theme,
@@ -3235,7 +3237,8 @@ class App extends Component {
         explore_display_type: explore_display_type,
         audiplayer_position: audiplayer_position,
         stack_address: stack_address,
-        stacked_ids: stacked_ids
+        stacked_ids: stacked_ids,
+        rating_denomination: rating_denomination,
       })
       var me = this;
       setTimeout(function() {
@@ -3279,6 +3282,7 @@ class App extends Component {
       me.stack_page.current?.set_selected_minified_content_setting_tag()
       me.stack_page.current?.set_selected_auto_run_setting_tag()
       me.stack_page.current?.set_selected_audiplayer_position_setting_tag()
+      me.stack_page.current?.set_selected_rating_denomination_setting_tag()
     }, (1 * 1000));
   }
 
@@ -6790,7 +6794,7 @@ class App extends Component {
     if(this.state.is_reloading_stack_due_to_ios_run == true){
       return(
         <div style={{height: '100%', width:'100%','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-            <img src={this.state.theme['letter']} style={{height:'auto',width:'18%'}} />
+            <img alt="" src={this.state.theme['letter']} style={{height:'auto',width:'18%'}} />
         </div>
       );
     }
@@ -6803,7 +6807,7 @@ class App extends Component {
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
-      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)}
+      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)}
       
       />
     )
@@ -6907,6 +6911,8 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
         me.set_cookies()
+        const page = me.homepage.current?.get_selected_page()
+        me.load_data_from_page_in_focus(page)
     }, (1 * 1000));
   }
 
@@ -7379,7 +7385,14 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.set_cookies()
-      me.reset_background_sync()
+    }, (1 * 1000));
+  }
+
+  when_rating_denomination_changed(item){
+    this.setState({rating_denomination: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -7388,7 +7401,7 @@ class App extends Component {
 
   set_can_switch_e5_value(value){
     this.setState({can_switch_e5s: value})
-}
+  }
 
   lock_run(value){
     var clone = structuredClone(this.state.is_running)
@@ -8150,7 +8163,7 @@ class App extends Component {
                 account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
             }
             if(e5 != '' && account != ''){
-                if(this.props.app_state.e5s['data'].includes(e5)){
+                if(this.state.e5s['data'].includes(e5)){
                     if(final_obj[e5] == null){
                         final_obj[e5] = []
                     }
@@ -8177,7 +8190,7 @@ class App extends Component {
     var account_entries = 0
     try{
         keys.forEach(key => {
-            if(this.props.app_state.e5s['data'].includes(key)){
+            if(this.state.e5s['data'].includes(key)){
                 if(final_obj[key] == null){
                     final_obj[key] = []
                 }
@@ -14915,15 +14928,15 @@ class App extends Component {
   }
 
   get_file_data(ecid_obj){
-    if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
-    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return null
     return data['data']
   }
 
   get_file_known_hash(ecid_obj){
-    if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
-    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return null
     return data['hash']
   }
@@ -16888,8 +16901,8 @@ return data['data']
 
   has_file_loaded(audio_file){
     var ecid_obj = this.get_cid_split(audio_file)
-    if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return false
-    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return false
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return false
     if(data['data'] == null) return false
     return true

@@ -664,7 +664,7 @@ class ViewGroups extends Component {
             var rating = object_data == null ? 5.0 : object_data['rating']
             var rating_total = object_data == null ? 10.0 : object_data['rating_total']
             var message = object_data == null ? null : object_data['message']
-            var percentage = Math.floor((rating/rating_total) * 100)
+            var percentage = this.props.rating_denomination == 'percentage' ? Math.floor((rating/rating_total) * 100)+'%' : rating
             if(rating_total == 10.0){
                 rating = (rating/rating_total) * 5
             }
@@ -680,7 +680,7 @@ class ViewGroups extends Component {
                         readonly={true}
                     />
                     {rating > 0 && (
-                        <p style={{ 'margin': '4px 0px 0px 7px', color: this.props.theme['primary_text_color'], 'font-family': this.props.font, 'font-size': '14px' }} className="fw-bold">{percentage}%</p>
+                        <p style={{ 'margin': '4px 0px 0px 7px', color: this.props.theme['primary_text_color'], 'font-family': this.props.font, 'font-size': '14px' }} className="fw-bold">{percentage}</p>
                     )}
                     {message && (
                         <p style={{ 'margin': '4px 0px 0px 7px', color: this.props.theme['secondary_text_color'], 'font-family': this.props.font, 'font-size': '14px' }}> • {message}</p>

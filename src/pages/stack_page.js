@@ -104,6 +104,7 @@ class StackPage extends Component {
         get_auto_run_setting_object:this.get_auto_run_setting_object(),
         get_explore_display_type_setting_object:this.get_explore_display_type_setting_object(),
         get_audiplayer_position_setting_object:this.get_audiplayer_position_setting_object(),
+        get_rating_denomination_setting_object:this.get_rating_denomination_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -210,6 +211,10 @@ class StackPage extends Component {
 
         // var theme_stage = 'all-available'
         var final_array = obj[theme_stage]
+        if(theme_stage == 'all-available' && !this.do_i_have_an_account()){
+            final_array = obj['lightcolor-available']
+        }
+
         return{
             'i':{
                 active:'e', 
@@ -218,6 +223,18 @@ class StackPage extends Component {
                 ['xor','',0], final_array, [this.get_light_dark_option(final_array)]
             ],
         };
+    }
+
+    do_i_have_an_account(){
+        for(var i=0; i<this.state.e5s['data'].length; i++){
+          var e5 = this.state.e5s['data'][i]
+          if(this.state.e5s[e5].active == true){
+              if(this.state.user_account_id[e5] != null || this.state.user_account_id[e5] > 1000){
+                return true;
+              }
+          }
+        }
+        return false
     }
 
     get_254_state_colors(theme){
@@ -1035,6 +1052,37 @@ class StackPage extends Component {
 
     set_selected_audiplayer_position_setting_tag(){
         this.setState({get_audiplayer_position_setting_object: this.get_audiplayer_position_setting_object(),})
+    }
+
+
+
+
+
+
+
+
+
+
+    get_rating_denomination_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593hj']/* 'percentage' */, this.props.app_state.loc['1593hk']/* 'score' */,], [this.get_selected_rating_denomination_setting_option()]
+            ], 
+        }
+    }
+
+    get_selected_rating_denomination_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593hj']/* 'percentage' */] = 1
+        obj[this.props.app_state.loc['1593hk']/* 'score' */] = 2
+        return obj[this.props.app_state.rating_denomination]
+    }
+
+    set_selected_rating_denomination_setting_tag(){
+        this.setState({get_rating_denomination_setting_object: this.get_rating_denomination_setting_object(),})
     }
 
 
@@ -10104,15 +10152,24 @@ class StackPage extends Component {
                     {this.render_detail_item('0')}
 
 
-
                     {this.render_theme_image_setting_if_any()}
-
 
 
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -10339,6 +10396,13 @@ class StackPage extends Component {
         var selected_item = this.get_selected_item(this.state.get_audiplayer_position_setting_object, 'e')
         this.props.when_audiplayer_position_changed(selected_item)
     }
+
+    when_get_rating_denomination_setting_object_updated(tag_obj){
+        this.setState({get_rating_denomination_setting_object: tag_obj})
+        var selected_item = this.get_selected_item(this.state.get_rating_denomination_setting_object, 'e')
+        this.props.when_rating_denomination_changed(selected_item)
+    }
+    
 
 
 

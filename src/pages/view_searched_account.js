@@ -234,8 +234,8 @@ class SearchedAccountPage extends Component {
         if(this.state.searched_account['id'] == item['id'] && this.state.searched_account['e5'] == item['e5']){
             return(
                 <div onClick={() => this.props.when_searched_account_reclicked(item, item['id'])}>
-                {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
-                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }

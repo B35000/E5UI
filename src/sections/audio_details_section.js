@@ -87,7 +87,7 @@ class AudioDetailSection extends Component {
     
     state = {
         selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], get_navigate_playlist_details_tags_object_tags: this.get_navigate_playlist_details_tags_object_tags(),
-        screen_width:0, visible_hidden_messages:[],
+        screen_width:0, visible_hidden_messages:[], selected_rating_group_filter:{}
     };
 
     reset_tags(){
@@ -100,7 +100,7 @@ class AudioDetailSection extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */, this.props.app_state.loc['a2527ca']/* 'ratings ⭐' */], [1]
             ],
         };
     }
@@ -2331,14 +2331,29 @@ return data['data']
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}} >
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items, object)}
-                        <div ref={this.messagesEnd}/>
-                    </ul>
-                </div>
-            )
-            }else{
+                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}} >
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {this.render_messages(final_items, object)}
+                            <div ref={this.messagesEnd}/>
+                        </ul>
+                    </div>
+                )
+            }
+            else if(selected_view_option == this.props.app_state.loc['a2527ca']/* 'ratings ⭐' */){
+                var groups = this.filter_ratings(final_items)
+                var selected_ratings = this.get_selected_ratings(groups, object)
+                return(
+                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
+                        {this.render_filter_option_picker(groups, object)}
+                        <div style={{height: 10}}/>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {this.render_messages(selected_ratings, object)}
+                            <div ref={this.messagesEnd}/>
+                        </ul>
+                    </div>
+                )
+            }
+            else{
                 return(
                     <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -2350,6 +2365,101 @@ return data['data']
             }
         }
     }
+
+    get_selected_ratings(groups, object){
+        var selected = this.state.selected_rating_group_filter[object['e5_id']]
+        if(selected == 'bottom'){
+            return groups.bottom
+        }
+        else if(selected == 'middle'){
+            return groups.middle
+        }
+        else if(selected == 'top'){
+            return groups.high
+        }
+        else{
+            return groups.all
+        }
+    }
+
+    filter_ratings(items){
+        const groups = {bottom:[], middle:[], high:[], all:[]}
+        items.forEach(item => {
+            const rating = item['rating']
+            if(rating != null){
+                const rating_total = item['rating_total']
+                const percentage = Math.floor((rating/rating_total) * 100)
+                if(percentage > 66){
+                    groups.high.push(item)
+                }
+                else if(percentage > 33){
+                    groups.middle.push(item)
+                }
+                else{
+                    groups.bottom.push(item)
+                }
+                groups.all.push(item)
+            }
+        });
+        return groups
+    }
+
+    render_filter_option_picker(groups, object){
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 3px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.set_rating_filter_preference('bottom', object)}>
+                        <div>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cb']/* 'Bottom  ratings' */, 'details':this.format_number(groups.bottom.length), 'size':'s'})}
+                            {this.render_line_if_selected('bottom', object)}
+                        </div>
+                        <div style={{width: 10}}/>
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.set_rating_filter_preference('middle', object)}>
+                        <div>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cc']/* 'Middle  ratings' */, 'details':this.format_number(groups.middle.length), 'size':'s'})}
+                            {this.render_line_if_selected('middle', object)}
+                        </div>
+                        <div style={{width: 10}}/>
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.set_rating_filter_preference('top', object)}>
+                        <div>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cd']/* 'Top  ratings' */, 'details':this.format_number(groups.high.length), 'size':'s'})}
+                            {this.render_line_if_selected('top', object)}
+                        </div>
+                        <div style={{width: 10}}/>
+                    </li>
+                </ul>
+            </div>
+        )
+    }
+
+    render_line_if_selected(option, object){
+        if(this.state.selected_rating_group_filter[object['e5_id']] == option){
+            return(
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )
+        }
+    }
+
+    format_number(number){
+        if(number == 0){
+            return '000'
+        }
+        return number_with_commas(number)
+    }
+
+    set_rating_filter_preference(option, object){
+        var clone = structuredClone(this.state.selected_rating_group_filter)
+        if(clone[object['e5_id']] == option){
+            clone[object['e5_id']] = null
+        }else{
+            clone[object['e5_id']] = option
+        }
+        this.setState({selected_rating_group_filter: clone})
+    }
+
+
 
     render_messages(items, object){
         var middle = this.props.height-200;        
@@ -3095,9 +3205,13 @@ return data['data']
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
 
+        var rating_denomination = this.props.app_state.rating_denomination == this.props.app_state.loc['1593hj']/* percentage */ ? 'percentage' : 'score'
+
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list} select_deselect_tag={this.props.select_deselect_tag.bind(this)} />
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list} select_deselect_tag={this.props.select_deselect_tag.bind(this)} rating_denomination={rating_denomination}
+                
+                />
             </div>
         )
 

@@ -5979,7 +5979,7 @@ class home_page extends Component {
         if(number == 0){
             return '000'
         }
-        return number
+        return number_with_commas(number)
     }
 
     get_all_work_notification_items(types){
