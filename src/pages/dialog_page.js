@@ -826,11 +826,48 @@ class DialogPage extends Component {
 
 
     render_song_options(){
+        var data = this.state.data
+        var from = data['from']
+        
+        if(from == 'audio_details_section'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items_data()}
+                </div>
+            )
+        }
+        else if(from == 'full_audio_page'){
+            return(
+                <div>
+                    {this.render_full_audio_page_song_option_items_data()}
+                </div>
+            )
+        }
+        else if(from == 'audio_details_section2'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items2_data()}
+                </div>
+            )
+        }
+        else if(from == 'audio_details_section3'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items3_data()}
+                </div>
+            )
+        }
+    }
+
+    render_audio_details_section_song_option_items_data(){
         var size = this.props.size
         if(size == 's'){
             return(
                 <div>
-                    {this.render_song_options_items()}
+                    {this.render_audio_details_section_song_option_items()}
+                    {this.render_audio_details_section_song_option_items_2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -838,10 +875,10 @@ class DialogPage extends Component {
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_song_options_items()}
+                        {this.render_audio_details_section_song_option_items()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_audio_details_section_song_option_items_2()}
                     </div>
                 </div>
                 
@@ -851,47 +888,13 @@ class DialogPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_song_options_items()}
+                        {this.render_audio_details_section_song_option_items()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_audio_details_section_song_option_items_2()}
                     </div>
                 </div>
                 
-            )
-        }
-    }
-
-    render_song_options_items(){
-        var data = this.state.data
-        var from = data['from']
-        
-        if(from == 'audio_details_section'){
-            return(
-                <div>
-                    {this.render_audio_details_section_song_option_items()}
-                </div>
-            )
-        }
-        else if(from == 'full_audio_page'){
-            return(
-                <div>
-                    {this.render_full_audio_page_song_option_items()}
-                </div>
-            )
-        }
-        else if(from == 'audio_details_section2'){
-            return(
-                <div>
-                    {this.render_audio_details_section_song_option_items2()}
-                </div>
-            )
-        }
-        else if(from == 'audio_details_section3'){
-            return(
-                <div>
-                    {this.render_audio_details_section_song_option_items3()}
-                </div>
             )
         }
     }
@@ -921,8 +924,13 @@ class DialogPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2999']/* 'Play Next.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 {this.render_detail_item('0')}
+            </div>
+        )
+    }
 
-
+    render_audio_details_section_song_option_items_2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3000']/* 'Play Last.' */, 'details':this.props.app_state.loc['3006c']/* 'Play the track last. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_play_last_clicked()}>
@@ -931,10 +939,6 @@ class DialogPage extends Component {
 
 
                 {this.render_buy_track_option_if_unbought()}
-
-                
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -1145,18 +1149,57 @@ class DialogPage extends Component {
         this.props.play_next_clicked(song)
     }
 
-
     when_play_last_clicked(){
         var song = this.state.data['item']
         this.props.play_last_clicked(song)
     }
-
 
     when_add_to_cache_clicked(){
         var song = this.state.data['item']
         this.props.add_song_to_cache(song)
     }
 
+
+
+    render_full_audio_page_song_option_items_data(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_full_audio_page_song_option_items()}
+                    {this.render_full_audio_page_song_option_items2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_full_audio_page_song_option_items()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_full_audio_page_song_option_items2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_full_audio_page_song_option_items()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_full_audio_page_song_option_items2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
 
     render_full_audio_page_song_option_items(){
         return(
@@ -1183,8 +1226,13 @@ class DialogPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2999']/* 'Play Next.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 {this.render_detail_item('0')}
+            </div>
+        )
+    }
 
-
+    render_full_audio_page_song_option_items2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3000']/* 'Play Last.' */, 'details':this.props.app_state.loc['3006c']/* 'Play the track last. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_play_last_clicked()}>
@@ -1198,8 +1246,6 @@ class DialogPage extends Component {
                 <div onClick={() => this.when_remove_from_queue_clicked()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3001']/* 'Remove from queue.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -1222,6 +1268,46 @@ class DialogPage extends Component {
 
 
 
+
+    render_audio_details_section_song_option_items2_data(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items2()}
+                    {this.render_audio_details_section_song_option_items22()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_audio_details_section_song_option_items2()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_audio_details_section_song_option_items22()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_audio_details_section_song_option_items2()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_audio_details_section_song_option_items22()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
 
     render_audio_details_section_song_option_items2(){
         return(
@@ -1249,7 +1335,13 @@ class DialogPage extends Component {
                 </div>
                 {this.render_detail_item('0')}
 
+            </div>
+        )
+    }
 
+    render_audio_details_section_song_option_items22(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2999']/* 'Play Next.' */, 'details':this.props.app_state.loc['3006b']/* 'Play the track next.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_play_next_clicked()}>
@@ -1263,8 +1355,6 @@ class DialogPage extends Component {
                 <div onClick={() => this.when_play_last_clicked()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3000']/* 'Play Last.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -1279,7 +1369,44 @@ class DialogPage extends Component {
 
     
 
-
+    render_audio_details_section_song_option_items3_data(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_audio_details_section_song_option_items3()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_audio_details_section_song_option_items3()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_audio_details_section_song_option_items3()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
 
     render_audio_details_section_song_option_items3(){
         return(
@@ -1291,9 +1418,6 @@ class DialogPage extends Component {
                 </div>
                 <div style={{height:15}}/>
                 {this.render_playlist_item(this.state.data['object'])}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
