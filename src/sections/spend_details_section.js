@@ -292,6 +292,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
                     {/* {this.render_post_state(selected_object)} */}
+                    {this.render_token_type(selected_object)}
                     {this.render_object_age(selected_object, item)}
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                     {this.render_detail_item('0')}
@@ -453,6 +454,27 @@ class SpendDetailSection extends Component {
             var country_color = obj[country_item_data.color[0]]
             var title = country_item_data.code /* +' '+country_item_data.emoji */
             var details = country_color+' '+country_item_data.call_code
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_token_type(object){
+        if(object['ipfs'].token_type != null){
+            var obj = {
+                'e':this.props.app_state.loc['629']/* '📈 e-Token' */,
+                'paid':this.props.app_state.loc['631']/* '☝️ Paid Token' */,
+                'free':this.props.app_state.loc['633']/* '🫰 Free Token' */,
+                'utility':this.props.app_state.loc['635']/* '🔧 Utility Token' */,
+                'end':his.props.app_state.loc['2769'],
+                'custom':this.props.app_state.loc['2447p']/* 'Custom Token.' */,
+            }
+            const title = this.props.app_state.loc['2447q']/* 'Token Type.' */
+            const details = obj[object['ipfs'].token_type]
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}

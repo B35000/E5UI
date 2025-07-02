@@ -775,7 +775,7 @@ return data['data']
     }
 
 
-    preset_e_token(){
+    preset_e_token(is_checking_type){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [1] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
@@ -787,8 +787,7 @@ return data['data']
         var spend_exchange = this.get_item_in_array(5, this.props.app_state.created_tokens[this.state.e5])
         var spend_exchange_mint_limit = spend_exchange == null ? 72_000_000 : spend_exchange['data'][1][0/* <0>default_exchange_amount_buy_limit */]
 
-
-        this.setState({
+        var set_object = {
             new_token_type_tags_object: type, 
             token_exchange_liquidity_total_supply: bigInt(spend_exchange_mint_limit*1000),
             default_exchange_amount_buy_limit: bigInt(spend_exchange_mint_limit*300),
@@ -806,18 +805,29 @@ return data['data']
             minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0,
             new_token_block_limit_sensitivity_tags_object: block_limit_sensitivity,
             default_authority_mint_limit:0, new_token_halving_type_tags_object: halving_type, maturity_limit:0,
-        });
+        }
 
-        this.props.notify(this.props.app_state.loc['637']/* 'e-token preset has been applied' */, 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['637']/* 'e-token preset has been applied' */, 2500)
+        }
+
+        
+
+        
     }
 
-    get_item_in_array(id, object_array){
-        var object = object_array.find(x => x['id'] === id);
-        return object
-    }
-
-
-    preset_paid_token(){
+    preset_paid_token(is_checking_type){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [1] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [1] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
@@ -826,7 +836,7 @@ return data['data']
         var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['614']/* 'fixed' */, this.props.app_state.loc['615']/* 'spread' */], [1] ], };
         var price = [{'id':'5', 'amount':bigInt('1')}]
 
-        this.setState({
+        var set_object = {
             new_token_type_tags_object: type,
             token_exchange_liquidity_total_supply: bigInt('1e72'),
             default_exchange_amount_buy_limit: bigInt('1e6'),
@@ -843,12 +853,26 @@ return data['data']
 
             minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, 
             minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object:block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object:halving_type, maturity_limit:0
-        })
+        }
 
-        this.props.notify(this.props.app_state.loc['638']/* 'End token preset has been applied' */, 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['638']/* 'Paid token preset has been applied' */, 2500)
+        }
+
     }
 
-    preset_free_token(){
+    preset_free_token(is_checking_type){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [2] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [1] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [1] ], };
@@ -857,7 +881,7 @@ return data['data']
         var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['614']/* 'fixed' */, this.props.app_state.loc['615']/* 'spread' */], [2] ], };
         var price = []
 
-        this.setState({
+        var set_object = {
             new_token_type_tags_object: type,
             default_exchange_amount_buy_limit: bigInt('720e6'),
             default_exchange_amount_sell_limit:0,
@@ -877,12 +901,25 @@ return data['data']
 
 
             token_exchange_liquidity_total_supply:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_entered_contracts_for_first_buy:0,
-        })
+        }
 
-        this.props.notify(this.props.app_state.loc['639']/* 'Spend token preset has been applied' */, 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['639']/* 'Free preset has been applied' */, 2500)
+        }
     }
 
-    preset_utility_token(){
+    preset_utility_token(is_checking_type){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [2] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
@@ -891,7 +928,7 @@ return data['data']
         var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['614']/* 'fixed' */, this.props.app_state.loc['615']/* 'spread' */], [1] ], };
         var price = [{'id':'3', 'amount':bigInt('1')}, {'id':'5', 'amount':bigInt('1')}]
 
-        this.setState({
+        var set_object = {
             new_token_type_tags_object: type,
             default_exchange_amount_buy_limit:bigInt('1e62'),
             default_exchange_amount_sell_limit:bigInt('1e62'),
@@ -906,13 +943,25 @@ return data['data']
             price_data: price,
 
             token_exchange_liquidity_total_supply:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object: halving_type, maturity_limit:0, 
-        })
+        }
 
-        this.props.notify(this.props.app_state.loc['640']/* 'Utility token preset has been applied' */, 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['640']/* 'Utility preset has been applied' */, 2500)
+        }
     }
 
-
-    preset_end_token(){
+    preset_end_token(is_checking_type){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [2] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
@@ -923,7 +972,7 @@ return data['data']
 
         var number = bigInt('9e143')
 
-        this.setState({
+        var set_object = {
             new_token_type_tags_object: type,
             default_exchange_amount_buy_limit:bigInt('1e62'),
             default_exchange_amount_sell_limit:bigInt('1e62'),
@@ -940,9 +989,44 @@ return data['data']
             minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object: halving_type, maturity_limit:0, 
 
             token_exchange_liquidity_total_supply: number, default_depth: this.get_default_depth(number)
-        })
+        }
 
-        this.props.notify(this.props.app_state.loc['2768']/* 'End token preset has been applied.' */, 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['2768']/* 'End preset has been applied' */, 2500)
+        }
+    }
+
+
+    get_token_type(){
+        if(this.preset_e_token(true) == true){
+            return 'e'
+        }
+        else if(this.preset_paid_token(true) == true){
+            return 'paid'
+        }
+        else if(this.preset_free_token(true) == true){
+            return 'free'
+        }
+        else if(this.preset_utility_token(true) == true){
+            return 'utility'
+        }
+        else if(this.preset_end_token(true) == true){
+            return 'end'
+        }
+        else{
+            return 'custom'
+        }
     }
    
 
@@ -3759,7 +3843,7 @@ return data['data']
             this.setState({content_channeling_setting: me.props.app_state.content_channeling,
                 device_language_setting :me.props.app_state.device_language,
                 device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
+                e5 :me.props.app_state.selected_e5, token_type:this.get_token_type()})
             
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)

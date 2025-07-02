@@ -270,6 +270,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', item['id'])}
                     <div style={{ height: 10 }} />
                     {this.render_post_state(object)}
+                    {this.render_contract_type(object)}
                     {this.render_detail_item('3', { 'title': '' + author, 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     {this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
@@ -358,6 +359,26 @@ class ContractDetailsSection extends Component {
             var country_color = obj[country_item_data.color[0]]
             var title = country_item_data.code /* +' '+country_item_data.emoji */
             var details = country_color+' '+country_item_data.call_code
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_contract_type(object){
+        if(object['ipfs'].contract_type != null){
+            var obj = {
+                'workgroup':this.props.app_state.loc['173'],
+                'personal':this.props.app_state.loc['175'],
+                'work':this.props.app_state.loc['177'],
+                'life':this.props.app_state.loc['179'],
+                'custom':this.props.app_state.loc['2214g'],
+            }
+            const title = this.props.app_state.loc['2214h']/* 'Contract Type.' */
+            const details = obj[object['ipfs'].contract_type]
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}

@@ -485,7 +485,7 @@ class NewContractPage extends Component {
         }
     }
 
-    preset_workgroup_contract(){
+    preset_workgroup_contract(is_checking_type){
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
@@ -500,7 +500,7 @@ class NewContractPage extends Component {
         var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
         var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
-        this.setState({
+        var set_object = {
             new_contract_type_tags_object: contract_type,
             default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
             max_extend_enter_contract_limit: (60*60*24*7*53),/* 1 year */
@@ -517,12 +517,26 @@ class NewContractPage extends Component {
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
             price_data:price, default_consensus_majority_limit: bigInt('75e16')
-        })
+        }
 
-        this.props.notify(this.props.app_state.loc['181'], 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['181'], 2500)
+        }
+
     }
 
-    preset_personal_contract(){
+    preset_personal_contract(is_checking_type){
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [2] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [1] ], };
         var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1] ], };
@@ -531,7 +545,7 @@ class NewContractPage extends Component {
         var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
         var price = [{'id':'3', 'amount':bigInt('3500')}]
 
-        this.setState({
+        var set_object = {
             new_contract_type_tags_object: contract_type,
             default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
             max_extend_enter_contract_limit: (60*60*24*7*53),/* 1 year */
@@ -548,12 +562,26 @@ class NewContractPage extends Component {
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
             price_data:price, default_consensus_majority_limit: 0
-        })
+        }
 
-        this.props.notify(this.props.app_state.loc['182'], 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['182'], 2500)
+        }
+
     }
 
-    preset_work_contract(){
+    preset_work_contract(is_checking_type){
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
@@ -569,7 +597,7 @@ class NewContractPage extends Component {
         var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [2] ], };
         var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
-        this.setState({
+        var set_object = {
             new_contract_type_tags_object: contract_type,
             default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
             max_extend_enter_contract_limit: (60*60*24*120),/* 4m0 */
@@ -586,12 +614,26 @@ class NewContractPage extends Component {
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
             price_data:price, default_consensus_majority_limit: 0
-        })
+        }
 
-        this.props.notify(this.props.app_state.loc['183'], 2500)
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['183'], 2500)
+        }
+
     }
    
-    preset_life_contract(){
+    preset_life_contract(is_checking_type){
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
         
@@ -608,7 +650,7 @@ class NewContractPage extends Component {
 
 
 
-        this.setState({
+        var set_object = {
             new_contract_type_tags_object: contract_type,
             default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
             max_extend_enter_contract_limit: bigInt('1e72'),/* forever */
@@ -625,10 +667,43 @@ class NewContractPage extends Component {
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
             price_data:price, default_consensus_majority_limit: 0
-        })
+        }
+
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(this.state[setting] != set_object[setting]){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['184'], 2500)
+        }
+
+    }
 
 
-        this.props.notify(this.props.app_state.loc['184'], 2500)
+
+    get_contract_type(){
+        if(this.preset_workgroup_contract(true) == true){
+            return 'workgroup'
+        }
+        else if(this.preset_personal_contract(true) == true){
+            return 'personal'
+        }
+        else if(this.preset_work_contract(true) == true){
+            return 'work'
+        }
+        else if(this.preset_life_contract(true) == true){
+            return 'life'
+        }
+        else{
+            return 'custom'
+        }
     }
 
 
@@ -2209,6 +2284,7 @@ class NewContractPage extends Component {
                 device_country :me.props.app_state.device_country,
                 e5 :me.props.app_state.selected_e5,
                 voter_weight_exchange_id: voter_weight_exchange_target,
+                contract_type:this.get_contract_type(),
             })
 
             setTimeout(function() {
