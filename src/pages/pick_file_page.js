@@ -207,13 +207,13 @@ class PickFilePage extends Component {
             return t
         }
         else if(type == 'lyric'){
-            var text = this.props.app_state.loc['2958']/* 'Pick one or multiple zip files from your storage.To see an audio file here, you need to upload it in the stack page.' */
+            var text = this.props.app_state.loc['2958']/* 'Pick one or multiple lyric files from your storage.To see an lyric file here, you need to upload it in the stack page.' */
             var t = text.replaceAll(this.props.app_state.loc['2955']/* image */,this.props.app_state.loc['1593hb']/* 'lyric' */)
             t = t.replaceAll('an lyric','a lyric')
             return t
         }
         else if(type == 'subtitle'){
-            var text = this.props.app_state.loc['2958']/* 'Pick one or multiple zip files from your storage.To see an audio file here, you need to upload it in the stack page.' */
+            var text = this.props.app_state.loc['2958']/* 'Pick one or multiple subtitle files from your storage.To see an subtitle file here, you need to upload it in the stack page.' */
             var t = text.replaceAll(this.props.app_state.loc['2955']/* image */,this.props.app_state.loc['1593hc']/* 'subtitle' */)
             t = t.replaceAll('an subtitle','a subtitle')
             return t
