@@ -1835,6 +1835,7 @@ return data['data']
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r'] 'Forget File.' , 'action':''})}
                     </div> */}
                     {this.render_verify_file_button(hash, ecid_obj)}
+                    {this.render_delete_file_button(hash, data)}
                 </div>
             )
         }
@@ -1957,6 +1958,22 @@ return data['data']
                     <div style={{height:10}}/>
                     <div onClick={() => this.props.verify_file(ecid_obj)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055by']/* 'Verify File' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_delete_file_button(hash, data){
+        if(hash != null && this.is_file_available(hash) && data['nitro'] != null && this.props.app_state.file_streaming_data[hash] != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055do']/* '🗑️ Delete File' */, 'details':this.props.app_state.loc['3055dp']/* 'Delete the file from the node and halt its streaming immediately and forever. This action cannot be undone.' */, 'size':'l'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3055dq']/* 'You wont get the file\'s space back but you wont pay for the files renewal.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.props.delete_nitro_file(hash, data)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055do']/* '🗑️ Delete File' */, 'action':'', 'font':this.props.app_state.font})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>

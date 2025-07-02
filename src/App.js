@@ -14293,7 +14293,8 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)}
+        <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)} 
+        delete_nitro_file={this.delete_nitro_file.bind(this)}
         
         />
       </div>
@@ -15013,6 +15014,88 @@ class App extends Component {
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
     this.open_dialog_bottomsheet()
+  }
+
+  delete_nitro_file = async (hash, data) => {
+    const nitro_e5_id = data['nitro']
+    const nitro_id = nitro_e5_id.split('E')[0]
+    const nitro_e5 = 'E'+nitro_e5_id.split('E')[1]
+    const nitro_object = this.state.created_nitro_mappings[nitro_e5][nitro_id]
+
+    if(nitro_object == null){
+      this.prompt_top_notification(this.getLocale()['1593da']/* 'Please wait a few moments for E5 to syncronize fully.' */, 4500)
+      return;
+    }
+
+    const node_details = this.state.nitro_node_details[nitro_e5_id]
+    if(node_details == null){
+      this.prompt_top_notification(this.getLocale()['3055dr']/* 'Please wait a few moments for the files node to come online.' */, 4500)
+      return;
+    }
+    
+    const block_hash_and_signature = await this.get_block_hash_and_signature2(nitro_e5)
+    if(block_hash_and_signature == null){
+      this.prompt_top_notification(this.getLocale()['3055cb']/* 'Something went wrong.' */, 4500)
+      return;
+    }
+
+    const node_url = nitro_object['ipfs'].node_url
+    var arg_obj = {
+      signature_data: block_hash_and_signature.data,
+      signature:block_hash_and_signature.signature,
+      file: hash,
+      e5: nitro_e5,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+
+    var request = `${node_url}/delete_file`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      if(obj.success == false){
+        console.log('apppage','Delete action was not successful', obj)
+        this.prompt_top_notification(this.getLocale()['3055cb']/* 'Something went wrong.' */, 4500)
+      }else{
+        var clone = structuredClone(this.state.file_streaming_data)
+        clone[hash].is_file_deleted = true
+        this.setState({file_streaming_data: clone})
+        this.prompt_top_notification(this.getLocale()['3055ds']/* 'File deleted successfully.' */, 4500)
+      }
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3055cb']/* 'Something went wrong.' */, 4500)
+    }
+  }
+
+  get_block_hash_and_signature2 = async (e5) => {
+    try{
+      const web3 = new Web3(this.get_web3_url_from_e5(e5))
+      var current_block_number = parseInt(await web3.eth.getBlockNumber())
+      var round_down_value = await this.get_round_down_value(web3, current_block_number)
+      var round_down_block = this.round_down(current_block_number, round_down_value)
+      var current_block = await web3.eth.getBlock(round_down_block);
+      var block_hash = current_block.hash.toString()
+
+      var address = this.state.accounts[e5].address
+      web3.eth.accounts.wallet.add(this.state.accounts[e5].privateKey);
+      var signature = await web3.eth.sign(block_hash, address)
+      return {data: block_hash, signature: signature, e5: this.state.selected_e5}
+    }catch(e){
+      console.log(e)
+      return null
+    }
   }
 
 
