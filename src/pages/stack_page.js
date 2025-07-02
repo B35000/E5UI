@@ -858,7 +858,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',/* this.props.app_state.loc['1593bk'] all */ this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */, this.props.app_state.loc['1593cd']/* 'documents' */, this.props.app_state.loc['1593ed']/* 'zip' */, this.props.app_state.loc['1593hb']/* 'lyric' */, this.props.app_state.loc['1593hc']/* 'subtitle' */], [0]
+                ['or','',0], ['e',/* this.props.app_state.loc['1593bk'] all */ this.props.app_state.loc['1593bl']/* 'images' */, this.props.app_state.loc['1593bm']/* 'audio' */, this.props.app_state.loc['1593bn']/* 'video' */, this.props.app_state.loc['1593cd']/* 'documents' */, this.props.app_state.loc['1593ed']/* 'zip' */, this.props.app_state.loc['1593hb']/* 'lyric' */, this.props.app_state.loc['1593hc']/* 'subtitle' */, this.props.app_state.loc['1593hl']/* 'deleted 🗑️' */], [0]
             ],
         };
     }
@@ -13763,12 +13763,13 @@ class StackPage extends Component {
                 </div>
             )
         }else{
+            var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
             return(
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <div style={{'margin':'3px 0px 3px 0px'}}>
-                                {this.render_uploaded_file(item, index)}
+                                {this.render_uploaded_file(item, index, selected_item)}
                             </div>
                         ))}
                     </ul>
@@ -13808,7 +13809,7 @@ class StackPage extends Component {
         var deleted_return_items = []
         items.forEach(ecid => {
             const data = this.get_cid_split(ecid)
-            if(data != null && (data['filetype'] == file_type || selected_item == 'e')){
+            if(data != null && (data['filetype'] == file_type || selected_item == 'e' || selected_item == this.props.app_state.loc['1593hl']/* 'deleted 🗑️' */)){
                 if(this.props.app_state.uploaded_data[data['filetype']] != null){
                     const file_data = this.props.app_state.uploaded_data[data['filetype']][data['full']]
                     if(file_data != null){
@@ -13822,13 +13823,15 @@ class StackPage extends Component {
                 }
             }
         });
-
-        var sorted_items = this.sortByAttributeDescending(return_items, 'time')
+        
+        const final_items = []
+        if(selected_item != this.props.app_state.loc['1593hl']/* 'deleted 🗑️' */){
+            var sorted_items = this.sortByAttributeDescending(return_items, 'time')
+            sorted_items.forEach(item => {
+                final_items.push(item['data'])
+            });
+        }
         var sorted_deleted_items = this.sortByAttributeDescending(deleted_return_items, 'time')
-        var final_items = []
-        sorted_items.forEach(item => {
-            final_items.push(item['data'])
-        });
         sorted_deleted_items.forEach(item => {
             final_items.push(item['data'])
         });
@@ -13851,11 +13854,12 @@ class StackPage extends Component {
         return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
-    render_uploaded_file(ecid_obj, index){
+    render_uploaded_file(ecid_obj, index, selected_item){
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         var opacity = this.props.app_state.uncommitted_upload_cids.includes(ecid_obj['full']) ? 0.6 : 1.0
-        if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+
+        if(data['nitro'] != null && !this.is_file_available(data['hash']) && selected_item != this.props.app_state.loc['1593hl']/* 'deleted 🗑️' */){
             opacity = 0.4
         }
         if(data != null){
@@ -13991,7 +13995,6 @@ class StackPage extends Component {
         }
         return 0
     }
-    
 
     when_file_clicked(ecid_obj){
         this.props.when_file_tapped(ecid_obj)
