@@ -6656,10 +6656,10 @@ class home_page extends Component {
                 {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2840']/* E5 Traffic Distribution. */}</p>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
-                        {traffic_proportion_events.map((item, index) => (
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2840']/* E5 Traffic Distribution. */}</p>
+                    
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                    {traffic_proportion_events.map((item, index) => (
                             <div>
                                 {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(item['percentage']+'%'), 'number':item['e5'], 'relativepower':item['percentage']+'%', })}
                             </div>

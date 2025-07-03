@@ -470,7 +470,7 @@ class EndDetailSection extends Component {
                 'paid':this.props.app_state.loc['631']/* '☝️ Paid Token' */,
                 'free':this.props.app_state.loc['633']/* '🫰 Free Token' */,
                 'utility':this.props.app_state.loc['635']/* '🔧 Utility Token' */,
-                'end':his.props.app_state.loc['2769'],
+                'end':this.props.app_state.loc['2769'],
                 'custom':this.props.app_state.loc['2447p']/* 'Custom Token.' */,
             }
             const title = this.props.app_state.loc['2447q']/* 'Token Type.' */

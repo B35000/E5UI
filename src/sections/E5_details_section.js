@@ -246,6 +246,8 @@ class E5DetailsSection extends Component {
 
                     {this.render_spend_bottom_80_dominance(obj)}
 
+                    {this.render_traffic_distribution_number(obj)}
+
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2234']}</p>
@@ -657,6 +659,55 @@ class E5DetailsSection extends Component {
         const bottomEntries = entries.slice(0, count);
         
         return Object.fromEntries(bottomEntries);
+    }
+
+
+
+
+
+    render_traffic_distribution_number(obj){
+        var item = this.load_traffic_proportion_data(obj)
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2840']/* E5 Traffic Distribution. */, 'subtitle':'e0', 'barwidth':(item['percentage']+'%'), 'number':item['percentage']+'%', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}  
+                </div>
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+    load_all_event_data(chart_id){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+
+            var e5_chart_data = this.props.app_state.all_data[e5]
+            if(e5_chart_data != null){
+                var e5s_events = e5_chart_data[chart_id]
+                all_objects = all_objects.concat(e5s_events)
+            }
+        }
+
+        return all_objects
+    }
+
+    load_traffic_proportion_data(obj){
+        var all_data = this.load_all_event_data('data').length
+        var return_data = {}
+        var e5 = obj['id']
+        var e5_chart_data = this.props.app_state.all_data[e5]
+        if(e5_chart_data != null){
+            var e5s_events = e5_chart_data['data'].length
+            var x = ((e5s_events * 100) / all_data)
+            var rounded_proportion = Math.round(x * 1000) / 1000
+            return_data = {'e5':e5, 'percentage':rounded_proportion}
+        }
+        else{
+            return_data = {'e5':e5, 'percentage':0}
+        }
+
+        return return_data
     }
     
 

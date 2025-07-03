@@ -118,12 +118,12 @@ class StorefrontDetailsSection extends Component {
               ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2695d']/* 'catalogue' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
           ],
           'direct-purchases':[
-              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
           ],
         }
 
         obj[this.props.app_state.loc['2603']] = [
-            ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
+            ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
         ]
 
         return obj
@@ -209,7 +209,7 @@ class StorefrontDetailsSection extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['1426']/* 'all' */ || selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */ || selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
+        else if(selected_item == this.props.app_state.loc['2695g']/* 'all' */ || selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */ || selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
             return(
                 <div>
                     {this.render_direct_purchases(object)}
@@ -1096,7 +1096,7 @@ class StorefrontDetailsSection extends Component {
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         if(filtered_purchases == null) return []
 
-        if(selected_item == this.props.app_state.loc['1426']/* 'all' */){
+        if(selected_item == this.props.app_state.loc['2695g']/* 'all' */){
             return filtered_purchases
         }
         else if(selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */){
