@@ -422,6 +422,49 @@ import etho_logo from './assets/etho.png'
 import oneledger_logo from './assets/oneledger.png'
 import sei_logo from './assets/sei.png'
 import hyperliquid_logo from './assets/hyperliquid.png'
+import xrpl_logo from './assets/xrpl.png'
+import abstract_logo from './assets/abstract.png'
+import apechain_logo from './assets/apechain.png'
+import bitlayer_logo from './assets/bitlayer.png'
+import blast_logo from './assets/blast.png'
+import bob_logo from './assets/bob.png'
+import botanix_logo from './assets/botanix.png'
+import bsquared_logo from './assets/bsquared.png'
+import core_logo from './assets/core.png'
+import corn_logo from './assets/corn.png'
+import etherlink_logo from './assets/etherlink.png'
+import fraxtal_logo from './assets/fraxtal.png'
+import hashkey_logo from './assets/hashkey.png'
+import hemi_logo from './assets/hemi.png'
+import ink_logo from './assets/ink.png'
+import lens_logo from './assets/lens.png'
+import linea_logo from './assets/linea.png'
+import lisk_logo from './assets/lisk.png'
+import merlin_logo from './assets/merlin.png'
+import metal_logo from './assets/metal.png'
+import metis_logo from './assets/metis.png'
+import mind_logo from './assets/mind.png'
+import mint_logo from './assets/mint.png'
+import mode_logo from './assets/mode.png'
+import neox_logo from './assets/neox.png'
+import opbnb_logo from './assets/opbnb.png'
+import plume_logo from './assets/plume.png'
+import katana_logo from './assets/katana.png'
+import peth_logo from './assets/peth.png'
+import ronin_logo from './assets/ronin.png'
+import scroll_logo from './assets/scroll.png'
+import shibarium_logo from './assets/shibarium.png'
+import soneium_logo from './assets/soneium.png'
+import superseed_logo from './assets/superseed.png'
+import taiko_logo from './assets/taiko.png'
+import treasure_logo from './assets/treasure.png'
+import unichain_logo from './assets/unichain.png'
+import world_logo from './assets/world.png'
+import okb_logo from './assets/okb.png'
+import okt_logo from './assets/okt.png'
+import zircuit_logo from './assets/zircuit.png'
+import zksync_logo from './assets/zksync.png'
+import cronoszkevm_logo from './assets/cronoszkevm.png'
 
 import celestia_logo from './assets/celestia.png'
 
@@ -921,7 +964,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1442,7 +1485,264 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:hyperliquid_logo, iteration:10_000, url:0	, active:false, e5_img:null
       },
-      
+      'E845':{
+        web3:['https://rpc.xrplevm.org'],
+        token:'XRP',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:xrpl_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E855':{
+        web3:['https://api.mainnet.abs.xyz'],
+        token:'ABETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:abstract_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E865':{
+        web3:['https://apechain.drpc.org'],
+        token:'APE',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:apechain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E875':{
+        web3:['https://rpc.bitlayer.org'],
+        token:'BIBTC',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:bitlayer_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E885':{
+        web3:['https://rpc.blast.io'],
+        token:'BLETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:blast_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E895':{
+        web3:['https://rpc.gobob.xyz/'],
+        token:'BOETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:bob_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E905':{
+        web3:['https://rpc.botanixlabs.com'],
+        token:'BOBTC',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:botanix_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E915':{
+        web3:['https://rpc.bsquared.network'],
+        token:'BSBTC',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:bsquared_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E925':{
+        web3:['https://core.drpc.org', 'https://rpc.coredao.org'],
+        token:'CORE',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:core_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E935':{
+        web3:['https://mainnet.corn-rpc.com'],
+        token:'BTCN',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:corn_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E945':{
+        web3:['https://node.mainnet.etherlink.com'],
+        token:'XTZ',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:etherlink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E955':{
+        web3:['https://rpc.frax.com'],
+        token:'FRAX',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:fraxtal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E965':{
+        web3:['https://mainnet.hsk.xyz'],
+        token:'HSK',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:hashkey_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E975':{
+        web3:['https://rpc.hemi.network/rpc'],
+        token:'HETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:hemi_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E985':{
+        web3:['https://rpc-qnd.inkonchain.com'],
+        token:'IETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:ink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E995':{
+        web3:['https://rpc.lens.xyz'],
+        token:'GHO',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:lens_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E1005':{
+        web3:['https://rpc.linea.build '],
+        token:'LETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:linea_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1015':{
+        web3:['https://rpc.api.lisk.com'],
+        token:'LIETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:lisk_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1025':{
+        web3:['https://merlin.drpc.org'],
+        token:'MBTC',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:merlin_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1035':{
+        web3:['https://rpc.metall2.com'],
+        token:'METH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:metal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1045':{
+        web3:['https://metis-rpc.publicnode.com'],
+        token:'METIS',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:metis_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1055':{
+        web3:['https://rpc-mainnet.mindnetwork.xyz'],
+        token:'MIETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:mind_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1065':{
+        web3:['https://rpc.mintchain.io'],
+        token:'MINETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:mint_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1075':{
+        web3:['https://mainnet.mode.network/'],
+        token:'MOETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:mode_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1085':{
+        web3:['https://mainnet-1.rpc.banelabs.org', 'https://mainnet-2.rpc.banelabs.org', 'https://mainnet-3.rpc.banelabs.org'],
+        token:'GAS',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:neox_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1095':{
+        web3:['https://opbnb-rpc.publicnode.com'],
+        token:'OBNB',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:opbnb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1105':{
+        web3:['https://rpc.plume.org'],
+        token:'PLUME',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:plume_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1115':{
+        web3:['https://rpc.katana.network/'],
+        token:'KETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:katana_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1125':{
+        web3:['https://zkevm-rpc.com'],
+        token:'PETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:peth_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E1135':{
+        web3:['https://api.roninchain.com/rpc'],
+        token:'RON',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:ronin_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1145':{
+        web3:['https://scroll-rpc.publicnode.com'],
+        token:'SETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1155':{
+        web3:['https://www.shibrpc.com'],
+        token:'BONE',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:shibarium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1165':{
+        web3:['https://rpc.soneium.org/'],
+        token:'SONETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:soneium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1175':{
+        web3:['https://mainnet.superseed.xyz'],
+        token:'SUETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:superseed_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1185':{
+        web3:['https://rpc.taiko.xyz'],
+        token:'TETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:taiko_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1195':{
+        web3:['https://rpc.treasure.lol'],
+        token:'MAGIC',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:treasure_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
+      'E1205':{
+        web3:['https://unichain-rpc.publicnode.com'],
+        token:'UETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:unichain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1215':{
+        web3:['https://worldchain-mainnet.g.alchemy.com/public'],
+        token:'WOETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:world_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1225':{
+        web3:['https://rpc.xlayer.tech'],
+        token:'OKB',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:okb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1235':{
+        web3:['https://exchainrpc.okex.org/'],
+        token:'OKT',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:okt_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1245':{
+        web3:['https://mainnet.zircuit.com'],
+        token:'ZETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:zircuit_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1255':{
+        web3:['https://mainnet.era.zksync.io'],
+        token:'ZKETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:zksync_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
+      'E1265':{
+        web3:['https://mainnet.zkevm.cronos.org/'],
+        token:'zkCRO',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:cronoszkevm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+      },
     }
   }
 
@@ -1538,6 +1838,49 @@ class App extends Component {
       this.get_token('BERA', 'Berachain', 'E815'),
       this.get_token('NRG', 'Energi', 'E825', true),
       this.get_token('HYPE', 'HyperEVM', 'E835'),
+      this.get_token('XRP', 'XRPL', 'E845'),
+      this.get_token('ABETH', 'Abstract', 'E855'),
+      this.get_token('APE', 'ApeChain', 'E865'),
+      this.get_token('BTC', 'Bitlayer', 'E875'),
+      this.get_token('BLETH', 'Blast', 'E885'),
+      this.get_token('BOETH', 'Bob', 'E895'),
+      this.get_token('BOBTC', 'Botanix', 'E905'),
+      this.get_token('BSBTC', 'Bsquared', 'E915'),
+      this.get_token('CORE', 'Core', 'E925'),
+      this.get_token('BTCN', 'Corn', 'E935'),
+      this.get_token('XTZ', 'Etherlink', 'E945'),
+      this.get_token('FRAX', 'Fraxtal', 'E955'),
+      this.get_token('HSK', 'HashKey', 'E965'),
+      this.get_token('HETH', 'Hemi', 'E975'),
+      this.get_token('IETH', 'Ink', 'E985'),
+      this.get_token('GHO', 'lens', 'E995'),
+      this.get_token('LETH', 'Linea', 'E1005'),
+      this.get_token('LIETH', 'Lisk', 'E1015'),
+      this.get_token('MBTC', 'Merlin', 'E1025'),
+      this.get_token('METH', 'Metal', 'E1035'),
+      this.get_token('METIS', 'Metis', 'E1045'),
+      this.get_token('MIETH', 'Mind Network', 'E1055'),
+      this.get_token('MINETH', 'Mint', 'E1065'),
+      this.get_token('MOETH', 'Mode', 'E1075'),
+      this.get_token('GAS', 'Neo X', 'E1085'),
+      this.get_token('OBNB', 'opBNB', 'E1095'),
+      this.get_token('PLUME', 'Plume', 'E1105'),
+      this.get_token('KETH', 'Katana', 'E1115'),
+      this.get_token('PETH', 'Polygon zkEVM', 'E1125'),
+      this.get_token('RON', 'Ronin', 'E1135'),
+      this.get_token('SETH', 'Scroll', 'E1145'),
+      this.get_token('BONE', 'Shibarium', 'E1155'),
+      this.get_token('SONETH', 'Soneium', 'E1165'),
+      this.get_token('SUETH', 'Superseed', 'E1175'),
+      this.get_token('TETH', 'Taiko Alethia', 'E1185'),
+      this.get_token('MAGIC', 'Treasure', 'E1195'),
+      this.get_token('UETH', 'Unichain', 'E1205'),
+      this.get_token('WOETH', 'World Chain', 'E1215'),
+      this.get_token('OKB', 'X Layer', 'E1225'),
+      this.get_token('OKT', 'OKTC', 'E1235'),
+      this.get_token('ZETH', 'Zircuit', 'E1245'),
+      this.get_token('ZKETH', 'ZKsync Era', 'E1255'),
+      this.get_token('zkCRO', 'Cronos zkEVM', 'E1265'),
     ]
 
     return list

@@ -51,7 +51,7 @@ class tags extends Component {
           items[this.props.app_state.loc['1260']/* stack-data */] = '🧱'
           items[this.props.app_state.loc['1261']/* settings-data */] = '🛠️'
           items[this.props.app_state.loc['1262']/* account-data */] = '🔐'
-          items[this.props.app_state.loc['1263']/* events */] = '🎊'
+          items[this.props.app_state.loc['1263']/* events */] = '🚨'
           items[this.props.app_state.loc['1264']/* moderator-events */] = '🧑‍⚖️'
           items[this.props.app_state.loc['1593aj']/* 'signatures' */] = '✍️'
           items[this.props.app_state.loc['1264k']/* audioport */] = '🎧'

@@ -378,6 +378,92 @@ class SuccessfulSend extends Component {
             return `https://berascan.com/tx/${hash}`
         }else if(e5 == 'E835'){
             return `https://www.hyperscan.com/tx/${hash}`
+        }else if(e5 == 'E845'){
+            return `https://explorer.xrplevm.org/tx/${hash}`
+        }else if(e5 == 'E855'){
+            return `https://abscan.org/tx/${hash}`
+        }else if(e5 == 'E865'){
+            return `https://apechain.calderaexplorer.xyz/tx/${hash}`
+        }else if(e5 == 'E875'){
+            return `https://www.btrscan.com/tx/${hash}`
+        }else if(e5 == 'E885'){
+            return `https://blastscan.io/tx/${hash}`
+        }else if(e5 == 'E895'){
+            return `https://explorer.gobob.xyz/tx/${hash}`
+        }else if(e5 == 'E905'){
+            return `https://botanixscan.io/tx/${hash}`
+        }else if(e5 == 'E915'){
+            return `https://explorer.bsquared.network/tx/${hash}`
+        }else if(e5 == 'E925'){
+            return `https://scan.coredao.org/tx/${hash}`
+        }else if(e5 == 'E935'){
+            return `https://cornscan.io/tx/${hash}`
+        }else if(e5 == 'E945'){
+            return`https://explorer.etherlink.com/tx/${hash}`
+        }else if(e5 == 'E955'){
+            return `https://fraxscan.com/tx/${hash}`
+        }else if(e5 == 'E965'){
+            return `https://hashkey.blockscout.com/tx/${hash}`
+        }else if(e5 == 'E975'){
+            return `https://explorer.hemi.xyz/tx/${hash}`
+        }else if(e5 == 'E985'){
+            return `https://explorer.inkonchain.com/tx/${hash}`
+        }else if(e5 == 'E995'){
+            return `https://explorer.lens.xyz/tx/${hash}`
+        }else if(e5 == 'E1005'){
+            return `https://lineascan.build/tx/${hash}`
+        }else if(e5 == 'E1015'){
+            return `https://blockscout.lisk.com/tx/${hash}`
+        }else if(e5 == 'E1025'){
+            return `https://scan.merlinchain.io/tx/${hash}`
+        }else if(e5 == 'E1035'){
+            return `https://explorer.metall2.com/tx/${hash}`
+        }else if(e5 == 'E1045'){
+            return `https://explorer.metis.io/tx/${hash}`
+        }else if(e5 == 'E1055'){
+            return `https://explorer.mindnetwork.xyz/tx/${hash}`
+        }else if(e5 == 'E1065'){
+            return `https://explorer.mintchain.io/tx/${hash}`
+        }else if(e5 == 'E1075'){
+            return `https://explorer.mode.network/tx/${hash}`
+        }else if(e5 == 'E1085'){
+            return `https://neoxscan.ngd.network/tx/${hash}`
+        }else if(e5 == 'E1095'){
+            return `https://opbnbscan.com/tx/${hash}`
+        }else if(e5 == 'E1105'){
+            return `https://explorer.plume.org/tx/${hash}`
+        }else if(e5 == 'E1115'){
+            return `https://explorer.katanarpc.com/tx/${hash}`
+        }else if(e5 == 'E1125'){
+            return `https://zkevm.polygonscan.com/tx/${hash}`
+        }else if(e5 == 'E1135'){
+            return `https://app.roninchain.com/tx/${hash}`
+        }else if(e5 == 'E1145'){
+            return `https://scrollscan.com/tx/${hash}`
+        }else if(e5 == 'E1155'){
+            return `https://www.shibariumscan.io/tx/${hash}`
+        }else if(e5 == 'E1165'){
+            return `https://soneium.blockscout.com/tx/${hash}`
+        }else if(e5 == 'E1175'){
+            return `https://explorer.superseed.xyz/tx/${hash}`
+        }else if(e5 == 'E1185'){
+            return `https://taikoscan.io/tx/${hash}`
+        }else if(e5 == 'E1195'){
+            return `https://treasurescan.io/tx/${hash}`
+        }else if(e5 == 'E1205'){
+            return `https://uniscan.xyz/tx/${hash}`
+        }else if(e5 == 'E1215'){
+            return `https://worldscan.org/tx/${hash}`
+        }else if(e5 == 'E1225'){
+            return `https://web3.okx.com/explorer/x-layer/tx/${hash}`
+        }else if(e5 == 'E1235'){
+            return `https://www.oklink.com/oktc/tx/${hash}`
+        }else if(e5 == 'E1245'){
+            return `https://explorer.zircuit.com/tx/${hash}`
+        }else if(e5 == 'E1255'){
+            return `https://explorer.zksync.io/tx/${hash}`
+        }else if(e5 == 'E1265'){
+            return `https://explorer.zkevm.cronos.org/tx/${hash}`
         }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
