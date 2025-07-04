@@ -464,6 +464,10 @@ class SuccessfulSend extends Component {
             return `https://explorer.zksync.io/tx/${hash}`
         }else if(e5 == 'E1265'){
             return `https://explorer.zkevm.cronos.org/tx/${hash}`
+        }else if(e5 == 'E1275'){
+            return `https://explorer.zero.network/tx/${hash}`
+        }else if(e5 == 'E1285'){
+            return `https://explorer.sophon.xyz/tx/${hash}`
         }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link

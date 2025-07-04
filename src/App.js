@@ -465,6 +465,8 @@ import okt_logo from './assets/okt.png'
 import zircuit_logo from './assets/zircuit.png'
 import zksync_logo from './assets/zksync.png'
 import cronoszkevm_logo from './assets/cronoszkevm.png'
+import zero_logo from './assets/zero.png'
+import sophon_logo from './assets/sophon.png'
 
 import celestia_logo from './assets/celestia.png'
 
@@ -964,7 +966,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1743,6 +1745,18 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:cronoszkevm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
       },
+      'E1275':{
+        web3:['https://rpc.zerion.io/v1/zero'],
+        token:'ZERETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:zero_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+      },
+      'E1285':{
+        web3:['https://rpc.sophon.xyz'],
+        token:'SOPH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:sophon_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
     }
   }
 
@@ -1881,6 +1895,8 @@ class App extends Component {
       this.get_token('ZETH', 'Zircuit', 'E1245'),
       this.get_token('ZKETH', 'ZKsync Era', 'E1255'),
       this.get_token('zkCRO', 'Cronos zkEVM', 'E1265'),
+      this.get_token('ZERETH', 'ZERϴ Network', 'E1275'),
+      this.get_token('SOPH', 'Sophon', 'E1285')
     ]
 
     return list
