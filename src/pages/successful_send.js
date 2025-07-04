@@ -53,8 +53,6 @@ class SuccessfulSend extends Component {
     render(){
         return(
             <div style={{'padding':'10px 15px 0px 15px'}}>
-                {/* <img style={{width:'140px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'20px'}} src={this.props.app_state.static_assets['done_icon']} alt="E5"/>
-                <div style={{height: 25}}/> */}
                 {this.render_everything()}
             </div>
         )

@@ -467,8 +467,29 @@ import zksync_logo from './assets/zksync.png'
 import cronoszkevm_logo from './assets/cronoszkevm.png'
 import zero_logo from './assets/zero.png'
 import sophon_logo from './assets/sophon.png'
+import berachain_logo from './assets/berachain.png'
 
 import celestia_logo from './assets/celestia.png'
+import algorand_logo from './assets/algorand.png'
+import aptos_logo from './assets/aptos.png'
+import arweave_logo from './assets/arweave.png'
+import bitcoincash_logo from './assets/bitcoin_cash.png'
+import bitcoin_logo from './assets/bitcoin.png'
+import cardano_logo from './assets/cardano.png'
+import cosmos_logo from './assets/cosmos.png'
+import dash_logo from './assets/dash.png'
+import dogecoin_logo from './assets/dogecoin.png'
+import kusama_logo from './assets/kusama.png'
+import litecoin_logo from './assets/litecoin.png'
+import polkadot_logo from './assets/polkadot.png'
+import solana_logo from './assets/solana.png'
+import stacks_logo from './assets/stacks.png'
+import stellar_logo from './assets/stellar.png'
+import sui_logo from './assets/sui.png'
+import tezos_logo from './assets/tezos.png'
+import tron_logo from './assets/tron.png'
+import xrp_logo from './assets/xrp.png'
+import filecoin_logo from './assets/filecoin.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -928,23 +949,9 @@ class App extends Component {
 
   get_static_assets(){
     return {
-      // 'letter':'https://nftstorage.link/ipfs/bafkreigapfe43wknpmflvp234k7fuijmv4fxbyjaybhcgc37pscsschi4u',
-      // 'e5_empty_icon':'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e',
-      // 'e5_empty_icon3':'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424',
-      // 'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74',
-      // 'music_label':'https://bafkreigntzixxxm2yyqjv2gffpbaxf7uuxmqcwhpvrkuwswztbhkdj35mu.ipfs.w3s.link/',
-      // 'expand_icon':'https://bafkreihfwjiuc3nucu6dbhtlojc7ovhuakkfknrrnhb2wfe723whj3f4qe.ipfs.w3s.link/',
-      // 'close_pip':'https://bafkreiat5hwlvyvquel7lnmtst2jf2fvr3jqatsd4m574bjmixy6r34wwm.ipfs.w3s.link/',
-      // 'empty_image':'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/',
-      // 'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
-      // 'download_icon':'https://bafkreie6m6aird6xkug5mzgqxccks65u4lsi5pghbvmb64uhvitikadnii.ipfs.w3s.link/',
-      // 'zoom_in_icon':'https://bafkreiaqdlkxszb7tnhm7bql5psp4m4ofyh3a7k7rdotgvpwnvgakm4uw4.ipfs.w3s.link/',
-      // 'zoom_out_icon':'https://bafkreidm4kb7zlaaqluepfllptvejmu3r3qvw35wt5d2z63jjlhwzin3qa.ipfs.w3s.link/',
-      // 'video_label':'https://bafkreid5u7arxovxweciekc6ddys4szsibdgnma5yddtcxlk3iq32dvx2e.ipfs.w3s.link/'
       'letter':letter,
       'e5_empty_icon':e5_empty_icon,
       'e5_empty_icon3':e5_empty_icon3,
-      'done_icon':'https://nftstorage.link/ipfs/bafkreigbsblz36t2qrngjtw5lvy2eeegir7vac6wmpzpmhum7o7pfrrb74',
       'music_label':music_label,
       'expand_icon':expand_icon,
       'close_pip':close_pip,
@@ -1487,6 +1494,7 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:hyperliquid_logo, iteration:10_000, url:0	, active:false, e5_img:null
       },
+
       'E845':{
         web3:['https://rpc.xrplevm.org'],
         token:'XRP',
@@ -1909,45 +1917,45 @@ class App extends Component {
 
   get_coin_data(){
     var list = {
-        'BTC': this.get_coin_info('BTC', 'Bitcoin', 'https://bafkreie2kzwwxljfs2vfnha5dey4m2mol7isouyozsmfervtqovv4dxwjy.ipfs.w3s.link/', 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1),
+        'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1),
 
-        'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', 'https://bafkreieqzh5ukzx7xkqbat6enbs6vvui45mzrdel72nrpvquggddnyqzge.ipfs.w3s.link/', 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32),
+        'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32),
 
-        'LTC': this.get_coin_info('LTC', 'Litecoin', 'https://bafkreibssgaxtckfjpfi3rwrhq24aapqukesjliidbuo2tefsfyvudccia.ipfs.w3s.link/', 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1),
+        'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1),
 
-        'DOGE': this.get_coin_info('DOGE', 'Dogecoin', 'https://bafkreigu2tax5e3kfiisfcx3yo4k54ly5za4p33n7cs4lvgdsrnqezkqey.ipfs.w3s.link/', 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1),
+        'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1),
 
-        'DASH': this.get_coin_info('DASH', 'Dash', 'https://bafkreicc4b6lb6pz2ql3iefz2graqvm5apk44jf3tjtwomdzi7pmsr3wiu.ipfs.w3s.link/', 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2),
+        'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2),
 
-        'TRX': this.get_coin_info('TRX', 'Tron', 'https://bafkreibogf2z4apmef7soghheiudwel67br5nxnuq4hydtvcqppme6lsre.ipfs.w3s.link/', 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
+        'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
         
-        'XRP': this.get_coin_info('XRP', 'Xrp', 'https://bafkreidql7b6v2emvlcnyl7qkhbzjknyvhu33ifxogf34236mmwue6bo4y.ipfs.w3s.link/', 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
+        'XRP': this.get_coin_info('XRP', 'Xrp', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
 
-        'XLM': this.get_coin_info('XLM', 'Stellar', 'https://bafkreiaeipmjvsizk6sbucvudjg332iaumravdte3p6gdnotfjbxsriqre.ipfs.w3s.link/', 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
+        'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
 
-        // 'DOT': this.get_coin_info('DOT', 'Polkadot', 'https://bafkreiewfdxotkspy37674wmlayzuurlgqrs3p4pbdzxqmysmsqpagtpk4.ipfs.w3s.link/', 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
+        // 'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
 
-        // 'KSM': this.get_coin_info('KSM', 'Kusama', 'https://bafkreifdhcp4hfl2hkkhfg6biz2rfyru5mzeyusqprgvcje4mbzr77kzpy.ipfs.w3s.link/', 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
+        // 'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
 
-        'ALGO': this.get_coin_info('ALGO', 'Algorand', 'https://bafkreif2p2eskun4pvetbksltymzhvajojqxv3mlbuazizqgonz6pbrt7u.ipfs.w3s.link/', '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
+        'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
 
-        'XTZ': this.get_coin_info('XTZ', 'Tezos', 'https://bafkreif5oy6o25qilqizjchl6pf7tud76yag7ubrnbwxfahpduh5uynx5y.ipfs.w3s.link/', 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
+        'XTZ': this.get_coin_info('XTZ', 'Tezos', tezos_logo, 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
 
-        'ATOM': this.get_coin_info('ATOM', 'Cosmos', 'https://bafybeifoqwr7jwsvreehrrtoabeaqvoorti42gam26dfo2rxm7vv3tks7a.ipfs.w3s.link/cosmos.png', 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
+        'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
 
-        'FIL': this.get_coin_info('FIL', 'Filecoin', 'https://bafybeidjiadnbmhhh5xrtjnhywj7dulx7d66ks2frq6kwwnykgryjd55bu.ipfs.w3s.link/filecoin.png', 'attoFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
+        'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'attoFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
 
-        'SOL': this.get_coin_info('SOL', 'Solana', 'https://bafkreie4wh23gwfdj4b2otksmajb7dmfvtn376kv3jfivmwocutkq773ai.ipfs.w3s.link/', 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
+        'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
 
-        'APT': this.get_coin_info('APT', 'Aptos', 'https://bafkreiafrdwgjayx3pjc42rfgzfclogm2ojd4hj522jnilw4std3rh4j5y.ipfs.w3s.link/', 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
+        'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
 
-        // 'ADA': this.get_coin_info('ADA', 'Cardano', 'https://bafkreighfusfpcbbvoqmjeoyxo7bnxqc3rdhctsvj7wwe74bdpnav7uxem.ipfs.w3s.link/', 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
+        // 'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
 
-        'STX': this.get_coin_info('STX', 'Stacks', 'https://bafkreigcxeejba4qmk33ecsmlzzpmfxlihwtqmwje4cyjxiu6fg3wfmcrm.ipfs.w3s.link/', 'microSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
+        'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'microSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
 
-        'AR': this.get_coin_info('AR', 'Arweave', 'https://bafkreidyyzdm2fp7bz6wwv7eyyxpzll4djv4pal74x4wcfheyh6qiqd75a.ipfs.w3s.link/', 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
+        'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
 
-        'SUI': this.get_coin_info('SUI', 'Sui', 'https://bafkreigttgkydkngvfgv2uflanuizda2us3o3qfslfnppmrdxyxwgogfii.ipfs.w3s.link/', 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~'),
+        'SUI': this.get_coin_info('SUI', 'Sui', sui_logo, 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~'),
 
         'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2),
     }
