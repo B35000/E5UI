@@ -202,9 +202,8 @@ class NewTokenPage extends Component {
         this.setState({new_token_page_tags_object: this.get_new_token_page_tags_object(), type:this.props.app_state.loc['761']/* 'edit-token' */})
     }
 
-    set_token_symbol(symbol){
-        console.log('setting symbol: '+symbol)
-        this.setState({existing_symbol: symbol})
+    set_token_symbol(symbol, name){
+        this.setState({existing_symbol: symbol, existing_name: name})
     }
 
 
@@ -1250,9 +1249,13 @@ class NewTokenPage extends Component {
             this.props.notify(this.props.app_state.loc['750']/* 'that symbol is invalid' */, 3700)
         }
         else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null && this.state.existing_symbol != symbol){
-            console.log(this.state.existing_symbol)
-            console.log(symbol)
             this.props.notify(this.props.app_state.loc['752']/* 'that symbol is already in use' */, 3700)
+        }
+        else if(this.is_symbol_in_use(symbol) && this.state.existing_symbol != symbol){
+            this.props.notify(this.props.app_state.loc['752']/* 'that symbol is already in use' */, 3700)
+        }
+        else if(this.is_name_in_use(title) && this.state.existing_name != title){
+            this.props.notify(this.props.app_state.loc['2772']/* 'That name is already in use.' */, 3700)
         }
         else if(symbol.length > 9){
             this.props.notify(this.props.app_state.loc['752a']/* 'That token symbol is too long.' */, 3700)
@@ -1265,6 +1268,69 @@ class NewTokenPage extends Component {
             this.props.notify(this.props.app_state.loc['18'], 1700);
         }
 
+    }
+
+
+    is_symbol_in_use(symbol){
+        var record = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol]
+        if(record != null) return true
+        record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_symbols)[symbol]
+        if(record != null) return true
+
+        const coins = Object.keys(this.props.app_state.coins)
+        if(coins.includes(symbol.toUpperCase())) return true;
+        for(var c=0; c<coins.length; c++){
+            const coin = coins[c]
+            if(this.props.app_state.coins[coins]['name'].toUpperCase() == symbol.toUpperCase() || this.props.app_state.coins[coins]['symbol'].toUpperCase() == symbol.toUpperCase() || this.props.app_state.coins[coins]['base_unit'].toUpperCase() == symbol.toUpperCase()){
+                return true;
+            }
+        }
+
+        const ethers = this.props.app_state.ether_data
+        const includes = ethers.find(e => (e['symbol'].toUpperCase() == symbol.toUpperCase() || e['name'].toUpperCase() == symbol.toUpperCase()))
+        if(includes != null) return true;
+
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(t.type == this.props.app_state.loc['601']/* 'token' */){
+                var selected_symbol = t.entered_symbol_text
+                if(symbol == selected_symbol) return true
+            }
+        }
+
+        return false
+    }
+
+    is_name_in_use(name){
+        var record = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[name]
+        if(record != null) return true
+        record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_names)[name]
+        if(record != null) return true
+
+        const coins = Object.keys(this.props.app_state.coins)
+        if(coins.includes(name.toUpperCase())) return true;
+        for(var c=0; c<coins.length; c++){
+            const coin = coins[c]
+            if(this.props.app_state.coins[coins]['name'].toUpperCase() == name.toUpperCase() || this.props.app_state.coins[coins]['symbol'].toUpperCase() == name.toUpperCase() || this.props.app_state.coins[coins]['base_unit'].toUpperCase() == name.toUpperCase()){
+                return true;
+            }
+        }
+
+        const ethers = this.props.app_state.ether_data
+        const includes = ethers.find(e => (e['symbol'].toUpperCase() == name.toUpperCase() || e['name'].toUpperCase() == name.toUpperCase()))
+        if(includes != null) return true;
+
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(t.type == this.props.app_state.loc['601']/* 'token' */){
+                var title_text = t.entered_title_text
+                if(name == title_text) return true
+            }
+        }
+
+        return false
     }
 
 

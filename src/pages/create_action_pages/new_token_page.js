@@ -3862,6 +3862,19 @@ return data['data']
         record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_symbols)[symbol]
         if(record != null) return true
 
+        const coins = Object.keys(this.props.app_state.coins)
+        if(coins.includes(symbol.toUpperCase())) return true;
+        for(var c=0; c<coins.length; c++){
+            const coin = coins[c]
+            if(this.props.app_state.coins[coins]['name'].toUpperCase() == symbol.toUpperCase() || this.props.app_state.coins[coins]['symbol'].toUpperCase() == symbol.toUpperCase() || this.props.app_state.coins[coins]['base_unit'].toUpperCase() == symbol.toUpperCase()){
+                return true;
+            }
+        }
+
+        const ethers = this.props.app_state.ether_data
+        const includes = ethers.find(e => (e['symbol'].toUpperCase() == symbol.toUpperCase() || e['name'].toUpperCase() == symbol.toUpperCase()))
+        if(includes != null) return true;
+
         var txs = this.props.app_state.stack_items
         for(var i=0; i<txs.length; i++){
             var t = txs[i]
@@ -3879,6 +3892,19 @@ return data['data']
         if(record != null) return true
         record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_names)[name]
         if(record != null) return true
+
+        const coins = Object.keys(this.props.app_state.coins)
+        if(coins.includes(name.toUpperCase())) return true;
+        for(var c=0; c<coins.length; c++){
+            const coin = coins[c]
+            if(this.props.app_state.coins[coins]['name'].toUpperCase() == name.toUpperCase() || this.props.app_state.coins[coins]['symbol'].toUpperCase() == name.toUpperCase() || this.props.app_state.coins[coins]['base_unit'].toUpperCase() == name.toUpperCase()){
+                return true;
+            }
+        }
+
+        const ethers = this.props.app_state.ether_data
+        const includes = ethers.find(e => (e['symbol'].toUpperCase() == name.toUpperCase() || e['name'].toUpperCase() == name.toUpperCase()))
+        if(includes != null) return true;
 
         var txs = this.props.app_state.stack_items
         for(var i=0; i<txs.length; i++){

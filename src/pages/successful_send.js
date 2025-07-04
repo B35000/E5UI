@@ -466,6 +466,8 @@ class SuccessfulSend extends Component {
             return `https://explorer.zero.network/tx/${hash}`
         }else if(e5 == 'E1285'){
             return `https://explorer.sophon.xyz/tx/${hash}`
+        }else if(e5 == 'E1295'){
+            return `https://pacific-explorer.manta.network/tx/${hash}`
         }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link

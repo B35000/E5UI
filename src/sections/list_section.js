@@ -4649,7 +4649,7 @@ return data['data']
             if(ether_desc['disabled'] == false) list.push(this.get_token_data(ether_desc['symbol'], ether_desc['name'], ether_desc['e5']));
         });
 
-        var sorted_list =  this.sortByAttributeDescending(list, 'name')
+        var sorted_list =  this.sortByAttributeDescending(list, 'sortname')
         var prioritized_list = []
         sorted_list.forEach(token => {
             if(this.does_account_have_balance(token['e5'])){
@@ -4700,11 +4700,12 @@ return data['data']
       });
     }
 
-    get_token_data(symbol, name,  e5){
+    get_token_data(symbol, name, e5){
         return {
             'id':symbol,
             'e5':e5,
             'name': name,
+            'sortname':name.toLowerCase(),
             'symbol': symbol,
             'image': this.props.app_state.e5s[e5].ether_image,
             'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},

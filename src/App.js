@@ -468,6 +468,13 @@ import cronoszkevm_logo from './assets/cronoszkevm.png'
 import zero_logo from './assets/zero.png'
 import sophon_logo from './assets/sophon.png'
 import berachain_logo from './assets/berachain.png'
+import hedera_logo from './assets/hedera.png'
+import iotaevm_logo from './assets/iotaevm.png'
+import moonbeam_logo from './assets/moonbeam.png'
+import moonriver_logo from './assets/moonriver.png'
+import sonic_logo from './assets/sonic.png'
+import kaia_logo from './assets/kaia.png'
+import manta_logo from './assets/manta.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -931,7 +938,7 @@ class App extends Component {
 
     queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{}, 
     
-    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
+    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:/* 'none'  */'darkcolor-available', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
@@ -973,7 +980,7 @@ class App extends Component {
   }
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1032,13 +1039,13 @@ class App extends Component {
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:'https://bafkreiboihdu4kpgt5qo3xyffhwwvtf7twjrpmbqszntxjeoftlnyajeeq.ipfs.w3s.link/', iteration:10_000, url:0, active:false, e5_img:null
+        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:moonbeam_logo, iteration:10_000, url:0, active:false, e5_img:null
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
         token:'MOVR',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:'https://bafkreihongf5cenm5oqngrxmutqlvz3qi3ucmsecx6gvc6mdqwbhkwjyci.ipfs.w3s.link/', iteration:40_000, url:0, active:false, e5_img:null
+        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:moonriver_logo, iteration:40_000, url:0, active:false, e5_img:null
       },
       'E115':{
         web3:['https://xdc.public-rpc.com'],
@@ -1456,31 +1463,31 @@ class App extends Component {
         web3:['https://mainnet.hashio.io/api'],
         token:'HBAR',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreic525y3d4aqb6wksu6dt6uaqhwtvbzpooqenkjm6t7xzsut7bfelq.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:hedera_logo, iteration:400_000, url:0, active:false, e5_img:null
       },
       'E785':{
         web3:['https://json-rpc.evm.iotaledger.net'],
         token:'IOTA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreigvxj7opelzoamc4ujrgmgwdq73g5pjtvgtrrhuuyvirzfvqjegj4.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:iotaevm_logo, iteration:400_000, url:0, active:false, e5_img:null
       },
       'E795':{
         web3:['https://public-en.node.kaia.io'],
         token:'KAIA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreigsndweoxio5jfmnjiliqncxgbuqfswdp5ptrtp2mde73jesc7kia.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:kaia_logo, iteration:400_000, url:0, active:false, e5_img:null
       },
       'E805':{
         web3:['https://rpc.soniclabs.com'],
         token:'S',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreigfnvmswmzp2qqrbky4at4uj4xoa44f2j7r3a2ux2op7iibaskcsi.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:sonic_logo, iteration:400_000, url:0, active:false, e5_img:null
       },
       'E815':{
         web3:['https://rpc.berachain.com/'],
         token:'BERA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'https://bafkreic3mo4xe7dfftguut7apsufbc4mzlnwxqpupmyo46f6adzd5nd65u.ipfs.w3s.link/', iteration:400_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:berachain_logo, iteration:400_000, url:0, active:false, e5_img:null
       },
       'E825':{
         web3:['https://nodeapi.energi.network'],
@@ -1765,6 +1772,12 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:sophon_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
       },
+      'E1295':{
+        web3:['https://pacific-rpc.manta.network/http'],
+        token:'MAETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:manta_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
+      },
     }
   }
 
@@ -1848,7 +1861,7 @@ class App extends Component {
       this.get_token('PHOENIX', 'Phoenix', 'E695'),
       this.get_token('OMC', 'Omchain', 'E705'),
       this.get_token('OM', 'Om', 'E715'),
-      this.get_token('MINTME', 'MintMe.com Coin', 'E725'),
+      this.get_token('MINTME', 'MintMe.com', 'E725'),
       this.get_token('ECS', 'eCredits', 'E735'),
       this.get_token('ELV', 'Eluv.io', 'E745'),
       this.get_token('ETHO', 'Etho Protocol', 'E755'),
@@ -1863,7 +1876,7 @@ class App extends Component {
       this.get_token('XRP', 'XRPL', 'E845'),
       this.get_token('ABETH', 'Abstract', 'E855'),
       this.get_token('APE', 'ApeChain', 'E865'),
-      this.get_token('BTC', 'Bitlayer', 'E875'),
+      this.get_token('BIBTC', 'Bitlayer', 'E875'),
       this.get_token('BLETH', 'Blast', 'E885'),
       this.get_token('BOETH', 'Bob', 'E895'),
       this.get_token('BOBTC', 'Botanix', 'E905'),
@@ -1904,7 +1917,8 @@ class App extends Component {
       this.get_token('ZKETH', 'ZKsync Era', 'E1255'),
       this.get_token('zkCRO', 'Cronos zkEVM', 'E1265'),
       this.get_token('ZERETH', 'ZERϴ Network', 'E1275'),
-      this.get_token('SOPH', 'Sophon', 'E1285')
+      this.get_token('SOPH', 'Sophon', 'E1285'),
+      this.get_token('MAETH', 'Manta Pacific', 'E1295')
     ]
 
     return list
@@ -3398,7 +3412,30 @@ class App extends Component {
       address: this.get_account_address(),
       stacked_ids: this.get_stacked_transaction_ids(),
       rating_denomination: this.state.rating_denomination,
+      my_active_e5s: this.get_e5s_im_using(),
     }
+  }
+
+  get_e5s_im_using(){
+    var active_e5s = []
+    var wallet_e5s = []
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      if(this.state.user_account_id[e5] != null && this.state.user_account_id[e5] > 1000){
+        active_e5s.push(e5)
+      }
+      else if(this.does_account_have_balance(e5)){
+        wallet_e5s.push(e5)
+      }
+    }
+    return active_e5s.concat(wallet_e5s)
+  }
+
+  does_account_have_balance(e5){
+    if(this.state.account_balance[e5] != null && this.state.account_balance[e5]!=0){
+      return true
+    }
+    return false
   }
   
   get_account_address(){
@@ -3457,6 +3494,7 @@ class App extends Component {
   load_cookies = async () => {
     var state_language = localStorage.getItem("language");
     var state = await this.load_data_from_indexdb('123')
+    const state_theme = this.state.theme['name']
     const my_language = this.get_language()
 
     if(state != null){
@@ -3543,6 +3581,7 @@ class App extends Component {
       var stack_address = stack_items.length > 0 ? state.address : null
       var stacked_ids = stack_items.length > 0 ? state.stacked_ids : null
       var rating_denomination = state.rating_denomination == null ? this.state.rating_denomination : state.rating_denomination
+      this.my_active_e5s = state.my_active_e5s == null ? [] : state.my_active_e5s
 
       this.setState({
         theme: theme,
@@ -3610,12 +3649,18 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.reset_theme()
-        if(selected_providers != null && added_providers != null) me.set_providers(selected_providers, added_providers);
+        if(selected_providers != null && added_providers != null){
+          me.set_providers(selected_providers, added_providers);
+          me.custom_set_providers = {selected_providers, added_providers}
+        } 
         if(remember_account != null && remember_account != 'e' && account_data != null){
           me.load_accounts_data_from_store(account_data)
         }
         if(albums_to_stash != null){
           me.load_albums_to_stash_to_state(albums_to_stash)
+        }
+        if(state_theme != theme['name']){
+          me.reset_coin_and_token_images(theme['name'], state_theme)
         }
       }, (1 * 500));
     }
@@ -4442,7 +4487,7 @@ class App extends Component {
       if(data == null) return
       return this.decrypt_storage_object_using_provided_key(data['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     }catch(e){
-      console.log(`Failed : ${e}`);
+      console.log('transform_image_by_theme', `Failed : ${e}`);
       return null
     }
   }
@@ -7204,13 +7249,236 @@ class App extends Component {
   }
 
   when_device_theme_changed(theme){
+    if(this.state.theme['name'] != theme){
+      this.reset_coin_and_token_images(theme, this.state.theme['name'])
+    }
     this.setState({theme: this.get_theme_data(theme), theme_image:''})
     var me = this;
     setTimeout(function() {
-        me.set_cookies()
+      me.set_cookies()
     }, (1 * 1000));
-    
   }
+
+  reset_coin_and_token_images = async (theme, previous_theme) => {
+    if(theme == this.getLocale()['1417']/* 'light' */ || theme == this.getLocale()['1418']/* 'dark' */ || theme == this.getLocale()['2740']/* midnight */ || theme == this.getLocale()['1593a']/* 'auto' */){
+      if(previous_theme == this.getLocale()['1417']/* 'light' */ || previous_theme == this.getLocale()['1418']/* 'dark' */ || previous_theme == this.getLocale()['2740']/* midnight */ || previous_theme == this.getLocale()['1593a']/* 'auto' */) return;
+
+      const original_ether_settings = this.get_e5s()
+      var ether_state_clone = structuredClone(this.state.e5s)
+      ether_state_clone['data'].forEach(e5 => {
+        ether_state_clone[e5].ether_image = original_ether_settings[e5].ether_image
+        this.setState({e5s: ether_state_clone})
+      });
+
+      const original_coin_settings = this.get_coin_data()
+      var coin_state_clone = structuredClone(this.state.coins)
+      Object.keys(coin_state_clone).forEach(coin => {
+        coin_state_clone[coin]['label']['image'] = original_coin_settings[coin]['label']['image']
+        coin_state_clone[coin]['banner-icon']['image'] = original_coin_settings[coin]['banner-icon']['image']
+        this.setState({coins: original_coin_settings})
+      });
+      // this.setState({e5s: ether_state_clone, coins: original_coin_settings})
+    }
+    else{
+      console.log('transform_image_by_theme', 'beginning image transformation work')
+      const existing_image_data = await this.fetch_image_theme_data_in_storage(theme)
+      console.log('transform_image_by_theme', 'existing_image_data', existing_image_data)
+      var should_update_storage = false
+      if(existing_image_data[theme] == null){
+        existing_image_data[theme] = {}
+        should_update_storage = true
+      }
+      const original_ether_settings = this.get_e5s()
+      var ether_state_clone = structuredClone(this.state.e5s)
+      var e5s = ether_state_clone['data']
+      for(var i=0; i<e5s.length; i++){
+        var e5 = e5s[i]
+        console.log('transform_image_by_theme', 'processing', original_ether_settings[e5].token)
+        const updated_image = existing_image_data[theme][e5] == null ? await this.transform_image_by_theme(original_ether_settings[e5].ether_image, theme) : existing_image_data[theme][e5]
+
+        if(existing_image_data[theme][e5] == null){
+          existing_image_data[theme][e5] = updated_image
+          should_update_storage = true
+        }
+
+        if(this.state.theme['name'] != theme && i > 7 && should_update_storage == true){
+          return;
+        }
+        
+        ether_state_clone[e5].ether_image = updated_image
+        this.setState({e5s: ether_state_clone})
+      }
+
+      console.log('transform_image_by_theme', 'done processing ethers...')
+
+      const original_coin_settings = this.get_coin_data()
+      var coin_state_clone = structuredClone(this.state.coins)
+      var coin_keys = Object.keys(coin_state_clone)
+      for(var j=0; j<coin_keys.length; j++){
+        var coin = coin_keys[j]
+        console.log('transform_image_by_theme', 'processing', coin)
+  
+        const updated_image = existing_image_data[theme][coin] == null ? await this.transform_image_by_theme(original_coin_settings[coin]['label']['image'], theme) : existing_image_data[theme][coin]
+
+        if(existing_image_data[theme][coin] == null){
+          existing_image_data[theme][coin] = updated_image
+          should_update_storage = true
+        }
+
+        if(this.state.theme['name'] != theme && j > 7 && should_update_storage == true){
+          return;
+        }
+
+        coin_state_clone[coin]['label']['image'] = updated_image
+        coin_state_clone[coin]['banner-icon']['image'] = updated_image
+        this.setState({coins: coin_state_clone})
+      }
+      // this.setState({e5s: ether_state_clone, coins: original_coin_settings})
+      
+      if(should_update_storage == true){
+        if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
+          this.update_image_theme_data_in_storage(existing_image_data[theme], theme)
+        }else{
+          this.setState({background_images_with_custom_themes: existing_image_data})
+        }
+        
+      }
+    }
+  }
+
+  update_theme_image_data_once_storage_permissions_enabled(){
+    if(this.state.background_images_with_custom_themes == null || this.state.storage_permissions != this.getLocale()['1428']/* 'enabled' */) return;
+    const clone = structuredClone(this.state.background_images_with_custom_themes)
+    const keys = Object.keys(clone)
+    keys.forEach(theme => {
+      this.update_image_theme_data_in_storage(clone[theme], theme)
+    });
+    this.setState({background_images_with_custom_themes: null})
+  }
+
+  update_image_theme_data_in_storage(existing_image_data, theme){
+    const data_string = JSON.stringify(existing_image_data)
+    this.update_data_in_db(data_string, theme)
+    localStorage.setItem(theme, 'set')
+  }
+
+  fetch_image_theme_data_in_storage = async (theme) => {
+    if(localStorage.getItem(theme) == null){
+      const obj = {}
+      obj[theme] = {}
+      return obj
+    }
+    else if(this.state.background_images_with_custom_themes != null){
+      return this.state.background_images_with_custom_themes
+    }
+    const data_string = await this.load_data_from_indexdb(theme)
+    if(data_string != null){
+      try{
+        const obj = {}
+        obj[theme] = JSON.parse(data_string)
+        return obj
+      }catch(e){
+        console.log('fetch_image_theme_data_in_storage', 'failed to parse')
+      }
+    }
+    const obj = {}
+    obj[theme] = {}
+    return obj
+  }
+
+  transform_image_by_theme = (image_url, theme) => {
+    const theme_data = this.get_theme_data(theme)
+    const main_rgba = this.hexToRgba(theme_data['primary_text_color'])
+    const darker_rgba = this.hexToRgba(theme_data['secondary_text_color'])
+    console.log('transform_image_by_theme', 'beginning transformation for specific image...')
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const maxWidth = 400 
+  
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = maxWidth;
+        canvas.height = maxWidth;
+  
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, maxWidth, maxWidth);
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const a = data[i + 3];
+
+          if (this.is_close_to(r, 179) && this.is_close_to(g, 179) && this.is_close_to(b, 179) && a > 0) {
+            //if ring color
+            data[i]     = main_rgba.r;   // R -> green
+            data[i + 1] = main_rgba.g; // G
+            data[i + 2] = main_rgba.b;   // B
+          }
+          else if (this.is_close_to(r, 128) && this.is_close_to(g, 128) && this.is_close_to(b, 128) && a > 0) {
+            //if ring color
+            data[i]     = main_rgba.r;   // R -> green
+            data[i + 1] = main_rgba.g; // G
+            data[i + 2] = main_rgba.b;   // B
+          }
+          else if (this.is_close_to(r, 255) && this.is_close_to(g, 255) && this.is_close_to(b, 255) && a > 0) {
+            //if ring color
+            data[i]     = main_rgba.r;   // R -> green
+            data[i + 1] = main_rgba.g; // G
+            data[i + 2] = main_rgba.b;   // B
+          }
+        }
+        ctx.putImageData(imageData, 0, 0);
+        var return_blob = canvas.toDataURL("image/jpeg", 1.0);
+        resolve(return_blob);
+      };
+  
+      img.src = image_url;
+      img.onerror = reject;
+    });
+  }
+
+  is_close_to(number, target){
+    return Math.abs(number-target) <= 6
+  }
+
+  hexToRgba(hex) {
+    // Remove "#" if present
+    if(!hex.includes('#')){
+      return this.cssColorToRgba(hex)
+    }
+    hex = hex.replace(/^#/, '');
+  
+    // Parse 3-digit hex (e.g. #abc) to 6-digit
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('');
+    }
+  
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+  
+    return {r, g, b};
+  }
+
+  cssColorToRgba(colorName) {
+    const temp = document.createElement('div');
+    temp.style.color = colorName;
+    document.body.appendChild(temp);
+  
+    const computedColor = getComputedStyle(temp).color;
+    document.body.removeChild(temp);
+  
+    // computedColor is in "rgb(r, g, b)" or "rgba(r, g, b, a)" format
+    const rgbValues = computedColor.match(/\d+/g).map(Number);
+    const [r, g, b] = rgbValues;
+  
+    return {r, g, b}
+  }
+
+
 
   when_details_orientation_changed(orientation){
     this.setState({details_orientation: orientation})
@@ -7296,6 +7564,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
         me.set_cookies()
+        me.update_theme_image_data_once_storage_permissions_enabled()
     }, (1 * 1000));
   }
 
@@ -8684,7 +8953,7 @@ class App extends Component {
       me.edit_token_page.current?.setState(object['ipfs'])
       me.edit_token_page.current?.set_edit_data()
       me.edit_token_page.current?.setState({object_id: object['id']})
-      me.edit_token_page.current?.set_token_symbol(object['ipfs'].entered_symbol_text)
+      me.edit_token_page.current?.set_token_symbol(object['ipfs'].entered_symbol_text, object['ipfs'].entered_title_text)
     }
     }, (1 * 500));
     
@@ -21256,7 +21525,20 @@ return data['data']
         const beacon_chain_url = root_data.data['beacon_chain_url']/* 'http://localhost:4000' */
         // console.log('apppage', 'resetting beacon_chain_url to', beacon_chain_url)
         const e5_ether_override = root_data.get_ether_e5_softwrite_object == null ? 'e' : this.get_selected_item(root_data.get_ether_e5_softwrite_object, 'e');
-        const e5s = e5_ether_override == 'e' ? this.state.e5s : this.update_e5_images(root_data.data['e5s'])
+        const e5s = e5_ether_override == 'e' ? structuredClone(this.state.e5s) : this.update_e5_images(root_data.data['e5s'])
+
+        if(this.my_active_e5s != null){
+          var final_e5_list = []
+          this.my_active_e5s.forEach(e5 => {
+            final_e5_list.push(e5)
+          });
+          e5s['data'].forEach(e5 => {
+            if(!final_e5_list.includes(e5)){
+              final_e5_list.push(e5)
+            }
+          });
+          e5s['data'] = final_e5_list
+        }
         
 
         const ether_data = e5_ether_override == 'e' ? this.get_ether_data() : root_data.data['ether_data']
@@ -21307,7 +21589,7 @@ return data['data']
           allowed_countries: allowed_countries, 
           logo_title: logo_title, 
           selected_dark_emblem_country: selected_dark_emblem_country, 
-          get_theme_stage_tags_object: get_theme_stage_tags_object, 
+          get_theme_stage_tags_object: 'darkcolor-available' /* get_theme_stage_tags_object */, 
           get_content_channeling_tags_object: get_content_channeling_tags_object, 
           beacon_chain_url: beacon_chain_url, 
           e5s: e5s,
@@ -21334,6 +21616,14 @@ return data['data']
         localStorage.setItem("is_country_allowed", allowed_countries)
 
         this.set_stack_page_data()
+
+        var me = this;
+        setTimeout(function() {
+          if(me.custom_set_providers != null){
+            me.set_providers(me.custom_set_providers.selected_providers, me.custom_set_providers.added_providers);
+            delete me.custom_set_providers
+          }
+        }, (1 * 500));
       }
     }
   }
