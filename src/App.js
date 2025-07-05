@@ -497,6 +497,8 @@ import tezos_logo from './assets/tezos.png'
 import tron_logo from './assets/tron.png'
 import xrp_logo from './assets/xrp.png'
 import filecoin_logo from './assets/filecoin.png'
+import solana2_logo from './assets/solana2.png'
+import algorand2_logo from './assets/algorand2.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -938,7 +940,7 @@ class App extends Component {
 
     queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{}, 
     
-    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:/* 'none'  */'darkcolor-available', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
+    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
@@ -7317,8 +7319,15 @@ class App extends Component {
       for(var j=0; j<coin_keys.length; j++){
         var coin = coin_keys[j]
         console.log('transform_image_by_theme', 'processing', coin)
+        var image_to_use = original_coin_settings[coin]['label']['image']
+        if(coin == 'ALGO'){
+          image_to_use = algorand2_logo
+        }
+        else if(coin == 'SOL'){
+          image_to_use = solana2_logo
+        }
   
-        const updated_image = existing_image_data[theme][coin] == null ? await this.transform_image_by_theme(original_coin_settings[coin]['label']['image'], theme) : existing_image_data[theme][coin]
+        const updated_image = existing_image_data[theme][coin] == null ? await this.transform_image_by_theme(image_to_use, theme) : existing_image_data[theme][coin]
 
         if(existing_image_data[theme][coin] == null){
           existing_image_data[theme][coin] = updated_image
@@ -21589,7 +21598,7 @@ return data['data']
           allowed_countries: allowed_countries, 
           logo_title: logo_title, 
           selected_dark_emblem_country: selected_dark_emblem_country, 
-          get_theme_stage_tags_object: 'darkcolor-available' /* get_theme_stage_tags_object */, 
+          get_theme_stage_tags_object: get_theme_stage_tags_object, 
           get_content_channeling_tags_object: get_content_channeling_tags_object, 
           beacon_chain_url: beacon_chain_url, 
           e5s: e5s,
