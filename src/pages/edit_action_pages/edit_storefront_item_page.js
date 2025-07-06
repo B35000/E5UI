@@ -30,6 +30,12 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
 
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 var bigInt = require("big-integer");
 
 function number_with_commas(x) {
@@ -61,6 +67,7 @@ class NewStorefrontItemPage extends Component {
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
         purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(), 
+        get_option_storefront_type_object:this.get_option_storefront_type_object(),
         
         typed_link_text:'', link_search_results:[], added_links:[],
         edit_text_item_pos:-1, edit_variant_item_pos:-1,
@@ -68,7 +75,9 @@ class NewStorefrontItemPage extends Component {
         get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'', entered_zip_objects:[],
 
         option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], edit_option_group_item_pos:-1,
-        get_option_group_type_object: this.get_option_group_type_object(), option_group_details:''
+        get_option_group_type_object: this.get_option_group_type_object(), option_group_details:'',
+
+        auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0,
     };
 
     get_new_job_page_tags_object(){
@@ -77,7 +86,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */, this.props.app_state.loc['535am']/* 'expiry-time' */, this.props.app_state.loc['535aw']/* 'registration-deposit' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -226,6 +235,21 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+    get_option_storefront_type_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['535ai']/* 'sale' */, this.props.app_state.loc['535aj']/* 'auction' */], [1]
+            ],
+        };
+    }
+
+
+
+
+
 
     
     set(){
@@ -344,6 +368,20 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_purchase_options_section()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['535am']/* 'expiry-time' */){
+            return(
+                <div>
+                    {this.render_auction_exipry_time_section()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['535aw']/* 'registration-deposit' */){
+            return(
+                <div>
+                    {this.render_auction_registration_deposit_section()}
                 </div>
             )
         }
@@ -540,11 +578,23 @@ class NewStorefrontItemPage extends Component {
     render_direct_shipping_fee_view_if_enabled(){
         var selected_item = this.get_selected_item(this.state.purchase_option_tags_object, this.state.purchase_option_tags_object['i'].active)
 
+        var selected_storefront_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        var fulfilment_accounts_title = {'title':this.props.app_state.loc['479']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['480']/* 'Set the accounts involved with shipping and fulfilling direct purchase orders from clients' */, 'size':'l'}
+
+        var purchase_fee_title = {'title':this.props.app_state.loc['481']/* 'Direct Purchase Shipping Fee' */, 'details':this.props.app_state.loc['482']/* 'The shipping fee you charge for shipping your item when directly purchased by your clients' */, 'size':'l'}
+
+        if(selected_storefront_item == this.props.app_state.loc['535aj']/* 'auction' */){
+            fulfilment_accounts_title = {'title':this.props.app_state.loc['479']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['535au']/* 'Set the accounts involved with shipping and fulfilling direct purchase orders from bidders.' */, 'size':'l'}
+
+            purchase_fee_title = {'title':this.props.app_state.loc['535av']/* 'Delivery Fee' */, 'details':this.props.app_state.loc['482']/* 'The shipping fee you charge for shipping your item when directly purchased by your clients' */, 'size':'l'}
+        }
+
         if(selected_item == this.props.app_state.loc['89']/* 'enabled' */){
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['479']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['480']/* 'Set the accounts involved with shipping and fulfilling direct purchase orders from clients' */, 'size':'l'})}
+                    {this.render_detail_item('3', fulfilment_accounts_title)}
                     <div style={{height:5}}/>
                     <div className="row" style={{width: '100%'}}>
                         <div className="col-11" style={{'padding': '5px 0px 0px 10px'}}>
@@ -560,7 +610,7 @@ class NewStorefrontItemPage extends Component {
                     {this.render_fulfilment_accounts()}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['481']/* 'Direct Purchase Shipping Fee' */, 'details':this.props.app_state.loc['482']/* 'The shipping fee you charge for shipping your item when directly purchased by your clients' */, 'size':'l'})}
+                    {this.render_detail_item('3', purchase_fee_title)}
 
                     <div style={{height:10}}/>
                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['535a']/* 'Exchange ID' */} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
@@ -586,6 +636,7 @@ class NewStorefrontItemPage extends Component {
         this.amount_picker = React.createRef();
         this.amount_picker2 = React.createRef();
         this.amount_picker3 = React.createRef();
+        this.amount_picker4 = React.createRef();
         this.screen = React.createRef()
     }
 
@@ -2649,6 +2700,17 @@ return data['data']
     }
     
     render_purchase_options_parts(){
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['535aj']/* 'auction' */){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['535an']/* 'Setting Unavailable.' */, 'details':this.props.app_state.loc['535ao']/* 'This setting is only available for auctions.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['535i']/* 'You can specify purchase options that will be requested upon direct purchase or bag purchase.' */})}
@@ -2702,6 +2764,16 @@ return data['data']
     }
 
     render_purchase_options_parts2(){
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        var size = this.props.size
+        if(selected_item == this.props.app_state.loc['535aj']/* 'auction' */ && size != 's'){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
         return(
             <div>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['505']/* 'Price' */, 'number':this.state.price_amount2, 'relativepower':this.props.app_state.loc['506']/* 'tokens' */})}>
@@ -3018,8 +3090,6 @@ return data['data']
 
 
     render_enter_item_price_part(){
-        var size = this.props.size
-
         return(
             <div style={{}}>
                 {this.render_set_token_and_amount_part()}
@@ -3040,9 +3110,16 @@ return data['data']
 
 
     render_set_token_and_amount_part(){
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        var text_obj = {'title':this.props.app_state.loc['502']/* 'Price per unit' */, 'details':this.props.app_state.loc['503']/* 'Specify the price for one unit of your new items variant' */, 'size':'l'}
+
+        if(selected_item == this.props.app_state.loc['535aj']/* 'auction' */){
+            text_obj = {'title':this.props.app_state.loc['535ar']/* 'Starting Bid Price' */, 'details':this.props.app_state.loc['535as']/* 'Specify the starting bid price for the item.' */, 'size':'l'}
+        }
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['502']/* 'Price per unit' */, 'details':this.props.app_state.loc['503']/* 'Specify the price for one unit of your new items variant' */, 'size':'l'})}
+                {this.render_detail_item('3', text_obj)}
                 <div style={{height:10}}/>
 
                 <div style={{height:10}}/>
@@ -3247,16 +3324,28 @@ return data['data']
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['516']/* 'Number of Units in ' */+selected_composition, 'details':this.props.app_state.loc['517']/* 'You can specify the number of units of the variant that are available for sale' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'number':this.state.available_unit_count, 'relativepower':this.props.app_state.loc['391']/* 'units' */})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
-                </div>
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+                {this.render_available_unit_count(selected_composition)}
             </div>
         )
+    }
+
+    render_available_unit_count(selected_composition){
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['535ai']/* 'sale' */){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['516']/* 'Number of Units in ' */+selected_composition, 'details':this.props.app_state.loc['517']/* 'You can specify the number of units of the variant that are available for sale' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'number':this.state.available_unit_count, 'relativepower':this.props.app_state.loc['391']/* 'units' */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
+                    </div>
+
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
     }
 
     render_variant_image_picker_ui(){
@@ -3379,6 +3468,12 @@ return data['data']
         var variant_description = this.state.variant_description.trim()
         var price_data = this.state.price_data
         var available_unit_count = this.state.available_unit_count
+
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['535aj']/* 'auction' */){
+            available_unit_count = 1
+        }
 
         if(variant_description == ''){
             this.props.notify(this.props.app_state.loc['521']/* 'that variant description isnt valid' */, 2800)
@@ -3602,6 +3697,299 @@ return data['data']
 
 
 
+    render_auction_exipry_time_section(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div style={{'overflow-x':'hidden'}}>
+                    {this.render_variants_exipry_time_picker()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_variants_exipry_time_picker()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_variants_exipry_time_picker()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_variants_exipry_time_picker(){
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['535ai']/* 'sale' */){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['535an']/* 'Setting Unavailable.' */, 'details':this.props.app_state.loc['535ao']/* 'This setting is only available for auctions.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535ap']/* 'Auction Expiry Time' */, 'details':this.props.app_state.loc['535aq']/* 'Set the time after which no new bids can be cast' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+                <div style={{height:15}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.auction_expiry_time - Date.now()/1000), 'details':''+(new Date(this.state.auction_expiry_time*1000)), 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_new_dat_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({auction_expiry_time: timeInSeconds})
+    }
+
+
+
+
+
+
+
+
+
+    render_auction_registration_deposit_section(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div style={{'overflow-x':'hidden'}}>
+                    {this.render_auction_registration_deposit_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_auction_registration_deposit_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_auction_registration_deposit_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_auction_registration_deposit_data(){
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['535ai']/* 'sale' */){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['535an']/* 'Setting Unavailable.' */, 'details':this.props.app_state.loc['535ao']/* 'This setting is only available for auctions.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+
+        return(
+            <div>
+                {this.render_set_minimum_bidding_proportion()}
+                {this.render_detail_item('0')}
+                {this.render_set_token_and_amount_part2()}
+                <div style={{height: 20}}/>
+                {this.render_set_prices_list_part2()}
+            </div>
+        )
+    }
+
+    render_set_minimum_bidding_proportion(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535az']/* 'Minimum Bidding Proportion.' */, 'details':this.props.app_state.loc['535ba']/* 'The proportion of the highest bid thats used to calculate the minimum amount that can be used for the next posted bid.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.minimum_bidding_proportion), 'details':this.props.app_state.loc['535bb']/* 'Minimum bidding proportion' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_minimum_bidding_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
+            </div>
+        )
+    }
+
+    when_minimum_bidding_proportion(amount){
+        this.setState({minimum_bidding_proportion: amount})
+    }
+
+    render_set_token_and_amount_part2(){
+        return(
+            <div style={{'overflow-x':'hidden'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535ax']/* 'Earnest Money Deposit' */, 'details':this.props.app_state.loc['535ay']/* 'Payment that must be made by prospective bidders who wish to participate in the auction.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['504']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed3.bind(this)} text={this.state.exchange_id3} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id3')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['505']/* 'Price' */, 'number':this.state.price_amount3, 'relativepower':this.props.app_state.loc['506']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['505']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount3), 'barwidth':this.calculate_bar_width(this.state.price_amount3), 'number':this.format_account_balance_figure(this.state.price_amount3), 'barcolor':'', 'relativepower':this.props.app_state.loc['506']/* 'tokens' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker4} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id3)+9))} when_number_picker_value_changed={this.when_price_amount3.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id3)}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set2()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['507']/* 'Add Price' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_exchange_id_input_field_changed3(text){
+        this.setState({exchange_id3: text})
+        this.reset_the_number_picker4()
+    }
+
+    reset_the_number_picker4(){
+        var me = this;
+        setTimeout(function() {
+            if(me.amount_picker4.current != null){
+                me.amount_picker4.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
+    }
+
+    when_price_amount3(amount){
+        this.setState({price_amount3: amount})
+    }
+
+    when_add_price_set2(){
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id3.trim())
+        var amount = this.state.price_amount3
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['508']/* 'please put a valid exchange id' */, 1600)
+        }
+        else if(amount == 0){
+            this.props.notify(this.props.app_state.loc['509']/* 'please put a valid amount' */, 1600)
+        }
+        else if(this.is_exchange_already_added(exchange_id, this.state.price_data2)){
+            this.props.notify(this.props.app_state.loc['510']/* 'You cant use the same exchange twice' */, 3600)
+        }
+        else{
+            var price_data_clone = this.state.price_data2.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data2: price_data_clone, price_amount3:0, exchange_id3:''});
+            this.props.notify(this.props.app_state.loc['511']/* 'added price!' */, 1000)
+        }
+    }
+
+    render_set_prices_list_part2(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.price_data2)
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_amount_clicked2(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                            </div>
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    when_amount_clicked2(item){
+        var cloned_array = this.state.price_data2.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({price_data2: cloned_array})
+    }
+
+
+
+
+
+
+
+
 
     load_token_suggestions(target_type){
         var items = [].concat(this.get_suggested_tokens(target_type))
@@ -3692,6 +4080,10 @@ return data['data']
         else if(target_type == 'exchange_id2'){
             this.setState({exchange_id2: item['id']})
             this.reset_the_number_picker3()
+        }
+        else if(target_type == 'exchange_id3'){
+            this.setState({exchange_id3: item['id']})
+            this.reset_the_number_picker4()
         }
     }
 
@@ -3811,8 +4203,11 @@ return data['data']
         var variants = this.state.variants
         var target_receiver = this.state.target_receiver.trim()
         var fulfilment_location = this.state.fulfilment_location.trim()
+        var shipping_price_data = this.state.shipping_price_data
 
         var selected_item = this.get_selected_item(this.state.purchase_option_tags_object, this.state.purchase_option_tags_object['i'].active)
+
+        var storefront_type = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
 
         if(index_tags.length == 0){
             this.props.notify(this.props.app_state.loc['529']/* 'add some tags first!' */, 2700)
@@ -3831,6 +4226,9 @@ return data['data']
         }
         else if(fulfilment_location==''){
             this.props.notify(this.props.app_state.loc['534']/* 'set a valid fulfilment location for your storefront items' */, 4900)
+        }
+        else if(storefront_type == this.props.app_state.loc['535aj']/* 'auction' */ && shipping_price_data.length == 0){
+            this.props.notify(this.props.app_state.loc['535at']/* 'You need to enable and set direct purchasing fees for your auction.' */, 7700)
         }
         else if(selected_item == this.props.app_state.loc['89']/* 'enabled' */ && this.state.fulfilment_accounts.length == 0){
             this.props.notify(this.props.app_state.loc['535']/* 'you should set some fulfilment accounts for your item' */, 4700)

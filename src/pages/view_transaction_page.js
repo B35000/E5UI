@@ -895,6 +895,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['3076']/* 'auction-bid' */){
+                return(
+                    <div>
+                        {this.render_auction_bid_info()}
+                    </div>
+                )
+            }
         }
     }
 
@@ -2694,6 +2701,8 @@ return data['data']
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
                         {this.render_detail_item('3', item['id'])}
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', item['type'])}
 
                         {this.render_detail_item('0')}
                         {this.render_item_data(items)}
@@ -2726,9 +2735,13 @@ return data['data']
     get_storefront_details_data(object){
         var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+
+        var selected_item = this.get_selected_item(object['ipfs'].get_option_storefront_type_object, object['ipfs'].get_option_storefront_type_object['i'].active)
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'type':{'title':selected_item, 'details':this.props.app_state.loc['535ak']/* Storefront Type */, 'size':'l'},
         }
     }
 
@@ -5769,6 +5782,8 @@ return data['data']
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
                         {this.render_detail_item('3', item['id'])}
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', item['type'])}
 
                         {this.render_detail_item('0')}
                         {this.render_item_data(items)}
@@ -6841,7 +6856,6 @@ return data['data']
         )
     }
 
-
     render_payment_amounts(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index]
         var object = transaction_item.nitro_object
@@ -7528,6 +7542,86 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+
+
+
+    render_auction_bid_info(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var storefront_object = transaction_item.storefront_item
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+
+                <div style={{height: 10}}/>
+                {this.render_storefront_item(storefront_object)}
+
+                <div style={{height: 10}}/>
+                {this.render_selected_variant(transaction_item.selected_variant)}
+
+                <div style={{height: 10}}/>
+                {this.render_set_bid_prices_list_part(transaction_item.payment_data)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_storefront_item(object){
+        const item = this.format_storefront_item(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        return(
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    format_storefront_item(object){
+        var tags = object['ipfs'] == null ? ['Storefront'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var sender = this.get_senders_name(object['event'].returnValues.p5, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    render_set_bid_prices_list_part(items){
+        return(
+            <div>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
     
 
 

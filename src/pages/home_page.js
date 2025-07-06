@@ -4479,6 +4479,8 @@ class home_page extends Component {
                 connect_to_node={this.props.connect_to_node.bind(this)} get_mail_messages={this.props.get_mail_messages.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_audiopost={this.props.repost_audiopost.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)} repost_post={this.props.repost_post.bind(this)}
 
                 perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} open_vote_in_poll_ui={this.props.show_view_vote_poll_bottomsheet.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} when_catalogue_storefront_item_clicked={this.when_catalogue_storefront_item_clicked.bind(this)} open_stage_creator_ui={this.props.open_stage_creator_ui.bind(this)} hash_data_with_specific_e5={this.props.hash_data_with_specific_e5.bind(this)}
+
+                open_participate_in_auction={this.props.show_view_bid_in_auction_bottomsheet.bind(this)}
                 />
             </div>
         )

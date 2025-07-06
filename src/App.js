@@ -651,6 +651,7 @@ import ContextualTransferPage from './pages/contextual_transfer_page'
 import VotePollPage from './pages/vote_poll_page'
 import CalculatePollResultPage from './pages/calculate_poll_result'
 import StageCreatorPayoutPage from './pages/stage_creator_payout_page'
+import BidInAuctionPage from './pages/bid_in_auction_page'
 
 import english from "./texts/english";
 
@@ -891,7 +892,7 @@ class App extends Component {
     created_mail:{}, received_mail:{},
     created_stores:{}, created_store_mappings:{}, created_bags:{}, 
     created_contractors:{},created_audios:{}, created_audio_mappings:{},
-    mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false, blocked_accounts:{}, should_update_blocked_accounts_onchain: false,
+    mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false, blocked_accounts:{}, should_update_blocked_accounts_onchain: false, view_bid_in_auction_bottomsheet:false,
 
     web3:'', e5_address:'',
     
@@ -3108,6 +3109,7 @@ class App extends Component {
     this.view_vote_poll_page = React.createRef();
     this.view_calculate_poll_result_page = React.createRef();
     this.view_stage_creator_payout_result_page = React.createRef();
+    this.view_bid_in_auction_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -5364,6 +5366,7 @@ class App extends Component {
           {this.render_dialog_bottomsheet()}
           {this.render_add_comment_bottomsheet()}
           {this.render_view_number_bottomsheet()}
+          {this.render_view_bid_in_auction_bottomsheet()}
           
           {this.render_toast_container()}
           <audio ref={this.remoteStream} autoPlay />
@@ -5453,7 +5456,7 @@ class App extends Component {
           close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} open_stage_creator_ui={this.show_view_stage_creator_payout_result_bottomsheet.bind(this)}
           get_channel_creator_file_records={this.get_channel_creator_file_records.bind(this)} get_channel_creator_payout_stagings={this.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.get_channel_payout_records.bind(this)}
 
-          hash_data_with_specific_e5={this.hash_data_with_specific_e5.bind(this)}
+          hash_data_with_specific_e5={this.hash_data_with_specific_e5.bind(this)} show_view_bid_in_auction_bottomsheet={this.show_view_bid_in_auction_bottomsheet.bind(this)}
 
         />
         {this.render_homepage_toast()}
@@ -12541,7 +12544,15 @@ class App extends Component {
       }
       }, (1 * 500));  
     }
-    
+    else if(tx.type == this.getLocale()['3076']/* 'auction-bid' */){
+      this.open_view_bid_in_auction_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.view_bid_in_auction_page.current){
+          me.view_bid_in_auction_page.current?.setState(tx)
+        }
+      }, (1 * 500)); 
+    }
   }
 
   delete_message_item(item, transaction_item){
@@ -19085,6 +19096,106 @@ return data['data']
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_view_bid_in_auction_bottomsheet(){
+    if(this.state.view_bid_in_auction_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_bid_in_auction_bottomsheet} onClose={this.open_view_bid_in_auction_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_view_bid_in_auction_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_bid_in_auction_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_bid_in_auction_bottomsheet.bind(this)} open={this.state.view_bid_in_auction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_view_bid_in_auction_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_bid_in_auction_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <BidInAuctionPage ref={this.view_bid_in_auction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_bid_in_auction_transaction_to_stack={this.add_bid_in_auction_transaction_to_stack.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_view_bid_in_auction_bottomsheet(){
+    if(this.state.view_bid_in_auction_bottomsheet == true){
+      //closing
+      this.view_bid_in_auction_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_bid_in_auction_bottomsheet: !this.state.view_bid_in_auction_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_bid_in_auction_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_bid_in_auction_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_bid_in_auction_bottomsheet: !me.state.view_bid_in_auction_bottomsheet});
+
+          if(me.view_bid_in_auction_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.view_bid_in_auction_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_bid_in_auction_bottomsheet(item){
+    this.open_view_bid_in_auction_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_bid_in_auction_page.current != null){
+        me.view_bid_in_auction_page.current.set_data(item)
+      }
+    }, (1 * 500));
+  }
+
+  add_bid_in_auction_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
 
 
 
