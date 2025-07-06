@@ -1209,16 +1209,47 @@ class StorefrontDetailsSection extends Component {
 
     render_storefront_auction_bids(object){
         var he = this.props.height-45
+        var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
 
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                     {this.render_auction_biddings_top_title(object)}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_bidding_item_variants(object, composition_type)}
+                    <div style={{height: 10}}/>
                     {this.render_bids(object)}
                 </div>
             </div>
         )
+    }
+
+    render_bidding_item_variants(object, composition_type){
+        var items = [].concat(object['ipfs'].variants)
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_variant_clicked(item)}>
+                            {this.render_item(item, composition_type)}
+                            {this.render_line_if_selected2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_line_if_selected2(item, index){
+        if(this.state.selected_variant == item['variant_id'] || index == 0){
+            return (
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )
+        }
+    }
+
+    when_variant_clicked(item){
+        this.setState({selected_variant: item['variant_id']})
     }
 
     render_auction_biddings_top_title(object){
@@ -1276,7 +1307,18 @@ class StorefrontDetailsSection extends Component {
     get_bids(object){
         var items = this.props.app_state.storefront_auction_bids[object['e5_id']]
         if(items == null) return []
-        return items
+        return this.filter_bids(items, object)
+    }
+
+    filter_bids(items, object){
+        var selected_variant = this.state.selected_variant
+        if(selected_variant == null){
+            selected_variant = object['ipfs'].variants[0]['variant_id']
+        }
+        var selected_items = items.filter(function (bid) {
+            return (bid['ipfs']['variant'] == selected_variant)
+        })
+        return selected_items
     }
 
     sort_bids(items){
@@ -1850,19 +1892,6 @@ class StorefrontDetailsSection extends Component {
         if(object['ipfs'].get_take_down_option == null) return false
         var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
         if(selected_take_down_option == 1) return true
-    }
-
-
-
-
-
-
-
-
-
-
-    render_storefront_auction_bids(object){
-
     }
 
 

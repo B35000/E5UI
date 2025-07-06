@@ -5983,12 +5983,6 @@ return data['data']
                 {this.render_detail_item('3', {'size':'l', 'title':this.get_time_diff(object['ipfs'].auction_expiry_time - Date.now()/1000), 'details':''+(new Date(item['event'].returnValues.p6/* timestamp */*1000)) })}
                 <div style={{height: 10}}/>
                 {this.render_bid_amounts(item['ipfs']['bid_data'])}
-                {index == 0 && (
-                    <div>
-                        <div style={{height: 10}}/>
-                        {this.render_detail_item('4', {'text':this.props.app_state.loc['2642p']/* 'This is the highest bid.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                    </div>
-                )}
             </div>
         )
     }
