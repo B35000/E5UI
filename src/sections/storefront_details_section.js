@@ -153,12 +153,37 @@ class StorefrontDetailsSection extends Component {
         return obj
     }
 
+
+
+
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.props.selected_storefront_item != null){
+            var object = this.get_item_in_array(this.get_storefront_items(), this.props.selected_storefront_item);
+            if(object == null) return;
+            
+            this.props.get_direct_purchase_events(object['id'], object['e5'])
+            this.props.get_storefront_auction_bids(object)
+            this.props.get_objects_messages(object['id'], object['e5'])
+        }
+    }
+
+
+
+
+
     render(){
         return(
             <div>{this.render_storefront_list_detail()}</div>
         )
     }
-
 
     render_storefront_list_detail(){
         if(this.props.selected_storefront_item == null){
@@ -293,6 +318,8 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':sale_type, 'details':this.props.app_state.loc['535ak']/* Storefront Type */, 'size':'l'})}
 
                     {this.render_auction_expiry_time(object)}
+
+                    {this.render_auction_bid_count(object)}
 
                     {this.render_auction_participation_fees_if_any(object)}
 
@@ -657,6 +684,18 @@ class StorefrontDetailsSection extends Component {
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['2642h']/* 'Auction Expiry Time.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(object['ipfs'].auction_expiry_time - Date.now()/1000), 'details':''+(new Date(object['ipfs'].auction_expiry_time*1000)), 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_auction_bid_count(object){
+        var bids = this.props.app_state.storefront_auction_bids[object['e5_id']]
+        if(bids == null || bids.length == 0) return;
+
+        return(
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':number_with_commas(bids.length), 'details':this.props.app_state.loc['2642l']/* 'Number of Bids.' */, 'size':'l'})}
             </div>
         )
     }
@@ -1132,6 +1171,9 @@ class StorefrontDetailsSection extends Component {
             return;
         }
 
+        var bids = this.props.app_state.storefront_auction_bids[object['e5_id']]
+        if(bids == null) return
+
         if(object['event'].returnValues.p5 != my_account.toString() || object['ipfs'].auction_expiry_time > Date.now()/1000){
             return(
                 <div>
@@ -1164,9 +1206,117 @@ class StorefrontDetailsSection extends Component {
 
 
 
-    render_direct_purchases(object){
+
+    render_storefront_auction_bids(object){
         var he = this.props.height-45
 
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_auction_biddings_top_title(object)}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_bids(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_auction_biddings_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2642m']/* 'Auction Bids' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_bids(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.sort_bids(this.get_bids(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_bid_item(item, object, index)}
+                                </div>
+                            </li> 
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_bids(object){
+        var items = this.props.app_state.storefront_auction_bids[object['e5_id']]
+        if(items == null) return []
+        return items
+    }
+
+    sort_bids(items){
+        return this.sort_bids_by_descending(items)
+    }
+
+    sort_bids_by_descending(array) {
+        return array.sort((a, b) => {
+            if (a['ipfs']['payment_data'][0]['amount'] < b['ipfs']['payment_data'][0]['amount']) {
+                return 1;
+            }
+            if (a['ipfs']['payment_data'][0]['amount'] > b['ipfs']['payment_data'][0]['amount']) {
+                return -1;
+            }
+            return 0;
+        });
+    }
+
+    render_bid_item(item, object, index){
+        return(
+            <div onClick={()=> this.when_bid_clicked(item, object, index)}>
+                {this.render_detail_item('3', {'size':'l', 'title':this.get_senders_name(item['event'].returnValues.p2/* sender_acc_id */, object), 'details':''+(new Date(item['event'].returnValues.p6/* timestamp */*1000)) })}
+            </div>
+        )
+    }
+
+    when_bid_clicked(item, object, index){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object, 'index':index}, 'view_bid_item')
+    }
+
+
+
+
+
+
+
+
+
+    render_direct_purchases(object){
+        var he = this.props.height-45
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
@@ -1178,7 +1328,6 @@ class StorefrontDetailsSection extends Component {
         )
     }
 
-
     render_purchases_top_title(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         return(
@@ -1187,7 +1336,6 @@ class StorefrontDetailsSection extends Component {
             </div>
         )
     }
-
 
     render_purchases(object){
         var middle = this.props.height-200;
@@ -1227,7 +1375,7 @@ class StorefrontDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
@@ -1241,7 +1389,6 @@ class StorefrontDetailsSection extends Component {
             )
         }
     }
-
 
     get_purchases(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
@@ -1260,7 +1407,6 @@ class StorefrontDetailsSection extends Component {
         // console.log('direct_purchase', 'filtered_purchases', filtered_purchases)
         return this.filter_using_bottom_tags(filtered_purchases, object)
     }
-
 
     filter_using_bottom_tags(filtered_purchases, object){
         var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, this.props.app_state.loc['2603']/* 'direct-purchases' */)
@@ -1293,7 +1439,6 @@ class StorefrontDetailsSection extends Component {
             return fulfilled_items
         }
     }
-
 
 
     render_full_or_compressed_object(item, sender_type, index, object){

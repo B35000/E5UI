@@ -5185,7 +5185,8 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['3076']/* 'auction-bid' */){
                     const data = {
-                        'payment_data': txs[i].payment_data,
+                        'bid_data': txs[i].bidd_data,
+                        'variant':txs[i].selected_variant['variant_id'],
                         'time': Date.now(),
                     }
                     ipfs_index_object[txs[i].id] = data
@@ -8782,7 +8783,7 @@ class StackPage extends Component {
         var ints_clone = ints.slice()
         var author = t.storefront_item['ipfs'].target_receiver.toString().toLocaleString('fullwide', {useGrouping:false})
         var id = t.storefront_item['id'].target_receiver.toString().toLocaleString('fullwide', {useGrouping:false})
-        var string_data = this.props.hash_data(t.id)
+        var string_data = this.props.hash_data(t.storefront_item['ipfs'].id)
         var depth_swap_obj = [
             [30000,16,0],
             [], [],/* target exchange ids */

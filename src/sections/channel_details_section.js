@@ -140,6 +140,9 @@ class ChannelDetailsSection extends Component {
         return obj
     }
 
+
+
+    
     render(){
         return(
             <div>
@@ -147,7 +150,6 @@ class ChannelDetailsSection extends Component {
             </div>
         )
     }
-
 
     render_channels_list_detail(){
         if(this.props.selected_channel_item == null){

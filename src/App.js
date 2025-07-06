@@ -954,7 +954,7 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{},
   };
 
   get_static_assets(){
@@ -5457,7 +5457,7 @@ class App extends Component {
           get_channel_creator_file_records={this.get_channel_creator_file_records.bind(this)} get_channel_creator_payout_stagings={this.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.get_channel_payout_records.bind(this)}
 
           hash_data_with_specific_e5={this.hash_data_with_specific_e5.bind(this)} show_view_bid_in_auction_bottomsheet={this.show_view_bid_in_auction_bottomsheet.bind(this)}
-
+          get_storefront_auction_bids={this.get_storefront_auction_bids.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -15010,6 +15010,7 @@ class App extends Component {
       'channel_payout_results':600,
       'confirm_upload_nitro_files':600,
       'renew_nitro_uploads':600,
+      'view_bid_item':550,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -34450,6 +34451,83 @@ return data['data']
       return sorted_object_events
     }
     return []
+  }
+
+  get_storefront_auction_bids = async (object) => {
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const recipient = object['ipfs'].target_receiver
+    const expiry = object['ipfs'].auction_expiry_time
+    const bidding_entry_fees = object['ipfs'].price_data2 == null ? [] : object['ipfs'].price_data2
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const auction_bids_event_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:45})).reverse()
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    const identifier = object['ipfs'].id
+    const used_identifier = this.hash_data(identifier)
+
+    const accepted_accounts = []
+    if(bidding_entry_fees.length > 0){
+      var itransfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p4/* metadata */: used_identifier, p2/* awward_receiver */: recipient, p3/* awward_context */: id})
+      var transfer_event_params = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: recipient})
+
+      itransfer_event_params.forEach(event => {
+        const sender = event.returnValues.p1/* awward_sender */
+        const block = event.returnValues.p6/* block_number */
+        var valid = true;
+        bidding_entry_fees.forEach(entry_fee_data => {
+          const exchange_id = entry_fee_data['id']
+          const amount = entry_fee_data['amount']
+
+          const exists = transfer_event_params.find(e => (e.returnValues.p1/* exchange */ == exchange_id && e.returnValues.p4/* amount */ == amount && e.returnValues.p6/* block_number */ == block && e.returnValues.p5/* timestamp */ <= expiry))
+
+          if(exists == null){
+            valid = false
+          }
+        });
+        
+        if(valid == true){
+          accepted_accounts.push(sender)
+        }
+      });
+    }
+
+    const valid_bid_events = auction_bids_event_data.filter(function (event) {
+      return (accepted_accounts.includes(event.returnValues.p2/* sender_acc_id */) || bidding_entry_fees.length == 0)
+    })
+
+
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(valid_bid_events, 0, 'p4')
+    }
+
+    const result_objects = []
+    var is_first_time = this.state.storefront_auction_bids[e5_id] == null ? true : false
+    for(var i=0; i<valid_bid_events.length; i++){
+      const event = valid_bid_events[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      const obj = {'ipfs':ipfs, 'event':event}
+      result_objects.push(obj)
+
+      if(is_first_time == true){
+        const storefront_auction_bids_clone = structuredClone(this.state.storefront_auction_bids)
+        storefront_auction_bids_clone[e5_id] = result_objects
+        this.setState({storefront_auction_bids: storefront_auction_bids_clone})
+      }
+    }
+
+    const storefront_auction_bids_clone = structuredClone(this.state.storefront_auction_bids)
+    storefront_auction_bids_clone[e5_id] = result_objects
+    this.setState({storefront_auction_bids: storefront_auction_bids_clone})
   }
 
 

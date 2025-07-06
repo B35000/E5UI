@@ -104,7 +104,6 @@ class BidInAuctionPage extends Component {
         this.setState({get_bid_in_auction_tags_object: tag_obj})
     }
 
-
     render_everything(){
         var size = this.props.app_state.size
         if(this.state.storefront_item == null) return;
@@ -113,7 +112,8 @@ class BidInAuctionPage extends Component {
             return(
                 <div>
                     {this.render_content()}
-                    {this.render_price_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_content2()}
                 </div>
             )
         }
@@ -122,10 +122,10 @@ class BidInAuctionPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_price_content()}
-                        {this.render_empty_views(3)}
+                        {this.render_content2()}
                     </div>
                 </div>
                 
@@ -136,10 +136,10 @@ class BidInAuctionPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_empty_views(3)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_price_content()}
-                        {this.render_empty_views(3)}
+                        {this.render_content2()}
                     </div>
                 </div>
                 
@@ -162,8 +162,16 @@ class BidInAuctionPage extends Component {
                 <div style={{height:10}}/>
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={72}/>
+                
+            </div>
+        )
+    }
 
+    render_content2(){
+        return(
+            <div>
                 {this.render_variant_price_data()}
+                {this.render_entry_fees()}
             </div>
         )
     }
@@ -250,8 +258,6 @@ class BidInAuctionPage extends Component {
                     </div>
                     <div style={{height:5}}/>
                     {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1107']/* 'Number of Units' */, 'size':'l'})}
-                    <div style={{height:5}}/>
-                    {/* {this.render_variant_price_data()} */}
                 </div>
             )
         }
@@ -263,6 +269,28 @@ class BidInAuctionPage extends Component {
         var items = [].concat(this.calculate_price_data(variant['price_data']))
         return(
             <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076f']/* 'Set Bid Amounts.' */, 'details':this.props.app_state.loc['3076g']/* The amount youve currently set for your next bid in their respective denominations. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_entry_fees(){
+        const entry_fees = this.state.storefront_item['ipfs'].price_data2
+        var items = [].concat(entry_fees)
+        if(items.length == 0 && !this.has_sender_already_cast_bid()) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076h']/* 'Auction Entry Fee' */, 'details':this.props.app_state.loc['3076i']/* The fee set by the auctioneer to participate in the auction. */, 'size':'l'})}
+                <div style={{height:10}}/>
                 {items.map((item, index) => (
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
@@ -275,8 +303,8 @@ class BidInAuctionPage extends Component {
     }
 
     calculate_price_data(items){
-        const subscription = this.state.storefront_item
-        const minimum_bidding_proportion = subscription['ipfs'].minimum_bidding_proportion
+        const storefront_item = this.state.storefront_item
+        const minimum_bidding_proportion = storefront_item['ipfs'].minimum_bidding_proportion
         var price_data = []
 
         items.forEach(price_data => {
@@ -299,6 +327,22 @@ class BidInAuctionPage extends Component {
         return price_data
     }
 
+    has_sender_already_cast_bid(){
+        const object = this.state.storefront_item
+        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+
+        var includes = this.props.app_state.storefront_auction_bids[object['e5_id']].find(e => e['event'].returnValues.p2/* sender_acc_id */ == my_account)
+
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == this.props.app_state.loc['3076']/* 'auction-bid' */ && stack_transactions[i].storefront_item['e5_id'] == object['e5_id']){
+                return true
+            }
+        }
+
+        return includes != null
+    }
+
 
 
 
@@ -308,6 +352,7 @@ class BidInAuctionPage extends Component {
         const payment_data_object = this.calculate_total_price_data()
         const payment_data = payment_data_object.final_payment_items
         const entry_fee = payment_data_object.entry_fee_data
+        const bidd_data = payment_data_object.bidd_data
         
         if(this.state.selected_variant == null){
             this.props.notify(this.props.app_state.loc['1109']/* 'Pick one variant first.' */, 3500)
@@ -319,7 +364,7 @@ class BidInAuctionPage extends Component {
             this.props.notify(this.props.app_state.loc['3076e']/* 'Your balance is insufficient to fulfil that bid.' */, 5900)
         }
         else{
-            this.setState({payment_data: payment_data, entry_fee: entry_fee})
+            this.setState({payment_data: payment_data, entry_fee: entry_fee, bidd_data:bidd_data})
             var me = this
             setTimeout(function() {
                 me.props.add_bid_in_auction_transaction_to_stack(me.state)
@@ -331,12 +376,14 @@ class BidInAuctionPage extends Component {
     }
 
     calculate_total_price_data(){
-        const subscription = this.state.storefront_item
-        const minimum_bidding_proportion = subscription['ipfs'].minimum_bidding_proportion
+        const storefront_item = this.state.storefront_item
+        const minimum_bidding_proportion = storefront_item['ipfs'].minimum_bidding_proportion
         var variant = this.state.selected_variant
         var items = variant['price_data']
+
         const price_data = {}
         const entry_fee_data = {}
+        const bidd_data_object = {}
 
         items.forEach(price_data_item => {
             const amount = price_data_item['amount']
@@ -354,23 +401,27 @@ class BidInAuctionPage extends Component {
             }
             if(price_data[exchange_id] == null){
                 price_data[exchange_id] = bigInt(0)
+                bidd_data_object[exchange_id] = bigInt(0)
             }
             price_data[exchange_id] = bigInt(price_data[exchange_id]).plus(minimum_amount)
+            bidd_data_object[exchange_id] = bigInt(price_data[exchange_id]).plus(minimum_amount)
         });
 
-        subscription['ipfs'].price_data2.forEach(price_data_item => {
-            const amount = price_data_item['amount']
-            const exchange_id = price_data_item['id']
+        if(!this.has_sender_already_cast_bid()){
+            storefront_item['ipfs'].price_data2.forEach(price_data_item => {
+                const amount = price_data_item['amount']
+                const exchange_id = price_data_item['id']
 
-            if(price_data[exchange_id] == null){
-                price_data[exchange_id] = bigInt(0)
-            }
-            if(entry_fee_data[exchange_id] == null){
-                entry_fee_data[exchange_id] = bigInt(0)
-            }
-            price_data[exchange_id] = bigInt(price_data[exchange_id]).plus(amount)
-            entry_fee_data[exchange_id] = bigInt(amount)
-        });
+                if(price_data[exchange_id] == null){
+                    price_data[exchange_id] = bigInt(0)
+                }
+                if(entry_fee_data[exchange_id] == null){
+                    entry_fee_data[exchange_id] = bigInt(0)
+                }
+                price_data[exchange_id] = bigInt(price_data[exchange_id]).plus(amount)
+                entry_fee_data[exchange_id] = bigInt(amount)
+            });
+        }
 
         const final_payment_items = []
         const exchanges = Object.keys(price_data)
@@ -378,7 +429,13 @@ class BidInAuctionPage extends Component {
             final_payment_items.push({'id':exchange_id, 'amount':price_data[exchange_id]})
         });
 
-        return { final_payment_items, entry_fee_data }
+        const bidd_data = []
+        const bid_exchanges = Object.keys(bidd_data_object)
+        bid_exchanges.forEach(exchange_id => {
+            bidd_data.push({'id':exchange_id, 'amount':bidd_data_object[exchange_id]})
+        });
+
+        return { final_payment_items, entry_fee_data, bidd_data }
     }
 
     can_afford_purchase(payment_data){
