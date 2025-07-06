@@ -335,7 +335,7 @@ class StorefrontDetailsSection extends Component {
                     
                     {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']/* ' variants' */, 'details':this.props.app_state.loc['2613']/* 'To choose from.' */, 'size':'l'})} 
                     <div style={{height: 5}}/>
-                    {this.render_item_variants(object, composition_type)}  
+                    {this.render_item_variants(object, composition_type)} 
                     
                     {this.render_out_of_stock_message_if_any(object)}                
 
@@ -343,6 +343,8 @@ class StorefrontDetailsSection extends Component {
                     {this.render_direct_purchase_button(object)}
 
                     {this.render_bid_in_auction_button(object)}
+
+                    {this.render_fulfil_bid_in_auction_button(object)}
 
                     {this.render_edit_object_button(object)}
 
@@ -1167,7 +1169,7 @@ class StorefrontDetailsSection extends Component {
 
         var sale_type = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
 
-        if(sale_type == 2){
+        if(sale_type == 1){
             return;
         }
 
@@ -1187,6 +1189,93 @@ class StorefrontDetailsSection extends Component {
             )
         }
         
+    }
+
+    render_fulfil_bid_in_auction_button(object){
+        var sale_type = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
+
+        if(sale_type == 1){
+            return;
+        }
+
+        const my_winning_bids = this.get_my_winning_bids(object)
+        if(my_winning_bids.length == 0) return
+
+        if(object['ipfs'].auction_expiry_time < Date.now()/1000){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2642s']/* 'Youve won some of the auction items, so you should fulfil them through direct transfers.' */, 'title':this.props.app_state.loc['2642r']/* 'Fulfil Bids.' */})}
+                    <div style={{height:5}}/>
+                    {this.render_winning_item_variants(object, my_winning_bids)}
+                    <div style={{height:5}}/>
+                    <div onClick={()=> this.props.open_fulfil_my_winning_bids(object, my_winning_bids)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2642q']/* 'Fulfil Bid' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_my_winning_bids(object){
+        const my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+
+        const bids = this.props.app_state.storefront_auction_bids[object['e5_id']]
+        if(bids == null) return []
+
+        const my_winning_bids = []
+
+        object['ipfs'].variants.forEach(variant_object => {
+            const variant_id = variant_object['variant_id']
+            const valid_bids = bids.filter(function (bid) {
+                return (bid['ipfs']['variant'] == variant_id)
+            })
+
+            const sorted_bids = this.sort_bids(valid_bids)
+            const top_bid = sorted_bids[0]
+
+            if(top_bid['event'].returnValues.p2/* user_acc_id */ == my_account){
+                my_winning_bids.push(top_bid)
+            }
+        });
+
+        return my_winning_bids
+    }
+
+    render_winning_item_variants(object, winning_bids){
+        var composition_type = this.get_composition_type(object)
+        var items = [].concat(this.get_my_variants(object['ipfs'].variants, winning_bids))
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_item(item, composition_type)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_composition_type(object){
+        var composition_type = object['ipfs'].composition_type == null ? this.props.app_state.loc['1114']/* 'items' */ : this.get_selected_item(object['ipfs'].composition_type, 'e')
+
+        return composition_type
+    }
+
+    get_my_variants(variants, winning_bids){
+        const variant_ids = []
+        winning_bids.forEach(bid => {
+            variant_ids.push(bid['ipfs']['variant'])
+        });
+
+        const valid_variants = variants.filter(function (variant) {
+            return (variant_ids.includes(variant['variant_id']))
+        })
+
+        return valid_variants
     }
 
     get_storefront_details_data(object){

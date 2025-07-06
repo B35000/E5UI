@@ -77,7 +77,7 @@ class NewStorefrontItemPage extends Component {
         option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], edit_option_group_item_pos:-1,
         get_option_group_type_object: this.get_option_group_type_object(), option_group_details:'',
 
-        auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0,
+        auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0, viewers:[], viewer:'',
     };
 
     get_new_job_page_tags_object(){
@@ -86,7 +86,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */, this.props.app_state.loc['535am']/* 'expiry-time' */, this.props.app_state.loc['535aw']/* 'registration-deposit' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['c311cf']/* access */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */, this.props.app_state.loc['535am']/* 'expiry-time' */, this.props.app_state.loc['535aw']/* 'registration-deposit' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -266,6 +266,10 @@ class NewStorefrontItemPage extends Component {
         if(this.state.option_group_title == null){
             this.setState({option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], option_group_details:''})
         }
+
+        if(this.state.viewers == null){
+            this.setState({viewers:[], viewer:'',})
+        }
     }
 
 
@@ -382,6 +386,13 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_auction_registration_deposit_section()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['c311cf']/* access */){
+            return(
+                <div>
+                    {this.render_access_rights_part()}
                 </div>
             )
         }
@@ -3991,6 +4002,225 @@ return data['data']
 
 
 
+
+
+
+
+
+    render_access_rights_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_access_rights_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_access_rights_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_access_rights_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_access_rights_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535bd']/* Storefront Accessibility. */, 'details':this.props.app_state.loc['535be']/* Specify which accounts can access the storefront. If no accounts are set, it will be open to every account. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_viewer_input_field_changed.bind(this)} text={this.state.viewer} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.load_account_suggestions('viewer')}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_viewer_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311cj']/* Add viewer. */, 'action':''})}
+                </div>
+                <div style={{height: 20}}/>
+                {this.render_added_viewers()}
+            </div>
+        )
+    }
+
+    when_viewer_input_field_changed(text){
+        this.setState({viewer: text})
+    }
+
+    when_add_viewer_button_tapped(){
+        var typed_text = this.state.viewer.trim()
+        if(typed_text.includes(',')){
+            this.add_multiple_viewers(typed_text)
+            return;
+        }
+        var participant_id = this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
+        var final_value = participant_e5+':'+participant_id
+        var participants_clone = this.state.viewers.slice()
+        if(typed_text == ''){
+            this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
+        }
+        else if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else if(participants_clone.includes(final_value)){
+            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        }
+        else{
+            participants_clone.push(final_value)
+            this.setState({viewers: participants_clone, viewer:''});
+        }
+    }
+
+    get_alias_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    add_multiple_viewers(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        var participants_clone = this.state.viewers.slice()
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                }
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5) && this.props.app_state.e5s[e5].active == true){
+                        if(!isNaN(account) && parseInt(account) < 10**16){
+                            var final_value = e5+':'+parseInt(account)
+                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
+                                final_obj.push(final_value)
+                                account_entries++
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            participants_clone = participants_clone.concat(final_obj)
+            this.setState({viewers: participants_clone, viewer:''});
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+
+    render_added_viewers(){
+        var items = [].concat(this.state.viewers)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_viewer_tapped(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '3px'}}>
+                                        {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_data(item){
+        var obj = item.split(':')
+        return { e5: obj[0], id: obj[1]}
+    }
+
+    get_senders_name(item){
+        var data_item = this.get_data(item)
+        var sender = data_item.id
+        var e5 = data_item.e5
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.props.app_state.alias_bucket[e5]
+            var alias = (obj[sender] == null ? this.props.app_state.loc['c311m']/* 'Account' */ : obj[sender])
+            return alias
+        }
+    }
+
+    when_added_viewer_tapped(item, index){
+        var cloned_array = this.state.viewers.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({viewers: cloned_array})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     load_token_suggestions(target_type){
         var items = [].concat(this.get_suggested_tokens(target_type))
         var background_color = this.props.theme['card_background_color']
@@ -4232,6 +4462,9 @@ return data['data']
         }
         else if(selected_item == this.props.app_state.loc['89']/* 'enabled' */ && this.state.fulfilment_accounts.length == 0){
             this.props.notify(this.props.app_state.loc['535']/* 'you should set some fulfilment accounts for your item' */, 4700)
+        }
+        else if(storefront_type == this.props.app_state.loc['535aj']/* 'auction' */ && this.state.auction_expiry_time < Date.now()/1000){
+            this.props.notify(this.props.app_state.loc['535bc']/* 'You cant set an auction expiry time thats less than now.' */, 6700)
         }
         else{
             

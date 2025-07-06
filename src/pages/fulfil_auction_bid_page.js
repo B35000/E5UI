@@ -51,30 +51,32 @@ function makeid(length) {
     }
     return result;
 }
-  
 
-class BidInAuctionPage extends Component {
+class FulfilAuctionBidPage extends Component {
     
     state = {
-        selected: 0, storefront_item: null, id:makeid(8), get_bid_in_auction_tags_object: this.get_bid_in_auction_tags_object(), e5:this.props.app_state.selected_e5, selected_variant:null,
-        type:this.props.app_state.loc['3076']/* 'auction-bid' */, entered_indexing_tags:[this.props.app_state.loc['3076c']/* 'auction' */, this.props.app_state.loc['3076d']/* 'bid' */, this.props.app_state.loc['1096']/* 'buy' */], amount:0
+        selected: 0, storefront_item: null, id:makeid(8), winning_bids:null, get_fulfil_auction_bids_tags_object: this.get_fulfil_auction_bids_tags_object(), e5:this.props.app_state.selected_e5,
+        type:this.props.app_state.loc['3077']/* 'fulfil-bids' */, entered_indexing_tags:[this.props.app_state.loc['3076c']/* 'auction' */, this.props.app_state.loc['3076d']/* 'bid' */, this.props.app_state.loc['3077a']/* 'fulfil' */], 
+
+        fulfilment_location:''
     };
 
-
-    get_bid_in_auction_tags_object(){
+    get_fulfil_auction_bids_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['3076']/* 'auction-bid' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['3077']/* 'fulfil-bids' */], [1]
             ],
         };
     }
 
-    set_data(object){
-        this.setState({storefront_item: object, e5: object['e5']})
+    set_data(object, winning_bids){
+        this.setState({e5: object['e5'], storefront_item: object, winning_bids: winning_bids})
     }
+
+
 
 
 
@@ -85,11 +87,11 @@ class BidInAuctionPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_bid_in_auction_tags_object} tag_size={'l'} when_tags_updated={this.when_get_bid_in_auction_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_fulfil_auction_bids_tags_object} tag_size={'l'} when_tags_updated={this.when_get_fulfil_auction_bids_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.finish_creating_auction_bid_item()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish_creating_fulfilment_transaction_item()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -100,8 +102,8 @@ class BidInAuctionPage extends Component {
         )
     }
 
-    when_get_bid_in_auction_tags_object_updated(tag_obj){
-        this.setState({get_bid_in_auction_tags_object: tag_obj})
+    when_get_fulfil_auction_bids_tags_object_updated(tag_obj){
+        this.setState({get_fulfil_auction_bids_tags_object: tag_obj})
     }
 
     render_everything(){
@@ -148,40 +150,89 @@ class BidInAuctionPage extends Component {
     }
 
 
-
     render_content(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1100']/* 'Item Variants' */, 'details':this.props.app_state.loc['1101']/* 'Pick the variant you want to purchase' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1097']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['1098']/* 'Set the delivery location, and be sure to be specific to avoid shipping issues' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1099']/* 'Shipping Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                {this.render_shipping_detail_suggestions()}
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1100']/* 'Item Variants' */, 'details':this.props.app_state.loc['3077b']/* 'Below are the items you won.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_item_variants()}
                 {this.render_selected_variant()}
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076a']/* 'Cast Your Bid' */, 'details':this.props.app_state.loc['3076b']/* 'Set the amount you wish to pay for it.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3077d']/* 'Final Payment.' */, 'details':this.props.app_state.loc['3077c']/* 'Below is the total amount you are to pay. The transaction is a direct purchase transaction.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={72}/>
+                {this.render_final_payment_amounts()}
                 
             </div>
         )
     }
 
-    render_content2(){
+    when_fulfilment_location_input_field_changed(text){
+        this.setState({fulfilment_location: text})
+    }
+
+    render_shipping_detail_suggestions(){
+        var items = [].concat(this.get_fulfilment_location_from_local_storage())
+        if(items.length == 0) return;
         return(
-            <div>
-                {this.render_variant_price_data()}
-                {this.render_entry_fees()}
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3',{'title':this.truncate(item['text'], 15), 'details':this.get_time_difference(item['time']),'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
 
-    when_price_amount(amount){
-        this.setState({amount: amount})
+    get_fulfilment_location_from_local_storage(){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            return []
+        }
+
+        return fulfilment_locations['data']
+    }
+
+    when_suggestion_clicked = (item, pos) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.when_location_suggestion_double_tapped(item, pos)
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.when_location_suggestion_tapped(item, pos)
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    when_location_suggestion_tapped(item, pos){
+        this.setState({fulfilment_location: item['text']})
+    }
+
+    when_location_suggestion_double_tapped(item, pos){
+        this.remove_fulfilment_location_from_local_storage(pos)
     }
 
     render_item_variants(){
-        var items = [].concat(this.state.storefront_item['ipfs'].variants)
+        var items = [].concat(this.get_my_variants())
         return(
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
@@ -194,6 +245,22 @@ class BidInAuctionPage extends Component {
             </div>
         )
     }
+
+    get_my_variants(){
+        const variants = this.state.storefront_item['ipfs'].variants
+        const winning_bids = this.state.winning_bids
+        const variant_ids = []
+        winning_bids.forEach(bid => {
+            variant_ids.push(bid['ipfs']['variant'])
+        });
+
+        const valid_variants = variants.filter(function (variant) {
+            return (variant_ids.includes(variant['variant_id']))
+        })
+
+        return valid_variants
+    }
+
 
     render_variant_item_if_selected(item){
         var composition_type = this.get_composition_type()
@@ -212,13 +279,6 @@ class BidInAuctionPage extends Component {
                 </div>
             )
         }
-    }
-
-    get_composition_type(){
-        var object = this.state.storefront_item
-        var composition_type = object['ipfs'].composition_type == null ? this.props.app_state.loc['1114']/* 'items' */ : this.get_selected_item(object['ipfs'].composition_type, 'e')
-
-        return composition_type
     }
 
     render_item(variant_in_store, composition_type){
@@ -273,18 +333,15 @@ class BidInAuctionPage extends Component {
 
 
 
-    render_variant_price_data(){
-        var variant = this.state.selected_variant
-        if(variant == null) return;
-        var items = [].concat(this.calculate_price_data(variant['price_data']))
+    render_final_payment_amounts(){
+        const items = this.get_total_payment_amounts()
+        const e5 = this.state.e5
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076f']/* 'Set Bid Amounts.' */, 'details':this.props.app_state.loc['3076g']/* The amount youve currently set for your next bid in their respective denominations. */, 'size':'l'})}
-                <div style={{height:10}}/>
                 {items.map((item, index) => (
                     <div style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
                         </div>
                     </div>
                 ))}
@@ -292,163 +349,66 @@ class BidInAuctionPage extends Component {
         )
     }
 
-    render_entry_fees(){
-        const entry_fees = this.state.storefront_item['ipfs'].price_data2
-        var items = [].concat(entry_fees)
-        if(items.length == 0 && !this.has_sender_already_cast_bid()) return;
-        return(
-            <div>
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076h']/* 'Auction Entry Fee' */, 'details':this.props.app_state.loc['3076i']/* The fee set by the auctioneer to participate in the auction. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                {items.map((item, index) => (
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
-                        </div>
-                    </div>
-                ))}
-            </div>
-        )
-    }
+    get_total_payment_amounts(){
+        const winning_bids = this.state.winning_bids
+        const payment_object = {}
 
-    calculate_price_data(items){
-        const storefront_item = this.state.storefront_item
-        const minimum_bidding_proportion = storefront_item['ipfs'].minimum_bidding_proportion
-        var price_data = []
-
-        items.forEach(price_data => {
-            const amount = price_data['amount']
-            const exchange_id = price_data['id']
-            const minimum_increment = minimum_bidding_proportion > 0 ? bigInt(amount).multiply(bigInt(minimum_bidding_proportion)).divide(bigInt('1e18')) : 0
-            var minimum_amount = bigInt(amount).plus(bigInt(minimum_increment))
-            
-            if(bigInt(minimum_increment).lesser(1)){
-                if(this.state.amount > 0){
-                    minimum_amount = bigInt(minimum_amount).plus(bigInt(this.state.amount))
+        winning_bids.forEach(bid => {
+            const bid_payments = bid['ipfs']['bid_data']
+            bid_payments.forEach(payment_item => {
+                const exchange = payment_item['id']
+                const amount = payment_item['amount']
+                if(payment_object[exchange] == null){
+                    payment_object[exchange] = bigInt(0)
                 }
-                else{
-                    minimum_amount = bigInt(minimum_amount).plus(bigInt(1))
-                }
-            }
-            price_data.push({'id':exchange_id, 'amount':minimum_amount})
+                payment_object[exchange] = bigInt(payment_object[exchange]).plus(bigInt(amount))
+            });
         });
 
-        return price_data
-    }
+        const data = []
+        Object.keys(payment_object).forEach(exchange => {
+            data.push({'id':exchange, 'amount':payment_object[exchange]})
+        });
 
-    has_sender_already_cast_bid(){
-        const object = this.state.storefront_item
-        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
-
-        var includes = this.props.app_state.storefront_auction_bids[object['e5_id']].find(e => e['event'].returnValues.p2/* sender_acc_id */ == my_account)
-
-        const stack_transactions = this.props.app_state.stack_items
-        for(var i=0; i<stack_transactions.length; i++){
-            if(stack_transactions[i].type == this.props.app_state.loc['3076']/* 'auction-bid' */ && stack_transactions[i].storefront_item['e5_id'] == object['e5_id']){
-                return true
-            }
-        }
-
-        return includes != null
+        return data
     }
 
 
 
 
 
-
-    finish_creating_auction_bid_item(){
-        const payment_data_object = this.calculate_total_price_data()
-        const payment_data = payment_data_object.final_payment_items
-        const entry_fee = payment_data_object.entry_fee_data
-        const bidd_data = payment_data_object.bidd_data
-        
-        if(this.state.selected_variant == null){
-            this.props.notify(this.props.app_state.loc['1109']/* 'Pick one variant first.' */, 3500)
+    finish_creating_fulfilment_transaction_item(){
+        if(this.state.fulfilment_location.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1112']/* 'Please specify a shipping adress.' */, 4200)
         }
-        else if(this.state.amount == 0){
-            this.props.notify(this.props.app_state.loc['1110']/* 'Please specify an amount of the item your adding.' */, 5200)
+        else if(!this.can_afford_purchase()){
+            this.props.notify(this.props.app_state.loc['3077e']/* 'Your balance is insufficient to fulfil this transaction.' */, 5900)
         }
-        else if(!this.can_afford_purchase(payment_data)){
-            this.props.notify(this.props.app_state.loc['3076e']/* 'Your balance is insufficient to fulfil that bid.' */, 5900)
+        else if(this.has_already_fulfiled()){
+            this.props.notify(this.props.app_state.loc['3077f']/* 'Transaction already in stack.' */, 5900)
         }
         else{
-            this.setState({payment_data: payment_data, entry_fee: entry_fee, bidd_data:bidd_data})
-            var me = this
-            setTimeout(function() {
-                me.props.add_bid_in_auction_transaction_to_stack(me.state)
-                me.setState({amount: 0, selected_variant:null})
-            }, (1 * 1000));
-            
+            this.props.add_fulfil_bids_in_auction_to_stack(this.state)
+            this.add_fulfilment_location_to_local_storage()
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
         }
     }
 
-    calculate_total_price_data(){
-        const storefront_item = this.state.storefront_item
-        const minimum_bidding_proportion = storefront_item['ipfs'].minimum_bidding_proportion
-        var variant = this.state.selected_variant
-        var items = variant['price_data']
-
-        const price_data = {}
-        const entry_fee_data = {}
-        const bidd_data_object = {}
-
-        items.forEach(price_data_item => {
-            const amount = price_data_item['amount']
-            const exchange_id = price_data_item['id']
-            const minimum_increment = minimum_bidding_proportion > 0 ? bigInt(amount).multiply(bigInt(minimum_bidding_proportion)).divide(bigInt('1e18')) : 0
-            var minimum_amount = bigInt(amount).plus(bigInt(minimum_increment))
-            
-            if(bigInt(minimum_increment).lesser(1)){
-                if(this.state.amount > 0){
-                    minimum_amount = bigInt(minimum_amount).plus(bigInt(this.state.amount))
-                }
-                else{
-                    minimum_amount = bigInt(minimum_amount).plus(bigInt(1))
-                }
+    has_already_fulfiled(){
+        const object = this.state.storefront_item
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == this.props.app_state.loc['3077']/* 'fulfil-bids' */ && stack_transactions[i].storefront_item['e5_id'] == object['e5_id']){
+                return true
             }
-            if(price_data[exchange_id] == null){
-                price_data[exchange_id] = bigInt(0)
-                bidd_data_object[exchange_id] = bigInt(0)
-            }
-            price_data[exchange_id] = bigInt(price_data[exchange_id]).plus(minimum_amount)
-            bidd_data_object[exchange_id] = bigInt(price_data[exchange_id]).plus(minimum_amount)
-        });
-
-        if(!this.has_sender_already_cast_bid()){
-            storefront_item['ipfs'].price_data2.forEach(price_data_item => {
-                const amount = price_data_item['amount']
-                const exchange_id = price_data_item['id']
-
-                if(price_data[exchange_id] == null){
-                    price_data[exchange_id] = bigInt(0)
-                }
-                if(entry_fee_data[exchange_id] == null){
-                    entry_fee_data[exchange_id] = bigInt(0)
-                }
-                price_data[exchange_id] = bigInt(price_data[exchange_id]).plus(amount)
-                entry_fee_data[exchange_id] = bigInt(amount)
-            });
         }
 
-        const final_payment_items = []
-        const exchanges = Object.keys(price_data)
-        exchanges.forEach(exchange_id => {
-            final_payment_items.push({'id':exchange_id, 'amount':price_data[exchange_id]})
-        });
-
-        const bidd_data = []
-        const bid_exchanges = Object.keys(bidd_data_object)
-        bid_exchanges.forEach(exchange_id => {
-            bidd_data.push({'id':exchange_id, 'amount':bidd_data_object[exchange_id]})
-        });
-
-        return { final_payment_items, entry_fee_data, bidd_data }
+        return false
     }
 
-    can_afford_purchase(payment_data){
+    can_afford_purchase(){
+        var payment_data = this.get_total_payment_amounts()
+        
         var can_afford = true;
         for(var i=0; i<payment_data.length; i++){
             var item = payment_data[i]['id']
@@ -464,6 +424,50 @@ class BidInAuctionPage extends Component {
 
         return can_afford
     }
+
+    add_fulfilment_location_to_local_storage(){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            fulfilment_locations = {'data':[]}
+        }
+        var set_fulfilment_location = this.state.fulfilment_location
+        var obj = {'text':set_fulfilment_location, 'time':((new Date()).getTime()/1000)}
+
+        if(!this.fulfilment_location_includes(fulfilment_locations['data'], obj)){
+            fulfilment_locations['data'].push(obj)
+        }
+
+        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+    }
+
+    remove_fulfilment_location_from_local_storage(pos){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            fulfilment_locations = {'data':[]}
+        }
+        fulfilment_locations['data'].splice(pos, 1);
+
+        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+    }
+
+    fulfilment_location_includes(array, item){
+        var includes = false
+        array.forEach(element => {
+            if(element['text'] == item['text']){
+                includes = true
+            }
+        });
+
+        return includes
+    }
+
+
+
+
 
 
 
@@ -643,4 +647,4 @@ class BidInAuctionPage extends Component {
 
 
 
-export default BidInAuctionPage;
+export default FulfilAuctionBidPage;

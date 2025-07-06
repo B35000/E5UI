@@ -4057,6 +4057,18 @@ class StackPage extends Component {
                         ints.push(auction_bid_fee_object.int)
                     }
                 }
+                else if(txs[i].type == this.props.app_state.loc['3077']/* 'fulfil-bids' */){
+                    var message_obj = await this.format_fulfil_auction_bid_object(txs[i], calculate_gas, ints, ipfs_index)
+                    if(message_obj.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_obj.depth)
+                    }
+
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -5191,6 +5203,20 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[txs[i].id] = data
                     ipfs_index_array.push({'id':txs[i].id, 'data':data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3077']/* 'fulfil-bids' */){
+                    var t = txs[i]
+                    const winning_bids = t.winning_bids
+                    for(var b=0; b<winning_bids.length; b++){
+                        const bid = winning_bids[b]
+                        const variant = bid['ipfs']['variant']
+                        const t_id = t.id+variant
+
+                        const purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':'', 'variant_id':variant, 'purchase_unit_count':1, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':[], 'storefront_options':[]}
+
+                        ipfs_index_object[t_id] = purchase_object
+                        ipfs_index_array.push({'id':t_id, 'data':purchase_object})
+                    }
                 }
             }
         }
@@ -8831,6 +8857,104 @@ class StackPage extends Component {
         
         
         string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
+    format_fulfil_auction_bid_object = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        const storefront_item = t.storefront_item
+        const object = storefront_item['ipfs']
+
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [], [],/* target receivers */
+            [],/* awward contexts */
+        ]
+        var string_obj = [[]]
+
+        const winning_bids = t.winning_bids
+        for(var b=0; b<winning_bids.length; b++){
+            const bid = winning_bids[b]
+            const price_data = bid['ipfs']['bid_data']
+            const variant = bid['ipfs']['variant']
+            const t_id = t.id+variant
+
+            obj[1].push(object.target_receiver)
+            obj[2].push(23)
+            obj[3].push(storefront_item['id'])
+
+            obj.push([])
+            obj.push([])
+            obj.push([])
+            obj.push([])
+            const p = obj.length-4
+
+            for(var i=0; i<price_data.length; i++){
+                var exchange = price_data[i]['id']
+                var amount = this.get_amounts_to_be_paid(price_data[i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
+    
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+    
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+                for(var f=0; f<transfer_actions.length; f++){
+                    obj[p].push(exchange)
+                    obj[p+1].push(23)
+                    obj[p+2].push(transfer_actions[f]['amount'])
+                    obj[p+3].push(transfer_actions[f]['depth'])
+                }
+            }
+
+            for(var j=0; j<object.shipping_price_data.length; j++){
+                var exchange = object.shipping_price_data[j]['id']
+                var amount = (object.shipping_price_data[j]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+    
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+    
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+                for(var t=0; t<transfer_actions.length; t++){
+                    obj[p].push(exchange)
+                    obj[p+1].push(23)
+                    obj[p+2].push(transfer_actions[t]['amount'])
+                    obj[p+3].push(transfer_actions[t]['depth'])
+                }
+            }
+
+            var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':variant, 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
+        
+            var string_data = await this.get_object_ipfs_index(purchase_object, calculate_gas, ipfs_index, t_id);
+
+            string_obj[0].push(string_data)
+        }
 
         return {int: obj, str: string_obj, depth: depth_swap_obj}
     }

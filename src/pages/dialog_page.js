@@ -1009,7 +1009,7 @@ class DialogPage extends Component {
             ignore_transfers = true
         }
 
-        if(!this.check_if_sender_can_afford_payments(data) && ignore_transfers == false){
+        if(!this.check_if_sender_can_afford_payments(data, object['e5']) && ignore_transfers == false){
             this.props.notify(this.props.app_state.loc['2970']/* 'You don\'t have enough money to fulfil this purchase.' */, 4500)
         }else{
             var txs = this.props.app_state.stack_items
@@ -1071,10 +1071,9 @@ class DialogPage extends Component {
         return {exchanges_used:exchanges_used, exchange_amounts:exchange_amounts}
     }
 
-    check_if_sender_can_afford_payments(data){
+    check_if_sender_can_afford_payments(data, e5){
         var exchanges_used = [].concat(data.exchanges_used)
         var exchange_amounts = data.exchange_amounts
-        var e5 = this.state.e5
 
         var can_pay = true;
         for(var i=0; i<exchanges_used.length; i++){
@@ -2686,7 +2685,7 @@ return data['data']
 
     can_sender_view_poll(object){
         var viewers = object['ipfs'].viewers
-        if(viewers.length == 0) return true;
+        if(viewers == null || viewers.length == 0) return true;
         var my_active_accounts = this.load_my_active_accounts(object)
         return my_active_accounts.some(r=> viewers.includes(r))
     }
@@ -5982,7 +5981,7 @@ return data['data']
 
                 {this.render_detail_item('3', {'size':'l', 'title':this.get_time_diff(object['ipfs'].auction_expiry_time - Date.now()/1000), 'details':''+(new Date(item['event'].returnValues.p6/* timestamp */*1000)) })}
                 <div style={{height: 10}}/>
-                {this.render_bid_amounts(item['ipfs']['bid_data'])}
+                {this.render_bid_amounts(item['ipfs']['bid_data'], object['e5'])}
             </div>
         )
     }
@@ -6005,15 +6004,15 @@ return data['data']
         )
     }
 
-    render_bid_amounts(items){
+    render_bid_amounts(items, e5){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3076f']/* 'Set Bid Amounts.' */, 'details':this.props.app_state.loc['2642o']/* The amounts set by the author of the bid. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {items.map((item, index) => (
                     <div style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
                         </div>
                     </div>
                 ))}

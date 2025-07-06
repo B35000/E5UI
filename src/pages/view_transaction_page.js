@@ -239,7 +239,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3030b']/* 'video-comment-messages' */ &&
             item.type != this.props.app_state.loc['3075w']/* 'stage-creator-payout' */ &&
             item.type != this.props.app_state.loc['2117p']/* 'creator-payout' */ &&
-            item.type != this.props.app_state.loc['3055df']/* 'nitro-renewal' */
+            item.type != this.props.app_state.loc['3055df']/* 'nitro-renewal' */ &&
+            item.type != this.props.app_state.loc['3077']/* 'fulfil-bids' */
         ){
             return(
                 <div>
@@ -899,6 +900,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_auction_bid_info()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3077']/* 'fulfil-bids' */){
+                return(
+                    <div>
+                        {this.render_auction_bid_fulfilment_info()}
                     </div>
                 )
             }
@@ -7624,6 +7632,139 @@ return data['data']
                 ))}
             </div>
         )
+    }
+
+
+
+
+
+
+
+    render_auction_bid_fulfilment_info(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var storefront_object = transaction_item.storefront_item
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+
+                <div style={{height: 10}}/>
+                {this.render_storefront_item(storefront_object)}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':transaction_item.fulfilment_location, 'size':'l'})}
+                
+
+                <div style={{height: 10}}/>
+                {this.render_item_variants()}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3077d']/* 'Final Payment.' */, 'details':this.props.app_state.loc['3077c']/* 'Below is the total amount you are to pay. The transaction is a direct purchase transaction.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_final_payment_amounts()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_item_variants(){
+        var items = [].concat(this.get_my_variants())
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_variant_item_if_selected(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_my_variants(){
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const storefront_object = transaction_item.storefront_item
+        const variants = storefront_object['ipfs'].variants
+        const winning_bids = transaction_item.winning_bids
+        const variant_ids = []
+        winning_bids.forEach(bid => {
+            variant_ids.push(bid['ipfs']['variant'])
+        });
+
+        const valid_variants = variants.filter(function (variant) {
+            return (variant_ids.includes(variant['variant_id']))
+        })
+
+        return valid_variants
+    }
+
+    render_variant_item_if_selected(item){
+        var composition_type = this.get_composition_type()
+        return(
+            <div>
+                {this.render_item(item, composition_type)}
+            </div>
+        )
+    }
+
+    render_item(variant_in_store, composition_type){
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            var image = variant_in_store['image_data']['data']['images'][0]
+            return(
+                <div>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                </div>
+            )
+        }else{
+            var image = this.props.app_state.static_assets['empty_image']
+            return(
+                <div>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                </div>
+            )
+        }
+    }
+
+
+    render_final_payment_amounts(){
+        const items = this.get_total_payment_amounts()
+        const e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
+        return(
+            <div>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    get_total_payment_amounts(){
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const winning_bids = transaction_item.winning_bids
+        const payment_object = {}
+
+        winning_bids.forEach(bid => {
+            const bid_payments = bid['ipfs']['bid_data']
+            bid_payments.forEach(payment_item => {
+                const exchange = payment_item['id']
+                const amount = payment_item['amount']
+                if(payment_object[exchange] == null){
+                    payment_object[exchange] = bigInt(0)
+                }
+                payment_object[exchange] = bigInt(payment_object[exchange]).plus(bigInt(amount))
+            });
+        });
+
+        const data = []
+        Object.keys(payment_object).forEach(exchange => {
+            data.push({'id':exchange, 'amount':payment_object[exchange]})
+        });
+
+        return data
     }
     
 

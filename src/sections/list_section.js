@@ -2656,7 +2656,7 @@ class PostListSection extends Component {
 
     can_sender_view_poll(object){
         var viewers = object['ipfs'].viewers
-        if(viewers.length == 0) return true;
+        if(viewers == null || viewers.length == 0) return true;
         var my_active_accounts = this.load_my_active_accounts(object)
         return my_active_accounts.some(r=> viewers.includes(r))
     }
@@ -2756,7 +2756,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_storefront_item(object)
-        if(this.is_object_sender_blocked(object) || !this.is_item_listed(object) || this.is_object_blocked_for_sender(object)){
+        if(this.is_object_sender_blocked(object) || !this.is_item_listed(object) || this.is_object_blocked_for_sender(object) || !this.can_sender_view_poll(object)){
             return(
                 <div>
                     {this.render_empty_object()}

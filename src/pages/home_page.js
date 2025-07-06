@@ -351,7 +351,7 @@ class home_page extends Component {
               ['xor','',0], [this.props.app_state.loc['1214']/* 'channels' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1215']/* 'storefront' */] = [
-              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264az']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1216']/* 'bags' */] = [
               ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264ae']/* 'my-responses' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [1],[1]
@@ -2536,14 +2536,14 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
             return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_stores))))
         }
-        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+        else if(selected_option_name == this.props.app_state.loc['1264az']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_all_sorted_objects(this.props.app_state.created_stores)
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
-                if(my_objects.includes(id)){
+                if(my_objects.includes(id) || object['participated'] == true){
                     my_participated_objects.push(object)
                 }
             }

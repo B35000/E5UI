@@ -652,6 +652,7 @@ import VotePollPage from './pages/vote_poll_page'
 import CalculatePollResultPage from './pages/calculate_poll_result'
 import StageCreatorPayoutPage from './pages/stage_creator_payout_page'
 import BidInAuctionPage from './pages/bid_in_auction_page'
+import FulfilAuctionBidPage from './pages/fulfil_auction_bid_page'
 
 import english from "./texts/english";
 
@@ -874,6 +875,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -3110,6 +3112,7 @@ class App extends Component {
     this.view_calculate_poll_result_page = React.createRef();
     this.view_stage_creator_payout_result_page = React.createRef();
     this.view_bid_in_auction_page = React.createRef();
+    this.fulfil_auction_bid_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -5358,6 +5361,8 @@ class App extends Component {
           {this.render_view_vote_poll_bottomsheet()}
           {this.render_view_calculate_poll_result_bottomsheet()}
           {this.render_view_stage_creator_payout_result_bottomsheet()}
+          {this.render_view_bid_in_auction_bottomsheet()}
+          {this.render_fulfil_auction_bid_bottomsheet()}
 
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
@@ -5366,7 +5371,7 @@ class App extends Component {
           {this.render_dialog_bottomsheet()}
           {this.render_add_comment_bottomsheet()}
           {this.render_view_number_bottomsheet()}
-          {this.render_view_bid_in_auction_bottomsheet()}
+          
           
           {this.render_toast_container()}
           <audio ref={this.remoteStream} autoPlay />
@@ -19210,6 +19215,106 @@ return data['data']
 
 
 
+  render_fulfil_auction_bid_bottomsheet(){
+    if(this.state.fulfil_auction_bid_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.fulfil_auction_bid_bottomsheet} onClose={this.open_fulfil_auction_bid_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_fulfil_auction_bid_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_fulfil_auction_bid_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_fulfil_auction_bid_bottomsheet.bind(this)} open={this.state.fulfil_auction_bid_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_fulfil_auction_bid_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_fulfil_auction_bid_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+        <FulfilAuctionBidPage ref={this.fulfil_auction_bid_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_fulfil_bids_in_auction_to_stack={this.add_fulfil_bids_in_auction_to_stack.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_fulfil_auction_bid_bottomsheet(){
+    if(this.state.fulfil_auction_bid_bottomsheet == true){
+      //closing
+      this.fulfil_auction_bid_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({fulfil_auction_bid_bottomsheet: !this.state.fulfil_auction_bid_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({fulfil_auction_bid_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({fulfil_auction_bid_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({fulfil_auction_bid_bottomsheet: !me.state.fulfil_auction_bid_bottomsheet});
+
+          if(me.fulfil_auction_bid_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.fulfil_auction_bid_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_fulfil_auction_bid_bottomsheet(object, winning_bids){
+    this.open_fulfil_auction_bid_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.fulfil_auction_bid_page.current != null){
+        me.fulfil_auction_bid_page.current.set_data(object, winning_bids)
+      }
+    }, (1 * 500));
+  }
+
+  add_fulfil_bids_in_auction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -26827,6 +26932,19 @@ return data['data']
       created_store_events = my_participated_events
     }
 
+    const auction_bids_event_data = this.get_ids_from_events4((await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:45, p2/* sender_acc_id */:account})))
+    if(auction_bids_event_data.length > 0){
+      var my_participated_events = created_store_events.filter(function (event) {
+        return (auction_bids_event_data.includes(event.returnValues.p2))
+      })
+      created_store_events.forEach(event => {
+        if(my_participated_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+          my_participated_events.push(event)
+        }
+      });
+      created_store_events = my_participated_events
+    }
+
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var prioritized_object_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */:27/* storefront_object */ , p2/* item */: prioritized_accounts})
 
@@ -26875,7 +26993,7 @@ return data['data']
         if(data != null){
           if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false)
 
-          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':parseInt(created_store_events[i].returnValues.p6), 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5}
+          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':parseInt(created_store_events[i].returnValues.p6), 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5, 'participated':auction_bids_event_data.includes(id)}
           
           const index = created_stores.findIndex(item => item['e5_id'] === obj['e5_id']);
           if(index != -1){
@@ -28117,6 +28235,15 @@ return data['data']
     events.forEach(event => {
       var id = event.returnValues.p1
       if(ids.length <= this.state.max_post_bulk_load_count) ids.push(id);
+    });
+    return ids
+  }
+
+  get_ids_from_events4(events){
+    var ids = []
+    events.forEach(event => {
+      var id = event.returnValues.p1
+      ids.push(id);
     });
     return ids
   }
