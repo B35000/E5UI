@@ -300,7 +300,9 @@ class NewStorefrontItemPage extends Component {
 
                 <div className="row" style={{'width':'102%'}}>
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}
+                        app_state={this.props.app_state}
+                        />
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
@@ -984,6 +986,8 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
                 </div>
             )
         }
@@ -994,10 +998,9 @@ class NewStorefrontItemPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6">
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -1007,7 +1010,7 @@ class NewStorefrontItemPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -1054,14 +1057,21 @@ class NewStorefrontItemPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
 
 
-
-                
                 {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['535g']/* 'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.' */})}
+                <div style={{height:10}}/>
+                {this.render_create_image_ui_buttons_part2()}
+
+            </div>
+        )
+    }
+
+    render_title_tags_part2(){
+        return(
+            <div style={{'padding':'0px 10px 0px 10px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['535ak']/* 'Storefront Type.' */, 'details':this.props.app_state.loc['535al']/* 'Specify if its a normal sale or an auction.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_option_storefront_type_object} tag_size={'l'} when_tags_updated={this.when_get_option_storefront_type_object_updated.bind(this)} theme={this.props.theme}/>
-
-
 
 
                 {this.render_detail_item('0')}
@@ -1076,21 +1086,10 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_device_city})}
 
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['535g']/* 'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.' */})}
-                <div style={{height:10}}/>
-                {this.render_create_image_ui_buttons_part2()}
-
-
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -4367,8 +4366,9 @@ return data['data']
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         if(exchanges_from_sync == null) exchanges_from_sync = []
+        var me = this
         exchanges_from_sync = exchanges_from_sync.filter(function (exchange) {
-            return (this.is_exchange_searched(exchange, target_type))
+            return (me.is_exchange_searched(exchange, target_type))
         })
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
@@ -4404,6 +4404,9 @@ return data['data']
         }
         else if(target_type == 'exchange_id2'){
             filter_text = this.state.exchange_id2
+        }
+        else if(target_type == 'exchange_id3'){
+            filter_text = this.state.exchange_id3
         }
 
         if(filter_text == ''){

@@ -280,7 +280,7 @@ class NewStorefrontItemPage extends Component {
 
                 <div className="row" style={{'width':'102%'}}>
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
@@ -4254,8 +4254,9 @@ return data['data']
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.e5]
         if(exchanges_from_sync == null) exchanges_from_sync = []
+        var me = this
         exchanges_from_sync = exchanges_from_sync.filter(function (exchange) {
-            return (this.is_exchange_searched(exchange, target_type))
+            return (me.is_exchange_searched(exchange, target_type))
         })
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
@@ -4291,6 +4292,9 @@ return data['data']
         }
         else if(target_type == 'exchange_id2'){
             filter_text = this.state.exchange_id2
+        }
+        else if(target_type == 'exchange_id3'){
+            filter_text = this.state.exchange_id3
         }
 
         if(filter_text == ''){

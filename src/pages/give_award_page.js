@@ -684,8 +684,9 @@ class GiveAwardPage extends Component {
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        var me = this;
         exchanges_from_sync = exchanges_from_sync.filter(function (exchange) {
-            return (this.is_exchange_searched(exchange, target_type))
+            return (me.is_exchange_searched(exchange, target_type))
         })
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
