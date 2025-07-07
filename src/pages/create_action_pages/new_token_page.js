@@ -135,13 +135,13 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['604']/* 'token-authorities' */, this.props.app_state.loc['605']/* 'token-prices' */, 'e.'+this.props.app_state.loc['752b']/* 'spend-simulator' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['604']/* 'token-authorities 👮' */, this.props.app_state.loc['605']/* 'token-prices 💵' */, 'e.'+this.props.app_state.loc['752b']/* 'spend-simulator' */], [0]
             ],
             'configuration': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['602']/* 'basic' */, this.props.app_state.loc['603']/* 'custom' */, this.props.app_state.loc['2765']/* ??? */], [1], [1]
             ],
             'spend-simulator': [
-                ['xor', 'e', 1], [this.props.app_state.loc['752b']/* 'spend-simulator' */, this.props.app_state.loc['752d']/* 'configuration' */, this.props.app_state.loc['752c']/* 'control' */,], [1], [1]
+                ['xor', 'e', 1], [this.props.app_state.loc['752b']/* 'spend-simulator' */, this.props.app_state.loc['752d']/* 'configuration 🛠️' */, this.props.app_state.loc['752c']/* 'control' */,], [1], [1]
             ],
         };
 

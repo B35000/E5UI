@@ -91,7 +91,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['163'], this.props.app_state.loc['113'], this.props.app_state.loc['164']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['163'], 'e.'+this.props.app_state.loc['113'], this.props.app_state.loc['164']], [0]
             ],
             'authorities':[
               ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]

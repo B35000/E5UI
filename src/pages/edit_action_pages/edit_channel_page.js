@@ -78,13 +78,13 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['162s']/* participants */,this.props.app_state.loc['162t']/* blocked *//* this.props.app_state.loc['298'] */, this.props.app_state.loc['162aj']/* creators */, this.props.app_state.loc['162ak']/* creator-subscriptions */, this.props.app_state.loc['162as']/* nitro-restrictions */], [0]
+                ['or','',0], ['e', 'e.'+this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['162s']/* participants */,this.props.app_state.loc['162t']/* blocked *//* this.props.app_state.loc['298'] */, this.props.app_state.loc['162aj']/* creators */, this.props.app_state.loc['162ak']/* creator-subscriptions */, this.props.app_state.loc['162as']/* nitro-restrictions */], [0]
             ],
             'authorities':[
               ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
             ],
             'text':[
-                ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
+                ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
             ],
             'font':[
                 ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
@@ -98,7 +98,7 @@ class NewChannelPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
             ];
         obj[this.props.app_state.loc['115']] = [
-                ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
+                ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
             ];
         obj[this.props.app_state.loc['116']] = [
                 ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]

@@ -373,7 +373,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */,this.props.app_state.loc['1264ai']/* 'e.bills' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
           ],
         }
 
@@ -1632,7 +1632,7 @@ class home_page extends Component {
                     this.wallet_list_section.current?.set_spend_list(scroll_pos)
                 }
             }
-            else if(selected_item == this.props.app_state.loc['1264ai']/* 'bills 🧾' */){
+            else if(selected_item == this.props.app_state.loc['1264ai']/* 'bills' */){
                 if(this.wallet_list_section.current != null){
                     this.wallet_list_section.current?.set_bills_list(scroll_pos)
                 }
@@ -1769,7 +1769,7 @@ class home_page extends Component {
                     this.wallet_list_section.current?.set_spend_list(scroll_pos, true)
                 }
             }
-            else if(selected_item == this.props.app_state.loc['1264ai']/* 'bills 🧾' */){
+            else if(selected_item == this.props.app_state.loc['1264ai']/* 'bills' */){
                 if(this.wallet_list_section.current != null){
                     this.wallet_list_section.current?.set_bills_list(scroll_pos, true)
                 }

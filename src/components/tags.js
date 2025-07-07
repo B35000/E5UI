@@ -59,6 +59,12 @@ class tags extends Component {
           items[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'
           items[this.props.app_state.loc['1264aj']/* 'bills' */] = '🧾'
           items[this.props.app_state.loc['1264ao']/* 'polls' */] = '📊'
+          items[this.props.app_state.loc['110']/* 'text' */] = '📜'
+          items[this.props.app_state.loc['120']/* 'font' */] = 'ℳ'
+          items[this.props.app_state.loc['121']/* 'size' */] = '📐'
+          items[this.props.app_state.loc['113']/* 'authorities' */] = '👮'
+          items[this.props.app_state.loc['2764']/* 'configuration' */] = '🛠️'
+          items[this.props.app_state.loc['752b']/* 'spend-simulator' */] = '🕹️'
       }
       
       if(items[item] != null) return items[item];
