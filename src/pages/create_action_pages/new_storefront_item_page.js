@@ -498,13 +498,7 @@ class NewStorefrontItemPage extends Component {
                 {this.load_account_suggestions('target_receiver')}
 
 
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['468']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['469']/* 'Set location of the pick up station for your item when its ordered using a bag and contractors' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['470']/* 'Location Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-                {this.render_shipping_detail_suggestions()}
-                <div style={{height:10}}/>
+                {this.render_pick_up_location_input_if_sale()}
 
 
                 {this.render_detail_item('0')}
@@ -515,6 +509,23 @@ class NewStorefrontItemPage extends Component {
                 {this.render_direct_shipping_fee_view_if_enabled()}
             </div>
         )
+    }
+
+    render_pick_up_location_input_if_sale(){
+        var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['535ai']/* 'sale' */){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['468']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['469']/* 'Set location of the pick up station for your item when its ordered using a bag and contractors' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['470']/* 'Location Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                    <div style={{height:10}}/>
+                    {this.render_shipping_detail_suggestions()}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_subscription_configuration_part2(){
@@ -903,6 +914,7 @@ class NewStorefrontItemPage extends Component {
 
     get_account_suggestions(target_type){
         var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        if(contacts == null) contacts = [];
         var return_array = []
 
         if(target_type == 'target_receiver'){
@@ -926,7 +938,6 @@ class NewStorefrontItemPage extends Component {
     get_contact_alias(contact){
         return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
     }
-
 
     when_suggestion_clicked2(item, pos, target_type){
         if(target_type == 'target_receiver'){
@@ -3247,7 +3258,6 @@ return data['data']
                         {this.render_enter_item_price_part()}
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -3260,7 +3270,6 @@ return data['data']
                         {this.render_enter_item_price_part()}
                     </div>
                 </div>
-                
             )
         }
     }
@@ -3490,6 +3499,14 @@ return data['data']
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(this.props.app_state.size != 's'){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }
@@ -4052,6 +4069,9 @@ return data['data']
         else if(this.is_exchange_already_added(exchange_id, this.state.price_data2)){
             this.props.notify(this.props.app_state.loc['510']/* 'You cant use the same exchange twice' */, 3600)
         }
+        else if(this.props.app_state.end_tokens[this.state.e5].includes(exchange_id)){
+            this.props.notify(this.props.app_state.loc['535bg']/* 'You cant use end tokens here.' */, 3600)
+        }
         else{
             var price_data_clone = this.state.price_data2.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
@@ -4412,12 +4432,16 @@ return data['data']
         if(filter_text == ''){
             return true
         }
-        var token_name = exchange['ipfs'].entered_title_text
-        var entered_symbol_text = exchange['ipfs'].entered_symbol_text
+        var token_name = exchange['ipfs'] == null ? '' : exchange['ipfs'].entered_title_text
+        var entered_symbol_text = exchange['ipfs'] == null ? '' : exchange['ipfs'].entered_symbol_text
+        if(token_name == null){
+            token_name = ''
+            entered_symbol_text = ''
+        }
         if(token_name.toLowerCase().includes(filter_text.toLowerCase()) || entered_symbol_text.toLowerCase().includes(filter_text.toLowerCase())){
             return true
         }
-        else if(!isNaN(filter_text) && exchange['id'].startsWith(filter_text)){
+        else if(!isNaN(filter_text) && exchange['id'].toString().startsWith(filter_text)){
             return true
         }
         return false
@@ -4582,7 +4606,7 @@ return data['data']
         else if(isNaN(target_receiver) || parseInt(target_receiver) < 1000 || target_receiver==''){
             this.props.notify(this.props.app_state.loc['533']/* 'set a valid receiver target' */, 3700)
         }
-        else if(fulfilment_location == ''){
+        else if(fulfilment_location == '' && storefront_type != this.props.app_state.loc['535aj']/* 'auction' */){
             this.props.notify(this.props.app_state.loc['534']/* 'set a valid fulfilment location for your storefront items' */, 4900)
         }
         else if(storefront_type == this.props.app_state.loc['535aj']/* 'auction' */ && shipping_price_data.length == 0){

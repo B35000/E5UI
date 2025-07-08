@@ -6013,8 +6013,9 @@ class home_page extends Component {
         const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
         const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+        const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
         
-        const all_events = bag.concat(bag_application_response, storefront, comment)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

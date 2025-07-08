@@ -1037,6 +1037,7 @@ class NewTokenPage extends Component {
 
     get_account_suggestions(target_type){
         var contacts = this.props.app_state.contacts[this.state.e5]
+        if(contacts == null) contacts = [];
         var return_array = []
 
         if(target_type == 'exchange_authority'){
@@ -1290,6 +1291,13 @@ class NewTokenPage extends Component {
         const includes = ethers.find(e => (e['symbol'].toUpperCase() == symbol.toUpperCase() || e['name'].toUpperCase() == symbol.toUpperCase()))
         if(includes != null) return true;
 
+        if(symbol.startsWith('E') && symbol.endsWith('5')){
+            return true;
+        }
+        if(symbol.startsWith('3') && symbol.endsWith('5')){
+            return true;
+        }
+
         var txs = this.props.app_state.stack_items
         for(var i=0; i<txs.length; i++){
             var t = txs[i]
@@ -1320,6 +1328,13 @@ class NewTokenPage extends Component {
         const ethers = this.props.app_state.ether_data
         const includes = ethers.find(e => (e['symbol'].toUpperCase() == name.toUpperCase() || e['name'].toUpperCase() == name.toUpperCase()))
         if(includes != null) return true;
+
+        if(name.startsWith('E') && name.endsWith('5')){
+            return true;
+        }
+        if(name.startsWith('3') && name.endsWith('5')){
+            return true;
+        }
 
         var txs = this.props.app_state.stack_items
         for(var i=0; i<txs.length; i++){

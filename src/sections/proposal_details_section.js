@@ -351,6 +351,7 @@ class ProposalDetailsSection extends Component {
     }
 
     render_post_state(object){
+        return;
         const country_data = this.props.app_state.country_data
         const object_country = object['ipfs'].device_country
         const country_item_data = country_data.find(e => e.name === object_country)

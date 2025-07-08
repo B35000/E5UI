@@ -15253,7 +15253,7 @@ class App extends Component {
 
   when_notification_object_clicked(index, object, data, post_nsfw){
     var type = data['type']
-    if(type == 'storefront'){
+    if(type == 'storefront' || type == 'auctionbids'){
       this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1215']/* 'storefront' */})
       this.homepage.current?.when_storefront_post_item_clicked(index, object['id'], object['e5'], object, 'ignore')
       this.homepage.current?.reset_post_detail_object()
@@ -18474,7 +18474,10 @@ return data['data']
       this.load_specific_bag_items(events)
     }
     else if(event_type == 'storefront'){
-      this.load_specific_storefront_items(events)
+      this.load_specific_storefront_items(events, 'p3')
+    }
+    else if(event_type == 'auctionbids'){
+      this.load_specific_storefront_items(events, 'p1')
     }
     else if(event_type == 'comment'){
       const id_type = obj['id_type']
@@ -18483,6 +18486,7 @@ return data['data']
       id_types_array_object[id_type] = [event_object_id]
       this.start_loading_objects_in_background(id_types_array_object)
     }
+    
 
     var id = obj['notification_id']
     this.show_dialog_bottomsheet(obj, id)
@@ -19143,7 +19147,7 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <BidInAuctionPage ref={this.view_bid_in_auction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_bid_in_auction_transaction_to_stack={this.add_bid_in_auction_transaction_to_stack.bind(this)}
+        <BidInAuctionPage ref={this.view_bid_in_auction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_bid_in_auction_transaction_to_stack={this.add_bid_in_auction_transaction_to_stack.bind(this)} show_images={this.show_images.bind(this)}
         />
       </div>
     )
@@ -19435,6 +19439,11 @@ return data['data']
     await this.load_root_config()
     await this.wait(500)
     if(this.is_allowed_in_e5()){
+      if(this.state.device_country == null || this.state.device_city == null){
+        this.prompt_top_notification(this.getLocale()['2738al']/* 'e cant seem to access your general location info.' */, 100000)
+        return;
+      }
+
       this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
       if(this.state.manual_beacon_node_disabled == 'e'){
@@ -27889,7 +27898,7 @@ return data['data']
           'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5, 'bought':is_bought,
           }
 
-          if(this.state.my_preferred_nitro == (id+e5)){
+          if(this.state.my_preferred_nitro == (id+e5) || true){
             this.load_nitro_node_details(data, false)
             this.load_my_account_storage_info(data)
           }
@@ -30500,6 +30509,7 @@ return data['data']
 
   load_and_notify_user_of_incoming_storefront_direct_order = async () => {
     var all_unsorted_events = {}
+    var all_unsorted_bid_events = {}
     var block_stamp = {}
     var current_blocks = {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -30527,7 +30537,10 @@ return data['data']
 
         var all_received_on_chain_events = await H52contractInstance.getPastEvents('e5', { filter: { p3/* awward_context */: ids}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
+        var all_received_bid_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: { p1/* target_id */: ids, p3/* context */:45}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
         all_unsorted_events[focused_e5] = all_received_on_chain_events
+        all_unsorted_bid_events[focused_e5] = all_received_bid_on_chain_events
         block_stamp[focused_e5] = current_block_number
         current_blocks[focused_e5] = current_block_number
       }
@@ -30547,19 +30560,51 @@ return data['data']
         var account = this.state.user_account_id[e5]
         all_unsorted_events[e5].forEach(event => {
           var event_block = event.returnValues.p6/* block_number */
+          var invalid_hash = this.hash_data(event.returnValues.p3/* context */.toString()+'auction')
+
+          if(invalid_hash != event.returnValues.p4/* metadata */){
+            if(event_block > this.load_and_notify_user_times_direct_storefront_order[e5]){
+              event['e5'] = e5
+              notifs.push(event)
+            }
+            event['e5'] = e5
+            event['p'] = event.returnValues.p3
+            event['time'] = event.returnValues.p5
+            event['block'] = event.returnValues.p6
+            event['sender'] = event.returnValues.p1
+            event['type'] = 'storefront'
+            event['event_type'] = 'storefront'
+            event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'}
+            all_notifications.push(event)
+          }
+        });
+        this.load_and_notify_user_times_direct_storefront_order[e5] = block_stamp[e5]
+      }
+    }
+
+    var bid_notifs = []
+    var all_bid_notifications = []
+    for(const e5 in all_unsorted_bid_events){
+      if(all_unsorted_bid_events.hasOwnProperty(e5)){
+        if(this.load_and_notify_user_times_direct_storefront_order[e5] == null){
+          this.load_and_notify_user_times_direct_storefront_order[e5] = block_stamp[e5]
+        }
+        var account = this.state.user_account_id[e5]
+        all_unsorted_bid_events[e5].forEach(event => {
+          var event_block = event.returnValues.p7/* block_number */
           if(event_block > this.load_and_notify_user_times_direct_storefront_order[e5]){
             event['e5'] = e5
-            notifs.push(event)
+            bid_notifs.push(event)
           }
           event['e5'] = e5
-          event['p'] = event.returnValues.p3
-          event['time'] = event.returnValues.p5
-          event['block'] = event.returnValues.p6
-          event['sender'] = event.returnValues.p1
-          event['type'] = 'storefront'
-          event['event_type'] = 'storefront'
-          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'}
-          all_notifications.push(event)
+          event['p'] = event.returnValues.p1/* target_id */
+          event['time'] = event.returnValues.p6/* timestamp */
+          event['block'] = event.returnValues.p7/* block_number */
+          event['sender'] = event.returnValues.p2/* sender_account_id */
+          event['type'] = 'auctionbids'
+          event['event_type'] = 'auctionbids'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'auctionbids', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_bid_notifications.push(event)
         });
         this.load_and_notify_user_times_direct_storefront_order[e5] = block_stamp[e5]
       }
@@ -30570,8 +30615,14 @@ return data['data']
       this.handle_incoming_storefront_direct_purchase_notifications(notifs)
     }
 
+    if(bid_notifs.length > 0){
+      console.log('notifier', 'found one storefront bid to notify', bid_notifs)
+      this.handle_incoming_storefront_auction_bid_notifications(bid_notifs)
+    }
+
     var clone = structuredClone(this.state.notification_object)
     clone['storefront'] = all_notifications.reverse()
+    clone['auctionbids'] = all_bid_notifications.reverse()
     this.setState({notification_object: clone})
   }
 
@@ -30600,17 +30651,29 @@ return data['data']
     });
     var prompt = this.getLocale()['2738x']/* 'Incoming storefront direct purchases from $' */
     prompt = prompt.replace('$', senders.toString())
-    this.load_specific_storefront_items(events)
+    this.load_specific_storefront_items(events, 'p3')
     this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'})
   }
 
-  load_specific_storefront_items(events){
+  handle_incoming_storefront_auction_bid_notifications(events){
+    var senders = []
+    events.forEach(event => {
+      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_account_id */, event['e5'])
+      senders.push(alias)
+    });
+    var prompt = this.getLocale()['2738ak']/* 'Incoming storefront auction bids from $' */
+    prompt = prompt.replace('$', senders.toString())
+    this.load_specific_storefront_items(events, 'p1')
+    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'auctionbids', 'p':'p1', 'time':'p6', 'block':'p7', 'sender':'p2'})
+  }
+
+  load_specific_storefront_items(events, p){
     var e5_data = {}
     events.forEach(event => {
       if(e5_data[event['e5']] == null){
         e5_data[event['e5']] = []
       }
-      e5_data[event['e5']].push(event.returnValues.p3/* awward_context */)
+      e5_data[event['e5']].push(event.returnValues[p])
     });
     const keys = Object.keys(e5_data)
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -30635,6 +30698,9 @@ return data['data']
       }
     }
   }
+
+
+
 
 
 
@@ -31474,7 +31540,7 @@ return data['data']
       return '';
     }
     var data = this.encrypt_storage_object(_data, tags_obj)
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
     if(block_hash_and_signature == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       return '';
@@ -32432,7 +32498,7 @@ return data['data']
   }
 
   upload_multiple_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details, total_size, file_sizes) => {
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
     if(block_hash_and_signature == null){
       console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'failed to load block hash and signature')
       return null;
@@ -32488,7 +32554,7 @@ return data['data']
       const files = []
       for(var e=0; e<file_datas.length; e++){
 
-        const block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
+        const block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
         if(block_hash_and_signature == null){
           return null;
         }
@@ -32585,8 +32651,8 @@ return data['data']
     }
   }
 
-  get_block_hash_and_signature = async (target_storage_recipinet_accounts) => {
-    const e5 = Object.keys(target_storage_recipinet_accounts)[0]
+  get_block_hash_and_signature = async (target_storage_recipient_accounts) => {
+    const e5 = Object.keys(target_storage_recipient_accounts)[0]
     try{
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
       var current_block_number = parseInt(await web3.eth.getBlockNumber())
@@ -32624,7 +32690,7 @@ return data['data']
   }
 
   upload_file_objects_to_nitro = async (file_objects, nitro_object, node_details) => {
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipinet_accounts'])
+    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
     if(block_hash_and_signature == null){
       console.log('apppage','upload_file_objects_to_nitro', 'failed to load block hash and signature')
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
@@ -32896,7 +32962,12 @@ return data['data']
         this.gateway_traffic_cache_pointers = {}
       }
       keys.forEach(key => {
-        store_obj[key] = this.gateway_traffic_cache[key]
+        var str = JSON.stringify(this.gateway_traffic_cache[key], (key, value) =>
+          typeof value === 'bigint'
+              ? value.toString()
+              : value // return everything else unchanged));
+        )
+        store_obj[key] = JSON.parse(str)
         this.gateway_traffic_cache_pointers[key] = this.gateway_traffic_cache_pointers_index
       });
 
@@ -32905,8 +32976,12 @@ return data['data']
             ? value.toString()
             : value // return everything else unchanged));
       )
-      this.update_data_in_db(x, this.gateway_traffic_cache_pointers_index.toString())
-      Object.keys(this.gateway_traffic_cache).forEach(key => delete this.gateway_traffic_cache[key]);
+      this.update_data_in_db(x, this.gateway_traffic_cache_pointers_index.toString()).then(result => {
+        Object.keys(this.gateway_traffic_cache).forEach(key => delete this.gateway_traffic_cache[key]);
+      })
+      .catch(error => {
+        console.error('store_in_local_storage', 'something went wrong while updating data in db', error)
+      });
     }
   }
 
@@ -34627,8 +34702,9 @@ return data['data']
       });
     }
 
+
     const valid_bid_events = auction_bids_event_data.filter(function (event) {
-      return (accepted_accounts.includes(event.returnValues.p2/* sender_acc_id */) || bidding_entry_fees.length == 0)
+      return (accepted_accounts.includes(event.returnValues.p2/* sender_acc_id */) || accepted_accounts.length == 0)
     })
 
 

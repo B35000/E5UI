@@ -7572,12 +7572,55 @@ return data['data']
                 <div style={{height: 10}}/>
                 {this.render_storefront_item(storefront_object)}
 
-                <div style={{height: 10}}/>
-                {this.render_selected_variant(transaction_item.selected_variant)}
-
-                <div style={{height: 10}}/>
-                {this.render_set_bid_prices_list_part(transaction_item.payment_data)}
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076n']/* 'Item Variant.' */, 'details':this.props.app_state.loc['3076m']/* 'The item youre bidding for in this auction.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_variant2(transaction_item.selected_variant)}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076f']/* 'Set Bid Amounts.' */, 'details':this.props.app_state.loc['3076g']/* The amount youve currently set for your next bid in their respective denominations. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_set_bid_prices_list_part(transaction_item.payment_data)}
+
+                {this.render_entry_fees(storefront_object, transaction_item.has_cast_bid)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_entry_fees(storefront_item, has_sender_already_cast_bid){
+        const entry_fees = storefront_item['ipfs'].price_data2
+        var items = [].concat(entry_fees)
+        if(items.length == 0 && !has_sender_already_cast_bid) return;
+        const e5 = storefront_item['e5']
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3076h']/* 'Auction Entry Fee' */, 'details':this.props.app_state.loc['3076i']/* The fee set by the auctioneer to participate in the auction. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_selected_variant2(item){
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 10px 5px','border-radius': '13px' }}>
+                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:3}}/>
+                    <div style={{padding:'0px 0px 0px 10px'}}>
+                        {this.render_detail_item('9', item['image_data']['data'])}
+                    </div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1950']/* 'Number of Units' */, 'size':'l'})}
+                </div>
             </div>
         )
     }
@@ -7614,7 +7657,7 @@ return data['data']
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+object['id']+' • '+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }

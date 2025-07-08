@@ -5098,7 +5098,7 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[data.id] = data
                     var extra_tags = [].concat(data.entered_title_text)
-                    extra_tags = extra_tags.concat(t.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
+                    extra_tags = extra_tags.concat(data.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
                         var songs = data.songs
                         songs.forEach(song => {
@@ -8808,13 +8808,13 @@ class StackPage extends Component {
     format_auction_entry_transaction_object = async (t, calculate_gas, ints, ipfs_index) => {
         var ints_clone = ints.slice()
         var author = t.storefront_item['ipfs'].target_receiver.toString().toLocaleString('fullwide', {useGrouping:false})
-        var id = t.storefront_item['id'].target_receiver.toString().toLocaleString('fullwide', {useGrouping:false})
-        var string_data = this.props.hash_data(t.storefront_item['ipfs'].id)
+        var id = t.storefront_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+        var string_data = this.props.hash_data(id+'auction')
         var depth_swap_obj = [
             [30000,16,0],
             [], [],/* target exchange ids */
             [], [],/* receivers */
-            [],/* action */ 
+            [],/* action */ /*  */
             [],/* depth */
             []/* amount */
         ]

@@ -415,9 +415,8 @@ class FulfilAuctionBidPage extends Component {
             var item_price = payment_data[i]['amount']
 
             var token_balance = this.props.calculate_actual_balance(this.state.e5, item)
-            token_balance = bigInt(token_balance).minus(this.get_debit_balance_in_stack(item, this.state.e5))
 
-            if(bigInt(token_balance).lesser(bigInt(item_price))){
+            if(bigInt(token_balance).lesser(item_price)){
                 can_afford = false
             }
         }

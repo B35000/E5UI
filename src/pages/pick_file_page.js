@@ -251,8 +251,7 @@ class PickFilePage extends Component {
         }
     }
 
-    get_opactiy_of_file(ecid){
-        const ecid_obj = this.get_cid_split(ecid)
+    get_opactiy_of_file(ecid_obj){
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data['nitro'] != null && !this.is_file_available(data['hash'])){
@@ -261,8 +260,7 @@ class PickFilePage extends Component {
         return 1.0
     }
 
-    when_file_selected(ecid){
-        const ecid_obj = this.get_cid_split(ecid)
+    when_file_selected(ecid_obj){
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data['nitro'] != null && !this.is_file_available(data['hash'])){
@@ -270,7 +268,7 @@ class PickFilePage extends Component {
             return;
         }
         var clone = this.state.selected_ecids.slice()
-        clone.push(ecid['full'])
+        clone.push(ecid_obj['full'])
         this.setState({selected_ecids: clone})
     }
 

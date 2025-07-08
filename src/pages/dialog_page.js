@@ -2357,7 +2357,7 @@ return data['data']
         var type = this.state.data['type']
         var id = event.returnValues[p]
         var items = []
-        if(type == 'storefront'){
+        if(type == 'storefront' || type == 'auctionbids'){
             items = this.props.app_state.created_stores[e5]
         }
         else if(type == 'bag'){
@@ -5976,7 +5976,7 @@ return data['data']
                 {this.render_selected_variant(variant)}
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'size':'l', 'title':this.get_senders_name(item['event'].returnValues.p2/* sender_acc_id */, object), 'details':this.props.app_state.loc['2642n']/* Bid Author */ })}
+                {this.render_detail_item('3', {'size':'l', 'title':this.get_senders_name4(item['event'].returnValues.p2/* sender_acc_id */, object), 'details':this.props.app_state.loc['2642n']/* Bid Author */ })}
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'size':'l', 'title':this.get_time_diff(object['ipfs'].auction_expiry_time - Date.now()/1000), 'details':''+(new Date(item['event'].returnValues.p6/* timestamp */*1000)) })}
@@ -5984,6 +5984,17 @@ return data['data']
                 {this.render_bid_amounts(item['ipfs']['bid_data'], object['e5'])}
             </div>
         )
+    }
+
+    get_senders_name4(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (obj[sender] == null ? sender : obj[sender])
+            return alias
+        }
     }
 
     get_variant_item(variant_id, object){

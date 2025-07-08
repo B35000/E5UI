@@ -68,7 +68,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067x']/* 'explore-comments' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067x']/* 'explore-comments' */], [0]
                 ],
             };
         }
@@ -220,6 +220,13 @@ class ViewNotificationLogPage extends Component {
             return(
                 <div>
                     {this.render_explore_notifications(['storefront'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3067aa']/* 'auction' */){
+            return(
+                <div>
+                    {this.render_explore_notifications(['auctionbids'])}
                 </div>
             )
         }
@@ -389,6 +396,7 @@ class ViewNotificationLogPage extends Component {
             'bag_application_response':this.props.app_state.loc['3067s'],/* '📥 $ accepted your bag application.' */
             'storefront':this.props.app_state.loc['3067t'],/* '🏪 $ purchased an item from one of your stores.' */
             'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
+            'auctionbids': this.props.app_state.loc['3067ab'],/* '🙋‍♂️ $ bid in one of your auctions.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -410,8 +418,9 @@ class ViewNotificationLogPage extends Component {
         const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
         const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+        const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
         
-        const all_events = bag.concat(bag_application_response, storefront, comment)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

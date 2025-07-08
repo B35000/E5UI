@@ -2186,6 +2186,7 @@ class NewPollPage extends Component {
 
     get_account_suggestions(target_type){
         var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        if(contacts == null) contacts = [];
         var return_array = []
 
         if(target_type == 'participants'){

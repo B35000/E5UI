@@ -2250,12 +2250,16 @@ return data['data']
         if(filter_text == ''){
             return true
         }
-        var token_name = exchange['ipfs'].entered_title_text
-        var entered_symbol_text = exchange['ipfs'].entered_symbol_text
+        var token_name = exchange['ipfs'] == null ? '' : exchange['ipfs'].entered_title_text
+        var entered_symbol_text = exchange['ipfs'] == null ? '' : exchange['ipfs'].entered_symbol_text
+        if(token_name == null){
+            token_name = ''
+            entered_symbol_text = ''
+        }
         if(token_name.toLowerCase().includes(filter_text.toLowerCase()) || entered_symbol_text.toLowerCase().includes(filter_text.toLowerCase())){
             return true
         }
-        else if(!isNaN(filter_text) && exchange['id'].startsWith(filter_text)){
+        else if(!isNaN(filter_text) && exchange['id'].toString().startsWith(filter_text)){
             return true
         }
         return false

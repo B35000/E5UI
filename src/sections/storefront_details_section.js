@@ -88,6 +88,10 @@ function toTree(data) {
   return nodeById[0].sortRecursive();
 }
 
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 class StorefrontDetailsSection extends Component {
     
     state = {
@@ -102,7 +106,7 @@ class StorefrontDetailsSection extends Component {
             if(selected_item == 1){
                 this.setState({navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags()})
             }else{
-                this.setState({navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_auction_list_detail_tags_object_tags()})
+                this.setState({navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_auction_list_detail_tags_object_tags(), selected_variant: null})
             }
         }else{
             this.setState({navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags()})
@@ -283,6 +287,8 @@ class StorefrontDetailsSection extends Component {
         var variants = object['ipfs'].variants == null ? [] : object['ipfs'].variants
 
         var sale_type = object['ipfs'].get_option_storefront_type_object == null ? this.props.app_state.loc['535ai']/* 'sale' */ : this.get_selected_item(object['ipfs'].get_option_storefront_type_object, 'e')
+
+        var sale_type_id = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
         
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
@@ -312,10 +318,14 @@ class StorefrontDetailsSection extends Component {
                     {this.render_fulfilment_accounts_if_any(object)}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2611']/* 'Fulfilment Location' */, 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3', {'title':sale_type, 'details':this.props.app_state.loc['535ak']/* Storefront Type */, 'size':'l'})}
+                    {sale_type_id == 1 && (
+                        <div>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2611']/* 'Fulfilment Location' */, 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
+                            <div style={{height: 10}}/>
+                        </div>
+                    )}
+                    
+                    {this.render_detail_item('3', {'title':capitalizeFirstLetter(sale_type), 'details':this.props.app_state.loc['535ak']/* Storefront Type */, 'size':'l'})}
 
                     {this.render_auction_expiry_time(object)}
 
@@ -429,12 +439,33 @@ class StorefrontDetailsSection extends Component {
             var country_color = obj[country_item_data.color[0]]
             var title = country_item_data.code /* +' '+country_item_data.emoji */
             var details = country_color+' '+country_item_data.call_code
-            return(
-                <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
-                    <div style={{height:10}}/>
-                </div>
-            )
+            var channeling_id = this.get_selected_item2(object['ipfs'].get_content_channeling_object, 'e')
+            if(channeling_id == 1){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+            else if(channeling_id == 2){
+                var text = country_color+' '+object['ipfs'].device_language_setting
+                return(
+                    <div>
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+            else{
+                var text = '⚫ '+this.props.app_state.loc['1233']/* 'international' */
+                return(
+                    <div>
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
         }
     }
 
@@ -683,9 +714,7 @@ class StorefrontDetailsSection extends Component {
         return(
             <div>
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['2642h']/* 'Auction Expiry Time.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(object['ipfs'].auction_expiry_time - Date.now()/1000), 'details':''+(new Date(object['ipfs'].auction_expiry_time*1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642h']/* 'Auction Expiry Time.' */+' '+this.get_time_diff(object['ipfs'].auction_expiry_time - Date.now()/1000), 'details':''+(new Date(object['ipfs'].auction_expiry_time*1000)), 'size':'l'})}
             </div>
         )
     }
@@ -1176,7 +1205,7 @@ class StorefrontDetailsSection extends Component {
         var bids = this.props.app_state.storefront_auction_bids[object['e5_id']]
         if(bids == null) return
 
-        if(object['event'].returnValues.p5 != my_account.toString() || object['ipfs'].auction_expiry_time > Date.now()/1000){
+        if(object['event'].returnValues.p5 != my_account.toString() && object['ipfs'].auction_expiry_time > Date.now()/1000){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1232,11 +1261,13 @@ class StorefrontDetailsSection extends Component {
             })
 
             const sorted_bids = this.sort_bids(valid_bids)
-            const top_bid = sorted_bids[0]
-
-            if(top_bid['event'].returnValues.p2/* user_acc_id */ == my_account){
-                my_winning_bids.push(top_bid)
+            if(sorted_bids.length > 0){
+                const top_bid = sorted_bids[0]
+                if(top_bid['event'].returnValues.p2/* user_acc_id */ == my_account){
+                    my_winning_bids.push(top_bid)
+                }
             }
+            
         });
 
         return my_winning_bids
@@ -1316,7 +1347,7 @@ class StorefrontDetailsSection extends Component {
     render_bidding_item_variants(object, composition_type){
         var items = [].concat(object['ipfs'].variants)
         return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 7px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_variant_clicked(item)}>
@@ -1362,7 +1393,7 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <ul style={{ 'padding': '0px 5px 0px 5px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -1379,7 +1410,7 @@ class StorefrontDetailsSection extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 5px 0px 5px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
                                 <div key={index}>
@@ -1427,9 +1458,11 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_bid_item(item, object, index){
+        var first_token_amount_data = item['ipfs']['bid_data'][0]
+        var amount_info = this.format_account_balance_figure(first_token_amount_data['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[first_token_amount_data['id']]
         return(
             <div onClick={()=> this.when_bid_clicked(item, object, index)}>
-                {this.render_detail_item('3', {'size':'l', 'title':this.get_senders_name(item['event'].returnValues.p2/* sender_acc_id */, object), 'details':''+(new Date(item['event'].returnValues.p6/* timestamp */*1000)) })}
+                {this.render_detail_item('3', {'size':'l', 'title':this.get_senders_name(item['event'].returnValues.p2/* sender_acc_id */, object)+' • '+amount_info, 'details':''+(new Date(item['event'].returnValues.p6/* timestamp */*1000)) })}
             </div>
         )
     }

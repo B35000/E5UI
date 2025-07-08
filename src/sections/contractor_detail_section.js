@@ -240,12 +240,33 @@ class ContractorDetailsSection extends Component {
             var country_color = obj[country_item_data.color[0]]
             var title = country_item_data.code /* +' '+country_item_data.emoji */
             var details = country_color+' '+country_item_data.call_code
-            return(
-                <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
-                    <div style={{height:10}}/>
-                </div>
-            )
+            var channeling_id = this.get_selected_item2(object['ipfs'].get_content_channeling_object, 'e')
+            if(channeling_id == 1){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+            else if(channeling_id == 2){
+                var text = country_color+' '+object['ipfs'].device_language_setting
+                return(
+                    <div>
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+            else{
+                var text = '⚫ '+this.props.app_state.loc['1233']/* 'international' */
+                return(
+                    <div>
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
         }
     }
 
