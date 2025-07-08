@@ -297,6 +297,7 @@ class ChannelDetailsSection extends Component {
                     {/* <div style={{height: 10}}/> */}
                     {this.render_edit_object_button(object)}
                     {this.render_pin_channel_button(object)}
+                    {this.render_stage_creator_payout_button(object)}
 
                     {this.render_follow_unfollow_author_button(object)}
 

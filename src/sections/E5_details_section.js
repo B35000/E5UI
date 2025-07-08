@@ -498,9 +498,12 @@ class E5DetailsSection extends Component {
             var language_percentage = this.round_off((transfer_events.language_events.length / total) * 100)
             var international_percentage = this.round_off((transfer_events.international_events.length / total) * 100)
 
-            var local_barwidth = local_percentage
-            var language_barwidth = language_percentage
-            var international_barwidth = international_percentage
+            var numbers = this.normalize(local_percentage, language_percentage, international_percentage)
+            var local_barwidth = numbers.a
+            var language_barwidth = numbers.b
+            var international_barwidth = numbers.c
+
+            
 
             const color_obj_directory = {'g':'green', 'r':'red', 'b':'cyan', 'y':'yellow', 'o':'orange', 'p':'pink'}
             const color_obj_icon_directory = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
@@ -517,11 +520,11 @@ class E5DetailsSection extends Component {
                             
                             <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
                                 <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
-                                    <div className="progress-bar" role="progressbar" style={{ width: local_barwidth+'%', 'background-image': 'none','background-color': country_color, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div className="progress-bar" role="progressbar" style={{ width: international_barwidth+'%', 'background-image': 'none','background-color': 'black', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
 
                                     <div className="progress-bar" role="progressbar" style={{ width: language_barwidth+'%', 'background-image': 'none','background-color': 'white', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
 
-                                    <div className="progress-bar" role="progressbar" style={{ width: international_barwidth+'%', 'background-image': 'none','background-color': 'black', 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div className="progress-bar" role="progressbar" style={{ width: local_barwidth+'%', 'background-image': 'none','background-color': country_color, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
 
@@ -559,6 +562,31 @@ class E5DetailsSection extends Component {
                 </div>
             );
         }
+    }
+
+    normalize(a, b, c) {
+        let vars = { a, b, c };
+        const keys = Object.keys(vars);
+
+        // Step 1: Find who needs more
+        const needy = keys.filter(k => vars[k] < 2.5);
+        if (needy.length === 0) return vars;
+
+        const totalNeeded = needy.reduce((sum, k) => sum + (2.5 - vars[k]), 0);
+
+        // Step 2: Find who can give
+        const givers = keys.filter(k => vars[k] > 2.5);
+        const sharePerGiver = totalNeeded / givers.length;
+
+        givers.forEach(k => {
+            vars[k] -= sharePerGiver;
+        });
+
+        needy.forEach(k => {
+            vars[k] = 2.5;
+        });
+
+        return vars;
     }
 
     filter_and_sort_channeling_events(events, e5){
@@ -669,8 +697,8 @@ class E5DetailsSection extends Component {
         var item = this.load_traffic_proportion_data(obj)
         return(
             <div>
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2840']/* E5 Traffic Distribution. */, 'subtitle':'e0', 'barwidth':(item['percentage']+'%'), 'number':item['percentage']+'%', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}  
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2336q']/* E5\'s Traffic Dominance */, 'subtitle':'e0', 'barwidth':(item['percentage']+'%'), 'number':item['percentage']+'%', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}  
                 </div>
                 <div style={{height: 10}}/>
             </div>

@@ -205,8 +205,8 @@ class StageCreatorPayoutPage extends Component {
     
 
     start_payout_calculation_process(){
-        var files = this.get_logged_files()
-        var file_view_data = []
+        const files = this.get_logged_files()
+        const file_view_data = []
 
         files.forEach(file => {
             var view_data = this.get_file_view_data(file['file'])
@@ -216,6 +216,11 @@ class StageCreatorPayoutPage extends Component {
                 file_view_data.push(obj)
             }
         });
+
+        if(file_view_data.length == 0){
+            this.props.notify(this.props.app_state.loc['3075ae']/* 'YNo valid files recorded under this channel have been found.' */, 9300);
+            return;
+        }
 
         const existing_stagings = this.props.app_state.channel_payout_stagings[this.state.channel_obj['e5_id']]
         const now = new Date();
