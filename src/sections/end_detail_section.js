@@ -266,7 +266,7 @@ class EndDetailSection extends Component {
     }
 
     get_exchange_tokens(exchange_type){
-        return this.props.get_exchange_tokens(exchange_type)
+        return this.props.get_exchange_tokens(exchange_type, '')
     }
 
     render_end_main_details_section(selected_object){
@@ -519,7 +519,7 @@ class EndDetailSection extends Component {
     }
 
     render_buy_sell_token_button(selected_object, item){
-        if(selected_object['hidden'] == true){
+        if(selected_object['hidden'] == true || !this.is_token_in_my_channeling(selected_object)){
             return;
         }
         return(
@@ -532,6 +532,21 @@ class EndDetailSection extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    is_token_in_my_channeling(object){
+        var device_country = this.props.app_state.device_country
+        var ipfs = object['ipfs']
+        if(
+            ipfs == null || 
+            ipfs.spend_exchange_allowed_countries == null || 
+            ipfs.spend_exchange_allowed_countries.includes(device_country) || 
+            ipfs.spend_exchange_allowed_countries.length == 0
+        ){
+            return true
+        }
+
+        return false
     }
 
     render_object_age(object, item){

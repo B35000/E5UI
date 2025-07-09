@@ -316,7 +316,15 @@ class EditVideoPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div className="row" style={{'width':'102%'}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
+                        <Tags app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                    <div style={{'padding': '0px 10px 0px 0px', width:40}}>
+                        <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                    </div>
+                </div>
+                {/* <div className="row" style={{'width':'102%'}}>
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -325,7 +333,7 @@ class EditVideoPage extends Component {
                             <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
-                </div>
+                </div> */}
                 
                 <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
@@ -937,7 +945,43 @@ class EditVideoPage extends Component {
                 my_subscriptions.push(created_subs[i])
             }
         }
-        return my_subscriptions
+        return this.filter_by_content_channeling(my_subscriptions)
+    }
+
+    filter_by_content_channeling(objects){
+        var return_objs = []
+        var content_channeling_setting = this.props.app_state.content_channeling
+        var device_country = this.props.app_state.device_country
+        var device_language = this.props.app_state.device_language
+
+        objects.forEach(object => {
+            var ipfs = object['ipfs'] == null ? {} : object['ipfs']
+            var object_country = ipfs.device_country
+            var object_content_channeling_setting = ipfs.content_channeling_setting
+            var object_language = ipfs.device_language_setting
+
+            if(object['id'] == 2 || object['id'] == 3 || object['id'] == 5 ){
+                return_objs.push(object)
+            }
+       
+            if(content_channeling_setting == this.props.app_state.loc['1231']/* 'local' */){
+                if(device_country == object_country && object_content_channeling_setting == this.props.app_state.loc['1231']/* 'local' */){
+                    return_objs.push(object)
+                }
+            }
+            else if(content_channeling_setting == this.props.app_state.loc['1232']/* 'language' */){
+                if(device_language == object_language && object_content_channeling_setting == this.props.app_state.loc['1232']/* 'language' */){
+                    return_objs.push(object)
+                }
+            }
+            else if(content_channeling_setting == this.props.app_state.loc['1233']/* 'international' */){
+                if(object_content_channeling_setting == this.props.app_state.loc['1233']/* 'international' */){
+                    return_objs.push(object)
+                }
+            }
+        });
+
+        return return_objs;
     }
 
     get_all_sorted_objects(object){

@@ -99,7 +99,7 @@ class ChannelDetailsSection extends Component {
     }
 
     reset_tags(){
-        this.setState({navigate_view_channel_list_detail_tags: this.get_navigate_view_channel_list_detail_tags()})
+        this.setState({navigate_view_channel_list_detail_tags: this.get_navigate_view_channel_list_detail_tags(), selected_creator_item: null})
     }
 
     componentDidMount() {
@@ -116,6 +116,7 @@ class ChannelDetailsSection extends Component {
             if(object == null) return;
             this.props.get_objects_messages(object['id'], object['e5'], object)
             this.props.get_channel_event_data(object['id'], object['e5'])
+            this.props.get_current_channel_creator_payout_info_if_possible(object)
             // this.props.get_moderator_event_data(object['id'], object['e5'])
         }
     }
@@ -259,9 +260,7 @@ class ChannelDetailsSection extends Component {
     render_channel_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
-        var size = this.props.screensize
        
-        // var object = this.get_channel_items()[this.props.selected_channel_item];
         var item = this.get_channel_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
@@ -290,6 +289,8 @@ class ChannelDetailsSection extends Component {
                     {this.render_chatroom_enabled_message(object)}
                     <div style={{height: 10}}/>
                     {this.show_channel_transaction_count_chart(object)}
+
+                    {this.show_my_current_payout_info(object)}
 
                     {/* {this.render_revoke_author_privelages_event(object)} */}
                     {/* <div style={{height: 10}}/> */}
@@ -887,6 +888,211 @@ class ChannelDetailsSection extends Component {
 
     open_stage_creator_payout_ui(object){
         this.props.open_stage_creator_ui(object)
+    }
+
+
+
+
+
+
+    show_my_current_payout_info(object){
+        const payout_information = this.props.app_state.stage_creator_payout_results[object['e5_id']]
+        if(payout_information == null){
+            return;
+        }
+
+        const final_payment_info = payout_information.final_payment_info
+        const start_time = payout_information.start_time
+        const end_time = payout_information.end_time
+        const total_data_bytes_streamed = payout_information.total_data_bytes_streamed
+        const valid_user_stream_data = payout_information.valid_user_stream_data
+
+        const formatted_size = this.format_data_size(total_data_bytes_streamed)
+        const fs = formatted_size['size']+' '+formatted_size['unit']
+
+        const files = this.get_logged_files(object)
+        const logged_files = files.length
+
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075j']/* 'Starting Time.' */, 'title':''+(new Date(start_time)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075k']/* 'Ending Time.' */, 'title':''+(new Date(end_time)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3075l']/* 'Total Data Streamed.' */, 'title':fs, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2117s']/* 'Your Tracked Files.' */, 'subtitle':this.format_power_figure(logged_files), 'barwidth':this.calculate_bar_width(logged_files), 'number':this.format_account_balance_figure(logged_files), 'barcolor':'', 'relativepower':this.props.app_state.loc['3075c']/* 'files' */, })}
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_final_payment_info(final_payment_info, valid_user_stream_data, total_data_bytes_streamed)}
+            </div>
+        )
+    }
+
+    get_logged_files(object){
+        var uploaded_files = this.props.app_state.object_creator_files[object['e5_id']]
+        if(uploaded_files == null){
+            return []
+        }
+        var my_accounts = this.load_my_active_accounts()
+        var selected_files = uploaded_files.filter(function (key) {
+            return (my_accounts.includes(key['e5']+':'+key['author']))
+        })
+
+        return selected_files
+    }
+
+    render_final_payment_info(final_payment_info, valid_user_stream_data, total_data_bytes_streamed){
+        var user_id_keys = this.filter_user_id_keys_by_searched_text(Object.keys(final_payment_info))
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['2117u']/* 'Your Current Payout Info' */, 'title':this.props.app_state.loc['2117v']/* 'Below is the current payout information for each of your accounts in this creator group.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_creators2(user_id_keys)}
+                <div style={{height:10}}/>
+                {this.render_selected_creator_payout_information(final_payment_info, valid_user_stream_data, total_data_bytes_streamed, user_id_keys)}
+            </div>
+        )
+    }
+
+    filter_user_id_keys_by_searched_text(user_id_keys){
+        var my_accounts = this.load_my_active_accounts()
+        var selected_keys = user_id_keys.filter(function (key) {
+            return (my_accounts.includes(key))
+        })
+        return selected_keys
+    }
+
+    get_data(item){
+        var obj = item.split(':')
+        return { e5: obj[0], id: obj[1]}
+    }
+
+    render_creators2(items){
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.reverse().map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_creator_item_clicked(item)}>
+                            {this.render_creator_item2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_creator_item2(item, pos){
+        if(this.state.selected_creator_item == item || (pos == 0 && this.state.selected_creator_item == null)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name2(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name2(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+            </div>
+        )
+    }
+
+    get_senders_name2(item){
+        var data_item = this.get_data(item)
+        var sender = data_item.id
+        var e5 = data_item.e5
+        var obj = this.props.app_state.alias_bucket[e5]
+        var alias = (obj[sender] == null ? this.props.app_state.loc['c311m']/* 'Account' */ : obj[sender])
+        return alias
+    }
+
+    when_creator_item_clicked(item){
+        if(item == this.state.selected_creator_item){
+            this.setState({selected_creator_item: null})
+        }else{
+            this.setState({selected_creator_item: item})
+        }
+    }
+
+    render_selected_creator_payout_information(final_payment_info, valid_user_stream_data, total_data_bytes_streamed, all_creators){
+        if(all_creators.length == 0){
+            return null
+        }
+        const selected_creator_item = this.state.selected_creator_item == null ? all_creators[0] : this.state.selected_creator_item
+        const selected_creator_payout_data = final_payment_info[selected_creator_item]
+        const selected_creator_payout_exchanges = Object.keys(selected_creator_payout_data)
+        const selected_creator_streaming_total = valid_user_stream_data[selected_creator_item]
+        var proportion = bigInt(selected_creator_streaming_total).multiply(100).divide(total_data_bytes_streamed)
+        if(bigInt(selected_creator_streaming_total).lesser(bigInt('1e14')) && bigInt(total_data_bytes_streamed).lesser(bigInt('1e14'))){
+            proportion = ((selected_creator_streaming_total * 100) / total_data_bytes_streamed).toFixed(2)
+        }
+        if(proportion >= 100){
+            proportion = 99.99
+        }
+        const formatted_size = this.format_data_size(selected_creator_streaming_total)
+        const fs = formatted_size['size']+' '+formatted_size['unit']
+
+        var transfer_data = []
+        selected_creator_payout_exchanges.forEach(exchange_e5_id => {
+            var item_data = this.get_data(exchange_e5_id)
+            var transfer_amount = selected_creator_payout_data[exchange_e5_id]
+            transfer_data.push({'exchange':item_data.id, 'e5':item_data.e5, 'amount':transfer_amount})
+        });
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['2117t']/* 'Total Data Streamed' */, 'title':fs, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3075q']/* 'Streaming proportion' */, 'subtitle':this.format_power_figure(proportion), 'barwidth':Math.floor(proportion)+'%', 'number':proportion+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */,})}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    {transfer_data.map((item, index) => (
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+item['exchange']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
     }
 
 

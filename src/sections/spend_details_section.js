@@ -258,7 +258,7 @@ class SpendDetailSection extends Component {
     }
 
     get_exchange_tokens(exchange_type){
-        return this.props.get_exchange_tokens(exchange_type)
+        return this.props.get_exchange_tokens(exchange_type, '')
     }
 
     get_senders_name(sender, object){
@@ -522,7 +522,7 @@ class SpendDetailSection extends Component {
         var user_country = this.props.app_state.device_country
         if(object['id'] == 5 && this.props.app_state.e5s[object['e5']].spend_access != null && !this.props.app_state.e5s[object['e5']].spend_access.includes(user_country)) return;
         
-        if(object['hidden'] == true){
+        if(object['hidden'] == true || !this.is_token_in_my_channeling(object)){
             return;
         }
         return(
@@ -535,6 +535,21 @@ class SpendDetailSection extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    is_token_in_my_channeling(object){
+        var device_country = this.props.app_state.device_country
+        var ipfs = object['ipfs']
+        if(
+            ipfs == null || 
+            ipfs.spend_exchange_allowed_countries == null || 
+            ipfs.spend_exchange_allowed_countries.includes(device_country) || 
+            ipfs.spend_exchange_allowed_countries.length == 0
+        ){
+            return true
+        }
+
+        return false
     }
 
     render_object_age(object, item){

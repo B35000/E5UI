@@ -5463,6 +5463,8 @@ class App extends Component {
 
           hash_data_with_specific_e5={this.hash_data_with_specific_e5.bind(this)} show_view_bid_in_auction_bottomsheet={this.show_view_bid_in_auction_bottomsheet.bind(this)}
           get_storefront_auction_bids={this.get_storefront_auction_bids.bind(this)}
+
+          get_current_channel_creator_payout_info_if_possible={this.get_current_channel_creator_payout_info_if_possible.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -19037,11 +19039,11 @@ return data['data']
     this.set_cookies_after_stack_action(stack_clone)
   }
 
-  calcualte_creator_payouts = async (channel_object, file_view_data, filter_value) => {
+  calcualte_creator_payouts = async (channel_object, file_view_data, filter_value, quietly) => {
     var now = Date.now()
     var last_run_time = this.state.creator_payout_calculation_times[channel_object['e5_id']]
     if(last_run_time != null && (now - last_run_time) > this.state.calculate_creator_payout_time_limit){
-      this.prompt_top_notification(this.getLocale()['3075i']/* 'Wait a bit.' */, 3200)
+      if(!quietly) this.prompt_top_notification(this.getLocale()['3075i']/* 'Wait a bit.' */, 3200);
       return;
     }
     
@@ -19097,12 +19099,12 @@ return data['data']
         clone[channel_object['e5_id']] = obj.data
         this.setState({stage_creator_payout_results: clone})
       }else{
-        this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+        if(!quietly) this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
       }
     }
     catch(e){
       console.log('calculate_payouts', e)
-      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+      if(!quietly) this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
     }
   }
 
@@ -34588,16 +34590,18 @@ return data['data']
     const channel_payout_stagings_clone = structuredClone(this.state.channel_payout_stagings)
     channel_payout_stagings_clone[e5_id] = result_objects
     this.setState({channel_payout_stagings: channel_payout_stagings_clone})
+
+    this.get_current_channel_creator_payout_info_if_possible(object)
   }
 
   get_channel_payout_records = async (object) => {
-    const all_object_comment_events = await this.get_channel_creator_payout_events(object)
+    const all_object_comment_events = await this.get_channel_creator_payout_record_events(object)
     const clone = structuredClone(this.state.channel_creator_payout_records)
     clone[object['e5_id']] = all_object_comment_events
     this.setState({channel_creator_payout_records: clone})
   }
 
-  get_channel_creator_payout_events = async (object) => {
+  get_channel_creator_payout_record_events = async (object) => {
     const all_unsorted_events = []
     const id = object['id']
     const e5 = object['e5']
@@ -34732,6 +34736,174 @@ return data['data']
     storefront_auction_bids_clone[e5_id] = result_objects
     this.setState({storefront_auction_bids: storefront_auction_bids_clone})
   }
+
+
+
+
+
+
+  get_current_channel_creator_payout_info_if_possible = async (object) => {
+    const subscriptions = object['e5'].selected_creator_group_subscriptions
+    const creators = object['e5'].creators
+    if(!this.can_sender_view_payout_data(object) || creators == null || creators.length == 0 || subscriptions == null || subscriptions.length == 0){
+      return;
+    }
+
+    const files = this.get_logged_files(object)
+    const proportion = this.get_loaded_proportion(files) * 100
+    const existing_stagings = this.state.channel_payout_stagings[this.state.channel_obj['e5_id']]
+
+    if(proportion == 100 && this.has_all_subscriptions_loaded() && existing_stagings != null){
+      const file_view_data = []
+      files.forEach(file => {
+        var view_data = this.get_file_view_data(file['file'])
+        if(view_data != null && this.is_file_nitro_valid(file['file'])){
+          var obj = structuredClone(file)
+          obj['view_data'] = view_data
+          file_view_data.push(obj)
+        }
+      });
+
+      if(file_view_data.length == 0){
+        return;
+      }
+
+      const existing_stagings = this.state.channel_payout_stagings[this.state.channel_obj['e5_id']]
+      const now = new Date();
+      const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const last_month_date = new Date(firstOfThisMonth.getTime() - 1);
+
+      var filter_value = 60*60*24*31
+      if(existing_stagings != null && existing_stagings.length > 0){
+        const record_end_time = existing_stagings[0]['ipfs'].payout_information.end_time
+        const difference = last_month_date.getTime() - record_end_time
+        filter_value = Math.floor(difference/1000);
+
+        if(filter_value < (60*60)){
+          return;
+        }
+      }else{
+        const channel_creation_time = this.state.channel_obj['event'].returnValues.p6/* timestamp */
+        filter_value = Math.floor(last_month_date.getTime()/1000) - channel_creation_time
+
+        if(filter_value < (60*60)){
+          return;
+        }
+      }
+      this.calcualte_creator_payouts(this.state.channel_obj, file_view_data, filter_value, true)
+    }
+  }
+
+  can_sender_view_payout_data(object){
+    var viewers = object['ipfs'].creators
+    if(viewers.length == 0) return true;
+    var my_active_accounts = this.load_my_active_accounts(object)
+    return my_active_accounts.some(r=> viewers.includes(r))
+  }
+
+  load_my_active_accounts(){
+    var active_e5s = []
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      if(this.state.e5s[e5].active == true){
+        var id = this.state.user_account_id[e5]
+        if(id != null && id != 1){
+          var account = e5+':'+id
+          active_e5s.push(account)
+        }
+      }
+    }
+    return active_e5s
+  }
+
+  get_logged_files(object){
+    var uploaded_files = this.state.object_creator_files[object['e5_id']]
+    
+    if(uploaded_files == null){
+      return []
+    }
+    return uploaded_files
+  }
+
+  get_loaded_proportion(files){
+    var total_files = files.length
+    var loaded_files = 0
+
+    files.forEach(file => {
+      if(this.has_file_loaded(file['file'])){
+        loaded_files++
+      }
+    });
+
+    if(loaded_files == 0){
+      return 0
+    }
+    return this.round_off(loaded_files / total_files)
+  }
+
+  has_file_loaded(file){
+    var ecid_obj = this.get_cid_split(file)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return false
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(data == null) return false
+    if(data['data'] == null) return false
+    var file = data['hash']
+    var nitro_id = data['nitro']
+    if(nitro_id != null){
+      var stream_data = this.state.file_streaming_data[file]
+      if(stream_data == null){
+        return false
+      }
+    }
+    return true
+  }
+
+  round_off(float_number){
+    return (Math.round(float_number * 100) / 100)
+  }
+
+  has_all_subscriptions_loaded(){
+    var has_all_subscriptions_loaded = true;
+    var items = this.state.channel_obj['ipfs'].selected_creator_group_subscriptions
+    items.forEach(item => {
+      var e5 = 'E'+item.split('E')[1]
+      var id = item.split('E')[0]
+      var subscription_item = this.state.created_subscription_object_mapping[e5][id]
+      if(subscription_item == null){
+        has_all_subscriptions_loaded = false;
+      }
+    });
+    return has_all_subscriptions_loaded
+  }
+
+  get_file_view_data(file_link){
+    var ecid_obj = this.get_cid_split(file_link)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return false
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    var file = data['hash']
+    var stream_data = this.state.file_streaming_data[file]
+    if(stream_data != null){
+        return stream_data
+    }
+  }
+
+  is_file_nitro_valid(file_link){
+    var ecid_obj = this.get_cid_split(file_link)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return false
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    var nitro_id = data['nitro']
+    var selected_creator_group_nitros = this.state.channel_obj['ipfs'].selected_creator_group_nitros
+    if(selected_creator_group_nitros != null && selected_creator_group_nitros.length > 0){
+      if(!selected_creator_group_nitros.includes(nitro_id)){
+        return false
+      }
+    }
+    return true
+  }
+
+
+
+
 
 
 

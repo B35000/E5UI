@@ -152,9 +152,9 @@ class StageCreatorPayoutPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3075d']/* 'Proportion Loaded.' */, 'subtitle':this.format_power_figure(logged_files), 'barwidth':this.calculate_bar_width(logged_files), 'number':this.format_account_balance_figure(logged_files), 'barcolor':'', 'relativepower':this.props.app_state.loc['3075c']/* 'files' */, })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3075b']/* 'Currently Tracked Files.' */, 'subtitle':this.format_power_figure(logged_files), 'barwidth':this.calculate_bar_width(logged_files), 'number':this.format_account_balance_figure(logged_files), 'barcolor':'', 'relativepower':this.props.app_state.loc['3075c']/* 'files' */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3075b']/* 'Currently Tracked Files.' */, 'subtitle':this.format_power_figure(load_proportion), 'barwidth':(Math.floor(load_proportion)+'%'), 'number':(load_proportion+'%'), 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
+                    {this.render_detail_item('2', { 'style':'l', 'title': this.props.app_state.loc['3075d']/* 'Proportion Loaded.' */, 'subtitle':this.format_power_figure(load_proportion), 'barwidth':(Math.floor(load_proportion)+'%'), 'number':(load_proportion+'%'), 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -248,7 +248,7 @@ class StageCreatorPayoutPage extends Component {
         }
 
         this.props.notify(this.props.app_state.loc['3075h']/* 'Sending payout data request...' */, 2300);
-        this.props.calcualte_creator_payouts(this.state.channel_obj, file_view_data, filter_value)
+        this.props.calcualte_creator_payouts(this.state.channel_obj, file_view_data, filter_value, false)
     }
     
     get_file_view_data(file_link){
@@ -507,7 +507,6 @@ class StageCreatorPayoutPage extends Component {
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'details':this.props.app_state.loc['3075l']/* 'Total Data Streamed.' */, 'title':fs, 'size':'l'})}
-                <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
                 {this.render_total_payment_data_for_subscriptions_data(total_payment_data_for_subscriptions)}
