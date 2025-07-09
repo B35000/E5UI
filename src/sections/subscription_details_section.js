@@ -311,7 +311,7 @@ class SubscriptionDetailsSection extends Component {
             var country_color = obj[country_item_data.color[0]]
             var title = country_item_data.code /* +' '+country_item_data.emoji */
             var details = country_color+' '+country_item_data.call_code
-            var channeling_id = this.get_selected_item2(object['ipfs'].get_content_channeling_object, 'e')
+            var channeling_id = object['ipfs'].get_content_channeling_object == null ? 3 : this.get_selected_item2(object['ipfs'].get_content_channeling_object, 'e')
             if(channeling_id == 1){
                 return(
                     <div>
@@ -339,6 +339,10 @@ class SubscriptionDetailsSection extends Component {
                 )
             }
         }
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
     render_pay_subscription_button(object){

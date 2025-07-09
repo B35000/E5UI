@@ -369,6 +369,10 @@ class ProposalDetailsSection extends Component {
         }
     }
 
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
     render_markdown_if_any(object){
         var state = object['ipfs']
         if(state.markdown != null && state.markdown != ''){
