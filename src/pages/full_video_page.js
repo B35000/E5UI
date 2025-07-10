@@ -114,7 +114,7 @@ class FullVideoPage extends Component {
     }
 
     check_for_new_responses_and_messages() {
-        if(this.state.object != null){
+        if(this.state.object != null && this.state.object['ipfs'] != null){
             this.props.load_video_messages(this.state.videos[this.state.pos], this.state.object)
         }
     }
@@ -138,7 +138,6 @@ class FullVideoPage extends Component {
             ],
         };
     }
-
 
     queue_or_comments_tags(){
         return{
@@ -169,6 +168,9 @@ class FullVideoPage extends Component {
     set_data(videos, object, pos){
         this.setState({videos:videos, object:object, pos:pos, is_player_resetting:true, subtitle_option_tags: this.subtitle_option_tags(videos[pos]['subtitles'] == null ? [] : videos[pos]['subtitles']) })
 
+        if(object['ipfs'] == null){
+            return;
+        }
         this.props.load_video_messages(videos[pos], object)
         if (this.messagesEnd.current){
             this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -579,6 +581,13 @@ class FullVideoPage extends Component {
         if(this.state.videos == null || this.state.videos.length == 0) return null;
         var current_video = this.state.videos[this.state.pos]
         var object = current_video['object']
+        if(object['ipfs'] == null){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
         var item = this.get_post_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
@@ -941,6 +950,13 @@ class FullVideoPage extends Component {
         if(this.state.videos == null || this.state.videos.length == 0) return null;
         var current_video = this.state.videos[this.state.pos]
         var object = current_video['object']
+        if(object['ipfs'] == null){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
         var items = this.state.videos
         var object_item = this.get_post_details_data(object)
         return(
@@ -1064,6 +1080,13 @@ class FullVideoPage extends Component {
 
     render_comments_section(){
         if(this.state.object == null) return;
+        if(this.state.object['ipfs'] == null){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
         var he = this.props.height-180
         if(this.get_focused_message() != null) he = this.props.height-250
         var size = this.props.screensize
@@ -1714,7 +1737,7 @@ class FullVideoPage extends Component {
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':video['video_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'videopost_id':object['id'], 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5}
+            var tx = {'id':video['video_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'videopost_id':object['id'], 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
 
             this.props.add_video_message_to_stack_object(tx)
 

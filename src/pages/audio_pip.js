@@ -214,10 +214,16 @@ class AudioPip extends Component {
     }
 
     render_expand_player_icon(){
-        var opacity = !this.has_file_metadata_loaded() ? 0.0 : 1.0
+        var opacity = !this.has_file_metadata_loaded() || this.is_mock_track() ? 0.0 : 1.0
         return(
             <img alt=""  onClick={()=>this.expand_player()} src={this.props.app_state.static_assets['expand_icon']} style={{height:25, width:'auto', 'margin': '-3px 0px 0px 0px', 'opacity':opacity}} />
         )
+    }
+
+    is_mock_track(){
+        if(this.state.isloading) return false
+        var current_song = this.state.songs[this.state.pos]
+        return current_song['mock'] == true;
     }
 
     has_file_loaded(){
@@ -246,7 +252,7 @@ class AudioPip extends Component {
 
 
     expand_player(){
-        if(!this.has_file_metadata_loaded()) return;
+        if(!this.has_file_metadata_loaded() || this.is_mock_track()) return;
         this.setState({is_full_screen_open: true})
         this.props.open_full_player(this.state.songs, this.state.pos, this.state.play_pause_state, this.state.value, this.state.is_repeating, this.state.is_shuffling, this.state.original_song_list, this.state.buffer)
     }
@@ -531,6 +537,7 @@ class AudioPip extends Component {
 
     is_song_available_for_playing(){
         var song = this.state.songs[this.state.pos]
+        if(song['mock'] == true) return true;
         var song_object = song['object']
         if(this.does_subscriptions_exist_in_object(song_object)){
             return this.check_if_sender_has_paid_subscriptions(song_object)

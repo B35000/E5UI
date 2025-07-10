@@ -1473,10 +1473,140 @@ class PostsDetailsSection extends Component {
             return(
                 <div>
                     <div style={{height:5}}/>
-                    {this.render_pdfs_part(item['pdf-data'])}
+                    {this.render_files_part(item['pdf-data'])}
                     <div style={{height:5}}/>
                 </div>
             )
+        }
+    }
+
+    render_files_part(items){
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_file_item_clicked(item, index)}>
+                            {this.render_uploaded_comment_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_file_item_clicked(item){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data != null){
+            if(data['type'] == 'audio'){
+                this.props.play_individual_track(item)
+            }
+            else if(data['type'] == 'video'){
+                this.props.play_individual_video(item)
+            }
+            else if(data['type'] == 'pdf'){
+                this.props.when_pdf_file_opened(item)
+            }
+            else if(data['type'] == 'zip'){
+                this.props.when_zip_file_opened(item)
+            }
+        }
+    }
+
+    render_uploaded_comment_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        const minified = true;
+        
+        if(data != null){
+            if(data['type'] == 'audio'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = data['data']
+                var font_size = ['15px', '12px', 19];
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var video_height = "50"
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    font_size = ['12px', '10px', 16];
+                    video_height = "40"
+                }
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['zip_file']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
         }
     }
 
@@ -1679,7 +1809,7 @@ class PostsDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
 
             this.props.add_post_reply_to_stack(tx)
 

@@ -898,7 +898,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:65, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2),
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -5464,7 +5464,7 @@ class App extends Component {
           hash_data_with_specific_e5={this.hash_data_with_specific_e5.bind(this)} show_view_bid_in_auction_bottomsheet={this.show_view_bid_in_auction_bottomsheet.bind(this)}
           get_storefront_auction_bids={this.get_storefront_auction_bids.bind(this)}
 
-          get_current_channel_creator_payout_info_if_possible={this.get_current_channel_creator_payout_info_if_possible.bind(this)}
+          get_current_channel_creator_payout_info_if_possible={this.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.play_individual_track.bind(this)} play_individual_video={this.play_individual_video.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -15275,7 +15275,7 @@ class App extends Component {
     }
     else if(type == 'contract'){
       if(object['hidden'] == true){
-        this.props.notify(this.getLocale()['2509d']/* 'That object is not available for you to access.' */, 9000)
+        this.prompt_top_notification(this.getLocale()['2509d']/* 'That object is not available for you to access.' */, 9000)
         return;
       }
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1197']/* 'contracts' */})
@@ -15378,7 +15378,7 @@ class App extends Component {
     }
     else if(object_type == 30/* contracts */){
       if(object['hidden'] == true){
-        this.props.notify(this.getLocale()['2509d']/* 'That object is not available for you to access.' */, 9000)
+        this.prompt_top_notification(this.getLocale()['2509d']/* 'That object is not available for you to access.' */, 9000)
         return;
       }
       this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1197']/* 'contracts' */})
@@ -15991,6 +15991,7 @@ class App extends Component {
     else if(function_name == 'create_audio_pick_audio_file'){
       this.new_audio_page.current?.when_audio_file_picked(picked_files)
       this.edit_audiopost_page.current?.when_audio_file_picked(picked_files)
+      this.add_comment_page.current?.when_pdf_files_picked(picked_files)
     }
     else if(function_name == 'create_audio_album_art'){
       this.new_audio_page.current?.when_album_art_selected(picked_files)
@@ -16053,10 +16054,13 @@ class App extends Component {
       this.edit_contractor_page.current?.when_zip_files_picked(picked_files)
       this.edit_videopost_page.current?.when_zip_files_picked(picked_files)
       this.edit_audiopost_page.current?.when_zip_files_picked(picked_files)
+
+      this.add_comment_page.current?.when_pdf_files_picked(picked_files)
     }
     else if(function_name == 'create_video_pick_video_file'){
       this.new_video_page.current?.when_video_file_picked(picked_files)
       this.edit_videopost_page.current?.when_video_file_picked(picked_files)
+      this.add_comment_page.current?.when_pdf_files_picked(picked_files)
     }
     else if(function_name == 'select_subtitle_file'){
       this.edit_videopost_page.current?.when_subtitle_file_selected_from_bottomsheet(picked_files)
@@ -17448,6 +17452,60 @@ return data['data']
     )
   }
 
+  play_individual_track(item){
+    this.prompt_top_notification(this.getLocale()['2976']/* 'Loading...' */, 5800)
+    this.setState({is_audio_pip_showing: true})
+    var queue = this.get_mock_queue(item)
+    this.setState({current_playing_song: queue[0], current_playing_time: 0.0})
+
+    var me = this;
+    setTimeout(function() {
+      me.audio_pip_page.current?.set_data(queue, 0, queue, false)
+      me.setState({queue: queue, pos: 0, original_song_list: queue, is_shuffling: false})
+      me.load_queue(queue, 0)
+    }, (1 * 500));
+  }
+
+  get_mock_queue(item){
+    var songs = []
+    var ecid_obj = this.get_cid_split(item)
+    var image = this.state.static_assets['music_label']
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    image = data['thumbnail']
+    
+    const song = {'song_id':item, 'song_title':data['name'], 'song_composer':'', 'price_data':[], 'track':item, 'songs_free_plays_count':10**14, 'basic_data':this.get_song_basic_data(item), 'lyrics':null, 'subtitle_type':null, 'track_lyric_file_name':null, 'credits':'', 'explicit':null, 'mock':true}
+
+    song['album_art'] = image
+    song['object'] = {}
+    songs.push(song)
+
+    return songs
+  }
+
+  get_song_basic_data(audio_file){
+    var ecid_obj = this.get_cid_split(audio_file)
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    var metadata_clone = {'common':{}, 'format':{}}
+    if(data['metadata'] != null){
+        var metadata = data['metadata']
+        if(metadata['common'] != null){
+            metadata_clone['common']['composer'] = metadata['common']['composer']
+        }
+        if(metadata['format'] != null){
+            metadata_clone['format']['bitrate'] = metadata['format']['bitrate']
+            metadata_clone['format']['codec'] = metadata['format']['codec']
+            metadata_clone['format']['codecProfile'] = metadata['format']['codecProfile']
+            metadata_clone['format']['container'] = metadata['format']['container']
+            metadata_clone['format']['lossless'] = metadata['format']['lossless']
+            metadata_clone['format']['numberOfChannels'] = metadata['format']['numberOfChannels']
+            metadata_clone['format']['numberOfSamples'] = metadata['format']['numberOfSamples']
+            metadata_clone['format']['sampleRate'] = metadata['format']['sampleRate']
+            metadata_clone['format']['duration'] = metadata['format']['duration']
+        } 
+    }
+    return metadata_clone
+}
+
   play_song(item, object, audio_items, is_page_my_collection_page, should_shuffle){
     this.prompt_top_notification(this.getLocale()['2976']/* 'Loading...' */, 5800)
     this.setState({is_audio_pip_showing: true})
@@ -18090,6 +18148,42 @@ return data['data']
         me.full_video_page.current.set_data(queue, object, 0)
       }
     }, (1 * 500));
+  }
+
+  play_individual_video(item){
+    var queue = this.get_mock_video_queue(item)
+    this.show_full_video_bottomsheet(queue, {})
+    this.load_video_queue(queue, 0)
+  }
+
+  get_mock_video_queue(item){
+    var videos = []
+    var ecid_obj = this.get_cid_split(item)
+    var image = this.state.static_assets['video_label']
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+      image = this.props.app_state.video_thumbnails[ecid_obj['full']]
+    }
+    
+    const video = {'video_id':this.make_number_id(12), 'video_title':data['name'], 'video_composer':'', 'price_data':[], 'video':item, 'subtitles':null, 'release_time':0}
+
+    video['album_art'] = image
+    video['object'] = {}
+    videos.push(video)
+
+    return videos
+  }
+
+  make_number_id(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return parseInt(result);
   }
 
   play_video(video, object){

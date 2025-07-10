@@ -812,11 +812,39 @@ class StorefrontDetailsSection extends Component {
 
 
     render_direct_purchases_if_any(object){
-        var purchases = this.props.app_state.direct_purchases[object['id']] == null ? [] : this.props.app_state.direct_purchases[object['id']]
+        const purchases = this.props.app_state.direct_purchases[object['id']] == null ? [] : this.props.app_state.direct_purchases[object['id']]
         if(purchases.length == 0) return
+
+        const fulfilment_data = this.props.app_state.direct_purchase_fulfilments[object['id']] == null ? [] : this.props.app_state.direct_purchase_fulfilments[object['id']]
+
+        const fulfilled_items = []
+        purchases.forEach(item => {
+            var signature = fulfilment_data[item['signature_data']]
+            if(signature != null){
+                //item is unfulfilled
+                fulfilled_items.push(item)
+            }
+        });
+
+        var rate = 0
+        if(fulfilled_items.length > 0){
+            rate = ((fulfilled_items.length / purchases.length) * 100).toFixed(2)
+        }
+
+        var star = ''
+        if(rate > 97 && purchases.length > 35){
+            star = '🌟 '
+        }
+
         return(
             <div>
                 {this.render_detail_item('3', {'title':''+number_with_commas(purchases.length), 'details':this.props.app_state.loc['2642a']/* 'Direct Purchases.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+number_with_commas(fulfilled_items.length), 'details':this.props.app_state.loc['2642t']/* 'Fulfilment Signatures Found.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':star+rate+'%', 'details':this.props.app_state.loc['2642u']/* 'Fulfilment Rate.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
             </div>
         )
@@ -1577,13 +1605,15 @@ class StorefrontDetailsSection extends Component {
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         if(filtered_purchases == null) return []
 
+        const fulfilment_data = this.props.app_state.direct_purchase_fulfilments[object['id']] == null ? [] : this.props.app_state.direct_purchase_fulfilments[object['id']]
+
         if(selected_item == this.props.app_state.loc['2695g']/* 'all' */){
             return filtered_purchases
         }
         else if(selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */){
             var unfulfilled_items = []
             filtered_purchases.forEach(item => {
-                var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
+                var signature = fulfilment_data[item['signature_data']]
                 if(signature == null){
                     //item is unfulfilled
                     unfulfilled_items.push(item)
@@ -1594,7 +1624,7 @@ class StorefrontDetailsSection extends Component {
         else if(selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
             var fulfilled_items = []
             filtered_purchases.forEach(item => {
-                var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
+                var signature = fulfilment_data[item['signature_data']]
                 if(signature != null){
                     //item is unfulfilled
                     fulfilled_items.push(item)
@@ -2913,7 +2943,7 @@ class StorefrontDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['2642']/* 'The activity section has been disabled.' */, 5200)
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
 
             this.props.add_storefront_message_to_stack_object(tx)
 

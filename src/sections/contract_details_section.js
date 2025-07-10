@@ -840,11 +840,10 @@ class ContractDetailsSection extends Component {
     }
 
     show_contract_balance(item, object) {
-        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if (time_to_expiry > 0 || object['id'] == 2){
+        if (time_to_expiry > 0 || object['id'] == 2 || object['ipfs'].contract_type == 'workgroup'){
             return (
                 <div>
                     {this.render_detail_item('0')}

@@ -362,7 +362,7 @@ class EditNitroPage extends Component {
                 <TextInput height={30} placeholder={this.props.app_state.loc['a273g']/* https://<your-public-ip>:3000/ */} when_text_input_field_changed={this.when_node_url_input_field_changed.bind(this)} text={this.state.entered_node_url_text} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
-                <TextInput height={60} placeholder={this.props.app_state.loc['a273o']/* 'nitro key (e.g. eeeee2Edp...di4reeeee)' */} when_text_input_field_changed={this.when_node_key_input_field_changed.bind(this)} text={this.state.entered_node_key_text} theme={this.props.theme}/>
+                <TextInput height={60} placeholder={this.props.app_state.loc['a273o']/* 'nitro key...' */} when_text_input_field_changed={this.when_node_key_input_field_changed.bind(this)} text={this.state.entered_node_key_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.nitro_link_size - this.state.entered_node_url_text.length)})}
                 <div style={{height: 10}}/>
@@ -612,9 +612,9 @@ class EditNitroPage extends Component {
         else if(key == ''){
             this.props.notify(this.props.app_state.loc['a273p']/* 'Please provide the nitro key for your node.' */, 4000)
         }
-        else if(!key.startsWith('eeeee') || !key.endsWith('eeeee')){
-            this.props.notify(this.props.app_state.loc['a273q']/* 'That key isn\'t valid.' */, 4000)
-        }
+        // else if(!key.startsWith('eeeee') || !key.endsWith('eeeee')){
+        //     this.props.notify(this.props.app_state.loc['a273q']/* 'That key isn\'t valid.' */, 4000)
+        // }
         else if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a273r']/* 'You need to set your wallet first to encrypt that nitro key.' */, 4000)
         }
