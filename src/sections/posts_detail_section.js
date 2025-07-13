@@ -1504,7 +1504,7 @@ class PostsDetailsSection extends Component {
                 this.props.play_individual_track(item)
             }
             else if(data['type'] == 'video'){
-                this.props.play_individual_video(item)
+                this.props.play_individual_video(item, data['width'], data['height'])
             }
             else if(data['type'] == 'pdf'){
                 this.props.when_pdf_file_opened(item)

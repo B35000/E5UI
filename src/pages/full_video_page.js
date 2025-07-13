@@ -367,9 +367,11 @@ class FullVideoPage extends Component {
 
     video_object(){
         // console.log('full_video_page', this.has_file_loaded(), this.state.is_player_resetting)
+        const default_height = this.props.app_state.full_video_window_height == 0 ? 350 : this.props.app_state.full_video_window_height;
+
         if(!this.has_file_loaded() || this.state.is_player_resetting == true){
             return(
-                <div style={{height: 350, width: this.state.screen_width, 'background-color':this.props.theme['view_group_card_item_background'], 'border-radius':'10px', 'display': 'flex', 'align-items':'center','justify-content':'center' }}>
+                <div style={{height: default_height, width: this.state.screen_width, 'background-color':this.props.theme['view_group_card_item_background'], 'border-radius':'10px', 'display': 'flex', 'align-items':'center','justify-content':'center' }}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 4px', 'color': this.props.app_state.theme['primary_text_color'], 'font-size':'11px'}}>{this.props.app_state.loc['3028'/* 'Loading...' */]}</p>
@@ -383,7 +385,7 @@ class FullVideoPage extends Component {
             var subtitles = current_video['subtitles'] == null ? [] : current_video['subtitles']
             if(current_video['release_time'] != null && current_video['release_time'] > (Date.now()/1000)){
                 return(
-                    <div style={{height: 350, width: this.state.screen_width, 'background-color':this.props.theme['view_group_card_item_background'], 'border-radius':'10px', 'display': 'flex', 'align-items':'center','justify-content':'center' }}>
+                    <div style={{height: default_height, width: this.state.screen_width, 'background-color':this.props.theme['view_group_card_item_background'], 'border-radius':'10px', 'display': 'flex', 'align-items':'center','justify-content':'center' }}>
                         <div style={{'margin':'10px 20px 0px 0px'}}>
                             <img alt="" src={this.props.app_state.theme['letter']} style={{height:60,width:'auto'}}/>
                             <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 4px', 'color': this.props.app_state.theme['primary_text_color'], 'font-size':'11px'}}>{''+(new Date(current_video['release_time']*1000))}</p>

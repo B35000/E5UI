@@ -682,7 +682,6 @@ const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const Web3 = require('web3');
 const { ethers } = require("ethers");
 const ecies = require('ecies-geth');
-var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
 const xrpl = require("xrpl")
 const BITBOXSDK = require('bitbox-sdk').BITBOX;
@@ -956,7 +955,7 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{},
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0,
   };
 
   get_static_assets(){
@@ -985,6 +984,9 @@ class App extends Component {
   }
 
   get_e5s(){
+    if(this.state != null && this.state.original_e5s_data != null){
+      return this.state.original_e5s_data
+    }
     var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
@@ -996,7 +998,7 @@ class App extends Component {
         end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true
       },
       'E25':{
-        web3:['https://etc.etcdesktop.com'], 
+        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link'], 
         token:'ETC',
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
@@ -1004,7 +1006,7 @@ class App extends Component {
         end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
       },
       'E35':{
-        web3:['https://etc.etcdesktop.com'],
+        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link'],
         token:'ETC',
         e5_address:''/* '0x4c124f6C90fa3F12A9b6b837B89832E2E460e731' */,
         first_block:19614310, end_image:end35_image/* 'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq' */, spend_image:spend35_image/* 'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, iteration:400_000, url:0, active:false, e5_img:E5_E35_image/* 'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4' */,
@@ -3667,7 +3669,8 @@ class App extends Component {
           me.load_albums_to_stash_to_state(albums_to_stash)
         }
         if(state_theme != theme['name']){
-          me.reset_coin_and_token_images(theme['name'], state_theme)
+          // me.reset_coin_and_token_images(theme['name'], state_theme)
+          me.reset_token_image_data = { new: theme['name'], original: state_theme }
         }
       }, (1 * 500));
     }
@@ -4491,8 +4494,9 @@ class App extends Component {
         data: 'id, data', // Primary key and indexed props
       });
       var data = await db.data.get({id: id})
-      if(data == null) return
-      return this.decrypt_storage_object_using_provided_key(data['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      if(data == null) return;
+      var data_obj = JSON.parse(data)
+      return this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     }catch(e){
       console.log('transform_image_by_theme', `Failed : ${e}`);
       return null
@@ -18099,8 +18103,9 @@ return data['data']
   render_full_video_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
+    var height = this.state.full_video_window_height == 0 ? (this.state.height-90) : (this.state.full_video_window_height + 20)
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+      <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             <FullVideoPage ref={this.full_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
             update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
             />
@@ -18150,7 +18155,12 @@ return data['data']
     }, (1 * 500));
   }
 
-  play_individual_video(item){
+  play_individual_video = async (item, width, height) => {
+    if(width != null && height != null){
+      var window_height = (height * this.state.width) / width
+      this.setState({full_video_window_height: window_height})
+      await this.wait(400)
+    }
     var queue = this.get_mock_video_queue(item)
     this.show_full_video_bottomsheet(queue, {})
     this.load_video_queue(queue, 0)
@@ -18186,7 +18196,10 @@ return data['data']
     return parseInt(result);
   }
 
-  play_video(video, object){
+  play_video = async (video, object) => {
+    this.setState({full_video_window_height: 0})
+    await this.wait(400)
+
     var queue = this.get_video_queue(video, object)
     this.show_full_video_bottomsheet(queue, object)
     this.load_video_queue(queue, 0)
@@ -19470,7 +19483,6 @@ return data['data']
       });
   }
 
-
   /* renders the toast item used */
   render_toast_item(message, onClickData){
     var width = this.state.width
@@ -19531,7 +19543,7 @@ return data['data']
     // const node = await IPFS.create()
     // var data = node.cat(cid)
     // console.log(data)
-
+    await this.check_and_set_default_rpc()
     await this.load_root_config()
     await this.wait(500)
     if(this.is_allowed_in_e5()){
@@ -19539,7 +19551,7 @@ return data['data']
         this.prompt_top_notification(this.getLocale()['2738al']/* 'e cant seem to access your general location info.' */, 100000)
         return;
       }
-
+ 
       this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
       if(this.state.manual_beacon_node_disabled == 'e'){
@@ -19555,6 +19567,27 @@ return data['data']
       }
     }else{
       this.prompt_top_notification(me.getLocale()['2738']/* 'Not available in your region yet.' */, 100000)
+    }
+  }
+
+  check_and_set_default_rpc = async () => {
+    const e5 = root_e5
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(web3_url);
+
+    var is_conn = await web3.eth.net.isListening()
+    if(!is_conn){
+      const clone = structuredClone(this.state.e5s)
+      clone[e5].url ++
+      if(clone[e5].url < clone[e5].web3.length){
+        this.setState({e5s: clone})
+        await this.wait(1500)
+        await this.check_and_set_default_rpc()
+      }else{
+        return;
+      }
+    }else{
+      return;
     }
   }
 
@@ -21924,6 +21957,7 @@ return data['data']
           get_content_channeling_tags_object: get_content_channeling_tags_object, 
           beacon_chain_url: beacon_chain_url, 
           e5s: e5s,
+          original_e5s_data: e5s,
           ether_data: ether_data, 
           dialer_addresses: dialer_addresses, 
           theme_images: theme_images, 
@@ -21954,10 +21988,16 @@ return data['data']
             me.set_providers(me.custom_set_providers.selected_providers, me.custom_set_providers.added_providers);
             delete me.custom_set_providers
           }
+          if(me.reset_token_image_data != null){
+            me.reset_coin_and_token_images(me.reset_token_image_data.new, me.reset_token_image_data.original)
+            delete me.reset_token_image_data
+          }
         }, (1 * 500));
       }
     }
   }
+
+
 
   get_selected_item(object, option){
     var selected_item = object[option][2][0]
@@ -22656,6 +22696,114 @@ return data['data']
     /* ---------------------------------------- ------------------------------------------- */
   }
 
+  get_alias_data = async (E52contractInstance, e5, account, web3) => {
+    var alias_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11})
+
+    var my_alias_events = []
+    var alias_bucket = {}
+    var alias_owners = {}
+    var alias_timestamp = {}
+    var is_first_time = this.state.my_alias_events[e5] == null
+    for(var i=0; i<alias_events.length; i++){
+      var alias_string = alias_events[i].returnValues.p4
+      if(alias_string.length > 23){
+        alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
+      } 
+      var alias_sender = alias_events[i].returnValues.p2/* owner */
+      var alias_time = alias_events[i].returnValues.p6/* timestamp */
+
+      if(alias_owners[alias_string] == null){
+        alias_owners[alias_string] = alias_sender
+        alias_bucket[alias_sender] = alias_string 
+        alias_timestamp[alias_string] = alias_time
+
+        if(alias_sender == account){
+          //my alias
+          my_alias_events.push({'alias':alias_string, 'event':alias_events[i]})
+        }
+
+        if(this.alias_data[alias_string] != null){
+          if(this.alias_data[alias_string]['time'] < alias_time){
+            //someone already initialized this alias in another e5 earler
+            delete alias_owners[alias_string]
+            delete alias_bucket[alias_sender]
+
+            const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
+            if(pos != -1){
+              my_alias_events.splice(pos, 1)
+            }
+          }else{
+            //we need to remove the previously set alias in the other e5 since this event is earler than that of the other e5
+            var invalid_data = this.alias_data[alias_string]
+
+            var alias_bucket_clone = structuredClone(this.state.alias_bucket)
+            delete alias_bucket_clone[invalid_data['e5']][invalid_data['id']]
+
+            var alias_owners_clone = structuredClone(this.state.alias_owners)
+            delete alias_owners_clone[invalid_data['e5']][invalid_data['name']]
+
+            var my_alias_events_clone = structuredClone(this.state.my_alias_events)
+            const pos = my_alias_events_clone[invalid_data['e5']].findIndex(obj => obj['alias'] == invalid_data['name'])
+            if(pos != -1){
+              my_alias_events_clone[invalid_data['e5']].splice(pos, 1)
+            }
+
+            var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
+            delete alias_timestamp_clone[invalid_data['e5']][invalid_data['name']]
+
+            this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
+
+            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+          }
+        }else{
+          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+        }
+      }
+      else if(alias_owners[alias_string] == alias_sender){
+        //ownership was revoked
+        delete alias_owners[alias_string]
+        delete alias_bucket[alias_sender]
+
+        const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
+        if(pos != -1){
+          my_alias_events.splice(pos, 1)
+        }
+        delete this.alias_data[alias_string]
+      }
+      
+      if(is_first_time){
+        var alias_bucket_clone = structuredClone(this.state.alias_bucket)
+        alias_bucket_clone[e5] = alias_bucket
+
+        var alias_owners_clone = structuredClone(this.state.alias_owners)
+        alias_owners_clone[e5] = alias_owners
+
+        var my_alias_events_clone = structuredClone(this.state.my_alias_events)
+        my_alias_events_clone[e5] = my_alias_events
+
+        var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
+        alias_timestamp_clone[e5] = alias_timestamp
+
+        this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
+      }
+    }
+
+    var alias_bucket_clone = structuredClone(this.state.alias_bucket)
+    alias_bucket_clone[e5] = alias_bucket
+
+    var alias_owners_clone = structuredClone(this.state.alias_owners)
+    alias_owners_clone[e5] = alias_owners
+
+    var my_alias_events_clone = structuredClone(this.state.my_alias_events)
+    my_alias_events_clone[e5] = my_alias_events
+
+    var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
+    alias_timestamp_clone[e5] = alias_timestamp
+
+    this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
+
+  }
+
   load_all_e5_runs_data = async (web3, contractInstance, e5, account) => {
     var events = await this.load_event_data(web3, contractInstance, 'e4', e5, {})
     events = events.reverse()
@@ -22728,6 +22876,7 @@ return data['data']
   }
   
   get_contacts_data = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var contacts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1})
 
     if(contacts_data.length > 0){
@@ -22757,6 +22906,7 @@ return data['data']
   }
 
   get_blocked_accounts_data = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var blocked_contacts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2})
 
     if(blocked_contacts_data.length > 0){
@@ -22792,6 +22942,7 @@ return data['data']
   }
 
   get_section_tags_data = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var section_tags_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:3})
 
     if(section_tags_data_events.length != 0){
@@ -22835,6 +22986,7 @@ return data['data']
   }
 
   get_my_token_ids = async (web3, contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return [];
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */, p3/* sender_account_id */:account})
     var ids = []
     created_token_events.forEach(event => {
@@ -22845,6 +22997,7 @@ return data['data']
   }
 
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
     console.log('apppage', 'loaded cid events', section_cid_data_events)
     if(section_cid_data_events.length != 0){
@@ -23150,6 +23303,7 @@ return data['data']
   }
 
   get_my_collection_data = async (web3, E52contractInstance, e5, account, address_account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var my_acquired_album_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5})
 
     if(my_acquired_album_data_events.length > 0){
@@ -23179,6 +23333,7 @@ return data['data']
   }
 
   get_my_playlists_data = async (web3, E52contractInstance, e5, account, address_account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var playlists_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6})
 
     if(playlists_event_data.length > 0){
@@ -23221,6 +23376,7 @@ return data['data']
   }
 
   get_my_plays_data = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var plays_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:7})
 
     if(plays_event_data.length > 0){
@@ -23262,6 +23418,7 @@ return data['data']
   }
 
   get_my_videos_data = async (web3, E52contractInstance, e5, account, address_account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var my_acquired_videos_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:11})
 
     if(my_acquired_videos_data_events.length > 0){
@@ -23349,6 +23506,7 @@ return data['data']
   }
 
   load_my_blocked_posts = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var my_blocked_posts_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:9})
 
     if(my_blocked_posts_event_data.length > 0){
@@ -23426,6 +23584,7 @@ return data['data']
   }
 
   load_my_censored_keywords = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var my_censored_keywords_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10})
 
     if(my_censored_keywords_event_data.length > 0){
@@ -23488,6 +23647,7 @@ return data['data']
   }
 
   load_my_promoted_posts = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var my_promoted_posts_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12})
 
     if(my_promoted_posts_event_data.length > 0){
@@ -23577,6 +23737,7 @@ return data['data']
   }
 
   load_my_participated_channel_ids = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var channel_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:14})
 
     if(channel_event_data.length > 0){
@@ -23597,6 +23758,7 @@ return data['data']
   }
 
   load_my_participated_poll_ids = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var poll_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:15})
 
     if(poll_event_data.length > 0){
@@ -23617,6 +23779,7 @@ return data['data']
   }
 
   load_my_participated_object_ids = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:16})
 
     if(object_event_data.length > 0){
@@ -23637,6 +23800,7 @@ return data['data']
   }
 
   load_my_channel_file_records = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     const object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account})
 
     if(object_event_data.length > 0){
@@ -23662,6 +23826,7 @@ return data['data']
   }
 
   load_my_file_renewal_records = async (web3, E52contractInstance, e5, account) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     const object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17})
 
     if(object_event_data.length > 0){
@@ -24540,114 +24705,6 @@ return data['data']
     return includes != null
   }
 
-  get_alias_data = async (E52contractInstance, e5, account, web3) => {
-    var alias_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11})
-
-    var my_alias_events = []
-    var alias_bucket = {}
-    var alias_owners = {}
-    var alias_timestamp = {}
-    var is_first_time = this.state.my_alias_events[e5] == null
-    for(var i=0; i<alias_events.length; i++){
-      var alias_string = alias_events[i].returnValues.p4
-      if(alias_string.length > 23){
-        alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
-      } 
-      var alias_sender = alias_events[i].returnValues.p2/* owner */
-      var alias_time = alias_events[i].returnValues.p6/* timestamp */
-
-      if(alias_owners[alias_string] == null){
-        alias_owners[alias_string] = alias_sender
-        alias_bucket[alias_sender] = alias_string 
-        alias_timestamp[alias_string] = alias_time
-
-        if(alias_sender == account){
-          //my alias
-          my_alias_events.push({'alias':alias_string, 'event':alias_events[i]})
-        }
-
-        if(this.alias_data[alias_string] != null){
-          if(this.alias_data[alias_string]['time'] < alias_time){
-            //someone already initialized this alias in another e5 earler
-            delete alias_owners[alias_string]
-            delete alias_bucket[alias_sender]
-
-            const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
-            if(pos != -1){
-              my_alias_events.splice(pos, 1)
-            }
-          }else{
-            //we need to remove the previously set alias in the other e5 since this event is earler than that of the other e5
-            var invalid_data = this.alias_data[alias_string]
-
-            var alias_bucket_clone = structuredClone(this.state.alias_bucket)
-            delete alias_bucket_clone[invalid_data['e5']][invalid_data['id']]
-
-            var alias_owners_clone = structuredClone(this.state.alias_owners)
-            delete alias_owners_clone[invalid_data['e5']][invalid_data['name']]
-
-            var my_alias_events_clone = structuredClone(this.state.my_alias_events)
-            const pos = my_alias_events_clone[invalid_data['e5']].findIndex(obj => obj['alias'] == invalid_data['name'])
-            if(pos != -1){
-              my_alias_events_clone[invalid_data['e5']].splice(pos, 1)
-            }
-
-            var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
-            delete alias_timestamp_clone[invalid_data['e5']][invalid_data['name']]
-
-            this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
-
-            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
-          }
-        }else{
-          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
-        }
-      }
-      else if(alias_owners[alias_string] == alias_sender){
-        //ownership was revoked
-        delete alias_owners[alias_string]
-        delete alias_bucket[alias_sender]
-
-        const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
-        if(pos != -1){
-          my_alias_events.splice(pos, 1)
-        }
-        delete this.alias_data[alias_string]
-      }
-      
-      if(is_first_time){
-        var alias_bucket_clone = structuredClone(this.state.alias_bucket)
-        alias_bucket_clone[e5] = alias_bucket
-
-        var alias_owners_clone = structuredClone(this.state.alias_owners)
-        alias_owners_clone[e5] = alias_owners
-
-        var my_alias_events_clone = structuredClone(this.state.my_alias_events)
-        my_alias_events_clone[e5] = my_alias_events
-
-        var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
-        alias_timestamp_clone[e5] = alias_timestamp
-
-        this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
-      }
-    }
-
-    var alias_bucket_clone = structuredClone(this.state.alias_bucket)
-    alias_bucket_clone[e5] = alias_bucket
-
-    var alias_owners_clone = structuredClone(this.state.alias_owners)
-    alias_owners_clone[e5] = alias_owners
-
-    var my_alias_events_clone = structuredClone(this.state.my_alias_events)
-    my_alias_events_clone[e5] = my_alias_events
-
-    var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
-    alias_timestamp_clone[e5] = alias_timestamp
-
-    this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
-
-  }
-
   record_number_of_items(e5, object_type, count){
     var obj = {'subscriptions':this.state.load_subscription_metrics, 'contracts':this.state.load_contracts_metrics, 'proposals':this.state.load_proposal_metrics, 'tokens':this.state.load_tokens_metrics, 'posts':this.state.load_posts_metrics, 'channels':this.state.load_channels_metrics, 'jobs':this.state.load_jobs_metrics, 'sent_mail':this.state.load_sent_mail_metrics, 'received_mail':this.state.load_received_mail_metrics, 'storefront':this.state.load_storefront_metrics, 'bags':this.state.load_bags_metrics, 'contractor':this.state.load_contractors_metrics, 'audio':this.state.load_audio_metrics, 'video':this.state.load_video_metrics, 'nitro':this.state.load_nitro_metrics, 'poll':this.state.load_poll_metrics}
 
@@ -24818,11 +24875,6 @@ return data['data']
     }
     var my_payments_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await F5contractInstance.methods.f229(created_subscriptions, account_as_list).call((error, result) => {});
 
-    // var interactible_checker_status_values_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f254(created_subscriptions,0).call((error, result) => {});
-
-    // var my_interactable_time_value_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f256(created_subscriptions, account_as_list, 0,2).call((error, result) => {})
-
-    // var my_blocked_time_value_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f256(created_subscriptions, account_as_list, 0,3).call((error, result) => {});
 
     var all_data = await this.fetch_multiple_objects_data(created_subscriptions, web3, e5, contract_addresses)
 
@@ -24830,72 +24882,7 @@ return data['data']
       var subscription_data = all_data[created_subscriptions[i]] == null ? await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses): all_data[created_subscriptions[i]]
       var my_payment = my_payments_for_all_subscriptions[i]
 
-      // var paid_accounts = [];
-      // var paid_amounts = [];
-
-      // if(created_subscription_events[i].returnValues.p3 == account){
-      //   //if the sender is the authority of the subscription
-      //   var all_subscription_payment_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p1/* subscription_id */:created_subscriptions[i]})
-
-      //   var accounts_in_focus_as_list = []
-      //   for(var j=0; j<all_subscription_payment_events.length; j++){
-      //     var account_in_focus = all_subscription_payment_events[j].returnValues.p2
-      //     accounts_in_focus_as_list.push(account_in_focus)
-      //   }
-
-      //   var collectible_time_value_for_all_accounts = created_subscription_data[i][1][2/* can_cancel_subscription */] == 1?
-      //   await F5contractInstance.methods.f235([created_subscriptions[i]], [accounts_in_focus_as_list]).call((error, result) => {}) :
-      //   await F5contractInstance.methods.f229([created_subscriptions[i]], [accounts_in_focus_as_list]).call((error, result) => {});
-
-        
-      //   for(var j=0; j<all_subscription_payment_events.length; j++){
-      //     var account_in_focus = all_subscription_payment_events[j].returnValues.p2
-          
-      //     if(!paid_accounts.includes(account_in_focus)){
-      //       if(created_subscription_data[i][1][2/* can_cancel_subscription */] == 1){
-      //         var collectible_time_value = /* await F5contractInstance.methods.f235([created_subscriptions[i]], [[account_in_focus]]).call((error, result) => {}); */ collectible_time_value_for_all_accounts
-              
-      //         if(collectible_time_value[0][j] != 0){
-      //           paid_accounts.push(account_in_focus)
-      //           paid_amounts.push(collectible_time_value[0][j])
-      //         }
-      //       }
-      //       else{
-      //         var collectible_time_value = /* await F5contractInstance.methods.f229([created_subscriptions[i]], [[account_in_focus]]).call((error, result) => {}); */ collectible_time_value_for_all_accounts
-
-      //         if(collectible_time_value[0][j] != 0){
-      //           paid_accounts.push(account_in_focus)
-      //           paid_amounts.push(collectible_time_value[0][j])
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-
-      // var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
-      // var old_moderators = []
-
-      // for(var e=0; e<moderator_data.length; e++){
-      //   var mod_id = moderator_data[e].returnValues.p3
-      //   old_moderators.push(mod_id)
-      // }
-
-      // var mod_status_values = await E52contractInstance.methods.f255([created_subscriptions[i]], [old_moderators]).call((error, result) => {});
-
-      // var moderators = []
-      // for(var e=0; e<old_moderators.length; e++){
-      //   var their_status = mod_status_values[0][e]
-      //   if(their_status == true){
-      //     moderators.push(old_moderators[e])
-      //   }
-      // }
-
-      // var interactible_checker_status_values = /* await E52contractInstance.methods.f254([created_subscriptions[i]],0).call((error, result) => {}); */interactible_checker_status_values_for_all_subscriptions[i]
-
-      // var my_interactable_time_value = /* await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,2).call((error, result) => {}); */ my_interactable_time_value_for_all_subscriptions[i]
-
-      // var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_subscriptions[i]
-
+      
       var subscription_config = created_subscription_data[i][1]
       var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
       var last_expiration_time = this.get_last_expiration_time(payment_history_events, created_subscriptions[i], time_unit, my_payment/* [0] */[0] )
@@ -25871,9 +25858,10 @@ return data['data']
     var registered_token_symbols = {}
     token_registry.forEach(event => {
       var data = event.returnValues.p4/* string_data */
+      var time = event.returnValues.p6/* timestamp */ * 1000
       var object = JSON.parse(data)
-      registered_token_names[object['name']] = object['time']
-      registered_token_symbols[object['symbol']] = object['time']
+      registered_token_names[object['name']] = time
+      registered_token_symbols[object['symbol']] = time
     });
     var registered_token_names_clone = structuredClone(this.state.registered_token_names)
     var registered_token_symbols_clone = structuredClone(this.state.registered_token_symbols)
@@ -25902,9 +25890,6 @@ return data['data']
     this.load_received_tokens_events(web3, H52contractInstance, e5, account)
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
 
-    // var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, created_token_depths, e5)
-    // var token_balances = token_balances_and_data['bal']
-    // var token_balances_data = token_balances_and_data['bal_data']
 
     var token_balances_and_data = await this.get_balance_from_multiple_exchanges(focused_exchanges, account, H52contractInstance, depths, e5)
     var token_balances = token_balances_and_data['bal']
@@ -25927,17 +25912,6 @@ return data['data']
     var created_token_object_mapping = this.state.created_token_object_mapping[e5] || {}
     var is_first_time = this.state.created_tokens[e5] == null
 
-    // var account_as_list = []
-    // for(var i=0; i<created_tokens.length; i++){
-    //   account_as_list.push([account])
-    // }
-
-    // var interactible_checker_status_values_for_all_tokens = await E52contractInstance.methods.f254(created_tokens,0).call((error, result) => {});
-
-    // var my_interactable_time_value_for_all_tokens = await E52contractInstance.methods.f256(created_tokens, account_as_list, 0,2).call((error, result) => {});
-
-    // var my_blocked_time_value_for_all_tokens = await E52contractInstance.methods.f256(created_tokens, account_as_list, 0,3).call((error, result) => {});
-
 
     var token_symbol_directory = this.state.token_directory[e5] == null ? {} : structuredClone(this.state.token_directory[e5])
     var token_name_directory = this.state.token_name_directory[e5] == null ? {} : structuredClone(this.state.token_name_directory[e5])
@@ -25958,37 +25932,6 @@ return data['data']
       for(var j=0; j<created_token_data[i][3].length; j++){
         depth_values.push(0)
       }
-      // var exchanges_balances = await H52contractInstance.methods.f140e(created_token_data[i][3], created_tokens[i], depth_values).call((error, result) => {});
-
-      // var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
-      // var old_moderators = []
-
-      // for(var e=0; e<moderator_data.length; e++){
-      //   var mod_id = moderator_data[e].returnValues.p3
-      //   old_moderators.push(mod_id)
-      // }
-
-      // var mod_status_values = await E52contractInstance.methods.f255([created_tokens[i]], [old_moderators]).call((error, result) => {});
-
-      // var moderators = []
-      // for(var e=0; e<old_moderators.length; e++){
-      //   var their_status = mod_status_values[0][e]
-      //   if(their_status == true){
-      //     moderators.push(old_moderators[e])
-      //   }
-      // }
-
-      // var interactible_checker_status_values = /* await E52contractInstance.methods.f254([created_tokens[i]],0).call((error, result) => {}); */ interactible_checker_status_values_for_all_tokens
-
-      // var my_interactable_time_value = /* await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,2).call((error, result) => {}); */ my_interactable_time_value_for_all_tokens
-
-      // var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_tokens
-
-
-
-      // var update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i]})
-
-      // var update_proportion_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i]})
 
       var timestamp = event == null ? 0 : parseInt(event.returnValues.p4)
       var author = event == null ? 0 : event.returnValues.p3
@@ -26002,12 +25945,6 @@ return data['data']
       if(tokens_data != null){
         exchanges_depth = tokens_data.default_depth == null ? 0 : tokens_data.default_depth
       }
-
-      // if(exchanges_depth > 13){
-      //   var token_balances_and_data2 = await this.get_balance_from_multiple_exchanges([created_tokens[i]], account, H52contractInstance, [exchanges_depth], e5)
-      //   balance = token_balances_and_data2['bal'][0]
-      //   token_balance_data = token_balances_and_data2['bal_data'][0]
-      // }
 
       if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false);
       
@@ -26028,16 +25965,6 @@ return data['data']
       var token_obj = {
         'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length
       }
-
-      // if(interactible_checker_status_values[i] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
-      //   token_obj['hidden'] = true
-      // }
-      // else if(my_blocked_time_value[i][0] > Date.now()/1000){
-      //   token_obj['hidden'] = true
-      // }
-      // else{
-      //   token_obj['hidden'] = false
-      // }
 
       if(this.homepage.current?.state.selected_end_item == created_tokens[i]+e5 || this.homepage.current?.state.selected_spend_item == created_tokens[i]+e5){
         // the token is being viewed
@@ -26127,49 +26054,6 @@ return data['data']
     this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
     // console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
 
-  }
-
-  load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
-    if(this.state.accounts[e5].privateKey == '') return;
-    var created_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
-
-    var my_sent_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p2/* sender_acc_id */:account})
-
-    created_bill_events = created_bill_events.reverse()
-    my_sent_bill_events = my_sent_bill_events.reverse()
-
-    const all_bills = created_bill_events.concat(my_sent_bill_events)
-
-    console.log('all_bills', all_bills)
-
-    const my_bills = []
-    var is_first_time = this.state.created_bills[e5] == null
-    if(all_bills.length > 0){
-      if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-        await this.fetch_multiple_cids_from_nitro(all_bills, 0, 'p4')
-      }
-    }
-    for(var i=0; i<all_bills.length; i++){
-      const event = all_bills[i]
-      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
-      const data = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
-      console.log('all_bills','loaded data', data)
-      if(data != null && data != ipfs){
-        var id = event.returnValues.p5/* int_data */
-        var bill = {'id':id, 'ipfs':data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6/* timestamp */), 'author':event.returnValues.p2/* sender_acc_id */ ,'e5_id':id+e5, 'target':event.returnValues.p1}
-        my_bills.push(bill)
-
-        if(is_first_time){
-          var created_bills_clone = structuredClone(this.state.created_bills)
-          created_bills_clone[e5] = my_bills
-          this.setState({created_bills: created_bills_clone});
-        }
-      }
-    }
-
-    var created_bills_clone = structuredClone(this.state.created_bills)
-    created_bills_clone[e5] = my_bills
-    this.setState({created_bills: created_bills_clone});
   }
 
   load_extra_token_data = async (object) => {
@@ -26347,6 +26231,52 @@ return data['data']
     my_token_event_notifications_clone[e5] = my_token_event_notifications_data
 
     this.setState({my_token_event_notifications: my_token_event_notifications_clone});
+  }
+
+
+
+
+  load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
+    if(this.state.accounts[e5].privateKey == '') return;
+    var created_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
+
+    var my_sent_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p2/* sender_acc_id */:account})
+
+    created_bill_events = created_bill_events.reverse()
+    my_sent_bill_events = my_sent_bill_events.reverse()
+
+    const all_bills = created_bill_events.concat(my_sent_bill_events)
+
+    console.log('all_bills', all_bills)
+
+    const my_bills = []
+    var is_first_time = this.state.created_bills[e5] == null
+    if(all_bills.length > 0){
+      if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+        await this.fetch_multiple_cids_from_nitro(all_bills, 0, 'p4')
+      }
+    }
+    for(var i=0; i<all_bills.length; i++){
+      const event = all_bills[i]
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+      const data = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
+      console.log('all_bills','loaded data', data)
+      if(data != null && data != ipfs){
+        var id = event.returnValues.p5/* int_data */
+        var bill = {'id':id, 'ipfs':data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6/* timestamp */), 'author':event.returnValues.p2/* sender_acc_id */ ,'e5_id':id+e5, 'target':event.returnValues.p1}
+        my_bills.push(bill)
+
+        if(is_first_time){
+          var created_bills_clone = structuredClone(this.state.created_bills)
+          created_bills_clone[e5] = my_bills
+          this.setState({created_bills: created_bills_clone});
+        }
+      }
+    }
+
+    var created_bills_clone = structuredClone(this.state.created_bills)
+    created_bills_clone[e5] = my_bills
+    this.setState({created_bills: created_bills_clone});
   }
 
   
@@ -28542,7 +28472,7 @@ return data['data']
       var e5_address = this.state.e5s[e5].e5_address;
       if(preferred_e5 != null && e5 != preferred_e5){
         e5_address = '';
-      } 
+      }
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 

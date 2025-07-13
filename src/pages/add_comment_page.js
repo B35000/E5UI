@@ -52,7 +52,9 @@ class AddCommentPage extends Component {
     state = {
         selected: 0, object: null, focused_message_id: 0, page: '', contractor_object: null,
         entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), entered_pdf_objects:[], get_text_or_markdown_tags_object:this.get_text_or_markdown_tags_object(), markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), 
-        rating:0.0, is_setting_rating: false, rating_total:10.0
+        rating:0.0, is_setting_rating: false, rating_total:10.0,
+
+        entered_video_object_dimensions:{}
     };
 
     get_comment_font_size_settings_object(){
@@ -608,10 +610,21 @@ class AddCommentPage extends Component {
 
     when_pdf_files_picked(files){
         var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
+        var clone = structuredClone(this.state.entered_video_object_dimensions)
         files.forEach(file => {
-            clonedArray.push(file);
+            if(!clonedArray.includes(file)){
+                clonedArray.push(file);
+
+                var ecid_obj = this.get_cid_split(file)
+                if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                    if(data['width'] != null && data['height'] != null){
+                        clone[file] = {'width': data['width'], 'height': data['height']}
+                    }
+                }
+            }
         });
-        this.setState({entered_pdf_objects: clonedArray});
+        this.setState({entered_pdf_objects: clonedArray, entered_video_object_dimensions: clone});
     }
 
     render_pdfs_part(){
@@ -635,6 +648,7 @@ class AddCommentPage extends Component {
         if (index > -1) { // only splice array when item is found
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
+
         this.setState({entered_pdf_objects: cloned_array})
     }
 
@@ -1153,7 +1167,7 @@ class AddCommentPage extends Component {
                 key_to_use = unencrypted_keys[unencrypted_keys.length-1]
                 key_index = unencrypted_keys.length-1
             }
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'key_to_use':key_to_use, 'key_index':key_index, 'lan':this.props.app_state.device_language}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'key_to_use':key_to_use, 'key_index':key_index, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions}
         }
         else if(page == 'job'){
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
@@ -1163,10 +1177,10 @@ class AddCommentPage extends Component {
             var convo_id = mail['convo_id']
             var recipients_e5 = mail['author'] == this.props.app_state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
 
-            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language}
+            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions}
         }
         else if(page == 'post'){
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions}
         }
         else if(page == 'proposal'){
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}

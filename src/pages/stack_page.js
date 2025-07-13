@@ -13517,8 +13517,14 @@ class StackPage extends Component {
                 this.is_loading_file = true
                 let reader = new FileReader();
                 reader.onload = async function(ev){
-                    var thumb = type == 'video' ? await this.extractFirstFrame(ev.target.result) : ''
-                    var obj = { 'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':'', 'nitro':this.selected_nitro_item, 'binary_size':this.get_file_sizes(ev.target.result) }
+                    var thumb_data = type == 'video' ? await this.extractFirstFrame(ev.target.result) : ''
+                    var obj = { 'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'data_type':type, 'metadata':'', 'nitro':this.selected_nitro_item, 'binary_size':this.get_file_sizes(ev.target.result) }
+                    
+                    if(thumb_data != null && thumb_data != ''){
+                        obj['thumbnail'] = thumb_data.return_blob
+                        obj['width'] = thumb_data.width
+                        obj['height'] = thumb_data.height
+                    }
 
                     if(ev.total < this.get_upload_file_size_limit()){
                         this.files.push(obj)
@@ -13648,7 +13654,7 @@ class StackPage extends Component {
                     quality = image_size / blob_size
                 }
                 var return_blob = canvas.toDataURL("image/jpeg", quality);
-                resolve(return_blob);
+                resolve({return_blob, width: canvas.width, height: canvas.height});
             }, "image/jpeg")
           });
     
@@ -13664,9 +13670,15 @@ class StackPage extends Component {
             this.selected_file_type = type
             let reader = new FileReader();
             reader.onload = async function(ev){
-                var thumb = type == 'video' ? await this.extractFirstFrameFromArrayBuffer(ev.target.result) : ''
+                var thumb_data = type == 'video' ? await this.extractFirstFrameFromArrayBuffer(ev.target.result) : ''
                 
-                this.file = {'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'thumbnail':thumb, 'data_type':type, 'metadata':''}
+                this.file = {'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'data_type':type, 'metadata':''}
+
+                if(thumb_data != null && thumb_data != ''){
+                    obj['thumbnail'] = thumb_data.return_blob
+                    obj['width'] = thumb_data.width
+                    obj['height'] = thumb_data.height
+                }
 
                 if(ev.total < this.get_upload_file_size_limit()){
                     this.upload_file_to_arweave()
@@ -13750,9 +13762,9 @@ class StackPage extends Component {
                 if(blob_size > image_size){
                     quality = image_size / blob_size
                 }
-                canvas.toDataURL(blob => {
-                    resolve(blob);
-                }, "image/jpeg", quality);
+
+                var return_blob = canvas.toDataURL("image/jpeg", quality);
+                resolve({return_blob, width: canvas.width, height: canvas.height});
             }, "image/jpeg")
 
           });

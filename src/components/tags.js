@@ -141,17 +141,17 @@ class tags extends Component {
         }
 
         var font = this.props.font
-
+        const final_text = this.final_text(txt,index)
         if(tag_size == 's'){
             return ( 
-                <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
-                    <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{this.final_text(txt,index)}</p>
+                <div onClick={() => this.when_tag_button_clicked(index, final_text)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
+                    <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
                 </div>
             );
         }else{
-            return ( 
-                <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
-                    <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{this.final_text(txt,index)}</p>
+            return (
+                <div onClick={() => this.when_tag_button_clicked(index, final_text)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
+                    <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
                 </div>
             );
         }
@@ -203,20 +203,17 @@ class tags extends Component {
 
 
     /* called when a tag button is tapped */
-    when_tag_button_clicked(pos){
+    when_tag_button_clicked(passed_pos, final_text){
         if(this.props.locked != null && this.props.locked == true) return;
         var page_data = this.props.page_tags_object;
         var active = page_data['i'].active;
+        const currently_selected_tag_pos = this.get_selected_item2(page_data, active)
+        var pos = (final_text == 'e' && active == 'e' && page_data[active][0/* config */][0/* type */] == 'xor' && currently_selected_tag_pos != 0) ? currently_selected_tag_pos : passed_pos;
         var current_selected_tag = this.get_selected_item(page_data, active)
-        var clone = {};
         var clicked_tag_name = page_data[active][1/* tag_options */][pos];
         var is_moving_down_option = false
         var is_selecting_same_tag = current_selected_tag == clicked_tag_name
-        for (var key in page_data) {
-            if (page_data.hasOwnProperty(key)) {
-                clone[key] = page_data[key];
-            }
-        }
+        var clone = structuredClone(page_data)
 
         if(pos == 0){
             //going up
@@ -333,6 +330,10 @@ class tags extends Component {
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
 
