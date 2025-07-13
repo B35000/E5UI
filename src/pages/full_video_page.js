@@ -233,6 +233,9 @@ class FullVideoPage extends Component {
 
 
     render_details_or_queue_tags_then_option(){
+        if(this.state.object != null && this.state.object['ipfs'] != null){
+            return;
+        }
         return(
             <div>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.detials_or_queue_tags} tag_size={'l'} when_tags_updated={this.when_detials_or_queue_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -278,6 +281,9 @@ class FullVideoPage extends Component {
 
 
     render_queue_then_comments_tags_option(){
+        if(this.state.object != null && this.state.object['ipfs'] != null){
+            return;
+        }
         return(
             <div>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.queue_or_comments_tags} tag_size={'l'} when_tags_updated={this.when_queue_or_comments_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -584,6 +590,9 @@ class FullVideoPage extends Component {
         var current_video = this.state.videos[this.state.pos]
         var object = current_video['object']
         if(object['ipfs'] == null){
+            if(this.props.size == 'm'){
+                return;
+            }
             return(
                 <div>
                     {this.render_empty_views(3)}
