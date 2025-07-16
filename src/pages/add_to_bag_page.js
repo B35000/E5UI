@@ -296,7 +296,7 @@ class AddToBagPage extends Component {
     }
 
     get_fulfilment_location_from_local_storage(){
-        return localStorage.getItem("delivery");
+        return this.props.get_local_storage_data_if_enabled("delivery");
     }
 
     should_render_city_settings(){
@@ -743,7 +743,7 @@ class AddToBagPage extends Component {
     }
 
     add_fulfilment_location_to_local_storage(location){
-        localStorage.setItem("delivery", JSON.stringify(location));
+        this.props.set_local_storage_data_if_enabled("delivery", JSON.stringify(location));
     }
 
 

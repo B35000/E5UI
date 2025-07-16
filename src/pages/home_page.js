@@ -130,11 +130,7 @@ class home_page extends Component {
 
 
     set_cookies(){
-        if(this.props.app_state.storage_permissions =='enabled'){
-            localStorage.setItem("viewed", JSON.stringify(this.get_persistent_data()));
-        }else{
-            localStorage.setItem("viewed", '');
-        }
+        this.props.set_local_storage_data_if_enabled("viewed", JSON.stringify(this.get_persistent_data()));
     }
 
     componentDidMount() {
@@ -150,7 +146,7 @@ class home_page extends Component {
     }
 
     set_cupcake_data(){
-        var cupcake_state = localStorage.getItem("viewed");
+        var cupcake_state = this.props.get_local_storage_data_if_enabled("viewed");
         if(cupcake_state != null && cupcake_state != ""){
             cupcake_state = JSON.parse(cupcake_state)
         }

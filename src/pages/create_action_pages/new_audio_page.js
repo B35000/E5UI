@@ -3317,7 +3317,7 @@ return data['data']
     }
 
     add_to_previously_used_channels(selected_channel_id, selected_channel_subscriptions){
-        var previously_used_channels = localStorage.getItem("creatorgroupsuggestions");
+        var previously_used_channels = this.props.get_local_storage_data_if_enabled("creatorgroupsuggestions");
         if(previously_used_channels != null && previously_used_channels != ""){
             previously_used_channels = JSON.parse(previously_used_channels)
         }else{
@@ -3329,11 +3329,11 @@ return data['data']
             previously_used_channels['data'].push(obj)
         }
 
-        localStorage.setItem("creatorgroupsuggestions", JSON.stringify(previously_used_channels));
+        this.props.set_local_storage_data_if_enabled("creatorgroupsuggestions", JSON.stringify(previously_used_channels));
     }
 
     get_previously_used_channels(){
-        var previously_used_channels = localStorage.getItem("creatorgroupsuggestions");
+        var previously_used_channels = this.props.get_local_storage_data_if_enabled("creatorgroupsuggestions");
         if(previously_used_channels != null && previously_used_channels != ""){
             previously_used_channels = JSON.parse(previously_used_channels)
         }else{

@@ -20,6 +20,7 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
+import DurationPicker from './../components/duration_picker';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -54,7 +55,7 @@ class AddCommentPage extends Component {
         entered_title_text:'', entered_image_objects:[], award_amount:0, get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), entered_pdf_objects:[], get_text_or_markdown_tags_object:this.get_text_or_markdown_tags_object(), markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), 
         rating:0.0, is_setting_rating: false, rating_total:10.0,
 
-        entered_video_object_dimensions:{}
+        entered_video_object_dimensions:{}, message_time_expiry:0
     };
 
     get_comment_font_size_settings_object(){
@@ -196,6 +197,8 @@ class AddCommentPage extends Component {
                     {this.render_content()}
                     <div style={{height:10}}/>
                     {this.render_award_ui()}
+                    <div style={{height:10}}/>
+                    {this.render_expiry_time_picker()}
                     {/* {this.render_finish()} */}
                 </div>
             )
@@ -209,7 +212,8 @@ class AddCommentPage extends Component {
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_award_ui()}
-                        {this.render_empty_views(3)}
+                        <div style={{height:10}}/>
+                        {this.render_expiry_time_picker()}
                     </div>
                 </div>
                 
@@ -224,7 +228,8 @@ class AddCommentPage extends Component {
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_award_ui()}
-                        {this.render_empty_views(3)}
+                        <div style={{height:10}}/>
+                        {this.render_expiry_time_picker()}
                     </div>
                 </div>
                 
@@ -1005,6 +1010,48 @@ class AddCommentPage extends Component {
 
 
 
+
+
+    render_expiry_time_picker(){
+        const page = this.state.page
+        const accepted_pages = ['mail', 'channel']
+
+        if(!accepted_pages.includes(page)){
+            const size = this.props.app_state.size
+            if(size != 's'){
+                return(
+                    <div>
+                        {this.render_empty_views(3)}
+                    </div>
+                )
+            }
+            return;
+        }
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1042j']/* 'Message Expiry' */, 'details':this.props.app_state.loc['1042k']/* 'The duration of time after which your message and its content will no longer be visible.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.message_time_expiry), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l'})}
+
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_message_expiry_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
+            </div>
+        )
+    }
+
+    when_message_expiry_time_set(time){
+        this.setState({message_time_expiry: time})
+    }
+
+
+
+
+
+
+
+
+
     render_award_ui(){
         var focused_message_id = this.state.focused_message_id;
         if(focused_message_id == 0) return;
@@ -1159,6 +1206,12 @@ class AddCommentPage extends Component {
         const rating = this.state.is_setting_rating == true ? this.state.rating : null
         const rating_total = this.state.rating_total
 
+        const expiry_time = this.state.message_time_expiry
+        if(expiry_time != 0 && expiry_time < (60*5)){
+            this.props.notify(this.props.app_state.loc['1042l']/* 'You cant use an expiry time thats less than 5 minutes.' */, 4000)
+            return;
+        }
+
         if(page == 'channel'){
             var unencrypted_keys = object['unencrypted_keys']
             var key_to_use = ''
@@ -1167,7 +1220,7 @@ class AddCommentPage extends Component {
                 key_to_use = unencrypted_keys[unencrypted_keys.length-1]
                 key_index = unencrypted_keys.length-1
             }
-            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'key_to_use':key_to_use, 'key_index':key_index, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions}
+            tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'key_to_use':key_to_use, 'key_index':key_index, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions, 'expiry_time':expiry_time}
         }
         else if(page == 'job'){
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
@@ -1177,7 +1230,7 @@ class AddCommentPage extends Component {
             var convo_id = mail['convo_id']
             var recipients_e5 = mail['author'] == this.props.app_state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
 
-            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions}
+            tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions, 'expiry_time':expiry_time}
         }
         else if(page == 'post'){
             tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0,}, 'message_id':message_id, 'focused_message_id':focused_message_id, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions}

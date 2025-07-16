@@ -620,7 +620,7 @@ import ViewTransactionLogPage from './pages/view_transaction_log'
 import AddToBagPage from './pages/add_to_bag_page'
 import FulfilBagPage from './pages/fulfil_bag_page'
 import ViewBagApplicationContractPage from './pages/view_bag_application_contract_page'
-import DirectPurchasetPage from './pages/direct_purchase_page'
+import DirectPurchasePage from './pages/direct_purchase_page'
 import ClearPurchasePage from './pages/clear_purchase_page'
 import ScanQrPage from './pages/scan_qr_page'
 import SendJobRequestPage from './pages/send_job_request'
@@ -897,7 +897,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*135), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*253), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2),
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -911,7 +911,7 @@ class App extends Component {
     selected_e5:'E25', default_e5:'E25',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
-    device_country:this.get_location_info().userCountry, device_city: this.get_location_info().userCity, device_region: this.get_location_info().userRegion, device_country_code: this.get_country_code(this.get_location_info().userCountry), static_assets: this.get_static_assets(), os:getOS(), languages:this.get_supported_languages(), allowed_countries:this.get_allowed_countries(),
+    device_country:this.get_location_info().userCountry, device_city: this.get_location_info().userCity, device_region: this.get_location_info().userRegion, device_country_code: this.get_country_code(this.get_location_info().userCountry), static_assets: this.get_static_assets(), languages:this.get_supported_languages(), allowed_countries:this.get_allowed_countries(),
     
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
@@ -2987,7 +2987,7 @@ class App extends Component {
   }
 
   get_default_logo_title(){
-    var item = localStorage.getItem("logo_title");
+    var item = this.get_local_storage_data_if_enabled("logo_title");
     if(item == null){
       return 'start-white'
     }else{
@@ -2996,7 +2996,7 @@ class App extends Component {
   }
 
   get_default_dark_emblem_country(){
-    var item = localStorage.getItem("selected_dark_emblem_country")
+    var item = this.get_local_storage_data_if_enabled("selected_dark_emblem_country")
     if(item == null){
       return ''
     }else{
@@ -3327,7 +3327,7 @@ class App extends Component {
         this.homepage.current?.set_cookies()
       }
     }
-    localStorage.setItem('language', this.get_language())
+    this.set_local_storage_data_if_enabled('language', this.get_language())
     this.set_cookies2(size);
   }
 
@@ -3501,7 +3501,7 @@ class App extends Component {
   }
 
   load_cookies = async () => {
-    var state_language = localStorage.getItem("language");
+    var state_language = this.get_local_storage_data_if_enabled("language");
     var state = await this.load_data_from_indexdb('123')
     const state_theme = this.state.theme['name']
     const my_language = this.get_language()
@@ -5469,6 +5469,9 @@ class App extends Component {
           get_storefront_auction_bids={this.get_storefront_auction_bids.bind(this)}
 
           get_current_channel_creator_payout_info_if_possible={this.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.play_individual_track.bind(this)} play_individual_video={this.play_individual_video.bind(this)}
+
+          set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}
+          get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -5933,7 +5936,9 @@ class App extends Component {
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'3'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
           <div style={{ height: this.state.height-50, 'background-color': background_color, 'margin': '0px 0px 0px 0px', 'padding':'10px 10px 0px 10px', 'overflow-y':'auto'}}>
-            <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} view_number={this.view_number.bind(this)} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} />
+            <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} view_number={this.view_number.bind(this)} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+            
+            />
           </div>
       </SwipeableBottomSheet>
     );
@@ -7235,7 +7240,7 @@ class App extends Component {
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
-      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)}
+      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
       
       />
     )
@@ -7382,11 +7387,11 @@ class App extends Component {
   update_image_theme_data_in_storage(existing_image_data, theme){
     const data_string = JSON.stringify(existing_image_data)
     this.update_data_in_db(data_string, theme)
-    localStorage.setItem(theme, 'set')
+    this.set_local_storage_data_if_enabled(theme, 'set')
   }
 
   fetch_image_theme_data_in_storage = async (theme) => {
-    if(localStorage.getItem(theme) == null){
+    if(this.get_local_storage_data_if_enabled(theme) == null){
       const obj = {}
       obj[theme] = {}
       return obj
@@ -7588,6 +7593,7 @@ class App extends Component {
     setTimeout(function() {
         me.set_cookies()
         me.update_theme_image_data_once_storage_permissions_enabled()
+        me.update_local_storage_data_once_storage_permissions_disabled()
     }, (1 * 1000));
   }
 
@@ -8662,7 +8668,9 @@ class App extends Component {
     else if(target == '8'/* ends ☝️/spends 🫰 */){
       return(
         <div>
-          <NewTokenPage ref={this.new_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+          <NewTokenPage ref={this.new_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+          set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+          />
         </div>
       )
     }
@@ -8689,7 +8697,9 @@ class App extends Component {
     }
     else if(target == '4'/* storefront */){
       return(
-        <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+        <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+        
+        />
       )
     }
     else if(target == '5'/* mail */){
@@ -8705,13 +8715,13 @@ class App extends Component {
     else if(target == '10'/* audioport */){
       return(
         <NewAudioPage ref={this.new_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)}
+        search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
         />
       )
     }
     else if(target == '11'/* videoport */){
       return(
-        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)} search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)}
+        <NewVideoPage ref={this.new_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)} search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
         
         />
       )
@@ -8901,6 +8911,32 @@ class App extends Component {
     clone[channel_id] = channel_id_hash
     this.setState({channel_id_hash_directory: clone})
   }
+
+  set_local_storage_data_if_enabled(identifier, data){
+    if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
+      const encrypted_data = this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      localStorage.setItem(identifier, encrypted_data)
+    }else{
+      localStorage.setItem(identifier, '')
+    }
+  }
+
+  get_local_storage_data_if_enabled(identifier){
+    if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
+      const data = localStorage.getItem(identifier)
+      if(data == null) return;
+      var data_obj = JSON.parse(data)
+      return this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+    }
+    return;
+  }
+
+  update_local_storage_data_once_storage_permissions_disabled(){
+    if(this.state.storage_permissions != this.getLocale()['1428']/* 'enabled' */){
+      localStorage.clear();
+    }
+  }
+
   
 
 
@@ -8924,7 +8960,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+                          <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8936,7 +8972,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_token_bottomsheet.bind(this)} open={this.state.edit_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+            <EditTokenPage ref={this.edit_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -9317,7 +9353,9 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+                          <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+                          
+                          />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -9329,7 +9367,9 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_storefront_bottomsheet.bind(this)} open={this.state.edit_storefront_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}/>
+            <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+            
+            />
           </div>
       </SwipeableBottomSheet>
     )
@@ -9491,7 +9531,7 @@ class App extends Component {
     
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} 
+        <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
         
         />
       </div>
@@ -9587,7 +9627,7 @@ class App extends Component {
     
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} 
+        <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
         />
       </div>
     )
@@ -9979,7 +10019,9 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+                          set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+                          />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -9991,7 +10033,9 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_transfer_token_bottomsheet.bind(this)} open={this.state.transfer_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+            <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+            
+            />
           </div>
       </SwipeableBottomSheet>
     )
@@ -12737,7 +12781,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -12749,7 +12793,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_to_bag_bottomsheet.bind(this)} open={this.state.add_to_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+            <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -13036,7 +13080,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <DirectPurchasetPage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+                          <DirectPurchasePage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -13048,7 +13092,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_direct_purchase_bottomsheet.bind(this)} open={this.state.direct_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <DirectPurchasetPage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+            <DirectPurchasePage ref={this.direct_purchase_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -18642,7 +18686,7 @@ return data['data']
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
         <ContextualTransferPage ref={this.view_contextual_transfer_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_itransfer_transaction_to_stack={this.add_itransfer_transaction_to_stack.bind(this)} add_bill_transaction_to_stack={this.add_bill_transaction_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-
+        set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
         />
       </div>
     )
@@ -19356,7 +19400,7 @@ return data['data']
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <FulfilAuctionBidPage ref={this.fulfil_auction_bid_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_fulfil_bids_in_auction_to_stack={this.add_fulfil_bids_in_auction_to_stack.bind(this)}
+        <FulfilAuctionBidPage ref={this.fulfil_auction_bid_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_fulfil_bids_in_auction_to_stack={this.add_fulfil_bids_in_auction_to_stack.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
         />
       </div>
     )
@@ -21496,19 +21540,20 @@ return data['data']
   }
 
   get_browser_cache_size_limit(){
-        if (localStorage && !localStorage.getItem('size')) {
-            var i = 0;
-            try {
-                // Test up to 10 MB
-                for (i = 250; i <= 10000; i += 250) {
-                    localStorage.setItem('test', new Array((i * 1024) + 1).join('a'));
-                }
-            } catch (e) {
-                localStorage.removeItem('test');
-                localStorage.setItem('size', i - 250);            
-            }
-        }
-        return localStorage.getItem('size')
+    // if (localStorage && !localStorage.getItem('size')) {
+    //     var i = 0;
+    //     try {
+    //         // Test up to 10 MB
+    //         for (i = 250; i <= 10000; i += 250) {
+    //             localStorage.setItem('test', new Array((i * 1024) + 1).join('a'));
+    //         }
+    //     } catch (e) {
+    //         localStorage.removeItem('test');
+    //         localStorage.setItem('size', i - 250);            
+    //     }
+    // }
+    // return localStorage.getItem('size')
+    return 3*1024*1024
   }
 
   start_get_accounts_data = async (is_synching, should_skip_account_data) => {
@@ -21976,9 +22021,9 @@ return data['data']
         })
         primary_following = primary_following.concat(my_moderators)
 
-        localStorage.setItem("logo_title", logo_title);
-        localStorage.setItem("selected_dark_emblem_country", selected_dark_emblem_country);
-        localStorage.setItem("is_country_allowed", allowed_countries)
+        this.set_local_storage_data_if_enabled("logo_title", logo_title);
+        this.set_local_storage_data_if_enabled("selected_dark_emblem_country", selected_dark_emblem_country);
+        this.set_local_storage_data_if_enabled("is_country_allowed", allowed_countries)
 
         this.set_stack_page_data()
 
@@ -22882,7 +22927,7 @@ return data['data']
     if(contacts_data.length > 0){
       var latest_event = contacts_data[contacts_data.length - 1];
       var contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var contacts = contacts_data['all_contacts']
+      var contacts = contacts_data['all_contacts'] == null ? this.decrypt_data(contacts_data['cypher'])['data'] : contacts_data['all_contacts']
       var time = contacts_data['time']
       if(contacts != null){
         if(this.my_contacts_timestamp == null){
@@ -22905,6 +22950,14 @@ return data['data']
     }
   }
 
+  decrypt_data(data){
+    const key = this.state.accounts['E25'].privateKey.toString()
+    const bytes = CryptoJS.AES.decrypt(data, key);
+    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+    const decrypted_data_object = JSON.parse(JSON.parse(originalText));
+    return decrypted_data_object
+  }
+
   get_blocked_accounts_data = async (web3, E52contractInstance, e5, account) => {
     if(this.state.accounts[e5].privateKey == '') return;
     var blocked_contacts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2})
@@ -22912,7 +22965,7 @@ return data['data']
     if(blocked_contacts_data.length > 0){
       var latest_event = blocked_contacts_data[blocked_contacts_data.length - 1];
       var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
-      var loaded_blocked_accounts = blocked_contacts_data['all_blocked_accounts']
+      var loaded_blocked_accounts = blocked_contacts_data['all_blocked_accounts'] == null ? this.decrypt_data(blocked_contacts_data['cypher'])['data'] : blocked_contacts_data['all_blocked_accounts']
       var timestamp = blocked_contacts_data['time']
 
       if(loaded_blocked_accounts != null){
@@ -22948,8 +23001,11 @@ return data['data']
     if(section_tags_data_events.length != 0){
       var latest_event = section_tags_data_events[section_tags_data_events.length - 1];
       var section_tag_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var job_section_tags = section_tag_data['job_section_tags']
-      var explore_section_tags = section_tag_data['explore_section_tags']
+      
+      var data_obj = section_tag_data == null ? this.decrypt_data(section_tag_data['cypher']) : section_tag_data
+
+      var job_section_tags = data_obj['job_section_tags']
+      var explore_section_tags = data_obj['explore_section_tags']
       var timestamp = section_tag_data['time']
 
       if(this.get_section_tags_data_e5_timestamp == null){
@@ -22999,10 +23055,9 @@ return data['data']
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
     if(this.state.accounts[e5].privateKey == '') return;
     var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
-    console.log('apppage', 'loaded cid events', section_cid_data_events)
     if(section_cid_data_events.length != 0){
       const cids = [];
-      const latest_events = section_cid_data_events.slice(-3) 
+      const latest_events = section_cid_data_events
       if(this.state.beacon_node_enabled == true){
         try{
           await this.fetch_multiple_cids_from_nitro(latest_events, 0, 'p4')
@@ -23025,14 +23080,15 @@ return data['data']
                 cids.push(item)
               }
             });
-          }else{
-            // console.log('datas', 'decrypted_data_object', section_cid_data)
-            section_cid_data['cids'].forEach(item => {
-              if(item != null && !cids.includes(item)){
-                cids.push(item)
-              }
-            });
           }
+          // else{
+          //   // console.log('datas', 'decrypted_data_object', section_cid_data)
+          //   section_cid_data['cids'].forEach(item => {
+          //     if(item != null && !cids.includes(item)){
+          //       cids.push(item)
+          //     }
+          //   });
+          // }
         }
         console.log('apppage', 'loaded cid event data for one event')
       }
@@ -23339,7 +23395,7 @@ return data['data']
     if(playlists_event_data.length > 0){
       var latest_event = playlists_event_data[playlists_event_data.length - 1];
       var playlists_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var loaded_playlists = playlists_data['playlists']
+      var loaded_playlists = playlists_data['playlists'] == null ? this.decrypt_data(playlists_data['cypher'])['data'] : playlists_data['playlists']
       var timestamp = playlists_data['time']
 
       if(this.my_playlists_timestamp == null){
@@ -23383,7 +23439,7 @@ return data['data']
       var latest_event = plays_event_data[plays_event_data.length - 1];
       var plays_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       if(plays_data != null){
-        var loaded_plays = plays_data['plays']
+        var loaded_plays = plays_data['plays'] == null ? this.decrypt_data(plays_data['cypher'])['data'] : plays_data['plays']
         var timestamp = plays_data['time']
 
         if(this.my_loaded_plays_collection_timestamp == null){
@@ -23475,7 +23531,7 @@ return data['data']
     if(followed_accounts_data.length > 0){
       var latest_event = followed_accounts_data[followed_accounts_data.length - 1];
       var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var loaded_followed_accounts = followed_account_data['followed_accounts']
+      var loaded_followed_accounts = followed_account_data['followed_accounts'] == null ? this.decrypt_data(followed_account_data['cypher'])['data'] : followed_account_data['followed_accounts']
       var timestamp = followed_account_data['time']
 
       if(this.my_followed_accounts_collection_timestamp == null){
@@ -31053,12 +31109,20 @@ return data['data']
 
     var searched_tags_including_prioritized_tags = (this.load_selected_tags(page)).concat(searched_tags)
 
-    if((page == this.getLocale()['1197']/* 'contracts' */ || page == this.getLocale()['1200']/* 'subscriptions' */ || page == this.getLocale()['1198']/* 'contractors' */) && searched_tags.length == 0 && this.state.user_account_id[this.state.selected_e5] != 1){
-      //prioritize my accounts data first
-      searched_tags_including_prioritized_tags = [this.state.user_account_id[this.state.selected_e5]].concat(searched_tags_including_prioritized_tags)
-    }
+    // if((page == this.getLocale()['1197']/* 'contracts' */ || page == this.getLocale()['1200']/* 'subscriptions' */ || page == this.getLocale()['1198']/* 'contractors' */) && searched_tags.length == 0 && this.state.user_account_id[this.state.selected_e5] != 1){
+    //   //prioritize my accounts data first
+    //   searched_tags_including_prioritized_tags = [this.state.user_account_id[this.state.selected_e5]].concat(searched_tags_including_prioritized_tags)
+    // }
 
     if(searched_tags.length != 0) searched_tags_including_prioritized_tags = searched_tags
+
+    var all_unhashed_tags = []
+    if(search != null && search != ''){
+      all_unhashed_tags = all_unhashed_tags.concat(search.trim().split(/\s+/).filter(word => word.length >= 3))
+    }
+    all_unhashed_tags = all_unhashed_tags.concat(searched_tags_including_prioritized_tags)
+
+    const all_final_elements = all_unhashed_tags.map(word => this.hash_data_with_randomizer(word.toLowerCase()));
 
     var prioritized_accounts = []
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
@@ -31067,8 +31131,8 @@ return data['data']
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
 
-    if(searched_tags.length != 0 && this.state.beacon_node_enabled == true){
-      var arg_obj = {tags: searched_tags, target_type: target_type}
+    if(all_final_elements.length != 0 && this.state.beacon_node_enabled == true){
+      var arg_obj = {tags: all_final_elements, target_type: target_type}
       const params = new URLSearchParams({
         arg_string: JSON.stringify(arg_obj)
       });
@@ -31090,28 +31154,28 @@ return data['data']
       }
     }
 
-    if(search != null && search != '' && this.state.beacon_node_enabled == true){
-      var arg_obj = {title: search, target_type: target_type}
-      const params = new URLSearchParams({
-        arg_string: JSON.stringify(arg_obj)
-      });
-      var request = `${beacon_node}/title?${params.toString()}`
-      try{
-        const response = await fetch(request);
-        if (!response.ok) {
-          console.log(response)
-          throw new Error(`Failed to retrieve data. Status: ${response}`);
-        }
-        var data = await response.text();
-        var obj = JSON.parse(data);
-        obj['data'].forEach(element => {
-          if(!prioritized_accounts.includes(parseInt(element))) prioritized_accounts.push(parseInt(element))
-        });
-      }
-      catch(e){
-        console.log(e)
-      }
-    }
+    // if(search != null && search != '' && this.state.beacon_node_enabled == true){
+    //   var arg_obj = {title: search, target_type: target_type}
+    //   const params = new URLSearchParams({
+    //     arg_string: JSON.stringify(arg_obj)
+    //   });
+    //   var request = `${beacon_node}/title?${params.toString()}`
+    //   try{
+    //     const response = await fetch(request);
+    //     if (!response.ok) {
+    //       console.log(response)
+    //       throw new Error(`Failed to retrieve data. Status: ${response}`);
+    //     }
+    //     var data = await response.text();
+    //     var obj = JSON.parse(data);
+    //     obj['data'].forEach(element => {
+    //       if(!prioritized_accounts.includes(parseInt(element))) prioritized_accounts.push(parseInt(element))
+    //     });
+    //   }
+    //   catch(e){
+    //     console.log(e)
+    //   }
+    // }
 
     if(prioritized_accounts.length == 0){
       prioritized_accounts = prioritized_accounts.concat(this.fetch_all_followed_accounts())
@@ -36325,6 +36389,12 @@ return data['data']
   hash_data_with_specific_e5(data, e5){
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     var hash = web3.utils.keccak256(data.toString())
+    return hash
+  }
+
+  hash_data_with_randomizer(data){
+    const web3 = new Web3(this.get_web3_url_from_e5('E25'));
+    var hash = web3.utils.keccak256(data.toString()+process.env.REACT_APP_INDEX_HASHING_KEY)
     return hash
   }
 

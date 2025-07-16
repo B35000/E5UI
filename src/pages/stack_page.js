@@ -1703,19 +1703,20 @@ class StackPage extends Component {
     }
 
     get_browser_cache_size_limit(){
-        if (localStorage && !localStorage.getItem('size')) {
-            var i = 0;
-            try {
-                // Test up to 10 MB
-                for (i = 250; i <= 10000; i += 250) {
-                    localStorage.setItem('test', new Array((i * 1024) + 1).join('a'));
-                }
-            } catch (e) {
-                localStorage.removeItem('test');
-                localStorage.setItem('size', i - 250);            
-            }
-        }
-        return localStorage.getItem('size')
+        return (3*1024*1024)
+        // if (localStorage && !localStorage.getItem('size')) {
+        //     var i = 0;
+        //     try {
+        //         // Test up to 10 MB
+        //         for (i = 250; i <= 10000; i += 250) {
+        //             localStorage.setItem('test', new Array((i * 1024) + 1).join('a'));
+        //         }
+        //     } catch (e) {
+        //         localStorage.removeItem('test');
+        //         localStorage.setItem('size', i - 250);            
+        //     }
+        // }
+        // return localStorage.getItem('size')
     }
 
     render_stack_item(item, index){
@@ -1763,7 +1764,7 @@ class StackPage extends Component {
     //here
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
-        var viewed_data = localStorage.getItem("viewed") == null ? "":localStorage.getItem("viewed")
+        var viewed_data = this.props.get_local_storage_data_if_enabled("viewed") == null ? "":this.props.get_local_storage_data_if_enabled("viewed")
         var data_size = this.lengthInUtf8Bytes(viewed_data) + this.props.app_state.index_db_size
         var formatted_data_size = this.format_data_size(data_size)
         
@@ -4949,7 +4950,7 @@ class StackPage extends Component {
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
                         t = await this.process_channel_object(txs[i])
                     }
-                    var extra_tags = [].concat(t.entered_title_text)
+                    var extra_tags = []
                     extra_tags = extra_tags.concat(t.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
                         var songs = t.songs
@@ -4975,7 +4976,7 @@ class StackPage extends Component {
                     
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
-                    const all_final_elements = all_elements.map(word => word.toLowerCase());
+                    const all_final_elements = all_elements.map(word => this.props.hash_data_with_randomizer(word.toLowerCase()));
                     obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type}
                     ipfs_index_array.push({'id':t.id, 'data':t})
 
@@ -5097,7 +5098,7 @@ class StackPage extends Component {
                         data = await this.process_channel_object(txs[i])
                     }
                     ipfs_index_object[data.id] = data
-                    var extra_tags = [].concat(data.entered_title_text)
+                    var extra_tags = []
                     extra_tags = extra_tags.concat(data.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
                         var songs = data.songs
@@ -5121,7 +5122,7 @@ class StackPage extends Component {
                         });
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
-                    const all_final_elements = all_elements.map(word => word.toLowerCase());
+                    const all_final_elements = all_elements.map(word => this.props.hash_data_with_randomizer(word.toLowerCase()));
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type}
                     ipfs_index_array.push({'id':data.id, 'data':data})
 
@@ -5227,14 +5228,24 @@ class StackPage extends Component {
         
         if(this.props.app_state.should_update_contacts_onchain){
             var contacts_clone = structuredClone(this.props.app_state.contacts)
-            var data = {'all_contacts':contacts_clone, 'time':Date.now()}
+
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'data':contacts_clone})
+            var encrypted_obj = this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['contacts'] = data
             ipfs_index_array.push({'id':'contacts', 'data':data})
         }
 
         if(this.props.app_state.should_update_blocked_accounts_onchain){
             var blocked_accounts = structuredClone(this.props.app_state.blocked_accounts)
-            var data = {'all_blocked_accounts':blocked_accounts, 'time':Date.now()}
+
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'data':blocked_accounts})
+            var encrypted_obj = this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['blocked'] = data
             ipfs_index_array.push({'id':'blocked', 'data':data})
         }
@@ -5242,7 +5253,12 @@ class StackPage extends Component {
         if(this.props.app_state.should_update_section_tags_onchain){
             var job_section_tags = this.props.app_state.job_section_tags
             var explore_section_tags = this.props.app_state.explore_section_tags
-            var data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
+
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags})
+            var encrypted_obj = this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['tags'] = data
             ipfs_index_array.push({'id':'tags', 'data':data})
         }
@@ -5306,14 +5322,24 @@ class StackPage extends Component {
 
         if(this.props.app_state.should_update_playlists_in_E5 == true){
             var my_playlists = this.props.app_state.my_playlists
-            var data = {'playlists': my_playlists, 'time':Date.now()}
+
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'data':my_playlists})
+            var encrypted_obj = this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['myplaylists'] = data
             ipfs_index_array.push({'id':'myplaylists', 'data':data})
         }
 
         if(this.props.app_state.should_update_song_plays == true){
             var song_plays = this.props.app_state.song_plays
-            var data = {'plays': song_plays, 'time':Date.now()}
+
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'data':song_plays})
+            var encrypted_obj = this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['myplays'] = data
             ipfs_index_array.push({'id':'myplays', 'data':data})
         }
@@ -5345,7 +5371,12 @@ class StackPage extends Component {
 
         if(this.props.app_state.should_update_followed_accounts == true){
             var followed_accounts = this.props.app_state.followed_accounts
-            var data = {'followed_accounts': followed_accounts, 'time':Date.now()}
+
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'data':followed_accounts})
+            var encrypted_obj = this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['following'] = data
             ipfs_index_array.push({'id':'following', 'data':data})
         }
@@ -13675,9 +13706,9 @@ class StackPage extends Component {
                 this.file = {'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'data_type':type, 'metadata':''}
 
                 if(thumb_data != null && thumb_data != ''){
-                    obj['thumbnail'] = thumb_data.return_blob
-                    obj['width'] = thumb_data.width
-                    obj['height'] = thumb_data.height
+                    this.file['thumbnail'] = thumb_data.return_blob
+                    this.file['width'] = thumb_data.width
+                    this.file['height'] = thumb_data.height
                 }
 
                 if(ev.total < this.get_upload_file_size_limit()){

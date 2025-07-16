@@ -511,7 +511,6 @@ class ContractDetailsSection extends Component {
     }
 
     when_pin_contract_clicked(object){
-        
         this.props.pin_contract(object)
     }
 

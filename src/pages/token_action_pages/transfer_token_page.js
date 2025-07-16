@@ -735,11 +735,11 @@ class TransferTokenPage extends Component {
 
         var trimmed = recipient_acc_ids.slice(-7)
         var obj = {'data':trimmed}
-        localStorage.setItem("transfer_data", JSON.stringify(obj));
+        this.props.set_local_storage_data_if_enabled("transfer_data", JSON.stringify(obj));
     }
 
     get_recipients_from_memory(){
-        return localStorage.getItem("transfer_data") == null ? [] : JSON.parse(localStorage.getItem("transfer_data"))['data']
+        return this.props.get_local_storage_data_if_enabled("transfer_data") == null ? [] : JSON.parse(this.props.get_local_storage_data_if_enabled("transfer_data"))['data']
     }
 
 

@@ -241,6 +241,8 @@ class BagDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'title':object['ipfs'].device_city, 'details':this.props.app_state.loc['2064g']/* Delivery General Location. */})}
 
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['delivery'])}
@@ -397,16 +399,35 @@ class BagDetailsSection extends Component {
         if(object['ipfs'].device_city != null){
             tags = [object['ipfs'].device_city].concat(tags)
         }
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+' item(s) ordered'
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        var delivery_location = object['ipfs'].delivery_location
+        var delivery_location = this.get_delivery_location_data_if_allowed(object)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'sender_account':{'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':delivery_location, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
+        }
+    }
+
+    get_delivery_location_data_if_allowed(object){
+        if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
+            return object['ipfs'].delivery_location
+        }
+        var responses = this.get_bag_details_responses(object)
+        var allowed = false
+        responses.forEach(item => {
+            var is_application_accepted = item['is_response_accepted'];
+            if(is_application_accepted == true){
+                allowed = true;
+            }
+        });
+        if(allowed == true){
+            return object['ipfs'].delivery_location
+        }else{
+            return this.props.app_state.loc['2064h']/* 'Masked.' */
         }
     }
 
@@ -888,7 +909,7 @@ class BagDetailsSection extends Component {
             )
         }
 
-        if(is_application_accepted){
+        if(is_application_accepted == true){
             return(
                 <div onClick={() => this.view_contract(item, object)}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}

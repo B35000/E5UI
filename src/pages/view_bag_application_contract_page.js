@@ -402,6 +402,8 @@ class ViewBagApplicationContractPage extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height:10}}/>
+                    {this.render_post_state(object)}
+                    {this.render_contract_type(object)}
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
                     <div style={{height: 10}}/>
 
@@ -473,6 +475,69 @@ class ViewBagApplicationContractPage extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_post_state(object){
+        const country_data = this.props.app_state.country_data
+        const object_country = object['ipfs'].device_country
+        const country_item_data = country_data.find(e => e.name === object_country)
+        if(country_item_data != null){
+            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+            var country_color = obj[country_item_data.color[0]]
+            var title = country_item_data.code /* +' '+country_item_data.emoji */
+            var details = country_color+' '+country_item_data.call_code
+            var channeling_id = object['ipfs'].get_content_channeling_object == null ? 3 : this.get_selected_item2(object['ipfs'].get_content_channeling_object, 'e')
+            if(channeling_id == 1){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+            else if(channeling_id == 2){
+                var text = country_color+' '+object['ipfs'].device_language_setting
+                return(
+                    <div>
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+            else{
+                var text = '⚫ '+this.props.app_state.loc['1233']/* 'international' */
+                return(
+                    <div>
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+        }
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
+    render_contract_type(object){
+        if(object['ipfs'].contract_type != null){
+            var obj = {
+                'workgroup':this.props.app_state.loc['173'],
+                'personal':this.props.app_state.loc['175'],
+                'work':this.props.app_state.loc['177'],
+                'life':this.props.app_state.loc['179'],
+                'custom':this.props.app_state.loc['2214g'],
+            }
+            const title = this.props.app_state.loc['2214h']/* 'Contract Type.' */
+            const details = obj[object['ipfs'].contract_type]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     get_contract_details_data(contract){

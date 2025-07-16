@@ -1449,6 +1449,9 @@ class ChannelDetailsSection extends Component {
 
 
     focus_message(item, object){
+        if(this.is_message_expired(item)){
+            return;
+        }
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
         // var object = this.get_channel_items()[this.props.selected_channel_item]
 
@@ -1544,7 +1547,7 @@ class ChannelDetailsSection extends Component {
 
     when_message_double_tapped(item){
         var message = item['message'];
-        this.copy_to_clipboard(message)
+        if(!this.is_message_expired(item)) this.copy_to_clipboard(message);
     }
 
     copy_to_clipboard(signature_data){
@@ -1560,8 +1563,26 @@ class ChannelDetailsSection extends Component {
         this.setState({visible_hidden_messages: clone})
     }
 
+    is_message_expired(item){
+        if(item['expiry_time'] != null && (Date.now()/1000) > (item['time']+item['expiry_time'])){
+            return true;
+        }
+        return false;
+    }
+
 
     render_stack_message_item(item, object){
+        if(this.is_message_expired(item)){
+            return(
+                <div>
+                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
         if(this.is_sender_in_blocked_accounts(item, object)){
             return(
                 <div onClick={()=>this.show_visible(item)}>

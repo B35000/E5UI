@@ -569,7 +569,7 @@ class NewStorefrontItemPage extends Component {
     }
 
     get_fulfilment_location_from_local_storage(){
-        var fulfilment_locations = localStorage.getItem("fulfilment");
+        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{
@@ -4537,7 +4537,7 @@ return data['data']
     }
 
     add_fulfilment_location_to_local_storage(){
-        var fulfilment_locations = localStorage.getItem("fulfilment");
+        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{
@@ -4550,7 +4550,7 @@ return data['data']
             fulfilment_locations['data'].push(obj)
         }
 
-        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+        this.props.set_local_storage_data_if_enabled("fulfilment", JSON.stringify(fulfilment_locations));
     }
 
     fulfilment_location_includes(array, item){
@@ -4565,7 +4565,7 @@ return data['data']
     }
 
     remove_fulfilment_location_from_local_storage(pos){
-        var fulfilment_locations = localStorage.getItem("fulfilment");
+        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{
@@ -4573,7 +4573,7 @@ return data['data']
         }
         fulfilment_locations['data'].splice(pos, 1);
 
-        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+        this.props.set_local_storage_data_if_enabled("fulfilment", JSON.stringify(fulfilment_locations));
     }
 
 
