@@ -880,7 +880,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:this.getLocale()['1593hp']/* 'disable' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -3422,6 +3422,8 @@ class App extends Component {
       stacked_ids: this.get_stacked_transaction_ids(),
       rating_denomination: this.state.rating_denomination,
       my_active_e5s: this.get_e5s_im_using(),
+
+      disable_moderation:this.state.disable_moderation,
     }
   }
 
@@ -3592,6 +3594,8 @@ class App extends Component {
       var rating_denomination = state.rating_denomination == null ? this.state.rating_denomination : state.rating_denomination
       this.my_active_e5s = state.my_active_e5s == null ? [] : state.my_active_e5s
 
+      var disable_moderation = state.disable_moderation == null ? this.state.disable_moderation : state.disable_moderation
+
       this.setState({
         theme: theme,
         stack_items: stack_items,
@@ -3654,6 +3658,7 @@ class App extends Component {
         stack_address: stack_address,
         stacked_ids: stacked_ids,
         rating_denomination: rating_denomination,
+        disable_moderation: disable_moderation,
       })
       var me = this;
       setTimeout(function() {
@@ -3705,6 +3710,7 @@ class App extends Component {
       me.stack_page.current?.set_selected_auto_run_setting_tag()
       me.stack_page.current?.set_selected_audiplayer_position_setting_tag()
       me.stack_page.current?.set_selected_rating_denomination_setting_tag()
+      me.stack_page.current?.set_selected_disable_moderation_setting_tag()
     }, (1 * 1000));
   }
 
@@ -6518,6 +6524,8 @@ class App extends Component {
 
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }else{
+      this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
     }
   }
 
@@ -6536,7 +6544,7 @@ class App extends Component {
       const response = await fetch(request, header);
       if (!response.ok) {
         console.log(response)
-        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
       var data = await response.text();
       data = JSON.parse(data)
@@ -6546,15 +6554,15 @@ class App extends Component {
         if(hash!= null){
           return hash
         }else{
-          this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+          // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
         }
       }else{
-        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
     }
     catch(e){
       console.log(e)
-      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
@@ -6659,6 +6667,8 @@ class App extends Component {
     const hash = await this.broadcast_block_cypher_transaction(raw, 'ltc')
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }else{
+      this.show_dialog_bottomsheet({'hash':raw, 'chain':'LTC'}, 'manual_transaction_broadcast')
     }
   }
 
@@ -6706,6 +6716,8 @@ class App extends Component {
     
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }else{
+      this.show_dialog_bottomsheet({'hash':raw, 'chain':'DOGE'}, 'manual_transaction_broadcast')
     }
   }
 
@@ -6752,6 +6764,8 @@ class App extends Component {
 
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+    }else{
+      this.show_dialog_bottomsheet({'hash':raw, 'chain':'DASH'}, 'manual_transaction_broadcast')
     }
   }
 
@@ -7240,7 +7254,7 @@ class App extends Component {
       show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} sign_custom_data_using_wallet={this.sign_custom_data_using_wallet.bind(this)} verify_custom_data_using_wallet={this.verify_custom_data_using_wallet.bind(this)} set_up_web3_account={this.set_up_web3_account.bind(this)} upload_multiple_files_to_web3_or_chainsafe={this.upload_multiple_files_to_web3_or_chainsafe.bind(this)}
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
-      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
+      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)}
       
       />
     )
@@ -8055,6 +8069,14 @@ class App extends Component {
 
   when_rating_denomination_changed(item){
     this.setState({rating_denomination: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_disable_moderation_changed(item){
+    this.setState({disable_moderation: item})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -15005,7 +15027,7 @@ class App extends Component {
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
         <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)} 
-        delete_nitro_file={this.delete_nitro_file.bind(this)}
+        delete_nitro_file={this.delete_nitro_file.bind(this)} set_new_wallet={this.set_new_wallet.bind(this)}
         
         />
       </div>
@@ -15066,6 +15088,8 @@ class App extends Component {
       'confirm_upload_nitro_files':600,
       'renew_nitro_uploads':600,
       'view_bid_item':550,
+      'manual_transaction_broadcast':350,
+      'confirm_new_wallet': 200
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -15808,6 +15832,11 @@ class App extends Component {
       console.log(e)
       return null
     }
+  }
+
+  set_new_wallet(data){
+    this.open_dialog_bottomsheet()
+    this.when_wallet_data_updated3(data.added_tags, data.set_salt, data.selected_item, data.is_synching, data.selected_item_2)
   }
 
 
@@ -19652,10 +19681,25 @@ return data['data']
 
 
 
+  when_wallet_data_updated2(added_tags, set_salt, selected_item, is_synching, selected_item_2){
+    const randomizer = selected_item_2 == this.getLocale()['1593hm']/* 'enabled' */ ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
+    var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
 
+    var e5 = this.state.e5s['data'][0]
+    var web3_url = this.get_web3_url_from_e5(e5)
+    var account = this.get_account_from_seed(seed, web3_url)
+    
+    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && account.address != this.state.stack_address && this.state.stacked_ids.length > 0){
+      this.show_dialog_bottomsheet({added_tags, set_salt, selected_item, is_synching, selected_item_2}, 'confirm_new_wallet')
+    }else{
+      this.when_wallet_data_updated3(added_tags, set_salt, selected_item, is_synching, selected_item_2)
+    }
+  }
 
-  when_wallet_data_updated2(added_tags, set_salt, selected_item, is_synching){
-    var seed = added_tags.join(' | ') + set_salt + selected_item;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
+  when_wallet_data_updated3(added_tags, set_salt, selected_item, is_synching, selected_item_2){
+    this.prompt_top_notification(this.getLocale()['1561']/* 'Setting your wallet.' */, 5500)
+    const randomizer = selected_item_2 == this.getLocale()['1593hm']/* 'enabled' */ ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
+    var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
     this.generate_one_account_for_all_e5s(seed)
     this.generate_account_data_for_each_coin(seed)
     this.setState({
@@ -19701,7 +19745,7 @@ return data['data']
     this.my_object_timestamp = 0
     Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
 
-    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5] != this.state.stack_address && this.state.stacked_ids.length > 0){
+    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0){
       //sender has set a different address from the previously used one, so delete the transactions they created with the other address
       var stack = this.state.stack_items.slice()
       var new_stack = []
@@ -32388,12 +32432,6 @@ return data['data']
       }
       this.when_uploading_multiple_files_complete(e_cids, cids, datas)
       this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
-      
-      this.setState({storage_permissions:this.getLocale()['1428']/* 'enabled' */})
-      var me = this;
-      setTimeout(function() {
-        me.set_cookies()
-      }, (1 * 1000));
     }
   }
 
@@ -32449,12 +32487,6 @@ return data['data']
     this.when_uploading_multiple_files_complete(e_cids, '', datas)
     this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
     this.load_my_account_storage_info(nitro_object)
-
-    this.setState({storage_permissions:this.getLocale()['1428']/* 'enabled' */})
-    var me = this;
-    setTimeout(function() {
-      me.set_cookies()
-    }, (1 * 1000));
 
   }
 
@@ -32861,7 +32893,7 @@ return data['data']
       cid_clone_2.push(e_cids[i])
     }
 
-    this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true, uncommitted_upload_cids: cid_clone_2})
+    this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true, uncommitted_upload_cids: cid_clone_2, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
     var me = this;
     setTimeout(function() {
       me.set_cookies()

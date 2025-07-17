@@ -105,8 +105,10 @@ class StackPage extends Component {
         get_explore_display_type_setting_object:this.get_explore_display_type_setting_object(),
         get_audiplayer_position_setting_object:this.get_audiplayer_position_setting_object(),
         get_rating_denomination_setting_object:this.get_rating_denomination_setting_object(),
+        get_disable_moderation_setting_object:this.get_disable_moderation_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
+        get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
 
         typed_word:'',added_tags:[],set_salt: 0,
@@ -182,6 +184,17 @@ class StackPage extends Component {
                 ['xor','',0], ['e','a','i','o','u','?','$','%','#','!', ',', '.', ';',':','-','+'], [1]
             ],
         };
+    }
+
+    get_seed_randomizer_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593hm']/* 'percentage' */], [0]
+            ], 
+        }
     }
 
 
@@ -1085,6 +1098,31 @@ class StackPage extends Component {
         this.setState({get_rating_denomination_setting_object: this.get_rating_denomination_setting_object(),})
     }
 
+
+
+
+
+
+    get_disable_moderation_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593hp']/* 'disable' */,], [this.get_selected_disable_moderation_setting_option()]
+            ], 
+        }
+    }
+
+    get_selected_disable_moderation_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593hp']/* 'disable' */] = 1
+        return obj[this.props.app_state.disable_moderation]
+    }
+
+    set_selected_disable_moderation_setting_tag(){
+        this.setState({get_disable_moderation_setting_object: this.get_disable_moderation_setting_object(),})
+    }
 
 
 
@@ -10298,6 +10336,18 @@ class StackPage extends Component {
 
                 {this.render_detail_item('0')}
 
+
+
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hn']/* 'Disable All Moderation.' */, 'details':this.props.app_state.loc['1593ho']/* 'Show all the hidden posts and content by your chosen moderators.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disable_moderation_setting_object} tag_size={'l'} when_tags_updated={this.when_get_disable_moderation_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
+
             </div>
         )
     }
@@ -10665,6 +10715,16 @@ class StackPage extends Component {
         this.setState({get_rating_denomination_setting_object: tag_obj})
         var selected_item = this.get_selected_item(this.state.get_rating_denomination_setting_object, 'e')
         this.props.when_rating_denomination_changed(selected_item)
+    }
+
+    when_get_disable_moderation_setting_object_updated(tag_obj){
+        if(!this.props.do_i_have_an_account()){
+            this.props.notify(this.props.app_state.loc['1593hq']/* 'You need an account to change this setting.' */, 4300)
+            return;
+        }
+        this.setState({get_disable_moderation_setting_object: tag_obj})
+        var selected_item = this.get_selected_item(this.state.get_disable_moderation_setting_object, 'e')
+        this.props.when_disable_moderation_changed(selected_item)
     }
     
 
@@ -11089,6 +11149,13 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1556']/* 'Wallet Thyme' */, 'details':this.props.app_state.loc['1557']/* 'Set the preferred thyme for your wallet' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
+                
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1979r']/* 'Seed Randomizer.' */, 'details':this.props.app_state.loc['1979s']/* 'Append an extra text thats only known by the creator of this webapp. This is useful in preventing the loss of all your coin and ether through spoofing.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_seed_randomizer_setting_object} tag_size={'l'} when_tags_updated={this.get_seed_randomizer_setting_object_updated.bind(this)} theme={this.props.theme}/>
+                
                 <div style={{height: 10}}/>
                 {this.render_message_if_stack_not_empty()}
                 
@@ -11117,12 +11184,18 @@ class StackPage extends Component {
         this.setState({get_wallet_thyme_tags_object: tag_group})
     }
 
+    get_seed_randomizer_setting_object_updated(tag_obj){
+        this.setState({get_seed_randomizer_setting_object: tag_obj})
+    }
+
     when_new_salt_figure_set(number){
         this.setState({set_salt: number})
     }
 
     when_set_wallet_button_tapped(){
         var selected_item = this.get_selected_item(this.state.get_wallet_thyme_tags_object, this.state.get_wallet_thyme_tags_object['i'].active)
+
+        var selected_item_2 = this.get_selected_item(this.state.get_seed_randomizer_setting_object, this.state.get_seed_randomizer_setting_object['i'].active)
 
         if(selected_item == 'e'){
             selected_item = 'a'
@@ -11135,11 +11208,9 @@ class StackPage extends Component {
             this.props.notify(this.props.app_state.loc['1560']/* 'Please set a salt.' */, 4200)
         }
         else{
-            this.props.notify(this.props.app_state.loc['1561']/* 'Setting your wallet.' */, 5500)
-
             var me = this;
             setTimeout(function() {
-                me.props.when_wallet_data_updated2(me.state.added_tags, me.state.set_salt, selected_item, false)
+                me.props.when_wallet_data_updated2(me.state.added_tags, me.state.set_salt, selected_item, false, selected_item_2)
             }, (1 * 900));
         }
         

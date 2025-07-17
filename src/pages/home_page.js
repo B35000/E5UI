@@ -3121,7 +3121,7 @@ class home_page extends Component {
             return (!blocked_accounts.includes(object['author']))
         });
 
-        if(this.props.app_state.masked_content == 'hide'){
+        if(this.props.app_state.masked_content != 'e'){
             return filtered_objects
         }
         return objects;
@@ -3291,15 +3291,15 @@ class home_page extends Component {
     }
 
     filter_by_blocked_posts(objects){
-        return objects;
-        // var all_blocked_objs = this.props.app_state.posts_blocked_by_me.concat(this.props.app_state.posts_blocked_by_my_following)
+        if(this.props.app_state.disable_moderation != 'e') return objects;
+        const all_blocked_objs = this.props.app_state.posts_blocked_by_me.concat(this.props.app_state.posts_blocked_by_my_following)
 
-        // var filtered_objects = [];
-        // filtered_objects = objects.filter(function (object) {
-        //     return (!all_blocked_objs.includes(object['e5_id']))
-        // });
+        const user_account_id = this.props.app_state.user_account_id
+        const filtered_objects = objects.filter(function (object) {
+            return (!all_blocked_objs.includes(object['e5_id']) || object['author'] == user_account_id[object['e5']])
+        });
 
-        // return filtered_objects
+        return filtered_objects
     }
 
 

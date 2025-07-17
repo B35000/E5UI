@@ -255,6 +255,21 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'manual_transaction_broadcast'){
+            return(
+                <div>
+                    {this.render_manual_transaction_broadcast_ui()}
+                </div>
+            )
+        }
+        else if(option == 'confirm_new_wallet'){
+            return(
+                <div>
+                    {this.render_confirm_new_wallet_ui()}
+                </div>
+            )
+        }
+        
     }
 
 
@@ -6031,6 +6046,148 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+    render_manual_transaction_broadcast_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_manual_transaction_broadcast_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_manual_transaction_broadcast_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_manual_transaction_broadcast_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_manual_transaction_broadcast_data(){
+        const coins = this.props.app_state.coins
+        const item = coins[this.state.data['chain']]
+        const raw = this.state.data['hash']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055dt']/* 'Auto Broadcast Unsuccessful.' */, 'details':this.props.app_state.loc['3055du']/* ''e was unable to broadcast your transaction, probably due to rate limits. However, you can manually post your transaction using the link provided below.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('8', item['label'])}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055dv']/* 'Transaction Hash.' */, 'details':this.props.app_state.loc['3055dw']/* 'Just copy the hex data shown below, then use the link provided below the button to broadcast the transaction.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('4', {'text':raw, 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.copy_hex_to_clipboard(raw)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055dx']/* 'Copy Hex' */, 'action':''},)}
+                </div>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'https://blockchair.com/broadcast', 'textsize':'11px', 'font':this.props.app_state.font})}
+
+            </div>
+        )
+    }
+
+    copy_hex_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify(this.props.app_state.loc['3055dy']/* 'Hex copied to Clipboard' */, 1600)
+    }
+
+
+
+
+
+
+
+
+
+    render_confirm_new_wallet_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_new_wallet_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_new_wallet_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_new_wallet_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_confirm_new_wallet_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055dz']/* 'Confirm Switch Wallets' */, 'details':this.props.app_state.loc['3055ea']/* 'Are you sure you wish to set this wallet? The transactions you stacked with your previous wallet will be deleted.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.props.set_new_wallet(this.state.data)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055dx']/* 'Copy Hex' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
 
 
 

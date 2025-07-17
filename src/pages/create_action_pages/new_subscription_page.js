@@ -1585,6 +1585,7 @@ class NewSubscriptionPage extends Component {
                     return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
                 }
             });
+            return_array = this.filter_and_add_other_accounts(this.state.authority_id, return_array)
         }
         else if(target_type == 'subscription_beneficiary'){
             contacts.forEach(contact => {
@@ -1592,6 +1593,7 @@ class NewSubscriptionPage extends Component {
                     return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
                 }
             });
+            return_array = this.filter_and_add_other_accounts(this.state.subscription_beneficiary, return_array)
         }
         else if(target_type == 'moderator_id'){
             contacts.forEach(contact => {
@@ -1599,6 +1601,7 @@ class NewSubscriptionPage extends Component {
                     return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
                 }
             });
+            return_array = this.filter_and_add_other_accounts(this.state.moderator_id, return_array)
         }
         else if(target_type == 'interactible_id'){
             contacts.forEach(contact => {
@@ -1606,9 +1609,46 @@ class NewSubscriptionPage extends Component {
                     return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
                 }
             });
+            return_array = this.filter_and_add_other_accounts(this.state.interactible_id, return_array)
         }
         
         return return_array;
+    }
+
+    filter_and_add_other_accounts(typed_name, return_array){
+        if(typed_name.length < 3){
+            return return_array
+        }
+        const added_aliases = []
+        return_array.forEach(item => {
+            added_aliases.push(item['label']['details'])
+        });
+
+        return return_array.concat(this.get_all_aliases(added_aliases, typed_name))
+    }
+
+    get_all_aliases(added_aliases, typed_name){
+        const aliases = []
+        // const e5s = Object.keys(this.props.app_state.alias_bucket)
+        // e5s.forEach(e5 => {
+        //     const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        //     accounts.forEach(account_id => {
+        //         const alias = this.props.app_state.alias_bucket[e5][account_id]
+        //         if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+        //             aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+        //         }
+        //     });
+        // });
+        const e5 = this.props.app_state.selected_e5
+        const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        accounts.forEach(account_id => {
+            const alias = this.props.app_state.alias_bucket[e5][account_id]
+            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+                aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+            }
+        });
+
+        return aliases
     }
 
     get_contact_alias(contact){
