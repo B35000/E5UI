@@ -131,7 +131,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */, this.props.app_state.loc['1593d']/* 'notifications 🔔' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -1264,7 +1264,13 @@ class StackPage extends Component {
                 </div>
             )
         }
-
+        else if(selected_item == this.props.app_state.loc['1593d']/* 'notifications 🔔' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_notifications()}
+                </div>
+            )   
+        }
     }
 
     get_selected_item(object, option){
@@ -11928,8 +11934,6 @@ class StackPage extends Component {
         if(size == 's'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
                     {this.render_my_notifications()}
                 </div>
             )
@@ -11938,87 +11942,26 @@ class StackPage extends Component {
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
                         {this.render_my_notifications()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
                         {this.render_my_notifications()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
-                
             )
         }
-    }
-
-    get_all_sorted_notifications(){
-        // var my_job_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_responses_notifications)
-
-        // var my_job_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_application_responses_notifications)
-
-        // var my_contractor_job_request_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_contractor_job_request_notifications)
-
-        var my_token_event_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_token_event_notifications)
-
-        // var my_bag_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_responses_notifications)
-
-        // var my_bag_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_application_responses_notifications)
-
-        // var enter_exit_accounts_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.enter_exit_accounts_notifications)
-
-        // var my_store_direct_purchases_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_store_direct_purchases_notifications)
-
-        // var my_mail_messages_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.received_mail_notifications)
-
-
-        var all_object_list = []
-        // for (const key in my_job_responses_notifications) {
-        //     all_object_list.push(my_job_responses_notifications[key])
-        // }
-        // for (const key in my_job_application_responses_notifications) {
-        //     all_object_list.push(my_job_application_responses_notifications[key])
-        // }
-        // for (const key in my_contractor_job_request_notifications) {
-        //     all_object_list.push(my_contractor_job_request_notifications[key])
-        // }
-        for (const key in my_token_event_notifications) {
-            all_object_list.push(my_token_event_notifications[key])
-        }
-        // for (const key in my_bag_responses_notifications) {
-        //     all_object_list.push(my_bag_responses_notifications[key])
-        // }
-        // for (const key in my_bag_application_responses_notifications) {
-        //     all_object_list.push(my_bag_application_responses_notifications[key])
-        // }
-        // for (const key in enter_exit_accounts_notifications) {
-        //     all_object_list.push(enter_exit_accounts_notifications[key])
-        // }
-        // for (const key in my_store_direct_purchases_notifications) {
-        //     all_object_list.push(my_store_direct_purchases_notifications[key])
-        // }
-        // for(const key in my_mail_messages_notifications){
-        //     all_object_list.push(my_mail_messages_notifications[key])
-        // }
-
-        var sorted_notifs = this.sortByAttributeDescending(all_object_list, 'timestamp')
-        // console.log('sorted notifications: ', sorted_notifs)
-
-        return sorted_notifs
     }
 
     render_my_notifications(){
@@ -12037,22 +11980,16 @@ class StackPage extends Component {
             items = [0, 0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['1593hr']/* 'If any new notifications are received, they will show here.' */})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
             return(
                 <div style={{}}>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
+                    <div style={{height:10}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <div style={{'margin':'3px 0px 3px 0px'}}>
@@ -12065,110 +12002,142 @@ class StackPage extends Component {
         }
     }
 
+    get_all_sorted_notifications(){
+        const notification_object = this.props.app_state.notification_object
+        const mail = notification_object['mail'] == null ? [] : notification_object['mail']
+        const message = notification_object['message'] == null ? [] : notification_object['message']
+        const proposal = notification_object['proposal'] == null ? [] : notification_object['proposal']
+        const job_application = notification_object['job_application'] == null ? [] : notification_object['job_application']
+        const job_request = notification_object['job_request'] == null ? [] : notification_object['job_request']
+        const job_application_response = notification_object['job_application_response'] == null ? [] : notification_object['job_application_response']
+        const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
+        const contract = notification_object['contract'] == null ? [] : notification_object['contract']
+        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+
+
+        const bag = notification_object['bag'] == null ? [] : notification_object['bag']
+        const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
+        const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
+        const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
+
+
+        const token = notification_object['token'] == null ? [] : notification_object['token']
+        const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
+        
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, bag_application_response, storefront, auctionbids, bill_request, token, bag)
+
+        return this.sortByAttributeDescending(all_events, 'time')
+    }
+
     render_notification_item(item, index){
-        if(item['type'] == 'token_event_notification'){
-            var sender = item['event'].returnValues.p2
-            var amount = item['event'].returnValues.p4
-            var depth = item['event'].returnValues.p7
-            var exchange = item['event'].returnValues.p1
-            var timestamp = item['event'].returnValues.p5
+       const explore_types = ['bag', 'bag_application_response', 'storefront', 'comment', 'auctionbids']
+       const token_type = ['token', 'bill_request']
+       const work_type = ['mail', 'message', 'proposal', 'job_application', 'job_request', 'job_application_response', 'job_request_response', 'contract']
+
+       const type = item['event_type']
+       if(explore_types.includes(type)){
             return(
-                <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})} /* onClick={() => this.open_object(exchange, item['e5'], 'token')} */>
-                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+' sent you '+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                <div>
+                    {this.render_explore_notification_item(item, index)}
+                </div>
+            )
+       }
+       else if(token_type.includes(type)){
+            return(
+                <div>
+                    {this.render_token_notification_item(item, index)}
+                </div>
+            )
+       }
+       else if(work_type.includes(type)){
+            return(
+                <div>
+                    {this.render_work_notification_item(item, index)}
+                </div>
+            )
+       }
+    }
+
+    render_token_notification_item(item, index){
+        if(item['event_type'] == 'token'){
+            var sender = item.returnValues.p2
+            var amount = item.returnValues.p4
+            var depth = item.returnValues.p7
+            var exchange = item.returnValues.p1
+            var timestamp = item.returnValues.p5
+            var e5 = item['e5']
+            return(
+                <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
+                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
+                </div>
+            )
+        }else{
+            const obj = {
+                'bill_request':this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
+            }
+            const event_type = item['event_type']
+            const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
+            const message = obj[event_type]
+            const processed_message = message.replace('$', sender_alias_or_account)
+            const timestamp = item['time']
+            const e5 = item['e5']
+            return(
+                <div onClick={() => this.when_event_clicked(item)}>
+                    {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
                 </div>
             )
         }
-        else if(item['type'] == 'my_job_application_response_notification'){
-            var timestamp = item['timestamp']
-            var sender = item['event'].returnValues.p2
-            var job_id = item['event'].returnValues.p1
-            return(
-                <div onClick={() => this.open_object(job_id, item['e5'], 'job')}>
-                    {this.render_detail_item('3', {'title':'💼 '+this.get_senders_name_or_you(sender, item['e5'])+' selected your application for the job '+job_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
+        
+    }
+
+    render_explore_notification_item(item, index){
+        const obj = {
+            'bag':this.props.app_state.loc['3067r'],/* '🛍️ $ applied to fulfil one of your bags.' */
+            'bag_application_response':this.props.app_state.loc['3067s'],/* '📥 $ accepted your bag application.' */
+            'storefront':this.props.app_state.loc['3067t'],/* '🏪 $ purchased an item from one of your stores.' */
+            'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
+            'auctionbids': this.props.app_state.loc['3067ab'],/* '🙋‍♂️ $ bid in one of your auctions.' */
         }
-        else if(item['type'] == 'job_response_notification'){
-            var timestamp = item['timestamp']
-            var sender = item['event'].returnValues.p2
-            var job_id = item['event'].returnValues.p1
-            return(
-                <div onClick={() => this.open_object(job_id, item['e5'], 'job')}>
-                    {this.render_detail_item('3', {'title':'💼 '+this.get_senders_name_or_you(sender, item['e5'])+' applied for your job '+job_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
+        const event_type = item['event_type']
+        const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
+        const message = obj[event_type]
+        const processed_message = message.replace('$', sender_alias_or_account)
+        const timestamp = item['time']
+        const e5 = item['e5']
+        return(
+            <div onClick={() => this.when_event_clicked(item)}>
+                {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_work_notification_item(item, index){
+        const obj = {
+            'mail':this.props.app_state.loc['3067j'],/* '📬 You received new mail from $' */
+            'message':this.props.app_state.loc['3067k'],/* '📧 You received a new message from $' */
+            'proposal':this.props.app_state.loc['3067l'],/* '🧎 $ sent you a proposal in one of your contracts.' */
+            'job_application':this.props.app_state.loc['3067m'],/* '📝 $ applied for one of your jobs.' */
+            'job_request':this.props.app_state.loc['3067n'],/* '📥 $ sent you a job in your contractor post.' */
+            'job_application_response':this.props.app_state.loc['3067o'],/* '📲 $ responded to your application in their job.' */
+            'job_request_response':this.props.app_state.loc['3067p'],/* '👷 $ accepted your job request in their contractor post' */
+            'contract':this.props.app_state.loc['3067q'],/* '↪📑 $ entered your contract.' */
+            'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
         }
-        else if(item['type'] == 'bag_response_notification'){
-            var timestamp = item['timestamp']
-            var sender = item['event'].returnValues.p2
-            var bag_id = item['event'].returnValues.p1
-            return(
-                <div onClick={() => this.open_object(bag_id, item['e5'], 'bag')}>
-                    {this.render_detail_item('3', {'title':'🛍 '+this.get_senders_name_or_you(sender, item['e5'])+' requested to fulfil your bag '+bag_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
+        const event_type = item['event_type']
+        const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
+        var message = obj[event_type]
+        if(event_type == 'proposal' && item.returnValues.p1 == 2){
+            message = this.props.app_state.loc['3067u']/* '🧎 $ sent a proposal to one of the  main contracts' */
         }
-        else if(item['type'] == 'my_bag_application_response_notification'){
-            var timestamp = item['timestamp']
-            var sender = item['event'].returnValues.p2
-            var bag_id = item['event'].returnValues.p1
-            return(
-                <div onClick={() => this.open_object(bag_id, item['e5'], 'bag')}>
-                    {this.render_detail_item('3', {'title':'🛍 '+this.get_senders_name_or_you(sender, item['e5'])+' selected you to fulfil their bag '+bag_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
-        }
-        else if(item['type'] == 'contractor_request_notification'){
-            var timestamp = item['timestamp']
-            var sender = item['event'].returnValues.p2
-            var contractor_id = item['event'].returnValues.p1
-            return(
-                <div onClick={() => this.open_object(contractor_id, item['e5'], 'contractor')}>
-                    {this.render_detail_item('3', {'title':'👷🏻‍♀️ '+this.get_senders_name_or_you(sender, item['e5'])+' sent a job request to your contractor post '+contractor_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
-        }
-        else if(item['type'] == 'contract_entry_notification'){
-            var timestamp = item['event'].returnValues.p7
-            var sender = item['event'].returnValues.p2
-            var contract_id = item['event'].returnValues.p1
-            return(
-                <div onClick={() => this.open_object(contract_id, item['e5'], 'contract')}>
-                    {this.render_detail_item('3', {'title':'📑 '+this.get_senders_name_or_you(sender, item['e5'])+' entered your contract '+contract_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
-        }
-        else if(item['type'] == 'contract_exit_notification'){
-            var timestamp = item['event'].returnValues.p7
-            var sender = item['event'].returnValues.p2
-            var contract_id = item['event'].returnValues.p1
-            return(
-                <div onClick={() => this.open_object(contract_id, item['e5'], 'contract')}>
-                    {this.render_detail_item('3', {'title':'📜 '+this.get_senders_name_or_you(sender, item['e5'])+' exited your contract '+contract_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
-        }
-        else if(item['type'] == 'direct_purchase_notification'){
-            var timestamp = item['timestamp']
-            var sender = item['event'].returnValues.p1
-            var storefront_id = item['event'].returnValues.p3
-            return(
-                <div onClick={() => this.open_object(storefront_id, item['e5'], 'storefront')}>
-                    {this.render_detail_item('3', {'title':'🏪 '+this.get_senders_name_or_you(sender, item['e5'])+' purchased your storefront item '+storefront_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
-        }
-        else if(item['type'] == 'mail_message_notification'){
-            var timestamp = item['timestamp']
-            var sender = item['event'].returnValues.p2
-            var message = this.truncate(item['ipfs']['message'], 53)
-            var id = item['convo_id']
-            return(
-                <div onClick={() => this.open_object(id, item['e5'], 'mail')}>
-                    {this.render_detail_item('3', {'title':'📩 '+this.get_senders_name_or_you(sender, item['e5'])+': '+message, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
-                </div>
-            )
-        }
+        const processed_message = message.replace('$', sender_alias_or_account)
+        const timestamp = item['time']
+        const e5 = item['e5']
+        
+        return(
+            <div onClick={() => this.when_event_clicked(item)}>
+                {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l',})}
+            </div>
+        )
     }
 
     get_actual_number(number, depth){
@@ -12181,17 +12150,21 @@ class StackPage extends Component {
         return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
 
-    open_object(target, e5, type){
-        this.props.open_object_in_homepage(target, e5, type)
-    }
-
     get_senders_name_or_you(sender, e5){
         if(sender == this.props.app_state.user_account_id[e5]){
             return this.props.app_state.loc['1694']/* 'You' */
         }
         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
-            return alias
+        return alias
     }
+
+    when_event_clicked(event){
+        this.props.when_event_clicked(event)
+    }
+
+
+
+
 
 
 
