@@ -1031,11 +1031,13 @@ class StorefrontDetailsSection extends Component {
 
         var sale_type = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
 
+        var bags_enabled = object['ipfs'].get_purchase_through_bags_tags_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_purchase_through_bags_tags_object, 'e')
+
         if(sale_type == 2){
             return;
         }
         
-        if(item_in_stock == 1/* 'in-stock' */){
+        if(item_in_stock == 1/* 'in-stock' */ && bags_enabled == 1){
             return(
                 <div>
                     {this.render_detail_item('0')}

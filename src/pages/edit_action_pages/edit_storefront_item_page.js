@@ -68,6 +68,7 @@ class NewStorefrontItemPage extends Component {
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
         purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(), 
         get_option_storefront_type_object:this.get_option_storefront_type_object(),
+        get_purchase_through_bags_tags_object:this.get_purchase_through_bags_tags_object(),
         
         typed_link_text:'', link_search_results:[], added_links:[],
         edit_text_item_pos:-1, edit_variant_item_pos:-1,
@@ -246,6 +247,17 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+    get_purchase_through_bags_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['89']/* 'enabled' */, this.props.app_state.loc['90']/* 'disabled' */], [1]
+            ],
+        };
+    }
+
 
 
 
@@ -269,6 +281,9 @@ class NewStorefrontItemPage extends Component {
 
         if(this.state.viewers == null){
             this.setState({viewers:[], viewer:'',})
+        }
+        if(this.state.get_purchase_through_bags_tags_object == null){
+            this.setState({get_purchase_through_bags_tags_object: this.get_purchase_through_bags_tags_object()})
         }
     }
 
@@ -1104,6 +1119,13 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
 
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535bh']/* 'Purchase Through Bags' */, 'details':this.props.app_state.loc['535bi']/* 'If set to enabled, users will be able to purchase your items through bags and contractors.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_purchase_through_bags_tags_object} tag_size={'l'} when_tags_updated={this.when_get_purchase_through_bags_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['535g']/* 'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.' */})}
                 <div style={{height:10}}/>
@@ -1120,6 +1142,10 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_purchase_through_bags_tags_object_updated(tag_obj){
+        this.setState({get_purchase_through_bags_tags_object: tag_obj})
     }
 
     when_title_text_input_field_changed(text){
@@ -4527,6 +4553,8 @@ return data['data']
 
         var storefront_type = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
 
+        var bags_enabled = this.get_selected_item2(this.state.get_purchase_through_bags_tags_object, this.state.get_purchase_through_bags_tags_object['i'].active)
+
         if(index_tags.length == 0){
             this.props.notify(this.props.app_state.loc['529']/* 'add some tags first!' */, 2700)
         }
@@ -4553,6 +4581,9 @@ return data['data']
         }
         else if(storefront_type == this.props.app_state.loc['535aj']/* 'auction' */ && this.state.auction_expiry_time < Date.now()/1000){
             this.props.notify(this.props.app_state.loc['535bc']/* 'You cant set an auction expiry time thats less than now.' */, 6700)
+        }
+        else if(shipping_price_data.length == 0 && bags_enabled == 2){
+            this.props.notify(this.props.app_state.loc['535bj']/* 'You need to set direct shipping details or enable bags.' */, 6700)
         }
         else{
             

@@ -16657,7 +16657,7 @@ class App extends Component {
     }
   }
 
-  boot_new_e5 = async (entered_backup_key_text, selected_e5, entered_address_text, entered_web3_text, entered_start_block_text, entered_iteration_text, nitro_object) => {
+  boot_new_e5 = async (entered_backup_key_text, selected_e5, entered_address_text, entered_web3_text, entered_start_block_text, entered_iteration_text, nitro_object, added_rpc_urls) => {
     this.prompt_top_notification(this.getLocale()['3054bh']/* 'Attempting to boot the E5 in the node...' */, 1200)
     var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
@@ -16669,7 +16669,8 @@ class App extends Component {
       e5_address: entered_address_text, 
       web3: entered_web3_text, 
       first_block:parseInt(entered_start_block_text), 
-      iteration:parseInt(entered_iteration_text)
+      iteration:parseInt(entered_iteration_text),
+      web3_backups:added_rpc_urls
     }
 
     const params = new URLSearchParams({
@@ -16802,7 +16803,7 @@ class App extends Component {
     }
   }
 
-  update_web3_provider_in_node = async (entered_backup_key_text, selected_e5, entered_web3_text, nitro_object) => {
+  update_web3_provider_in_node = async (entered_backup_key_text, selected_e5, entered_web3_text, nitro_object, added_rpc_urls) => {
     this.prompt_top_notification(this.getLocale()['3054bz']/* 'Attempting to change the web3 provider url...' */, 1200)
     var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
@@ -16811,7 +16812,8 @@ class App extends Component {
     const params = new URLSearchParams({
       backup_key: final_backup_key,
       e5: selected_e5,
-      new_provider: entered_web3_text
+      new_provider: entered_web3_text,
+      new_providers: added_rpc_urls
     });
     var body = {
       method: "POST", // Specify the HTTP method

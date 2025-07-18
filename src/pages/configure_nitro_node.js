@@ -64,7 +64,9 @@ class ConfigureNitroNodePage extends Component {
         entered_ipfs_provider_text:'', entered_web3_text:'', entered_start_block_text:'', entered_iteration_text:'', 
         max_buyable_capacity:0, exchange_id:'', price_amount:0, price_data:[], recipient_id:'', entered_subscription_text:'', entered_dialer_enpoint_text:'',
 
-        default_free_storage:0, selected_e5: this.props.app_state.selected_e5, storage_price_data:{}
+        default_free_storage:0, selected_e5: this.props.app_state.selected_e5, storage_price_data:{},
+
+        added_rpc_urls:[],
     };
 
 
@@ -170,6 +172,24 @@ class ConfigureNitroNodePage extends Component {
 
     when_get_configure_nitro_node_title_tags_object_updated(tag_obj){
         this.setState({get_configure_nitro_node_title_tags_object: tag_obj})
+        
+        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        if(selected_item == this.props.app_state.loc['3043']/* 'new-E5' */){
+            this.setState({added_rpc_urls: []})
+        }
+        else if(selected_item == this.props.app_state.loc['3047']/* 'provider' */){
+            var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
+            if(node_details != null){
+                var web3_urls = node_details['e5_data']['web3']
+                var selected_url = node_details['e5_data']['url']
+                if(selected_url != null){
+                    this.setState({added_rpc_urls: web3_urls})
+                }
+                else{
+                    this.setState({added_rpc_urls: []})
+                }
+            }
+        }
     }
 
 
@@ -909,6 +929,21 @@ class ConfigureNitroNodePage extends Component {
                 <div style={{height:10}}/>
 
 
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['3054dw']/* Backup web3 provider... */} when_text_input_field_changed={this.when_typed_rpc_url_input_field_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_rpc_url()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_added_rpcs()}
+                {this.render_detail_item('0')}
+
+
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3054ba']/* 'Starting Block Number..' */} when_text_input_field_changed={this.when_start_block_input_field_changed.bind(this)} text={this.state.entered_start_block_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
@@ -999,6 +1034,19 @@ class ConfigureNitroNodePage extends Component {
                 this.setState({recipient_id: my_account_id.toString()})
             }
         }
+        else if(selected_item == this.props.app_state.loc['3047']/* 'provider' */){
+            var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
+            if(node_details != null){
+                var web3_urls = node_details['e5_data']['web3']
+                var selected_url = node_details['e5_data']['url']
+                if(selected_url != null){
+                    this.setState({added_rpc_urls: web3_urls})
+                }
+                else{
+                    this.setState({added_rpc_urls: []})
+                }
+            }
+        }
     }
 
     when_address_input_field_changed(text){
@@ -1028,6 +1076,7 @@ class ConfigureNitroNodePage extends Component {
         var entered_web3_text = this.state.entered_web3_text
         var entered_start_block_text = this.state.entered_start_block_text
         var entered_iteration_text = this.state.entered_iteration_text
+        var added_rpc_urls = this.state.added_rpc_urls;
 
         if(selected_e5 == null){
             this.props.notify(this.props.app_state.loc['3054bc']/* 'Please select an E5.' */, 4000)
@@ -1045,7 +1094,7 @@ class ConfigureNitroNodePage extends Component {
             this.props.notify(this.props.app_state.loc['3054bg']/* 'Please set an iteration value for node\'s the sync process.' */, 4000)
         }
         else{
-            this.props.boot_new_e5(entered_backup_text, selected_e5, entered_address_text, entered_web3_text, entered_start_block_text, entered_iteration_text, this.state.nitro_object)
+            this.props.boot_new_e5(entered_backup_text, selected_e5, entered_address_text, entered_web3_text, entered_start_block_text, entered_iteration_text, this.state.nitro_object, added_rpc_urls)
         }
     }
 
@@ -1057,6 +1106,84 @@ class ConfigureNitroNodePage extends Component {
             return false;  
         }
         return url.protocol === "http:" || url.protocol === "https:" || url.protocol === "wss:";
+    }
+
+
+
+    when_typed_rpc_url_input_field_changed(text){
+        this.setState({typed_rpc_url: text})
+    }
+
+    add_rpc_url(){
+        var url = this.state.typed_rpc_url
+        var clone = this.state.added_rpc_urls.slice()
+
+        if(!this.isValidHttpUrl(url)){
+            this.props.notify(this.props.app_state.loc['3054be']/* 'That web3 provider is not valid.' */, 4000)
+            return;
+        }
+        else if(clone.includes(url)){
+            this.props.notify(this.props.notify(this.props.app_state.loc['3054dx']/* 'That rpc url is already added' */, 3000), 5000)
+            return;
+        }
+        clone.push(url)
+        this.setState({added_rpc_urls: clone})
+    }
+
+    render_added_rpcs(){
+        var items = this.state.added_rpc_urls;
+        if(items == null){
+            items = []
+        }
+        items = [].concat(items)
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.delete_rpc_url(index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}}>
+                                            {this.render_detail_item('4', {'text':item, 'textsize':'11px', 'font':this.props.app_state.font})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    delete_rpc_url(index){
+        var clone = this.state.added_rpc_urls.slice()
+        clone.splice(index, 1)
+        this.setState({added_rpc_urls: clone})
     }
 
 
@@ -1316,6 +1443,21 @@ class ConfigureNitroNodePage extends Component {
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3054z']/* 'Web3 provider...' */} when_text_input_field_changed={this.when_web3_input_field_changed.bind(this)} text={this.state.entered_web3_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
+
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['3054dw']/* Backup web3 provider... */} when_text_input_field_changed={this.when_typed_rpc_url_input_field_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_rpc_url()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_added_rpcs()}
+                {this.render_detail_item('0')}
+
                 <div style={{height:20}}/>
                 <div onClick={()=> this.when_update_web3_provider_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3054by']/* 'Update Provider' */, 'action':''},)}
@@ -1328,6 +1470,7 @@ class ConfigureNitroNodePage extends Component {
         var entered_backup_text = this.state.entered_backup_text
         var selected_e5 = this.state.selected_e5
         var entered_web3_text = this.state.entered_web3_text
+        var added_rpc_urls = this.state.added_rpc_urls;
 
         if(selected_e5 == null){
             this.props.notify(this.props.app_state.loc['3054bc']/* 'Please select an E5.' */, 4000)
@@ -1336,7 +1479,7 @@ class ConfigureNitroNodePage extends Component {
             this.props.notify(this.props.app_state.loc['3054be']/* 'That web3 provider is not valid.' */, 4000)
         }
         else{
-            this.props.update_web3_provider_in_node(entered_backup_text, selected_e5, entered_web3_text, this.state.nitro_object)
+            this.props.update_web3_provider_in_node(entered_backup_text, selected_e5, entered_web3_text, this.state.nitro_object, added_rpc_urls)
         }
     }
 
