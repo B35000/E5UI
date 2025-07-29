@@ -647,12 +647,12 @@ class AudioDetailSection extends Component {
 
 
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527u']/* 'Download Playlist.' */, 'details':this.props.app_state.loc['a2527v']/* 'DDownload all the tracks in this playlist for faster load times.' */})}
+                    {/* {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527u']'Download Playlist.', 'details':this.props.app_state.loc['a2527v']'Download all the tracks in this playlist for faster load times.'})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.download_playlist(object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527u']/* 'Download Playlist.' */, 'action':''},)}
-                    </div>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527u']'Download Playlist.', 'action':''},)}
+                    </div> */}
 
 
 

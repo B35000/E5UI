@@ -7256,7 +7256,7 @@ class App extends Component {
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
-      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)}
+      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
       
       />
     )
@@ -15313,38 +15313,38 @@ class App extends Component {
   }
 
   add_song_to_cache = async (song) => {
-    this.prompt_top_notification(this.getLocale()['3006m']/* The track will be cached in a few moments. */, 5000)
-    var audio_file = song['track']
-    await this.fetch_uploaded_data_from_ipfs([audio_file], false)
-    var clone = this.state.cached_tracks.slice()
-    clone.push(audio_file)
+    // this.prompt_top_notification(this.getLocale()['3006m']/* The track will be cached in a few moments. */, 5000)
+    // var audio_file = song['track']
+    // await this.fetch_uploaded_data_from_ipfs([audio_file], false)
+    // var clone = this.state.cached_tracks.slice()
+    // clone.push(audio_file)
 
-    this.setState({cached_tracks: clone, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
-    var me = this;
-    setTimeout(function() {
-      me.set_cookies()
-    }, (1 * 1000));
+    // this.setState({cached_tracks: clone, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    // var me = this;
+    // setTimeout(function() {
+    //   me.set_cookies()
+    // }, (1 * 1000));
   }
 
   download_playlist = async (songs) => {
-    this.prompt_top_notification(this.getLocale()['a2527z']/* Downloading... */, 5000)
-    var ids = []
-    var clone = this.state.cached_tracks.slice()
-    songs.forEach(song => {
-      var audio_file = song['track']
-      ids.push(audio_file)
-      if(!clone.contains(audio_file)){
-        clone.push(audio_file)
-      }
-    });
-    await this.fetch_uploaded_data_from_ipfs(ids, false)
+    // this.prompt_top_notification(this.getLocale()['a2527z']/* Downloading... */, 5000)
+    // var ids = []
+    // var clone = this.state.cached_tracks.slice()
+    // songs.forEach(song => {
+    //   var audio_file = song['track']
+    //   ids.push(audio_file)
+    //   if(!clone.contains(audio_file)){
+    //     clone.push(audio_file)
+    //   }
+    // });
+    // await this.fetch_uploaded_data_from_ipfs(ids, false)
     
-    this.setState({cached_tracks: clone, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
-    var me = this;
-    setTimeout(function() {
-      me.set_cookies()
-      me.prompt_top_notification(me.getLocale()['a2527ba']/* Done. */, 1300)
-    }, (1 * 1000));
+    // this.setState({cached_tracks: clone, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    // var me = this;
+    // setTimeout(function() {
+    //   me.set_cookies()
+    //   me.prompt_top_notification(me.getLocale()['a2527ba']/* Done. */, 1300)
+    // }, (1 * 1000));
   }
 
   upload_file_to_arweave_confirmed(data){
@@ -17862,6 +17862,7 @@ return data['data']
 
     var songs_to_load2 = []
     var lyrics_to_load2 = []
+    var keys = {}
     for(var i=pos; i<queue.length; i++){
       var song = queue[i]
       if(i == 0){
@@ -17879,6 +17880,11 @@ return data['data']
           lyrics_to_load2.push('')
         }
       }
+      const key_object = song['object']['ipfs'].ecid_encryption_passwords || {}
+      var object_keys = Object.keys(key_object)
+      object_keys.forEach(ecid => {
+        keys[ecid] = key_object[ecid]
+      });
     }
 
     for(var i=0; i<songs_to_load.length; i++){
@@ -17895,9 +17901,9 @@ return data['data']
       }
 
       if(lyrics != ''){
-        await this.fetch_uploaded_data_from_ipfs([song, lyrics], false)
+        await this.fetch_uploaded_data_from_ipfs([song, lyrics], false, keys)
       }else{
-        await this.fetch_uploaded_data_from_ipfs([song], false)
+        await this.fetch_uploaded_data_from_ipfs([song], false, keys)
       }
       if(i == 0 && !has_played){
         //if its the song thats to be played
@@ -17918,7 +17924,7 @@ return data['data']
       }
     }
 
-    await this.fetch_uploaded_data_from_ipfs(load_data, false)
+    await this.fetch_uploaded_data_from_ipfs(load_data, false, keys)
   }
 
   has_file_loaded(audio_file){
@@ -18366,8 +18372,8 @@ return data['data']
     var ecid_obj = this.get_cid_split(item)
     var image = this.state.static_assets['video_label']
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-    if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
-      image = this.props.app_state.video_thumbnails[ecid_obj['full']]
+    if(this.state.video_thumbnails[ecid_obj['full']] != null){
+      image = this.state.video_thumbnails[ecid_obj['full']]
     }
     
     const video = {'video_id':this.make_number_id(12), 'video_title':data['name'], 'video_composer':'', 'price_data':[], 'video':item, 'subtitles':null, 'release_time':0}
@@ -18403,6 +18409,7 @@ return data['data']
   load_video_queue = async (queue, pos) => {
     var videos_to_load = []
     var video_subtitles_to_load = []
+    var keys = {}
     for(var i=pos; i<queue.length; i++){
       var video = queue[i]
       if(videos_to_load.length < 1){
@@ -18414,15 +18421,20 @@ return data['data']
           }
         });
       }
+      const key_object = video['object']['ipfs'].ecid_encryption_passwords || {}
+      var object_keys = Object.keys(key_object)
+      object_keys.forEach(ecid => {
+        keys[ecid] = key_object[ecid]
+      });
     }
 
     for(var i=0; i<videos_to_load.length; i++){
       var video = videos_to_load[i]
       if(video_subtitles_to_load.length != 0){
         var every_item_to_load = [video].concat(video_subtitles_to_load)
-        await this.fetch_uploaded_data_from_ipfs(every_item_to_load, false)
+        await this.fetch_uploaded_data_from_ipfs(every_item_to_load, false, keys)
       }else{
-        await this.fetch_uploaded_data_from_ipfs([video], false)
+        await this.fetch_uploaded_data_from_ipfs([video], false, keys)
       }
       
       if(i == 0){
@@ -19833,8 +19845,7 @@ return data['data']
       contacts:{}, 
       blocked_accounts:{}, 
       job_section_tags: [], 
-      explore_section_tags: [], 
-      uploaded_data_cids:[], 
+      explore_section_tags: [],  
       my_albums: [], 
       my_tracks: [], 
       my_playlists:[], 
@@ -23259,20 +23270,26 @@ return data['data']
         console.log('apppage', 'loaded cid event data for one event')
       }
       const clone = this.state.uploaded_data_cids.slice()
+      const keys = {}
       cids.forEach(cid => {
         if(!clone.includes(cid) && !this.state.deleted_files.includes(cid)){
           clone.push(cid)
+          keys[cid] = 'e'
         }
       });
       console.log('apppage', 'loaded uplpaded cid datas', clone)
-      this.fetch_uploaded_data_from_ipfs(clone, true)
+      this.fetch_uploaded_data_from_ipfs(clone, true, keys)
     }else{
       if(this.uploaded_data_user != account && this.uploaded_data_user != null && this.uploaded_data_user != 1){
         this.setState({uploaded_data_cids:[]})
       }else{
         if(this.state.uploaded_data_cids.length != 0){
           var clone = this.state.uploaded_data_cids.slice();
-          this.fetch_uploaded_data_from_ipfs(clone, true)
+          const keys = {}
+          clone.forEach(cid => {
+            keys[cid] = 'e'
+          });
+          this.fetch_uploaded_data_from_ipfs(clone, true, keys)
         }
       }
     }
@@ -23280,7 +23297,7 @@ return data['data']
     this.uploaded_data_user = account
   }
 
-  fetch_uploaded_data_from_ipfs = async (cids, is_my_cids) => {
+  fetch_uploaded_data_from_ipfs = async (cids, is_my_cids, keys) => {
     // console.log('datas', 'all cids', cids)
     if(is_my_cids){
       this.setState({uploaded_data_cids: cids})
@@ -23315,7 +23332,7 @@ return data['data']
       }
     }
     if(nitro_cid_data.length != null){
-      await this.fetch_multiple_file_datas_from_nitro_storage(nitro_cid_data, selected_cids)
+      await this.fetch_multiple_file_datas_from_nitro_storage(nitro_cid_data, selected_cids, keys)
     }
 
     // console.log('apppage', 'starting loaded cid objects...')
@@ -23333,8 +23350,7 @@ return data['data']
         // console.log('datas', 'loaded:', data)
         if(data != null) this.store_in_local_storage(cids[i], data);
       }
-      if(data != null){
-        // console.log('apppage', 'loaded one cid event data object')
+      else{
         if(filetype == 'video'){
           this.load_and_store_video_thumbnail(cids[i], data)
         }
@@ -23426,6 +23442,8 @@ return data['data']
 
   fetch_uploaded_files_for_object = async (object) => {
     var ecids = [];
+    var keys = {}
+
     if(object['ipfs'] != null){
       var images_to_add = object['ipfs'].entered_image_objects == null ? [] : object['ipfs'].entered_image_objects
       if(images_to_add.length > 0){
@@ -23484,6 +23502,12 @@ return data['data']
           if(this.is_ecid(video_data_link)) ecids.push(video_data_link)
         });
       }
+
+      const key_object = object['ipfs'].ecid_encryption_passwords || {}
+      var object_keys = Object.keys(key_object)
+      object_keys.forEach(ecid => {
+        keys[ecid] = key_object[ecid]
+      });
     }
 
     if(object['image-data'] != null){
@@ -23504,8 +23528,19 @@ return data['data']
       }
     }
 
+    if(object['ecid_encryption_passwords'] != null){
+      const key_object = object['ecid_encryption_passwords'] || {}
+      var object_keys = Object.keys(key_object)
+      object_keys.forEach(ecid => {
+        keys[ecid] = key_object[ecid]
+      });
+    }
+
+    
+    
+
     if(ecids.length > 0){
-      this.fetch_uploaded_data_from_ipfs(ecids, false)
+      this.fetch_uploaded_data_from_ipfs(ecids, false, keys)
     }
   }
 
@@ -26169,7 +26204,13 @@ return data['data']
         exchanges_depth = tokens_data.default_depth == null ? 0 : tokens_data.default_depth
       }
 
-      if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false);
+      var keys = {}
+      const key_object = tokens_data.ecid_encryption_passwords || {}
+      var object_keys = Object.keys(key_object)
+      object_keys.forEach(ecid => {
+        keys[ecid] = key_object[ecid]
+      });
+      if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false, keys);
       
       if(tokens_data != null){
         token_thumbnail_directory[created_tokens[i]] = tokens_data.token_image
@@ -27249,7 +27290,13 @@ return data['data']
       if(created_store_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_store_events[i].returnValues.p1.toString(), web3)){
         var data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(data != null){
-          if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false)
+          var keys = {}
+          const key_object = data.ecid_encryption_passwords || {}
+          var object_keys = Object.keys(key_object)
+          object_keys.forEach(ecid => {
+            keys[ecid] = key_object[ecid]
+          });
+          if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false, keys)
 
           var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':parseInt(created_store_events[i].returnValues.p6), 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5, 'participated':auction_bids_event_data.includes(id)}
           
@@ -27437,9 +27484,15 @@ return data['data']
 
         var images = this.get_bag_images(bag)
         // console.log('all_data2', 'staged images for bag ', bag, images)
+        var keys = {}
+        const key_object = bag['ecid_encryption_passwords'] || {}
+        var object_keys = Object.keys(key_object)
+        object_keys.forEach(ecid => {
+          keys[ecid] = key_object[ecid]
+        });
         if(images.length > 0){
           // console.log('all_data2', 'starting fetch of images', images)
-          this.fetch_uploaded_data_from_ipfs(images, false)
+          this.fetch_uploaded_data_from_ipfs(images, false, keys)
           // console.log('all_data2', 'finished calling fetch of images', images)
         }
 
@@ -27786,7 +27839,7 @@ return data['data']
     });
 
     var songs_to_load = []
-
+    var all_keys = {}
     for(var i=0; i<created_audio_events.length; i++){
       var id = created_audio_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -27794,15 +27847,25 @@ return data['data']
         var audio_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         
         if(audio_data != null){
-          if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false);
+          var keys = {}
+          const key_object = audio_data.ecid_encryption_passwords || {}
+          var object_keys = Object.keys(key_object)
+          object_keys.forEach(ecid => {
+            keys[ecid] = key_object[ecid]
+            all_keys[ecid] = key_object[ecid]
+          });
+          if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false, keys);
 
           audio_data.songs.forEach(song => {
             songs_to_load.push(song['track'])
           });
 
           if(i % this.state.file_load_step_count == 0 || i == created_audio_events.length -1){
-            this.fetch_uploaded_data_from_ipfs(songs_to_load, false)
+            this.fetch_uploaded_data_from_ipfs(songs_to_load.slice(), false, structuredClone(all_keys))
             songs_to_load = []
+            Object.keys().forEach(entry => {
+              delete all_keys[entry]
+            });
           }
 
           var album_sales = album_sale_data[id] == null ? 0 : album_sale_data[id]
@@ -27940,7 +28003,7 @@ return data['data']
     });
 
     var videos_to_load = []
-
+    var all_keys = {}
     for(var i=0; i<created_video_events.length; i++){
       var id = created_video_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
@@ -27948,8 +28011,15 @@ return data['data']
         var video_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         console.log('video_data', video_data)
         if(video_data != null){
+          var keys = {}
+          const key_object = video_data.ecid_encryption_passwords || {}
+          var object_keys = Object.keys(key_object)
+          object_keys.forEach(ecid => {
+            keys[ecid] = key_object[ecid]
+            all_keys[ecid] = key_object[ecid]
+          });
           if(video_data.album_art != null && video_data.album_art.startsWith('image')) {
-            this.fetch_uploaded_data_from_ipfs([video_data.album_art], false)
+            this.fetch_uploaded_data_from_ipfs([video_data.album_art], false, keys)
           }
           
           video_data.videos.forEach(video => {
@@ -27957,8 +28027,11 @@ return data['data']
           });
 
           if(i % this.state.file_load_step_count == 0 || i == created_video_events.length -1){
-            this.fetch_uploaded_data_from_ipfs(videos_to_load, false)
+            this.fetch_uploaded_data_from_ipfs(videos_to_load.slice(), false, structuredClone(all_keys))
             videos_to_load = []
+            Object.keys().forEach(entry => {
+              delete all_keys[entry]
+            });
           }
 
           var videopost_sales = videopost_sale_data[id] == null ? 0 : videopost_sale_data[id]
@@ -28138,8 +28211,14 @@ return data['data']
       if(created_nitro_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_nitro_events[i].returnValues.p1.toString(), web3) || true){
         var nitro_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         if(nitro_data != null){
+          var keys = {}
+          const key_object = nitro_data.ecid_encryption_passwords || {}
+          var object_keys = Object.keys(key_object)
+          object_keys.forEach(ecid => {
+            keys[ecid] = key_object[ecid]
+          });
           if(nitro_data.album_art != null && nitro_data.album_art.startsWith('image')) {
-            this.fetch_uploaded_data_from_ipfs([nitro_data.album_art], false)
+            this.fetch_uploaded_data_from_ipfs([nitro_data.album_art], false, keys)
           }
 
           var is_bought = bought_nitros.includes(id)
@@ -32279,7 +32358,7 @@ return data['data']
   }
 
 
-  fetch_multiple_file_datas_from_nitro_storage = async (ecid_objs, original_cids) => {
+  fetch_multiple_file_datas_from_nitro_storage = async (ecid_objs, original_cids, keys) => {
     var search_data = {}
     var search_data_file_types = {}
     var search_data_cids = {}
@@ -32311,7 +32390,7 @@ return data['data']
       this.fetch_index[search_index] = {'search_item_count':nitro_keys.length, 'successful':0}
       nitro_keys.forEach(nitro_url => {
         const cids = search_data[nitro_url]
-        this.fetch_multiple_file_datas_from_one_nitro_storage(nitro_url, cids, search_data_file_types, search_data_cids, search_index)
+        this.fetch_multiple_file_datas_from_one_nitro_storage(nitro_url, cids, search_data_file_types, search_data_cids, search_index, keys)
       });
 
       while (this.fetch_index[search_index]['search_item_count'] > this.fetch_index[search_index]['successful']) {
@@ -32321,11 +32400,12 @@ return data['data']
     }
   }
 
-  fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index) => {
+  fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index, keys) => {
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes:nitro_cids}),
     });
     var request = `${nitro_url}/data?${params.toString()}`
+    const private_key = this.state.accounts['E25'].privateKey.toString()
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -32365,11 +32445,46 @@ return data['data']
             }
           }
           if(filetype == 'lyric'){
-            cid_data['lyrics'] = await this.load_lyric_subtitle_data(cid_data, true)
+            if(cid_data['encrypted'] == true){
+              const file_name = this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+              const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+
+              cid_data['lyrics'] = await this.load_encrypted_lyric_subtitle_data(cid_data, true, password)
+            }else{
+              cid_data['lyrics'] = await this.load_lyric_subtitle_data(cid_data, true)
+            }
           }
           else if(filetype == 'subtitle'){
-            cid_data['subtitles'] = cid_data['data']
-            // cid_data['subtitles'] = await this.load_lyric_subtitle_data(cid_data, false)
+            if(cid_data['encrypted'] == true){
+              const file_name = this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+              const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+
+              cid_data['subtitles'] = await this.load_encrypted_lyric_subtitle_data(cid_data, false, password)
+            }else{
+              cid_data['subtitles'] = await this.load_lyric_subtitle_data(cid_data, false)
+            }
+          }
+
+          if(cid_data['encrypted'] == true){
+            const file_name = this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+            const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+            
+            
+            if(filetype == 'image'){
+              const thumbnail = this.decrypt_data_string(cid_data['thumbnail'], password)
+              cid_data['full_image'] = cid_data['data']
+              cid_data['data'] = thumbnail
+            }
+            else if(filetype == 'audio' || filetype == 'video' || filetype == 'pdf'){
+              const thumbnail = this.decrypt_data_string(cid_data['thumbnail'], password)
+              cid_data['thumbnail'] = thumbnail
+              
+              if(filetype == 'audio'){
+                const metadata = JSON.parse(this.decrypt_data_string(cid_data['metadata'], password))
+                cid_data['metadata'] = metadata
+              }
+            }
+            cid_data['password'] = password
           }
 
           this.store_in_local_storage(search_data_cids[nitro_cid], cid_data);
@@ -32459,6 +32574,44 @@ return data['data']
     } catch (error) {
       console.error("Error downloading the lyric data:", error);
     }
+  }
+
+  load_encrypted_lyric_subtitle_data = async (cid_data, is_lyric, password) => {
+    const url = cid_data['data']
+    try {
+      // Fetch the image as a blob
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch file");
+      }
+      const buffer = await response.arrayBuffer()
+      const mime_type = this.get_file_mimetype(cid_data['extension'])
+      const data_as_uint_array = new Uint8Array(buffer)
+      const plaintext = await this.decrypt_text_file(data_as_uint_array, password, mime_type, 'e')
+
+      if(is_lyric == true){
+        return this.parseLyric(plaintext)
+      }
+      return plaintext
+    } catch (error) {
+      console.error("Error downloading the image:", error);
+    }
+  }
+
+  decrypt_text_file = async (encryptedBuffer, password, mime_type, salt) => {
+    const iv = encryptedBuffer.slice(0, 12); // First 12 bytes
+    const data = encryptedBuffer.slice(12);  // Remaining bytes
+
+    const key = await this.get_key_from_password(password, salt);
+    const decrypted = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: new Uint8Array(iv) },
+      key,
+      data
+    );
+    const blob =  new Blob([decrypted], { type: mime_type });
+    const arrayBuffer = await blob.arrayBuffer();
+    const text = new TextDecoder().decode(arrayBuffer);
+    return text
   }
 
   parseLyric(lrc) {
@@ -34902,6 +35055,7 @@ return data['data']
     var is_first_time = this.state.object_creator_files[id] == null ? true: false
 
     var all_files = []
+    var keys = []
     for(var j=0; j<all_object_creator_file_events.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_creator_file_events[j].returnValues.p4)
       var author = all_object_creator_file_events[j].returnValues.p2/* sender_acc_id */
@@ -34910,6 +35064,7 @@ return data['data']
 
       if(ipfs_message != null && ipfs_message['e'] != null && ipfs_message['e'].length > 0 && channel_creators.includes(author_account)){
         var files = ipfs_message['e']
+        var file_keys = ipfs_message['k'] || {}
         files.forEach(file => {
           const includes = messages.find(e => e['file'] === file)
           if(includes == null){
@@ -34917,6 +35072,7 @@ return data['data']
             all_files.push(file)
             messages.push(obj)
           }
+          keys = file_keys[file]
         });
 
         if(is_first_time){
@@ -34927,7 +35083,7 @@ return data['data']
       }
     }
 
-    this.fetch_uploaded_data_from_ipfs(all_files, false)
+    this.fetch_uploaded_data_from_ipfs(all_files, false, keys)
     var subscription_ids = []
     subscriptions.forEach(subscription_e5_id => {
       var id = subscription_e5_id.split('E')[0]
@@ -36221,10 +36377,22 @@ return data['data']
         var block = event.returnValues.p5/* blocknumber */
         var ipfs = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id];
         if(object_type == 31){
-          if(ipfs != null && ipfs.token_image != null && ipfs.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([ipfs.token_image], false)
+          var keys = {}
+          const key_object = ipfs.ecid_encryption_passwords || {}
+          var object_keys = Object.keys(key_object)
+          object_keys.forEach(ecid => {
+            keys[ecid] = key_object[ecid]
+          });
+          if(ipfs != null && ipfs.token_image != null && ipfs.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([ipfs.token_image], false, keys)
         }
         else if(object_type == 19 || object_type == 20 || object_type == 21){
-          if(ipfs != null && ipfs.album_art != null && ipfs.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([ipfs.album_art], false)
+          var keys = {}
+          const key_object = ipfs.ecid_encryption_passwords || {}
+          var object_keys = Object.keys(key_object)
+          object_keys.forEach(ecid => {
+            keys[ecid] = key_object[ecid]
+          });
+          if(ipfs != null && ipfs.album_art != null && ipfs.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([ipfs.album_art], false, keys);
         }
 
         if(ipfs != null){

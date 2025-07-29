@@ -1635,7 +1635,7 @@ class ContextualTransferPage extends Component {
             var obj = {
                 id:makeid(8), type:this.props.app_state.loc['3068af']/* 'bill' */,
                 entered_indexing_tags:[this.props.app_state.loc['3068ag']/* 'request' */, this.props.app_state.loc['3068af']/* 'bill' */, this.props.app_state.loc['3068ah']/* 'payment' */],
-                e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier, transfer_recipient: transfer_recipient, recurring_enabled: recurring_enabled, entered_pdf_objects: entered_pdf_objects
+                e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier, transfer_recipient: transfer_recipient, recurring_enabled: recurring_enabled, entered_pdf_objects: entered_pdf_objects, ecid_encryption_passwords: this.state.ecid_encryption_passwords
             }
             this.props.add_bill_transaction_to_stack(obj)
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)

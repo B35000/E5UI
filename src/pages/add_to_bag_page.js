@@ -56,7 +56,7 @@ class AddToBagPage extends Component {
         entered_indexing_tags:[this.props.app_state.loc['1044']/* 'add' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1046']/* 'storefront-item' */], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
         purchase_unit_count:1, selected_variant:null, device_city: '', selected_device_city:'', delivery_location:'', order_specifications:'',
 
-        purchase_option_tags_array:[], get_frequency_bag_object: this.get_frequency_bag_object(), delivery_frequency_time:0
+        purchase_option_tags_array:[], get_frequency_bag_object: this.get_frequency_bag_object(), delivery_frequency_time:0, ecid_encryption_passwords:{}
     };
 
     get_add_to_bag_tags_object(){
@@ -702,7 +702,7 @@ class AddToBagPage extends Component {
                 purchase_unit_count:1, selected_variant:null
             })
         }
-        this.setState({storefront_item: item, e5: item['e5']})
+        this.setState({storefront_item: item, e5: item['e5'], ecid_encryption_passwords: (item['ipfs'].ecid_encryption_passwords || {})})
         this.set_up_option_groups(item)
     }
 

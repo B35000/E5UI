@@ -932,12 +932,12 @@ class DialogPage extends Component {
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k']/* 'Download Track.' */, 'details':this.props.app_state.loc['3006l']/* 'Cache the track in your cookies to load it faster in the future.' */, 'size':'l'})}
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k'] 'Download Track.', 'details':this.props.app_state.loc['3006l']'Cache the track in your cookies to load it faster in the future.', 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_add_to_cache_clicked()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k']/* 'Download Track.'' */, 'action':'', 'font':this.props.app_state.font})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k'] 'Download Track.', 'action':'', 'font':this.props.app_state.font})}
                 </div>
-                {this.render_detail_item('0')}
+                {this.render_detail_item('0')} */}
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2999']/* 'Play Next.' */, 'details':this.props.app_state.loc['3006b']/* 'Play the track next.' */, 'size':'l'})}
@@ -1233,12 +1233,12 @@ class DialogPage extends Component {
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k']/* 'Download Track.' */, 'details':this.props.app_state.loc['3006l']/* 'Cache the track in your cookies to load it faster in the future.' */, 'size':'l'})}
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k'] 'Download Track.', 'details':this.props.app_state.loc['3006l']'Cache the track in your cookies to load it faster in the future.', 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_add_to_cache_clicked()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k']/* 'Download Track.'' */, 'action':'', 'font':this.props.app_state.font})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k'] 'Download Track.', 'action':'', 'font':this.props.app_state.font})}
                 </div>
-                {this.render_detail_item('0')}
+                {this.render_detail_item('0')} */}
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2999']/* 'Play Next.' */, 'details':this.props.app_state.loc['3006b']/* 'Play the track next.' */, 'size':'l'})}
@@ -1341,12 +1341,12 @@ class DialogPage extends Component {
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k']/* 'Download Track.' */, 'details':this.props.app_state.loc['3006l']/* 'Cache the track in your cookies to load it faster in the future.' */, 'size':'l'})}
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3006k'] 'Download Track.', 'details':this.props.app_state.loc['3006l']'Cache the track in your cookies to load it faster in the future.', 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_add_to_cache_clicked()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k']/* 'Download Track.'' */, 'action':'', 'font':this.props.app_state.font})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3006k'] 'Download Track.', 'action':'', 'font':this.props.app_state.font})}
                 </div>
-                {this.render_detail_item('0')}
+                {this.render_detail_item('0')} */}
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3006e']/* 'Remove from Playlist.' */, 'details':this.props.app_state.loc['3006f']/* 'Remove the track from your playlist.' */, 'size':'l'})}

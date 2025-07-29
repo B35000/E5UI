@@ -1266,6 +1266,8 @@ class AddCommentPage extends Component {
         else if(page == 'video-comment'){
             tx = {'id':object['video_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'videopost_id':this.state.contractor_object, 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
         }
+        
+        tx['ecid_encryption_passwords'] = this.state.ecid_encryption_passwords
 
         this.props.add_comment_to_respective_forum_page(tx, page)
         this.setState({entered_title_text: '', entered_image_objects:[], get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), markdown:'', entered_pdf_objects:[], award_amount:0})

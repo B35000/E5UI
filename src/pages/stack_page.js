@@ -4865,6 +4865,7 @@ class StackPage extends Component {
                     var t = txs[i]
                     const bag_variants = []
                     const bag_tags = []
+                    const ecid_encryption_passwords = {}
                     txs[i].items_to_deliver.forEach(item => {
                         var variant_images = []
                         if(item.selected_variant['image_data']['data']['images'].length > 0){
@@ -4875,10 +4876,17 @@ class StackPage extends Component {
                             bag_tags.push(tag)
                         })
                         
-                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_item_e5':item.storefront_item['e5'],'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications, 'options':item.purchase_option_tags_array, 'storefront_options':(item.storefront_item['ipfs'].option_groups == null ? [] : item.storefront_item['ipfs'].option_groups)})
+                        bag_variants.push({
+                            'storefront_item_id':item.storefront_item['id'], 'storefront_item_e5':item.storefront_item['e5'],'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images, 'custom_specifications':item.order_specifications, 'options':item.purchase_option_tags_array, 'storefront_options':(item.storefront_item['ipfs'].option_groups == null ? [] : item.storefront_item['ipfs'].option_groups)
+                        })
+                        Object.keys(item.ecid_encryption_passwords).forEach(key => {
+                            ecid_encryption_passwords[key] = item.ecid_encryption_passwords[key]
+                        });
                     });
 
-                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time }
+                    var final_bag_object = { 
+                        'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time, ecid_encryption_passwords: ecid_encryption_passwords
+                    }
 
                     ipfs_index_object[t.id] = final_bag_object
                     ipfs_index_array.push({'id':t.id, 'data':final_bag_object})
@@ -5024,16 +5032,17 @@ class StackPage extends Component {
                     obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type}
                     ipfs_index_array.push({'id':t.id, 'data':t})
 
-                    if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */){
+                    if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
                         const selected_channel = t.selected_channel
                         if(selected_channel != null){
-                            const creator_group_record = {'e':[]}
-                            if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
+                            const creator_group_record = {'e':[], 'k':{}}
+                            if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ ){
                                 const previous_songs = txs[i].previous_songs
                                 txs[i].songs.forEach(song => {
                                     const includes = previous_songs.find(e => e['track'] === song['track'])
                                     if(includes == null && this.can_log_file_in_channel(song['track'], txs[i].selected_object_identifier)){
                                         creator_group_record['e'].push(song['track'])
+                                        creator_group_record['k'][song['track']] = this.props.get_ecid_file_password_if_any(song['track'])
                                     }
                                 });
                             }else{
@@ -5042,6 +5051,7 @@ class StackPage extends Component {
                                     const includes = previous_videos.find(e => e['video'] === video['video'])
                                     if(includes == null && this.can_log_file_in_channel(video['video'], txs[i].selected_object_identifier)){
                                         creator_group_record['e'].push(video['video'])
+                                        creator_group_record['k'][video['video']] = this.props.get_ecid_file_password_if_any(video['video'])
                                     }
                                 });
                             }
@@ -5173,17 +5183,19 @@ class StackPage extends Component {
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */){
                         const selected_channel = data.selected_channel
                         if(selected_channel != null){
-                            const creator_group_record = {'e':[]}
+                            const creator_group_record = {'e':[], 'k':{}}
                             if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ ){
                                 data.songs.forEach(song => {
                                     if(this.can_log_file_in_channel(song['track'], data.selected_object_identifier)){
                                         creator_group_record['e'].push(song['track'])
+                                        creator_group_record['k'][song['track']] = this.props.get_ecid_file_password_if_any(song['track'])
                                     }
                                 });
                             }else{
                                 data.videos.forEach(video => {
                                     if(this.can_log_file_in_channel(video['video'], data.selected_object_identifier)){
                                         creator_group_record['e'].push(video['video'])
+                                        creator_group_record['k'][video['video']] = this.props.get_ecid_file_password_if_any(video['video'])
                                     }
                                 });
                             }
