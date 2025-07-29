@@ -17056,9 +17056,8 @@ class App extends Component {
   }
 
   render_view_image_element(){
-    var images = this.state.view_images == null ? [] : this.state.view_images;
-    var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
-    var img = this.get_image_from_file(images[pos])
+    var img = this.state.view_images
+    var name = this.state.view_images_name
     var w = this.state.width
     return(
       <div style={{'position': 'relative'}}>
@@ -17070,7 +17069,7 @@ class App extends Component {
 
         <div style={{height: 32, width: w, 'z-index':'10', 'position': 'absolute'}}>
           <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
-            <img alt="" onClick={()=>this.download_image(img, this.get_name_of_file(images[pos]))} src={this.state.static_assets['download_icon']} style={{height:36, width:'auto'}}/>
+            <img alt="" onClick={()=>this.download_image(img, name, this.is_loaded_image_encrypted)} src={this.state.static_assets['download_icon']} style={{height:36, width:'auto'}}/>
             <div style={{width: w - 60}}/>
             <img alt="" onClick={()=>this.open_view_image_bottomsheet()} src={this.state.static_assets['close_pip']} style={{height:28, width:'auto'}} />
           </div>
@@ -17099,9 +17098,18 @@ class App extends Component {
     }
   }
 
-  show_images(images, pos){
-    this.setState({view_images:images, view_images_pos: pos })
-    this.getBase64ImageDimensions(images[pos])
+  show_images = async (images, pos) => {
+    var view_image = images[pos]
+    const name = this.get_name_of_file(view_image)
+    if(this.is_image_encrypted(view_image)){
+      view_image = await this.load_decrypted_image_file(view_image)
+      this.is_loaded_image_encrypted = true;
+    }else{
+      view_image = this.get_image_data_from_file(view_image)
+      this.is_loaded_image_encrypted = false;
+    }
+    this.setState({view_images: view_image, view_images_name: name })
+    this.getBase64ImageDimensions(view_image)
     .then(({ width, height }) => {
       console.log(`Image Width: ${width}px, Image Height: ${height}px`);
       if(width > height){
@@ -17141,21 +17149,59 @@ class App extends Component {
       this.rendering_image_width = this.state.width
       this.open_view_image_bottomsheet()
     });
-    
+  }
+
+  is_image_encrypted(ecid){
+    if(!ecid.startsWith('image')) return false;
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return false;
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    return data['encrypted'] == true;
+  }
+
+  load_decrypted_image_file = async (image) => {
+    const url = this.get_image_from_file(image)
+    try {
+      // Fetch the image as a blob
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch zip");
+      }
+      const buffer = await response.arrayBuffer()
+      const password_mimetype_data = this.fetch_encrypted_files_password(image)
+      const password = password_mimetype_data.password
+      const mime_type = password_mimetype_data.mime_type
+      const data_as_uint_array = new Uint8Array(buffer)
+      const image_url = await this.decryptFile(data_as_uint_array, password, mime_type, 'e')
+      return image_url
+    } catch (error) {
+      console.error("Error downloading the image:", error);
+    }
+  }
+
+  get_image_from_file(ecid){
+    if(!ecid.startsWith('image')) return ecid
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/';
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/';
+    return data['full_image']
+  }
+
+  get_image_data_from_file(ecid){
+    if(!ecid.startsWith('image')) return ecid
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/';
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+    if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/';
+    return data['data']
   }
 
   /* fullscreen image rendered in bottomsheet when image item is tapped */
   render_view_image(){
-    var images = this.state.view_images == null ? [] : this.state.view_images;
-    var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
-    var img = this.get_image_from_file(images[pos])
+    var img = this.state.view_images;
     return(
       <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px', 'text-align':'center'}}>
-        {/* <SwipeableViews index={pos}>
-          {images.map((item, index) => ( 
-            <img src={item} style={{height:'auto',width:w}} />
-          ))}
-        </SwipeableViews> */}
         <TransformWrapper doubleClick={{ disabled: false }}>
             <TransformComponent>
               <div>
@@ -17189,20 +17235,7 @@ class App extends Component {
   }
 
   when_view_image_clicked(index, images){
-    this.setState({view_images: images, view_images_pos: index})
-    this.open_view_image_bottomsheet()
-  }
-
-  get_image_from_file(ecid){
-    if(!ecid.startsWith('image')) return ecid
-    var ecid_obj = this.get_cid_split2(ecid)
-    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
-    
-    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-    console.log('datas', 'uploaded_data_obj', this.state.uploaded_data)
-    if(data == null) return 'https://bafkreihhphkul4fpsqougigu4oenl3nbbnjjav4fzkgpjlwfya5ie2tu2u.ipfs.w3s.link/'
-    if(data == null) return
-return data['data']
+    this.show_images(images, index)
   }
 
   get_cid_split2(ecid){
@@ -17220,9 +17253,9 @@ return data['data']
     return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
   }
 
-  download_image = async (img,  name) => {
+  download_image = async (img, name, is_loaded_image_encrypted) => {
     this.prompt_top_notification(this.getLocale()['2738b']/* 'Downloading image.' */, 1500)
-    if(!img.startsWith('http')){
+    if(is_loaded_image_encrypted == true || !img.startsWith('http')){
       // Create and click the download link
       const a = document.createElement("a");
       a.href = img;
@@ -17239,9 +17272,7 @@ return data['data']
       if (!response.ok) {
           throw new Error("Failed to fetch image");
       }
-
       const blob = await response.blob();
-
       // Create a temporary object URL
       const objectUrl = URL.createObjectURL(blob);
 
@@ -17277,16 +17308,18 @@ return data['data']
   when_zip_file_opened = async (item) => {
     this.prompt_top_notification(this.getLocale()['2738f']/* 'Downloading Zip file.' */, 5500)
     var zip_file_name = this.get_name_of_file(item)
+    if(this.is_zip_encrypted(item)){
+      this.load_decrypted_zip_file(item, zip_file_name)
+      return;
+    }
     var img = this.get_zip_from_file(item)
     try {
       // Fetch the zip as a blob
       const response = await fetch(img);
       if (!response.ok) {
-          throw new Error("Failed to fetch image");
+        throw new Error("Failed to fetch image");
       }
-
       const blob = await response.blob();
-
       // Create a temporary object URL
       const objectUrl = URL.createObjectURL(blob);
 
@@ -17305,15 +17338,55 @@ return data['data']
     }
   }
 
-  get_zip_from_file(ecid){
-    if(!ecid.startsWith('zip')) return ecid
+  is_zip_encrypted(ecid){
+    if(!ecid.startsWith('zip')) return false;
     var ecid_obj = this.get_cid_split2(ecid)
-    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return null
-    
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return false;
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-    if(data == null) return null
+    return data['encrypted'] == true;
+  }
+
+  load_decrypted_zip_file = async (zip, name) => {
+    const url = this.get_zip_from_file(zip)
+    try {
+      // Fetch the image as a blob
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch zip");
+      }
+      const buffer = await response.arrayBuffer()
+      const password_mimetype_data = this.fetch_encrypted_files_password(zip)
+      const password = password_mimetype_data.password
+      const mime_type = password_mimetype_data.mime_type
+      const data_as_uint_array = new Uint8Array(buffer)
+      const zip_url = await this.decryptFile(data_as_uint_array, password, mime_type, 'e')
+      this.download_encrypted_zip_from_url(zip_url, name)
+    } catch (error) {
+      console.error("Error downloading the image:", error);
+    }
+  }
+
+  get_zip_from_file(ecid){
+    if(!ecid.startsWith('pdf')) return ecid
+    var ecid_obj = this.get_cid_split2(ecid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return;
+    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return
     return data['data']
+  }
+
+  download_encrypted_zip_from_url = async (objectUrl, name) => {
+    try {
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      // Clean up
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading the image:", error);
+    }
   }
 
 
@@ -17425,14 +17498,19 @@ return data['data']
   }
 
   fetch_encrypted_files_password(ecid){
-    if(!ecid.startsWith('pdf')) return;
-    if(!this.state.uploaded_data_cids.includes(ecid)) return;
+    if(!ecid.startsWith('pdf') && !ecid.startsWith('image') && !ecid.startsWith('zip')) return;
     var ecid_obj = this.get_cid_split2(ecid)
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return;
     var _data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']];
+    if(_data == null) return;
+    const mime_type = this.get_file_mimetype(_data['extension'])
+    if(_data['password'] != null){
+      return { password: _data['password'], mime_type }
+    }
+    if(!this.state.uploaded_data_cids.includes(ecid)) return;
     const file_name = _data['name'];
     const private_key = this.state.accounts['E25'].privateKey.toString()
-    const mime_type = this.get_file_mimetype(_data['extension'])
+    
     const password = this.hash_data_with_randomizer(file_name + _data['id'] + private_key)
     return { password, mime_type }
   }
@@ -32484,6 +32562,7 @@ return data['data']
                 cid_data['metadata'] = metadata
               }
             }
+            cid_data['name'] = file_name
             cid_data['password'] = password
           }
 
