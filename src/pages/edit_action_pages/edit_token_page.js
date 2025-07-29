@@ -611,6 +611,9 @@ class NewTokenPage extends Component {
 
     when_banner_selected(files){
         this.setState({token_image: files[0]});
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        cloned_ecid_encryption_passwords[files[0]] = this.props.get_ecid_file_password_if_any(files[0])
+        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
     get_image_from_file(ecid){

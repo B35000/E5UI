@@ -1319,7 +1319,12 @@ class ContextualTransferPage extends Component {
         files.forEach(file => {
             clonedArray.push(file);
         });
-        this.setState({entered_pdf_objects: clonedArray});
+
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        files.forEach(file => {
+            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
+        });
+        this.setState({entered_pdf_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
     render_selected_files(){

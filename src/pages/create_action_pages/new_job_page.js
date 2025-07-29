@@ -872,6 +872,9 @@ class NewJobPage extends Component {
 
     when_banner_selected(files){
         this.add_banner_to_object(files[0])
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        cloned_ecid_encryption_passwords[files[0]] = this.props.get_ecid_file_password_if_any(files[0])
+        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
     when_banner_image_updated = (e, index) => {
@@ -1518,10 +1521,12 @@ class NewJobPage extends Component {
 
     when_image_gif_files_picked(files){
         var clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
         files.forEach(file => {
             clonedArray.push(file);
+            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
         });
-        this.setState({entered_image_objects: clonedArray});
+        this.setState({entered_image_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
     render_all_images_part(){
@@ -1706,7 +1711,12 @@ return data['data']
         files.forEach(file => {
             clonedArray.push(file);
         });
-        this.setState({entered_pdf_objects: clonedArray});
+
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        files.forEach(file => {
+            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
+        });
+        this.setState({entered_pdf_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
     render_pdfs_part(){
@@ -1851,9 +1861,9 @@ return data['data']
                 
             )
         }
-        }
+    }
 
-        render_pick_zip_parts(){
+    render_pick_zip_parts(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['162p']/* 'The gray circle stages a pdf file. Then swipe it to remove.' */})}
@@ -1861,9 +1871,9 @@ return data['data']
                 {this.render_zips_part()}
             </div>
         )
-        }
+    }
 
-        render_create_zip_ui_buttons_part(){
+    render_create_zip_ui_buttons_part(){
         return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
@@ -1871,17 +1881,21 @@ return data['data']
             </div>
         </div>
         )
-        }
+    }
 
-        when_zip_files_picked(files){
+    when_zip_files_picked(files){
         var clonedArray = this.state.entered_zip_objects == null ? [] : this.state.entered_zip_objects.slice();
         files.forEach(file => {
             clonedArray.push(file);
         });
-        this.setState({entered_zip_objects: clonedArray});
-        }
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        files.forEach(file => {
+            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
+        });
+        this.setState({entered_zip_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
+    }
 
-        render_zips_part(){
+    render_zips_part(){
         var items = [].concat(this.state.entered_zip_objects)
 
         if(items.length == 0){
@@ -1913,9 +1927,9 @@ return data['data']
                 </div>
             )
         }
-        }
+    }
 
-        render_uploaded_zip_file(item, index){
+    render_uploaded_zip_file(item, index){
         var ecid_obj = this.get_cid_split(item)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
@@ -1931,15 +1945,15 @@ return data['data']
                 {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
             </div>
         )
-        }
+    }
 
-        when_zip_clicked(item, index){
+    when_zip_clicked(item, index){
         var cloned_array = this.state.entered_zip_objects.slice()
         if (index > -1) { // only splice array when item is found
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_zip_objects: cloned_array})
-        }
+    }
 
 
 

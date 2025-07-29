@@ -13575,104 +13575,309 @@ class StackPage extends Component {
 
 
     when_file_picked = async (e, type) => {
+        this.when_encrypted_file_picked(e, type)
+        return;
+        // if(e.target.files && e.target.files[0]){
+        //     this.props.notify(this.props.app_state.loc['1593by']/* 'Preparing Files...' */, 2000)
+        //     this.selected_nitro_item = this.state.selected_nitro_item
+        //     this.selected_files_count = e.target.files.length
+        //     this.selected_files_type = type
+        //     this.file_names = []
+        //     this.audio_file_images = []
+        //     this.audio_file_metadatas = []
+        //     this.files = []
+        //     this.too_big_files = []
+        //     this.is_preparing_files = true;
+        //     for(var i = 0; i < e.target.files.length; i++){
+        //         this.is_loading_file = true
+        //         let reader = new FileReader();
+        //         reader.onload = async function(ev){
+        //             var thumb_data = type == 'video' ? await this.extractFirstFrame(ev.target.result) : ''
+        //             var obj = { 'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'data_type':type, 'metadata':'', 'nitro':this.selected_nitro_item, 'binary_size':this.get_file_sizes(ev.target.result) }
+                    
+        //             if(thumb_data != null && thumb_data != ''){
+        //                 obj['thumbnail'] = thumb_data.return_blob
+        //                 obj['width'] = thumb_data.width
+        //                 obj['height'] = thumb_data.height
+        //             }
+
+        //             if(ev.total < this.get_upload_file_size_limit()){
+        //                 this.files.push(obj)
+        //             }else{
+        //                 this.too_big_files.push(obj)
+        //             }
+
+        //             if(this.files.length + this.too_big_files.length == this.selected_files_count){
+        //                 //were done loading the files
+        //                 if(this.too_big_files.length == 0){
+        //                     this.upload_files(this.selected_nitro_item)
+        //                 }else{
+        //                     var formatted_size = this.format_data_size(this.get_upload_file_size_limit())
+        //                     var fs = formatted_size['size']+' '+formatted_size['unit']
+        //                     this.props.notify(this.props.app_state.loc['1593bw']/* 'One of the files exceeds the current file size limit of ' */+fs, 6000)
+        //                 }
+        //                 this.is_preparing_files = false
+        //             }
+        //             this.is_loading_file = false
+        //         }.bind(this);
+
+        //         this.file_names.push(e.target.files[i]['name']);
+
+        //         if(type == 'image'){
+        //             var imageFile = e.target.files[i];
+        //             reader.readAsDataURL(imageFile);
+        //         }
+        //         else if(type == 'audio'){
+        //             var audioFile = e.target.files[i];
+        //             var me = this
+        //             parseBlob(audioFile).then(metadata => {
+        //                 me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
+        //                     me.audio_file_images.push(metadata_image)
+        //                     me.audio_file_metadatas.push(me.process_metadata(metadata))
+        //                     me.audio_file_metadatas[me.audio_file_metadatas.length - 1].common.picture = null
+        //                     reader.readAsDataURL(audioFile);
+        //                 })
+        //             }).catch(err => {
+        //                 console.error('Error parsing metadata:', err);
+        //                 this.audio_file_images.push(this.props.app_state.static_assets['music_label'])
+        //                 this.audio_file_metadatas.push({})
+        //                 reader.readAsDataURL(audioFile);
+        //             });
+        //         }
+        //         else if(type == 'video'){
+        //             var videoFile = e.target.files[i];
+        //             reader.readAsDataURL(videoFile);
+        //         }
+        //         else if(type == 'pdf'){
+        //             var pdfFile = e.target.files[i];
+        //             reader.readAsDataURL(pdfFile)
+        //         }
+        //         else if(type == 'zip'){
+        //             var zipFile = e.target.files[i];
+        //             reader.readAsDataURL(zipFile);
+        //         }
+        //         else if(type == 'lyric'){
+        //             var lyricFile = e.target.files[i];
+        //             reader.readAsDataURL(lyricFile);
+        //         }
+        //         else if(type == 'subtitle'){
+        //             var subtitleFile = e.target.files[i];
+        //             reader.readAsDataURL(subtitleFile);
+        //         }
+
+        //         while (this.is_loading_file == true) {
+        //             if (this.is_loading_file == false) break
+        //             console.log('stackdata','Waiting for file to be loaded')
+        //             await new Promise(resolve => setTimeout(resolve, 1000))
+        //         }
+        //     }
+        // }
+    }
+
+    when_encrypted_file_picked = async (e, type) => {
         if(e.target.files && e.target.files[0]){
             this.props.notify(this.props.app_state.loc['1593by']/* 'Preparing Files...' */, 2000)
-            this.selected_nitro_item = this.state.selected_nitro_item
+            const selected_nitro_item = this.state.selected_nitro_item
+            const files_to_upload = []
+            const time_in_mills = Date.now()
 
-            this.selected_files_count = e.target.files.length
-            this.selected_files_type = type
-            this.file_names = []
-            this.audio_file_images = []
-            this.audio_file_metadatas = []
-
-            this.files = []
-            this.too_big_files = []
-            this.is_preparing_files = true;
             for(var i = 0; i < e.target.files.length; i++){
-                this.is_loading_file = true
-                let reader = new FileReader();
-                reader.onload = async function(ev){
-                    var thumb_data = type == 'video' ? await this.extractFirstFrame(ev.target.result) : ''
-                    var obj = { 'data':ev.target.result, 'size': ev.total, 'id':Date.now(), 'type':this.selected_files_type, 'name': '', 'data_type':type, 'metadata':'', 'nitro':this.selected_nitro_item, 'binary_size':this.get_file_sizes(ev.target.result) }
-                    
-                    if(thumb_data != null && thumb_data != ''){
-                        obj['thumbnail'] = thumb_data.return_blob
-                        obj['width'] = thumb_data.width
-                        obj['height'] = thumb_data.height
-                    }
-
-                    if(ev.total < this.get_upload_file_size_limit()){
-                        this.files.push(obj)
-                    }else{
-                        this.too_big_files.push(obj)
-                    }
-
-                    if(this.files.length + this.too_big_files.length == this.selected_files_count){
-                        //were done loading the files
-                        if(this.too_big_files.length == 0){
-                            this.upload_files(this.selected_nitro_item)
-                        }else{
-                            var formatted_size = this.format_data_size(this.get_upload_file_size_limit())
-                            var fs = formatted_size['size']+' '+formatted_size['unit']
-                            this.props.notify(this.props.app_state.loc['1593bw']/* 'One of the files exceeds the current file size limit of ' */+fs, 6000)
-                        }
-                        this.is_preparing_files = false
-                    }
-                    this.is_loading_file = false
-                }.bind(this);
-
-                this.file_names.push(e.target.files[i]['name']);
-
+                const unencrypted_file_name = e.target.files[i]['name']
+                const file_name = this.props.encrypt_data_string(unencrypted_file_name, process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+                const private_key = this.props.app_state.accounts['E25'].privateKey.toString()
+                const password = this.props.hash_data_with_randomizer(unencrypted_file_name + time_in_mills + private_key)
+                const extension = this.props.get_file_extension(unencrypted_file_name)
+                
                 if(type == 'image'){
                     var imageFile = e.target.files[i];
-                    reader.readAsDataURL(imageFile);
+                    // reader.readAsDataURL(imageFile);
+                    const encrypted_file_data = await this.encrypt_singular_file(imageFile,password, 'e')
+                    const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
+
+                    const compressed_image = this.compressImageFromFile(URL.createObjectURL(imageFile))
+                    
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':this.props.encrypt_data_string(compressed_image, password)}
+                    
+                    files_to_upload.push(obj)
                 }
                 else if(type == 'audio'){
                     var audioFile = e.target.files[i];
+                    const encrypted_file_data = await this.encrypt_in_chunks(audioFile, password, 'e')
+                    const size = this.props.get_encrypted_file_size(encrypted_file_data)
+                    const duration = await this.get_audio_duration(audioFile)
                     var me = this
                     parseBlob(audioFile).then(metadata => {
                         me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
-                            me.audio_file_images.push(metadata_image)
-                            me.audio_file_metadatas.push(me.process_metadata(metadata))
-                            me.audio_file_metadatas[me.audio_file_metadatas.length - 1].common.picture = null
-                            reader.readAsDataURL(audioFile);
+                            const metadata = me.process_metadata(metadata)
+                            // reader.readAsDataURL(audioFile);
+                            const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':this.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': this.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension }
+
+                            files_to_upload.push(obj)
                         })
                     }).catch(err => {
                         console.error('Error parsing metadata:', err);
-                        this.audio_file_images.push(this.props.app_state.static_assets['music_label'])
-                        this.audio_file_metadatas.push({})
-                        reader.readAsDataURL(audioFile);
+                        const metadata = {}
+                        // reader.readAsDataURL(audioFile);
+                        const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension }
+
+                        files_to_upload.push(obj)
                     });
                 }
                 else if(type == 'video'){
                     var videoFile = e.target.files[i];
-                    reader.readAsDataURL(videoFile);
+                    // reader.readAsDataURL(videoFile);
+                    const encrypted_file_data = await this.encrypt_in_chunks(videoFile, password, 'e')
+                    const thumb_data = await this.extractFirstFrame(URL.createObjectURL(videoFile))
+                    const size = this.props.get_encrypted_file_size(encrypted_file_data)
+                    const duration = await this.get_video_duration(videoFile)
+
+                    const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension }
+                    
+                    if(thumb_data != null && thumb_data != ''){
+                        obj['thumbnail'] = this.props.encrypt_data_string(thumb_data.return_blob, password) 
+                        obj['width'] = thumb_data.width
+                        obj['height'] = thumb_data.height
+                    }
+
+                    files_to_upload.push(obj)
                 }
                 else if(type == 'pdf'){
                     var pdfFile = e.target.files[i];
-                    reader.readAsDataURL(pdfFile)
+                    // reader.readAsDataURL(pdfFile)
+                    const encrypted_file_data = await this.encrypt_singular_file(pdfFile, password, 'e')
+                    const pdf_image = await this.get_pdf_image(URL.createObjectURL(pdfFile))
+                    const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
+
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail':this.props.encrypt_data_string(pdf_image, password), 'encrypted':true, 'extension':extension }
+
+                    files_to_upload.push(obj)
                 }
                 else if(type == 'zip'){
                     var zipFile = e.target.files[i];
-                    reader.readAsDataURL(zipFile);
+                    // reader.readAsDataURL(zipFile);
+                    const encrypted_file_data = await this.encrypt_singular_file(zipFile, password, 'e')
+                    const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
+
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension }
+
+                    files_to_upload.push(obj)
                 }
                 else if(type == 'lyric'){
                     var lyricFile = e.target.files[i];
-                    reader.readAsDataURL(lyricFile);
+                    // reader.readAsDataURL(lyricFile);
+                    const encrypted_file_data = await this.encrypt_singular_file(lyricFile, password, 'e')
+                    const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
+
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension }
+
+                    files_to_upload.push(obj)
                 }
                 else if(type == 'subtitle'){
                     var subtitleFile = e.target.files[i];
-                    reader.readAsDataURL(subtitleFile);
-                }
+                    // reader.readAsDataURL(subtitleFile);
+                    const encrypted_file_data = await this.encrypt_singular_file(subtitleFile, password, 'e')
+                    const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
 
-                while (this.is_loading_file == true) {
-                    if (this.is_loading_file == false) break
-                    console.log('stackdata','Waiting for file to be loaded')
-                    await new Promise(resolve => setTimeout(resolve, 1000))
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension }
+
+                    files_to_upload.push(obj)
                 }
             }
+            
+            this.upload_encrypted_files(selected_nitro_item, files_to_upload, type)
         }
     }
+
+    encrypt_singular_file = async (file, password, salt) => {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const key = await this.props.get_key_from_password(password, salt);
+
+        const fileBuffer = await file.arrayBuffer();
+        const encrypted = await crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv },
+            key,
+            fileBuffer
+        );
+
+        // Combine IV + encrypted data
+        const ivBuffer = new Uint8Array(iv);
+        const encryptedBuffer = new Uint8Array(encrypted);
+        const result = new Uint8Array(ivBuffer.length + encryptedBuffer.length);
+        result.set(ivBuffer, 0);
+        result.set(encryptedBuffer, ivBuffer.length);
+
+        return result;
+    }
+
+    encrypt_in_chunks = async (file, password, salt) => {
+        const CHUNK_SIZE = 1024 * 1024; // 1 MB
+        const key = await this.props.get_key_from_password(password, salt);
+        const encryptedChunks = [];
+        const fileSize = file.size;
+
+        for (let offset = 0; offset < fileSize; offset += CHUNK_SIZE) {
+            const chunk = file.slice(offset, offset + CHUNK_SIZE);
+            const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const encrypted = await window.crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv }, // unique IV per chunk
+            key,
+            chunkBuffer
+            );
+            const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
+            chunkWithIV.set(iv);
+            chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+
+            encryptedChunks.push(chunkWithIV);
+        }
+
+        return encryptedChunks;
+    }
+
+    readChunkAsArrayBuffer(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(blob);
+        });
+    }
+
+    get_video_duration(file) {
+        return new Promise((resolve, reject) => {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.src = URL.createObjectURL(file);
+            video.onloadedmetadata = () => {
+                resolve(video.duration); // duration in seconds
+                URL.revokeObjectURL(video.src);
+            };
+            video.onerror = () => reject(new Error('Could not load video metadata'));
+        });
+    }
+
+    get_audio_duration(file) {
+        return new Promise((resolve, reject) => {
+            const audio = document.createElement('audio');
+            audio.preload = 'metadata';
+            const url = URL.createObjectURL(file);
+            audio.src = url;
+
+            audio.onloadedmetadata = () => {
+                URL.revokeObjectURL(url); // Clean up
+                resolve(audio.duration);
+            };
+
+            audio.onerror = (e) => {
+                reject(new Error('Failed to load audio metadata'));
+            };
+        });
+    }
+
+    
+
+
+
 
     get_file_sizes(dataURL){
         const base64Data = dataURL.split(",")[1];
@@ -13884,10 +14089,10 @@ class StackPage extends Component {
         return thumbnailDataUrl
     }
 
-    upload_file(file, size, id, type, name, thumbnail, metadata){
-        var obj = {'data':file, 'size': size, 'id':id, 'type':type, 'name':name, 'thumbnail':thumbnail, 'data_type':type, 'metadata':metadata}
-        // this.props.upload_file_to_web3_or_chainsafe(obj, type)
-    }
+    // upload_file(file, size, id, type, name, thumbnail, metadata){
+    //     var obj = {'data':file, 'size': size, 'id':id, 'type':type, 'name':name, 'thumbnail':thumbnail, 'data_type':type, 'metadata':metadata}
+    //     // this.props.upload_file_to_web3_or_chainsafe(obj, type)
+    // }
 
     upload_files = async (nitro_id) => {
         var size_total = 0
@@ -13972,10 +14177,52 @@ class StackPage extends Component {
         this.props.prompt_confirmation_for_arweave_upload(this.file, this.selected_file_type)
     }
 
+    upload_encrypted_files = async (nitro_id, files, type) => {
+        var size_total = 0
+        for(var i = 0; i<files.length; i++){
+            size_total += files[i]['size']
+        }
+        
+        var selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+            if(size_total > this.get_upload_file_size_limit()){
+                this.props.notify(this.props.app_state.loc['1593cy']/* 'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.' */, 9000)
+            }else{
+                if(nitro_id == null){
+                   this.props.notify(this.props.app_state.loc['1593coz']/* 'You need to select a nitro node first.' */, 9000) 
+                }
+                else if(!this.props.app_state.has_wallet_been_set){
+                    this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 9000)
+                }
+                else{
+                    var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+                    var obj = this.get_item_in_array2(nitro_id, all_nitros)
+                    var node_details = this.props.app_state.nitro_node_details[nitro_id]
+                    
+                    if(obj == null){
+                        this.props.notify(this.props.app_state.loc['1593da']/* 'Please wait a few moments for E5 to syncronize fully.' */, 5000)
+                    }
+                    else if(node_details == null){
+                        this.props.notify(this.props.app_state.loc['1593db']/* 'Please wait a few moments for your selected node to come online.' */, 5000)
+                    }
+                    else{
+                        this.props.show_dialog_bottomsheet({ 'files':files, 'selected_files_type':type, 'obj':obj, 'node_details':node_details, 'size_total':size_total, 'available_storage_space':this.get_upload_file_size_limit(), 'encrypted':true }, 'confirm_upload_nitro_files')
+                    }
+                }
+            }
+        }
+        // else{
+        //     this.props.upload_multiple_files_to_web3_or_chainsafe(this.files, this.selected_files_type)
+        // }
+    }
+
     get_item_in_array2(e5_id, object_array){
         var object = object_array.find(x => x['e5_id'] === e5_id);
         return object
     }
+
+
 
 
 
