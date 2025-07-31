@@ -13714,7 +13714,8 @@ class StackPage extends Component {
                 }
                 else if(type == 'audio'){
                     var audioFile = e.target.files[i];
-                    const encrypted_file_data = await this.encrypt_in_chunks(audioFile, password, 'e')
+                    const CHUNK_SIZE = 1024 * 512; // 512 KB
+                    const encrypted_file_data = await this.encrypt_in_chunks(audioFile, password, 'e', CHUNK_SIZE)
                     const size = this.props.get_encrypted_file_size(encrypted_file_data)
                     const duration = await this.get_audio_duration(audioFile)
                     var me = this
@@ -13722,28 +13723,31 @@ class StackPage extends Component {
                         me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
                             const metadata = me.process_metadata(metadata)
                             // reader.readAsDataURL(audioFile);
-                            const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':this.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': this.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension }
-
+                            const obj = { 
+                                'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':this.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': this.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension, 'chunk_size':CHUNK_SIZE 
+                            }
                             files_to_upload.push(obj)
                         })
                     }).catch(err => {
                         console.error('Error parsing metadata:', err);
                         const metadata = {}
                         // reader.readAsDataURL(audioFile);
-                        const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension }
-
+                        const obj = { 
+                            'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'chunk_size':CHUNK_SIZE 
+                        }
                         files_to_upload.push(obj)
                     });
                 }
                 else if(type == 'video'){
                     var videoFile = e.target.files[i];
                     // reader.readAsDataURL(videoFile);
-                    const encrypted_file_data = await this.encrypt_in_chunks(videoFile, password, 'e')
+                    const CHUNK_SIZE = 1024 * 1024; // 1 MB
+                    const encrypted_file_data = await this.encrypt_in_chunks(videoFile, password, 'e', CHUNK_SIZE)
                     const thumb_data = await this.extractFirstFrame(URL.createObjectURL(videoFile))
                     const size = this.props.get_encrypted_file_size(encrypted_file_data)
                     const duration = await this.get_video_duration(videoFile)
 
-                    const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension }
+                    const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension, 'chunk_size':CHUNK_SIZE }
                     
                     if(thumb_data != null && thumb_data != ''){
                         obj['thumbnail'] = this.props.encrypt_data_string(thumb_data.return_blob, password) 
@@ -13821,8 +13825,7 @@ class StackPage extends Component {
         return result;
     }
 
-    encrypt_in_chunks = async (file, password, salt) => {
-        const CHUNK_SIZE = 1024 * 1024; // 1 MB
+    encrypt_in_chunks = async (file, password, salt, CHUNK_SIZE) => {
         const key = await this.props.get_key_from_password(password, salt);
         const encryptedChunks = [];
         const fileSize = file.size;

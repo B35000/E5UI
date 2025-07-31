@@ -17360,7 +17360,9 @@ class App extends Component {
       const mime_type = password_mimetype_data.mime_type
       const data_as_uint_array = new Uint8Array(buffer)
       const zip_url = await this.decryptFile(data_as_uint_array, password, mime_type, 'e')
-      this.download_encrypted_zip_from_url(zip_url, name)
+      if(zip_url != null){
+        this.download_encrypted_zip_from_url(zip_url, name)
+      }
     } catch (error) {
       console.error("Error downloading the image:", error);
     }
@@ -17723,7 +17725,7 @@ class App extends Component {
     return(
       <div style={{width:player_size, height:player_size}}>
         <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} player_size={player_size} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
-        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)}
+        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)}
         />
       </div>
     )
@@ -32682,15 +32684,19 @@ class App extends Component {
     const data = encryptedBuffer.slice(12);  // Remaining bytes
 
     const key = await this.get_key_from_password(password, salt);
-    const decrypted = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: new Uint8Array(iv) },
-      key,
-      data
-    );
-    const blob =  new Blob([decrypted], { type: mime_type });
-    const arrayBuffer = await blob.arrayBuffer();
-    const text = new TextDecoder().decode(arrayBuffer);
-    return text
+    try{
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: new Uint8Array(iv) },
+        key,
+        data
+      );
+      const blob =  new Blob([decrypted], { type: mime_type });
+      const arrayBuffer = await blob.arrayBuffer();
+      const text = new TextDecoder().decode(arrayBuffer);
+      return text
+    }catch(e){
+      console.log('apppage', 'something went wrong while decrypting buffer', e)
+    }
   }
 
   parseLyric(lrc) {
@@ -33419,16 +33425,16 @@ class App extends Component {
     for(var i=0; i<datas.length; i++){
       var _data = structuredClone(datas[i])
       const file_name = this.decrypt_data_string(_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+      const password = this.hash_data_with_randomizer(file_name + _data['id'] + private_key)
+      
       _data['name'] = file_name
+      _data['password'] = password
       if(type == 'image'){
-        const password = this.hash_data_with_randomizer(file_name + _data['id'] + private_key)
         const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
         _data['full_image'] = _data['data']
         _data['data'] = thumbnail
       }
       if(type == 'audio' || type == 'video' || type == 'pdf'){
-        const password = this.hash_data_with_randomizer(file_name + _data['id'] + private_key)
-        
         if(type == 'audio' && _data['thumbnail'] != null){
           const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
           const metadata = JSON.parse(this.decrypt_data_string(_data['metadata'], password))
@@ -33462,13 +33468,18 @@ class App extends Component {
     const data = encryptedBuffer.slice(12);  // Remaining bytes
 
     const key = await this.get_key_from_password(password, salt);
-    const decrypted = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: new Uint8Array(iv) },
-      key,
-      data
-    );
-    const blob =  new Blob([decrypted], { type: mime_type });
-    return URL.createObjectURL(blob);
+    try{
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: new Uint8Array(iv) },
+        key,
+        data
+      );
+      const blob =  new Blob([decrypted], { type: mime_type });
+      return URL.createObjectURL(blob);
+    }catch(e){
+      console.log('apppage', 'something went wrong while decrypting buffer', e)
+    }
+    
   }
 
   make_file2(dataURL, file_name){

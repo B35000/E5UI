@@ -63,6 +63,7 @@ class AudioPip extends Component {
     constructor(props) {
         super(props);
         this.audio = React.createRef();
+        this.mpegRef = React.createRef();
     }
 
     render(){
@@ -273,7 +274,19 @@ class AudioPip extends Component {
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data != null && data['data'] == null) return null
+        if(data['encrypted'] == true){
+            return;
+        }
         return encodeURI(data['data'])
+    }
+
+    get_audio_file_data(){
+        var current_song = this.state.songs[this.state.pos]
+        var audio_file = current_song['track']
+        var ecid_obj = this.get_cid_split(audio_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data
     }
 
     render_audio(){
@@ -284,16 +297,128 @@ class AudioPip extends Component {
                     <div style={{width:this.props.player_size, height:40, 'margin':'0px 0px 0px 0px', 'z-index':'3', 'position': 'absolute'}}/>
                     <div style={{width:2, height:2, 'margin':'px 0px 0px 0px', 'z-index':'2', 'position': 'absolute'}}>
                         <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} onProgress={this.onProgress} controlsList="nodownload" controls ref={this.audio}>
-                            <source src={this.get_audio_file()} type="audio/ogg"></source>
-                            <source src={this.get_audio_file()} type="audio/mpeg"></source>
-                            <source src={this.get_audio_file()} type="audio/wav"></source>
+                            <source ref={this.mpegRef} src={this.get_audio_file()} type="audio/mpeg"></source>
                             Your browser does not support the audio element.
                         </audio>
                     </div>
                 </div>
-                
             </div>
         )
+    }
+
+    streamAndPlayEncryptedAudio = async () => {
+        const track_data = this.get_audio_file_data()
+        if(track_data['encrypted'] != true){
+            return;
+        }
+        const mediaSource = new MediaSource();
+        const audioElement = this.mpegRef.current;
+        audioElement.src = URL.createObjectURL(mediaSource);
+        
+
+        mediaSource.addEventListener('sourceopen', async () => {
+            const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+            const key = await this.props.get_key_from_password(track_data['password'], 'e');
+            const CHUNK_SIZE = track_data['chunk_size'] + 12; // 512KB + 12-byte IV
+            const chunks_to_fetch_at_once = this.get_chunks_to_fetch_at_once(track_data)
+            const LOAD_RANGE_SIZE = CHUNK_SIZE * chunks_to_fetch_at_once;
+            
+            this.start = 0;
+            let buffer = new Uint8Array();
+            while (this.start <= track_data['size']) {
+                if(this.should_continue_loading(track_data)){
+                    var end = this.start + LOAD_RANGE_SIZE - 1;
+                    if(end >= track_data['size']){
+                        end = track_data['size'] - 1
+                    }
+                    const response = await fetch(encodeURI(track_data['data']), {
+                        headers: { Range: `bytes=${this.start}-${end}` },
+                    });
+                    if (response.status === 206 || response.status === 200) {
+                        const value = await response.arrayBuffer()
+                        const tmp = new Uint8Array(buffer.length + value.length);
+                        tmp.set(buffer);
+                        tmp.set(value, buffer.length);
+                        buffer = tmp;
+
+                        while (buffer.length > 0) {
+                            const current_chunk_size = buffer.length >= CHUNK_SIZE ? CHUNK_SIZE : buffer.length
+                            const chunk = buffer.slice(0, current_chunk_size);
+                            buffer = buffer.slice(current_chunk_size);
+                            try{
+                                const iv = chunk.slice(0, 12);
+                                const encryptedData = chunk.slice(12);
+                                const decrypted = await crypto.subtle.decrypt(
+                                    { name: 'AES-GCM', iv },
+                                    key,
+                                    encryptedData
+                                );
+                                await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                            }catch(e){
+                                console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
+                                mediaSource.endOfStream('decode');
+                                return;
+                            }
+                        }
+                        this.start = end
+                    }
+                    else{
+                        console.log('failed to fetch file chunk from node', response.status, response.statusText)
+                    }
+                }
+                await new Promise(resolve => setTimeout(resolve, 3500))
+            }
+            mediaSource.endOfStream();
+        });
+    }
+
+    update_stream_start_value_after_scrub(time){
+        const track_data = this.get_audio_file_data()
+        const CHUNK_SIZE = track_data['chunk_size'] + 12; // 512KB + 12-byte IV
+        const track_duration = track_data['duration']
+        const track_size = track_data['size']
+        const bytes_per_second = Math.ceil(track_size / track_duration)
+        const new_time_pos_in_bytes = time * bytes_per_second
+        const number_of_chunks = Math.floor(new_time_pos_in_bytes / CHUNK_SIZE)
+        this.start = number_of_chunks * CHUNK_SIZE
+    }
+
+    should_continue_loading(track_data){
+        const value = this.get_bar_length()
+        const buffer = this.state.buffer
+        const track_duration = track_data['duration']
+        const buffer_difference_percentage = buffer - value
+        const remaining_time = (buffer_difference_percentage / 100) * track_duration;
+        return remaining_time < 23
+    }
+
+    get_chunks_to_fetch_at_once(track_data){
+        const CHUNK_SIZE = track_data['chunk_size'] + 12; // 512KB + 12-byte IV
+        const track_duration = track_data['duration']
+        const track_size = track_data['size']
+        const bytes_per_second = Math.ceil(track_size / track_duration)
+        if(bytes_per_second < CHUNK_SIZE){
+            return 1
+        }
+        const chunk_count = Math.floor((bytes_per_second * 35) / CHUNK_SIZE) + 1
+        if(chunk_count > 35){
+            return 35
+        }
+        return chunk_count
+    }
+
+    appendBufferAsync(sourceBuffer, chunk) {
+        return new Promise((resolve, reject) => {
+            const tryAppend = () => {
+                if (sourceBuffer.updating) {
+                    sourceBuffer.addEventListener('updateend', tryAppend, { once: true });
+                } else {
+                    sourceBuffer.appendBuffer(chunk);
+                    sourceBuffer.addEventListener('updateend', resolve, { once: true });
+                }
+            };
+            tryAppend();
+        });
     }
 
 
@@ -349,6 +474,7 @@ class AudioPip extends Component {
         }
         var me = this;
         setTimeout(function() {
+            me.streamAndPlayEncryptedAudio()
             me.audio.current?.play()
             me.check_if_plays_are_available_and_pause_otherwise()
         }, (1 * 700));
@@ -379,6 +505,7 @@ class AudioPip extends Component {
             this.props.notify_account_to_make_purchase()
         }
         var current_time = this.audio.current?.currentTime
+        this.update_stream_start_value_after_scrub(current_time)
         this.setState({value: current_time})
         this.props.when_time_updated(current_time, this.state.songs[this.state.pos])
     }
@@ -423,6 +550,7 @@ class AudioPip extends Component {
             setTimeout(function() {
                 me.setState({isloading:false})
                 setTimeout(function() {
+                    me.streamAndPlayEncryptedAudio()
                     me.audio.current?.play()
                     me.props.load_queue(me.state.songs, me.state.pos)
                     me.check_if_plays_are_available_and_pause_otherwise()
@@ -440,6 +568,7 @@ class AudioPip extends Component {
             setTimeout(function() {
                 me.setState({isloading:false})
                 setTimeout(function() {
+                    me.streamAndPlayEncryptedAudio()
                     me.audio.current?.play()
                     me.props.load_queue(me.state.songs, me.state.pos)
                     me.check_if_plays_are_available_and_pause_otherwise()
@@ -465,6 +594,7 @@ class AudioPip extends Component {
         
         var me = this;
         setTimeout(function() {
+            me.streamAndPlayEncryptedAudio()
             me.props.load_queue(me.state.songs, me.state.pos)
             me.check_if_plays_are_available_and_pause_otherwise()
         }, (1 * 300));
