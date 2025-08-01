@@ -32561,7 +32561,9 @@ class App extends Component {
               
               if(filetype == 'audio'){
                 const metadata = JSON.parse(this.decrypt_data_string(cid_data['metadata'], password))
+                const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(cid_data['encrypted_file_data_info'], password))
                 cid_data['metadata'] = metadata
+                cid_data['encrypted_file_data_info'] = encrypted_file_data_info
               }
             }
             cid_data['name'] = file_name
@@ -33438,8 +33440,10 @@ class App extends Component {
         if(type == 'audio' && _data['thumbnail'] != null){
           const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
           const metadata = JSON.parse(this.decrypt_data_string(_data['metadata'], password))
+          const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(_data['encrypted_file_data_info'], password))
           _data['thumbnail'] = thumbnail
           _data['metadata'] = metadata
+          _data['encrypted_file_data_info'] = encrypted_file_data_info
         }
         else if(type == 'video' && _data['thumbnail'] != null){
           const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)

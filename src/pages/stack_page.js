@@ -13714,26 +13714,30 @@ class StackPage extends Component {
                 }
                 else if(type == 'audio'){
                     var audioFile = e.target.files[i];
-                    const CHUNK_SIZE = 1024 * 512; // 512 KB
-                    const encrypted_file_data = await this.encrypt_in_chunks(audioFile, password, 'e', CHUNK_SIZE)
-                    const size = this.props.get_encrypted_file_size(encrypted_file_data)
                     const duration = await this.get_audio_duration(audioFile)
+                    const chunk_duration = duration < 35 ? duration : 35
+                    const timeToByteMap = await this.buildTimeToByteMap(audioFile, chunk_duration)
+                    const encrypted_file_data_object = await this.encrypt_audio_file_in_chunks(audioFile, password, 'e', timeToByteMap)
+                    const encrypted_file_data = encrypted_file_data_object.encryptedChunks
+                    const encrypted_file_data_info = encrypted_file_data_object.encryptedChunksInfo
+                    const size = this.props.get_encrypted_file_size(encrypted_file_data)
+                    
                     var me = this
                     parseBlob(audioFile).then(metadata => {
                         me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
                             const metadata = me.process_metadata(metadata)
                             // reader.readAsDataURL(audioFile);
                             const obj = { 
-                                'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':this.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': this.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension, 'chunk_size':CHUNK_SIZE 
+                                'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':me.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': me.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension,
+                                'timeToByteMap':timeToByteMap, 'encrypted_file_data_info':  me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password)
                             }
                             files_to_upload.push(obj)
                         })
                     }).catch(err => {
                         console.error('Error parsing metadata:', err);
-                        const metadata = {}
                         // reader.readAsDataURL(audioFile);
                         const obj = { 
-                            'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'chunk_size':CHUNK_SIZE 
+                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password)
                         }
                         files_to_upload.push(obj)
                     });
@@ -13834,10 +13838,10 @@ class StackPage extends Component {
             const chunk = file.slice(offset, offset + CHUNK_SIZE);
             const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
             const iv = crypto.getRandomValues(new Uint8Array(12));
-            const encrypted = await window.crypto.subtle.encrypt(
-            { name: 'AES-GCM', iv }, // unique IV per chunk
-            key,
-            chunkBuffer
+            const encrypted = await crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv }, // unique IV per chunk
+                key,
+                chunkBuffer
             );
             const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
             chunkWithIV.set(iv);
@@ -13847,6 +13851,59 @@ class StackPage extends Component {
         }
 
         return encryptedChunks;
+    }
+
+    encrypt_audio_file_in_chunks = async (file, password, salt, timeToByteMap) => {
+        const key = await this.props.get_key_from_password(password, salt);
+        const encryptedChunks = [];
+        const encryptedChunksInfo = {}
+        const chunkSeekMap = new Map();
+        const fileSize = file.size;
+
+        const seekPoints = Array.from(timeToByteMap.entries()).sort((a, b) => a[0] - b[0]);
+        let encryptedBytePosition = 0;
+
+        for (let i = 0; i < seekPoints.length; i++) {
+            const [currentTime, currentBytePos] = seekPoints[i];
+            let chunkEndPos;
+            if (i < seekPoints.length - 1) {
+                chunkEndPos = seekPoints[i + 1][1];
+            } else {
+                chunkEndPos = fileSize;
+            }
+            const chunkSize = chunkEndPos - currentBytePos;
+            if (chunkSize <= 0) continue;
+            chunkSeekMap.set(currentTime, encryptedBytePosition);
+
+            const chunk = file.slice(currentBytePos, chunkEndPos);
+            const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
+
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            // Encrypt the chunk
+            const encrypted = await window.crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv },
+                key,
+                chunkBuffer
+            );
+
+            const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
+            chunkWithIV.set(iv);
+            chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+            encryptedChunks.push(chunkWithIV);
+            encryptedChunksInfo[currentTime] = {
+                timestamp: currentTime,
+                originalStartByte: currentBytePos,
+                originalEndByte: chunkEndPos,
+                originalSize: chunkSize,
+                encryptedSize: chunkWithIV.length,
+                encryptedStartByte: encryptedBytePosition
+            }
+
+            // Update encrypted byte position for next chunk
+            encryptedBytePosition += chunkWithIV.length;
+        }
+
+        return { encryptedChunks, encryptedChunksInfo };
     }
 
     readChunkAsArrayBuffer(blob) {
@@ -13887,6 +13944,264 @@ class StackPage extends Component {
                 reject(new Error('Failed to load audio metadata'));
             };
         });
+    }
+
+    readChunk = async (file, offset, size) => {
+        const actualSize = Math.min(size, file.size - offset);
+        const slice = file.slice(offset, offset + actualSize);
+        return await slice.arrayBuffer();
+    };
+
+    getFrameDuration = (header) => {
+        const sampleRates = [44100, 48000, 32000];
+        const sampleRateIndex = (header >> 10) & 0x3;
+        const sampleRate = sampleRates[sampleRateIndex];
+        return 1152 / sampleRate;
+    };
+
+    getFrameSize = (header) => {
+        const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+        const sampleRates = [44100, 48000, 32000];
+
+        const bitrateIndex = (header >> 12) & 0xF;
+        const sampleRateIndex = (header >> 10) & 0x3;
+        const padding = (header >> 9) & 0x1;
+
+        const bitrate = bitrates[bitrateIndex] * 1000;
+        const sampleRate = sampleRates[sampleRateIndex];
+
+        return Math.floor((144 * bitrate) / sampleRate) + padding;
+    };
+
+    isValidMP3Header = (header) => {
+        if ((header & 0xFFE00000) !== 0xFFE00000) return false;
+        const version = (header >> 19) & 0x3;
+        if (version === 1) return false;
+        const layer = (header >> 17) & 0x3;
+        if (layer === 0) return false;
+        const bitrateIndex = (header >> 12) & 0xF;
+        if (bitrateIndex === 0 || bitrateIndex === 15) return false;
+        const sampleRateIndex = (header >> 10) & 0x3;
+        if (sampleRateIndex === 3) return false;
+        return true;
+    };
+
+    findFramesInChunk = (arrayBuffer) => {
+        const frames = [];
+        const view = new DataView(arrayBuffer);
+
+        for (let i = 0; i < arrayBuffer.byteLength - 4; i++) {
+        const header = view.getUint32(i, false);
+
+            if (this.isValidMP3Header(header)) {
+                const frameSize = this.getFrameSize(header);
+                if (frameSize > 0 && frameSize < arrayBuffer.byteLength - i) {
+                    frames.push({
+                        offset: i,
+                        header: header,
+                        size: frameSize
+                    });
+                    i += Math.max(frameSize - 1, 0);
+                }
+            }
+        }
+
+        return frames;
+    };
+
+    getFrameBitrate = (header) => {
+        const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+        const bitrateIndex = (header >> 12) & 0xF;
+        return bitrates[bitrateIndex];
+    };
+
+    parseFrameHeader = (header) => {
+        const version = (header >> 19) & 0x3;
+        const layer = (header >> 17) & 0x3;
+        const bitrateIndex = (header >> 12) & 0xF;
+        const sampleRateIndex = (header >> 10) & 0x3;
+        const channelMode = (header >> 6) & 0x3;
+
+        const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+        const sampleRates = [44100, 48000, 32000];
+        const channelModes = ['Stereo', 'Joint Stereo', 'Dual Channel', 'Mono'];
+
+        return {
+            version,
+            layer,
+            bitrate: bitrates[bitrateIndex],
+            sampleRate: sampleRates[sampleRateIndex],
+            channelMode: channelModes[channelMode]
+        };
+    };
+
+    getSideInfoSize = (header) => {
+        const version = (header >> 19) & 0x3;
+        const mode = (header >> 6) & 0x3;
+        
+        if (version === 3) { // MPEG 1
+            return mode === 3 ? 17 : 32;
+        } else { // MPEG 2/2.5
+            return mode === 3 ? 9 : 17;
+        }
+    };
+
+    parseXingHeader = (arrayBuffer, offset) => {
+        const view = new DataView(arrayBuffer);
+        const flags = view.getUint32(offset + 4, false);
+        let pos = offset + 8;
+        
+        const vbrInfo = { type: 'Xing' };
+        
+        if (flags & 0x01) {
+            vbrInfo.frames = view.getUint32(pos, false);
+            pos += 4;
+        }
+        
+        if (flags & 0x02) {
+            vbrInfo.bytes = view.getUint32(pos, false);
+            pos += 4;
+        }
+        
+        return vbrInfo;
+    };
+
+    findVBRHeader = (arrayBuffer) => {
+        const view = new DataView(arrayBuffer);
+        for (let i = 0; i < arrayBuffer.byteLength - 8; i++) {
+            const header = view.getUint32(i, false);
+            
+            if ((header & 0xFFE00000) === 0xFFE00000) {
+                const frameStart = i;
+                let vbrOffset = frameStart + 4 + this.getSideInfoSize(header);
+                
+                if (vbrOffset + 4 < arrayBuffer.byteLength) {
+                    const tag = new TextDecoder().decode(
+                        new Uint8Array(arrayBuffer, vbrOffset, 4)
+                    );
+                    
+                    if (tag === 'Xing' || tag === 'Info') {
+                        return this.parseXingHeader(arrayBuffer, vbrOffset);
+                    }
+                }
+            }
+        }
+        return null;
+    };
+
+    buildVBRSeekTable = async (file, intervalSeconds) => {
+        const timeToByteMap = [];
+        let currentTime = 0;
+        let nextTargetTime = 0;
+        
+        const SCAN_CHUNK_SIZE = 64 * 1024;
+        let fileOffset = 0;
+        const totalSize = file.size;
+        let framesFound = 0;
+
+        while (fileOffset < totalSize && currentTime < nextTargetTime + intervalSeconds * 10) {
+            const chunk = await this.readChunk(file, fileOffset, SCAN_CHUNK_SIZE);
+            const frames = this.findFramesInChunk(chunk);
+            
+            for (const frame of frames) {
+                const absoluteBytePos = fileOffset + frame.offset;
+                framesFound++;
+
+                if (currentTime >= nextTargetTime) {
+                    timeToByteMap.push([nextTargetTime, absoluteBytePos]);
+                    nextTargetTime += intervalSeconds;
+                }
+                currentTime += this.getFrameDuration(frame.header);
+                if (timeToByteMap.length >= 50) break; // Reasonable limit
+            }
+
+            fileOffset += SCAN_CHUNK_SIZE;
+        }
+
+        return timeToByteMap;
+    };
+
+    buildCBRSeekTable = async (file, fileInfo, intervalSeconds) => {
+        const timeToByteMap = [];
+        
+        // Calculate basic parameters
+        const bytesPerSecond = (fileInfo.bitrate * 1000) / 8; // Convert kbps to bytes/sec
+        const duration = (file.size * 8) / (fileInfo.bitrate * 1000); // Total duration in seconds
+
+        // Find first frame to get accurate starting position
+        const headerChunk = await this.readChunk(file, 0, 4096);
+        const frames = this.findFramesInChunk(headerChunk);
+        const audioStart = frames.length > 0 ? frames[0].offset : 0;
+
+        // Generate seek points mathematically
+        for (let time = 0; time <= duration; time += intervalSeconds) {
+            const bytePosition = audioStart + Math.floor(time * bytesPerSecond);
+            
+            // Ensure we don't exceed file size
+            if (bytePosition < file.size) {
+                timeToByteMap.push([time, bytePosition]);
+            }
+        }
+
+        return timeToByteMap;
+    };
+
+    analyzeMP3File = async (file) => {
+        const SAMPLE_SIZE = 128 * 1024; // Sample first 128KB
+        const chunk = await this.readChunk(file, 0, SAMPLE_SIZE);
+        
+        // Look for VBR header first
+        const vbrHeader = this.findVBRHeader(chunk);
+        if (vbrHeader) {
+            return {
+                isCBR: false,
+                hasVBRHeader: true,
+                vbrInfo: vbrHeader,
+                totalFrames: vbrHeader.frames,
+                totalBytes: vbrHeader.bytes || file.size
+            };
+        }
+
+        // Sample multiple frames to check bitrate consistency
+        const frames = this.findFramesInChunk(chunk);
+        if (frames.length < 3) {
+            console.log('stackpage','Could not find enough MP3 frames to analyze');
+            return;
+        }
+
+        const bitrates = frames.slice(0, 10).map(frame => this.getFrameBitrate(frame.header));
+        const uniqueBitrates = [...new Set(bitrates)];
+        
+        const firstFrame = frames[0];
+        const frameInfo = this.parseFrameHeader(firstFrame.header);
+
+        return {
+            isCBR: uniqueBitrates.length === 1,
+            hasVBRHeader: false,
+            bitrate: bitrates[0],
+            sampleRate: frameInfo.sampleRate,
+            channelMode: frameInfo.channelMode,
+            samplesPerFrame: 1152, // Standard for MP3
+            frameSize: this.getFrameSize(firstFrame.header),
+            averageBitrate: bitrates.reduce((a, b) => a + b, 0) / bitrates.length
+        };
+    };
+
+    buildTimeToByteMap = async (file, intervalSeconds) => {
+        try{
+            const fileInfo = await this.analyzeMP3File(file);
+            let seekTable;
+            if (fileInfo.isCBR) {
+                seekTable = await this.buildCBRSeekTable(file, fileInfo, intervalSeconds);
+            } else {
+                seekTable = await this.buildVBRSeekTable(file, intervalSeconds);
+            }
+            return new Map(seekTable)
+        }
+        catch(e){
+            console.log('stackpage', 'something went wrong while building timeToByteMap', e)
+            return new Map();
+        }
     }
 
     

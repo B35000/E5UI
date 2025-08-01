@@ -314,59 +314,52 @@ class AudioPip extends Component {
         const mediaSource = new MediaSource();
         const audioElement = this.mpegRef.current;
         audioElement.src = URL.createObjectURL(mediaSource);
-        
 
         mediaSource.addEventListener('sourceopen', async () => {
             const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
             const key = await this.props.get_key_from_password(track_data['password'], 'e');
-            const CHUNK_SIZE = track_data['chunk_size'] + 12; // 512KB + 12-byte IV
-            const chunks_to_fetch_at_once = this.get_chunks_to_fetch_at_once(track_data)
-            const LOAD_RANGE_SIZE = CHUNK_SIZE * chunks_to_fetch_at_once;
-            
-            this.start = 0;
-            let buffer = new Uint8Array();
-            while (this.start <= track_data['size']) {
+            const timestamp_keys = Object.keys(track_data['encrypted_file_data_info'])
+            var current_timestamp_key_pos = 0;
+            while (current_timestamp_key_pos < timestamp_keys.length) {
                 if(this.should_continue_loading(track_data)){
-                    var end = this.start + LOAD_RANGE_SIZE - 1;
-                    if(end >= track_data['size']){
-                        end = track_data['size'] - 1
-                    }
+                    const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]]
+                    const start = focused_timestamp_info.encryptedStartByte
+                    const end = start + focused_timestamp_info.encryptedSize - 1;
                     const response = await fetch(encodeURI(track_data['data']), {
-                        headers: { Range: `bytes=${this.start}-${end}` },
+                        headers: { Range: `bytes=${start}-${end}` },
                     });
                     if (response.status === 206 || response.status === 200) {
                         const value = await response.arrayBuffer()
-                        const tmp = new Uint8Array(buffer.length + value.length);
-                        tmp.set(buffer);
-                        tmp.set(value, buffer.length);
-                        buffer = tmp;
-
-                        while (buffer.length > 0) {
-                            const current_chunk_size = buffer.length >= CHUNK_SIZE ? CHUNK_SIZE : buffer.length
-                            const chunk = buffer.slice(0, current_chunk_size);
-                            buffer = buffer.slice(current_chunk_size);
-                            try{
-                                const iv = chunk.slice(0, 12);
-                                const encryptedData = chunk.slice(12);
-                                const decrypted = await crypto.subtle.decrypt(
-                                    { name: 'AES-GCM', iv },
-                                    key,
-                                    encryptedData
-                                );
-                                await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
-                            }catch(e){
-                                console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
-                                mediaSource.endOfStream('decode');
-                                return;
-                            }
+                        const chunk = new Uint8Array(value.length);
+                        chunk.set(value);
+                        try{
+                            const iv = chunk.slice(0, 12);
+                            const encryptedData = chunk.slice(12);
+                            const decrypted = await crypto.subtle.decrypt(
+                                { name: 'AES-GCM', iv },
+                                key,
+                                encryptedData
+                            );
+                            await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
                         }
-                        this.start = end
+                        catch(e){
+                            console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
+                            mediaSource.endOfStream('decode');
+                            return;
+                        }
+                        current_timestamp_key_pos++;
                     }
                     else{
                         console.log('failed to fetch file chunk from node', response.status, response.statusText)
                     }
                 }
-                await new Promise(resolve => setTimeout(resolve, 3500))
+                await new Promise(resolve => setTimeout(resolve, 1500))
+                if(this.update_start_time_pos != null){
+                    current_timestamp_key_pos = this.update_start_time_pos
+                    const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
+                    sourceBuffer.timestampOffset = load_time_to_set;
+                    delete this.update_start_time_pos;
+                }
             }
             mediaSource.endOfStream();
         });
@@ -374,14 +367,24 @@ class AudioPip extends Component {
 
     update_stream_start_value_after_scrub(time){
         const track_data = this.get_audio_file_data()
-        const CHUNK_SIZE = track_data['chunk_size'] + 12; // 512KB + 12-byte IV
-        const track_duration = track_data['duration']
-        const track_size = track_data['size']
-        const bytes_per_second = Math.ceil(track_size / track_duration)
-        const new_time_pos_in_bytes = time * bytes_per_second
-        const number_of_chunks = Math.floor(new_time_pos_in_bytes / CHUNK_SIZE)
-        this.start = number_of_chunks * CHUNK_SIZE
+        const seek_data = this.seekToTime(time, track_data['timeToByteMap'])
+        this.update_start_time_pos = Object.keys(track_data['encrypted_file_data_info']).indexOf(seek_data.time)
     }
+
+    seekToTime = (targetSeconds, seekTable) => {
+        const entries = Array.from(seekTable.entries()).sort((a, b) => a[0] - b[0]);
+        if (entries.length === 0) return 0;
+        let closestEntry = entries[0];
+        for (const [time, byte] of entries) {
+            if (time <= targetSeconds) {
+                closestEntry = [time, byte];
+            } else {
+                break;
+            }
+        }
+
+        return { time: closestEntry[0], byte: closestEntry[1] }
+    };
 
     should_continue_loading(track_data){
         const value = this.get_bar_length()
@@ -390,21 +393,6 @@ class AudioPip extends Component {
         const buffer_difference_percentage = buffer - value
         const remaining_time = (buffer_difference_percentage / 100) * track_duration;
         return remaining_time < 23
-    }
-
-    get_chunks_to_fetch_at_once(track_data){
-        const CHUNK_SIZE = track_data['chunk_size'] + 12; // 512KB + 12-byte IV
-        const track_duration = track_data['duration']
-        const track_size = track_data['size']
-        const bytes_per_second = Math.ceil(track_size / track_duration)
-        if(bytes_per_second < CHUNK_SIZE){
-            return 1
-        }
-        const chunk_count = Math.floor((bytes_per_second * 35) / CHUNK_SIZE) + 1
-        if(chunk_count > 35){
-            return 35
-        }
-        return chunk_count
     }
 
     appendBufferAsync(sourceBuffer, chunk) {
@@ -420,6 +408,8 @@ class AudioPip extends Component {
             tryAppend();
         });
     }
+
+
 
 
     close_and_stop_playing(){
