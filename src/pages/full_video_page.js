@@ -98,7 +98,7 @@ class FullVideoPage extends Component {
         selected: 0, videos:null, object:null, pos:null,
         detials_or_queue_tags:this.detials_or_queue_tags(), is_player_resetting:false,
         subtitle_option_tags:null, queue_or_comments_tags:this.queue_or_comments_tags(),
-        entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
+        entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], value:0
     };
 
 
@@ -124,6 +124,7 @@ class FullVideoPage extends Component {
         this.screen = React.createRef()
         this.video_player = React.createRef();
         this.messagesEnd = React.createRef();
+        this.sourceRef = React.createRef();
         this.has_user_scrolled = {}
     }
 
@@ -351,7 +352,20 @@ class FullVideoPage extends Component {
         var ecid_obj = this.get_cid_split(video_file)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return null;
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data['encrypted'] == true){
+            return;
+        }
         return encodeURI(data['data'])
+    }
+
+    get_video_file_data(){
+        if(this.state.videos == null || this.state.videos.length == 0) return null;
+        var current_video = this.state.videos[this.state.pos]
+        var video_file = current_video['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return null;
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return data
     }
 
 
@@ -387,6 +401,8 @@ class FullVideoPage extends Component {
         }
         else{
             var video = this.get_video_file()
+            const video_file_data = this.get_video_file_data()
+            const video_type = video_file_data['video_type'] == null ? "video/mp4" : video_file_data['video_type']
             var current_video = this.state.videos[this.state.pos]
             var subtitles = current_video['subtitles'] == null ? [] : current_video['subtitles']
             if(current_video['release_time'] != null && current_video['release_time'] > (Date.now()/1000)){
@@ -412,9 +428,8 @@ class FullVideoPage extends Component {
             if(this.props.app_state.os == 'iOS'){
                 return(
                     <div style={{}}>
-                        <video ref={this.video_player} preload="metadata" controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls disablePictureInPicture>
-                            <source src={video} type="video/mp4"/>
-                            <source src={video} type="video/ogg"/>
+                        <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls disablePictureInPicture>
+                            <source ref={this.sourceRef} src={video} type={video_type}/>
                             {tracks.map((item, index) => (
                                 <track
                                     label={item.label} 
@@ -432,9 +447,8 @@ class FullVideoPage extends Component {
             }
             return(
                 <div style={{}}>
-                    <video ref={this.video_player} preload="metadata" controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
-                        <source src={video} type="video/mp4"/>
-                        <source src={video} type="video/ogg"/>
+                    <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
+                        <source ref={this.sourceRef} src={video} type={video_type}/>
                         {tracks.map((item, index) => (
                             <track
                                 label={item.label} 
@@ -482,17 +496,122 @@ class FullVideoPage extends Component {
         this.setState({is_player_resetting:false})
         var me = this;
         setTimeout(function() {
-            // var current_video_id = me.state.videos[me.state.pos]['video_id']
-            // var last_time = me.props.app_state.video_timestamp_data[current_video_id]
-            
-            // if(last_time != null && last_time != 0 && me.video_player.current != null){
-            //     me.video_player.current.currentTime = last_time 
-            // }
-            me.video_player.current?.play()
             me.video_player.current?.addEventListener('leavepictureinpicture', me.when_pip_closed);
             me.video_player.current?.addEventListener('timeupdate', me.when_time_updated);
-            me.video_player.current?.addEventListener('loadedmetadata', me.when_metadata_loaded);
+            me.video_player.current?.addEventListener('seeked', me.handleTimeUpdate);
+            me.when_metadata_loaded()
+            me.streamAndPlayEncryptedVideo()
+            me.video_player.current?.play()
         }, (1 * 300));
+    }
+
+    streamAndPlayEncryptedVideo = async () => {
+        const track_data = this.get_video_file_data()
+        if(track_data['encrypted'] != true){
+            return;
+        }
+        const mediaSource = new MediaSource();
+        const audioElement = this.sourceRef.current;
+        audioElement.src = URL.createObjectURL(mediaSource);
+        const codec = track_data['codec']
+        const video_type = track_data['video_type'] == null ? "video/mp4" : track_data['video_type']
+
+        mediaSource.addEventListener('sourceopen', async () => {
+            const sourceBuffer = mediaSource.addSourceBuffer(`${video_type}; codecs="${codec}"`);
+            const key = await this.props.get_key_from_password(track_data['password'], 'e');
+            const timestamp_keys = Object.keys(track_data['encrypted_file_data_info'])
+            var current_timestamp_key_pos = 0;
+            while (current_timestamp_key_pos < timestamp_keys.length) {
+                if(this.should_continue_loading(track_data)){
+                    const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]]
+                    const start = focused_timestamp_info.encryptedStartByte
+                    const end = start + focused_timestamp_info.encryptedSize - 1;
+                    if(this.update_start_time_pos == null){
+                        const response = await fetch(encodeURI(track_data['data']), {
+                            headers: { Range: `bytes=${start}-${end}` },
+                        });
+                        if (response.status === 206 || response.status === 200) {
+                            const value = await response.arrayBuffer()
+                            const chunk = new Uint8Array(value.length);
+                            chunk.set(value);
+                            try{
+                                const iv = chunk.slice(0, 12);
+                                const encryptedData = chunk.slice(12);
+                                const decrypted = await crypto.subtle.decrypt(
+                                    { name: 'AES-GCM', iv },
+                                    key,
+                                    encryptedData
+                                );
+                                await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                            }
+                            catch(e){
+                                console.log('video_pip', 'something went wrong with the decryption or appending to buffer', e)
+                                mediaSource.endOfStream('decode');
+                                return;
+                            }
+                            current_timestamp_key_pos++;
+                        }
+                        else{
+                            console.log('failed to fetch file chunk from node', response.status, response.statusText)
+                        }
+                    }
+                }
+                if(this.update_start_time_pos != null){
+                    current_timestamp_key_pos = this.update_start_time_pos
+                    const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
+                    sourceBuffer.timestampOffset = load_time_to_set;
+                    delete this.update_start_time_pos;
+                }else{
+                    const pause_time = this.should_continue_loading(track_data) ? 1000 : 1500
+                    await new Promise(resolve => setTimeout(resolve, pause_time))
+                }
+            }
+            mediaSource.endOfStream();
+        });
+    }
+
+    appendBufferAsync(sourceBuffer, chunk) {
+        return new Promise((resolve, reject) => {
+            const tryAppend = () => {
+                if (sourceBuffer.updating) {
+                    sourceBuffer.addEventListener('updateend', tryAppend, { once: true });
+                } else {
+                    sourceBuffer.appendBuffer(chunk);
+                    sourceBuffer.addEventListener('updateend', resolve, { once: true });
+                }
+            };
+            tryAppend();
+        });
+    }
+
+    update_stream_start_value_after_scrub(time){
+        const track_data = this.get_video_file_data()
+        const seek_data = this.seekToTime(time, track_data['timeToByteMap'])
+        this.update_start_time_pos = Object.keys(track_data['encrypted_file_data_info']).indexOf(seek_data.time)
+    }
+
+    seekToTime = (targetSeconds, seekTable) => {
+        const entries = Array.from(seekTable.entries()).sort((a, b) => a[0] - b[0]);
+        if (entries.length === 0) return 0;
+        let closestEntry = entries[0];
+        for (const [time, byte] of entries) {
+            if (time <= targetSeconds) {
+                closestEntry = [time, byte];
+            } else {
+                break;
+            }
+        }
+
+        return { time: closestEntry[0], byte: closestEntry[1] }
+    };
+
+    should_continue_loading(track_data){
+        const track_duration = track_data['duration']
+        const value = ((this.state.value  * 100) / track_duration)
+        const buffer = this.state.buffer
+        const buffer_difference_percentage = buffer - value
+        const remaining_time = (buffer_difference_percentage / 100) * track_duration;
+        return remaining_time < 23
     }
 
     when_pip_closed = () => {
@@ -501,17 +620,35 @@ class FullVideoPage extends Component {
 
     when_time_updated = () => {
         var time = this.video_player.current?.currentTime
+        this.setState({value: time})
         this.props.update_video_time_for_future_reference(time, this.state.videos[this.state.pos])
+    }
+
+    onProgress = () => {
+        if (this.video_player.current?.buffered.length > 0) {
+            const loaded = this.video_player.current?.buffered.end(this.video_player.current?.buffered.length - 1); // Last buffered time
+            const track_data = this.get_video_file_data()
+            var current_song_length = track_data['duration']
+            var buffer = (loaded / current_song_length) * 100
+            this.setState({buffer: buffer});
+        }
     }
 
     when_metadata_loaded = () => {
         var current_video_id = this.state.videos[this.state.pos]['video_id']
         var last_time = this.props.app_state.video_timestamp_data[current_video_id]
-        
-        if(last_time != null && last_time != 0 && this.video_player.current != null){
-            const watch_time_proportion = last_time / this.video_player.current.duration
+        const video_file_data = this.get_video_file_data()
+
+        if(last_time != null && last_time != 0 && this.video_player.current != null && video_file_data['duration'] != null){
+            const watch_time_proportion = last_time / video_file_data['duration']
             if(watch_time_proportion < 0.96) this.video_player.current.currentTime = last_time;
         }
+    }
+
+    handleTimeUpdate = () => {
+        var current_time = this.video_player.current?.currentTime
+        this.update_stream_start_value_after_scrub(current_time)
+        this.setState({value: current_time})
     }
 
 

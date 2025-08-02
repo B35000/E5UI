@@ -13714,10 +13714,15 @@ class StackPage extends Component {
                 }
                 else if(type == 'audio'){
                     var audioFile = e.target.files[i];
+                    const audioType = audioFile.type
                     const duration = await this.get_audio_duration(audioFile)
                     const chunk_duration = duration < 35 ? duration : 35
                     const timeToByteMap = await this.buildTimeToByteMap(audioFile, chunk_duration)
-                    const encrypted_file_data_object = await this.encrypt_audio_file_in_chunks(audioFile, password, 'e', timeToByteMap)
+                    if(timeToByteMap == null){
+                        this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
+                        continue;
+                    }
+                    const encrypted_file_data_object = await this.encrypt_file_in_chunks(audioFile, password, 'e', timeToByteMap)
                     const encrypted_file_data = encrypted_file_data_object.encryptedChunks
                     const encrypted_file_data_info = encrypted_file_data_object.encryptedChunksInfo
                     const size = this.props.get_encrypted_file_size(encrypted_file_data)
@@ -13729,7 +13734,8 @@ class StackPage extends Component {
                             // reader.readAsDataURL(audioFile);
                             const obj = { 
                                 'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':me.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': me.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension,
-                                'timeToByteMap':timeToByteMap, 'encrypted_file_data_info':  me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password)
+                                'timeToByteMap':timeToByteMap, 'encrypted_file_data_info':  me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
+                                'audio_type':audioType
                             }
                             files_to_upload.push(obj)
                         })
@@ -13737,7 +13743,7 @@ class StackPage extends Component {
                         console.error('Error parsing metadata:', err);
                         // reader.readAsDataURL(audioFile);
                         const obj = { 
-                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password)
+                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password), 'audio_type':audioType
                         }
                         files_to_upload.push(obj)
                     });
@@ -13745,13 +13751,26 @@ class StackPage extends Component {
                 else if(type == 'video'){
                     var videoFile = e.target.files[i];
                     // reader.readAsDataURL(videoFile);
-                    const CHUNK_SIZE = 1024 * 1024; // 1 MB
-                    const encrypted_file_data = await this.encrypt_in_chunks(videoFile, password, 'e', CHUNK_SIZE)
+                    const duration = await this.get_video_duration(videoFile)
+                    const videoType = videoFile.type;
+                    const chunk_duration = duration < 35 ? duration : 35
+                    const codec = await this.extractMP4Codec(videoFile)
+                    const timeToByteMap = await this.buildVideoTimeToByteMap(videoFile, chunk_duration)
+                    if(timeToByteMap == null || codec == null){
+                        this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
+                        continue;
+                    }
+                    const encrypted_file_data_object = await this.encrypt_file_in_chunks(audioFile, password, 'e', timeToByteMap)
+                    const encrypted_file_data = encrypted_file_data_object.encryptedChunks
+                    const encrypted_file_data_info = encrypted_file_data_object.encryptedChunksInfo
+                    
                     const thumb_data = await this.extractFirstFrame(URL.createObjectURL(videoFile))
                     const size = this.props.get_encrypted_file_size(encrypted_file_data)
-                    const duration = await this.get_video_duration(videoFile)
-
-                    const obj = { 'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension, 'chunk_size':CHUNK_SIZE }
+                    
+                    const obj = {
+                        'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': this.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
+                        'video_type':videoType, 'codec':codec
+                    }
                     
                     if(thumb_data != null && thumb_data != ''){
                         obj['thumbnail'] = this.props.encrypt_data_string(thumb_data.return_blob, password) 
@@ -13829,31 +13848,31 @@ class StackPage extends Component {
         return result;
     }
 
-    encrypt_in_chunks = async (file, password, salt, CHUNK_SIZE) => {
-        const key = await this.props.get_key_from_password(password, salt);
-        const encryptedChunks = [];
-        const fileSize = file.size;
+    // encrypt_in_chunks = async (file, password, salt, CHUNK_SIZE) => {
+    //     const key = await this.props.get_key_from_password(password, salt);
+    //     const encryptedChunks = [];
+    //     const fileSize = file.size;
 
-        for (let offset = 0; offset < fileSize; offset += CHUNK_SIZE) {
-            const chunk = file.slice(offset, offset + CHUNK_SIZE);
-            const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-            const encrypted = await crypto.subtle.encrypt(
-                { name: 'AES-GCM', iv }, // unique IV per chunk
-                key,
-                chunkBuffer
-            );
-            const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
-            chunkWithIV.set(iv);
-            chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+    //     for (let offset = 0; offset < fileSize; offset += CHUNK_SIZE) {
+    //         const chunk = file.slice(offset, offset + CHUNK_SIZE);
+    //         const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
+    //         const iv = crypto.getRandomValues(new Uint8Array(12));
+    //         const encrypted = await crypto.subtle.encrypt(
+    //             { name: 'AES-GCM', iv }, // unique IV per chunk
+    //             key,
+    //             chunkBuffer
+    //         );
+    //         const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
+    //         chunkWithIV.set(iv);
+    //         chunkWithIV.set(new Uint8Array(encrypted), iv.length);
 
-            encryptedChunks.push(chunkWithIV);
-        }
+    //         encryptedChunks.push(chunkWithIV);
+    //     }
 
-        return encryptedChunks;
-    }
+    //     return encryptedChunks;
+    // }
 
-    encrypt_audio_file_in_chunks = async (file, password, salt, timeToByteMap) => {
+    encrypt_file_in_chunks = async (file, password, salt, timeToByteMap) => {
         const key = await this.props.get_key_from_password(password, salt);
         const encryptedChunks = [];
         const encryptedChunksInfo = {}
@@ -14200,9 +14219,413 @@ class StackPage extends Component {
         }
         catch(e){
             console.log('stackpage', 'something went wrong while building timeToByteMap', e)
-            return new Map();
         }
     }
+
+
+
+
+    buildSeekTableLinear = async (file, intervalSeconds) => {
+        const timeToByteMap = [];
+        const estimatedDuration = file.size / (2 * 1024 * 1024); // Assume ~2MB/s average
+        for (let time = 0; time <= estimatedDuration; time += intervalSeconds) {
+            const timeRatio = time / estimatedDuration;
+            const bytePosition = Math.floor(timeRatio * file.size);
+            timeToByteMap.push([time, bytePosition]);
+        }
+        return timeToByteMap;
+    };
+
+    // Build seek table using sample-based estimation
+    buildSeekTableFromSamples = async (file, mp4Info, intervalSeconds) => {
+        const timeToByteMap = [];
+        const duration = mp4Info.duration;
+        
+        if (!duration || duration <= 0) {
+            // Fallback to linear byte estimation
+            return this.buildSeekTableLinear(file, intervalSeconds);
+        }
+        
+        // Calculate approximate data rate
+        const dataSize = file.size - mp4Info.moovPosition; // Approximate data size
+
+        for (let time = 0; time <= duration; time += intervalSeconds) {
+            // Estimate byte position based on time ratio and average bitrate
+            const timeRatio = time / duration;
+            // Start from mdat position (actual video data)
+            const estimatedBytePos = mp4Info.mdatPosition + Math.floor(timeRatio * dataSize);
+            // Ensure we don't exceed file size
+            const bytePosition = Math.min(estimatedBytePos, file.size - 1);
+            
+            timeToByteMap.push([time, bytePosition]);
+        }
+
+        return timeToByteMap;
+    };
+
+    // Build seek table using keyframe analysis (most accurate)
+    buildSeekTableFromKeyFrames = async (file, mp4Info, intervalSeconds) => {
+        // This would require parsing stss (sync sample) box for keyframes
+        // For now, fall back to sample-based approach
+        return this.buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
+    };
+
+    // Parse individual track box
+    parseTrakBox = (trakBuffer, trackIndex) => {
+        const boxes = this.parseMP4Boxes(trakBuffer);
+        const tkhdBox = boxes.find(box => box.type === 'tkhd');
+        const mdiaBox = boxes.find(box => box.type === 'mdia');
+        
+        if (!tkhdBox || !mdiaBox) return null;
+
+        // Parse track header
+        const tkhdData = trakBuffer.slice(tkhdBox.dataOffset, tkhdBox.dataOffset + tkhdBox.size - 8);
+        const tkhdView = new DataView(tkhdData);
+        const version = tkhdView.getUint8(0);
+        
+        let trackId, duration;
+        if (version === 0) {
+            trackId = tkhdView.getUint32(12, false);
+            duration = tkhdView.getUint32(20, false);
+        } else {
+            trackId = tkhdView.getUint32(20, false);
+            duration = tkhdView.getBigUint64(28, false);
+        }
+
+        // Parse media box
+        const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
+        const mdiaBoxes = this.parseMP4Boxes(mdiaData);
+        const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
+        
+        let mediaType = 'unknown';
+        if (hdlrBox) {
+            const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
+            mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
+        }
+
+        return {
+            trackId: Number(trackId),
+            trackIndex,
+            mediaType,
+            duration: Number(duration),
+            hasKeyFrames: false // Will be determined later if needed
+        };
+    };
+
+    // Parse moov box for track and timing information
+    parseMoovBox = (moovBuffer) => {
+        const boxes = this.parseMP4Boxes(moovBuffer);
+        const mvhdBox = boxes.find(box => box.type === 'mvhd');
+        const trakBoxes = boxes.filter(box => box.type === 'trak');
+        
+        let duration = 0;
+        let timescale = 1000;
+        
+        // Parse movie header
+        if (mvhdBox) {
+            const mvhdData = moovBuffer.slice(mvhdBox.dataOffset, mvhdBox.dataOffset + mvhdBox.size - 8);
+            const mvhdView = new DataView(mvhdData);
+            const version = mvhdView.getUint8(0);
+            
+            if (version === 0) {
+                timescale = mvhdView.getUint32(12, false);
+                duration = mvhdView.getUint32(16, false);
+            } else {
+                timescale = mvhdView.getUint32(20, false);
+                duration = mvhdView.getBigUint64(24, false);
+            }
+        }
+
+        // Parse tracks
+        const tracks = trakBoxes.map((trakBox, index) => {
+            const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
+            return this.parseTrakBox(trakData, index);
+        }).filter(track => track !== null);
+
+        return {
+            duration: Number(duration) / timescale,
+            timescale,
+            tracks,
+            hasKeyFrameIndex: tracks.some(track => track.hasKeyFrames)
+        };
+    };
+
+    // Parse ftyp box to determine file type
+    parseFtypBox = (buffer, ftypBox) => {
+        const majorBrand = new TextDecoder().decode(
+            buffer.slice(ftypBox.dataOffset, ftypBox.dataOffset + 4)
+        );
+        const minorVersion = new DataView(buffer).getUint32(ftypBox.dataOffset + 4, false);
+        return { majorBrand, minorVersion };
+    };
+
+    // Parse MP4 boxes from buffer
+    parseMP4Boxes = (buffer) => {
+        const boxes = [];
+        const view = new DataView(buffer);
+        let offset = 0;
+
+        while (offset < buffer.byteLength - 8) {
+            const size = view.getUint32(offset, false);
+            const type = new TextDecoder().decode(buffer.slice(offset + 4, offset + 8));
+            
+            if (size === 0) break; // Size 0 means box extends to end of file
+            if (size < 8) break; // Invalid box size
+            
+            boxes.push({
+                type,
+                size,
+                offset,
+                dataOffset: offset + 8
+            });
+            
+            offset += size;
+        }
+
+        return boxes;
+    };
+
+    // Parse MP4 container structure
+    parseMP4Structure = async (file) => {
+        const headerSize = Math.min(1024 * 1024, file.size); // Read first 1MB
+        const headerBuffer = await this.readChunk(file, 0, headerSize);
+        
+        const boxes = this.parseMP4Boxes(headerBuffer);
+        const ftypBox = boxes.find(box => box.type === 'ftyp');
+        const moovBox = boxes.find(box => box.type === 'moov');
+        
+        if (!ftypBox) {
+            throw new Error('Not a valid MP4 file (missing ftyp box)');
+        }
+
+        let videoInfo = {
+            fileType: this.parseFtypBox(headerBuffer, ftypBox),
+            tracks: [],
+            duration: 0,
+            hasKeyFrameIndex: false,
+            moovPosition: moovBox?.offset || 0,
+            mdatPosition: 0
+        };
+
+        if (moovBox) {
+            // Parse moov box for detailed track information
+            const moovData = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
+            videoInfo = { ...videoInfo, ...this.parseMoovBox(moovData) };
+        } else {
+            // moov box might be at the end of file, try to find it
+            const tailSize = Math.min(1024 * 1024, file.size);
+            const tailBuffer = await this.readChunk(file, file.size - tailSize, tailSize);
+            const tailBoxes = this.parseMP4Boxes(tailBuffer);
+            const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
+            
+            if (tailMoovBox) {
+                const moovData = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
+                videoInfo = { ...videoInfo, ...this.parseMoovBox(moovData) };
+                videoInfo.moovPosition = file.size - tailSize + tailMoovBox.offset;
+            }
+        }
+
+        // Find mdat box position
+        const mdatBox = boxes.find(box => box.type === 'mdat');
+        if (mdatBox) {
+            videoInfo.mdatPosition = mdatBox.offset;
+        }
+
+        return videoInfo;
+    };
+
+    // Main method to build time-to-byte mapping for MP4 videos
+    buildVideoTimeToByteMap = async (file, intervalSeconds) => {
+        try {
+            // Parse MP4 structure to find moov box and track info
+            const mp4Info = await this.parseMP4Structure(file);
+            let seekTable;
+            if (mp4Info.hasKeyFrameIndex) {
+                // Use keyframe index for precise seeking
+                seekTable = await this.buildSeekTableFromKeyFrames(file, mp4Info, intervalSeconds);
+            } else {
+                // Fallback to sample-based estimation
+                seekTable = await this.buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
+            }
+            return new Map(seekTable);
+        }
+        catch (error) {
+            console.log('stackpage', 'something went wrong with the buildVideoTimeToByteMap function', error)
+        }
+    };
+
+
+    // Parse HEVC (H.265) codec string
+    parseHEVCCodec = (stsdData, offset) => {
+        // Look for hvcC box
+        let pos = offset + 78; // Skip sample entry header
+        const maxPos = stsdData.byteLength - 8;
+        
+        while (pos < maxPos) {
+            const view = new DataView(stsdData);
+            const boxSize = view.getUint32(pos, false);
+            const boxType = new TextDecoder().decode(stsdData.slice(pos + 4, pos + 8));
+            
+            if (boxType === 'hvcC' && boxSize > 23) {
+                // Parse hvcC content
+                const hvcCOffset = pos + 8;
+                const configByte1 = view.getUint8(hvcCOffset + 1);
+                const levelId = view.getUint8(hvcCOffset + 12);
+                
+                const profileSpace = (configByte1 >> 6) & 0x3;
+                const tierFlag = (configByte1 >> 5) & 0x1;
+                const profileId = configByte1 & 0x1f;
+                
+                return `hev1.${profileSpace}.${profileId}.${tierFlag}.L${levelId}.B0`;
+            }
+            
+            pos += boxSize || 8;
+        }
+        
+        return 'hev1.1.6.L93.B0'; // Default main profile
+    };
+
+    // Parse AVC (H.264) codec string
+    parseAVCCodec = (stsdData, offset) => {
+        // Look for avcC box
+        let pos = offset + 78; // Skip sample entry header
+        const maxPos = stsdData.byteLength - 8;
+        
+        while (pos < maxPos) {
+            const view = new DataView(stsdData);
+            const boxSize = view.getUint32(pos, false);
+            const boxType = new TextDecoder().decode(stsdData.slice(pos + 4, pos + 8));
+            
+            if (boxType === 'avcC' && boxSize > 11) {
+                // Parse avcC content
+                const avcCOffset = pos + 8;
+                const profile = view.getUint8(avcCOffset + 1);
+                const compatibility = view.getUint8(avcCOffset + 2);
+                const level = view.getUint8(avcCOffset + 3);
+                
+                const profileHex = profile.toString(16).padStart(2, '0');
+                const compatHex = compatibility.toString(16).padStart(2, '0');
+                const levelHex = level.toString(16).padStart(2, '0');
+                
+                return `avc1.${profileHex}${compatHex}${levelHex}`;
+            }
+            
+            pos += boxSize || 8;
+        }
+        
+        return 'avc1.42001e'; // Default baseline
+    };
+
+    extractTrackCodec = (trakBuffer) => {
+        const boxes = this.parseMP4Boxes(trakBuffer);
+        const mdiaBox = boxes.find(box => box.type === 'mdia');
+        
+        if (!mdiaBox) return null;
+        
+        const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
+        const mdiaBoxes = this.parseMP4Boxes(mdiaData);
+        
+        // Get media type
+        const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
+        let mediaType = 'unknown';
+        if (hdlrBox) {
+            const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
+            mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
+        }
+        
+        // Find stsd box for codec info
+        const minfBox = mdiaBoxes.find(box => box.type === 'minf');
+        if (!minfBox) return null;
+        
+        const minfData = mdiaData.slice(minfBox.dataOffset, minfBox.dataOffset + minfBox.size - 8);
+        const minfBoxes = this.parseMP4Boxes(minfData);
+        const stblBox = minfBoxes.find(box => box.type === 'stbl');
+        
+        if (!stblBox) return null;
+        
+        const stblData = minfData.slice(stblBox.dataOffset, stblBox.dataOffset + stblBox.size - 8);
+        const stblBoxes = this.parseMP4Boxes(stblData);
+        const stsdBox = stblBoxes.find(box => box.type === 'stsd');
+        
+        if (!stsdBox) return null;
+        
+        const stsdData = stblData.slice(stsdBox.dataOffset, stsdBox.dataOffset + stsdBox.size - 8);
+        const view = new DataView(stsdData);
+        
+        // Skip version/flags and entry count
+        if (stsdData.byteLength < 16) return null;
+        
+        const codecType = new TextDecoder().decode(stsdData.slice(12, 16));
+        
+        // Generate codec string based on type
+        switch (codecType) {
+            case 'avc1':
+            case 'avc3':
+            return this.parseAVCCodec(stsdData, 16);
+            case 'hev1':
+            case 'hvc1':
+            return this.parseHEVCCodec(stsdData, 16);
+            case 'mp4a':
+            return 'mp4a.40.2'; // Default AAC-LC
+            case 'vp09':
+            return 'vp09.00.10.08';
+            default:
+            return codecType;
+        }
+    };
+
+    // Simple MP4 codec extractor - returns just the codec string
+    extractMP4Codec = async (file) => {
+        try {
+            // Read first 1MB to find moov box
+            const headerSize = Math.min(1024 * 1024, file.size);
+            const headerBuffer = await this.readChunk(file, 0, headerSize);
+            
+            let moovBuffer = null;
+            
+            // Find moov box in header
+            const headerBoxes = this.parseMP4Boxes(headerBuffer);
+            const moovBox = headerBoxes.find(box => box.type === 'moov');
+            
+            if (moovBox) {
+                moovBuffer = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
+            } else {
+                // Try end of file (some MP4s have moov at end)
+                const tailSize = Math.min(1024 * 1024, file.size);
+                const tailBuffer = await this.readChunk(file, file.size - tailSize, tailSize);
+                const tailBoxes = this.parseMP4Boxes(tailBuffer);
+                const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
+                
+                if (tailMoovBox) {
+                    moovBuffer = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
+                }
+            }
+            
+            if (!moovBuffer) {
+            throw new Error('No moov box found');
+            }
+            
+            // Parse tracks from moov
+            const moovBoxes = this.parseMP4Boxes(moovBuffer);
+            const trakBoxes = moovBoxes.filter(box => box.type === 'trak');
+            
+            const codecs = [];
+            
+            for (const trakBox of trakBoxes) {
+                const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
+                const codec = this.extractTrackCodec(trakData);
+                if (codec) {
+                    codecs.push(codec);
+                }
+            }
+            
+            return codecs.length > 0 ? codecs.join(', ') : null;
+            
+        } catch (error) {
+            console.error('Codec extraction failed:', error);
+            return null;
+        }
+    };
 
     
 
@@ -14282,12 +14705,23 @@ class StackPage extends Component {
             reader.onload = async function(ev){
                 var thumb_data = type == 'video' ? await this.extractFirstFrameFromArrayBuffer(ev.target.result) : ''
                 
-                this.file = {'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'data_type':type, 'metadata':''}
+                this.file = {
+                    'data':new Uint8Array(ev.target.result), 'size': ev.total, 'id':Date.now(), 'type':this.selected_file_type, 'name': '', 'data_type':type, 'metadata':'',
+                }
 
                 if(thumb_data != null && thumb_data != ''){
                     this.file['thumbnail'] = thumb_data.return_blob
                     this.file['width'] = thumb_data.width
                     this.file['height'] = thumb_data.height
+                }
+
+                if(type == 'video'){
+                    this.file['duration'] = this.video_duration
+                    this.file['video_type'] = this.videoType
+                }
+                else if(type == 'audio'){
+                    this.file['duration'] = this.audio_duration
+                    this.file['audio_type'] = this.audio_type
                 }
 
                 if(ev.total < this.get_upload_file_size_limit()){
@@ -14304,6 +14738,8 @@ class StackPage extends Component {
             }
             else if(type == 'audio'){
                 var audioFile = e.target.files[0];
+                this.audio_type = audioFile.type
+                this.audio_duration = await this.get_audio_duration(audioFile)
                 var me = this
                 parseBlob(audioFile).then(metadata => {
                     me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
@@ -14321,6 +14757,8 @@ class StackPage extends Component {
             }
             else if(type == 'video'){
                 var videoFile = e.target.files[0];
+                this.videoType = videoFile.type;
+                this.video_duration = await this.get_video_duration(videoFile)
                 reader.readAsArrayBuffer(videoFile);
             }
             else if(type == 'pdf'){

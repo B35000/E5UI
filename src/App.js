@@ -15073,7 +15073,9 @@ class App extends Component {
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
         <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)} 
-        delete_nitro_file={this.delete_nitro_file.bind(this)} set_new_wallet={this.set_new_wallet.bind(this)}
+        delete_nitro_file={this.delete_nitro_file.bind(this)} set_new_wallet={this.set_new_wallet.bind(this)} 
+        
+        show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} play_individual_track={this.play_individual_track.bind(this)} play_individual_video={this.play_individual_video.bind(this)}
         
         />
       </div>
@@ -17099,6 +17101,7 @@ class App extends Component {
   }
 
   show_images = async (images, pos) => {
+    this.prompt_top_notification(this.getLocale()['2738am']/* 'Loading Image...' */, 2500)
     var view_image = images[pos]
     const name = this.get_name_of_file(view_image)
     if(this.is_image_encrypted(view_image)){
@@ -17454,6 +17457,7 @@ class App extends Component {
   }
 
   when_pdf_file_opened = async(pdf) => {
+    this.prompt_top_notification(this.getLocale()['2738an']/* 'Loading PDF...' */, 2500)
     if(this.is_pdf_encrypted(pdf) == true){
       this.load_pdf_directly = true;
       const pdf_url = await this.load_decrypted_pdf_file(pdf)
@@ -17783,7 +17787,7 @@ class App extends Component {
         } 
     }
     return metadata_clone
-}
+  }
 
   play_song(item, object, audio_items, is_page_my_collection_page, should_shuffle){
     this.prompt_top_notification(this.getLocale()['2976']/* 'Loading...' */, 5800)
@@ -32541,7 +32545,8 @@ class App extends Component {
 
               cid_data['subtitles'] = await this.load_encrypted_lyric_subtitle_data(cid_data, false, password)
             }else{
-              cid_data['subtitles'] = await this.load_lyric_subtitle_data(cid_data, false)
+              // cid_data['subtitles'] = await this.load_lyric_subtitle_data(cid_data, false)
+              cid_data['subtitles'] = cid_data['data']
             }
           }
 
@@ -32563,6 +32568,10 @@ class App extends Component {
                 const metadata = JSON.parse(this.decrypt_data_string(cid_data['metadata'], password))
                 const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(cid_data['encrypted_file_data_info'], password))
                 cid_data['metadata'] = metadata
+                cid_data['encrypted_file_data_info'] = encrypted_file_data_info
+              }
+              else if(filetype == 'video'){
+                const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(cid_data['encrypted_file_data_info'], password))
                 cid_data['encrypted_file_data_info'] = encrypted_file_data_info
               }
             }
@@ -32670,18 +32679,18 @@ class App extends Component {
       const buffer = await response.arrayBuffer()
       const mime_type = this.get_file_mimetype(cid_data['extension'])
       const data_as_uint_array = new Uint8Array(buffer)
-      const plaintext = await this.decrypt_text_file(data_as_uint_array, password, mime_type, 'e')
-
       if(is_lyric == true){
+        const plaintext = await this.decrypt_text_file(data_as_uint_array, password, mime_type, 'e', false)
         return this.parseLyric(plaintext)
+      }else{
+        return await this.decrypt_text_file(data_as_uint_array, password, mime_type, 'e', true)
       }
-      return plaintext
     } catch (error) {
       console.error("Error downloading the image:", error);
     }
   }
 
-  decrypt_text_file = async (encryptedBuffer, password, mime_type, salt) => {
+  decrypt_text_file = async (encryptedBuffer, password, mime_type, salt, encode_in_uri) => {
     const iv = encryptedBuffer.slice(0, 12); // First 12 bytes
     const data = encryptedBuffer.slice(12);  // Remaining bytes
 
@@ -32693,6 +32702,9 @@ class App extends Component {
         data
       );
       const blob =  new Blob([decrypted], { type: mime_type });
+      if(encode_in_uri == true){
+        return URL.createObjectURL(blob)
+      }
       const arrayBuffer = await blob.arrayBuffer();
       const text = new TextDecoder().decode(arrayBuffer);
       return text
@@ -33437,21 +33449,19 @@ class App extends Component {
         _data['data'] = thumbnail
       }
       if(type == 'audio' || type == 'video' || type == 'pdf'){
-        if(type == 'audio' && _data['thumbnail'] != null){
+        if(_data['thumbnail'] != null){
           const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
+          _data['thumbnail'] = thumbnail
+        }
+        if(type == 'audio'){
           const metadata = JSON.parse(this.decrypt_data_string(_data['metadata'], password))
           const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(_data['encrypted_file_data_info'], password))
-          _data['thumbnail'] = thumbnail
           _data['metadata'] = metadata
           _data['encrypted_file_data_info'] = encrypted_file_data_info
         }
-        else if(type == 'video' && _data['thumbnail'] != null){
-          const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
-          _data['thumbnail'] = thumbnail
-        }
-        else if(type == 'pdf' && _data['thumbnail'] != null){
-          const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
-          _data['thumbnail'] = thumbnail
+        else if(type == 'video'){
+          const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(_data['encrypted_file_data_info'], password))
+          _data['encrypted_file_data_info'] = encrypted_file_data_info
         }
       }
       if(clone[_data['type']] == null) clone[_data['type']] = {}

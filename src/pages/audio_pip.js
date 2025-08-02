@@ -291,13 +291,15 @@ class AudioPip extends Component {
 
     render_audio(){
         if(!this.has_file_loaded()) return;
+        const track_data = this.get_audio_file_data()
+        const audio_type = track_data['audio_type'] == null ? 'audio/mpeg' : track_data['audio_type']
         return(
             <div style={{width:2, height:2,'z-index':'2', 'opacity':0.0, 'position': 'absolute', 'margin':'100px 0px 0px 0px'}}>
                 <div style={{'position': 'relative'}}>
                     <div style={{width:this.props.player_size, height:40, 'margin':'0px 0px 0px 0px', 'z-index':'3', 'position': 'absolute'}}/>
                     <div style={{width:2, height:2, 'margin':'px 0px 0px 0px', 'z-index':'2', 'position': 'absolute'}}>
                         <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} onProgress={this.onProgress} controlsList="nodownload" controls ref={this.audio}>
-                            <source ref={this.mpegRef} src={this.get_audio_file()} type="audio/mpeg"></source>
+                            <source ref={this.mpegRef} src={this.get_audio_file()} type={audio_type}></source>
                             Your browser does not support the audio element.
                         </audio>
                     </div>
@@ -325,40 +327,44 @@ class AudioPip extends Component {
                     const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]]
                     const start = focused_timestamp_info.encryptedStartByte
                     const end = start + focused_timestamp_info.encryptedSize - 1;
-                    const response = await fetch(encodeURI(track_data['data']), {
-                        headers: { Range: `bytes=${start}-${end}` },
-                    });
-                    if (response.status === 206 || response.status === 200) {
-                        const value = await response.arrayBuffer()
-                        const chunk = new Uint8Array(value.length);
-                        chunk.set(value);
-                        try{
-                            const iv = chunk.slice(0, 12);
-                            const encryptedData = chunk.slice(12);
-                            const decrypted = await crypto.subtle.decrypt(
-                                { name: 'AES-GCM', iv },
-                                key,
-                                encryptedData
-                            );
-                            await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                    if(this.update_start_time_pos == null){
+                        const response = await fetch(encodeURI(track_data['data']), {
+                            headers: { Range: `bytes=${start}-${end}` },
+                        });
+                        if (response.status === 206 || response.status === 200) {
+                            const value = await response.arrayBuffer()
+                            const chunk = new Uint8Array(value.length);
+                            chunk.set(value);
+                            try{
+                                const iv = chunk.slice(0, 12);
+                                const encryptedData = chunk.slice(12);
+                                const decrypted = await crypto.subtle.decrypt(
+                                    { name: 'AES-GCM', iv },
+                                    key,
+                                    encryptedData
+                                );
+                                await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                            }
+                            catch(e){
+                                console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
+                                mediaSource.endOfStream('decode');
+                                return;
+                            }
+                            current_timestamp_key_pos++;
                         }
-                        catch(e){
-                            console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
-                            mediaSource.endOfStream('decode');
-                            return;
+                        else{
+                            console.log('failed to fetch file chunk from node', response.status, response.statusText)
                         }
-                        current_timestamp_key_pos++;
-                    }
-                    else{
-                        console.log('failed to fetch file chunk from node', response.status, response.statusText)
                     }
                 }
-                await new Promise(resolve => setTimeout(resolve, 1500))
                 if(this.update_start_time_pos != null){
                     current_timestamp_key_pos = this.update_start_time_pos
                     const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
                     sourceBuffer.timestampOffset = load_time_to_set;
                     delete this.update_start_time_pos;
+                }else{
+                    const pause_time = this.should_continue_loading(track_data) ? 1000 : 1500
+                    await new Promise(resolve => setTimeout(resolve, pause_time))
                 }
             }
             mediaSource.endOfStream();

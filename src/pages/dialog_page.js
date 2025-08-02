@@ -1740,7 +1740,7 @@ return data['data']
                     img = this.props.app_state.static_assets['empty_image']
                 }
                 return(
-                    <div>
+                    <div onClick={() => this.open_file()}>
                         {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':'auto', 'height':wh, 'border_radius':'25px'})}
                     </div>
                 )
@@ -1748,45 +1748,32 @@ return data['data']
             else if(data['type'] == 'audio'){
                 var img = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
                 return(
-                    <div>
+                    <div onClick={() => this.open_file()}>
                         {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
                     </div>
                 )
             }
             else if(data['type'] == 'video'){
-                var video = encodeURI(data['data'])
-                console.log('videoimage', ''+video)
                 if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
                     var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
                     return(
-                        <div>
+                        <div onClick={() => this.open_file()}>
                             {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':thumbnail, 'width_height':'auto', 'height':wh, 'border_radius':'15px'})}
                         </div>
                     )
                 }else{
                     var thumbnail = this.props.app_state.static_assets['video_label']
                     return(
-                        <div>
+                        <div onClick={() => this.open_file()}>
                             {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':thumbnail, 'width_height':'auto', 'height':wh, 'border_radius':'15px'})}
                         </div>
                     )
                 }
-                return(
-                    <div style={{'display': 'flex', 'align-items':'center','justify-content':'center','padding': '0px 0px 0px 5px', width: '99%'}}>
-                        <div>
-                            <video height="240" style={{'border-radius':'7px'}}>
-                                <source src={video} type="video/mp4"/>
-                                <source src={video} type="video/ogg"/>
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    </div>
-                )
             }
             else if(data['type'] == 'pdf'){
                 var img = data['thumbnail']
                 return(
-                    <div>
+                    <div onClick={() => this.open_file()}>
                         {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
                     </div>
                 )
@@ -1794,7 +1781,7 @@ return data['data']
             else if(data['type'] == 'zip'){
                 var img = this.props.app_state.static_assets['zip_file']
                 return(
-                    <div>
+                    <div onClick={() => this.open_file()}>
                         {this.render_detail_item('7', {'header':'', 'subtitle':'', 'image':img, 'width_height':wh})}
                     </div>
                 )
@@ -1815,6 +1802,32 @@ return data['data']
                     </div>
                 )
             }
+        }
+    }
+
+    open_file(){
+        const ecid_obj = this.state.data['ecid_obj']
+        const ecid = ecid_obj['full']
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null) return;
+
+        if(data['type'] == 'image'){
+            this.props.show_images([ecid], 0)
+        }
+        else if(data['type'] == 'audio'){
+            this.props.play_individual_track(ecid)
+        }
+        else if(data['type'] == 'video'){
+            const width = data['width'];
+            const height = data['height'];
+            this.props.play_individual_video(ecid, width, height)
+        }
+        else if(data['type'] == 'pdf'){
+            this.props.when_pdf_file_opened(ecid)
+        }
+        else if(data['type'] == 'zip'){
+            this.props.when_zip_file_opened(ecid)
         }
     }
 
