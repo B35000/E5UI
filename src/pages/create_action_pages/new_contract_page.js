@@ -280,6 +280,22 @@ class NewContractPage extends Component {
         return picked_item
     }
 
+
+
+
+
+    componentDidMount(){
+        if(this.interval != null) clearInterval(this.interval);
+        var me = this;
+        setTimeout(function() {
+            me.interval = setInterval(() => me.update_object_in_background(), 10*1000);
+        }, (1 * 100));
+    }
+
+    componentWillUnmount() {
+        if(this.interval != null)clearInterval(this.interval);
+    }
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -377,6 +393,9 @@ class NewContractPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['170'], 'details':this.props.app_state.loc['171'], 'size':'l'})}
                 <div style={{height:20}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_previous_edits_if_existing()}
 
 
                 {this.render_detail_item('0')}
@@ -813,21 +832,65 @@ class NewContractPage extends Component {
         return str.length + (m ? m.length : 0);
     }
     
-    render_new_job_object(){
-        return;
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return ( 
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                <div style={{'padding': '5px 0px 5px 0px'}}>
-                    {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
-                    {this.render_detail_item('0')}
+    
+    
 
-                </div>         
+
+
+    render_previous_edits_if_existing(){
+        const previous_edits = this.props.fetch_objects_from_db(this.state.object_type)
+        const unfiltered_items = Object.keys(previous_edits)
+        if(unfiltered_items.length == 0){
+            return;
+        }
+        const items = this.sort_items(unfiltered_items, previous_edits)
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ds']/* 'Set to previous changes.' */, 'details':this.props.app_state.loc['a311dt']/* 'You can continue where you left off in a pevious edit.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_previous_edit_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
-        );
+        )
+    }
+
+    sort_items(items, previous_edits_data){
+        const return_data = []
+        const current_id = this.state.id
+        items.forEach(identifier => {
+            if(identifier != current_id){
+                return_data.push(previous_edits_data[identifier])
+            }
+        });
+        return this.sortByAttributeDescending(return_data, 'last_modified')
+    }
+
+    render_previous_edit_item(data){
+        const title = this.truncate(data.entered_title_text, 17);
+        const details = (new Date(data.last_modified))+''
+        return(
+            <div onClick={() => this.when_previous_edit_tapped(data)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    when_previous_edit_tapped(data){
+        this.setState(data)
+    }
+
+    update_object_in_background(){
+        if(this.state.entered_title_text != ''){
+            this.props.update_object_change_in_db(this.state, this.state.object_type)
+        }
     }
 
 
