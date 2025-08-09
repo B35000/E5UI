@@ -1841,9 +1841,10 @@ return data['data']
             var size = formatted_size['size']+' '+formatted_size['unit']
             var age = this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
             var name = data['name']
-            var link = data['data'].startsWith('http') ? encodeURI(data['data']) : ''
+            // var link = data['data'].startsWith('http') ? encodeURI(data['data']) : ''
             var hash = data['hash']
-            
+            const am_i_author = this.props.app_state.uploaded_data_cids.includes(ecid_obj['full']);
+
             return(
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3055x']/* File Details. */}</h4>
@@ -1864,12 +1865,9 @@ return data['data']
                     {this.render_not_on_e5_message(ecid_obj)}
                     {this.render_file_verified_message(ecid_obj)}
                     {this.render_deleted_file_message_if_deleted(hash)}
-                    {/* {this.render_detail_item('4', {'text':link, 'textsize':'10px', 'font':this.props.app_state.font})} */}
-                    {/* <div onClick={() => this.props.delete_file(ecid_obj)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055r'] 'Forget File.' , 'action':''})}
-                    </div> */}
-                    {this.render_verify_file_button(hash, ecid_obj)}
-                    {this.render_delete_file_button(hash, data)}
+
+                    {this.render_verify_file_button(hash, ecid_obj, am_i_author)}
+                    {this.render_delete_file_button(hash, data, am_i_author)}
                 </div>
             )
         }
@@ -1984,8 +1982,8 @@ return data['data']
         }
     }
 
-    render_verify_file_button(hash, ecid_obj){
-        if(hash != null && this.is_file_available(hash)){
+    render_verify_file_button(hash, ecid_obj, am_i_author){
+        if(hash != null && this.is_file_available(hash) && am_i_author == true){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055by']/* 'Verify File' */, 'details':this.props.app_state.loc['3055bz']/* 'Verify that the entire file has not been tampered with.' */, 'size':'l'})}
@@ -1999,8 +1997,8 @@ return data['data']
         }
     }
 
-    render_delete_file_button(hash, data){
-        if(hash != null && this.is_file_available(hash) && data['nitro'] != null && this.props.app_state.file_streaming_data[hash] != null){
+    render_delete_file_button(hash, data, am_i_author){
+        if(hash != null && this.is_file_available(hash) && data['nitro'] != null && this.props.app_state.file_streaming_data[hash] != null && am_i_author == true){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055do']/* '🗑️ Delete File' */, 'details':this.props.app_state.loc['3055dp']/* 'Delete the file from the node and halt its streaming immediately and forever. This action cannot be undone.' */, 'size':'l'})}
@@ -3011,10 +3009,13 @@ return data['data']
         if(this.is_post_anonymous(object)){
             sender = ''
         }
+        var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
+        var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
+        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'id':{'title':' • '+objectid+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, }
         }
     }
 
@@ -3022,24 +3023,6 @@ return data['data']
         if(object['ipfs'].get_post_nsfw_option == null) return false
         var selected_nsfw_option = this.get_selected_item2(object['ipfs'].get_post_nsfw_option, 'e')
         if(selected_nsfw_option == 1) return true
-    }
-
-    check_if_sender_has_paid_subscriptions(required_subscriptions){
-        var has_sender_paid_all_subs = true
-        if(required_subscriptions == null) return true
-        required_subscriptions.forEach(subscription_id => {
-            if(!this.has_paid_subscription(parseInt(subscription_id))){
-                has_sender_paid_all_subs=  false
-            }
-        });
-
-        return has_sender_paid_all_subs
-    }
-
-    has_paid_subscription(required_subscription_set){
-        var my_payment = this.get_all_sorted_objects_mappings(this.props.app_state.my_subscription_payment_mappings)[required_subscription_set]
-        if(my_payment == null || my_payment == 0) return false;
-        return true
     }
 
     is_post_preview_enabled(object){

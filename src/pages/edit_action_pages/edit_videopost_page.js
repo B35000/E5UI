@@ -109,7 +109,7 @@ class EditVideoPage extends Component {
         album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
         markdown:'', entered_zip_objects:[],
 
-        video_availability_timestamp:(Date.now()/1000),
+        video_availability_timestamp:(Date.now()/1000), purchase_recipient:''
     };
 
 
@@ -302,9 +302,11 @@ class EditVideoPage extends Component {
         if(this.state.video_subtitle_language == null){
             this.setState({video_subtitle_language:''})
         }
-
         if(this.state.get_markdown_preview_or_editor_object == null){
             this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
+        }
+        if(this.state.purchase_recipient == null){
+            this.setState({purchase_recipient: ''})
         }
         
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, edit_video_item_pos:-1, video_availability_timestamp:(Date.now()/1000), previous_videos:this.state.videos})
@@ -524,15 +526,15 @@ class EditVideoPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['311e']/* Masked for Outsiders. */, 'details':this.props.app_state.loc['311f']/* If set to masked, your post will not be visible to users without accounts. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_from_outsiders_option} tag_size={'l'} when_tags_updated={this.when_get_masked_from_outsiders_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+
 
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
-
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'details':this.props.app_state.loc['b311as']/* 'Set the recipient account ID for all the purchases of this object. If unset, the default will be your account.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */} when_text_input_field_changed={this.when_purchase_recipient_input_field_changed.bind(this)} text={this.state.purchase_recipient} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
 
 
                 {this.render_detail_item('0')}
@@ -608,6 +610,11 @@ class EditVideoPage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_purchase_recipient_input_field_changed(text){
+        if(isNaN(text) || text.length > 12) return;
+        this.setState({purchase_recipient: text})
     }
 
     when_get_disabled_comments_section_option(tag_obj){
@@ -3221,6 +3228,9 @@ return data['data']
         }
         else if(album_art == null){
             this.props.notify(this.props.app_state.loc['a311az']/* You need to set the album art for your new post. */, 4700)
+        }
+        else if(!isNaN(this.state.purchase_recipient) && parseInt(this.state.purchase_recipient) < 1000){
+            this.props.notify(this.props.app_state.loc['b311at']/* That purchase recipient value is invalid. */, 4700)
         }
         else{
             this.props.when_add_edit_object_to_stack(this.state)

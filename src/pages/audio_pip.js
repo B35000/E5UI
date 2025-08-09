@@ -308,7 +308,10 @@ class AudioPip extends Component {
         )
     }
 
-    streamAndPlayEncryptedAudio = async () => {
+    streamAndPlayEncryptedAudio = async (should_reset_everything) => {
+        if(should_reset_everything != false){
+            await this.reset_stream_decryptor_function()
+        }
         const track_data = this.get_audio_file_data()
         if(track_data['encrypted'] != true){
             return;
@@ -317,18 +320,25 @@ class AudioPip extends Component {
         const audioElement = this.mpegRef.current;
         audioElement.src = URL.createObjectURL(mediaSource);
 
+        this.is_loading_and_decrypting_track = true;
         mediaSource.addEventListener('sourceopen', async () => {
             const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
             const key = await this.props.get_key_from_password(track_data['password'], 'e');
             const timestamp_keys = Object.keys(track_data['encrypted_file_data_info'])
             var current_timestamp_key_pos = 0;
-            while (current_timestamp_key_pos < timestamp_keys.length) {
-                if(this.should_continue_loading(track_data)){
+            if(this.update_start_time_pos != null){
+                current_timestamp_key_pos = this.update_start_time_pos
+                const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
+                sourceBuffer.timestampOffset = load_time_to_set;
+                delete this.update_start_time_pos;
+            }
+            while (current_timestamp_key_pos < timestamp_keys.length && this.current_file == track_data['data']) {
+                if(this.should_continue_loading(track_data) && !this.has_already_loaded_current_timestamp_key_pos(current_timestamp_key_pos)){
                     const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]]
                     const start = focused_timestamp_info.encryptedStartByte
                     const end = start + focused_timestamp_info.encryptedSize - 1;
                     if(this.update_start_time_pos == null){
-                        const response = await fetch(encodeURI(track_data['data']), {
+                        const response = await fetch(encodeURI(track_data['data'].replace('/eee', this.props.app_state.nitro_privacy_signature)), {
                             headers: { Range: `bytes=${start}-${end}` },
                         });
                         if (response.status === 206 || response.status === 200) {
@@ -343,13 +353,22 @@ class AudioPip extends Component {
                                     key,
                                     encryptedData
                                 );
-                                await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                                if(this.current_file == track_data['data']){
+                                    await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                                }else{
+                                    mediaSource.endOfStream();
+                                    return;
+                                }
                             }
                             catch(e){
                                 console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
                                 mediaSource.endOfStream('decode');
                                 return;
                             }
+                            if(this.loaded_timestamp_key_pos == null){
+                                this.loaded_timestamp_key_pos = []
+                            }
+                            this.loaded_timestamp_key_pos.push(current_timestamp_key_pos)
                             current_timestamp_key_pos++;
                         }
                         else{
@@ -357,24 +376,50 @@ class AudioPip extends Component {
                         }
                     }
                 }
-                if(this.update_start_time_pos != null){
-                    current_timestamp_key_pos = this.update_start_time_pos
-                    const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
-                    sourceBuffer.timestampOffset = load_time_to_set;
-                    delete this.update_start_time_pos;
-                }else{
-                    const pause_time = this.should_continue_loading(track_data) ? 1000 : 1500
-                    await new Promise(resolve => setTimeout(resolve, pause_time))
+                if(this.current_file == track_data['data']){
+                    if(this.update_start_time_pos != null){
+                        current_timestamp_key_pos = this.update_start_time_pos
+                        const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
+                        sourceBuffer.timestampOffset = load_time_to_set;
+                        delete this.update_start_time_pos;
+                    }else{
+                        const pause_time = this.should_continue_loading(track_data) ? 1000 : 1500
+                        await new Promise(resolve => setTimeout(resolve, pause_time))
+                    }
                 }
             }
             mediaSource.endOfStream();
+            this.is_loading_and_decrypting_track = false;
         });
+    }
+
+    has_already_loaded_current_timestamp_key_pos(pos){
+        if(this.loaded_timestamp_key_pos != null && this.loaded_timestamp_key_pos.includes(pos)){
+            return true
+        }
+        return false;
     }
 
     update_stream_start_value_after_scrub(time){
         const track_data = this.get_audio_file_data()
         const seek_data = this.seekToTime(time, track_data['timeToByteMap'])
         this.update_start_time_pos = Object.keys(track_data['encrypted_file_data_info']).indexOf(seek_data.time)
+
+        if(this.is_loading_and_decrypting_track != true){
+            this.streamAndPlayEncryptedAudio(false)
+        }
+    }
+
+    reset_stream_decryptor_function = async () => {
+        delete this.update_start_time_pos;
+        delete this.loaded_timestamp_key_pos;
+        const track_data = this.get_audio_file_data()
+        this.current_file = track_data['data'];
+
+        while (this.is_loading_and_decrypting_track == true) {
+            if (this.is_loading_and_decrypting_track != true) break
+            await new Promise(resolve => setTimeout(resolve, 1000))
+        }
     }
 
     seekToTime = (targetSeconds, seekTable) => {

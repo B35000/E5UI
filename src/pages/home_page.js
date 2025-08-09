@@ -3164,6 +3164,9 @@ class home_page extends Component {
                         is_valid_video_or_audiopost = true;
                     }
                 });
+                if(object['ipfs'].audio_type != null && searched_string_words.includes(object['ipfs'].audio_type.toLowerCase())){
+                    is_valid_video_or_audiopost = true;
+                }
             }
             else if(object['ipfs'] != null && object['ipfs'].songs != null){
                 object['ipfs'].songs.forEach(song => {
@@ -3176,6 +3179,9 @@ class home_page extends Component {
                         is_valid_video_or_audiopost = true;
                     }
                 });
+                if(object['ipfs'].audio_type != null && searched_string_words.includes(object['ipfs'].audio_type.toLowerCase())){
+                    is_valid_video_or_audiopost = true;
+                }
             }
 
             var object_author = object['author'] == null ? '0' : object['author']
@@ -4077,7 +4083,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
 
     when_playlist_selected(song, index){
@@ -4206,7 +4212,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
 
     play_videopost_from_list_section = async (object) => {
@@ -4683,7 +4689,7 @@ class home_page extends Component {
         this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
 
     when_discography_video_item_clicked(object){
@@ -4707,7 +4713,7 @@ class home_page extends Component {
         this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['author']])
+        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
 
     when_catalogue_storefront_item_clicked(object){
@@ -6495,16 +6501,31 @@ class home_page extends Component {
 
 
     render_stack_gas_figure(){
+        var estimated_gas_consumption_proportion = ((this.estimated_gas_consumed() / this.get_e5_run_limit(this.props.app_state.selected_e5)) * 100).toFixed(2);
+        estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion;
+        
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ht']/* 'Gas Consumption as Proportion of Limit.' */, 'subtitle':'e0', 'barwidth':estimated_gas_consumption_proportion+'%', 'number':estimated_gas_consumption_proportion+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
                 </div>
                 {this.render_arweave_network_fee_if_selected()}
             </div>
         )
+    }
+
+    get_e5_run_limit(e5){
+        if(this.props.app_state.created_contract_mapping[e5] == null || this.props.app_state.created_contract_mapping[e5][2] == null || this.props.app_state.created_contract_mapping[e5][2]['data'] == null){
+            return 5_300_000;
+        }
+        var contract_data = this.props.app_state.created_contract_mapping[e5][2]['data'];
+        var contract_config = obj['data'][1]
+        return contract_config[11]
+
     }
 
     calculate_wallet_impact_figure(){

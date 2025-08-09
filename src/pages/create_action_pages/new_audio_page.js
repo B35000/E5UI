@@ -630,7 +630,7 @@ class NewAudioPage extends Component {
     }
 
     when_purchase_recipient_input_field_changed(text){
-        if(isNaN(text)) return;
+        if(isNaN(text) || text.length > 12) return;
         this.setState({purchase_recipient: text})
     }
 

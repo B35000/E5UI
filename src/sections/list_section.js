@@ -2355,11 +2355,14 @@ class PostListSection extends Component {
         if(this.is_post_anonymous(object)){
             sender = ''
         }
+        var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
+        var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
+        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
+            'id':{'title':' • '+objectid+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
+            'min':{'details':object['e5']+' • '+objectid+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -3744,6 +3747,7 @@ return data['data']
             var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
 
             var view_count_message = this.get_audio_files_view_counts(object)
+            var objectid = this.is_post_anonymous(object) ? '???' : object['id']
 
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
@@ -3762,7 +3766,7 @@ return data['data']
                                     <img src={e5_img} alt={object['e5']} style={{height:15,width:15}}/>
                                     <div style={{width:2}}/>
                                 </div>
-                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{object['id']+author}</p>
+                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{objectid+author}</p>
                             </div>
                             
                             <div style={{height: 3}}/>
@@ -3869,11 +3873,15 @@ return data['data']
         var default_image = this.props.app_state.static_assets['music_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         var view_count_message = this.get_audio_files_view_counts(object)
+
+        var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
+        var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
+        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details': author+' • '+this.get_time_difference(time)+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object}
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
+            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object}
         }
     }
 
@@ -4247,6 +4255,8 @@ return data['data']
             var blur = this.is_post_nsfw(object)
 
             var view_count_message = this.get_video_files_view_counts(object)
+            var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
+            var objectid = this.is_post_anonymous(object) ? '???' : object['id']
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
@@ -4264,7 +4274,7 @@ return data['data']
                                     <img src={e5_img} alt={object['e5']} style={{height:15,width:15}}/>
                                     <div style={{width:2}}/>
                                 </div>
-                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{object['id']+author}</p>
+                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{objectid+author}</p>
                             </div>
                             
                             <div style={{height: 3}}/>
@@ -4272,7 +4282,7 @@ return data['data']
                             <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{videos_available}</p>
                             <div style={{height: 3}}/>
 
-                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ this.get_time_difference(time)+view_count_message}</p>
+                            <p style={{'font-size': '11px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{listing_type+' • '+ relativepower+view_count_message}</p>
                         </div>
                     </div>
                 </div>
@@ -4365,11 +4375,13 @@ return data['data']
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
         var view_count_message = this.get_video_files_view_counts(object)
+        var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
+        var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object)},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details': author+' • '+this.get_time_difference(time)+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object)}
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
+            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object)}
         }
     }
 

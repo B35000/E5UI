@@ -461,24 +461,69 @@ class AddCommentPage extends Component {
             return false
         }
         else if(page == 'audio'){
-            var required_subscriptions = object['ipfs'].selected_subscriptions
-            var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
-            if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
-                return true
-            }
+            // var required_subscriptions = object['ipfs'].selected_subscriptions
+            // var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+            // if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+            //     return true
+            // }
             const my_albums = this.props.app_state.my_albums
-            return my_albums.includes(object['id'])
+            return my_albums.includes(object['id']) || this.can_rate_from_streaming_data()
         }
         else if(page == 'video'){
-            var required_subscriptions = object['ipfs'].selected_subscriptions
-            var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
-            if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
-                return true
-            }
+            // var required_subscriptions = object['ipfs'].selected_subscriptions
+            // var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+            // if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+            //     return true
+            // }
             const my_videos = this.props.app_state.my_videoposts
-            return my_videos.includes(object['id'])
+            return my_videos.includes(object['id']) || this.can_rate_from_streaming_data()
         }
         return false
+    }
+
+    can_rate_from_streaming_data(){
+        const page = this.state.page
+        const object = this.state.object
+        if(page == 'audio'){
+            const songs = object['ipfs'].songs
+            var all_seconds_stored = 0
+            var all_seconds_consumed = 0
+            songs.forEach(song => {
+                const watch_time = this.props.app_state.audio_timestamp_data[song['song_id']]
+                const file = song['track']
+                var ecid_obj = this.get_cid_split(file)
+                if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                    const song_length = data['duration']
+                    if(song_length != null && watch_time != null){
+                        all_seconds_stored += song_length
+                        all_seconds_consumed += watch_time
+                    }
+                }
+            });
+            return (all_seconds_consumed / all_seconds_stored) > 0.23
+        }
+        else if(page == 'video'){
+            const videos = object['ipfs'].videos
+            var all_seconds_stored = 0
+            var all_seconds_consumed = 0
+
+            videos.forEach(video => {
+                const watch_time = this.props.app_state.video_timestamp_data[video['video_id']]
+                const file = video['video']
+                var ecid_obj = this.get_cid_split(file)
+                if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                    const song_length = data['duration']
+                    if(song_length != null && watch_time != null){
+                        all_seconds_stored += song_length
+                        all_seconds_consumed += watch_time
+                    }
+                }
+            });
+
+            return (all_seconds_consumed / all_seconds_stored) > 0.23
+        }
     }
 
 

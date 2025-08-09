@@ -65,35 +65,57 @@ class TextInput extends Component {
     render(){
         return(
             <div>
-                {this.render_text_input_field(this.props.height)}
+                {this.render_text_input_field()}
             </div>
         )
     }
 
 
     /* render the text area */
-    render_text_input_field(height){
+    render_text_input_field(){
       var os = getOS()
       var f = os == 'iOS' ? '16px' : '13px'
       return(
         <div style={{'padding': '0px 0px 0px 0px'}}>
             <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'],'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
-                    <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
-                      <style>
-                        {`
-                          .form-control::placeholder {
-                            color: ${this.props.theme['text_input_color']};
-                            opacity: 0.6; /* Ensures visibility in some browsers */
-                          }
-                        `}
-                      </style>
-                       <textarea className="form-control"  rows="1" style={{height:height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
-                    </div> 
+                  {this.render_textarea_or_input(f)}
             </div>
         </div>
       )
     }
 
+    render_textarea_or_input(f){
+      var height = this.props.height
+      if(height < 53){
+        return(
+          <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
+            <style>
+              {`
+                .form-control::placeholder {
+                  color: ${this.props.theme['text_input_color']};
+                  opacity: 0.6; /* Ensures visibility in some browsers */
+                }
+              `}
+            </style>
+              <input className="form-control"  type="text" style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
+          </div> 
+        )
+      }else{
+        return(
+          <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
+            <style>
+              {`
+                .form-control::placeholder {
+                  color: ${this.props.theme['text_input_color']};
+                  opacity: 0.6; /* Ensures visibility in some browsers */
+                }
+              `}
+            </style>
+              <textarea className="form-control"  rows="1" style={{height:height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+          </div> 
+        )
+      }
+    }
 
     /* when text is added to the text area  */
     when_text_input_field_changed(e){

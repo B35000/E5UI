@@ -108,7 +108,7 @@ class NewVideoPage extends Component {
         album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
         markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
-        video_availability_timestamp:(Date.now()/1000), channel_search:'',
+        video_availability_timestamp:(Date.now()/1000), channel_search:'', purchase_recipient:''
     };
 
 
@@ -500,6 +500,15 @@ class NewVideoPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'details':this.props.app_state.loc['b311as']/* 'Set the recipient account ID for all the purchases of this object. If unset, the default will be your account.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */} when_text_input_field_changed={this.when_purchase_recipient_input_field_changed.bind(this)} text={this.state.purchase_recipient} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['b311g']/* 'Set the album art for your new post.' */})}
@@ -566,6 +575,11 @@ class NewVideoPage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_purchase_recipient_input_field_changed(text){
+        if(isNaN(text) || text.length > 12) return;
+        this.setState({purchase_recipient: text})
     }
 
     when_get_disabled_comments_section_option(tag_obj){
@@ -3552,6 +3566,9 @@ return data['data']
         else if(album_art == null){
             this.props.notify(this.props.app_state.loc['a311az']/* You need to set the album art for your new post. */, 4700)
         }
+        else if(!isNaN(this.state.purchase_recipient) && parseInt(this.state.purchase_recipient) < 1000){
+            this.props.notify(this.props.app_state.loc['b311at']/* That purchase recipient value is invalid. */, 4700)
+        }
         else{
             var me = this;
             setTimeout(function() {
@@ -3591,7 +3608,7 @@ return data['data']
                     videos:[], edit_video_item_pos:-1,
 
                     album_art:null, video_type: me.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
-                    markdown:''
+                    markdown:'', purchase_recipient:''
                 })
             }, (1 * 1000));
 

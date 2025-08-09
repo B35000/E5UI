@@ -271,6 +271,9 @@ class VideoDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
+                    {this.render_detail_item('3', item['purchase_recipient'])}
+                    <div style={{height: 10}}/>
+
                     {this.render_taken_down_message_if_post_is_down(object)}
                     {this.render_message_if_blocked_by_sender(object)}
                     {this.render_comment_section_disabled(object)}
@@ -850,10 +853,15 @@ class VideoDetailsSection extends Component {
         var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
         var default_image = this.props.app_state.static_assets['video_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        var purchase_recipient = object['ipfs'] == null ? object['event'].returnValues.p5 :object['ipfs'].purchase_recipient
+
+        var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
+        var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
+        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
+            'id':{'title':object['e5']+' • '+objectid, 'details':title, 'size':'l'},
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
             
             'reply_count':{'title':`${number_with_commas(number_of_replies)}`, 'details': this.props.app_state.loc['2815']/* 'Number of Replies.' */, 'size':'l'},
             'award_count':{'title':`${number_with_commas(number_of_awards)}`, 'details': this.props.app_state.loc['2816']/* 'Number of Awards.' */, 'size':'l'},
@@ -864,6 +872,8 @@ class VideoDetailsSection extends Component {
 
             'videopost_sales':{'title':number_with_commas(object['videopost_sales']), 'details':this.props.app_state.loc['3024']/* 'Videopost Sales' */, 'size':'l'},
             'video_sales':{'title':number_with_commas(object['video_sales']), 'details':this.props.app_state.loc['3025']/* 'Video Sales' */, 'size':'l'},
+
+            'purchase_recipient':{'title':purchase_recipient, 'details':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'size':'l'},
         }
     }
 
@@ -1826,9 +1836,10 @@ class VideoDetailsSection extends Component {
 
     render_top_title(object){
         var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
+        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.truncate(top_title, 40), 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+objectid, 'details':this.truncate(top_title, 40), 'size':'l'})} 
             </div>
         )
     }

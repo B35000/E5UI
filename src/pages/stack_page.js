@@ -1284,7 +1284,7 @@ class StackPage extends Component {
         var height = this.props.height-150
         return(
             <div style={{}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'details':this.props.app_state.loc['1431']/* 'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'details':this.props.app_state.loc['1431']/* 'The gas budget for your next run with E5. You can auto-set the value to be the estimated gas to be comsumed.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'number':this.state.run_gas_limit, 'relativepower':this.props.app_state.loc['1430']/* 'units' */})}>
@@ -1693,6 +1693,9 @@ class StackPage extends Component {
     }
 
     render_clear_stack_button(){
+        if(this.props.app_state.stacked_ids != null && this.props.app_state.has_wallet_been_set == false){
+            return;
+        }
         var items = [].concat(this.props.app_state.stack_items)
         if(items.length > 0){
             return(
@@ -1764,16 +1767,22 @@ class StackPage extends Component {
     }
 
     render_stack_item(item, index){
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
         var op = this.props.app_state.hidden.includes(item) ? 0.5 : 1.0
-        var txt = this.props.app_state.hidden.includes(item) ? 'show' : 'hide'
         var e5_img = this.props.app_state.e5s[item.e5].e5_img
         return(
-            <div style={{'margin': '2px 0px 2px 0px', opacity: op}} onClick={() => this.props.view_transaction(item, index)}>
+            <div style={{'margin': '2px 0px 2px 0px', opacity: op}} onClick={() => this.open_view_transaction(item, index)}>
                 {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1446']/* 'Stack ID: ' */+item.id,'size':'l', 'title_image':e5_img})}
             </div>
         )
+    }
+
+    open_view_transaction(item, index){
+        if(this.props.app_state.stacked_ids != null && this.props.app_state.has_wallet_been_set == false && this.props.app_state.stacked_ids.includes(item.id)){
+            this.props.notify(this.props.app_state.loc['1593hu']/* First set your wallet to view that transaction. */, 3500)
+        }
+        else{
+            this.props.view_transaction(item, index)
+        }
     }
 
     show_hide_stack_item(item){
@@ -1824,6 +1833,9 @@ class StackPage extends Component {
         if(is_running == null) is_running = false
         var button_opacity = is_running == true ? 0.4 : 1.0
         var button_text = is_running == true ? this.props.app_state.loc['1593cs']/* 'Running...' */ : (this.props.app_state.loc['1456']/* 'Run ' */+this.props.app_state.selected_e5+this.props.app_state.loc['1457']/* ' Transactions' */)
+
+        var estimated_gas_consumption_proportion = ((this.estimated_gas_consumed() / this.get_e5_run_limit(this.props.app_state.selected_e5)) * 100).toFixed(2);
+        estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion
         return(
             <div>
                 {this.render_now_playing_media_if_any()}
@@ -1854,7 +1866,9 @@ class StackPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}  onClick={()=>this.fetch_gas_figures()}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ht']/* 'Gas Consumption as Proportion of Limit.' */, 'subtitle':'e0', 'barwidth':estimated_gas_consumption_proportion+'%', 'number':estimated_gas_consumption_proportion+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
                 </div>
                 <div style={{height:10}}/>
                 {this.render_message_if_calculating_stack_gas_figures()}
@@ -1874,6 +1888,16 @@ class StackPage extends Component {
                 <div style={{height:7}}/>
             </div>
         )
+    }
+
+    get_e5_run_limit(e5){
+        if(this.props.app_state.created_contract_mapping[e5] == null || this.props.app_state.created_contract_mapping[e5][2] == null || this.props.app_state.created_contract_mapping[e5][2]['data'] == null){
+            return 5_300_000;
+        }
+        var contract_data = this.props.app_state.created_contract_mapping[e5][2]['data'];
+        var contract_config = contract_data['data'][1]
+        return contract_config[11]
+
     }
 
     render_message_if_calculating_stack_gas_figures(){
@@ -4721,7 +4745,7 @@ class StackPage extends Component {
 
 
         var account_balance = this.props.app_state.account_balance[e5]
-        var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
+        var run_gas_limit = this.state.run_gas_limit == 0 ? this.get_e5_run_limit(e5) : this.state.run_gas_limit
         // var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[e5] : this.state.run_gas_price
         var run_gas_price = this.get_gas_price()
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*5/* 5 hours */) : this.state.run_time_expiry
@@ -5028,8 +5052,8 @@ class StackPage extends Component {
                     
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
-                    const all_final_elements = all_elements.map(word => this.props.hash_data_with_randomizer(word.toLowerCase()));
-                    obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type}
+                    const all_final_elements = all_elements.map(word => this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY));
+                    obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting}
                     ipfs_index_array.push({'id':t.id, 'data':t})
 
                     if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
@@ -5164,6 +5188,7 @@ class StackPage extends Component {
                             }
                         });
                         extra_tags.push(data.entered_author_text.toLowerCase())
+                        extra_tags.push(data.audio_type.toLowerCase())
                     }
                     if(txs[i].type == this.props.app_state.loc['b311a']/* video */){
                         var videos = data.videos
@@ -5174,10 +5199,11 @@ class StackPage extends Component {
                                 extra_tags.push(video['video_composer'].toLowerCase())
                             }
                         });
+                        extra_tags.push(data.audio_type.toLowerCase())
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
-                    const all_final_elements = all_elements.map(word => this.props.hash_data_with_randomizer(word.toLowerCase()));
-                    obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type}
+                    const all_final_elements = all_elements.map(word => this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting}
                     ipfs_index_array.push({'id':data.id, 'data':data})
 
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */){
@@ -8150,7 +8176,7 @@ class StackPage extends Component {
 
     format_buy_videopost_videos = async (t, calculate_gas, ints, ipfs_index) => {
         var ints_clone = ints.slice()
-        var purchase_recipient = t.videopost['event'].returnValues.p5
+        var purchase_recipient = (t.videopost['ipfs'].purchase_recipient != null && t.videopost['ipfs'].purchase_recipient != '') ?  t.videopost['ipfs'].purchase_recipient : t.videopost['event'].returnValues.p5;
         var post_id = t.videopost['id'];
         var sale_type = this.get_video_sale_type(t)
 
@@ -11146,7 +11172,7 @@ class StackPage extends Component {
                 
                 <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
@@ -11185,6 +11211,10 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    mask_word_in_input_field(text){
+        return '•'.repeat(text.length)
     }
 
     render_message_if_stack_not_empty(){
@@ -11235,7 +11265,7 @@ class StackPage extends Component {
     }
 
 
-    when_text_input_field_changed(text){
+    when_wallet_text_input_field_changed(text){
         this.setState({typed_word: text})
     }
 

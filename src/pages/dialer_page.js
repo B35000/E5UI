@@ -85,7 +85,7 @@ class DialerPage extends Component {
         typed_moderator_country:'', selected_typed_moderator_country:'', typed_moderator_account_id:'', selected_moderator_e5:'E25',
 
         get_manual_disable_beacon_node_override_object:this.get_manual_disable_beacon_node_override_object(), typed_notification_blocks_input:'',
-        get_ether_e5_softwrite_object:this.get_ether_e5_softwrite_object(),
+        get_ether_e5_softwrite_object:this.get_ether_e5_softwrite_object(), get_document_title_object:this.get_document_title_object(),
     };
 
 
@@ -292,6 +292,20 @@ class DialerPage extends Component {
         };
     }
 
+    get_document_title_object(){
+        const manual_softwrite = this.props.app_state.document_title
+        var pos = ['e', 'e(Beta)', 'E5(Beta)', 'E5'].indexOf(manual_softwrite)
+        if(pos == -1) pos = 1
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', 'e(Beta)', 'E5(Beta)', 'E5'], [0]
+            ],
+        };
+    }
+
 
 
 
@@ -419,14 +433,19 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_detail_item('4', {'text':this.state.selected_dark_emblem_country, 'textsize':'14px', 'font':this.props.app_state.font})}
 
-                {this.render_detail_item('0')}
 
+
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('4', {'text':'Set the theme stage.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_theme_stage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_theme_stage_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-                {this.render_detail_item('0')}
 
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('4', {'text':'Set the content channelling stage', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_tags_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -489,9 +508,20 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'10000'} when_text_input_field_changed={this.when_upload_object_size_limit_input_field_changed.bind(this)} text={this.state.data['upload_object_size_limit']} theme={this.props.theme}/>
                 {this.render_detail_item('10', {'text':'Current OnChain setting: '+this.get_current_upload_object_size(), 'textsize':'11px', 'font':this.props.app_state.font})}
+                
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Set the default document title', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_document_title_object} tag_size={'l'} when_tags_updated={this.when_get_document_title_object_updated.bind(this)} theme={this.props.theme}/>
+
             </div>
         )
+    }
+
+    when_get_document_title_object_updated(tag_obj){
+        this.setState({get_document_title_object: tag_obj})
     }
 
     when_upload_object_size_limit_input_field_changed(text){

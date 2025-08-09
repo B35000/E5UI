@@ -1564,7 +1564,8 @@ class ChannelDetailsSection extends Component {
     }
 
     is_message_expired(item){
-        if(item['expiry_time'] != null && (Date.now()/1000) > (item['time']+item['expiry_time'])){
+        const includes = this.props.app_state.stacked_message_ids.find(e => e['id'] === item['message_id'])
+        if(item['expiry_time'] != null && (Date.now()/1000) > (item['time']+item['expiry_time']) && includes == null){
             return true;
         }
         return false;
