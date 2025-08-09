@@ -955,7 +955,7 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}
   };
 
   get_static_assets(){
@@ -3427,6 +3427,7 @@ class App extends Component {
 
       disable_moderation:this.state.disable_moderation,
       stacked_message_ids:this.state.stacked_message_ids,
+      last_login_time: Date.now(),
     }
   }
 
@@ -3604,6 +3605,7 @@ class App extends Component {
 
       var disable_moderation = state.disable_moderation == null ? this.state.disable_moderation : state.disable_moderation
       var stacked_message_ids = state.stacked_message_ids == null ? this.state.stacked_message_ids : state.stacked_message_ids
+      var last_login_time = state.last_login_time == null ? Date.now() : state.last_login_time
 
       this.setState({
         theme: theme,
@@ -3668,7 +3670,8 @@ class App extends Component {
         stacked_ids: stacked_ids,
         rating_denomination: rating_denomination,
         disable_moderation: disable_moderation,
-        stacked_message_ids: stacked_message_ids
+        stacked_message_ids: stacked_message_ids,
+        last_login_time: last_login_time
       })
       var me = this;
       setTimeout(function() {
@@ -5488,6 +5491,7 @@ class App extends Component {
 
           set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}
           get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
+          get_nitro_purchases={this.get_nitro_purchases.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -20058,6 +20062,7 @@ class App extends Component {
       my_objects:[],
       notification_object:{},
       latest_file_renewal_time:{},
+      current_nitro_purchases:{},
     });
 
     this.get_blocked_accounts_data_e5_timestamp = 0
@@ -20071,6 +20076,7 @@ class App extends Component {
     this.my_poll_timestamp = 0
     this.my_object_timestamp = 0
     Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
+    this.last_load_time = {};
 
     if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0){
       //sender has set a different address from the previously used one, so delete the transactions they created with the other address
@@ -35448,6 +35454,38 @@ class App extends Component {
     const storefront_auction_bids_clone = structuredClone(this.state.storefront_auction_bids)
     storefront_auction_bids_clone[e5_id] = result_objects
     this.setState({storefront_auction_bids: storefront_auction_bids_clone})
+  }
+
+  get_nitro_purchases = async (object) => {
+    const e5 = object['e5']
+    const id = object['id']
+    const e5_id = object['e5_id']
+    var account = this.state.user_account_id[e5]
+    if(account == null || account == 1){
+      return;
+    }
+    if(this.last_load_time != null && this.last_load_time[e5_id] != null && this.last_load_time[e5_id] < Date.now() - (60*1000)){
+      return;
+    }
+    if(this.last_load_time == null){
+      this.last_load_time = {}
+    }
+    this.last_load_time[e5_id] = Date.now()
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var current_block_number = await web3.eth.getBlockNumber()
+    var difference = 1000
+    var start = current_block_number == 0 ? 0 : current_block_number - difference
+    if(start < 0) start = 0;
+
+    var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: 23/* 23(nitro node storage sale) */, p3/* context */:id, p5/* int_data */:account }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+    const clone = structuredClone(this.state.current_nitro_purchases)
+    clone[e5_id] = all_received_on_chain_events
+    this.setState({current_nitro_purchases: clone})
   }
 
 

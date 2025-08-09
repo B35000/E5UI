@@ -668,7 +668,8 @@ class MailDetailsSection extends Component {
         // }
         var items = [].concat(this.get_convo_messages(object)).reverse()
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
-        var final_items = stacked_items.concat(items)
+        var final_items_without_divider = stacked_items.concat(items)
+        var final_items = this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -700,6 +701,27 @@ class MailDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    append_divider_between_old_messages_and_new_ones(items){
+        if(items.length == 0) return;
+        const last_login_time = this.props.app_state.last_login_time
+        const newElement = 'e';
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        items.forEach((obj, i) => {
+            const diff = Math.abs(obj['message_id'] - last_login_time);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIndex = i;
+            }
+        });
+        if(closestIndex == items.length - 1){
+            return items
+        }
+        const clone = items.slice()
+        clone.splice(closestIndex + 1, 0, newElement);
+        return clone;
     }
 
     render_messages(items, object){
@@ -803,6 +825,13 @@ class MailDetailsSection extends Component {
     }
 
     render_message_as_focused_if_so(item, object){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['2117w']/* new */})}
+                </div>
+            )
+        }
         return(
             <div>
                 <SwipeableList>

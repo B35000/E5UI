@@ -1359,7 +1359,9 @@ class ChannelDetailsSection extends Component {
         if(this.get_focused_message(object) != null) middle = this.props.height-290
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
-        var final_items = stacked_items.concat(items)
+        var final_items_without_divider = stacked_items.concat(items)
+
+        var final_items = this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -1371,7 +1373,7 @@ class ChannelDetailsSection extends Component {
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
                                 </li>
@@ -1405,6 +1407,27 @@ class ChannelDetailsSection extends Component {
             }
             
         }
+    }
+
+    append_divider_between_old_messages_and_new_ones(items){
+        if(items.length == 0) return;
+        const last_login_time = this.props.app_state.last_login_time
+        const newElement = 'e';
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        items.forEach((obj, i) => {
+            const diff = Math.abs(obj['message_id'] - last_login_time);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIndex = i;
+            }
+        });
+        if(closestIndex == items.length - 1){
+            return items
+        }
+        const clone = items.slice()
+        clone.splice(closestIndex + 1, 0, newElement);
+        return clone;
     }
 
     render_messages(items, object){
@@ -1507,17 +1530,24 @@ class ChannelDetailsSection extends Component {
 
 
     render_message_as_focused_if_so(item, object){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['2117w']/* new */})}
+                </div>
+            )
+        }
         return(
             <div>
                 <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
-                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
-                            action: () => this.focus_message(item, object)
+                                content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
+                                action: () => this.focus_message(item, object)
                             }}
                             swipeRight={{
-                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
-                            action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1510']/* 'channel-messages' */)
+                                content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
+                                action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1510']/* 'channel-messages' */)
                             }}
                             >
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>

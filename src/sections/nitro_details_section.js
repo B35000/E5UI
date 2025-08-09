@@ -131,6 +131,7 @@ class NitroDetailsSection extends Component {
             this.props.get_objects_messages(object['id'],  object['e5'])
             this.props.load_nitro_node_details(object, true)
             this.props.load_my_account_storage_info(object)
+            this.props.get_nitro_purchases(object)
         }
     }
 
@@ -225,9 +226,7 @@ class NitroDetailsSection extends Component {
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
-                    <div onClick={()=> this.play_album(object)}>
-                        {this.render_detail_item('7', item['banner-icon'])}
-                    </div>
+                    {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
@@ -1000,12 +999,20 @@ class NitroDetailsSection extends Component {
 
     render_buy_storage_button(object){
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        var purchase_history = this.props.app_state.current_nitro_purchases[object['e5_id']]
+        var last_purchase_time = 0
+        if(purchase_history != null && purchase_history.length > 0){
+            const last_event = purchase_history[purchase_history.length - 1]
+            last_purchase_time = last_event.returnValues.p6/* timestamp */
+        }
         if(
             node_details != null && 
             node_details != 'unavailable' && 
             node_details['max_buyable_capacity'] !== 0 && 
             node_details['price_per_megabyte'] != null && 
-            node_details['price_per_megabyte'][this.props.app_state.selected_e5] != null
+            node_details['price_per_megabyte'][this.props.app_state.selected_e5] != null &&
+            purchase_history != null &&
+            (Date.now()/1000) - last_purchase_time > (200)
         ){
             return(
                 <div>

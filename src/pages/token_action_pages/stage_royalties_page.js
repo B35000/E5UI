@@ -64,7 +64,7 @@ class StageRoyaltiesPage extends Component {
         get_transaction_ordering_tags_object: this.get_transaction_ordering_tags_object(),
         payout_amount:0, payout_title:'', batch_size:0,
 
-        get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(),
+        get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(), minimum_balance:0,
     };
 
     set_token(token_item){
@@ -77,7 +77,7 @@ class StageRoyaltiesPage extends Component {
                 get_transaction_ordering_tags_object:this.get_transaction_ordering_tags_object(),
                 payout_amount:0, payout_title:'', batch_size:0,
 
-                get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(),
+                get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(), minimum_balance:0,
             })
         }
         this.setState({token_item: token_item, e5: token_item['e5']})
@@ -290,8 +290,24 @@ class StageRoyaltiesPage extends Component {
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_transactions_per_batch_value_picked.bind(this)} theme={this.props.theme} power_limit={63}/>
 
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2883b']/* 'Set the minimum balance that will be valid for receiving a payout.' */, 'title':this.props.app_state.loc['2883a']/* 'Minimum Balance Count' */})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2883a']/* 'Minimum Balance Count' */, 'number':this.state.minimum_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2883a']/* 'Minimum Balance Count' */, 'subtitle':this.format_power_figure(this.state.minimum_balance), 'barwidth':this.calculate_bar_width(this.state.minimum_balance), 'number':this.format_account_balance_figure(this.state.minimum_balance), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_balance_value_picked.bind(this)} theme={this.props.theme} power_limit={63}/>
+
             </div>
         )
+    }
+
+    when_minimum_balance_value_picked(number){
+        this.setState({minimum_balance: number})
     }
 
     when_new_dat_time_value_set(value){
@@ -495,15 +511,21 @@ class StageRoyaltiesPage extends Component {
                 </div>
             )
         }
-        var total_number_of_transactions = exchange_royalty_data['balance_data'].length
+        var total_number_of_transactions = this.filter_exchange_royalty_data_by_minimum_balance(exchange_royalty_data['balance_data']).length
+        var total_filtered_transactions = exchange_royalty_data['balance_data'].length - total_number_of_transactions
         var time = (new Date(exchange_royalty_data['time']*1000))+''
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':(time), 'title':this.props.app_state.loc['2866']/* 'Balance Snapshot Time.' */})}
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2868']/* 'Total Payout Transactions.' */, 'number':total_number_of_transactions, 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */})}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2868']/* 'Total Payout Transactions.' */, 'number':this.format_account_balance_figure(total_number_of_transactions), 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2868']/* 'Total Payout Transactions.' */, 'subtitle':this.format_power_figure(total_number_of_transactions), 'barwidth':this.calculate_bar_width(total_number_of_transactions), 'number':this.format_account_balance_figure(total_number_of_transactions), 'barcolor':'', 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2883c']/* 'Ignored Payout Transactions.' */, 'number':this.format_account_balance_figure(total_filtered_transactions), 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2883c']/* 'Ignored Payout Transactions.' */, 'subtitle':this.format_power_figure(total_filtered_transactions), 'barwidth':this.calculate_bar_width(total_filtered_transactions), 'number':this.format_account_balance_figure(total_filtered_transactions), 'barcolor':'', 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */, })}
                 </div>
                 <div style={{height:10}}/>
                 
@@ -512,6 +534,16 @@ class StageRoyaltiesPage extends Component {
                 {this.render_individual_or_batch_transactions()}
             </div>
         )
+    }
+
+    filter_exchange_royalty_data_by_minimum_balance(balance_data){
+        const filtered_data = []
+        balance_data.forEach(balance_item => {
+            if(balance_item['balance'] >= this.state.minimum_balance){
+                filtered_data.push(balance_item)
+            }
+        });
+        return filtered_data
     }
 
     when_get_individual_or_batch_tags_object_updated(tag_obj){
@@ -540,7 +572,7 @@ class StageRoyaltiesPage extends Component {
 
     render_all_transactions_to_royalties(){
         var exchange_royalty_data = this.props.app_state.exchange_royalty_data[this.state.token_item['id']]
-        var total_number_of_transactions = exchange_royalty_data['balance_data']
+        var total_number_of_transactions = this.filter_exchange_royalty_data_by_minimum_balance(exchange_royalty_data['balance_data'])
         var total_held_shares = this.total_held_shares(total_number_of_transactions)
         if(total_number_of_transactions.length == 0 ||  total_held_shares.equals(0)){
             return(
@@ -607,7 +639,7 @@ class StageRoyaltiesPage extends Component {
 
     render_transaction_batches_to_royalties(){
         var exchange_royalty_data = this.props.app_state.exchange_royalty_data[this.state.token_item['id']]
-        var total_number_of_transactions = exchange_royalty_data['balance_data']
+        var total_number_of_transactions = this.filter_exchange_royalty_data_by_minimum_balance(exchange_royalty_data['balance_data'])
         var batches = this.get_batch_data(total_number_of_transactions, false)
         if(total_number_of_transactions.length == 0){
             return(
@@ -662,7 +694,7 @@ class StageRoyaltiesPage extends Component {
         var now = (new Date().getTime()/1000)+1000
 
         var exchange_royalty_data = this.props.app_state.exchange_royalty_data[this.state.token_item['id']]
-        var total_number_of_transactions = exchange_royalty_data['balance_data']
+        var total_number_of_transactions = this.filter_exchange_royalty_data_by_minimum_balance(exchange_royalty_data['balance_data'])
         var total_held_shares = this.total_held_shares(total_number_of_transactions)
 
         if(payout_title == ''){
@@ -687,7 +719,7 @@ class StageRoyaltiesPage extends Component {
             var me = this;
             
             var batches = this.get_batch_data(total_number_of_transactions, true)
-            var payout_data = {'payout_id':parseInt(Date.now()),'exchange_royalty_data':exchange_royalty_data, 'batches':batches, 'payout_title':payout_title, 'payout_amount':payout_amount, 'payout_start_timestamp':payout_start_timestamp, 'royalty_payout_account':royalty_payout_account, 'batch_size':batch_size, 'token_id':this.state.token_item['id'], 'sender':this.props.app_state.user_account_id[this.state.token_item['e5']], 'total_held_shares':total_held_shares}
+            var payout_data = {'payout_id':parseInt(Date.now()),'exchange_royalty_data': {'balance_data':total_number_of_transactions, 'time':exchange_royalty_data['time']} , 'batches':batches, 'payout_title':payout_title, 'payout_amount':payout_amount, 'payout_start_timestamp':payout_start_timestamp, 'royalty_payout_account':royalty_payout_account, 'batch_size':batch_size, 'token_id':this.state.token_item['id'], 'sender':this.props.app_state.user_account_id[this.state.token_item['e5']], 'total_held_shares':total_held_shares, 'minimum_balance':this.state.minimum_balance}
 
             this.setState({payout_data:payout_data})
 

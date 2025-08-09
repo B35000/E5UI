@@ -688,6 +688,16 @@ class ViewGroups extends Component {
                 </div>
             )
         }
+        else if(item_id=='16'){/* line with message */
+            var message = object_data == null ? 'e' : object_data['message']
+            return(
+                <div style={{ display: 'flex', alignItems: 'center', 'margin': '20px 20px 20px 20px' }}>
+                    <div style={{ flex: 1, height: '1px', backgroundColor: this.props.theme['line_color'] }} />
+                    <span style={{ margin: '0 1px', color:this.props.theme['primary_text_color'], 'font-size':'10px', 'translate': '0px -1px' }}>{message}</span>
+                    <div style={{ flex: 1, height: '1px', backgroundColor: this.props.theme['line_color'] }} />
+                </div>
+            )
+        }
     }
 
     render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data){
