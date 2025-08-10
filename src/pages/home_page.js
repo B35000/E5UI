@@ -1015,20 +1015,21 @@ class home_page extends Component {
     }
 
     when_e_button_tapped = () => {
-        let me = this;
-        if(Date.now() - this.last_all_click_time < 200){
-            //double tap
-            me.open_search_filter_section()
-            // if(this.is_page_valid()) me.setState({search_visible: !me.state.search_visible})
-            clearTimeout(this.all_timeout);
-        }else{
-            this.all_timeout = setTimeout(function() {
-                clearTimeout(this.all_timeout);
-                // single tap
-                me.when_e_plus_letter_clicked()
-            }, 200);
-        }
-        this.last_all_click_time = Date.now();
+        this.when_e_plus_letter_clicked()
+        // let me = this;
+        // if(Date.now() - this.last_all_click_time < 200){
+        //     //double tap
+        //     // me.open_search_filter_section()
+        //     // if(this.is_page_valid()) me.setState({search_visible: !me.state.search_visible})
+        //     clearTimeout(this.all_timeout);
+        // }else{
+        //     this.all_timeout = setTimeout(function() {
+        //         clearTimeout(this.all_timeout);
+        //         // single tap
+        //         me.when_e_plus_letter_clicked()
+        //     }, 200);
+        // }
+        // this.last_all_click_time = Date.now();
     }
 
     get_selected_tag_name(){
@@ -3184,6 +3185,11 @@ class home_page extends Component {
                 }
             }
 
+            var should_ignore_object_because_anonymous = false
+            if((this.is_post_anonymous(object) || this.should_hide_contract_info_because_private(object)) && searched_string_words.includes(object['id'].toString())){
+                should_ignore_object_because_anonymous = true;
+            }
+
             var object_author = object['author'] == null ? '0' : object['author']
             if(
                 object['id'].toString() == (searched_input) || 
@@ -3192,17 +3198,25 @@ class home_page extends Component {
                 entered_symbol_text.toLowerCase().includes(searched_input.toLowerCase()) ||
                 is_valid_video_or_audiopost == true
             ){
-                if(this.check_if_object_includes_tags(object, searched_tags) && !return_objs.includes(object)){
+                if(this.check_if_object_includes_tags(object, searched_tags) && !return_objs.includes(object) && should_ignore_object_because_anonymous == false){
                     return_objs.push(object)
                 }
             }
             else if(this.containsAllWords(entered_title_text, searched_string_words)){
-                if(this.check_if_object_includes_tags(object, searched_tags) && !return_objs.includes(object)){
+                if(this.check_if_object_includes_tags(object, searched_tags) && !return_objs.includes(object) && should_ignore_object_because_anonymous == false){
                     other_objs.push(object)
                 }
             }
         });
         return return_objs.concat(other_objs)
+    }
+
+    should_hide_contract_info_because_private(object){
+        var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
+        if(this.props.app_state.user_account_id[object['e5']] == object['author']){
+            return false
+        }
+        return should_show
     }
 
     containsAllWords(text, requiredWords) {
@@ -6524,7 +6538,7 @@ class home_page extends Component {
             return 5_300_000;
         }
         var contract_data = this.props.app_state.created_contract_mapping[e5][2]['data'];
-        var contract_config = obj['data'][1]
+        var contract_config = contract_data['data'][1]
         return contract_config[11]
 
     }

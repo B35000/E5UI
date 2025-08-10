@@ -2521,12 +2521,17 @@ return data['data']
         var myid = this.props.app_state.user_account_id[object['e5']]
         if(myid == null) myid = 1;
         var sender = this.get_senders_name_or_you(event.returnValues[senderp], event['e5']);
+        var object_id = object['id']
+        if(this.should_hide_contract_info_because_private(object)){
+            sender = '????'
+            object_id = '????'
+        }
 
         var details = object['ipfs'] == null ? 'Object ID' : object['ipfs'].entered_title_text
         if(this.state.data['type'] == 'bag'){
             details = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+' • '+sender
         }
-        var title = ' • '+object['id']+' • '+sender
+        var title = ' • '+object_id+' • '+sender
         if(this.state.data['type'] == 'message' || this.state.data['type'] == 'bill'){
             var recipient = object['event'].returnValues.p1
             title = ' • '+this.props.app_state.loc['2738ab']/* 'From $' */
@@ -2541,11 +2546,19 @@ return data['data']
         }
         var age = event == null ? 0 : event.returnValues[blockp]
         var time = object['event'] == null ? 0 : event.returnValues[timep]
+
+        var number = number_with_commas(age)
+        var barwidth = this.get_number_width(age)
+        var relativepower = this.get_time_difference(time)
+        if(this.should_hide_contract_info_because_private(object)){
+            number = '????'
+            relativepower = '????'
+        }
         
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'when_tapped':''},
             'id':{'details':details, 'title':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':barwidth, 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, }
         }
     }
 
@@ -2905,14 +2918,39 @@ return data['data']
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
-        var id_text = ' • '+object['id']
+        var object_id = object['id']
+        if(this.should_hide_contract_info_because_private(object)){
+            object_id = '????'
+        }
+        var id_text = ' • '+object_id
         if(object['id'] == 2) id_text = ' • '+'Main Contract'
         var sender = object['event'] == null ? '' : this.get_senders_name(object['event'].returnValues.p3, object);
+        if(this.should_hide_contract_info_because_private(object)){
+            sender = '????'
+        }
+        var number = number_with_commas(age)
+        var barwidth = this.get_number_width(age)
+        var relativepower = this.get_time_difference(time)
+        if(this.should_hide_contract_info_because_private(object)){
+            sender = '????'
+            id_text = ' • ????'
+            object_id = '????'
+            number = '????'
+            relativepower = '????'
+        }
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, }
         }
+    }
+
+    should_hide_contract_info_because_private(object){
+        var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
+        if(this.props.app_state.user_account_id[object['e5']] == object['author']){
+            return false
+        }
+        return should_show
     }
 
     format_proposal_item(object){

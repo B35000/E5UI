@@ -955,7 +955,7 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17,
   };
 
   get_static_assets(){
@@ -19925,16 +19925,9 @@ class App extends Component {
 
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
-    // var obj = {name:'hello world'}
-    // var cid = await this.store_data_in_web3(JSON.stringify(obj))
-    // console.log('---------------------load_e5_data-------------------------------')
-    // console.log(cid)
-    // var data = await this.fetch_objects_data_from_nft_storage(cid)
-    // console.log(data)
-    // const node = await IPFS.create()
-    // var data = node.cat(cid)
-    // console.log(data)
     await this.check_and_set_default_rpc()
+    this.update_nitro_privacy_signature()
+    await this.wait(1500)
     await this.load_root_config()
     await this.wait(500)
     if(this.is_allowed_in_e5()){
@@ -20003,11 +19996,36 @@ class App extends Component {
     var address = account.address
     const web3 = new Web3(web3_url);
     web3.eth.accounts.wallet.add(account.privateKey);
-    var current_block_number = parseInt(await web3.eth.getBlockNumber())
+    var block_number = await this.get_sync_block_from_nitro()
+    if(block_number == null || block_number == 0){
+      block_number = await web3.eth.getBlockNumber()
+    }
+    var current_block_number = parseInt(block_number)
     var signature_data = Math.floor(current_block_number/5)
     var signature = await web3.eth.sign(signature_data.toString(), address)
     console.log('update_nitro_privacy_signature','nitro privacy address', address)
     this.setState({nitro_privacy_signature: signature})
+  }
+
+  get_sync_block_from_nitro = async () => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
+    var request = `${beacon_node}/`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      if(obj.success == true && obj.b != null){
+        return obj.b
+      }
+    }
+    catch(e){
+      console.log(e)
+    }
   }
 
 
@@ -25235,18 +25253,21 @@ class App extends Component {
     var created_subscription_events = null
     var my_paid_subscription_events = null
     var created_index_events = null
+    var payment_history_events = null
 
     if(this.state.beacon_node_enabled == true){
       var event_params = [
         [web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ }],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account }],
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3)}],
+        [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
       var all_events = await this.load_multiple_events_from_nitro(event_params)
 
       created_subscription_events = all_events[0]
       my_paid_subscription_events = all_events[1]
       created_index_events = all_events[2]
+      payment_history_events = all_events[3]
     }
     else{
       created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ })
@@ -25254,6 +25275,8 @@ class App extends Component {
       my_paid_subscription_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account })
 
       created_index_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)})
+
+      payment_history_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account})
     }
 
     var valid_ids = this.get_ids_from_events(created_index_events)
@@ -25303,8 +25326,6 @@ class App extends Component {
       created_subscription_events = my_events
     }
 
-    var payment_history_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account})
-
     var created_subscriptions = []
     for(var i=0; i<created_subscription_events.length; i++){
       var id = created_subscription_events[i].returnValues.p1
@@ -25325,8 +25346,8 @@ class App extends Component {
     }
     var my_payments_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await F5contractInstance.methods.f229(created_subscriptions, account_as_list).call((error, result) => {});
 
-
-    var all_data = await this.fetch_multiple_objects_data(created_subscriptions, web3, e5, contract_addresses)
+    var starter = my_paid_subs.length > 53 ? my_paid_subs.length : 53;
+    var all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(0, starter), web3, e5, contract_addresses)
 
     for(var i=0; i<created_subscriptions.length; i++){
       var subscription_data = all_data[created_subscriptions[i]] == null ? await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses): all_data[created_subscriptions[i]]
@@ -25373,6 +25394,11 @@ class App extends Component {
 
         this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
         // await this.wait(150)
+      }
+
+      if(i+1 >= created_subscriptions.length && all_data[created_subscriptions[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 
@@ -25738,7 +25764,8 @@ class App extends Component {
 
 
     var enter_exit_accounts_notifications = []
-    var all_data = await this.fetch_multiple_objects_data(created_contracts, web3, e5, contract_addresses)
+    var starter = entered_contracts.length > 53 ? entered_contracts.length+1 : 53;
+    var all_data = await this.fetch_multiple_objects_data(created_contracts.slice(0, starter), web3, e5, contract_addresses)
     
     for(var i=0; i<created_contracts.length; i++){
       var contracts_data = all_data[created_contracts[i]] == null ? await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses) : all_data[created_contracts[i]]
@@ -25846,6 +25873,11 @@ class App extends Component {
 
         this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone, enter_exit_accounts_notifications: enter_exit_accounts_notifications_clone})
         // await this.wait(150)
+      }
+
+      if(i+1 >= created_contracts.length && all_data[created_contracts[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_contracts.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 
@@ -26078,8 +26110,8 @@ class App extends Component {
     // var senders_vote_in_proposal_for_all_proposals = await G52contractInstance.methods.f237(my_proposal_ids, account_as_list).call((error, result) => {});
 
     this.record_number_of_items(e5, 'proposals',my_proposal_ids.length)
-
-    var all_data = await this.fetch_multiple_objects_data(my_proposal_ids, web3, e5, contract_addresses)
+    var starter = 53
+    var all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(0, starter), web3, e5, contract_addresses)
 
     for(var i=0; i<my_proposal_ids.length; i++){
       var proposals_data = all_data[my_proposal_ids[i]] == null ? await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses) : all_data[my_proposal_ids[i]]
@@ -26147,6 +26179,11 @@ class App extends Component {
         my_proposals_clone[e5] = created_proposal_object_data
         this.setState({my_proposals: my_proposals_clone})
         // await this.wait(150)
+      }
+
+      if(i+1 >= my_proposal_ids.length && all_data[my_proposal_ids[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 
@@ -26336,7 +26373,8 @@ class App extends Component {
     token_symbol_directory['wei'] = 0
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
 
-    var all_data = await this.fetch_multiple_objects_data(created_tokens, web3, e5, contract_addresses)
+    var starter = exchanges_to_load_first.length > 53 ? exchanges_to_load_first.length+2 : 53;
+    var all_data = await this.fetch_multiple_objects_data(created_tokens.slice(0, starter), web3, e5, contract_addresses)
 
     for(var i=0; i<created_tokens.length; i++){
       var tokens_data = all_data[created_tokens[i]] == null ? await this.fetch_objects_data(created_tokens[i], web3, e5, contract_addresses) : all_data[created_tokens[i]]
@@ -26450,6 +26488,11 @@ class App extends Component {
 
         this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
         // await this.wait(150)
+      }
+
+      if(i+1 >= created_tokens.length && all_data[created_tokens[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_tokens.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 
@@ -26825,6 +26868,11 @@ class App extends Component {
         this.setState({created_posts: created_posts_clone}) 
         // await this.wait(150)       
       }
+
+      if(i+1 >= created_post_events.length && all_data[created_post_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_post_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      }
     }
 
     var created_posts_clone = structuredClone(this.state.created_posts)
@@ -26937,6 +26985,11 @@ class App extends Component {
         created_channels_clone[e5] = created_channel
         this.setState({created_channels: created_channels_clone})
         // await this.wait(150)
+      }
+
+      if(i+1 >= created_channel_events.length && all_data[created_channel_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_channel_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 
@@ -27090,6 +27143,11 @@ class App extends Component {
 
         this.setState({created_jobs: created_jobs_clone, created_job_mappings:created_job_mappings_clone});
         // await this.wait(150)
+      }
+
+      if(i+1 >= created_job_events.length && all_data[created_job_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_job_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 
@@ -27429,6 +27487,11 @@ class App extends Component {
         this.setState({created_stores: created_stores_clone, created_store_mappings:created_store_mappings_clone})
         // await this.wait(150)
       }
+
+      if(i+1 >= created_store_events.length && all_data[created_store_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_store_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      }
     }
 
 
@@ -27533,7 +27596,7 @@ class App extends Component {
     var my_created_bag_ids =  []
     var is_first_time = this.state.created_bags[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     var response_count_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
 
@@ -27596,6 +27659,11 @@ class App extends Component {
         created_bags_clone[e5] = my_created_bags
         this.setState({created_bags: created_bags_clone})
         // await this.wait(150)
+      }
+
+      if(i+1 >= created_bag_events.length && all_data[created_bag_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_bag_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
     // console.log('all_data2', 'reached end of loading bag data')
@@ -27806,6 +27874,11 @@ class App extends Component {
         this.setState({created_contractors: created_contractors_clone,})
         // await this.wait(150)
       }
+
+      if(i+1 >= created_contractor_events.length && all_data[created_contractor_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_contractor_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      }
     }
 
 
@@ -27968,6 +28041,11 @@ class App extends Component {
         this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone, my_acquired_audios: my_acquired_audios}) 
         // await this.wait(150)       
       }
+
+      if(i+1 >= created_audio_events.length && all_data[created_audio_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_audio_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      }
     }
 
     var created_audios_clone = structuredClone(this.state.created_audios)
@@ -28123,6 +28201,11 @@ class App extends Component {
         this.setState({created_videos: created_videos_clone, created_video_mappings: created_video_mappings_clone, my_acquired_videos: my_acquired_videos})   
         // await this.wait(150)     
       }
+
+      if(i+1 >= created_video_events.length && all_data[created_video_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_video_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      }
     }
 
     var created_videos_clone = structuredClone(this.state.created_videos)
@@ -28243,7 +28326,7 @@ class App extends Component {
     var is_first_time = this.state.created_nitros[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
 
     for(var i=0; i<created_nitro_events.length; i++){
       var id = created_nitro_events[i].returnValues.p2
@@ -28290,6 +28373,11 @@ class App extends Component {
         
         this.setState({created_nitros: created_nitros_clone, created_nitro_mappings: created_nitro_mappings_clone})   
         // await this.wait(150)     
+      }
+
+      if(i+1 >= created_nitro_events.length && all_data[created_nitro_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_nitro_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 
@@ -28382,6 +28470,11 @@ class App extends Component {
         var created_polls_clone = structuredClone(this.state.created_polls)
         created_polls_clone[e5] = created_posts
         this.setState({created_polls: created_polls_clone}) 
+      }
+
+      if(i+1 >= created_post_events.length && all_data[created_post_events[i+1]] == null){
+        await this.wait(3000)
+        all_data = await this.fetch_multiple_objects_data(created_post_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
       }
     }
 

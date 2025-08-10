@@ -1005,11 +1005,22 @@ class PostListSection extends Component {
         var id_text = ' • '+object['id']
         if(object['id'] == 2) id_text = ' • '+'Main Contract'
         var sender = object['event'] == null ? '' : this.get_senders_name(object['event'].returnValues.p3, object);
+        var number = number_with_commas(age)
+        var barwidth = this.get_number_width(age)
+        var relativepower = this.get_time_difference(time)
+        var object_id = object['id']
+        if(this.should_hide_contract_info_because_private(object)){
+            sender = '????'
+            id_text = ' • ????'
+            object_id = '????'
+            number = '????'
+            relativepower = '????'
+        }
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, },
+            'min':{'details':object['e5']+' • '+object_id+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
 
@@ -1019,6 +1030,14 @@ class PostListSection extends Component {
         //     return;
         // }
         this.props.when_contract_item_clicked(index, object['id'], object['e5'], null, object)
+    }
+
+    should_hide_contract_info_because_private(object){
+        var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
+        if(this.props.app_state.user_account_id[object['e5']] == object['author']){
+            return false
+        }
+        return should_show
     }
 
 
@@ -1927,7 +1946,7 @@ class PostListSection extends Component {
 
         var selector_item = type == 31/* token */ || type == 19/* audioport */ || type == 20/* videoport */ || type == 21/* nitro */ ? '8' : '3'
         
-        if(this.check_if_sender_has_paid_subscriptions(object) || this.is_post_preview_enabled(object) || post_author == me){
+        if((this.check_if_sender_has_paid_subscriptions(object) || this.is_post_preview_enabled(object) || post_author == me) && !this.is_post_anonymous(object)){
             if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
                 return(
                     <div onClick={() => this.when_link_object_clicked(index, object, type)}>
@@ -4645,13 +4664,41 @@ return data['data']
     }
 
     render_ethers_object(item, index){
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return ( 
+        var clone = structuredClone(item['label'])
+        clone['title'] = this.get_ethers_wallet_status_icon(item)+clone['title']
+        return (
             <div onClick={() => this.when_ether_object_clicked(index, item)}>
                 {this.render_detail_item('8', item['label'])}
             </div>
         );
+    }
+
+    get_ethers_wallet_status_icon(item){
+        if(this.get_gas_limit(item['e5']) == 0){
+            if(this.props.app_state.wallet_status[item['e5']] == 'synchronizing'){
+                return '⏳ '/* synchronizing... */
+            }else{
+                return '⚠️ ' /* failed to load data */
+            }
+        }else{
+            return '' /* synchronized */
+        }
+    }
+
+    get_gas_limit(e5){
+        try{
+            return this.format_account_balance_figure(this.get_latest_block_data(e5).gasLimit)
+        }catch(e){
+            // console.log(e)
+            return 0
+        }
+    }
+
+    get_latest_block_data(e5){
+        if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
+            return {}
+        }
+        return this.props.app_state.last_blocks[e5][0];
     }
 
     get_ethers_data(){

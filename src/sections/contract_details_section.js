@@ -262,6 +262,9 @@ class ContractDetailsSection extends Component {
         var item = this.get_contract_details_data(object)
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         var author = object['event'] != null ? this.get_senders_name(object['event'].returnValues.p3, object) : 'Unknown'
+        if(this.should_hide_contract_info_because_private(object)){
+            author = '????'
+        }
         return (
             <div style={{ 'background-color': background_color, 'border-radius': '15px', 'margin': '5px 10px 2px 10px', 'padding': '0px 10px 0px 10px' }}>
                 <div style={{ 'overflow-y': 'auto', width: '100%', height: he, padding: '0px 10px 0px 10px' }}>
@@ -878,10 +881,21 @@ class ContractDetailsSection extends Component {
         var consensus_majority = contract_config[7] == 0 ? bigInt('1e18') : contract_config[7]
         var voter_weight_target_name = this.get_exchange_name_from_id(contract_config[33], object)
         var voter_weight_balance = this.get_voter_weight_balance(contract_config[33], object)
+
+        var number = number_with_commas(age)
+        var barwidth = this.get_number_width(age)
+        var relativepower = this.get_time_difference(time)
+        var object_id = object['id']
+        if(this.should_hide_contract_info_because_private(object)){
+            object_id = '????'
+            number = '????'
+            relativepower = '????'
+        }
+
         return {
             'tags': { 'active_tags': tags, 'index_option': 'indexed', 'selected_tags':this.props.app_state.job_section_tags,'when_tapped':'select_deselect_tag' },
-            'id': { 'title': object['e5']+' • '+object['id'], 'details': title, 'size': 'l' },
-            'age': { 'style': 'l', 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle': '', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, },
+            'id': { 'title': object['e5']+' • '+object_id, 'details': title, 'size': 'l' },
+            'age': { 'style': 'l', 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle': '', 'barwidth': barwidth, 'number': `${number}`, 'barcolor': '', 'relativepower': `${relativepower} `+this.props.app_state.loc['2047']/* ago */, },
 
             'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */, 'size': 'l' },
 
@@ -920,6 +934,14 @@ class ContractDetailsSection extends Component {
 
             'voter_weight_balance': { 'style': 'l', 'title': this.props.app_state.loc['1627']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${number_with_commas(voter_weight_balance)}`, 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* `units` */, 'n':voter_weight_balance},
         }
+    }
+
+    should_hide_contract_info_because_private(object){
+        var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
+        if(this.props.app_state.user_account_id[object['e5']] == object['author'] || this.is_sender_part_of_contract(object)){
+            return false
+        }
+        return should_show
     }
 
     get_exchange_name_from_id(id, object){
@@ -1420,7 +1442,7 @@ class ContractDetailsSection extends Component {
 
 
     get_item_logs(object, event) {
-        if (this.props.app_state.contract_events[object['id']] == null) {
+        if (this.props.app_state.contract_events[object['id']] == null || this.should_hide_contract_info_because_private(object)) {
             return []
         }
         return this.props.app_state.contract_events[object['id']][event]
