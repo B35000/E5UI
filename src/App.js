@@ -37064,9 +37064,7 @@ class App extends Component {
       var obj = JSON.parse(data);
       var success = obj.success
       if(success == true){
-        var clone = structuredClone(this.state.nitro_node_details)
-        clone[object['e5_id']] = obj
-        this.setState({nitro_node_details:clone})
+        await this.record_key_in_nitro_node(obj, link, object)
       }else{
         var clone = structuredClone(this.state.nitro_node_details)
         clone[object['e5_id']] = 'unavailable'
@@ -37084,6 +37082,7 @@ class App extends Component {
     const user_temp_hash = this.makeid(53);
     const user_temp_encryption_key = this.makeid(35)
     const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'])
+    
     if(encrypted_user_temp_encryption_key == null){
       var clone = structuredClone(this.state.nitro_node_details)
       clone[object['e5_id']] = 'unavailable'
@@ -37119,7 +37118,10 @@ class App extends Component {
         var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
         
         clone[object['e5_id']] = marco_obj
-        nitro_url_temp_hash_data_clone[link] = {'user_temp_hash': user_temp_hash, 'user_temp_encryption_key' : user_temp_encryption_key}
+        nitro_url_temp_hash_data_clone[link] = {
+          'user_temp_hash': user_temp_hash, 
+          'user_temp_encryption_key' : user_temp_encryption_key
+        }
         
         this.setState({nitro_node_details: clone, nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone})
       }else{
