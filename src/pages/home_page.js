@@ -5601,7 +5601,7 @@ class home_page extends Component {
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1264ao']/* 'polls' */){
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_poll_item: tem['e5_id']})
-         }
+        }
         
     }
 

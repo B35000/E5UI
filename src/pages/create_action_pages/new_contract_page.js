@@ -71,9 +71,9 @@ class NewContractPage extends Component {
 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
-        exchange_id:'', price_amount:0, price_data:[], 
+        exchange_id:'', price_amount:0, price_data:[],
 
-        page:0, 
+        page:0,
 
         content_channeling_setting: this.props.app_state.content_channeling, device_language_setting: this.props.app_state.device_language, device_country: this.props.app_state.device_country,
 
@@ -2383,13 +2383,13 @@ class NewContractPage extends Component {
         }
 
         if(index_tags.length == 0){
-            this.props.notify(this.props.app_state.loc['160'], 1700)
+            this.props.notify(this.props.app_state.loc['160'], 3700)
         }
         else if(title == ''){
-            this.props.notify(this.props.app_state.loc['251'], 1700)
+            this.props.notify(this.props.app_state.loc['251'], 3700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify(this.props.app_state.loc['252'], 1700)
+            this.props.notify(this.props.app_state.loc['252'], 3700)
         }
         else{
             var me = this

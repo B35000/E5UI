@@ -17,6 +17,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { Component } from 'react';
+
 function getOS() {
   if(iOS()) return 'iOS'
   const userAgent = window.navigator.userAgent,
@@ -54,20 +55,19 @@ function iOS() {
   || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 }
 
-
 class TextInput extends Component {
     
     state = {
-        selected: 0,
-        set_text:''
+      selected: 0,
+      set_text:''
     };
 
     render(){
-        return(
-            <div>
-                {this.render_text_input_field()}
-            </div>
-        )
+      return(
+        <div>
+          {this.render_text_input_field()}
+        </div>
+      )
     }
 
 
@@ -77,9 +77,9 @@ class TextInput extends Component {
       var f = os == 'iOS' ? '16px' : '13px'
       return(
         <div style={{'padding': '0px 0px 0px 0px'}}>
-            <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'],'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
-                  {this.render_textarea_or_input(f)}
-            </div>
+          <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'],'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
+            {this.render_textarea_or_input(f)}
+          </div>
         </div>
       )
     }

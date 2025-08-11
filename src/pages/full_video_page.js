@@ -542,7 +542,8 @@ class FullVideoPage extends Component {
                     const start = focused_timestamp_info.encryptedStartByte
                     const end = start + focused_timestamp_info.encryptedSize - 1;
                     if(this.update_start_time_pos == null){
-                        const response = await fetch(encodeURI(track_data['data'].replace('/eee', this.props.app_state.nitro_privacy_signature)), {
+                        const link = this.props.construct_encrypted_link_from_ecid_object(track_data, 'data')
+                        const response = await fetch(encodeURI(link), {
                             headers: { Range: `bytes=${start}-${end}` },
                         });
                         if (response.status === 206 || response.status === 200) {
