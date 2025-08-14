@@ -55,6 +55,7 @@ class ViewGroups extends Component {
       
     state = {
         keyboard_showing: false,
+        animate: false,
     };
 
     render(){
@@ -341,11 +342,20 @@ class ViewGroups extends Component {
             }
             return(
                 <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <button style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
+                    <style>{`
+                        .button-click {
+                            animation: clickAnim 0.2s ease;
+                        }
+                        @keyframes clickAnim {
+                            0%   { transform: scale(1); background-color: ${this.props.theme['button_color']}; }
+                            50%  { transform: scale(0.95); background-color: ${this.props.theme['button_color']}; }
+                            100% { transform: scale(1); background-color: ${this.props.theme['button_color']}; }
+                        }
+                    `}</style>
+                    <button className={'button-click'} style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
                       {text}
                     </button>
-                </div>
-                
+                </div>  
             );
         }
         else if(item_id=='6'){/* chart */
@@ -793,6 +803,10 @@ class ViewGroups extends Component {
             e.preventDefault()
             console.log('prevented default!')
         }
+
+        this.setState({ animate: true }, () => {
+            setTimeout(() => this.setState({ animate: false }), 200); // match animation duration
+        });
     }
 
     get_tag_color(tag, selected_tags, tag_background_color){

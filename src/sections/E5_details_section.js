@@ -141,6 +141,12 @@ class E5DetailsSection extends Component {
                     <div onClick={() => this.when_address_tapped(obj)}>
                         {this.render_detail_item('3', item['address'])}
                     </div>
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['e5_tx_height']['title'], 'number':item['e5_tx_height']['n'], 'relativepower':item['e5_tx_height']['relativepower']})}>
+                        {this.render_detail_item('2', item['e5_tx_height'])}
+                    </div>
+                    
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
                    <div style={{height:10}}/>
@@ -199,6 +205,7 @@ class E5DetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_anchor_price']['title'], 'number':item['tx_gas_anchor_price']['n'], 'relativepower':item['tx_gas_anchor_price']['relativepower']})}>
                         {this.render_detail_item('2', item['tx_gas_anchor_price'])}
                     </div>
+
 
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_lower_limit']['title'], 'number':item['tx_gas_lower_limit']['n'], 'relativepower':item['tx_gas_lower_limit']['relativepower']})}>
@@ -349,6 +356,7 @@ class E5DetailsSection extends Component {
         var chain = this.props.app_state.e5s[obj['id']].token
         var address = this.props.app_state.e5s[obj['id']].e5_address
         var contract_config = obj['data'][1]
+        var e5_height = this.props.app_state.e5s_transaction_height[obj['id']]
         return{
             'label':{'header':obj['id'], 'subtitle':chain, 'size':'l', 'image': image},
             'tags':{'active_tags':[obj['id'],this.props.app_state.loc['2244']/* 'E5' */, this.props.app_state.loc['2245']/* 'Main' */, this.props.app_state.loc['361']/* 'Contract' */], 'index_option':'indexed'},
@@ -393,6 +401,8 @@ class E5DetailsSection extends Component {
             'primary_tx_account': {'title':contract_config[39], 'details':this.props.app_state.loc['2260']/* 'Primary Transaction Account' */, 'size':'l'},
 
             'primary_account_tx_period': {'title':this.get_time_diff(contract_config[40]), 'details':this.props.app_state.loc['2261']/* 'Primary Account Transaction Period' */, 'size':'l'},
+
+            'e5_tx_height':{'style':'l','title':this.props.app_state.loc['2336r']/* 'E5 Transaction Height' */, 'subtitle':this.format_power_figure(e5_height), 'barwidth':this.calculate_bar_width(e5_height), 'number':this.format_account_balance_figure(e5_height), 'relativepower':'???', 'n':e5_height},
         }
     }
 
