@@ -22125,11 +22125,11 @@ class App extends Component {
     return filtered_events
   }
 
-  load_events_from_nitro = async (_web3, contract_instance, event_id, e5, filter) => {
+  load_events_from_nitro = async (_web3, contract_instance, event_id, e5, filter, load_limit) => {
     var requested_contract = this.get_contract_id_from_contract(e5, contract_instance)
     var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':event_id, 'filter':filter}
     const params = new URLSearchParams({
-      arg_string:JSON.stringify({requests:[event_request]}),
+      arg_string:JSON.stringify({requests:[event_request], load_limit: load_limit}),
     });
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;

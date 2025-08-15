@@ -102,11 +102,11 @@ class home_page extends Component {
         
         view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
-        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], viewed_nitros:[], viewed_polls:[],
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], viewed_nitros:[], viewed_polls:[], viewed_tokens:[],
         
         confirmation_dialog_box: false, contact_to_add:0, 
         
-        pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[], pinned_nitros:[], pinned_bills:[], pinned_polls:[],
+        pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[], pinned_nitros:[], pinned_bills:[], pinned_polls:[], all_pinns:[], pinned_tokens:[],
         
         page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[],
 
@@ -215,6 +215,9 @@ class home_page extends Component {
             if(cupcake_state.pinned_audios != null){
                 this.setState({pinned_audios: cupcake_state.pinned_audios})
             }
+            if(cupcake_state.all_pinns != null){
+                this.setState({all_pinns: cupcake_state.all_pinns})
+            }
         }
     }
 
@@ -241,6 +244,7 @@ class home_page extends Component {
             pinned_contract: this.state.pinned_contract,
             pinned_job: this.state.pinned_job,
             pinned_audios:this.state.pinned_audios,
+            all_pinns:this.state.all_pinns,
             // tabs: this.state.tabs
         }
     }
@@ -369,12 +373,20 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
           ],
         }
 
         obj[this.props.app_state.loc['1264aj']/* 'bills' */] = [
             ['xor','',0], [this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
+        ]
+
+        obj[this.props.app_state.loc['1218']/* 'ends' */] = [
+            ['xor','',0], [this.props.app_state.loc['1218']/* 'ends' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264ba']/* 'main ⚫' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
+        ]
+
+        obj[this.props.app_state.loc['1219']/* 'spends' */] = [
+            ['xor','',0], [this.props.app_state.loc['1219']/* 'spends' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264bb']/* 'main ⚪' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1264bc']/* 'hyper 🌟' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
         ]
 
         return obj
@@ -973,8 +985,12 @@ class home_page extends Component {
       else{
         var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
         if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
-            return 'bills'
+            return 'bills';
         }
+        else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */ || this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
+            return '8';
+        }
+
         var data = {'ends ☝️':'8','spends 🫰':'8'};
         data[this.props.app_state.loc['1218']/* ends ☝️ */] = '8'
         data[this.props.app_state.loc['1219']/* spends 🫰 */] = '8'
@@ -1208,6 +1224,9 @@ class home_page extends Component {
                 if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
             }
         });
+
+
+        
         this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data, [])
     }
 
@@ -1225,6 +1244,12 @@ class home_page extends Component {
             selected_page = 'w'
             if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
                 selected_page = this.props.app_state.loc['1264aj']/* 'bills' */
+            }
+            else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */){
+                selected_page = this.props.app_state.loc['1218']/* 'ends' */
+            }
+            else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
+                selected_page = this.props.app_state.loc['1219']/* 'spends' */
             }
         }
         return selected_page;
@@ -1421,6 +1446,12 @@ class home_page extends Component {
             if(tag_group['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
                 selected_page = this.props.app_state.loc['1264aj']/* 'bills' */
             }
+            else if(tag_group['i'].active == this.props.app_state.loc['1218']/* 'ends' */){
+                selected_page = this.props.app_state.loc['1218']/* 'ends' */
+            }
+            else if(tag_group['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
+                selected_page = this.props.app_state.loc['1219']/* 'spends' */
+            }
         }
 
         var id = this.get_page_id()
@@ -1431,16 +1462,60 @@ class home_page extends Component {
         }
         
         var posts_to_load = []
+        var targeted_accounts = []
         var searched_data = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
+        var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
+        contained_words_in_string.forEach(word => {
+            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
+                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+            }
+        });
+        var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
+        the_other_words.forEach(word => {
+            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            if(trimmed_word.length > 3){
+                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+            }
+        });
+
+
         if(posts_to_load.length == 0 && (id == this.props.app_state.loc['1264k']/* 'audioport' */+this.props.app_state.loc['1264l']/* 'acquired' */ || id == this.props.app_state.loc['1264k']/* 'audioport' */+this.props.app_state.loc['1264m']/* 'playlists' */)){
             //if viewing my collection or my playlists, load my albums first
             posts_to_load = posts_to_load.concat(this.props.app_state.my_albums)
         }
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, [])
+        
+
+        if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264at']/* 'participated ✍' */)){
+            var my_objects = this.props.app_state.my_objects
+            var my_channels = this.props.app_state.my_channels
+            var my_polls = this.props.app_state.my_polls
+            
+            if(id == this.props.app_state.loc['1264ao']/* 'polls' */){
+                targeted_accounts = targeted_accounts.concat(my_polls)
+            }
+            else if(id == this.props.app_state.loc['1214']/* 'channels' */){
+                targeted_accounts = targeted_accounts.concat(my_channels)
+            }
+            else{
+                targeted_accounts = targeted_accounts.concat(my_objects)
+            }
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ag']/* 'following' */)){
+            const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags()
+            posts_to_load = posts_to_load.concat(following_tags.current_tags, following_tags.extra_tags)
+            targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts)
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1222']/* 'pinned 📌' */)){
+            posts_to_load = posts_to_load.concat(this.state.all_pinns)
+        }
+
+
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
 
         var me = this;
         setTimeout(function() {
@@ -1450,16 +1525,60 @@ class home_page extends Component {
 
     reload_section_data(id, selected_page){
         var posts_to_load = []
+        var targeted_accounts = []
         var searched_data = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
+        
+        var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
+        contained_words_in_string.forEach(word => {
+            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
+                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+            }
+        });
+        var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
+        the_other_words.forEach(word => {
+            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            if(trimmed_word.length > 3){
+                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+            }
+        });
+
+
         if(posts_to_load.length == 0 && (id == this.props.app_state.loc['1264k']/* 'audioport' */+this.props.app_state.loc['1264l']/* 'acquired' */ || id == this.props.app_state.loc['1264k']/* 'audioport' */+this.props.app_state.loc['1264m']/* 'playlists' */)){
             //if viewing my collection or my playlists, load my albums first
             posts_to_load = posts_to_load.concat(this.props.app_state.my_albums)
         }
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, [])
+        
+
+        if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264at']/* 'participated ✍' */)){
+            var my_objects = this.props.app_state.my_objects
+            var my_channels = this.props.app_state.my_channels
+            var my_polls = this.props.app_state.my_polls
+            
+            if(id == this.props.app_state.loc['1264ao']/* 'polls' */){
+                targeted_accounts = targeted_accounts.concat(my_polls)
+            }
+            else if(id == this.props.app_state.loc['1214']/* 'channels' */){
+                targeted_accounts = targeted_accounts.concat(my_channels)
+            }
+            else{
+                targeted_accounts = targeted_accounts.concat(my_objects)
+            }
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ag']/* 'following' */)){
+            const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags()
+            posts_to_load = posts_to_load.concat(following_tags.current_tags, following_tags.extra_tags)
+            targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts)
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1222']/* 'pinned 📌' */)){
+            posts_to_load = posts_to_load.concat(this.state.all_pinns)
+        }
+
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
     }
 
     
@@ -2117,7 +2236,6 @@ class home_page extends Component {
         }
 
         var sorted_token_exchange_data = []
-        // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < token_exchanges.length; i++) {
             var myid = this.props.app_state.user_account_id[token_exchanges[i]['e5']]
             if(myid == null){
@@ -2150,6 +2268,105 @@ class home_page extends Component {
         }
 
         return this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
+    }
+
+    get_spend_token_items(all){
+        var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+
+        if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1219']/* 'spends' */|| all != null){
+            return this.get_exchange_tokens(5, all)
+        }
+        else if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
+            return this.get_exchange_tokens(5, all)
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264bb']/* 'main ⚪' */){
+            var all_tokens = this.get_exchange_tokens(5, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (object['id'] == 5)
+            })
+            return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */){
+            var all_tokens = this.get_exchange_tokens(5, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (object['balance'] != 0)
+            })
+            return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264bc']/* 'hyper 🌟' */){
+            var all_tokens = this.get_exchange_tokens(5, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (this.props.app_state.end_tokens[object['e5']].includes(object['id']))
+            })
+            return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
+            var all_tokens = this.get_exchange_tokens(5, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (this.state.viewed_tokens.includes(object['id']))
+            })
+            return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
+            var all_tokens = this.get_exchange_tokens(5, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (this.state.pinned_tokens.includes(object['id']))
+            })
+            return main_tokens
+        }
+        else {
+            var all_tokens = this.get_exchange_tokens(5, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (this.props.app_state.user_account_id[object['e5']] == object['author'])
+            })
+            return main_tokens
+        }
+    }
+
+    get_end_token_items(all){
+        var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+
+        if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1218']/* 'ends' */ || all != null){
+            return this.get_exchange_tokens(3, all)
+        }
+        else if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
+            return this.get_exchange_tokens(3, all)
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264ba']/* 'main ⚫' */){
+            var all_tokens = this.get_exchange_tokens(3, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (object['id'] == 3)
+            })
+            return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */){
+            var all_tokens = this.get_exchange_tokens(3, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (object['balance'] != 0)
+            })
+            return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
+            var all_tokens = this.get_exchange_tokens(3, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (this.state.viewed_tokens.includes(object['id']))
+            })
+            return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
+            var all_tokens = this.get_exchange_tokens(3, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (this.state.pinned_tokens.includes(object['id']))
+            })
+            return main_tokens
+        }
+        else {
+            var all_tokens = this.get_exchange_tokens(3, all)
+            var main_tokens = all_tokens.filter(function (object) {
+                return (this.props.app_state.user_account_id[object['e5']] == object['author'])
+            })
+            return main_tokens
+        }
     }
 
     get_job_items(all){
@@ -3773,6 +3990,8 @@ class home_page extends Component {
             show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
 
             current_search={searched_data} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} play_video={this.props.play_video.bind(this)} play_song_from_list_section={this.play_song_from_list_section.bind(this)} play_video_from_list_section={this.play_video_from_list_section.bind(this)} fetch_uploaded_data_from_ipfs={this.props.fetch_uploaded_data_from_ipfs.bind(this)}
+
+            get_spend_token_items={this.get_spend_token_items.bind(this)} get_end_token_items={this.get_end_token_items.bind(this)}
             />
         )
     }
@@ -3796,10 +4015,17 @@ class home_page extends Component {
 
     when_ends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_end_item: id+e5})
-        if(ignore_set_details_data == null) this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
+        var viewed_tokens_clone = this.state.viewed_tokens.slice()
+        var pos = viewed_tokens_clone.indexOf(id)
+        if(pos == -1){
+            viewed_tokens_clone.push(id)
+            this.setState({viewed_tokens: viewed_tokens_clone})
+            this.update_cookies()
+        }
         this.props.load_extra_token_data(object)
         this.reset_post_detail_object()
-        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends ☝️' */)
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends' */)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -3812,9 +4038,16 @@ class home_page extends Component {
 
     when_spends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_spend_item: id+e5})
-        if(ignore_set_details_data == null) this.set_detail_data()
+        if(ignore_set_details_data == null) this.set_detail_data();
+        var viewed_tokens_clone = this.state.viewed_tokens.slice()
+        var pos = viewed_tokens_clone.indexOf(id)
+        if(pos == -1){
+            viewed_tokens_clone.push(id)
+            this.setState({viewed_tokens: viewed_tokens_clone})
+            this.update_cookies()
+        }
         this.props.load_extra_token_data(object)
-        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends 🫰' */)
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */)
         this.reset_post_detail_object()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -4381,6 +4614,12 @@ class home_page extends Component {
             if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
                 selected_tag = this.state.wallet_page_tags_object['i'].active
             }
+            else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */){
+                selected_tag = this.state.wallet_page_tags_object['i'].active
+            }
+            else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
+                selected_tag = this.state.wallet_page_tags_object['i'].active
+            }
         }
         this.setState({detail_page: selected_page, detail_selected_tag: selected_tag})
     }
@@ -4786,6 +5025,7 @@ class home_page extends Component {
     }
 
     pin_bag(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_bag_clone = this.state.pinned_bags.slice()
         var pos = pinned_bag_clone.indexOf(id)
@@ -4809,6 +5049,7 @@ class home_page extends Component {
     }
 
     pin_channel(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_channel_clone = this.state.pinned_channels.slice()
         var pos = pinned_channel_clone.indexOf(id)
@@ -4832,6 +5073,7 @@ class home_page extends Component {
     }
 
     pin_item(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_item.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -4855,6 +5097,7 @@ class home_page extends Component {
     }
 
     pin_post(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_post.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -4878,6 +5121,7 @@ class home_page extends Component {
     }
 
     pin_subscription(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_subscriptions.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -4901,6 +5145,7 @@ class home_page extends Component {
     }
 
     pin_proposal(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_proposal.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -4924,6 +5169,7 @@ class home_page extends Component {
     }
 
     pin_contractor(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_contractor.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -4947,6 +5193,7 @@ class home_page extends Component {
     }
 
     pin_contract(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_contract.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -4973,6 +5220,7 @@ class home_page extends Component {
     }
 
     pin_job(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_job.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -4996,6 +5244,7 @@ class home_page extends Component {
     }
 
     pin_audio(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_audios.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -5019,6 +5268,7 @@ class home_page extends Component {
     }
 
     pin_video(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_videos.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -5042,6 +5292,7 @@ class home_page extends Component {
     }
 
     pin_nitro(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_nitros.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -5065,6 +5316,7 @@ class home_page extends Component {
     }
 
     pin_bill(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_bills.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -5088,6 +5340,7 @@ class home_page extends Component {
     }
 
     pin_poll(item){
+        this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_polls.slice()
         var pos = pinned_item_clone.indexOf(id)
@@ -5107,6 +5360,45 @@ class home_page extends Component {
                     this.open_view_object_bottomsheet()
                 }
             }
+        }
+    }
+
+    pin_token(item){
+        this.add_item_to_all_pinns(item)
+        var id = item['id']
+        var pinned_data_clone = this.state.pinned_tokens.slice()
+        var pos = pinned_bag_clone.indexOf(id)
+        if(pos == -1){
+            pinned_data_clone.push(id)
+            this.setState({pinned_tokens: pinned_data_clone})
+            this.update_cookies()
+            this.props.notify(this.props.app_state.loc['1264bd']/* 'Exchange Pinned.' */,900)
+        }else{
+            pinned_data_clone.splice(pos, 1)
+            this.setState({pinned_tokens: pinned_data_clone})
+            this.update_cookies()
+            this.props.notify(this.props.app_state.loc['1264be']/* 'Exchange Unpinned' */,900)
+
+            if(this.is_in_pinned_section()){
+                if(this.props.screensize == 's'){
+                    this.open_view_object_bottomsheet()
+                }
+            }
+        }
+    }
+
+    add_item_to_all_pinns(item){
+        var id = item['e5_id']
+        var pinned_item_clone = this.state.all_pinns.slice()
+        var pos = pinned_item_clone.indexOf(id)
+        if(pos == -1){
+            pinned_item_clone.push(id)
+            this.setState({all_pinns: pinned_item_clone})
+            this.update_cookies()
+        }else{
+            pinned_item_clone.splice(pos, 1)
+            this.setState({all_pinns: pinned_item_clone})
+            this.update_cookies()
         }
     }
 
@@ -5258,7 +5550,7 @@ class home_page extends Component {
                 return tem['id']
             }
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends ☝️' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends' */){
             var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
             if(object != null && object['ipfs'] != null){
                 return object['ipfs'].entered_title_text
@@ -5266,7 +5558,7 @@ class home_page extends Component {
                 return tem['e5_id']
             }
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1219']/* 'spends 🫰' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1219']/* 'spends' */){
             var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
             if(object != null && object['ipfs'] != null){
                 return object['ipfs'].entered_title_text
@@ -5344,8 +5636,8 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1199']/* proposals */] = '🧎'
         obj[this.props.app_state.loc['1201']/* mail */] = '📬'
         obj[this.props.app_state.loc['1216']/* bags */] = '🛍'
-        obj[this.props.app_state.loc['1218']/* ends ☝️ */] = ''
-        obj[this.props.app_state.loc['1219']/* spends 🫰 */] = ''
+        obj[this.props.app_state.loc['1218']/* ends */] = '☝️'
+        obj[this.props.app_state.loc['1219']/* spends */] = '🫰'
         obj[this.props.app_state.loc['1264k']/* audioport */] = '🎧'
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = '📺'
         obj[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'
@@ -5429,7 +5721,7 @@ class home_page extends Component {
                 }
             }
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends ☝️' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends' */){
             var selected_item = this.state.selected_end_item
             if(this.state.detail_selected_tag == tem['selected_tag']){
                 if(selected_item == tem['e5_id']){
@@ -5437,7 +5729,7 @@ class home_page extends Component {
                 }
             }
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1219']/* 'spends 🫰' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1219']/* 'spends' */){
             var selected_item = this.state.selected_spend_item
             if(this.state.detail_selected_tag == tem['selected_tag']){
                 if(selected_item == tem['e5_id']){
@@ -5566,13 +5858,13 @@ class home_page extends Component {
         else if(tem['selected_tag'] == this.props.app_state.loc['1216']/* 'bags' */){
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_bag_item: tem['e5_id']})
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends ☝️' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1218']/* 'ends' */){
             var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
             if(object != null) this.props.load_extra_token_data(object);
 
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_end_item: tem['e5_id'] })
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1219']/* 'spends 🫰' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1219']/* 'spends' */){
             var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
             if(object != null) this.props.load_extra_token_data(object);
 

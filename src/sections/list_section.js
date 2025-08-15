@@ -246,14 +246,14 @@ class PostListSection extends Component {
                 <div>{this.render_ethers_list_group()}</div>
                 )
             }
-            else if(selected_option_name == this.props.app_state.loc['1218']/* 'ends ☝️' */ ){
+            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */ ){
                 return(
-                <div>{this.render_ends_list_group()}</div>
+                    <div>{this.render_ends_list_group()}</div>
                 )
             }
-            else if(selected_option_name == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
+            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1219']/* 'spends' */ ){
                 return(
-                <div>{this.render_spends_list_group()}</div>
+                    <div>{this.render_spends_list_group()}</div>
                 )
             }
             else if(selected_option_name == this.props.app_state.loc['1264i']/* 'wallet-notifications' */ ){
@@ -268,7 +268,7 @@ class PostListSection extends Component {
                     </div>
                 )
             }
-            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */ && (selected_option_name == this.props.app_state.loc['1264ak']/* 'received' */ || selected_option_name == this.props.app_state.loc['1264am']/* 'sent' */ || selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */ || this.props.app_state.loc['1264an']/* 'reucrring' */)){
+            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
                 return(
                     <div>
                         {this.render_bills_list_group()}
@@ -4807,8 +4807,7 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_exchange_tokens(3)
-        var items2 = items.concat(this.get_exchange_tokens(5))
+        var items = this.get_end_exchange_tokens()
 
         if(items.length == 0){
             items = ['0','1'];
@@ -4827,11 +4826,11 @@ return data['data']
             );
         }
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
-        return ( 
+        return (
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <AnimatePresence initial={false}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                        {this.show_load_metrics(items2, 'tokens')}
+                        {this.show_load_metrics(items, 'tokens')}
                         {items.map((item, index) => (
                             <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                             style={{'padding': padding}}>
@@ -4842,6 +4841,10 @@ return data['data']
                 </AnimatePresence>
             </div>
         );
+    }
+
+    get_end_exchange_tokens(){
+        return this.remove_duplicates(this.props.get_end_token_items())
     }
 
     get_exchange_tokens(exchange_type){
@@ -4958,14 +4961,18 @@ return data['data']
 
 
 
+
+
+
+
+
     render_spends_list_group(){
         var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_exchange_tokens(5)
-        var items2 = items.concat(this.get_exchange_tokens(3))
+        var items = this.get_spend_exchange_tokens()
 
         if(items.length == 0){
             items = ['0','1'];
@@ -4988,7 +4995,7 @@ return data['data']
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <AnimatePresence initial={false}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                        {this.show_load_metrics(items2, 'tokens')}
+                        {this.show_load_metrics(items, 'tokens')}
                         {items.map((item, index) => (
                             <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                             style={{'padding': padding}}>
@@ -4999,6 +5006,10 @@ return data['data']
                 </AnimatePresence>
             </div>
         );
+    }
+
+    get_spend_exchange_tokens(){
+        return this.remove_duplicates(this.props.get_spend_token_items())
     }
 
     render_spends_object(object_array, index, token_id, img, object){
