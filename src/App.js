@@ -655,6 +655,7 @@ import BidInAuctionPage from './pages/bid_in_auction_page'
 import FulfilAuctionBidPage from './pages/fulfil_auction_bid_page'
 
 import english from "./texts/english";
+import cities from "./resources/cities";
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -8077,6 +8078,9 @@ class App extends Component {
 
   when_audiplayer_position_changed(item){
     this.setState({audiplayer_position: item})
+    if(this.state.is_audio_pip_showing == true){
+      this.prompt_top_notification(this.getLocale()['1593hv']/* Its position will change after its reloaded. */, 3000)
+    }
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -22738,6 +22742,10 @@ class App extends Component {
   }
 
   load_cities_data = async () => {
+    if(cities != null){
+      await this.load_cities_data_from_file()
+      return;
+    }
     if(this.state.all_cities.length > 0) return;
 
     var request = this.state.static_assets['all_cities']
@@ -22764,6 +22772,18 @@ class App extends Component {
       console.log('something went wrong:', e)
       
     }
+  }
+
+  load_cities_data_from_file = async() => {
+    const json_obj = cities['data']
+    const storage_obj = []
+    for(var i=0; i<json_obj.length; i++){
+      var city = json_obj[i]['name'].toLowerCase()
+      var country = json_obj[i]['country']
+      var id = parseInt(json_obj[i]['id'])
+      storage_obj.push({'city':city, 'country':country, 'id':id})
+    }
+    this.setState({all_cities: storage_obj})
   }
 
 
@@ -23511,17 +23531,18 @@ class App extends Component {
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
     if(this.state.accounts[e5].privateKey == '') return;
     var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
+    var loaded_target = 0
     if(section_cid_data_events.length != 0){
       const cids = [];
       const latest_events = section_cid_data_events
       if(this.state.beacon_node_enabled == true){
         try{
-          await this.fetch_multiple_cids_from_nitro(latest_events, 0, 'p4')
+          await this.fetch_multiple_cids_from_nitro(latest_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+          loaded_target = latest_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
         }catch(e){
           console.log('apppage', e)
         }
       }
-      console.log('apppage', 'loaded cid event data')
       for(var c = latest_events.length - 1; c >= 0; c--){
         const latest_event = latest_events[c];
         const section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
@@ -23546,7 +23567,11 @@ class App extends Component {
           //   });
           // }
         }
-        console.log('apppage', 'loaded cid event data for one event')
+        if(c == loaded_target && c+1 >= latest_events.length){
+          await this.wait(3000)
+          await this.fetch_multiple_cids_from_nitro(latest_events.slice(c+1, c+this.state.max_post_bulk_load_count), 0, 'p4')
+          loaded_target = c+this.state.max_post_bulk_load_count
+        }
       }
       const clone = this.state.uploaded_data_cids.slice()
       const keys = {}
@@ -24085,9 +24110,11 @@ class App extends Component {
       }
     }
 
+    var loaded_target = 0
     if(followed_accounts_blocked_posts_events_data.length != 0){
       if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-        await this.fetch_multiple_cids_from_nitro(followed_accounts_blocked_posts_events_data, 0, 'p4')
+        await this.fetch_multiple_cids_from_nitro(followed_accounts_blocked_posts_events_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = followed_accounts_blocked_posts_events_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
       }
 
       var clone = this.state.posts_blocked_by_my_following.slice()
@@ -24100,6 +24127,12 @@ class App extends Component {
             clone.push(post_id)
           }
         });
+
+        if(i == loaded_target && i+1 >= followed_accounts_blocked_posts_events_data.length){
+          await this.wait(3000)
+          await this.fetch_multiple_cids_from_nitro(followed_accounts_blocked_posts_events_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+          loaded_target = i+this.state.max_post_bulk_load_count
+        }
       }
       this.setState({posts_blocked_by_my_following: clone})
     }
@@ -24163,9 +24196,11 @@ class App extends Component {
       }
     }
 
+    var loaded_target = 0
     if(followed_accounts_censored_keywords_events_data.length != 0){
       if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-        await this.fetch_multiple_cids_from_nitro(followed_accounts_censored_keywords_events_data, 0, 'p4')
+        await this.fetch_multiple_cids_from_nitro(followed_accounts_censored_keywords_events_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = followed_accounts_censored_keywords_events_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
       }
 
       var clone = this.state.censored_keywords_by_my_following.slice()
@@ -24178,6 +24213,12 @@ class App extends Component {
             clone.push(keyword)
           }
         });
+
+        if(i == loaded_target && i+1 >= followed_accounts_censored_keywords_events_data.length){
+          await this.wait(3000)
+          await this.fetch_multiple_cids_from_nitro(followed_accounts_censored_keywords_events_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+          loaded_target = i+this.state.max_post_bulk_load_count
+        }
       }
       this.setState({censored_keywords_by_my_following: clone})
     }
@@ -24242,9 +24283,11 @@ class App extends Component {
       }
     }
 
+    var loaded_target = 0
     if(followed_accounts_promoted_posts_events_data.length != 0){
       if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-        await this.fetch_multiple_cids_from_nitro(followed_accounts_promoted_posts_events_data, 0, 'p4')
+        await this.fetch_multiple_cids_from_nitro(followed_accounts_promoted_posts_events_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = followed_accounts_promoted_posts_events_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
       }
 
       var clone = structuredClone(this.state.posts_reposted_by_my_following)
@@ -24267,7 +24310,13 @@ class App extends Component {
             clone['post'].push(post)
           }
         });
-        
+
+
+        if(i == loaded_target && i+1 >= followed_accounts_promoted_posts_events_data.length){
+          await this.wait(3000)
+          await this.fetch_multiple_cids_from_nitro(followed_accounts_promoted_posts_events_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+          loaded_target = i+this.state.max_post_bulk_load_count
+        }
       }
       this.setState({posts_reposted_by_my_following: clone})
     }
@@ -24340,9 +24389,11 @@ class App extends Component {
     if(this.state.accounts[e5].privateKey == '') return;
     const object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account})
 
+    var loaded_target = 0
     if(object_event_data.length > 0){
       if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-        await this.fetch_multiple_cids_from_nitro(object_event_data, 0, 'p4')
+        await this.fetch_multiple_cids_from_nitro(object_event_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = object_event_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
       }
 
       for(var i=0; i<object_event_data.length; i++){
@@ -24357,6 +24408,12 @@ class App extends Component {
             clone[file_id] = hashed_channel_id 
           });
           this.setState({my_channel_files_directory: clone})
+        }
+
+        if(i == loaded_target && i+1 >= object_event_data.length){
+          await this.wait(3000)
+          await this.fetch_multiple_cids_from_nitro(object_event_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+          loaded_target = i+this.state.max_post_bulk_load_count
         }
       }
     }
@@ -26547,7 +26604,11 @@ class App extends Component {
         end_tokens_clone[e5] = end_tokens
 
         this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
-        // await this.wait(150)
+        
+        if(i%4 == 0 && i != 0){
+          await this.wait(350)
+          this.resolve_token_name_details()
+        }
       }
 
       if(i+1 >= created_tokens.length && all_data[created_tokens[i+1]] == null){
@@ -26577,6 +26638,50 @@ class App extends Component {
     this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
     // console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
 
+    await this.wait(350)
+    this.resolve_token_name_details()
+  }
+
+  resolve_token_name_details(){
+    var registered_token_names_clone = structuredClone(this.state.registered_token_names)
+    var registered_token_symbols_clone = structuredClone(this.state.registered_token_symbols)
+    var token_directory_clone = structuredClone(this.state.token_directory)
+    var token_name_directory_clone = structuredClone(this.state.token_name_directory)
+
+    const token_time_registry = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const e5 = this.state.e5s['data'][i]
+      if(this.state.token_directory[e5] != null){
+        var registered_e5_symbols = Object.keys(this.state.token_directory[e5])
+        registered_e5_symbols.forEach(symbol => {
+          const token_id = token_directory_clone[e5][symbol]
+          const token_name = token_name_directory_clone[e5][e5+token_id]
+          if(token_time_registry[symbol] != null){
+            if(token_time_registry[symbol]['time'] < this.state.registered_token_symbols[e5][symbol]){
+              //a token already exists with the symbol
+              delete registered_token_names_clone[e5][token_name]
+              delete registered_token_symbols_clone[e5][symbol]
+              delete token_directory_clone[e5][token_id]
+              delete token_directory_clone[e5][token_name]
+              delete token_name_directory_clone[e5][e5+token_id]
+            }
+            else{
+              //the loaded token's symbol was registered before the one in the registry
+              const registry_e5 = token_time_registry[symbol]['e5']
+              delete registered_token_names_clone[registry_e5][token_time_registry[symbol]['name']]
+              delete registered_token_symbols_clone[registry_e5][symbol]
+              delete token_directory_clone[registry_e5][token_time_registry[symbol]['id']]
+              delete token_directory_clone[registry_e5][token_time_registry[symbol]['name']]
+              delete token_name_directory_clone[registry_e5][registry_e5+token_time_registry[symbol]['id']]
+              token_time_registry[symbol] = {'time': this.state.registered_token_symbols[e5][symbol], 'e5':e5, 'id':token_id, 'name':token_name}
+            }
+          }else{
+            token_time_registry[symbol] = {'time': this.state.registered_token_symbols[e5][symbol], 'e5':e5, 'id':token_id, 'name':token_name}
+          }
+        });
+      }
+    }
+    this.setState({registered_token_names: registered_token_names_clone, registered_token_symbols: registered_token_symbols_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone})
   }
 
   load_extra_token_data = async (object) => {
@@ -26774,9 +26879,12 @@ class App extends Component {
 
     const my_bills = []
     var is_first_time = this.state.created_bills[e5] == null
+    
+    var loaded_target = 0
     if(all_bills.length > 0){
       if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-        await this.fetch_multiple_cids_from_nitro(all_bills, 0, 'p4')
+        await this.fetch_multiple_cids_from_nitro(all_bills.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = all_bills.slice(0, this.state.max_post_bulk_load_count).length - 1;
       }
     }
     for(var i=0; i<all_bills.length; i++){
@@ -26794,6 +26902,12 @@ class App extends Component {
           created_bills_clone[e5] = my_bills
           this.setState({created_bills: created_bills_clone});
         }
+      }
+
+      if(i == loaded_target && i+1 >= all_bills.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_bills.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
       }
     }
 
@@ -27322,8 +27436,10 @@ class App extends Component {
       all_my_mail_events = my_events
     }
 
+    var loaded_target = 0
     if(this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_my_mail_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(all_my_mail_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = all_my_mail_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     
     for(var i=0; i<all_my_mail_events.length; i++){
@@ -27357,6 +27473,12 @@ class App extends Component {
           this.fetch_uploaded_files_for_object(ipfs_obj)
           // await this.wait(150)
         }
+      }
+
+      if(i == loaded_target && i+1 >= all_my_mail_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_my_mail_events.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
       }
     }
 
@@ -34293,65 +34415,24 @@ class App extends Component {
 
 
   get_objects_messages = async (id, e5, object) => {
-    // for(var i=0; i<this.state.e5s['data'].length; i++){
-    //   var focused_e5 = this.state.e5s['data'][i]
-    //   const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
-    //   const E52contractArtifact = require('./contract_abis/E52.json');
-    //   if(this.state.addresses[focused_e5] != null){
-    //     const E52_address = this.state.addresses[focused_e5][1];
-    //     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-
-    //     var e5_id = parseInt(e5.replace('E',''))
-    //     var cutoff_timestamp = Math.round(Date.now()/1000) - (60*60*24*400)
-    //     var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id,})
-    //     created_channel_data = created_channel_data.reverse()
-
-    //     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-    //       await this.fetch_multiple_cids_from_nitro(created_channel_data, 0, 'p4')
-    //     }
-
-    //     var is_first_time = this.state.object_messages[id] == null ? true: false
-    //     for(var j=0; j<created_channel_data.length; j++){
-    //       if(parseInt(created_channel_data[j].returnValues.p6) > cutoff_timestamp){
-    //         var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
-    //         if(ipfs_message != null){
-    //           ipfs_message['time'] = created_channel_data[j].returnValues.p6
-    //           this.fetch_uploaded_files_for_object(ipfs_message)
-
-    //           if(!messages.includes(ipfs_message)){
-    //             messages = [ipfs_message].concat(messages)
-    //           }
-    //           if(is_first_time){
-    //             var clone = JSON.parse(JSON.stringify(this.state.object_messages))
-    //             clone[id] = messages
-    //             this.setState({object_messages: clone})
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-
-    
     const all_object_comment_events = await this.get_object_comment_events(id, e5, 17)
+
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_object_comment_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = all_object_comment_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var messages = []
     var is_first_time = this.state.object_messages[id] == null ? true: false
     for(var j=0; j<all_object_comment_events.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
-      console.log('apppage', 'ipfs message', ipfs_message)
       if(ipfs_message != null){
         if(ipfs_message['encrypted_data'] != null){
           //channel message was encrypted
-          console.log('apppage', 'comment is encrypted, decrypting...')
           const key_used = object['unencrypted_keys'][parseInt(ipfs_message['key_index'])]
-          console.log('apppage', 'key used: ', key_used)
           var bytes = CryptoJS.AES.decrypt(ipfs_message['encrypted_data'], key_used.toString());
           var originalText = bytes.toString(CryptoJS.enc.Utf8);
           ipfs_message = JSON.parse(JSON.parse(originalText));
-          console.log('apppage', 'parsed object: ', ipfs_message)
         }
         ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
@@ -34366,6 +34447,12 @@ class App extends Component {
           this.setState({object_messages: clone})
           // await this.wait(150)
         }
+        
+      }
+      if(j == loaded_target && j+1 >= all_object_comment_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 
@@ -34467,9 +34554,11 @@ class App extends Component {
 
     var application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37})
 
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_job_respnse_data, 0, 'p4')
-      await this.fetch_multiple_cids_from_nitro(application_responses, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
+      // await this.fetch_multiple_cids_from_nitro(application_responses, 0, 'p4')
     }
 
     var messages = []
@@ -34518,6 +34607,12 @@ class App extends Component {
           console.log('get_job_objects_responses', 'data is null')
         }
       }
+
+      if(j == loaded_target && j+1 >= created_job_respnse_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_job_respnse_data.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
+      }
     }
 
     var clone = JSON.parse(JSON.stringify(this.state.job_responses))
@@ -34536,10 +34631,10 @@ class App extends Component {
 
     created_awward_data = created_awward_data.reverse()
 
-    console.log('direct_purchase', created_awward_data)
-    
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_awward_data, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_awward_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     var direct_purchases = structuredClone(this.state.direct_purchases)
@@ -34558,6 +34653,11 @@ class App extends Component {
           this.setState({direct_purchases: direct_purchases})
         }
       }
+      if(j == loaded_target && j+1 >= created_awward_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
+      }
     }
 
 
@@ -34566,6 +34666,12 @@ class App extends Component {
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var created_fulfilment_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id})
+
+    var loaded_target = 0
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_fulfilment_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_fulfilment_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
     
     var fulfilments = {}
     var is_first_time_for_fulfilments = this.state.direct_purchase_fulfilments[id] == null ? true: false
@@ -34580,6 +34686,12 @@ class App extends Component {
         var fulfilment_clone = JSON.parse(JSON.stringify(this.state.direct_purchase_fulfilments))
         fulfilment_clone[id] = fulfilments
         this.setState({direct_purchase_fulfilments: fulfilment_clone})
+      }
+
+      if(j == loaded_target && j+1 >= created_fulfilment_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_fulfilment_data.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 
@@ -34600,8 +34712,10 @@ class App extends Component {
 
     created_job_respnse_data = created_job_respnse_data.reverse()
 
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_job_respnse_data, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     var messages = []
@@ -34639,6 +34753,12 @@ class App extends Component {
         clone[id] = messages
         this.setState({contractor_applications: clone})
       }
+
+      if(j == loaded_target && j+1 >= created_job_respnse_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_job_respnse_data.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
+      }
     }
 
     var clone = JSON.parse(JSON.stringify(this.state.contractor_applications))
@@ -34660,40 +34780,11 @@ class App extends Component {
   }
 
   load_job_request_messages = async (contractor_id, request_id, e5, key_data) => {
-    // var messages = []
-    // for(var i=0; i<this.state.e5s['data'].length; i++){
-    //   var focused_e5 = this.state.e5s['data'][i]
-    //   const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
-    //   const E52contractArtifact = require('./contract_abis/E52.json');
-      
-    //   if(this.state.addresses[focused_e5] != null){
-    //     const E52_address = this.state.addresses[focused_e5][1];
-    //     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-
-    //     var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17/* shadow_object_container */, p3/* context */:contractor_id, p5/* int_data */:request_id})
-    //     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-    //       await this.fetch_multiple_cids_from_nitro(created_channel_data, 0, 'p4')
-    //     }
-    //     var is_first_time = this.state.object_messages[request_id] == null ? true: false
-    //     for(var j=0; j<created_channel_data.length; j++){
-    //       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
-    //       if(ipfs_message != null && ipfs_message['e5'] == e5){
-    //         this.fetch_uploaded_files_for_object(ipfs_message)
-    //         messages.push(ipfs_message)
-    //       }
-    //       if(is_first_time){
-    //         var clone = JSON.parse(JSON.stringify(this.state.object_messages))
-    //         clone[request_id] = messages
-    //         this.setState({object_messages: clone})
-    //       }
-    //     }
-    //   }
-    // }
-
-    
     var all_object_comment_events = await this.get_job_request_comment_events(contractor_id, request_id)
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_object_comment_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = all_object_comment_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     var convo_key = ''
@@ -34733,6 +34824,11 @@ class App extends Component {
           clone[request_id] = messages
           this.setState({object_messages: clone})
         }
+      }
+      if(j == loaded_target && j+1 >= all_object_comment_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 
@@ -34823,15 +34919,11 @@ class App extends Component {
   }
 
   get_post_award_data = async (id, e5) => {
-    // const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    // const H52contractArtifact = require('./contract_abis/H52.json');
-    // const H52_address = this.state.addresses[e5][6];
-    // const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
-    // var created_awward_data = (await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})).reverse()
     var created_awward_data = await this.get_and_sort_all_award_events(id)
-
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_awward_data, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_awward_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     var award_events = []
@@ -34847,6 +34939,12 @@ class App extends Component {
         var clone = JSON.parse(JSON.stringify(this.state.award_data))
         clone[id] = award_events
         this.setState({award_data: clone})
+      }
+
+      if(j == loaded_target && j+1 >= created_awward_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 
@@ -34911,9 +35009,11 @@ class App extends Component {
   get_mail_messages = async (mail) => {
     var convo_id = mail['convo_id']
     var all_my_mail_events = await this.get_sorted_convo_message_events(convo_id)
-    console.log('apppage', 'all events to load', all_my_mail_events)
+    
+    var loaded_target = 0
     if(this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_my_mail_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(all_my_mail_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = all_my_mail_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     
     var messages = []
@@ -34950,6 +35050,11 @@ class App extends Component {
           this.setState({mail_messages: mail_messages_clone})
           // await this.wait(150)
         }
+      }
+      if(i == loaded_target && i+1 >= all_my_mail_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_my_mail_events.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
       }
     }
     const mail_messages_clone = structuredClone(this.state.mail_messages)
@@ -35262,8 +35367,10 @@ class App extends Component {
 
     const created_results_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:43, p2/* sender_acc_id */:author}))
 
+    var loaded_target = 0
     if(this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_results_data, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_results_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_results_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     const result_objects = []
@@ -35279,6 +35386,12 @@ class App extends Component {
         poll_resutls_clone[e5_id] = result_objects
         this.setState({poll_results: poll_resutls_clone})
       }
+
+      if(i == loaded_target && i+1 >= created_results_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_results_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
+      }
     }
 
     const poll_resutls_clone = structuredClone(this.state.poll_results)
@@ -35290,14 +35403,16 @@ class App extends Component {
     var id = isNaN(video['video_id']) ? await this.stringToBigNumber(video['video_id']) : video['video_id']
     var e5 = videopost['e5']
     const all_object_comment_events = await this.get_object_comment_events(id, e5, 26)
+    
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_object_comment_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = all_object_comment_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var messages = []
     var is_first_time = this.state.object_messages[id] == null ? true: false
     for(var j=0; j<all_object_comment_events.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
-      console.log('apppage', 'ipfs message', ipfs_message)
       if(ipfs_message != null){
         ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
@@ -35312,6 +35427,11 @@ class App extends Component {
           this.setState({object_messages: clone})
           // await this.wait(150)
         }
+      }
+      if(j == loaded_target && j+1 >= all_object_comment_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 
@@ -35332,8 +35452,10 @@ class App extends Component {
     }
     
     const all_object_creator_file_events = await this.get_channel_creator_file_events(id, e5)
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_object_creator_file_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(all_object_creator_file_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = all_object_creator_file_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var messages = []
     var is_first_time = this.state.object_creator_files[id] == null ? true: false
@@ -35364,6 +35486,12 @@ class App extends Component {
           clone[object['e5_id']] = messages
           this.setState({object_creator_files: clone})
         }
+      }
+
+      if(j == loaded_target && j+1 >= all_object_creator_file_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_object_creator_file_events.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 
@@ -35479,8 +35607,10 @@ class App extends Component {
 
     const created_results_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:44, p2/* sender_acc_id */:author})).reverse()
 
+    var loaded_target = 0
     if(this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_results_data, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_results_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_results_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     const result_objects = []
@@ -35491,10 +35621,17 @@ class App extends Component {
       const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
       const obj = {'ipfs':ipfs, 'event':event}
       result_objects.push(obj)
+
       if(is_first_time == true){
         const channel_payout_stagings_clone = structuredClone(this.state.channel_payout_stagings)
         channel_payout_stagings_clone[e5_id] = result_objects
         this.setState({channel_payout_stagings: channel_payout_stagings_clone})
+      }
+
+      if(i == loaded_target && i+1 >= created_results_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_results_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
       }
     }
 
@@ -35622,9 +35759,10 @@ class App extends Component {
       return (accepted_accounts.includes(event.returnValues.p2/* sender_acc_id */) || accepted_accounts.length == 0)
     })
 
-
+    var loaded_target = 0
     if(this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(valid_bid_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(valid_bid_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = valid_bid_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     const result_objects = []
@@ -35640,6 +35778,12 @@ class App extends Component {
         const storefront_auction_bids_clone = structuredClone(this.state.storefront_auction_bids)
         storefront_auction_bids_clone[e5_id] = result_objects
         this.setState({storefront_auction_bids: storefront_auction_bids_clone})
+      }
+
+      if(i == loaded_target && i+1 >= valid_bid_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(valid_bid_events.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
       }
     }
 
@@ -36879,8 +37023,11 @@ class App extends Component {
 
     var created_exchange_royalty_events = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 12/* 12(stage_royalty_id) */, p3/* context */: id})).reverse()
 
+
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_exchange_royalty_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
     var royalty_events = []
@@ -36894,6 +37041,12 @@ class App extends Component {
         var clone = JSON.parse(JSON.stringify(this.state.token_royalty_data_staging_data))
         clone[id] = royalty_events
         this.setState({token_royalty_data_staging_data: clone})
+      }
+
+      if(j == loaded_target && j+1 >= created_exchange_royalty_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 
@@ -36910,8 +37063,10 @@ class App extends Component {
 
     var created_exchange_royalty_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 13/* 13(record_royalty_payout_id) */, p3/* context */: id})
 
+    var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events, 0, 'p4')
+      await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_exchange_royalty_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var royalty_payout_events = []
     var is_first_time = this.state.token_royalty_payout_data[id] == null ? true: false
@@ -36925,6 +37080,12 @@ class App extends Component {
         var clone = JSON.parse(JSON.stringify(this.state.token_royalty_payout_data))
         clone[id] = royalty_payout_events
         this.setState({token_royalty_payout_data: clone})
+      }
+
+      if(j == loaded_target && j+1 >= created_exchange_royalty_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_exchange_royalty_events.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
 

@@ -87,6 +87,7 @@ class TextInput extends Component {
     render_textarea_or_input(f){
       var height = this.props.height
       if(height < 53){
+        var text_type = this.props.type == null ? 'text' : this.props.type
         return(
           <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
             <style>
@@ -97,7 +98,7 @@ class TextInput extends Component {
                 }
               `}
             </style>
-              <input className="form-control"  type="text" style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
+              <input className="form-control"  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
           </div> 
         )
       }else{

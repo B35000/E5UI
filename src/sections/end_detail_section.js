@@ -438,6 +438,8 @@ class EndDetailSection extends Component {
 
                     {this.render_royalty_staging_page(selected_object)}
 
+                    {this.render_pin_exchange_button(selected_object)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -508,6 +510,23 @@ class EndDetailSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_pin_exchange_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2447r']/* Pin the exchange to your feed' */, 'title':this.props.app_state.loc['2447s']/* 'Pin Exchange' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_exchange_clicked(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2447t']/* 'Pin/Unpin Exchange' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_exchange_clicked(object){
+        this.props.pin_token(object)
     }
 
     render_transfer_button(selected_object){
@@ -1798,7 +1817,10 @@ return data['data']
 
     render_royalty_staging_item_logs(object){
         var middle = this.props.height - 120;
-        var items = [].concat(this.get_royalty_payout_logs(object))
+        var unfiltered_items = [].concat(this.get_royalty_payout_logs(object))
+        var items = unfiltered_items.filter(function (log) {
+            return ((log['payout_start_timestamp'] * 1000) <= Date.now())
+        })
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1841,7 +1863,6 @@ return data['data']
         }
         return this.props.app_state.token_royalty_data_staging_data[object['id']]
     }
-
 
     render_royalty_staging_event_item(item, object){
         var title = item['payout_title']

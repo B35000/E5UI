@@ -10650,13 +10650,11 @@ class StackPage extends Component {
         this.props.when_masked_data_setting_changed(selected_item)
     }
 
-
     when_get_content_channeling_object_updated(tag_group){
         this.setState({get_content_channeling_object: tag_group})
         var selected_item = this.get_selected_item(this.state.get_content_channeling_object, 'e')
         this.props.when_content_channeling_changed(selected_item)
     }
-
 
     when_get_content_language_object_updated(tag_group){
         this.setState({get_content_language_object: tag_group})
@@ -11172,7 +11170,7 @@ class StackPage extends Component {
                 
                 <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} theme={this.props.theme} type={'password'}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
@@ -11214,7 +11212,8 @@ class StackPage extends Component {
     }
 
     mask_word_in_input_field(text){
-        return '•'.repeat(text.length)
+        return text
+        // return '•'.repeat(text.length)
     }
 
     render_message_if_stack_not_empty(){
@@ -13266,7 +13265,15 @@ class StackPage extends Component {
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['1593gk']/* 'You need to select a storage option to use.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
                 </div>
             )
-        }else{
+        }
+        else if(this.props.app_state.uncommitted_upload_cids.length > 720){
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['1593hw']/* 'You can only upload up to 720 files between runs.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+        else{
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -13718,12 +13725,19 @@ class StackPage extends Component {
 
     when_encrypted_file_picked = async (e, type) => {
         if(e.target.files && e.target.files[0]){
-            this.props.notify(this.props.app_state.loc['1593by']/* 'Preparing Files...' */, 2000)
+            var selected_files_length = e.target.files.length
+            if(e.target.files.length + this.props.app_state.uncommitted_upload_cids.length > 720){
+                selected_files_length = 720 - this.props.app_state.uncommitted_upload_cids.length
+                this.props.notify(this.props.app_state.loc['1593hx']/* 'Only the first $ files will be prepared.' */.replace('$', selected_files_length), 4000);
+            }
+            else{
+                this.props.notify(this.props.app_state.loc['1593by']/* 'Preparing Files...' */, 2000)
+            }
             const selected_nitro_item = this.state.selected_nitro_item
             const files_to_upload = []
             const time_in_mills = Date.now()
 
-            for(var i = 0; i < e.target.files.length; i++){
+            for(var i = 0; i < selected_files_length; i++){
                 const unencrypted_file_name = e.target.files[i]['name']
                 const file_name = this.props.encrypt_data_string(unencrypted_file_name, process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
                 const private_key = this.props.app_state.accounts['E25'].privateKey.toString()
@@ -13853,7 +13867,7 @@ class StackPage extends Component {
                 }
             }
             
-            this.upload_encrypted_files(selected_nitro_item, files_to_upload, type)
+            if(files_to_upload.length > 0) this.upload_encrypted_files(selected_nitro_item, files_to_upload, type);
         }
     }
 
@@ -15010,9 +15024,6 @@ class StackPage extends Component {
                 }
             }
         }
-        // else{
-        //     this.props.upload_multiple_files_to_web3_or_chainsafe(this.files, this.selected_files_type)
-        // }
     }
 
     get_item_in_array2(e5_id, object_array){

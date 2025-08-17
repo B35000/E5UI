@@ -438,6 +438,8 @@ class SpendDetailSection extends Component {
 
                     {this.render_basic_edit_object_button(selected_object)}
 
+                    {this.render_pin_exchange_button(selected_object)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -508,6 +510,23 @@ class SpendDetailSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_pin_exchange_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2447r']/* Pin the exchange to your feed' */, 'title':this.props.app_state.loc['2447s']/* 'Pin Exchange' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_exchange_clicked(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2447t']/* 'Pin/Unpin Exchange' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_exchange_clicked(object){
+        this.props.pin_token(object)
     }
 
     render_transfer_button(selected_object){

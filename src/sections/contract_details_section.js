@@ -845,7 +845,7 @@ class ContractDetailsSection extends Component {
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if (time_to_expiry > 0 || object['id'] == 2 || object['ipfs'].contract_type == 'workgroup'){
+        if (time_to_expiry > 0 || object['id'] == 2){
             return (
                 <div>
                     {this.render_detail_item('0')}

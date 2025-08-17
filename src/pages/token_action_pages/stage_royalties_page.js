@@ -64,7 +64,7 @@ class StageRoyaltiesPage extends Component {
         get_transaction_ordering_tags_object: this.get_transaction_ordering_tags_object(),
         payout_amount:0, payout_title:'', batch_size:0,
 
-        get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(), minimum_balance:0,
+        get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(), minimum_balance:0, payout_schedule_timestamp: (new Date().getTime()/1000)
     };
 
     set_token(token_item){
@@ -77,7 +77,7 @@ class StageRoyaltiesPage extends Component {
                 get_transaction_ordering_tags_object:this.get_transaction_ordering_tags_object(),
                 payout_amount:0, payout_title:'', batch_size:0,
 
-                get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(), minimum_balance:0,
+                get_individual_or_batch_tags_object:this.get_individual_or_batch_tags_object(), minimum_balance:0, payout_schedule_timestamp: (new Date().getTime()/1000),
             })
         }
         this.setState({token_item: token_item, e5: token_item['e5']})
@@ -256,7 +256,6 @@ class StageRoyaltiesPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2852']/* 'Set the date and time that the payout will begin' */, 'title':this.props.app_state.loc['2852b']/* 'Schedule Date and Time.' */})}
-                <div style={{height:10}}/>
 
                 <div style={{height:10}}/>
                 <div style={{}}>
@@ -302,6 +301,25 @@ class StageRoyaltiesPage extends Component {
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_balance_value_picked.bind(this)} theme={this.props.theme} power_limit={63}/>
 
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2883e']/* 'Set the date and time after which this staging info will be visible.' */, 'title':this.props.app_state.loc['2883d']/* 'Scheduled Visibility' */})}
+
+                <div style={{height:10}}/>
+                <div style={{}}>
+                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                        <CssBaseline />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set2(newValue)}/>
+                        </LocalizationProvider>
+                    </ThemeProvider>
+                </div>
+                
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.payout_schedule_timestamp - Date.now()/1000), 'details':this.props.app_state.loc['2883f']/* Scheduled time. */, 'size':'l'})}
+                
             </div>
         )
     }
@@ -318,6 +336,16 @@ class StageRoyaltiesPage extends Component {
             this.props.notify(this.props.app_state.loc['2854']/* You cant schedule a time before now. */, 7800)
         }
         this.setState({payout_start_timestamp: timeInSeconds})
+    }
+
+    when_new_dat_time_value_set2(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        var now = (new Date().getTime()/1000)+1000
+        if(timeInSeconds < now){
+            this.props.notify(this.props.app_state.loc['2854']/* You cant schedule a time before now. */, 7800)
+        }
+        this.setState({payout_schedule_timestamp: timeInSeconds})
     }
 
     when_royalty_payout_account_input_field_changed(text){
@@ -691,6 +719,7 @@ class StageRoyaltiesPage extends Component {
         var payout_start_timestamp = this.state.payout_start_timestamp;
         var royalty_payout_account = this.state.royalty_payout_account;
         var batch_size = this.state.batch_size;
+        var payout_schedule_timestamp = this.state.payout_schedule_timestamp
         var now = (new Date().getTime()/1000)+1000
 
         var exchange_royalty_data = this.props.app_state.exchange_royalty_data[this.state.token_item['id']]
@@ -715,11 +744,16 @@ class StageRoyaltiesPage extends Component {
         else if(total_number_of_transactions.length == 0){
             this.props.notify(this.props.app_state.loc['2883']/* You cant stage no transactions. */, 6700)
         }
+        else if(payout_schedule_timestamp > payout_start_timestamp){
+            this.props.notify(this.props.app_state.loc['2883g']/* The scheduled visibility of your payout cant be after the scheduled starting time. */, 9700)
+        }
         else{
             var me = this;
             
             var batches = this.get_batch_data(total_number_of_transactions, true)
-            var payout_data = {'payout_id':parseInt(Date.now()),'exchange_royalty_data': {'balance_data':total_number_of_transactions, 'time':exchange_royalty_data['time']} , 'batches':batches, 'payout_title':payout_title, 'payout_amount':payout_amount, 'payout_start_timestamp':payout_start_timestamp, 'royalty_payout_account':royalty_payout_account, 'batch_size':batch_size, 'token_id':this.state.token_item['id'], 'sender':this.props.app_state.user_account_id[this.state.token_item['e5']], 'total_held_shares':total_held_shares, 'minimum_balance':this.state.minimum_balance}
+            var payout_data = {
+                'payout_id':parseInt(Date.now()),'exchange_royalty_data': {'balance_data':total_number_of_transactions, 'time':exchange_royalty_data['time']} , 'batches':batches, 'payout_title':payout_title, 'payout_amount':payout_amount, 'payout_start_timestamp':payout_start_timestamp, 'royalty_payout_account':royalty_payout_account, 'batch_size':batch_size, 'token_id':this.state.token_item['id'], 'sender':this.props.app_state.user_account_id[this.state.token_item['e5']], 'total_held_shares':total_held_shares, 'minimum_balance':this.state.minimum_balance, 'visibility_time': payout_schedule_timestamp
+            }
 
             this.setState({payout_data:payout_data})
 
@@ -733,7 +767,7 @@ class StageRoyaltiesPage extends Component {
                 get_transaction_ordering_tags_object: me.get_transaction_ordering_tags_object(),
                 payout_amount:0, payout_title:'', batch_size:0,
 
-                get_individual_or_batch_tags_object:me.get_individual_or_batch_tags_object(),})
+                get_individual_or_batch_tags_object:me.get_individual_or_batch_tags_object(), payout_schedule_timestamp:(new Date().getTime()/1000)})
             }, (1 * 1000));
 
             this.props.notify(this.props.app_state.loc['18'], 1700);
