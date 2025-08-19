@@ -34367,8 +34367,7 @@ class App extends Component {
   }
 
   base64ToUint8(base64) {
-    const binary = atob(base64);
-    return new Uint8Array([...binary].map(char => char.charCodeAt(0)));
+    return new Uint8Array(Buffer.from(base64, 'base64'))
   }
 
   encrypt_key_with_accounts_public_key_hash = async (key, pub_key_hash) => {
@@ -37420,12 +37419,12 @@ class App extends Component {
 
   encrypt_my_key_with_user_encryption_key = async (user_temp_encryption_key, node_public_key, keyPair) => {
     try{
-      const node_raw_public_key_buffer = new Uint8Array(Buffer.from(node_public_key, 'base64'))
+      const node_raw_public_key_buffer = this.base64ToUint8(node_public_key)
       const encoder = new TextEncoder();
       const message = encoder.encode(user_temp_encryption_key)
-      const nonce = new Uint8Array(nacl.box.nonceLength)
+      const nonce = nacl.randomBytes(nacl.box.nonceLength)
       const cipher = nacl.box(message, nonce, node_raw_public_key_buffer, keyPair.secretKey);
-      return this.uint8ToBase64(new Uint8Array(cipher))
+      return this.uint8ToBase64(new Uint8Array(cipher))+'_'+this.uint8ToBase64(nonce)
 
       // const node_public_key_buffer = Buffer.from(node_public_key, 'base64')
       // const encrypted_data = await ecies.encrypt(node_public_key_buffer, Buffer.from(user_temp_encryption_key))
@@ -37438,12 +37437,12 @@ class App extends Component {
 
   encrypt_data_with_specified_targets_public_key(data, targeted_public_key, keyPair, public_key_is_uint8_array){
     try{
-      const node_raw_public_key_buffer = public_key_is_uint8_array == true ? targeted_public_key: new Uint8Array(Buffer.from(targeted_public_key, 'base64'))
+      const node_raw_public_key_buffer = public_key_is_uint8_array == true ? targeted_public_key: this.base64ToUint8(targeted_public_key)
       const encoder = new TextEncoder();
       const message = encoder.encode(data)
-      const nonce = new Uint8Array(nacl.box.nonceLength)
+      const nonce = nacl.randomBytes(nacl.box.nonceLength)
       const cipher = nacl.box(message, nonce, node_raw_public_key_buffer, keyPair.secretKey);
-      return this.uint8ToBase64(new Uint8Array(cipher))
+      return this.uint8ToBase64(new Uint8Array(cipher))+'_'+this.uint8ToBase64(nonce)
     }
     catch(e){
       console.log('apppage', 'something went wrong with the encrypt_my_key_with_user_encryption_key function', e)
@@ -37452,9 +37451,11 @@ class App extends Component {
 
   decrypt_data_with_my_private_key(base64_encoded_data, encoders_public_key_string, keyPair){
     try{
-      const encrypted_key_as_uint8array = this.base64ToUint8(base64_encoded_data)
+      const base64_encoded_cypher = base64_encoded_data.split('_')[0]
+      const nonce_cypher = base64_encoded_data.split('_')[1]
+      const encrypted_key_as_uint8array = this.base64ToUint8(base64_encoded_cypher)
       const encoders_public_key_to_use = this.base64ToUint8(encoders_public_key_string)
-      const nonce = new Uint8Array(nacl.box.nonceLength)
+      const nonce = this.base64ToUint8(nonce_cypher)
       const decrypted = nacl.box.open(encrypted_key_as_uint8array, nonce, encoders_public_key_to_use, keyPair.secretKey);
       const decoder = new TextDecoder();
       const user_key = decoder.decode(decrypted);
