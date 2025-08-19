@@ -676,6 +676,7 @@ import { zoomPlugin } from '@react-pdf-viewer/zoom';
 import '@react-pdf-viewer/zoom/lib/styles/index.css';
 
 import io from 'socket.io-client';
+import { createHash } from 'crypto';
 // import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -687,6 +688,7 @@ var CryptoJS = require("crypto-js");
 const xrpl = require("xrpl")
 const BITBOXSDK = require('bitbox-sdk').BITBOX;
 const pako = require('pako');
+const nacl = require("tweetnacl");
 
 const BITBOX = new BITBOXSDK();
 const arweave = Arweave.init();
@@ -943,7 +945,7 @@ class App extends Component {
 
     queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{}, 
     
-    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(), 
+    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(),
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
@@ -7271,7 +7273,7 @@ class App extends Component {
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
-      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
+      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)}
       
       />
     )
@@ -8234,47 +8236,46 @@ class App extends Component {
       }, (1 * 1000));
     }
     
-    
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
-        web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          var clone = structuredClone(me.state.is_running)
-          clone[e5] = false
-          me.setState({
-            should_update_contacts_onchain: false, 
-            is_running: clone, 
-            should_update_section_tags_onchain: false, 
-            should_update_blocked_accounts_onchain: false, 
-            update_data_in_E5:false, 
-            should_update_playlists_in_E5:false, 
-            should_update_followed_accounts:false, 
-            should_update_posts_blocked_by_me: false, 
-            should_update_censored_keyword_phrases:false, 
-            uncommitted_upload_cids:[],
-            should_update_posts_reposted_by_me:false,
-          })
-          me.delete_stack_items(delete_pos_array)
-          me.reset_gas_calculation_figure(me)
-          me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+      web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
+        var clone = structuredClone(me.state.is_running)
+        clone[e5] = false
+        me.setState({
+          should_update_contacts_onchain: false, 
+          is_running: clone, 
+          should_update_section_tags_onchain: false, 
+          should_update_blocked_accounts_onchain: false, 
+          update_data_in_E5:false, 
+          should_update_playlists_in_E5:false, 
+          should_update_followed_accounts:false, 
+          should_update_posts_blocked_by_me: false, 
+          should_update_censored_keyword_phrases:false, 
+          uncommitted_upload_cids:[],
+          should_update_posts_reposted_by_me:false,
+        })
+        me.delete_stack_items(delete_pos_array)
+        me.reset_gas_calculation_figure(me)
+        me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
 
-          me.has_my_followed_accounts_loaded[e5] = null
-          me.has_posts_blocked_by_me_loaded[e5] = null
-          me.has_censored_keywords_by_me_loaded[e5] = null
-          me.has_promoted_posts_by_me_loaded[e5] = null
+        me.has_my_followed_accounts_loaded[e5] = null
+        me.has_posts_blocked_by_me_loaded[e5] = null
+        me.has_censored_keywords_by_me_loaded[e5] = null
+        me.has_promoted_posts_by_me_loaded[e5] = null
 
-          me.clear_stacked_messages_after_run(e5)
-          setTimeout(function() {
-            me.start_get_accounts_for_specific_e5(false, e5, false)
-          }, (1 * 500));
-          setTimeout(function() {
-            me.set_cookies()
-          }, (1 * 1000));
-        }).on('error', (error) => {
-          console.error('Transaction error:', error);
-          var clone = structuredClone(this.state.is_running)
-          clone[e5] = false
-          me.setState({is_running: clone})
-          me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
-        });
+        me.clear_stacked_messages_after_run(e5)
+        setTimeout(function() {
+          me.start_get_accounts_for_specific_e5(false, e5, false)
+        }, (1 * 500));
+        setTimeout(function() {
+          me.set_cookies()
+        }, (1 * 1000));
+      }).on('error', (error) => {
+        console.error('Transaction error:', error);
+        var clone = structuredClone(this.state.is_running)
+        clone[e5] = false
+        me.setState({is_running: clone})
+        me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+      });
     })
 
     // this.prompt_top_notification('running your transactions...', 600)
@@ -19970,7 +19971,7 @@ class App extends Component {
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     await this.check_and_set_default_rpc()
-    this.update_nitro_privacy_signature()
+    await this.update_nitro_privacy_signature()
     await this.wait(1500)
     await this.load_root_config()
     await this.wait(500)
@@ -20071,6 +20072,7 @@ class App extends Component {
       console.log(e)
     }
   }
+
 
 
 
@@ -27134,9 +27136,14 @@ class App extends Component {
           for(var k=0; k<channel_data['channel_keys'].length; k++){
             var focused_encrypted_key = channel_data['channel_keys'][k][my_unique_crosschain_identifier]
             if(focused_encrypted_key != null){
-              var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
-              var my_key = await ecies.decrypt(private_key_to_use, uint8array)
-              unencrypted_keys.push(my_key.toString())
+              if(channel_data['channel_keys'][k]['encryptor_pub_key'] != null){
+                var my_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, channel_data['channel_keys'][k]['encryptor_pub_key'])
+                unencrypted_keys.push(my_key.toString())
+              }else{
+                var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
+                var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+                unencrypted_keys.push(my_key.toString())
+              }
             }else{
               unencrypted_keys.push('')
             }
@@ -34229,15 +34236,18 @@ class App extends Component {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
-    var private_key_to_use = Buffer.from(hash)
-    const publicKeyA = await ecies.getPublic(private_key_to_use);
-    // var key = (new Uint8Array(publicKeyA)).toString()//oh my god
-    var key = this.uint8ToBase64(new Uint8Array(publicKeyA))
 
-    return key
-    var object_as_string = JSON.stringify({'key':key})
-    var obj_cid = await this.store_objects_data_in_ipfs_using_option(object_as_string)
-    return obj_cid
+    const key_data = this.generate_my_box_keys(hash);
+    return key_data.my_node_server_public_key;
+
+    // var private_key_to_use = Buffer.from(hash)
+    // const publicKeyA = await ecies.getPublic(private_key_to_use);
+    // // var key = (new Uint8Array(publicKeyA)).toString()//oh my god
+    // return this.uint8ToBase64(new Uint8Array(publicKeyA))
+
+    // var object_as_string = JSON.stringify({'key':key})
+    // var obj_cid = await this.store_objects_data_in_ipfs_using_option(object_as_string)
+    // return obj_cid
   }
 
   uint8ToBase64(uint8) {
@@ -34248,18 +34258,26 @@ class App extends Component {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
-    var private_key_to_use = Buffer.from(hash)
-    const publicKeyA = await ecies.getPublic(private_key_to_use);
-    return (new Uint8Array(publicKeyA)).toString()
+    
+    const key_data = this.generate_my_box_keys(hash);
+    return key_data.my_node_server_public_key;
+
+    // var private_key_to_use = Buffer.from(hash)
+    // const publicKeyA = await ecies.getPublic(private_key_to_use);
+    // return (new Uint8Array(publicKeyA)).toString()
   }
 
   get_account_raw_public_key = async () => {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
-    var private_key_to_use = Buffer.from(hash)
-    const publicKeyA = await ecies.getPublic(private_key_to_use);
-    return publicKeyA
+
+    const key_data = this.generate_my_box_keys(hash);
+    return key_data.keypair.publicKey;
+
+    // var private_key_to_use = Buffer.from(hash)
+    // const publicKeyA = await ecies.getPublic(private_key_to_use);
+    // return publicKeyA
   }
 
   encrypt_data_object(tx, key){
@@ -34354,9 +34372,17 @@ class App extends Component {
   }
 
   encrypt_key_with_accounts_public_key_hash = async (key, pub_key_hash) => {
-    const encrypted_data = (await ecies.encrypt(pub_key_hash, Buffer.from(key)))
-    var string = (new Uint8Array(encrypted_data)).toString()
+    const web3 = new Web3(this.get_selected_web3_url());
+    const privateKey = this.state.accounts[this.state.selected_e5].privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    const key_data = this.generate_my_box_keys(hash);
+    const user_key_data = key_data.keypair
+    const string = this.encrypt_data_with_specified_targets_public_key(key, pub_key_hash, user_key_data, true)
     return string
+
+    // const encrypted_data = (await ecies.encrypt(pub_key_hash, Buffer.from(key)))
+    // var string = (new Uint8Array(encrypted_data)).toString()
+    // return string
   }
 
   fetch_and_decrypt_ipfs_object = async (encrypted_ipfs_obj, e5) => {
@@ -34375,10 +34401,15 @@ class App extends Component {
       if(encrypted_key == null){
         return null;
       }
-      var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
-      var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+      var my_key = ''
+      if(encrypted_ipfs_obj['encryptor_pub_key'] != null){
+        my_key = this.decrypt_encrypted_key_with_my_public_key(encrypted_key, e5, encrypted_ipfs_obj['encryptor_pub_key'])
+      }else{
+        var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
+        my_key = await ecies.decrypt(private_key_to_use, uint8array)
+      }
+      
       var encrypted_object = encrypted_ipfs_obj['obj']
-    
       var bytes = CryptoJS.AES.decrypt(encrypted_object, my_key.toString());
       var originalText = bytes.toString(CryptoJS.enc.Utf8);
       return JSON.parse(originalText);
@@ -34392,20 +34423,42 @@ class App extends Component {
 
   encrypt_nitro_node_key_with_my_public_key = async (key) => {
     var uint8array = await this.get_account_raw_public_key()
-    var encrypted_key = this.encrypt_key_with_accounts_public_key_hash(key, uint8array)
-    return encrypted_key
+    var encrypted_key = this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(uint8array))
+    return { 'encrypted_key': encrypted_key, 'encryptor_pub_key': this.uint8ToBase64(uint8array)}
   }
 
   decrypt_nitro_node_key_with_my_public_key = async (encrypted_key, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const privateKey = this.state.accounts[e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
-    var private_key_to_use = Buffer.from(hash)
+    const key_data = this.generate_my_box_keys(hash);
+    const user_key_data = key_data.keypair
 
-    var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
-    var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+    if(this.is_string(encrypted_key)){
+      var private_key_to_use = Buffer.from(hash)
+      var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
+      var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+      return my_key.toString()
+    }
+    else{
+      const my_key = this.decrypt_data_with_my_private_key(encrypted_key['encrypted_key'], encrypted_key['encryptor_pub_key'], user_key_data)
+      return my_key;
+    }
+  }
 
-    return my_key.toString()
+  decrypt_encrypted_key_with_my_public_key = async (encrypted_key, e5, encryptor_pub_key) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const privateKey = this.state.accounts[e5].privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    const key_data = this.generate_my_box_keys(hash);
+    const user_key_data = key_data.keypair
+
+    const my_key = this.decrypt_data_with_my_private_key(encrypted_key, encryptor_pub_key, user_key_data)
+    return my_key;
+  }
+
+  is_string(value) {
+    return typeof value === "string" || value instanceof String;
   }
 
 
@@ -34793,8 +34846,12 @@ class App extends Component {
     if(key_data != null && key_data[my_unique_crosschain_identifier] != null){
         var focused_encrypted_key = key_data[my_unique_crosschain_identifier]
         if(focused_encrypted_key != null){
-          var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
-          convo_key = await ecies.decrypt(private_key_to_use, uint8array)
+          if(key_data['encryptor_pub_key'] != null){
+            convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, key_data['encryptor_pub_key'])
+          }else{
+            var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
+            convo_key = await ecies.decrypt(private_key_to_use, uint8array)
+          }
         }
     }
 
@@ -37264,7 +37321,11 @@ class App extends Component {
   }
 
   load_nitro_directory_details = async (link) => {
-    var request = `${link}/`
+    if(this.state.nitro_privacy_signature == null){
+      await this.update_nitro_privacy_signature()
+      await this.wait(350)
+    }
+    var request = `${link}/${this.state.nitro_privacy_signature}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -37284,9 +37345,10 @@ class App extends Component {
   }
 
   record_key_in_nitro_node = async (marco_obj, link, object, nitro_link_directory) => {
-    const user_temp_hash = this.makeid(53);
+    const user_key_data = this.generate_my_box_keys(this.makeid(53));
+    const user_temp_hash = user_key_data.my_node_server_public_key
     const user_temp_encryption_key = this.makeid(35)
-    const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'])
+    const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'], user_key_data.keypair)
     
     if(encrypted_user_temp_encryption_key == null){
       var clone = structuredClone(this.state.nitro_node_details)
@@ -37345,14 +37407,61 @@ class App extends Component {
     }
   }
 
-  encrypt_my_key_with_user_encryption_key = async (user_temp_encryption_key, node_public_key) => {
+  generate_my_box_keys(identifier){
+    const web3 = new Web3(this.get_web3_url_from_e5('E25'));
+    const hash = web3.utils.keccak256(identifier.toString()).slice(34)
+    const private_key_to_use = createHash("sha256").update(hash).digest(); // 32 bytes
+    const my_node_server_keys = nacl.sign.keyPair.fromSeed(new Uint8Array(private_key_to_use));
+    const my_node_server_public_key = this.uint8ToBase64(new Uint8Array(my_node_server_keys.publicKey))
+    const my_node_server_secret_key = this.uint8ToBase64(new Uint8Array(my_node_server_keys.secretKey))
+
+    return {my_node_server_public_key, my_node_server_secret_key, keypair: my_node_server_keys}
+  }
+
+  encrypt_my_key_with_user_encryption_key = async (user_temp_encryption_key, node_public_key, keyPair) => {
     try{
-      const node_public_key_buffer = Buffer.from(node_public_key, 'base64')
-      const encrypted_data = await ecies.encrypt(node_public_key_buffer, Buffer.from(user_temp_encryption_key))
-      return this.uint8ToBase64(new Uint8Array(encrypted_data))
+      const node_raw_public_key_buffer = new Uint8Array(Buffer.from(node_public_key, 'base64'))
+      const encoder = new TextEncoder();
+      const message = encoder.encode(user_temp_encryption_key)
+      const nonce = new Uint8Array(nacl.box.nonceLength)
+      const cipher = nacl.box(message, nonce, node_raw_public_key_buffer, keyPair.secretKey);
+      return this.uint8ToBase64(new Uint8Array(cipher))
+
+      // const node_public_key_buffer = Buffer.from(node_public_key, 'base64')
+      // const encrypted_data = await ecies.encrypt(node_public_key_buffer, Buffer.from(user_temp_encryption_key))
+      // return this.uint8ToBase64(new Uint8Array(encrypted_data))
     }
     catch(e){
       console.log('apppage', 'something went wrong with the encrypt_my_key_with_user_encryption_key function', e)
+    }
+  }
+
+  encrypt_data_with_specified_targets_public_key(data, targeted_public_key, keyPair, public_key_is_uint8_array){
+    try{
+      const node_raw_public_key_buffer = public_key_is_uint8_array == true ? targeted_public_key: new Uint8Array(Buffer.from(targeted_public_key, 'base64'))
+      const encoder = new TextEncoder();
+      const message = encoder.encode(data)
+      const nonce = new Uint8Array(nacl.box.nonceLength)
+      const cipher = nacl.box(message, nonce, node_raw_public_key_buffer, keyPair.secretKey);
+      return this.uint8ToBase64(new Uint8Array(cipher))
+    }
+    catch(e){
+      console.log('apppage', 'something went wrong with the encrypt_my_key_with_user_encryption_key function', e)
+    }
+  }
+
+  decrypt_data_with_my_private_key(base64_encoded_data, encoders_public_key_string, keyPair){
+    try{
+      const encrypted_key_as_uint8array = this.base64ToUint8(base64_encoded_data)
+      const encoders_public_key_to_use = this.base64ToUint8(encoders_public_key_string)
+      const nonce = new Uint8Array(nacl.box.nonceLength)
+      const decrypted = nacl.box.open(encrypted_key_as_uint8array, nonce, encoders_public_key_to_use, keyPair.secretKey);
+      const decoder = new TextDecoder();
+      const user_key = decoder.decode(decrypted);
+      return user_key
+    }
+    catch(e){
+      console.log('apppage', 'something went wrong with the decrypt_data_with_my_private_key function', e)
     }
   }
 

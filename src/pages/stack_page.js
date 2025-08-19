@@ -5052,7 +5052,11 @@ class StackPage extends Component {
                     
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
+                    
                     const all_final_elements = all_elements.map(word => this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY));
+
+                    all_final_elements.push(this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    
                     obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting}
                     ipfs_index_array.push({'id':t.id, 'data':t})
 
@@ -5202,7 +5206,11 @@ class StackPage extends Component {
                         extra_tags.push(data.audio_type.toLowerCase())
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
+                    
                     const all_final_elements = all_elements.map(word => this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    
+                    all_final_elements.push(this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting}
                     ipfs_index_array.push({'id':data.id, 'data':data})
 
@@ -5554,15 +5562,15 @@ class StackPage extends Component {
         var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, e5)
 
         if(recipients_pub_key_hash != ''){
-            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(recipients_pub_key_hash))
             recipent_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
         }
 
-        var uint8array = await this.props.get_account_raw_public_key() 
-        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+        var my_public_key_uint8_array = await this.props.get_account_raw_public_key() 
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(my_public_key_uint8_array))
         recipent_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
 
-        return {'obj':encrypted_obj, 'recipient_data':recipent_data}
+        return { 'obj':encrypted_obj, 'recipient_data':recipent_data, 'encryptor_pub_key':this.props.uint8ToBase64(my_public_key_uint8_array) }
     }
 
     get_encrypted_job_request_key = async (t) =>{
@@ -5572,12 +5580,14 @@ class StackPage extends Component {
         var key_data = {}
         var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, author_e5)
         if(recipients_pub_key_hash != ''){
-            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(recipients_pub_key_hash))
+
             key_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
         }
         var uint8array = await this.props.get_account_raw_public_key() 
-        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(uint8array))
         key_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+        key_data['encryptor_pub_key'] = this.props.uint8ToBase64(uint8array)
 
         return key_data
     }
@@ -6822,13 +6832,14 @@ class StackPage extends Component {
                 var participant_e5 = data.participants[i].e5
                 var recipients_pub_key_hash = await this.props.get_accounts_public_key(participant_account, participant_e5)
                 if(recipients_pub_key_hash != ''){
-                    var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+                    var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(recipients_pub_key_hash));
                     channel_keys_obj[this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
                 }
             }
             var uint8array = await this.props.get_account_raw_public_key() 
-            var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+            var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(uint8array))
             channel_keys_obj[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+            channel_keys_obj['encryptor_pub_key'] = this.props.uint8ToBase64(uint8array)
         }
         data.channel_keys.push(channel_keys_obj)
 
@@ -6864,17 +6875,17 @@ class StackPage extends Component {
         var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, t['recipients_e5'])
 
         if(recipients_pub_key_hash != ''){
-            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(recipients_pub_key_hash))
             // recipent_data[parseInt(recipient)] = encrypted_key
             recipent_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
         }
 
         var uint8array = await this.props.get_account_raw_public_key() 
-        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
-        // recipent_data[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] = my_encrypted_key
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(uint8array))
+        
         recipent_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
 
-        return {'obj':encrypted_obj, 'recipient_data':recipent_data}
+        return {'obj':encrypted_obj, 'recipient_data':recipent_data, 'encryptor_pub_key':this.props.uint8ToBase64(uint8array)}
     }
 
     get_my_unique_crosschain_identifier_number = async () => {
@@ -13752,7 +13763,9 @@ class StackPage extends Component {
 
                     const compressed_image = this.compressImageFromFile(URL.createObjectURL(imageFile))
                     
-                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':this.props.encrypt_data_string(compressed_image, password)}
+                    const obj = {
+                        'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':this.props.encrypt_data_string(compressed_image, password)
+                    }
                     
                     files_to_upload.push(obj)
                 }
@@ -13797,7 +13810,7 @@ class StackPage extends Component {
                     // reader.readAsDataURL(videoFile);
                     const duration = await this.get_video_duration(videoFile)
                     const videoType = videoFile.type;
-                    const chunk_duration = duration < 35 ? duration : 35
+                    const chunk_duration = duration < 53 ? duration : 53
                     const codec = await this.extractMP4Codec(videoFile)
                     const timeToByteMap = await this.buildVideoTimeToByteMap(videoFile, chunk_duration)
                     if(timeToByteMap == null || codec == null){

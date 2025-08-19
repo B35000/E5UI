@@ -1845,6 +1845,8 @@ return data['data']
             var hash = data['hash']
             const am_i_author = this.props.app_state.uploaded_data_cids.includes(ecid_obj['full']);
 
+            var location = data['nitro'] == null ? this.props.app_state.loc['1593ew']/* arweave */ : this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */
+
             return(
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3055x']/* File Details. */}</h4>
@@ -1856,6 +1858,9 @@ return data['data']
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['3055p']/* 'File Size.' */, 'title':size, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['3055eb']/* 'File Location.' */, 'title':location, 'size':'l'})}
 
                     {this.render_streamed_bytes_if_any(data)}
 
@@ -1948,6 +1953,10 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    render_file_location_message(data){
+
     }
 
     render_file_verified_message(ecid_obj){
