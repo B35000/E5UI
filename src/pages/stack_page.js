@@ -1814,10 +1814,19 @@ class StackPage extends Component {
         return sum
     }
 
+    componentDidMount() {
+        this.set_viewed_data()
+    }
+
+    set_viewed_data = async () => {
+        const viewed_data = await this.props.get_local_storage_data_if_enabled('viewed')
+        this.setState({state_viewed_data: viewed_data})
+    }
+
     //here
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
-        var viewed_data = this.props.get_local_storage_data_if_enabled("viewed") == null ? "":this.props.get_local_storage_data_if_enabled("viewed")
+        var viewed_data = this.state.state_viewed_data == null ? "" : this.state.state_viewed_data
         var data_size = this.lengthInUtf8Bytes(viewed_data) + this.props.app_state.index_db_size
         var formatted_data_size = this.format_data_size(data_size)
         
@@ -4836,7 +4845,7 @@ class StackPage extends Component {
                         if(message_obj['key_to_use'] != ''){
                             const key = message_obj['key_to_use']
                             const key_index = message_obj['key_index']
-                            var encrypted_obj = this.props.encrypt_data_object(JSON.stringify(message_obj), key)
+                            var encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(message_obj), key)
                             message_obj = {'encrypted_data':encrypted_obj, 'key_index':key_index}
                         }
                         ipfs_index_object[t.messages_to_deliver[m]['message_id']] = message_obj
@@ -5001,7 +5010,7 @@ class StackPage extends Component {
                             if(focused_encrypted_key != null){
                                 var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
                                 var my_key = await ecies.decrypt(private_key_to_use, uint8array)
-                                var encrypted_obj = this.props.encrypt_data_object(JSON.stringify(message_obj), my_key.toString())
+                                var encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(message_obj), my_key.toString())
                                 message_obj = {'encrypted_data':encrypted_obj}
                             }
                         }
@@ -5053,9 +5062,13 @@ class StackPage extends Component {
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
                     
-                    const all_final_elements = all_elements.map(word => this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY));
+                    const all_final_elements = []
+                    for(var te=0; te<all_elements.length; te++){
+                        const word = all_elements[te]
+                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    }
 
-                    all_final_elements.push(this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     
                     obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting}
                     ipfs_index_array.push({'id':t.id, 'data':t})
@@ -5207,9 +5220,13 @@ class StackPage extends Component {
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
                     
-                    const all_final_elements = all_elements.map(word => this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    const all_final_elements = []
+                    for(var te=0; te<all_elements.length; te++){
+                        const word = all_elements[te]
+                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    }
                     
-                    all_final_elements.push(this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting}
                     ipfs_index_array.push({'id':data.id, 'data':data})
@@ -5321,7 +5338,7 @@ class StackPage extends Component {
 
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
             var data = JSON.stringify({'data':contacts_clone})
-            var encrypted_obj = this.props.encrypt_data_object(data, key)
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
 
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['contacts'] = data
@@ -5333,7 +5350,7 @@ class StackPage extends Component {
 
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
             var data = JSON.stringify({'data':blocked_accounts})
-            var encrypted_obj = this.props.encrypt_data_object(data, key)
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
 
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['blocked'] = data
@@ -5346,7 +5363,7 @@ class StackPage extends Component {
 
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
             var data = JSON.stringify({'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags})
-            var encrypted_obj = this.props.encrypt_data_object(data, key)
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
 
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['tags'] = data
@@ -5378,7 +5395,7 @@ class StackPage extends Component {
             });
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
             var data = JSON.stringify({'data':final_items.concat(unloaded_items)})
-            var encrypted_obj = this.props.encrypt_data_object(data, key)
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
 
             var data = {'cids': encrypted_obj, 'time':Date.now(), 'encrypted':true}
             ipfs_index_object['ciddata'] = data
@@ -5415,7 +5432,7 @@ class StackPage extends Component {
 
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
             var data = JSON.stringify({'data':my_playlists})
-            var encrypted_obj = this.props.encrypt_data_object(data, key)
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
 
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['myplaylists'] = data
@@ -5427,7 +5444,7 @@ class StackPage extends Component {
 
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
             var data = JSON.stringify({'data':song_plays})
-            var encrypted_obj = this.props.encrypt_data_object(data, key)
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
 
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['myplays'] = data
@@ -5464,7 +5481,7 @@ class StackPage extends Component {
 
             var key = this.props.app_state.accounts['E25'].privateKey.toString()
             var data = JSON.stringify({'data':followed_accounts})
-            var encrypted_obj = this.props.encrypt_data_object(data, key)
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
 
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['following'] = data
@@ -5555,7 +5572,7 @@ class StackPage extends Component {
 
     get_encrypted_bill_object = async (t) =>{
         var key = makeid(35)
-        var encrypted_obj = this.props.encrypt_data_object(t, key)
+        var encrypted_obj = await this.props.encrypt_data_object(t, key)
         var recipent_data = {}
         var recipient = t.recipient
         var e5 = t.e5
@@ -6869,7 +6886,7 @@ class StackPage extends Component {
         var key = makeid(35)
         // t.my_pub_key = this.props.app_state.my_pub_key
         // console.log('stackpage', 'message', t)
-        var encrypted_obj = this.props.encrypt_data_object(t, key)
+        var encrypted_obj = await this.props.encrypt_data_object(t, key)
         var recipent_data = {}
         var recipient = recip
         var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, t['recipients_e5'])
@@ -13750,7 +13767,7 @@ class StackPage extends Component {
 
             for(var i = 0; i < selected_files_length; i++){
                 const unencrypted_file_name = e.target.files[i]['name']
-                const file_name = this.props.encrypt_data_string(unencrypted_file_name, process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+                const file_name = await this.props.encrypt_data_string(unencrypted_file_name, process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
                 const private_key = this.props.app_state.accounts['E25'].privateKey.toString()
                 const password = this.props.hash_data_with_randomizer(unencrypted_file_name + time_in_mills + private_key)
                 const extension = this.props.get_file_extension(unencrypted_file_name)
@@ -13764,7 +13781,7 @@ class StackPage extends Component {
                     const compressed_image = this.compressImageFromFile(URL.createObjectURL(imageFile))
                     
                     const obj = {
-                        'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':this.props.encrypt_data_string(compressed_image, password)
+                        'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':await this.props.encrypt_data_string(compressed_image, password)
                     }
                     
                     files_to_upload.push(obj)
@@ -13786,21 +13803,21 @@ class StackPage extends Component {
                     
                     var me = this
                     parseBlob(audioFile).then(metadata => {
-                        me.compressImageFromFile(me.get_audio_file_image(metadata)).then(metadata_image => {
+                        me.compressImageFromFile(me.get_audio_file_image(metadata)).then(async metadata_image => {
                             const metadata = me.process_metadata(metadata)
                             // reader.readAsDataURL(audioFile);
                             const obj = { 
-                                'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':me.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': me.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension,
-                                'timeToByteMap':timeToByteMap, 'encrypted_file_data_info':  me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
+                                'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':await me.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': await me.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension,
+                                'timeToByteMap':timeToByteMap, 'encrypted_file_data_info':  await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
                                 'audio_type':audioType
                             }
                             files_to_upload.push(obj)
                         })
-                    }).catch(err => {
+                    }).catch(async err => {
                         console.error('Error parsing metadata:', err);
                         // reader.readAsDataURL(audioFile);
                         const obj = { 
-                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password), 'audio_type':audioType
+                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password), 'audio_type':audioType
                         }
                         files_to_upload.push(obj)
                     });
@@ -13825,12 +13842,12 @@ class StackPage extends Component {
                     const size = this.props.get_encrypted_file_size(encrypted_file_data)
                     
                     const obj = {
-                        'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': this.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
+                        'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': await this.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
                         'video_type':videoType, 'codec':codec
                     }
                     
                     if(thumb_data != null && thumb_data != ''){
-                        obj['thumbnail'] = this.props.encrypt_data_string(thumb_data.return_blob, password) 
+                        obj['thumbnail'] = await this.props.encrypt_data_string(thumb_data.return_blob, password) 
                         obj['width'] = thumb_data.width
                         obj['height'] = thumb_data.height
                     }
@@ -13844,7 +13861,7 @@ class StackPage extends Component {
                     const pdf_image = await this.get_pdf_image(URL.createObjectURL(pdfFile))
                     const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
 
-                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail':this.props.encrypt_data_string(pdf_image, password), 'encrypted':true, 'extension':extension }
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail':await this.props.encrypt_data_string(pdf_image, password), 'encrypted':true, 'extension':extension }
 
                     files_to_upload.push(obj)
                 }

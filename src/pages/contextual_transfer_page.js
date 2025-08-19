@@ -74,6 +74,7 @@ class ContextualTransferPage extends Component {
     }
 
     componentDidMount() {
+        this.get_fulfilment_location_from_local_storage()
         this.interval = setInterval(() => this.check_for_new_payments(), this.props.app_state.details_section_syncy_time);
     }
 
@@ -523,7 +524,7 @@ class ContextualTransferPage extends Component {
     }
 
     get_suggested_accounts(){
-        var memory_accounts = this.get_recipients_from_memory()
+        var memory_accounts = this.state.default_recipients_data || []
         var defaults = []
         memory_accounts.forEach(account => {
             defaults.push({'id':account,'label':{'title':account, 'details':this.get_account_alias(account), 'size':'s'}})
@@ -1314,16 +1315,17 @@ class ContextualTransferPage extends Component {
       )
     }
 
-    when_pdf_files_picked(files){
+    when_pdf_files_picked = async (files) => {
         var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
         files.forEach(file => {
             clonedArray.push(file);
         });
 
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        files.forEach(file => {
-            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
-        });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({entered_pdf_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
@@ -1821,7 +1823,7 @@ class ContextualTransferPage extends Component {
     }
 
     add_recipients_to_memory(stack_items){
-        var recipient_acc_ids = this.get_recipients_from_memory()
+        var recipient_acc_ids = this.state.default_recipients_data || []
         stack_items.forEach(item => {
             var recipient = item['recipient']
             if(!recipient_acc_ids.includes(recipient)) recipient_acc_ids.push(recipient);
@@ -1832,8 +1834,11 @@ class ContextualTransferPage extends Component {
         this.props.set_local_storage_data_if_enabled("transfer_data", JSON.stringify(obj));
     }
 
-    get_recipients_from_memory(){
-        return this.props.get_local_storage_data_if_enabled("transfer_data") == null ? [] : JSON.parse(this.props.get_local_storage_data_if_enabled("transfer_data"))['data']
+    get_recipients_from_memory = async () => {
+        const data = await this.props.get_local_storage_data_if_enabled("transfer_data")
+        var recipients = data == null ? [] : JSON.parse(data)['data']
+
+        if(recipients != null) this.setState({default_recipients_data: recipients})
     }
 
 

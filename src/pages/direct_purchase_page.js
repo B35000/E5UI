@@ -222,7 +222,7 @@ class DirectPurchasetPage extends Component {
     }
 
     render_shipping_detail_suggestions(){
-        var items = [].concat(this.get_fulfilment_location_from_local_storage())
+        var items = [].concat(this.state.fulfilment_locations_data || [])
         if(items.length == 0) return;
         return(
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -237,15 +237,16 @@ class DirectPurchasetPage extends Component {
         )
     }
 
-    get_fulfilment_location_from_local_storage(){
-        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
+    componentDidMount() {
+        this.get_fulfilment_location_from_local_storage()
+    }
+
+    get_fulfilment_location_from_local_storage = async () => {
+        var fulfilment_locations = await this.props.get_local_storage_data_if_enabled("fulfilment");
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
-        }else{
-            return []
+            this.setState({fulfilment_locations_data: fulfilment_locations['data']})
         }
-
-        return fulfilment_locations['data']
     }
 
     when_suggestion_clicked = (item, pos) => {
@@ -704,7 +705,7 @@ class DirectPurchasetPage extends Component {
     }
 
     add_fulfilment_location_to_local_storage(){
-        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
+        var fulfilment_locations = this.state.fulfilment_locations_data || []
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{
@@ -721,7 +722,7 @@ class DirectPurchasetPage extends Component {
     }
 
     remove_fulfilment_location_from_local_storage(pos){
-        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
+        var fulfilment_locations = this.state.fulfilment_locations_data || []
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{

@@ -122,9 +122,18 @@ class synchronizing_page extends Component {
         }
     }
 
+    componentDidMount() {
+        this.set_is_allowed_in_e5_data()
+    }
+
+    set_is_allowed_in_e5_data = async () => {
+        const is_allowed_object = await this.props.get_local_storage_data_if_enabled('is_country_allowed')
+        this.setState({is_allowed_data: is_allowed_object})
+    }
+
     is_allowed_in_e5(){
         if(this.state.get_available_for_all_tags_object == 'enabled') return true
-        var obj = this.props.get_local_storage_data_if_enabled('is_country_allowed') == null ? this.props.app_state.allowed_countries : this.props.get_local_storage_data_if_enabled('is_country_allowed')
+        var obj = this.state.is_allowed_data == null ? this.props.app_state.allowed_countries : this.state.is_allowed_data
         var device_country = this.props.app_state.device_country
         if(!obj.includes(device_country)){
             return false

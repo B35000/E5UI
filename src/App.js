@@ -945,7 +945,7 @@ class App extends Component {
 
     queue:[], pos:0, is_repeating:false, is_shuffling:false, original_song_list:[], play_pause_state: 0/* paused */, my_acquired_audios:[], asset_price_data:{}, 
     
-    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, logo_title: this.get_default_logo_title(), selected_dark_emblem_country:this.get_default_dark_emblem_country(), get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(),
+    calculated_arewave_storage_fees_figures:{}, graph_slice_proportion:0.25, get_theme_stage_tags_object:'none', get_content_channeling_tags_object:'all', beacon_chain_url:'', ether_data: this.get_ether_data(),
     
     language_data:this.get_language_data_object(), all_locales:{'en':english}, dialer_addresses:this.get_dialer_addresses(), theme_images:{}, theme_image:'', line_setting:false, subscribed_nitros:[], get_available_for_all_tags_object:'enabled', is_uploading_to_arweave:false, uploader_percentage:0, uncommitted_upload_cids:[], 
     
@@ -2989,8 +2989,8 @@ class App extends Component {
     ]
   }
 
-  get_default_logo_title(){
-    var item = this.get_local_storage_data_if_enabled("logo_title");
+  get_default_logo_title = async () => {
+    var item = await this.get_local_storage_data_if_enabled("logo_title");
     if(item == null){
       return 'start-white'
     }else{
@@ -2998,8 +2998,8 @@ class App extends Component {
     }
   }
 
-  get_default_dark_emblem_country(){
-    var item = this.get_local_storage_data_if_enabled("selected_dark_emblem_country")
+  get_default_dark_emblem_country = async () => {
+    var item = await this.get_local_storage_data_if_enabled("selected_dark_emblem_country")
     if(item == null){
       return ''
     }else{
@@ -3163,6 +3163,8 @@ class App extends Component {
     // this.test_beacon_node()
     // this.test_infura()
     // this.test_key_hasher()
+    this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
+
     await this.load_cookies();
     this.load_cookies2()
     var me = this;
@@ -3515,7 +3517,7 @@ class App extends Component {
   }
 
   load_cookies = async () => {
-    var state_language = this.get_local_storage_data_if_enabled("language");
+    var state_language = await this.get_local_storage_data_if_enabled("language");
     var state = await this.load_data_from_indexdb('123')
     const state_theme = this.state.theme['name']
     const my_language = this.get_language()
@@ -4518,7 +4520,7 @@ class App extends Component {
       var data = await db.data.get({id: id})
       if(data == null) return;
       var data_obj = JSON.parse(data)
-      return this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      return await this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     }catch(e){
       console.log('transform_image_by_theme', `Failed : ${e}`);
       return null
@@ -7424,7 +7426,7 @@ class App extends Component {
   }
 
   fetch_image_theme_data_in_storage = async (theme) => {
-    if(this.get_local_storage_data_if_enabled(theme) == null){
+    if(await this.get_local_storage_data_if_enabled(theme) == null){
       const obj = {}
       obj[theme] = {}
       return obj
@@ -8981,12 +8983,12 @@ class App extends Component {
     }
   }
 
-  get_local_storage_data_if_enabled(identifier){
+  get_local_storage_data_if_enabled = async (identifier) => {
     if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
       const data = localStorage.getItem(identifier)
       if(data == null) return;
       var data_obj = JSON.parse(data)
-      return this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      return await this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     }
     return;
   }
@@ -8997,7 +8999,7 @@ class App extends Component {
     }
   }
 
-  get_ecid_file_password_if_any(ecid){
+  get_ecid_file_password_if_any = async (ecid) => {
     if(!this.state.uploaded_data_cids.includes(ecid)) return 'e';
     var ecid_obj = this.get_cid_split2(ecid)
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return 'e';
@@ -9007,7 +9009,7 @@ class App extends Component {
     const file_name = _data['name'];
     const private_key = this.state.accounts['E25'].privateKey.toString()
     const password = this.hash_data_with_randomizer(file_name + _data['id'] + private_key)
-    return this.encrypt_data_string(password, process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY);
+    return await this.encrypt_data_string(password, process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY);
   }
 
   update_object_change_in_db = (state, type) => {
@@ -15912,10 +15914,10 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
     }
     const endpoint = this.load_registered_endpoint_from_link(node_url, 'delete_file')
-    var request = `${node_url}/${endpoint}/${this.fetch_nitro_privacy_signature(node_url)}`
+    var request = `${node_url}/${endpoint}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -15963,12 +15965,12 @@ class App extends Component {
     this.when_wallet_data_updated3(data.added_tags, data.set_salt, data.selected_item, data.is_synching, data.selected_item_2)
   }
 
-  fetch_nitro_privacy_signature(node_url, target_data_to_encrypt){
+  fetch_nitro_privacy_signature = async (node_url, target_data_to_encrypt) => {
     const target_data = target_data_to_encrypt == null ? this.state.nitro_privacy_signature: target_data_to_encrypt;
     const data = this.state.nitro_url_temp_hash_data[node_url]
     const user_temp_hash = data['user_temp_hash']
     const user_temp_encryption_key = data['user_temp_encryption_key']
-    const encrypted_nitro_privacy_signature = this.encrypt_data_string(target_data, user_temp_encryption_key)
+    const encrypted_nitro_privacy_signature = await this.encrypt_data_string(target_data, user_temp_encryption_key)
     return user_temp_hash+'|'+encrypted_nitro_privacy_signature;
   }
 
@@ -16987,7 +16989,7 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
     }
 
     var request = `${node_url}/boot_storage`
@@ -17025,7 +17027,7 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
     }
 
     var request = `${node_url}/reconfigure_storage`
@@ -17094,11 +17096,11 @@ class App extends Component {
     }
   }
 
-  encrypt_post_object(node_object_e5_id, data){
+  encrypt_post_object = async (node_object_e5_id, data) => {
     const node_details = node_object_e5_id == '' ? this.state.beacon_data :this.state.nitro_node_details[node_object_e5_id]
     const user_temp_encryption_key = node_details['user_temp_encryption_key']
     const user_temp_hash = node_details['user_temp_hash']
-    const encrypted_data_string = this.encrypt_data_string(JSON.stringify(data), user_temp_encryption_key)
+    const encrypted_data_string = await this.encrypt_data_string(JSON.stringify(data), user_temp_encryption_key)
     return { 'registered_user': user_temp_hash, 'encrypted_data':encrypted_data_string }
   }
 
@@ -17245,7 +17247,7 @@ class App extends Component {
   }
 
   load_decrypted_image_file = async (image) => {
-    const url = this.construct_encrypted_link_from_ecid(image, 'image', 'full_image')
+    const url = await this.construct_encrypted_link_from_ecid(image, 'image', 'full_image')
     try {
       // Fetch the image as a blob
       const response = await fetch(encodeURI(url));
@@ -17268,7 +17270,7 @@ class App extends Component {
     }
   }
 
-  construct_encrypted_link_from_ecid(ecid, type, id){
+  construct_encrypted_link_from_ecid = async (ecid, type, id) => {
     if(!ecid.startsWith(type)) return ecid
     var ecid_obj = this.get_cid_split2(ecid)
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return '';
@@ -17286,7 +17288,7 @@ class App extends Component {
     
     raw_link.replace(
       `/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, 
-      `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${this.fetch_nitro_privacy_signature(nitro_url, file)}/${this.fetch_nitro_privacy_signature(nitro_url)}`
+      `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
     );
 
     return raw_link
@@ -17464,7 +17466,7 @@ class App extends Component {
   }
 
   load_decrypted_zip_file = async (zip, name) => {
-    const url = this.construct_encrypted_link_from_ecid(zip, 'zip', 'data')
+    const url = await this.construct_encrypted_link_from_ecid(zip, 'zip', 'data')
     try {
       // Fetch the image as a blob
       const response = await fetch(encodeURI(url));
@@ -17607,7 +17609,7 @@ class App extends Component {
   }
 
   load_decrypted_pdf_file = async (pdf) => {
-    const url = this.construct_encrypted_link_from_ecid(pdf, 'pdf', 'data')
+    const url = await this.construct_encrypted_link_from_ecid(pdf, 'pdf', 'data')
     try {
       // Fetch the image as a blob
       const response = await fetch(encodeURI(url));
@@ -19438,21 +19440,22 @@ class App extends Component {
       poll_e5: poll_e5,
     }
 
-    nitro_objects.forEach(nitro_object => {
+    for(var o=0; o<nitro_objects.length; o++){
+      const nitro_object = nitro_objects[o]
       var node_url = nitro_object['ipfs'].node_url
       const body = {
         method: "POST", // Specify the HTTP method
         headers: {
           "Content-Type": "application/json" // Set content type to JSON
         },
-        body: JSON.stringify(this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
+        body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
       }
       this.get_vote_count_from_nitro(node_url, body, nitro_object, poll_obj)
-    });
+    }
   }
 
   get_vote_count_from_nitro = async (node_url, body, nitro_object, poll_obj) => {
-    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'count_votes')}/${this.fetch_nitro_privacy_signature(node_url)}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'count_votes')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -19623,10 +19626,10 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(nitro_object_e5_id, arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object_e5_id, arg_obj)) // Convert the data object to a JSON string
     }
 
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'creator_group_payouts')}/${this.fetch_nitro_privacy_signature(beacon_node)}`
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'creator_group_payouts')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -22142,7 +22145,7 @@ class App extends Component {
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -25737,7 +25740,7 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(nitro_object_e5_id, arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object_e5_id, arg_obj)) // Convert the data object to a JSON string
     }
 
     var request = `${beacon_node}/subscription_income_stream_datapoints`
@@ -28862,7 +28865,7 @@ class App extends Component {
     const params = new URLSearchParams({
       arg_string:JSON.stringify({requests: event_requests}),
     });
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -31736,7 +31739,11 @@ class App extends Component {
     }
     all_unhashed_tags = all_unhashed_tags.concat(searched_tags_including_prioritized_tags)
 
-    const all_final_elements = all_unhashed_tags.map(word => this.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+    const all_final_elements = []
+    for(var t=0; t<all_unhashed_tags.length; t++){
+      const word = all_unhashed_tags[t]
+      all_final_elements.push(await this.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+    }
 
     var prioritized_accounts = []
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
@@ -31750,7 +31757,7 @@ class App extends Component {
       const params = new URLSearchParams({
         arg_string: JSON.stringify(arg_obj)
       });
-      var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tags')}/${this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+      var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tags')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
       try{
         const response = await fetch(request);
         if (!response.ok) {
@@ -31953,7 +31960,7 @@ class App extends Component {
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -31971,7 +31978,7 @@ class App extends Component {
           if(confirmation_hash != hashes[i] && obj_types[hashes[i]] == 'ni'){
             console.log('apppage', hashes[i], 'data has been modified! bad data!', confirmation_hash)
           }else{
-            var decrypted_data = this.decrypt_storage_object2(cid_data)
+            var decrypted_data = await this.decrypt_storage_object2(cid_data)
             // console.log('apppage', 'decrypted object', decrypted_data)
             this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
           }
@@ -32235,7 +32242,7 @@ class App extends Component {
       var return_data = await fetch(`https://arweave.net/${decoded}`)
       var data = await return_data.text()
       // console.log('appdata', data)
-      var decrypted_data = this.decrypt_storage_object(data)
+      var decrypted_data = await this.decrypt_storage_object(data)
       // console.log('appdata', decrypted_data)
       var obj = JSON.parse(decrypted_data)
       // console.log('appdata', obj)
@@ -32277,10 +32284,10 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(my_preferred_nitro, arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(my_preferred_nitro, arg_obj)) // Convert the data object to a JSON string
     }
 
-    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'store_data')}/${this.fetch_nitro_privacy_signature(node_url)}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'store_data')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -32319,7 +32326,7 @@ class App extends Component {
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes:[nitro_cid]}),
     });
-    var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'data')}/${this.fetch_nitro_privacy_signature(nitro_url)}?${params.toString()}`
+    var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'data')}/${await this.fetch_nitro_privacy_signature(nitro_url)}?${params.toString()}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -32338,7 +32345,7 @@ class App extends Component {
         console.log('apppage', confirmation_hash)
         return null
       }
-      var decrypted_data = this.decrypt_storage_object(cid_data)
+      var decrypted_data = await this.decrypt_storage_object(cid_data)
       var return_data = JSON.parse(decrypted_data)
       // console.log('datas', 'hash object return_data', return_data)
       return return_data
@@ -32355,7 +32362,7 @@ class App extends Component {
 
   store_data_in_infura = async (_data, unencrypt_image, tags_obj) => {
     var data = unencrypt_image ? _data: this.encrypt_storage_object(_data, tags_obj)
-    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) :this.encrypt_storage_data(_data))
+    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
 
     const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
     const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
@@ -32382,7 +32389,7 @@ class App extends Component {
   }
 
   store_data_in_infura2 = async (_data, unencrypt_image, tags_obj) => {
-    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) :this.encrypt_storage_data(_data))
+    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
     
     const obj = { data: data }
     const final_data = JSON.stringify(obj)
@@ -32463,7 +32470,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
       var data = await response.text();
-      data = this.decrypt_storage_object(data)
+      data = await this.decrypt_storage_object(data)
       return JSON.parse(data);
       // Do something with the retrieved data
     } catch (error) {
@@ -32558,7 +32565,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
       var data = await response.text();
-      data = this.decrypt_storage_object(data)
+      data = await this.decrypt_storage_object(data)
       var json = JSON.parse((JSON.parse(data)).data);
       return json
       // Do something with the retrieved data
@@ -32620,7 +32627,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
       var data = await response.text();
-      data = this.decrypt_storage_object(data)
+      data = await this.decrypt_storage_object(data)
       return JSON.parse(data);
       // Do something with the retrieved data
     } catch (error) {
@@ -32710,7 +32717,7 @@ class App extends Component {
       var data = await response.text();
       var encrypted_data = (JSON.parse(data)).data
       // console.log('stackdata','encrypted data', encrypted_data)
-      var unencrypted_data = this.decrypt_storage_object(encrypted_data)
+      var unencrypted_data = await this.decrypt_storage_object(encrypted_data)
       // console.log('stackdata','decrypted data', unencrypted_data)
       var json = JSON.parse(unencrypted_data);
       // console.log('stackdata','decrypted data', json)
@@ -32800,7 +32807,7 @@ class App extends Component {
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes:nitro_cids}),
     });
-    var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'data')}/${this.fetch_nitro_privacy_signature(nitro_url)}?${params.toString()}`
+    var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'data')}/${await this.fetch_nitro_privacy_signature(nitro_url)}?${params.toString()}`
     const private_key = this.state.accounts['E25'].privateKey.toString()
     try{
       const response = await fetch(request);
@@ -32847,8 +32854,8 @@ class App extends Component {
           }
           if(filetype == 'lyric'){
             if(cid_data['encrypted'] == true){
-              const file_name = this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
-              const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+              const file_name = await this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+              const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : await this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
 
               cid_data['lyrics'] = await this.load_encrypted_lyric_subtitle_data(cid_data, true, password)
             }else{
@@ -32857,8 +32864,8 @@ class App extends Component {
           }
           else if(filetype == 'subtitle'){
             if(cid_data['encrypted'] == true){
-              const file_name = this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
-              const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+              const file_name = await this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+              const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : await this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
 
               cid_data['subtitles'] = await this.load_encrypted_lyric_subtitle_data(cid_data, false, password)
             }else{
@@ -32868,27 +32875,27 @@ class App extends Component {
           }
 
           if(cid_data['encrypted'] == true){
-            const file_name = this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
-            const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+            const file_name = await this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+            const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : await this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
             
             
             if(filetype == 'image'){
-              const thumbnail = this.decrypt_data_string(cid_data['thumbnail'], password)
+              const thumbnail = await this.decrypt_data_string(cid_data['thumbnail'], password)
               cid_data['full_image'] = cid_data['data']
               cid_data['data'] = thumbnail
             }
             else if(filetype == 'audio' || filetype == 'video' || filetype == 'pdf'){
-              const thumbnail = this.decrypt_data_string(cid_data['thumbnail'], password)
+              const thumbnail = await this.decrypt_data_string(cid_data['thumbnail'], password)
               cid_data['thumbnail'] = thumbnail
               
               if(filetype == 'audio'){
-                const metadata = JSON.parse(this.decrypt_data_string(cid_data['metadata'], password))
-                const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(cid_data['encrypted_file_data_info'], password))
+                const metadata = JSON.parse(await this.decrypt_data_string(cid_data['metadata'], password))
+                const encrypted_file_data_info = JSON.parse(await this.decrypt_data_string(cid_data['encrypted_file_data_info'], password))
                 cid_data['metadata'] = metadata
                 cid_data['encrypted_file_data_info'] = encrypted_file_data_info
               }
               else if(filetype == 'video'){
-                const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(cid_data['encrypted_file_data_info'], password))
+                const encrypted_file_data_info = JSON.parse(await this.decrypt_data_string(cid_data['encrypted_file_data_info'], password))
                 cid_data['encrypted_file_data_info'] = encrypted_file_data_info
               }
             }
@@ -32931,7 +32938,7 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(files_to_fetch_view_data_e5s[0], arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(files_to_fetch_view_data_e5s[0], arg_obj)) // Convert the data object to a JSON string
     }
 
     var request = `${nitro_url}/streams`
@@ -32968,7 +32975,7 @@ class App extends Component {
   }
 
   load_lyric_subtitle_data = async (cid_data, is_lyric) => {
-    var link = this.construct_encrypted_link_from_ecid_object(cid_data, 'data')
+    var link = await this.construct_encrypted_link_from_ecid_object(cid_data, 'data')
     try {
       // Fetch the image as a blob
       const response = await fetch(link);
@@ -32986,7 +32993,7 @@ class App extends Component {
   }
 
   load_encrypted_lyric_subtitle_data = async (cid_data, is_lyric, password) => {
-    const url = this.construct_encrypted_link_from_ecid_object(cid_data, 'data')
+    const url = await this.construct_encrypted_link_from_ecid_object(cid_data, 'data')
     try {
       // Fetch the image as a blob
       const response = await fetch(url);
@@ -33034,14 +33041,14 @@ class App extends Component {
     }
   }
 
-  construct_encrypted_link_from_ecid_object(data, id){
+  construct_encrypted_link_from_ecid_object = async (data, id) => {
     var raw_link = data[id]
     const nitro_url = data['data_deconstructed'][0]
     const content_type = data['data_deconstructed'][1]
     const nitro_cid2 = data['data_deconstructed'][2]
     const file = nitro_cid2+'.'+content_type
     
-    raw_link.replace(`/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${this.fetch_nitro_privacy_signature(nitro_url, file)}/${this.fetch_nitro_privacy_signature(nitro_url)}`)
+    raw_link.replace(`/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`)
 
     return raw_link
   }
@@ -33107,7 +33114,7 @@ class App extends Component {
         var _data = structuredClone(datas[i])
         var file_name = 'data'+i
         _data['data'] = `https://${streamable_cid}.ipfs.w3s.link/${_data['name']}`
-        files.push(this.make_file(this.encrypt_storage_data(JSON.stringify(_data)), file_name))
+        files.push(this.make_file(await this.encrypt_storage_data(JSON.stringify(_data)), file_name))
       }
       const directoryCid = await client.uploadDirectory(files)
       var cid = directoryCid.toString()
@@ -33401,10 +33408,10 @@ class App extends Component {
         headers: {
           "Content-Type": "application/json" // Set content type to JSON
         },
-        body: JSON.stringify(this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
+        body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
       }
 
-      var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'store_files')}/${this.fetch_nitro_privacy_signature(node_url)}`
+      var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'store_files')}/${await this.fetch_nitro_privacy_signature(node_url)}`
       try{
         const response = await fetch(request, body);
         if (!response.ok) {
@@ -33460,9 +33467,9 @@ class App extends Component {
           headers: {
             "Content-Type": "application/json" // Set content type to JSON
           },
-          body: JSON.stringify(this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
+          body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
         }
-        const request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'reserve_upload')}/${this.fetch_nitro_privacy_signature(node_url)}`
+        const request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'reserve_upload')}/${await this.fetch_nitro_privacy_signature(node_url)}`
         try{
           const response = await fetch(request, body);
           if (!response.ok) {
@@ -33486,7 +33493,7 @@ class App extends Component {
         files.push(extension)
         this.is_uploading_file = true
         const xhr = new XMLHttpRequest();
-        const url = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'upload')}/${this.fetch_nitro_privacy_signature(node_url, extension)}/${this.fetch_nitro_privacy_signature(node_url)}`;
+        const url = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'upload')}/${await this.fetch_nitro_privacy_signature(node_url, extension)}/${await this.fetch_nitro_privacy_signature(node_url)}`;
         xhr.open("POST", url);
         const me = this;
         xhr.upload.onprogress = (event) => {
@@ -33568,7 +33575,7 @@ class App extends Component {
         },
         body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
       }
-      const request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'reserve_upload')}/${this.fetch_nitro_privacy_signature(node_url)}`
+      const request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'reserve_upload')}/${await this.fetch_nitro_privacy_signature(node_url)}`
       try{
         const response = await fetch(request, body);
         if (!response.ok) {
@@ -33592,7 +33599,7 @@ class App extends Component {
       files.push(extension)
       this.is_uploading_file = true
       const xhr = new XMLHttpRequest();
-      const url = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'upload')}/${this.fetch_nitro_privacy_signature(node_url, extension)}/${this.fetch_nitro_privacy_signature(node_url)}`;
+      const url = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'upload')}/${await this.fetch_nitro_privacy_signature(node_url, extension)}/${await this.fetch_nitro_privacy_signature(node_url)}`;
       xhr.open("POST", url);
       const me = this;
       xhr.upload.onprogress = (event) => {
@@ -33695,10 +33702,10 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
     }
 
-    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'store_data')}/${this.fetch_nitro_privacy_signature(node_url)}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'store_data')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -33771,7 +33778,7 @@ class App extends Component {
 
     for(var i=0; i<datas.length; i++){
       var _data = structuredClone(datas[i])
-      const file_name = this.decrypt_data_string(_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+      const file_name = await this.decrypt_data_string(_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
       const password = this.hash_data_with_randomizer(file_name + _data['id'] + private_key)
 
       var file_pointer_link = _data['data']
@@ -33795,23 +33802,23 @@ class App extends Component {
       _data['name'] = file_name
       _data['password'] = password
       if(type == 'image'){
-        const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
+        const thumbnail = await this.decrypt_data_string(_data['thumbnail'], password)
         _data['full_image'] = _data['data']
         _data['data'] = thumbnail
       }
       if(type == 'audio' || type == 'video' || type == 'pdf'){
         if(_data['thumbnail'] != null){
-          const thumbnail = this.decrypt_data_string(_data['thumbnail'], password)
+          const thumbnail = await this.decrypt_data_string(_data['thumbnail'], password)
           _data['thumbnail'] = thumbnail
         }
         if(type == 'audio'){
-          const metadata = JSON.parse(this.decrypt_data_string(_data['metadata'], password))
-          const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(_data['encrypted_file_data_info'], password))
+          const metadata = JSON.parse(await this.decrypt_data_string(_data['metadata'], password))
+          const encrypted_file_data_info = JSON.parse(await this.decrypt_data_string(_data['encrypted_file_data_info'], password))
           _data['metadata'] = metadata
           _data['encrypted_file_data_info'] = encrypted_file_data_info
         }
         else if(type == 'video'){
-          const encrypted_file_data_info = JSON.parse(this.decrypt_data_string(_data['encrypted_file_data_info'], password))
+          const encrypted_file_data_info = JSON.parse(await this.decrypt_data_string(_data['encrypted_file_data_info'], password))
           _data['encrypted_file_data_info'] = encrypted_file_data_info
         }
       }
@@ -33876,25 +33883,28 @@ class App extends Component {
 
 
 
-  encrypt_storage_object(data, tags_obj){
+  encrypt_storage_object = async (data, tags_obj) => {
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
-    var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
+    // var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
+    var ciphertext = await this.encrypt_secure_data(data, APP_KEY);
     const compressed = pako.deflate(base64ToUint8Array(ciphertext))/* Im not sure if compressing data then converting it to base64 makes much of a difference in the long run for storage efficiency. Im yet to actually gauge if this a good thing since storage objects cant exceeed the limit i've set in the state of about 350Kb... */
-    var final_obj = {'ciphertext':uint8ArrayToBase64(compressed), 'tags':tags_obj, 'c'/* compressed */: true}
+    var final_obj = {'ciphertext':uint8ArrayToBase64(compressed), 'tags':tags_obj, 'c'/* compressed */: true, 'a':true }
     return JSON.stringify(final_obj)
   }
 
-  encrypt_storage_object_using_provided_key(data, tags_obj, key){
+  encrypt_storage_object_using_provided_key = async (data, tags_obj, key) => {
     const APP_KEY = key
-    var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
-    const compressed = pako.deflate(base64ToUint8Array(ciphertext))/* Im not sure if compressing data then converting it to base64 makes much of a difference in the long run for storage efficiency. Im yet to actually gauge if this a good thing since storage objects cant exceeed the limit i've set in the state of about 350Kb... */
-    var final_obj = {'ciphertext':uint8ArrayToBase64(compressed), 'tags':tags_obj, 'c'/* compressed */: true}
+    // var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
+    var ciphertext = await this.encrypt_secure_data(data, APP_KEY);
+    const compressed = pako.deflate(base64ToUint8Array(ciphertext))/* Im not sure if compressing data then converting it to base64 makes much of a difference in the long run for storage efficiency. Im yet to actually gauge if this a good thing since storage objects cant exceeed the limit i've set in the state of about 230Kb... */
+    var final_obj = {'ciphertext':uint8ArrayToBase64(compressed), 'tags':tags_obj, 'c'/* compressed */: true, 'a':true}
     return JSON.stringify(final_obj)
   }
 
-  decrypt_storage_object_using_provided_key(data, key){
+  decrypt_storage_object_using_provided_key = async (data, key) => {
     const APP_KEY = key
     var cipher_text = data
+    var secure = false
     try{
       var json_object = JSON.parse(data)
       cipher_text = json_object['ciphertext']
@@ -33904,11 +33914,15 @@ class App extends Component {
         cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
         // console.log('apppage', 'uncompressed ciphertext', cipher_text)
       }
+      secure = json_object['a']
       // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
     }catch(f){
       // console.log('apppage', f)
     }
     try{
+      if(secure == true){
+        return await this.decrypt_secure_data(cipher_text, APP_KEY)
+      }
       var bytes = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
       console.log('sigbytes', bytes.sigBytes)
       if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
@@ -33923,9 +33937,10 @@ class App extends Component {
     }
   }
 
-  decrypt_storage_object(data){
+  decrypt_storage_object = async (data) => {
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
     var cipher_text = data
+    var secure = false
     try{
       var json_object = JSON.parse(data)
       cipher_text = json_object['ciphertext']
@@ -33935,11 +33950,15 @@ class App extends Component {
         cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
         // console.log('apppage', 'uncompressed ciphertext', cipher_text)
       }
+      secure = json_object['a']
       // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
     }catch(f){
       // console.log('apppage', f)
     }
     try{
+      if(secure == true){
+        return await this.decrypt_secure_data(cipher_text, APP_KEY)
+      }
       var bytes = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
       console.log('sigbytes', bytes.sigBytes)
       if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
@@ -33954,7 +33973,7 @@ class App extends Component {
     }
   }
 
-  decrypt_storage_object2(data){
+  decrypt_storage_object2 = async (data) => {
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
     var cipher_text = data
     if(isJsonObject(data)){
@@ -33980,6 +33999,9 @@ class App extends Component {
       }
     }
     try{
+      if(data['a'] == true){
+        return await this.decrypt_secure_data(cipher_text, APP_KEY)
+      }
       var bytes  = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
       if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
         var originalText = bytes.toString(CryptoJS.enc.Utf8);
@@ -33994,10 +34016,46 @@ class App extends Component {
     }
   }
 
-  encrypt_storage_data(data){
+  encrypt_storage_data = async (data) => {
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
-    var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
-    return ciphertext
+    return await this.encrypt_secure_data(data, APP_KEY);
+    // var ciphertext = CryptoJS.AES.encrypt(data, APP_KEY).toString();
+    // return ciphertext
+  }
+
+
+  encrypt_secure_data = async(text, password) => {
+    const iv   = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
+    const key = await this.get_key_from_password(password, 'f');
+    const encoder = new TextEncoder();
+    const encoded = encoder.encode(text);
+
+    const ciphertext = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      key,
+      encoded
+    );
+
+    const result = new Uint8Array(iv.length + ciphertext.byteLength);
+    result.set(iv, 0);
+    result.set(new Uint8Array(ciphertext), iv.length);
+
+    return this.uint8ToBase64(result); // return as base64 string
+  }
+
+  decrypt_secure_data = async (encrypted, password) => {
+    const data = this.base64ToUint8(encrypted);
+    const iv   = data.slice(0, 12);
+    const ciphertext = data.slice(12);
+
+    const key = await this.get_key_from_password(password, 'f');
+    const decrypted = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: iv },
+      key,
+      ciphertext
+    );
+    const decoder = new TextDecoder();
+    return decoder.decode(decrypted)
   }
 
 
@@ -34280,22 +34338,25 @@ class App extends Component {
     // return publicKeyA
   }
 
-  encrypt_data_object(tx, key){
+  encrypt_data_object = async (tx, key) => {
     var object_as_string = JSON.stringify(tx)
-    var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
-    return ciphertext
+    return await this.encrypt_secure_data(object_as_string, key);
+    // var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
+    // return ciphertext
   }
 
-  encrypt_data_string(tx, key){
+  encrypt_data_string = async (tx, key) => {
     var object_as_string = JSON.stringify(tx)
-    var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
-    return ciphertext
+    return await this.encrypt_secure_data(object_as_string, key);
+    // var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
+    // return ciphertext
   }
 
-  decrypt_data_string(data, key){
-    const bytes = CryptoJS.AES.decrypt(data, key);
-    const originalText = bytes.toString(CryptoJS.enc.Utf8);
-    return originalText
+  decrypt_data_string = async (data, key) => {
+    return await this.encrypt_secure_data(data, key);
+    // const bytes = CryptoJS.AES.decrypt(data, key);
+    // const originalText = bytes.toString(CryptoJS.enc.Utf8);
+    // return originalText
   }
 
   get_accounts_public_key = async (account, e5) => {
@@ -36562,7 +36623,7 @@ class App extends Component {
         const params = new URLSearchParams({
           arg_string: JSON.stringify(arg_obj)
         });
-        var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tags')}/${this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+        var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tags')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
         try{
           const response = await fetch(request);
           if (!response.ok) {
@@ -37471,7 +37532,7 @@ class App extends Component {
     if(account != null && account != 1){
       var link = object['ipfs'] == null ? null : object['ipfs'].node_url
       const e5_account = object['e5']+':'+account
-      var request = `${link}/${this.load_registered_endpoint_from_link(link, 'account_storage_data')}/${this.fetch_nitro_privacy_signature(link,e5_account)}/${this.fetch_nitro_privacy_signature(link)}`
+      var request = `${link}/${this.load_registered_endpoint_from_link(link, 'account_storage_data')}/${await this.fetch_nitro_privacy_signature(link,e5_account)}/${await this.fetch_nitro_privacy_signature(link)}`
       try{
         const response = await fetch(request);
         if (!response.ok) {
@@ -37538,7 +37599,7 @@ class App extends Component {
     const params = new URLSearchParams({
       arg_string:JSON.stringify({hashes: final_hashes}),
     });
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -37557,7 +37618,7 @@ class App extends Component {
           if(confirmation_hash != final_hashes[i] && options[i] == 'ni'){
             console.log('apppage', final_hashes[i], 'data has been modified')
           }else{
-            var decrypted_data = this.decrypt_storage_object2(cid_data)
+            var decrypted_data = await this.decrypt_storage_object2(cid_data)
             count++
             this.store_in_local_storage(final_hashes[i], JSON.parse(decrypted_data))
           }

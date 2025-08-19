@@ -1223,10 +1223,13 @@ class EditPostPage extends Component {
         }
     }
 
-    when_banner_selected(files){
+    when_banner_selected = async (files) => {
         this.add_banner_to_object(files[0])
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        cloned_ecid_encryption_passwords[files[0]] = this.props.get_ecid_file_password_if_any(files[0])
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
@@ -1876,13 +1879,16 @@ class EditPostPage extends Component {
         }
     }
 
-    when_image_gif_files_picked(files){
+    when_image_gif_files_picked = async (files) => {
         var clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
         files.forEach(file => {
             clonedArray.push(file);
-            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
         });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({entered_image_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
@@ -2068,16 +2074,17 @@ return data['data']
       )
     }
 
-    when_pdf_files_picked(files){
+    when_pdf_files_picked = async (files) => {
         var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
         files.forEach(file => {
             clonedArray.push(file);
         });
 
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        files.forEach(file => {
-            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
-        });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({entered_pdf_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
@@ -2204,15 +2211,16 @@ return data['data']
         )
     }
     
-    when_zip_files_picked(files){
+    when_zip_files_picked = async (files) => {
         var clonedArray = this.state.entered_zip_objects == null ? [] : this.state.entered_zip_objects.slice();
         files.forEach(file => {
             clonedArray.push(file);
         });
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        files.forEach(file => {
-            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
-        });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({entered_zip_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
     

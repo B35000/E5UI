@@ -609,10 +609,13 @@ class NewTokenPage extends Component {
     }
 
 
-    when_banner_selected(files){
+    when_banner_selected = async (files) => {
         this.setState({token_image: files[0]});
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        cloned_ecid_encryption_passwords[files[0]] = this.props.get_ecid_file_password_if_any(files[0])
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 

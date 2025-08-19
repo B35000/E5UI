@@ -145,8 +145,8 @@ class home_page extends Component {
     componentWillUnmount(){
     }
 
-    set_cupcake_data(){
-        var cupcake_state = this.props.get_local_storage_data_if_enabled("viewed");
+    set_cupcake_data = async () => {
+        var cupcake_state = await this.props.get_local_storage_data_if_enabled("viewed");
         if(cupcake_state != null && cupcake_state != ""){
             cupcake_state = JSON.parse(cupcake_state)
         }

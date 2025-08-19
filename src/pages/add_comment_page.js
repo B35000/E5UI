@@ -652,24 +652,26 @@ class AddCommentPage extends Component {
         }
     }
 
-    when_image_gif_files_picked(files){
+    when_image_gif_files_picked = async (files) => {
         var clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
         files.forEach(file => {
             clonedArray.push(file);
-            cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
         });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({entered_image_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 
-    when_pdf_files_picked(files){
+    when_pdf_files_picked = async (files) => {
         var clonedArray = this.state.entered_pdf_objects == null ? [] : this.state.entered_pdf_objects.slice();
         var clone = structuredClone(this.state.entered_video_object_dimensions)
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
         files.forEach(file => {
             if(!clonedArray.includes(file)){
                 clonedArray.push(file);
-                cloned_ecid_encryption_passwords[file] = this.props.get_ecid_file_password_if_any(file)
 
                 var ecid_obj = this.get_cid_split(file)
                 if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
@@ -680,6 +682,10 @@ class AddCommentPage extends Component {
                 }
             }
         });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
         this.setState({entered_pdf_objects: clonedArray, entered_video_object_dimensions: clone, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
     }
 

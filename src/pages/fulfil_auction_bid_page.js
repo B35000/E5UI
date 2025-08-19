@@ -196,15 +196,16 @@ class FulfilAuctionBidPage extends Component {
         )
     }
 
-    get_fulfilment_location_from_local_storage(){
-        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
+    componentDidMount() {
+        this.get_fulfilment_location_from_local_storage()
+    }
+
+    get_fulfilment_location_from_local_storage = async () => {
+        var fulfilment_locations = await this.props.get_local_storage_data_if_enabled("fulfilment");
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
-        }else{
-            return []
+            this.setState({fulfilment_locations_data: fulfilment_locations['data']})
         }
-
-        return fulfilment_locations['data']
     }
 
     when_suggestion_clicked = (item, pos) => {
@@ -425,7 +426,7 @@ class FulfilAuctionBidPage extends Component {
     }
 
     add_fulfilment_location_to_local_storage(){
-        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
+        var fulfilment_locations = this.state.fulfilment_locations_data || []
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{
@@ -442,7 +443,7 @@ class FulfilAuctionBidPage extends Component {
     }
 
     remove_fulfilment_location_from_local_storage(pos){
-        var fulfilment_locations = this.props.get_local_storage_data_if_enabled("fulfilment");
+        var fulfilment_locations = this.state.fulfilment_locations_data || []
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{

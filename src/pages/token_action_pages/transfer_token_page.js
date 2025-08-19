@@ -775,8 +775,20 @@ class TransferTokenPage extends Component {
         this.props.set_local_storage_data_if_enabled("transfer_data", JSON.stringify(obj));
     }
 
+    set_recipients_data = async () => {
+        var recipients_data = await this.props.get_local_storage_data_if_enabled("transfer_data");
+        if(recipients_data != null && recipients_data != ""){
+            this.setState({recipients_data: recipients_data})
+        }
+    }
+
+    componentDidMount(){
+        this.set_recipients_data()
+    }
+
     get_recipients_from_memory(){
-        return this.props.get_local_storage_data_if_enabled("transfer_data") == null ? [] : JSON.parse(this.props.get_local_storage_data_if_enabled("transfer_data"))['data']
+        const recipients_data = this.state.recipients_data;
+        return recipients_data == null ? [] : JSON.parse(recipients_data)['data']
     }
 
 

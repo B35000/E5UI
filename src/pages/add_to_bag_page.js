@@ -276,9 +276,10 @@ class AddToBagPage extends Component {
         this.setState({delivery_frequency_time: time})
     }
 
+    
 
     render_button_if_location_exists(){
-        var location = this.get_fulfilment_location_from_local_storage()
+        var location = this.state.default_location_data
         if(location != null){
             location = location.replaceAll('"','')
             return(
@@ -295,8 +296,13 @@ class AddToBagPage extends Component {
         }
     }
 
-    get_fulfilment_location_from_local_storage(){
-        return this.props.get_local_storage_data_if_enabled("delivery");
+    componentDidMount(){
+        this.get_fulfilment_location_from_local_storage()
+    }
+
+    get_fulfilment_location_from_local_storage = async () => {
+        var location_data = await this.props.get_local_storage_data_if_enabled("delivery");
+        if(location_data != null) this.setState({default_location_data: location_data})
     }
 
     should_render_city_settings(){
