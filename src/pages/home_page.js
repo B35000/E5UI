@@ -381,7 +381,7 @@ class home_page extends Component {
         ]
 
         obj[this.props.app_state.loc['1218']/* 'ends' */] = [
-            ['xor','',0], [this.props.app_state.loc['1218']/* 'ends' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264ba']/* 'main ⚫' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1218']/* 'ends' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264ba']/* 'main ⚫' */, this.props.app_state.loc['1264bf']/* 'E-Tokens 📈' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
         ]
 
         obj[this.props.app_state.loc['1219']/* 'spends' */] = [
@@ -2358,6 +2358,13 @@ class home_page extends Component {
                 return (this.state.pinned_tokens.includes(object['id']))
             })
             return main_tokens
+        }
+        else if(selected_option_name == this.props.app_state.loc['1264bf']/* 'E-Tokens 📈' */){
+            var all_tokens = this.get_exchange_tokens(3, all)
+            var e_tokens = all_tokens.filter(function (object) {
+                return (object['ipfs'] != null && object['ipfs'].token_type == 'e')
+            })
+            return this.sortByAttributeDescending(e_tokens, 'spend_balance')
         }
         else {
             var all_tokens = this.get_exchange_tokens(3, all)

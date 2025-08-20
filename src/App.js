@@ -26495,6 +26495,8 @@ class App extends Component {
       }
     });
 
+    const e_token_balance_data = await this.fetch_balance_data_for_e_tokens(created_tokens, created_token_data, H52contractInstance)
+
     // var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
     var created_token_object_data = this.state.created_tokens[e5] || []
@@ -26559,7 +26561,7 @@ class App extends Component {
       }
         
       var token_obj = {
-        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length
+        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length, 'spend_balance':(tokens_data.token_type == 'e' ? e_token_balance_data[created_tokens[i]] : 0)
       }
 
       if(this.homepage.current?.state.selected_end_item == created_tokens[i]+e5 || this.homepage.current?.state.selected_spend_item == created_tokens[i]+e5){
@@ -26661,6 +26663,28 @@ class App extends Component {
 
     await this.wait(350)
     this.resolve_token_name_details()
+  }
+
+  fetch_balance_data_for_e_tokens = async(exchange_ids, exchange_data, H52contractInstance) => {
+    const exchanges_to_fetch = []
+    for(var i=0; i<exchange_ids.length; i++){
+      const focused_exchange_id = exchange_ids[i]
+      const focused_exchange_data = exchange_data[i]
+
+      if(focused_exchange_data[3].length == 1 && focused_exchange_data[3][0] == 5 && focused_exchange_data[4][0] == 1 && focused_exchange_data[5][0] == 0){
+        exchanges_to_fetch.push(focused_exchange_id)
+      }
+    }
+    if(exchanges_to_fetch.length == 0) return {};
+    
+    const balance_data = {}
+    const token_balances = await H52contractInstance.methods.f270([5], exchanges_to_fetch, [0], 1, 0).call((error, result) => {});
+
+    token_balances[0].forEach((balance_item, index) => {
+      balance_data[exchanges_to_fetch[index]] = bigInt(balance_item)
+    });
+
+    return balance_data
   }
 
   resolve_token_name_details(){
@@ -34371,14 +34395,14 @@ class App extends Component {
   }
 
   get_balance_in_exchange_for_multiple_accounts = async (exchange_ids, accounts, e5, addresses, depths, action) => {
-      const web3 = new Web3(this.get_web3_url_from_e5(e5));
-      const H52contractArtifact = require('./contract_abis/H52.json');
-      const H52_address = addresses[6];
-      const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
-      
-      var token_balances = await H52contractInstance.methods.f270(exchange_ids, accounts, depths, 1, action).call((error, result) => {});
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    
+    var token_balances = await H52contractInstance.methods.f270(exchange_ids, accounts, depths, 1, action).call((error, result) => {});
 
-      return token_balances
+    return token_balances
   }
 
   get_actual_number(number, depth){
