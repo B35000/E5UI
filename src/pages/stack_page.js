@@ -4807,7 +4807,7 @@ class StackPage extends Component {
         this.setState({stack_size_in_bytes: stack_size_data_clone})
 
         const ipfs_index_object = {'version':this.props.app_state.version, 'color':this.get_device_color()}
-        const obj = {'version':this.props.app_state.version, 'color':this.get_device_color(), 'tags':{'color':this.get_device_color()}}
+        const obj = {'version':this.props.app_state.version, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address), 'color':this.get_device_color(), 'tags':{'color':this.get_device_color()}}
         const ipfs_index_array = []
         console.log('stack_page_ipfs', 'initial object data', ipfs_index_object)
         const pushed_txs = []
@@ -13777,13 +13777,11 @@ class StackPage extends Component {
                     // reader.readAsDataURL(imageFile);
                     const encrypted_file_data = await this.encrypt_singular_file(imageFile,password, 'e')
                     const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
-
                     const compressed_image = this.compressImageFromFile(URL.createObjectURL(imageFile))
                     
                     const obj = {
-                        'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':await this.props.encrypt_data_string(compressed_image, password)
+                        'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':await this.props.encrypt_data_string(compressed_image, password), 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)
                     }
-                    
                     files_to_upload.push(obj)
                 }
                 else if(type == 'audio'){
@@ -13809,7 +13807,7 @@ class StackPage extends Component {
                             const obj = { 
                                 'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':await me.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': await me.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension,
                                 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info':  await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
-                                'audio_type':audioType
+                                'audio_type':audioType, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)
                             }
                             files_to_upload.push(obj)
                         })
@@ -13817,7 +13815,7 @@ class StackPage extends Component {
                         console.error('Error parsing metadata:', err);
                         // reader.readAsDataURL(audioFile);
                         const obj = { 
-                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password), 'audio_type':audioType
+                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password), 'audio_type':audioType, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)
                         }
                         files_to_upload.push(obj)
                     });
@@ -13843,7 +13841,7 @@ class StackPage extends Component {
                     
                     const obj = {
                         'data':this.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': await this.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
-                        'video_type':videoType, 'codec':codec
+                        'video_type':videoType, 'codec':codec, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)
                     }
                     
                     if(thumb_data != null && thumb_data != ''){
@@ -13861,7 +13859,7 @@ class StackPage extends Component {
                     const pdf_image = await this.get_pdf_image(URL.createObjectURL(pdfFile))
                     const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
 
-                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail':await this.props.encrypt_data_string(pdf_image, password), 'encrypted':true, 'extension':extension }
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail':await this.props.encrypt_data_string(pdf_image, password), 'encrypted':true, 'extension':extension, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address) }
 
                     files_to_upload.push(obj)
                 }
@@ -13871,7 +13869,7 @@ class StackPage extends Component {
                     const encrypted_file_data = await this.encrypt_singular_file(zipFile, password, 'e')
                     const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
 
-                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension }
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address) }
 
                     files_to_upload.push(obj)
                 }
@@ -13881,7 +13879,7 @@ class StackPage extends Component {
                     const encrypted_file_data = await this.encrypt_singular_file(lyricFile, password, 'e')
                     const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
 
-                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension }
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address) }
 
                     files_to_upload.push(obj)
                 }
@@ -13891,7 +13889,7 @@ class StackPage extends Component {
                     const encrypted_file_data = await this.encrypt_singular_file(subtitleFile, password, 'e')
                     const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
 
-                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension }
+                    const obj = { 'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address) }
 
                     files_to_upload.push(obj)
                 }

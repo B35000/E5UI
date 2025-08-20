@@ -900,7 +900,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(1024*253), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 153, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2),
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -958,7 +958,9 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{}
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
+
+    gateway_traffic_stats_cache_time_limit: (3*60*1000),
   };
 
   get_static_assets(){
@@ -3478,6 +3480,7 @@ class App extends Component {
       cached_files: await this.get_uploaded_data_to_stash(),
       all_cities: this.state.all_cities,
       new_object_changes: this.state.new_object_changes,
+      my_data_items: this.fetch_my_personal_data_in_memory()
     }
   }
 
@@ -3503,6 +3506,7 @@ class App extends Component {
       var cached_files = state.cached_files
       var all_cities = state.all_cities == null ? this.state.all_cities : state.all_cities
       var new_object_changes = state.new_object_changes == null ? this.state.new_object_changes : state.new_object_changes
+      var my_data_items = state.my_data_items == null ? {} : state.my_data_items
 
       // if(cached_tracks != null){
       //   this.set_cached_tracks_data(cached_tracks)
@@ -3512,6 +3516,7 @@ class App extends Component {
       //   this.load_cached_files_into_memory(cached_files)
       // }
 
+      this.write_my_data_items_to_memory_for_faster_load_times(my_data_items)
       this.setState({all_cities: all_cities, new_object_changes: new_object_changes})
     }
   }
@@ -4494,7 +4499,7 @@ class App extends Component {
   }
 
   update_data_in_db = async (data, id) => {
-    const encrypted_data = this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+    const encrypted_data = data == '' ? '' : await this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     try {
       const db = new Dexie('twentythreeinreverse');
       db.version(2).stores({
@@ -4505,7 +4510,7 @@ class App extends Component {
       }catch(e){
         console.log(`Failed to delete data in db: `, e);
       }
-      await db.data.add({ id, encrypted_data });
+      if(encrypted_data != '') await db.data.add({ id, encrypted_data });
     } catch (error) {
       console.log(`Failed to do something in db: `,error);
     }
@@ -7629,6 +7634,7 @@ class App extends Component {
         me.set_cookies()
         me.update_theme_image_data_once_storage_permissions_enabled()
         me.update_local_storage_data_once_storage_permissions_disabled()
+        me.delete_data_in_db_after_permissions_change()
     }, (1 * 1000));
   }
 
@@ -8974,9 +8980,9 @@ class App extends Component {
     this.setState({channel_id_hash_directory: clone})
   }
 
-  set_local_storage_data_if_enabled(identifier, data){
+  set_local_storage_data_if_enabled = async (identifier, data) => {
     if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
-      const encrypted_data = this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      const encrypted_data = await this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
       localStorage.setItem(identifier, encrypted_data)
     }else{
       localStorage.setItem(identifier, '')
@@ -34083,10 +34089,15 @@ class App extends Component {
     if(this.gateway_traffic_cache == null){
       this.gateway_traffic_cache = {}
     }
+    if(this.gateway_traffic_stats_cache = null){
+      this.gateway_traffic_stats_cache = {}
+    }
+    this.gateway_traffic_stats_cache[cid] = { 't': Date.now() }
     var data_or_pointer = this.gateway_traffic_cache[cid];
     if(data_or_pointer != null){
       return data_or_pointer
-    }else{
+    }
+    else{
       if(this.gateway_traffic_cache_pointers != null){
         var pointer = this.gateway_traffic_cache_pointers[cid]
         if(pointer != null){
@@ -34101,9 +34112,14 @@ class App extends Component {
     if(this.gateway_traffic_cache == null){
       this.gateway_traffic_cache = {}
     }
+    if(this.gateway_traffic_stats_cache = null){
+      this.gateway_traffic_stats_cache = {}
+    }
     this.gateway_traffic_cache[cid] = data
 
     if(this.get_object_size_in_mbs(this.gateway_traffic_cache) > 5.3 && this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
+      const my_address_signature = this.state.hash_data_with_randomizer(this.state.accounts['E25'].address)
+
       this.gateway_traffic_cache_pointers_index += 1
       var keys = Object.keys(this.gateway_traffic_cache)
       var store_obj = {}
@@ -34111,13 +34127,15 @@ class App extends Component {
         this.gateway_traffic_cache_pointers = {}
       }
       keys.forEach(key => {
-        var str = JSON.stringify(this.gateway_traffic_cache[key], (key, value) =>
-          typeof value === 'bigint'
-              ? value.toString()
-              : value // return everything else unchanged));
-        )
-        store_obj[key] = JSON.parse(str)
-        this.gateway_traffic_cache_pointers[key] = this.gateway_traffic_cache_pointers_index
+        if(this.gateway_traffic_cache[key]['author'] != my_address_signature){
+          var str = JSON.stringify(this.gateway_traffic_cache[key], (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value // return everything else unchanged));
+          )
+          store_obj[key] = JSON.parse(str)
+          this.gateway_traffic_cache_pointers[key] = this.gateway_traffic_cache_pointers_index
+        }
       });
 
       var x = JSON.stringify(store_obj, (key, value) =>
@@ -34126,12 +34144,64 @@ class App extends Component {
             : value // return everything else unchanged));
       )
       this.update_data_in_db(x, this.gateway_traffic_cache_pointers_index.toString()).then(result => {
-        Object.keys(this.gateway_traffic_cache).forEach(key => delete this.gateway_traffic_cache[key]);
+        Object.keys(this.gateway_traffic_cache).forEach(key => {
+            if(this.gateway_traffic_cache[key]['author'] != my_address_signature) {
+              delete this.gateway_traffic_cache[key]
+            }
+        });
       })
       .catch(error => {
         console.error('store_in_local_storage', 'something went wrong while updating data in db', error)
       });
     }
+    else if(this.get_object_size_in_mbs(this.gateway_traffic_cache) > 5.3){
+      //reduce the size by removing unaccessed data
+      const cached_keys = Object.keys(this.gateway_traffic_cache)
+      const my_address_signature = this.state.hash_data_with_randomizer(this.state.accounts['E25'].address)
+      cached_keys.forEach(key => {
+        if(this.gateway_traffic_stats_cache[key] != null){
+          const time_difference = Date.now() - this.gateway_traffic_stats_cache[key]['t']
+          if(time_difference > this.state.gateway_traffic_stats_cache_time_limit && this.gateway_traffic_cache[key]['author'] != my_address_signature){
+            delete this.gateway_traffic_cache[key]
+          }
+        }
+      });
+    }
+  }
+
+  fetch_my_personal_data_in_memory(){
+    const cached_keys = Object.keys(this.gateway_traffic_cache)
+    const my_address_signature = this.state.hash_data_with_randomizer(this.state.accounts['E25'].address)
+    const my_personal_data = {}
+    cached_keys.forEach(key => {
+      if(this.gateway_traffic_cache[key]['author'] != my_address_signature){
+        my_personal_data[key] = this.gateway_traffic_cache[key]
+      }
+    });
+    return my_personal_data
+  }
+
+  write_my_data_items_to_memory_for_faster_load_times(cid_data){
+    const cids = Object.keys(cid_data)
+    cids.forEach(cid => {
+      this.store_in_local_storage(cid, cid_data[cid])
+    });
+  }
+
+  delete_data_in_db_after_permissions_change = async () => {
+    if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
+      return;
+    }
+    if(this.gateway_traffic_cache_pointers != null){
+      Object.keys(this.gateway_traffic_cache_pointers).forEach(key => {
+        delete this.gateway_traffic_cache_pointers[key]
+      });
+    }
+    for(var i=0; i <= this.gateway_traffic_cache_pointers_index; i++){
+      const db_identifier = i.toString()
+      await this.update_data_in_db('', db_identifier)
+    }
+    this.gateway_traffic_cache_pointers_index = 0;
   }
 
   get_object_size_in_mbs(obj) {
