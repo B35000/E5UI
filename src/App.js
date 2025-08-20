@@ -16674,17 +16674,18 @@ class App extends Component {
     var node_url = nitro_object['ipfs'].node_url
 
     var beacon_chain_link = this.state.beacon_chain_url
-    const params = new URLSearchParams({
+    const arg_obj = {
       backup_key: final_backup_key,
       beacon_chain_link: beacon_chain_link
-    });
-    var request = `${node_url}/boot?${params.toString()}`
+    }
+
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'boot')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: ''
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
     try{
       const response = await fetch(request, body);
@@ -16710,20 +16711,21 @@ class App extends Component {
     // var final_files_backup_key = entered_backup_file_text == '' ? final_backup_key : entered_backup_file_text
     var final_files_backup_key = ''
 
-    const params = new URLSearchParams({
+    const arg_obj = {
       backup_key: final_backup_key,
       file_name: entered_filename_text,
       data_key: final_files_backup_key,
       should_restore_key: should_restore_key_title_tag_selected
-    });
+    }
+
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: '' // Convert the data object to a JSON string
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
-    var request = `${node_url}/restore?${params.toString()}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'restore')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -16748,17 +16750,17 @@ class App extends Component {
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
     var node_url = nitro_object['ipfs'].node_url
 
-    const params = new URLSearchParams({
+    const arg_obj = {
       backup_key: final_backup_key,
-    });
+    }
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: ''
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
-    var request = `${node_url}/backup?${params.toString()}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'backup')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -16802,17 +16804,14 @@ class App extends Component {
       web3_backups:added_rpc_urls
     }
 
-    const params = new URLSearchParams({
-      arg_string:JSON.stringify(arg_obj),
-    });
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: ''
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
-    var request = `${node_url}/new_e5?${params.toString()}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'new_e5')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -16835,18 +16834,19 @@ class App extends Component {
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
     var node_url = nitro_object['ipfs'].node_url
 
-    const params = new URLSearchParams({
+    const arg_obj = {
       e5: selected_e5,
       backup_key: final_backup_key
-    });
+    }
+
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: ''
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
-    var request = `${node_url}/delete_e5?${params.toString()}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'delete_e5')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -16869,19 +16869,20 @@ class App extends Component {
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
     var node_url = nitro_object['ipfs'].node_url
 
-    const params = new URLSearchParams({
+    const arg_obj = {
       backup_key: final_backup_key,
       e5: selected_e5,
       new_iteration:parseInt(entered_iteration_text),
-    });
+    }
+
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: ''
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
-    var request = `${node_url}/update_iteration?${params.toString()}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'update_iteration')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -16904,18 +16905,19 @@ class App extends Component {
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
     var node_url = nitro_object['ipfs'].node_url
 
-    const params = new URLSearchParams({
+    const arg_obj = {
       backup_key: final_backup_key,
       new_provider: entered_ipfs_provider_text
-    });
+    }
+
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: ''
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
-    var request = `${node_url}/update_content_gateway?${params.toString()}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'update_content_gateway')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -16938,20 +16940,21 @@ class App extends Component {
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
     var node_url = nitro_object['ipfs'].node_url
 
-    const params = new URLSearchParams({
+    const arg_obj = {
       backup_key: final_backup_key,
       e5: selected_e5,
       new_provider: entered_web3_text,
       new_providers: added_rpc_urls
-    });
+    }
+
     var body = {
       method: "POST", // Specify the HTTP method
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: ''
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
     }
-    var request = `${node_url}/update_provider?${params.toString()}`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'update_provider')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -16992,7 +16995,7 @@ class App extends Component {
       body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
     }
 
-    var request = `${node_url}/boot_storage`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'boot_storage')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -17030,7 +17033,7 @@ class App extends Component {
       body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
     }
 
-    var request = `${node_url}/reconfigure_storage`
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'reconfigure_storage')}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -17058,42 +17061,42 @@ class App extends Component {
   }
 
   update_dialer_provider_in_node = async (entered_backup_key_text, e5, subscription, dialer_payment_optional, nitro_object, dialer_endpoint) => {
-    this.prompt_top_notification(this.getLocale()['3054di']/* Attempting to update your dialer configuration... */, 1200)
-    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
-    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
-    var node_url = nitro_object['ipfs'].node_url
+    // this.prompt_top_notification(this.getLocale()['3054di']/* Attempting to update your dialer configuration... */, 1200)
+    // var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    // var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    // var node_url = nitro_object['ipfs'].node_url
 
-    var arg_obj = {
-      backup_key: final_backup_key,
-      target_subscription: subscription,
-      target_subscriptions_e5: e5,
-      subscription_payment_optional: dialer_payment_optional,
-      dialer_endpoint:dialer_endpoint
-    }
+    // var arg_obj = {
+    //   backup_key: final_backup_key,
+    //   target_subscription: subscription,
+    //   target_subscriptions_e5: e5,
+    //   subscription_payment_optional: dialer_payment_optional,
+    //   dialer_endpoint:dialer_endpoint
+    // }
 
-    var body = {
-      method: "POST", // Specify the HTTP method
-      headers: {
-        "Content-Type": "application/json" // Set content type to JSON
-      },
-      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
-    }
+    // var body = {
+    //   method: "POST", // Specify the HTTP method
+    //   headers: {
+    //     "Content-Type": "application/json" // Set content type to JSON
+    //   },
+    //   body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    // }
 
-    var request = `${node_url}/configure_dialer`
-    try{
-      const response = await fetch(request, body);
-      if (!response.ok) {
-        console.log(response)
-        throw new Error(`Failed to retrieve data. Status: ${response}`);
-      }
-      var data = await response.text();
-      var obj = JSON.parse(data);
-      var duration = obj.success == true ? 3700 : 4800
-      this.prompt_top_notification(obj.message, duration)
-    }
-    catch(e){
-      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
-    }
+    // var request = `${node_url}/configure_dialer`
+    // try{
+    //   const response = await fetch(request, body);
+    //   if (!response.ok) {
+    //     console.log(response)
+    //     throw new Error(`Failed to retrieve data. Status: ${response}`);
+    //   }
+    //   var data = await response.text();
+    //   var obj = JSON.parse(data);
+    //   var duration = obj.success == true ? 3700 : 4800
+    //   this.prompt_top_notification(obj.message, duration)
+    // }
+    // catch(e){
+    //   this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    // }
   }
 
   encrypt_post_object = async (node_object_e5_id, data) => {
@@ -19974,7 +19977,7 @@ class App extends Component {
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     await this.check_and_set_default_rpc()
-    await this.update_nitro_privacy_signature()
+    await this.update_nitro_privacy_signature(false)
     await this.wait(1500)
     await this.load_root_config()
     await this.wait(500)
@@ -20037,19 +20040,19 @@ class App extends Component {
   }
 
 
-  update_nitro_privacy_signature = async () => {
+  update_nitro_privacy_signature = async ( get_sync_block_from_nitro = true ) => {
     const seed = process.env.REACT_APP_PRIVACY_SIGNATURE_KEY
     const web3_url = this.get_web3_url_from_e5('E25')
     var account = this.get_account_from_seed(seed, web3_url)
     var address = account.address
     const web3 = new Web3(web3_url);
     web3.eth.accounts.wallet.add(account.privateKey);
-    var block_number = await this.get_sync_block_from_nitro()
+    var block_number = get_sync_block_from_nitro == true ? await this.get_sync_block_from_nitro() : null;
     if(block_number == null || block_number == 0){
       block_number = await web3.eth.getBlockNumber()
     }
     var current_block_number = parseInt(block_number)
-    var signature_data = Math.floor(current_block_number/5)
+    var signature_data = Math.floor(current_block_number/10)
     var signature = await web3.eth.sign(signature_data.toString(), address)
     console.log('update_nitro_privacy_signature','nitro privacy address', address)
     this.setState({nitro_privacy_signature: signature})
@@ -22137,14 +22140,16 @@ class App extends Component {
   load_events_from_nitro = async (_web3, contract_instance, event_id, e5, filter, load_limit) => {
     var requested_contract = this.get_contract_id_from_contract(e5, contract_instance)
     var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':event_id, 'filter':filter}
-    const params = new URLSearchParams({
-      arg_string:JSON.stringify({requests:[event_request], load_limit: load_limit}),
-    });
+    
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
+    const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify({requests:[event_request], load_limit: load_limit}))
+    const params = new URLSearchParams({
+      arg_string: arg_string_data,
+    });
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
       const response = await fetch(request);
@@ -22828,7 +22833,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ACCOUNT DATA ------------------------------------------- */
-    var accounts = await contractInstance.methods.f167([],[address_account.address], 2).call((error, result) => {});
+    var accounts = await contractInstance.methods.f167([],[address_account.address], 2).call();
     console.log('account_id',accounts[0], 'for e5 ',e5)
     var account = accounts[0] == 0 ? 1 : accounts[0]
 
@@ -28863,7 +28868,7 @@ class App extends Component {
 
   load_muliple_batch_events_from_nitro = async (event_requests, beacon_node) => {
     const params = new URLSearchParams({
-      arg_string:JSON.stringify({requests: event_requests}),
+      arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify({requests: event_requests})),
     });
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
@@ -28882,6 +28887,13 @@ class App extends Component {
     }
   }
 
+  encrypt_arg_string = async (node_url, target_data_to_encrypt) => {
+    const data = this.state.nitro_url_temp_hash_data[node_url]
+    const user_temp_hash = data['user_temp_hash']
+    const user_temp_encryption_key = data['user_temp_encryption_key']
+    return await this.encrypt_data_string(target_data_to_encrypt, user_temp_encryption_key)
+  }
+
   get_ids_from_events(events){
     var ids = []
     events.forEach(event => {
@@ -28895,7 +28907,7 @@ class App extends Component {
     var ids = []
     events.forEach(event => {
       var id = event.returnValues.p1
-      if(ids.length <= this.state.max_post_bulk_load_count) ids.push(id);
+      ids.push(id);
     });
     return ids
   }
@@ -31952,14 +31964,15 @@ class App extends Component {
     }
 
     // console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
-    const params = new URLSearchParams({
-      arg_string:JSON.stringify({hashes: hashes}),
-    });
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
+    const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify({hashes: hashes}))
+    const params = new URLSearchParams({
+      arg_string: arg_string_data,
+    });
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
       const response = await fetch(request);
@@ -32322,9 +32335,11 @@ class App extends Component {
     var nitro_cid = split_cid_array[1]
 
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
-    if(nitro_url == null) return
+    if(nitro_url == null) return;
+
+    const arg_string_data = await this.encrypt_arg_string(nitro_url, JSON.stringify({hashes:[nitro_cid]}))
     const params = new URLSearchParams({
-      arg_string:JSON.stringify({hashes:[nitro_cid]}),
+      arg_string: arg_string_data,
     });
     var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'data')}/${await this.fetch_nitro_privacy_signature(nitro_url)}?${params.toString()}`
     try{
@@ -32804,8 +32819,9 @@ class App extends Component {
   }
 
   fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index, keys) => {
+    const arg_string_data = await this.encrypt_arg_string(nitro_url, JSON.stringify({hashes: nitro_cids}))
     const params = new URLSearchParams({
-      arg_string:JSON.stringify({hashes:nitro_cids}),
+      arg_string: arg_string_data,
     });
     var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'data')}/${await this.fetch_nitro_privacy_signature(nitro_url)}?${params.toString()}`
     const private_key = this.state.accounts['E25'].privateKey.toString()
@@ -36620,8 +36636,10 @@ class App extends Component {
         }
         const searched_tags = id.includes('"') ? this.extract_quoted_words(id) : id.trim().split(/\s+/).filter(word => word.length >= 3)
         var arg_obj = {tags: searched_tags, target_type: 0, language: this.state.device_language}
+
+        const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify(arg_obj))
         const params = new URLSearchParams({
-          arg_string: JSON.stringify(arg_obj)
+          arg_string: arg_string_data
         });
         var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tags')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
         try{
@@ -37596,8 +37614,9 @@ class App extends Component {
       load_limit = this.state.nitro_node_details[this.state.my_preferred_nitro]['hash_data_request_limit']
     }
     const final_hashes = hashes.slice(0, load_limit)
+    const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify({hashes: final_hashes}))
     const params = new URLSearchParams({
-      arg_string:JSON.stringify({hashes: final_hashes}),
+      arg_string: arg_string_data,
     });
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
