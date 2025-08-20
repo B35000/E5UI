@@ -3274,6 +3274,7 @@ class App extends Component {
     if(this.interval4 != null) clearInterval(this.interval4)
 
     this.set_cookies()
+    this.delete_data_in_db_when_app_closed()
   }
 
   reset_background_sync(){
@@ -28895,7 +28896,6 @@ class App extends Component {
 
   encrypt_arg_string = async (node_url, target_data_to_encrypt) => {
     const data = this.state.nitro_url_temp_hash_data[node_url]
-    const user_temp_hash = data['user_temp_hash']
     const user_temp_encryption_key = data['user_temp_encryption_key']
     return await this.encrypt_data_string(target_data_to_encrypt, user_temp_encryption_key)
   }
@@ -31757,10 +31757,11 @@ class App extends Component {
     }
     all_unhashed_tags = all_unhashed_tags.concat(searched_tags_including_prioritized_tags)
 
+    const final_key = await this.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
     const all_final_elements = []
     for(var t=0; t<all_unhashed_tags.length; t++){
       const word = all_unhashed_tags[t]
-      all_final_elements.push(await this.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+      all_final_elements.push(await this.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
     }
 
     var prioritized_accounts = []
@@ -34046,9 +34047,9 @@ class App extends Component {
   }
 
 
-  encrypt_secure_data = async(text, password) => {
+  encrypt_secure_data = async(text, password, ready_made_key) => {
     const iv   = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
-    const key = await this.get_key_from_password(password, 'f');
+    const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
     const encoder = new TextEncoder();
     const encoded = encoder.encode(text);
 
@@ -34065,12 +34066,12 @@ class App extends Component {
     return this.uint8ToBase64(result); // return as base64 string
   }
 
-  decrypt_secure_data = async (encrypted, password) => {
+  decrypt_secure_data = async (encrypted, password, ready_made_key) => {
     const data = this.base64ToUint8(encrypted);
     const iv   = data.slice(0, 12);
     const ciphertext = data.slice(12);
 
-    const key = await this.get_key_from_password(password, 'f');
+    const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
     const decrypted = await crypto.subtle.decrypt(
       { name: "AES-GCM", iv: iv },
       key,
@@ -34197,11 +34198,24 @@ class App extends Component {
         delete this.gateway_traffic_cache_pointers[key]
       });
     }
+    if(this.gateway_traffic_cache_pointers_index == 0){
+      return;
+    }
     for(var i=0; i <= this.gateway_traffic_cache_pointers_index; i++){
       const db_identifier = i.toString()
       await this.update_data_in_db('', db_identifier)
     }
     this.gateway_traffic_cache_pointers_index = 0;
+  }
+
+  delete_data_in_db_when_app_closed = async () => {
+    if(this.gateway_traffic_cache_pointers_index == 0){
+      return;
+    }
+    for(var i=0; i <= this.gateway_traffic_cache_pointers_index; i++){
+      const db_identifier = i.toString()
+      await this.update_data_in_db('', db_identifier)
+    }
   }
 
   get_object_size_in_mbs(obj) {
@@ -34431,9 +34445,9 @@ class App extends Component {
     // return ciphertext
   }
 
-  encrypt_data_string = async (tx, key) => {
+  encrypt_data_string = async (tx, key, ready_made_key) => {
     var object_as_string = JSON.stringify(tx)
-    return await this.encrypt_secure_data(object_as_string, key);
+    return await this.encrypt_secure_data(object_as_string, key, ready_made_key);
     // var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
     // return ciphertext
   }

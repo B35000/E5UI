@@ -5062,13 +5062,15 @@ class StackPage extends Component {
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
                     
+                    const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
+
                     const all_final_elements = []
                     for(var te=0; te<all_elements.length; te++){
                         const word = all_elements[te]
-                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
                     }
 
-                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
                     
                     obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting}
                     ipfs_index_array.push({'id':t.id, 'data':t})
@@ -5220,13 +5222,14 @@ class StackPage extends Component {
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
                     
+                    const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
                     const all_final_elements = []
                     for(var te=0; te<all_elements.length; te++){
                         const word = all_elements[te]
-                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
                     }
                     
-                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
                     
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting}
                     ipfs_index_array.push({'id':data.id, 'data':data})
