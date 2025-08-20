@@ -431,9 +431,15 @@ class FullAudioPage extends Component {
     }
 
     play_previous(){
-        if(this.state.pos > 0){
-            this.props.play_previous()
-            this.setState({pos: this.state.pos -1})
+        if(this.state.value > 10){
+            this.props.restart_song()
+            this.setState({value: 0})
+        }
+        else{
+            if(this.state.pos > 0){
+                this.props.play_previous()
+                this.setState({pos: this.state.pos -1})
+            }
         }
     }
 

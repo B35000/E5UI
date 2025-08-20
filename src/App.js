@@ -18281,7 +18281,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <FullAudioPage ref={this.full_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)} repeat_current_song={this.repeat_current_song.bind(this)} shuffle_songs_in_pip={this.shuffle_songs_in_pip.bind(this)} open_purchase_album_ui={this.show_buy_album_bottomsheet.bind(this)}
+            <FullAudioPage ref={this.full_audio_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)} repeat_current_song={this.repeat_current_song.bind(this)} shuffle_songs_in_pip={this.shuffle_songs_in_pip.bind(this)} open_purchase_album_ui={this.show_buy_album_bottomsheet.bind(this)} restart_song={this.restart_song.bind(this)}
             
             />
       </div>
@@ -18339,6 +18339,10 @@ class App extends Component {
     if(this.state.pos != 0){
       this.setState({pos: this.state.pos -1})
     }
+  }
+
+  restart_song(){
+    this.audio_pip_page.current?.restart_song()
   }
 
   play_next(){

@@ -359,7 +359,6 @@ class EndDetailSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_token_cap(selected_object)}
 
-
                     {this.render_detail_item('0')}
 
                     

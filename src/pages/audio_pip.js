@@ -576,6 +576,18 @@ class AudioPip extends Component {
         }
     };
 
+    restart_song(){
+        this.audio.current.currentTime = 0
+        this.setState({value: 0})
+        
+        var me = this;
+        setTimeout(function() {
+            me.audio.current?.play()
+            me.props.load_queue(me.state.songs, me.state.pos)
+            me.check_if_plays_are_available_and_pause_otherwise()
+        }, (1 * 700));
+    }
+
 
     render_blocker(){
         if(!this.state.is_full_screen_open) return

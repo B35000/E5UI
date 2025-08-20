@@ -150,7 +150,6 @@ class home_page extends Component {
         if(cupcake_state != null && cupcake_state != ""){
             cupcake_state = JSON.parse(cupcake_state)
         }
-
         if(cupcake_state != null && cupcake_state != ""){
             if(cupcake_state.viewed_posts != null){
                 this.setState({viewed_posts:cupcake_state.viewed_posts})
