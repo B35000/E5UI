@@ -4979,7 +4979,7 @@ return data['data']
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.show_load_metrics(items2, 'tokens')}
+                        {this.show_load_metrics(items, 'tokens')}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}

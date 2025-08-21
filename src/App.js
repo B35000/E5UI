@@ -900,7 +900,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2),
+    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -960,7 +960,7 @@ class App extends Component {
 
     is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
 
-    gateway_traffic_stats_cache_time_limit: (3*60*1000),
+    gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false,
   };
 
   get_static_assets(){
@@ -3272,6 +3272,9 @@ class App extends Component {
     if(this.interval2 != null) clearInterval(this.interval2)
     if(this.interval3 != null) clearInterval(this.interval3)
     if(this.interval4 != null) clearInterval(this.interval4)
+    if(this.interval5 != null) clearInterval(this.interval5)
+    if(this.interval6 != null) clearInterval(this.interval6)
+    if(this.dissapearing_pip_interval != null) clearInterval(this.dissapearing_pip_interval);
 
     this.set_cookies()
     this.delete_data_in_db_when_app_closed()
@@ -3309,6 +3312,7 @@ class App extends Component {
       }
     }, (1 * 100));
     
+    this.schedule_audio_pip_visibility_because_of_inactivity()
   }
 
 
@@ -3436,6 +3440,7 @@ class App extends Component {
       disable_moderation:this.state.disable_moderation,
       stacked_message_ids:this.state.stacked_message_ids,
       last_login_time: Date.now(),
+      my_created_moderator_notes: this.state.my_created_moderator_notes,
     }
   }
 
@@ -3617,6 +3622,7 @@ class App extends Component {
       var disable_moderation = state.disable_moderation == null ? this.state.disable_moderation : state.disable_moderation
       var stacked_message_ids = state.stacked_message_ids == null ? this.state.stacked_message_ids : state.stacked_message_ids
       var last_login_time = state.last_login_time == null ? Date.now() : state.last_login_time
+      var my_created_moderator_notes = state.my_created_moderator_notes == null ? this.state.my_created_moderator_notes : state.my_created_moderator_notes
 
       this.setState({
         theme: theme,
@@ -3682,7 +3688,8 @@ class App extends Component {
         rating_denomination: rating_denomination,
         disable_moderation: disable_moderation,
         stacked_message_ids: stacked_message_ids,
-        last_login_time: last_login_time
+        last_login_time: last_login_time,
+        my_created_moderator_notes: my_created_moderator_notes,
       })
       var me = this;
       setTimeout(function() {
@@ -5502,7 +5509,7 @@ class App extends Component {
 
           set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}
           get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
-          get_nitro_purchases={this.get_nitro_purchases.bind(this)}
+          get_nitro_purchases={this.get_nitro_purchases.bind(this)} set_audio_pip_opacity_because_of_inactivity={this.set_audio_pip_opacity_because_of_inactivity.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -7281,7 +7288,7 @@ class App extends Component {
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
-      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)}
+      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} add_moderator_note={this.add_moderator_note.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)}
       
       />
     )
@@ -8008,11 +8015,32 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  add_moderator_note(note_object){
+    var clone = this.state.my_created_moderator_notes.slice()
+    clone.push(note_object)
+    this.setState({my_created_moderator_notes: clone, should_update_censored_keyword_phrases: true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
   uncensor_keyword(word_phrase, index){
     var clone = this.state.censored_keyword_phrases.slice()
     clone.splice(index, 1);
     this.setState({censored_keyword_phrases: clone, should_update_censored_keyword_phrases: true})
     this.prompt_top_notification(this.getLocale()['1593dx']/* 'Keyword or phrase removed from your censored list.' */, 2300)
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  remove_moderator_note(note_object, index){
+    var clone = this.state.my_created_moderator_notes.slice()
+    clone.splice(index, 1);
+    this.setState({my_created_moderator_notes: clone, should_update_censored_keyword_phrases: true})
+    this.prompt_top_notification(this.getLocale()['1593iq']/* 'Note removed.' */, 2300)
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -15149,7 +15177,7 @@ class App extends Component {
         <DialogPage ref={this.dialog_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)} 
         delete_nitro_file={this.delete_nitro_file.bind(this)} set_new_wallet={this.set_new_wallet.bind(this)} 
         
-        show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_downloaded.bind(this)} when_pdf_file_opened={this.when_pdf_file_accessed.bind(this)} play_individual_track={this.when_audio_file_opened.bind(this)} play_individual_video={this.when_video_file_opened.bind(this)}
+        show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_downloaded.bind(this)} when_pdf_file_opened={this.when_pdf_file_accessed.bind(this)} play_individual_track={this.when_audio_file_opened.bind(this)} play_individual_video={this.when_video_file_opened.bind(this)} filter_by_selected_account={this.filter_by_selected_account.bind(this)}
         
         />
       </div>
@@ -15203,7 +15231,7 @@ class App extends Component {
       'confirm_pay_bill':350,
       'invalid_stack_size_dialog_box':350,
       'file_type_picker':550,
-      'home_page_view_options': 300,
+      'home_page_view_options': 350,
       'view_json_example':550,
       'poll_results':600,
       'channel_payout_results':600,
@@ -15814,6 +15842,12 @@ class App extends Component {
     this.open_dialog_bottomsheet()
     this.prompt_top_notification(this.getLocale()['3055cm']/* 'Reloading in progress...' */, 4000)
     this.homepage.current?.reload_section_data(data['id'], data['selected_page'])
+  }
+
+  filter_by_selected_account(account, data){
+    this.open_dialog_bottomsheet()
+    this.prompt_top_notification(this.getLocale()['3055ee']/* 'Filtering...' */, 2000)
+    this.homepage.current?.set_account_in_search_then_reload_section_data(data['id'], data['selected_page'], account)
   }
 
   add_creator_payouts_to_stack(state_obj){
@@ -17836,7 +17870,7 @@ class App extends Component {
   render_audio_pip(){
     if(!this.state.is_audio_pip_showing) return;
     var size = this.getScreenSize();
-    var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : 1.0
+    var opacity = this.state.full_audio_bottomsheet == true ? 0.2 : (this.state.hide_audio_pip_due_to_inactivity == true ? 0.55 : 1.0)
     var player_size = size == 's' ? 150 : 200
 
     var x_pos = this.state.width - (player_size + 12)
@@ -17872,12 +17906,37 @@ class App extends Component {
     )
   }
 
+  set_audio_pip_opacity_because_of_inactivity(){
+    if(this.state.is_audio_pip_showing == true && this.already_scheduled_opacity_change != true && this.hide_audio_pip_due_to_inactivity == false && this.state.full_audio_bottomsheet == false){
+      var me = this;
+      setTimeout(function() {
+        if(me.already_scheduled_opacity_change = true && me.state.full_audio_bottomsheet == false) me.setState({hide_audio_pip_due_to_inactivity: true})
+      }, (3 * 1000));
+      this.already_scheduled_opacity_change = true;
+    }
+  }
+
+  restore_audio_pip_visibility_because_of_touch(){
+    if(this.state.is_audio_pip_showing == true && this.hide_audio_pip_due_to_inactivity == true){
+      this.setState({hide_audio_pip_due_to_inactivity: false})
+      this.already_scheduled_opacity_change = false;
+    }
+  }
+
+  schedule_audio_pip_visibility_because_of_inactivity(){
+    if(this.dissapearing_pip_interval != null) clearInterval(this.dissapearing_pip_interval);
+    var me = this;
+    setTimeout(function() {
+      me.dissapearing_pip_interval = setInterval(() => me.set_audio_pip_opacity_because_of_inactivity(), (6*1000));
+    }, (1 * 100));
+  }
+
   get_audio_pip_ui(player_size){
     var size = this.getScreenSize();
     return(
       <div style={{width:player_size, height:player_size}}>
         <AudioPip ref={this.audio_pip_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} player_size={player_size} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
-        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)}
+        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} schedule_audio_pip_visibility_because_of_inactivity={this.schedule_audio_pip_visibility_because_of_inactivity.bind(this)} restore_audio_pip_visibility_because_of_touch={this.restore_audio_pip_visibility_because_of_touch.bind(this)}
         />
       </div>
     )
@@ -24182,16 +24241,25 @@ class App extends Component {
       var latest_event = my_censored_keywords_event_data[my_censored_keywords_event_data.length - 1];
       var censored_keywords_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var censored_keywords_by_me = censored_keywords_data['censored_keywords']
+      var my_created_moderator_notes = censored_keywords_data['moderator_notes'] || []
 
-      var clone = this.state.censored_keyword_phrases.slice()
+      const clone = this.state.censored_keyword_phrases.slice()
       for(var i=0; i<censored_keywords_by_me.length; i++){
         var post = censored_keywords_by_me[i]
         if(!clone.includes(post)){
           clone.push(post)
         }
       }
+      const notes_clone = this.state.my_created_moderator_notes.slice()
+      for(var i=0; i<my_created_moderator_notes.length; i++){
+        const note_object = my_created_moderator_notes[i]
+        const existing_notes = notes_clone.filter(existing_note_object => existing_note_object['id'] == note_object['id']);
+        if(existing_notes.length == 0){
+          notes_clone.push(note_object)
+        }
+      }
       if(this.has_censored_keywords_by_me_loaded[e5] != account){
-        this.setState({censored_keyword_phrases: clone})
+        this.setState({censored_keyword_phrases: clone, my_created_moderator_notes: notes_clone})
         this.has_censored_keywords_by_me_loaded[e5] = account
       }
     }
@@ -24225,15 +24293,25 @@ class App extends Component {
       }
 
       var clone = this.state.censored_keywords_by_my_following.slice()
+      var notes_clone = this.state.moderator_notes_by_my_following.slice()
+      
       for(var i=0; i<followed_accounts_censored_keywords_events_data.length; i++){
         var latest_event = followed_accounts_censored_keywords_events_data[i]
         var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
         var censored_keywords = followed_account_data['censored_keywords']
+        var my_following_moderator_notes = followed_account_data['moderator_notes'] || []
         censored_keywords.forEach(keyword => {
           if(!clone.includes(keyword)){
             clone.push(keyword)
           }
         });
+        my_following_moderator_notes.forEach(note_object => {
+          const existing_notes = notes_clone.filter(existing_note_object => existing_note_object['id'] == note_object['id']);
+          if(existing_notes.length == 0){
+            notes_clone.push(note_object)
+          }
+        });
+
 
         if(i == loaded_target && i+1 >= followed_accounts_censored_keywords_events_data.length){
           await this.wait(3000)
@@ -24241,7 +24319,7 @@ class App extends Component {
           loaded_target = i+this.state.max_post_bulk_load_count
         }
       }
-      this.setState({censored_keywords_by_my_following: clone})
+      this.setState({censored_keywords_by_my_following: clone, moderator_notes_by_my_following: notes_clone})
     }
   }
 
@@ -33075,6 +33153,8 @@ class App extends Component {
     const content_type = data['data_deconstructed'][1]
     const nitro_cid2 = data['data_deconstructed'][2]
     const file = nitro_cid2+'.'+content_type
+
+    await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
     
     raw_link.replace(`/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`)
 
@@ -37512,7 +37592,9 @@ class App extends Component {
   }
 
   record_key_in_nitro_node = async (marco_obj, link, object, nitro_link_directory) => {
-    const root_identifier = this.generate_id_for_nitro_node_key(link)
+    const root_identifier_data = this.generate_id_for_nitro_node_key(link)
+    const root_identifier = root_identifier_data.id
+    const root_identifier_from_private_key = root_identifier_data.from_private_key
     const user_key_data = this.generate_my_box_keys(root_identifier);
     const user_temp_hash = user_key_data.my_node_server_public_key
     const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
@@ -37557,7 +37639,9 @@ class App extends Component {
         clone[object['e5_id']] = marco_obj
         nitro_url_temp_hash_data_clone[link] = {
           'user_temp_hash': user_temp_hash, 
-          'user_temp_encryption_key' : user_temp_encryption_key
+          'user_temp_encryption_key' : user_temp_encryption_key,
+          'root_identifier_from_private_key' : root_identifier_from_private_key,
+          'e5_id': object['e5_id']
         }
         nitro_link_directory_data_clone[link] = nitro_link_directory
         
@@ -37575,14 +37659,80 @@ class App extends Component {
     }
   }
 
+  check_and_start_rerecording_of_key_in_nitro = async (link) => {
+    const nitro_key_data = this.state.nitro_url_temp_hash_data[link]
+    if(nitro_key_data != null && nitro_key_data['root_identifier_from_private_key'] == false && this.state.has_wallet_been_set){
+      await this.re_record_key_in_nitro_node(nitro_key_data['e5_id'], link)
+    }
+  }
+
+  re_record_key_in_nitro_node = async (nitro_e5_id, link) => {
+    const root_identifier_data = this.generate_id_for_nitro_node_key(link)
+    const root_identifier = root_identifier_data.id
+    const root_identifier_from_private_key = root_identifier_data.from_private_key
+
+    const user_key_data = this.generate_my_box_keys(root_identifier);
+    const user_temp_hash = user_key_data.my_node_server_public_key
+    const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
+    const marco_obj = this.state.nitro_node_details[nitro_e5_id]
+    const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'], user_key_data.keypair)
+    const nitro_link_directory = this.state.nitro_link_directory_data[link]
+
+    var arg_obj = {
+      user_temp_hash: user_temp_hash,
+      encrypted_key: encrypted_user_temp_encryption_key,
+    }
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+    const endpoint = nitro_link_directory['register']
+    var request = `${link}/${endpoint}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var success = obj.success
+      if(success == true || obj.existing == true){
+        marco_obj['user_temp_hash'] = user_temp_hash
+        marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
+
+        var clone = structuredClone(this.state.nitro_node_details)
+        var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
+        
+        clone[nitro_e5_id] = marco_obj
+        nitro_url_temp_hash_data_clone[link] = {
+          'user_temp_hash': user_temp_hash, 
+          'user_temp_encryption_key' : user_temp_encryption_key,
+          'root_identifier_from_private_key' : root_identifier_from_private_key,
+          'e5_id': nitro_e5_id
+        }
+        
+        this.setState({nitro_node_details: clone, nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone})
+
+        await this.wait(700)
+      }
+    }
+    catch(e){
+      
+    }
+  }
+
   generate_id_for_nitro_node_key(link){
-    if(this.state.has_wallet_been_set || this.state.has_account_been_loaded_from_storage){
+    if(this.state.has_wallet_been_set){
       const my_address = this.state.accounts['E25'].privateKey.toString()
       const current_hour = this.start_of_current_day()
-      return this.hash_data_with_randomizer(my_address+ link + current_hour)
+      return { id: this.hash_data_with_randomizer(my_address+ link + current_hour), from_private_key: true }
     }
     else{
-      return this.makeid(53) 
+      return { id: this.makeid(53), from_private_key: false }
     }
   }
 

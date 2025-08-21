@@ -127,6 +127,8 @@ class AudioPip extends Component {
                 {this.render_audio()}
 
                 {this.render_blocker()}
+
+                {this.render_inactivity_blocker()}
             </div>
         )
     }
@@ -253,6 +255,10 @@ class AudioPip extends Component {
 
 
     expand_player(){
+        if(this.props.app_state.hide_audio_pip_due_to_inactivity == true){
+            this.props.restore_audio_pip_visibility_because_of_touch()
+            return;
+        }
         if(!this.has_file_metadata_loaded() || this.is_mock_track()) return;
         this.setState({is_full_screen_open: true})
         this.props.open_full_player(this.state.songs, this.state.pos, this.state.play_pause_state, this.state.value, this.state.is_repeating, this.state.is_shuffling, this.state.original_song_list, this.state.buffer)
@@ -260,6 +266,7 @@ class AudioPip extends Component {
 
     when_expanded_player_closed(){
         this.setState({is_full_screen_open: false})
+        this.props.schedule_audio_pip_visibility_because_of_inactivity()
     }
 
 
@@ -465,11 +472,19 @@ class AudioPip extends Component {
 
 
     close_and_stop_playing(){
+        if(this.props.app_state.hide_audio_pip_due_to_inactivity == true){
+            this.props.restore_audio_pip_visibility_because_of_touch()
+            return;
+        }
         this.audio.current?.pause()
         this.props.close_audio_pip()
     }
 
     play_pause(){
+        if(this.props.app_state.hide_audio_pip_due_to_inactivity == true){
+            this.props.restore_audio_pip_visibility_because_of_touch()
+            return;
+        }
         if(!this.has_file_loaded() || this.is_song_available_for_playing()){
             this.setState({play_pause_state: 0})
             this.audio.current?.pause()
@@ -486,10 +501,14 @@ class AudioPip extends Component {
             this.audio.current?.pause()
             this.props.when_audio_play_paused_from_pip(0)
         }
-        
+        this.props.schedule_audio_pip_visibility_because_of_inactivity()
     }
 
     handleNumber = (number) => {
+        if(this.props.app_state.hide_audio_pip_due_to_inactivity == true){
+            this.props.restore_audio_pip_visibility_because_of_touch()
+            return;
+        }
         if(this.audio.current == null) return
         var new_value = number.target.value
         var current_song = this.state.songs[this.state.pos]
@@ -519,6 +538,7 @@ class AudioPip extends Component {
             me.streamAndPlayEncryptedAudio()
             me.audio.current?.play()
             me.check_if_plays_are_available_and_pause_otherwise()
+            me.props.schedule_audio_pip_visibility_because_of_inactivity()
         }, (1 * 700));
         
     }
@@ -585,6 +605,7 @@ class AudioPip extends Component {
             me.audio.current?.play()
             me.props.load_queue(me.state.songs, me.state.pos)
             me.check_if_plays_are_available_and_pause_otherwise()
+            me.props.schedule_audio_pip_visibility_because_of_inactivity()
         }, (1 * 700));
     }
 
@@ -594,6 +615,20 @@ class AudioPip extends Component {
         return(
             <div style={{width:this.props.player_size, height:this.props.player_size, 'margin':'0px 0px 0px 0px', 'z-index':'100', 'position': 'absolute'}}/>
         )
+    }
+
+    render_inactivity_blocker(){
+        if(!this.props.app_state.hide_audio_pip_due_to_inactivity) return;
+        return(
+            <div onClick={() => this.when_inactivity_blocker_tapped()} style={{width:this.props.player_size, height:this.props.player_size, 'margin':'0px 0px 0px 0px', 'z-index':'120', 'position': 'absolute'}}/>
+        )
+    }
+
+    when_inactivity_blocker_tapped(){
+        if(this.props.app_state.hide_audio_pip_due_to_inactivity == true){
+            this.props.restore_audio_pip_visibility_because_of_touch()
+            return;
+        }
     }
 
     play_previous(){
@@ -611,6 +646,7 @@ class AudioPip extends Component {
                 }, (1 * 700));
             }, (1 * 300));
         }
+        this.props.schedule_audio_pip_visibility_because_of_inactivity()
     }
 
     play_next(){
@@ -629,6 +665,7 @@ class AudioPip extends Component {
                 }, (1 * 700));
             }, (1 * 300));
         }
+        this.props.schedule_audio_pip_visibility_because_of_inactivity()
     }
 
     skip_to(index){
@@ -651,6 +688,7 @@ class AudioPip extends Component {
             me.streamAndPlayEncryptedAudio()
             me.props.load_queue(me.state.songs, me.state.pos)
             me.check_if_plays_are_available_and_pause_otherwise()
+            me.props.schedule_audio_pip_visibility_because_of_inactivity()
         }, (1 * 300));
     }
 

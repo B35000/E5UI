@@ -1654,8 +1654,44 @@ class FullVideoPage extends Component {
                     
                 {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item)}
+                {this.show_moderator_note_for_comment_if_any(item)}
             </div>
         )
+    }
+
+    show_moderator_note_for_comment_if_any(item){
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0 || item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]) return;
+        var note_to_apply = null
+        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
+            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
+            var hit_count = 0
+            for(var k=0; k<focused_note['keywords'].length; k++){
+                const keyword_target = focused_note['keywords'][k]
+                if(item['message'].includes(keyword_target)){
+                    hit_count ++
+                }
+                else if(item['markdown'].includes(keyword_target)){
+                    hit_count++
+                }
+            }
+
+            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
+                note_to_apply = focused_note
+                break;
+            }
+            else if(focused_note['type'] == 'one' && hit_count != 0){
+                note_to_apply = focused_note;
+                break;
+            }
+        }
+        if(note_to_apply != null){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                </div>
+            )
+        }
     }
 
     split_text(text){

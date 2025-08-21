@@ -110,6 +110,7 @@ class StackPage extends Component {
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
+        get_keyword_target_type_object:this.get_keyword_target_type_object(),
 
         typed_word:'',added_tags:[],set_salt: 0,
         run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
@@ -122,7 +123,9 @@ class StackPage extends Component {
 
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
-        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true,
+        default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true, 
+        
+        keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'',
     };
 
     get_stack_page_tags_object(){
@@ -154,7 +157,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' *//* , this.props.app_state.loc['1593cr'] *//* 'gateway 🚧' */, ], [1],[1]
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'Censor 🚫' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'censor 🚫' */, this.props.app_state.loc['1593ir']/* 'notes ℹ️' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1593aj']/* 'signatures' */] = [
               ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
@@ -193,6 +196,17 @@ class StackPage extends Component {
             },
             'e':[
                 ['or','',0], ['e', this.props.app_state.loc['1593hm']/* 'percentage' */], [0]
+            ], 
+        }
+    }
+
+    get_keyword_target_type_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593ij']/* 'all-words' */, this.props.app_state.loc['1593ik']/* 'one-word' */], [1]
             ], 
         }
     }
@@ -1236,13 +1250,6 @@ class StackPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['1593cr']/* 'gateway 🚧' */){
-            return(
-                <div key={selected_item}>
-                    {this.render_set_custom_ipfs_gateway()}
-                </div>
-            )
-        }
         else if(selected_item == this.props.app_state.loc['1593df']/* 'following 👥' */){
             return(
                 <div key={selected_item}>
@@ -1270,6 +1277,13 @@ class StackPage extends Component {
                     {this.render_notifications()}
                 </div>
             )   
+        }
+        else if(selected_item == this.props.app_state.loc['1593ir']/* 'notes ℹ️' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_moderator_notes_ui()}
+                </div>
+            )
         }
     }
 
@@ -4582,7 +4596,8 @@ class StackPage extends Component {
 
             const string_obj = [[]]
             var censored_keyword_phrases = this.props.app_state.censored_keyword_phrases
-            const data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
+            var my_created_moderator_notes = this.props.app_state.my_created_moderator_notes
+            const data = {'censored_keywords': censored_keyword_phrases, 'moderator_notes': my_created_moderator_notes, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'censoredkeywords');
 
             account_data_object[1].push(0)
@@ -5500,7 +5515,8 @@ class StackPage extends Component {
 
         if(this.props.app_state.should_update_censored_keyword_phrases == true){
             var censored_keyword_phrases = this.props.app_state.censored_keyword_phrases
-            var data = {'censored_keywords': censored_keyword_phrases, 'time':Date.now()}
+            var my_created_moderator_notes = this.props.app_state.my_created_moderator_notes
+            var data = {'censored_keywords': censored_keyword_phrases, 'moderator_notes':my_created_moderator_notes, 'time':Date.now()}
             ipfs_index_object['censoredkeywords'] = data
             ipfs_index_array.push({'id':'censoredkeywords', 'data':data})
         }
@@ -15419,91 +15435,89 @@ class StackPage extends Component {
 
 
 
-    render_set_custom_ipfs_gateway(){
-        var size = this.props.size
-        if(size == 's'){
-            return(
-                <div>
-                    {this.render_set_custom_gateway_data()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_set_custom_gateway_data()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
-                
-            )
-        }
-        else if(size == 'l'){
-            return(
-                <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_set_custom_gateway_data()}
-                    </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
+    // render_set_custom_ipfs_gateway(){
+    //     var size = this.props.size
+    //     if(size == 's'){
+    //         return(
+    //             <div>
+    //                 {this.render_set_custom_gateway_data()}
+    //             </div>
+    //         )
+    //     }
+    //     else if(size == 'm'){
+    //         return(
+    //             <div className="row">
+    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_set_custom_gateway_data()}
+    //                 </div>
+    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_empty_views(3)}
+    //                 </div>
+    //             </div> 
+    //         )
+    //     }
+    //     else if(size == 'l'){
+    //         return(
+    //             <div className="row">
+    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_set_custom_gateway_data()}
+    //                 </div>
+    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_empty_views(3)}
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    // }
 
-    render_set_custom_gateway_data(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ck']/* 'Set Custom Ipfs Gateway' */, 'details':this.props.app_state.loc['1593cl']/* 'You can specify a custom gateway for serving all your content.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <div className="row" style={{width:'100%'}}>
-                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593cm']/* 'https://ipfs.io/cid' */} when_text_input_field_changed={this.when_custom_gateway_text_changed.bind(this)} text={this.state.custom_gateway_text} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.set_custom_ipfs_gateway()} >
-                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
-                        </div>
-                    </div>
-                </div>
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['1593cn']/* 'paste \'cid\' whenre the content cid would be used.' */})}
-                <div style={{height:10}}/>
-                {this.render_detail_item('4', {'text':this.props.app_state.custom_gateway, 'textsize':'13px', 'font':this.props.app_state.font})}
-            </div>
-        )
-    }
+    // render_set_custom_gateway_data(){
+    //     return(
+    //         <div>
+    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ck']/* 'Set Custom Ipfs Gateway' */, 'details':this.props.app_state.loc['1593cl']/* 'You can specify a custom gateway for serving all your content.' */, 'size':'l'})}
+    //             <div style={{height:10}}/>
+    //             <div className="row" style={{width:'100%'}}>
+    //                 <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+    //                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593cm']/* 'https://ipfs.io/cid' */} when_text_input_field_changed={this.when_custom_gateway_text_changed.bind(this)} text={this.state.custom_gateway_text} theme={this.props.theme}/>
+    //                 </div>
+    //                 <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.set_custom_ipfs_gateway()} >
+    //                     <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+    //                         <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //             {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['1593cn']/* 'paste \'cid\' whenre the content cid would be used.' */})}
+    //             <div style={{height:10}}/>
+    //             {this.render_detail_item('4', {'text':this.props.app_state.custom_gateway, 'textsize':'13px', 'font':this.props.app_state.font})}
+    //         </div>
+    //     )
+    // }
 
-    when_custom_gateway_text_changed(text){
-        this.setState({custom_gateway_text:text})
-    }
+    // when_custom_gateway_text_changed(text){
+    //     this.setState({custom_gateway_text:text})
+    // }
 
-    set_custom_ipfs_gateway(){
-        var custom_gateway_text = this.state.custom_gateway_text.trim()
+    // set_custom_ipfs_gateway(){
+    //     var custom_gateway_text = this.state.custom_gateway_text.trim()
 
-        if(custom_gateway_text == ''){
-            this.props.notify(this.props.app_state.loc['1593bh']/* 'Type something.' */, 4000)
-        }
-        else if(!this.isValidURL(custom_gateway_text)){
-            this.props.notify(this.props.app_state.loc['1593co']/* 'That gateway link is not valid.' */, 4000)
-        }
-        else if(!custom_gateway_text.includes('cid')){
-            this.props.notify(this.props.app_state.loc['1593cq']/* 'The url needs to include the keyword \'cid\'' */, 4000)
-        }
-        else{
-            this.props.notify(this.props.app_state.loc['1593cp']/* 'gateway set. */, 1400)
-            this.props.set_custom_gateway(custom_gateway_text)
-        }
-    }
+    //     if(custom_gateway_text == ''){
+    //         this.props.notify(this.props.app_state.loc['1593bh']/* 'Type something.' */, 4000)
+    //     }
+    //     else if(!this.isValidURL(custom_gateway_text)){
+    //         this.props.notify(this.props.app_state.loc['1593co']/* 'That gateway link is not valid.' */, 4000)
+    //     }
+    //     else if(!custom_gateway_text.includes('cid')){
+    //         this.props.notify(this.props.app_state.loc['1593cq']/* 'The url needs to include the keyword \'cid\'' */, 4000)
+    //     }
+    //     else{
+    //         this.props.notify(this.props.app_state.loc['1593cp']/* 'gateway set. */, 1400)
+    //         this.props.set_custom_gateway(custom_gateway_text)
+    //     }
+    // }
 
-    isValidURL(url) {
-        const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
-        return pattern.test(url);
-    }
+    // isValidURL(url) {
+    //     const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
+    //     return pattern.test(url);
+    // }
 
 
 
@@ -15757,7 +15771,7 @@ class StackPage extends Component {
         var censor_keyword_text = this.state.censor_keyword_text.trim()
 
         if(censor_keyword_text == ''){
-            this.props.notify(this.props.app_state.loc['1593du']/* 'You need to specify an account first.' */, 4000)
+            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
         }
         else if(this.already_censored_keyword(censor_keyword_text)){
             this.props.notify(this.props.app_state.loc['1593dv']/* 'Youve already censored that keyword.' */, 4000)
@@ -15799,7 +15813,7 @@ class StackPage extends Component {
             return(
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeLeft={{
@@ -16020,6 +16034,246 @@ class StackPage extends Component {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+    render_moderator_notes_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_moderator_notes_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_my_moderator_notes()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_moderator_notes_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_my_moderator_notes()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_moderator_notes_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_my_moderator_notes()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_moderator_notes_data(){
+        return(
+            <div style={{'padding': '0px 0px 0px 10px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593hy']/* 'Moderator Notes.' */, 'details':this.props.app_state.loc['1593hz']/* 'Display custom notes when certain keywords or phrases are used by posts show to the accounts you moderate.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ia']/* Activation 'Keywords' */, 'details':this.props.app_state.loc['1593ib']/* 'Specify one or more keywords or phrases that should activate the note.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593ic']/* 'Keyword or Phrase...' */} when_text_input_field_changed={this.when_note_keyword_input_field_changed.bind(this)} text={this.state.keyword_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_keyword_to_staged_note()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+
+                {this.render_staged_keywords()}
+                <div style={{height:20}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ie']/* Note Message.' */, 'details':this.props.app_state.loc['1593if']/* 'Specify the message to display in posts containing the keywords specified above.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593ig']/* 'Message...' */} when_text_input_field_changed={this.when_moderator_note_message_input_field_changed.bind(this)} text={this.state.moderator_note_message} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.moderator_note_max_length - this.state.moderator_note_message.length)})}
+                
+                
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593il']/* Application Filter' */, 'details':this.props.app_state.loc['1593im']/* 'With all-words, the note will show when all the specified keywords are present, and one-word, at least one keyword should exist in the post.' */, 'size':'l'})}
+                
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_keyword_target_type_object} tag_size={'l'} when_tags_updated={this.get_keyword_target_type_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                <div style={{height:10}}/>
+                <div onClick={() => this.add_moderator_note()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593ih']/* 'Add Note' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_note_keyword_input_field_changed(text){
+        this.setState({keyword_text: text})
+    }
+
+    add_keyword_to_staged_note(){
+        var keyword_text = this.state.keyword_text.trim()
+
+        if(keyword_text == ''){
+            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
+        }
+        else if(this.state.staged_keywords_for_new_note.includes(keyword_text)){
+            this.props.notify(this.props.app_state.loc['1593id']/* 'Youve already staged that keyword or phrase.' */, 4000)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword_text) /* || /\p{Emoji}/u.test(typed_word) */){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else{
+            var clone = this.state.staged_keywords_for_new_note.slice()
+            clone.push(keyword_text)
+            this.setState({staged_keywords_for_new_note: clone, keyword_text:'' })
+        }
+    }
+
+    render_staged_keywords(){
+        var items = [].concat(this.state.staged_keywords_for_new_note)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.remove_staged_keyword(item)}>
+                                {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})} 
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    remove_staged_keyword(item){
+        var clone = this.state.staged_keywords_for_new_note.slice()
+        const index = clone.indexOf(item)
+        if(index != -1){
+            clone.splice(index, 1)
+            this.setState({staged_keywords_for_new_note: clone})
+        }
+    }
+
+    when_moderator_note_message_input_field_changed(text){
+        if(text.length <= this.props.app_state.moderator_note_max_length) this.setState({moderator_note_message: text});
+    }
+
+    get_keyword_target_type_object_updated(tag_obj){
+        this.setState({get_keyword_target_type_object: tag_obj})
+    }
+
+    add_moderator_note(){
+        const moderator_note_message = this.state.moderator_note_message.trim()
+        const keywords = this.state.staged_keywords_for_new_note
+        const application_type = this.get_selected_item(this.state.get_keyword_target_type_object, 'e') == this.props.app_state.loc['1593ij']/* 'all-words' */ ? 'all': 'one'
+
+        if(moderator_note_message == ''){
+            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
+        }
+        else if(keywords.length == 0){
+            this.props.notify(this.props.app_state.loc['1593ii']/* 'You need to specify your targeted keywords.' */, 4000)
+        }
+        else{
+            const note_obj = { 'message':moderator_note_message, 'keywords':keywords, 'type':application_type, 'id':makeid(16) }
+            this.props.add_moderator_note(note_obj)
+            this.props.notify(this.props.app_state.loc['1593in']/* 'The note will be shown after your next run.' */, 2000)
+            this.setState({moderator_note_message: '', staged_keywords_for_new_note:[]})
+        }
+    }
+
+    render_my_moderator_notes(){
+        var items = [].concat(this.props.app_state.my_created_moderator_notes)
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593io']/* Remove */}</p>,
+                                    action: () =>this.props.remove_moderator_note(item, index)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}}>
+                                            {this.render_moderator_note_item(item)}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_moderator_note_item(item){
+        const title = this.truncate(item['message'], 35)
+        const type = item['type'] == 'all' ? this.props.app_state.loc['1593ij']/* 'all-words' */ : this.props.app_state.loc['1593ik']/* 'one-word' */;
+        const details = this.props.app_state.loc['1593ip']/* '% keywords targeted, $ filter set.' */.replace('%', number_with_commas(item['keywords'].length)).replace('$', type)
+        
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
 
 
 

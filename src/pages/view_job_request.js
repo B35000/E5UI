@@ -365,6 +365,7 @@ class ViewJobRequestPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
+                    {this.show_moderator_note_if_any(item)}
 
                     {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
@@ -396,6 +397,7 @@ class ViewJobRequestPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
+                    {this.show_moderator_note_if_any(item)}
 
                     {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
@@ -423,6 +425,41 @@ class ViewJobRequestPage extends Component {
             )
         }
         
+    }
+
+    show_moderator_note_if_any(item){
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0  || this.props.app_state.user_account_id[this.state.contractor_object['e5']] == item['applicant_id']) return;
+        var note_to_apply = null
+        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
+            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
+            var hit_count = 0
+            for(var k=0; k<focused_note['keywords'].length; k++){
+                const keyword_target = focused_note['keywords'][k]
+                if(this.get_senders_name_or_you(item['applicant_id'], this.state.contractor_object['e5']) == keyword_target || item['applicant_id'] == keyword_target){
+                    hit_count++
+                }
+                else if(item['title_description'].includes(keyword_target)){
+                    hit_count++
+                }
+            }
+
+            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
+                note_to_apply = focused_note
+                break;
+            }
+            else if(focused_note['type'] == 'one' && hit_count != 0){
+                note_to_apply = focused_note;
+                break;
+            }
+        }
+        if(note_to_apply != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     get_senders_name_or_you(sender, e5){
@@ -1413,8 +1450,44 @@ class ViewJobRequestPage extends Component {
                     
                 {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item)}
+                {this.show_moderator_note_for_comment_if_any(item)}
             </div>
         )
+    }
+
+    show_moderator_note_for_comment_if_any(item){
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0 || item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]) return;
+        var note_to_apply = null
+        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
+            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
+            var hit_count = 0
+            for(var k=0; k<focused_note['keywords'].length; k++){
+                const keyword_target = focused_note['keywords'][k]
+                if(item['message'].includes(keyword_target)){
+                    hit_count ++
+                }
+                else if(item['markdown'].includes(keyword_target)){
+                    hit_count++
+                }
+            }
+
+            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
+                note_to_apply = focused_note
+                break;
+            }
+            else if(focused_note['type'] == 'one' && hit_count != 0){
+                note_to_apply = focused_note;
+                break;
+            }
+        }
+        if(note_to_apply != null){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                </div>
+            )
+        }
     }
 
     split_text(text){

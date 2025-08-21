@@ -153,7 +153,7 @@ class CoinsDetailsSection extends Component {
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
-
+                    {this.show_moderator_note_if_any(item)}
                     {this.render_detail_item('3', {'title':item['name'], 'details':this.props.app_state.loc['2910']/* Coin Name' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':item['symbol'], 'details':this.props.app_state.loc['2911']/* Coin Symbol' */, 'size':'l'})}
@@ -245,6 +245,41 @@ class CoinsDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    show_moderator_note_if_any(item){
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0) return;
+        var note_to_apply = null
+        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
+            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
+            var hit_count = 0
+            for(var k=0; k<focused_note['keywords'].length; k++){
+                const keyword_target = focused_note['keywords'][k]
+                if(item['name'] == (keyword_target)){
+                    hit_count ++
+                }
+                else if(item['symbol'] == (keyword_target)){
+                    hit_count ++
+                }
+            }
+
+            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
+                note_to_apply = focused_note
+                break;
+            }
+            else if(focused_note['type'] == 'one' && hit_count != 0){
+                note_to_apply = focused_note;
+                break;
+            }
+        }
+        if(note_to_apply != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_wallet_vaue(item, balance_decimal){

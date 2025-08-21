@@ -1570,6 +1570,16 @@ class home_page extends Component {
         }, (1 * 10));
     }
 
+    set_account_in_search_then_reload_section_data(id, selected_page, target_account){
+        var clone = structuredClone(this.state.page_search_data)
+        clone[id] = target_account
+        this.setState({page_search_data: clone})
+        var me = this;
+        setTimeout(function() {
+            me.reload_section_data(id, selected_page)
+        }, (1 * 10));
+    }
+
     reload_section_data(id, selected_page){
         var posts_to_load = []
         var targeted_accounts = []
@@ -1819,6 +1829,7 @@ class home_page extends Component {
                 }
             }
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     update_scroll_position2(){
@@ -1956,6 +1967,7 @@ class home_page extends Component {
                 }
             }
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     get_tags_object(page){
@@ -4074,6 +4086,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_coin_object_clicked(item){
@@ -4082,6 +4095,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
 
@@ -4101,6 +4115,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.get_exchange_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
@@ -4124,6 +4139,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
         this.props.get_exchange_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
     }
@@ -4135,6 +4151,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     update_cookies(){
@@ -4164,6 +4181,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_contract_item_clicked(index, id, e5, ignore_set_details_data, object){
@@ -4187,6 +4205,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_subscription_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4209,6 +4228,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_post_item_clicked(index, id, e5, is_post_nsfw, object, ignore_set_details_data){
@@ -4243,6 +4263,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4269,6 +4290,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_proposal_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4292,6 +4314,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_mail_item_clicked(index, id, object, ignore_set_details_data){
@@ -4304,6 +4327,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_storefront_post_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4327,6 +4351,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4348,6 +4373,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     get_bag_stores(object){
@@ -4379,6 +4405,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4401,6 +4428,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
@@ -4412,6 +4440,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     play_album_from_list_section = async(object) =>{
@@ -4530,6 +4559,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
@@ -4617,6 +4647,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_bill_item_clicked(object, ignore_set_details_data){
@@ -4628,6 +4659,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_poll_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4648,6 +4680,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
 

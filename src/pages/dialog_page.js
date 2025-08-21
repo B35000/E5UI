@@ -4114,7 +4114,11 @@ return data['data']
                 <div onClick={() => this.when_reload_section_selected()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ci']/* 'Reload Section.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
-
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ec']/* 'Filter By Following' */, 'details':this.props.app_state.loc['3055ed']/* 'Filter the content in the section by an account your following.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_followed_accounts()}
             </div>
         )
     }
@@ -4125,6 +4129,61 @@ return data['data']
 
     when_reload_section_selected(){
         this.props.when_reload_section(this.state.data)
+    }
+
+    render_followed_accounts(){
+        var items = [].concat(this.props.app_state.followed_accounts)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.filter_by_selected_account(item)}>
+                                {this.render_followed_account_item(item)} 
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_followed_account_item(item){
+        var split_account_array = item.split(':')
+        var e5 = split_account_array[0]
+        var account = split_account_array[1]
+        var alias = this.get_followed_account_name_from_id(account, e5)
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':' • '+(account), 'details':alias, 'title_image':this.props.app_state.e5s[e5].e5_img, 'size':'l'})}
+            </div>
+        )
+    }
+
+    get_followed_account_name_from_id(account, e5) {
+        if (account == this.props.app_state.user_account_id[e5]) {
+            return this.props.app_state.loc['1694']/* 'You' */
+        } else {
+            var alias = (this.props.app_state.alias_bucket[e5][account] == null ? account : this.props.app_state.alias_bucket[e5][account])
+            return alias
+        }
+    }
+
+    filter_by_selected_account(item){
+        this.props.filter_by_selected_account(item, this.state.data)
     }
 
 

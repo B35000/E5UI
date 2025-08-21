@@ -254,15 +254,17 @@ class ProposalDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div onClick={() => this.add_to_contacts2(object)}>
-                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p4, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
-                    </div>
-                    <div style={{height: 10}}/>
+                    
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
                     <div style={{height: 10}}/>
+                    {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p4, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    </div>
+                    <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -350,6 +352,85 @@ class ProposalDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    show_moderator_note_if_any(object){
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0 || this.props.app_state.user_account_id[object['e5']] == object['author']) return;
+        var note_to_apply = null
+        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
+            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
+            var hit_count = 0
+            for(var k=0; k<focused_note['keywords'].length; k++){
+                const keyword_target = focused_note['keywords'][k]
+                if(object['ipfs'].entered_title_text.includes(keyword_target)){
+                    hit_count ++
+                }
+                else if(this.get_senders_name(object['author'], object) == keyword_target || object['author'] == keyword_target){
+                    hit_count++
+                }
+                else if(object['ipfs'].entered_indexing_tags.includes(keyword_target)){
+                    hit_count ++
+                }
+                else{
+                    const matching_entered_text_objects = object['ipfs'].entered_text_objects.filter(text_object => text_object['text'].includes(keyword_target));
+                    
+                    if(matching_entered_text_objects.length > 0){
+                        hit_count ++
+                    }
+                    else if(object['ipfs'].markdown != null && object['ipfs'].markdown.includes(keyword_target)){
+                        hit_count++
+                    }
+                    else if(object['ipfs'].entered_genre_text != null && object['ipfs'].entered_genre_text.includes(keyword_target)){
+                        hit_count++
+                    }
+                    else if(object['ipfs'].entered_year_recorded_text != null && object['ipfs'].entered_year_recorded_text.includes(keyword_target)){
+                        hit_count++
+                    }
+                    else if(object['ipfs'].entered_author_text != null && object['ipfs'].entered_author_text.includes(keyword_target)){
+                        hit_count++
+                    }
+                    else if(object['ipfs'].entered_copyright_text != null && object['ipfs'].entered_copyright_text.includes(keyword_target)){
+                        hit_count++
+                    }
+                    else if(object['ipfs'].entered_comment_text != null && object['ipfs'].entered_comment_text.includes(keyword_target)){
+                        hit_count++
+                    }
+                    else{
+                        if(object['ipfs'].songs != null){
+                            const matching_songs = object['ipfs'].songs.filter(song => (song['song_title'].includes(keyword_target) || song['song_composer'].includes(keyword_target) || song['credits'].includes(keyword_target)));
+                            
+                            if(matching_songs.length > 0){
+                                hit_count ++
+                            }
+                        }
+                        else if(object['ipfs'].videos != null){
+                            const matching_videos = object['ipfs'].videos.filter(video => (video['video_title'].includes(keyword_target) || video['video_composer'].includes(keyword_target)));
+                            
+                            if(matching_videos.length > 0){
+                                hit_count ++
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
+                note_to_apply = focused_note
+                break;
+            }
+            else if(focused_note['type'] == 'one' && hit_count != 0){
+                note_to_apply = focused_note;
+                break;
+            }
+        }
+        if(note_to_apply != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     add_to_contacts2(object){
@@ -1594,7 +1675,7 @@ class ProposalDetailsSection extends Component {
                 <div onClick={()=>this.show_visible(item)}>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -1647,8 +1728,44 @@ class ProposalDetailsSection extends Component {
                 </div>   
                 {this.render_pdfs_if_any(item)}
                 {this.render_response_if_any(item, object)}
+                {this.show_moderator_note_for_comment_if_any(item)}
             </div>
         ) 
+    }
+
+    show_moderator_note_for_comment_if_any(item){
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0 || item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]) return;
+        var note_to_apply = null
+        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
+            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
+            var hit_count = 0
+            for(var k=0; k<focused_note['keywords'].length; k++){
+                const keyword_target = focused_note['keywords'][k]
+                if(item['message'].includes(keyword_target)){
+                    hit_count ++
+                }
+                else if(item['markdown'].includes(keyword_target)){
+                    hit_count++
+                }
+            }
+
+            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
+                note_to_apply = focused_note
+                break;
+            }
+            else if(focused_note['type'] == 'one' && hit_count != 0){
+                note_to_apply = focused_note;
+                break;
+            }
+        }
+        if(note_to_apply != null){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                </div>
+            )
+        }
     }
 
     split_text(text){
