@@ -31822,29 +31822,6 @@ class App extends Component {
       }
     }
 
-    // if(search != null && search != '' && this.state.beacon_node_enabled == true){
-    //   var arg_obj = {title: search, target_type: target_type}
-    //   const params = new URLSearchParams({
-    //     arg_string: JSON.stringify(arg_obj)
-    //   });
-    //   var request = `${beacon_node}/title/${this.state.nitro_privacy_signature}?${params.toString()}`
-    //   try{
-    //     const response = await fetch(request);
-    //     if (!response.ok) {
-    //       console.log(response)
-    //       throw new Error(`Failed to retrieve data. Status: ${response}`);
-    //     }
-    //     var data = await response.text();
-    //     var obj = JSON.parse(data);
-    //     obj['data'].forEach(element => {
-    //       if(!prioritized_accounts.includes(parseInt(element))) prioritized_accounts.push(parseInt(element))
-    //     });
-    //   }
-    //   catch(e){
-    //     console.log(e)
-    //   }
-    // }
-
     if(prioritized_accounts.length == 0){
       prioritized_accounts = prioritized_accounts.concat(this.fetch_all_followed_accounts())
     }
@@ -37601,7 +37578,7 @@ class App extends Component {
   generate_id_for_nitro_node_key(link){
     if(this.state.has_wallet_been_set || this.state.has_account_been_loaded_from_storage){
       const my_address = this.state.accounts['E25'].privateKey.toString()
-      const current_hour = this.start_of_current_hour()
+      const current_hour = this.start_of_current_day()
       return this.hash_data_with_randomizer(my_address+ link + current_hour)
     }
     else{
@@ -37609,10 +37586,10 @@ class App extends Component {
     }
   }
 
-  start_of_current_hour() {
+  start_of_current_day() {
     const now = new Date();
-    now.setMinutes(0, 0, 0); // reset minutes, seconds, milliseconds
-    return now.getTime(); // timestamp in ms
+    now.setHours(0, 0, 0, 0);
+    return now.getTime();
   }
 
   generate_my_box_keys(identifier){

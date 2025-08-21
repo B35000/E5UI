@@ -274,7 +274,10 @@ class ContractDetailsSection extends Component {
                     <div style={{ height: 10 }} />
                     {this.render_post_state(object)}
                     {this.render_contract_type(object)}
-                    {this.render_detail_item('3', { 'title': '' + author, 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' })}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', { 'title': '' + author, 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' })}
+                    </div>
+                    
                     <div style={{ height: 10 }} />
                     {this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
                     <div style={{ height: 10 }} />
@@ -351,6 +354,10 @@ class ContractDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
     }
 
     render_post_state(object){

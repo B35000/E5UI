@@ -238,7 +238,9 @@ class JobDetailsSection extends Component {
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
                     {this.render_post_state(object)}
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    </div>
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('4', {'text':object['responses']+this.props.app_state.loc['2509c']/* ' responses' */, 'textsize':'14px', 'font':'Sans-serif'})} 
@@ -284,6 +286,10 @@ class JobDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
     }
 
     render_post_state(object){

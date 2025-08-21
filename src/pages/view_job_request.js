@@ -185,7 +185,7 @@ class ViewJobRequestPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish_creating_response()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish_creating_response()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
@@ -785,7 +785,7 @@ class ViewJobRequestPage extends Component {
         }
         return(
             <div>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1691']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1691']/* 'Select the work contract youll be using. If you have no work contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -811,7 +811,7 @@ class ViewJobRequestPage extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -845,13 +845,8 @@ class ViewJobRequestPage extends Component {
         
         for(var i = 0; i < created_contracts.length; i++){
             var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
-            if(post_author.toString() == myid.toString()){
-                // if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
-                //     my_contracts.push(this.props.app_state.created_contracts[i])
-                // }else{
-                //     if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
-                //     }
-                // }
+            const contract_type = created_contracts[i]['ipfs'].contract_type
+            if(post_author.toString() == myid.toString() && contract_type == 'work'){
                 my_contracts.push(created_contracts[i])
             }
         }

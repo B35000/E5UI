@@ -287,7 +287,9 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+author, 'details':'Author', 'size':'l'})}
+                    <div onClick={() => this.add_to_contacts2(selected_object)}>
+                        {this.render_detail_item('3', {'title':''+author, 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    </div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
@@ -447,44 +449,48 @@ class SpendDetailSection extends Component {
         )
     }
 
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
+    }
+
     render_post_state(object){
         return;
-        const country_data = this.props.app_state.country_data
-        const object_country = object['ipfs'].device_country
-        const country_item_data = country_data.find(e => e.name === object_country)
-        if(country_item_data != null){
-            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
-            var country_color = obj[country_item_data.color[0]]
-            var title = country_item_data.code /* +' '+country_item_data.emoji */
-            var details = country_color+' '+country_item_data.call_code
-            var channeling_id = object['ipfs'].get_content_channeling_object == null ? 3 : this.get_selected_item2(object['ipfs'].get_content_channeling_object, 'e')
-            if(channeling_id == 1){
-                return(
-                    <div>
-                        {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
-                        <div style={{height:10}}/>
-                    </div>
-                )
-            }
-            else if(channeling_id == 2){
-                var text = country_color+' '+object['ipfs'].device_language_setting
-                return(
-                    <div>
-                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
-                        <div style={{height:10}}/>
-                    </div>
-                )
-            }
-            else{
-                var text = '⚫ '+this.props.app_state.loc['1233']/* 'international' */
-                return(
-                    <div>
-                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
-                        <div style={{height:10}}/>
-                    </div>
-                )
-            }
-        }
+        // const country_data = this.props.app_state.country_data
+        // const object_country = object['ipfs'].device_country
+        // const country_item_data = country_data.find(e => e.name === object_country)
+        // if(country_item_data != null){
+        //     var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+        //     var country_color = obj[country_item_data.color[0]]
+        //     var title = country_item_data.code /* +' '+country_item_data.emoji */
+        //     var details = country_color+' '+country_item_data.call_code
+        //     var channeling_id = object['ipfs'].get_content_channeling_object == null ? 3 : this.get_selected_item2(object['ipfs'].get_content_channeling_object, 'e')
+        //     if(channeling_id == 1){
+        //         return(
+        //             <div>
+        //                 {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+        //                 <div style={{height:10}}/>
+        //             </div>
+        //         )
+        //     }
+        //     else if(channeling_id == 2){
+        //         var text = country_color+' '+object['ipfs'].device_language_setting
+        //         return(
+        //             <div>
+        //                 {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+        //                 <div style={{height:10}}/>
+        //             </div>
+        //         )
+        //     }
+        //     else{
+        //         var text = '⚫ '+this.props.app_state.loc['1233']/* 'international' */
+        //         return(
+        //             <div>
+        //                 {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+        //                 <div style={{height:10}}/>
+        //             </div>
+        //         )
+        //     }
+        // }
     }
 
     get_selected_item2(object, option){

@@ -308,7 +308,9 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':composition_type, 'details':this.props.app_state.loc['2606']/* 'Set Denomination' */, 'size':'l'})}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2607']/* 'Author Seller' */, 'size':'l'})}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2607']/* 'Author Seller' */, 'size':'l'})}
+                    </div>
                     <div style={{height: 10}}/>
 
                     {this.render_direct_purchases_if_any(object)}
@@ -372,6 +374,10 @@ class StorefrontDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
     }
 
     render_ratings_if_any(object){

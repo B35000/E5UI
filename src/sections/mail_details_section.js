@@ -177,7 +177,9 @@ class MailDetailsSection extends Component {
                     {this.render_detail_item('4', item['id'])}
                     <div style={{height: 10}}/>
                     {this.render_post_state(object)}
-                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p2, object)), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p2, object)), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    </div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p1,object)), 'details':this.props.app_state.loc['888']/* 'Recipient' */, 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -198,6 +200,10 @@ class MailDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
     }
 
     render_post_state(object){

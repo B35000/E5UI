@@ -1205,6 +1205,7 @@ class home_page extends Component {
         var posts_to_load = []
         var searched_data = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
+        var searched_accounts = []
         
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
@@ -1213,20 +1214,36 @@ class home_page extends Component {
         contained_words_in_string.forEach(word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
-                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!searched_accounts.includes(e5_id)){
+                        searched_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
             }
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
         the_other_words.forEach(word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             if(trimmed_word.length > 3){
-                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!searched_accounts.includes(e5_id)){
+                        searched_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
             }
         });
-
-
         
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data, [])
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data, searched_accounts)
     }
 
     get_selected_page(){
@@ -1252,6 +1269,19 @@ class home_page extends Component {
             }
         }
         return selected_page;
+    }
+
+    get_alias_account_if_any(alias){
+        var e5s = this.props.app_state.e5s['data']
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][alias]
+                if(id != null && !isNaN(id)){
+                    return e5+':'+id;
+                }
+            }
+        }
     }
 
 
@@ -1471,14 +1501,32 @@ class home_page extends Component {
         contained_words_in_string.forEach(word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
-                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!targeted_accounts.includes(e5_id)){
+                        targeted_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
             }
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
         the_other_words.forEach(word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             if(trimmed_word.length > 3){
-                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!targeted_accounts.includes(e5_id)){
+                        targeted_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
             }
         });
 
@@ -1535,14 +1583,32 @@ class home_page extends Component {
         contained_words_in_string.forEach(word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
-                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!targeted_accounts.includes(e5_id)){
+                        targeted_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
             }
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
         the_other_words.forEach(word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             if(trimmed_word.length > 3){
-                if(posts_to_load.includes(trimmed_word)) posts_to_load.push(trimmed_word);
+                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!targeted_accounts.includes(e5_id)){
+                        targeted_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
             }
         });
 

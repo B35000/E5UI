@@ -231,7 +231,10 @@ class BagDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'scroll', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['sender_account'])}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', item['sender_account'])}
+                    </div>
+                    
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
@@ -265,6 +268,10 @@ class BagDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
     }
 
     render_post_state(object){

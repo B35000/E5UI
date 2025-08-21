@@ -254,7 +254,9 @@ class ProposalDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p4, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p4, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                    </div>
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
@@ -350,23 +352,27 @@ class ProposalDetailsSection extends Component {
         )
     }
 
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
+    }
+
     render_post_state(object){
         return;
-        const country_data = this.props.app_state.country_data
-        const object_country = object['ipfs'].device_country
-        const country_item_data = country_data.find(e => e.name === object_country)
-        if(country_item_data != null){
-            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
-            var country_color = obj[country_item_data.color[0]]
-            var title = country_item_data.code /* +' '+country_item_data.emoji */
-            var details = country_color+' '+country_item_data.call_code
-            return(
-                <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
-                    <div style={{height:10}}/>
-                </div>
-            )
-        }
+        // const country_data = this.props.app_state.country_data
+        // const object_country = object['ipfs'].device_country
+        // const country_item_data = country_data.find(e => e.name === object_country)
+        // if(country_item_data != null){
+        //     var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
+        //     var country_color = obj[country_item_data.color[0]]
+        //     var title = country_item_data.code /* +' '+country_item_data.emoji */
+        //     var details = country_color+' '+country_item_data.call_code
+        //     return(
+        //         <div>
+        //             {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+        //             <div style={{height:10}}/>
+        //         </div>
+        //     )
+        // }
     }
 
     get_selected_item2(object, option){

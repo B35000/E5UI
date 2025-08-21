@@ -218,7 +218,7 @@ class FulfilBagPage extends Component {
         var items = this.get_contract_items()
         return(
             <div>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1135']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1135']/* 'Select the work contract youll be using. If you have no work contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -272,22 +272,12 @@ class FulfilBagPage extends Component {
         var created_cons = this.get_all_sorted_objects(this.props.app_state.created_contracts)
         for(var i = 0; i < created_cons.length; i++){
             var post_author = created_cons[i]['event'] == null ? 0 : created_cons[i]['event'].returnValues.p3
-            // console.log('----------------------get_contract_items------------------------------')
-            // console.log(this.props.app_state.user_account_id)
-            // console.log(created_cons[i]['e5'])
-
             var myid = this.props.app_state.user_account_id[created_cons[i]['e5']]
             if(myid == null){
                 myid = 1
             }
-            if(post_author.toString() == myid.toString()){
-                // if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
-                //     my_contracts.push(this.props.app_state.created_contracts[i])
-                // }else{
-                //     if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
-                //     }
-                //     my_contracts.push(this.props.app_state.created_contracts[i])
-                // }
+            const contract_type = created_cons[i]['ipfs'].contract_type
+            if(post_author.toString() == myid.toString() && contract_type == 'work'){
                 my_contracts.push(created_cons[i])
             }
         }

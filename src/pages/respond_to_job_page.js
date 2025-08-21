@@ -196,7 +196,7 @@ class RespondToJobPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1316']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1316']/* 'Select the work contract youll be using. If you have no work contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -251,25 +251,15 @@ class RespondToJobPage extends Component {
 
     get_contract_items(){
         var my_contracts = []
-        // var myid = this.props.app_state.user_account_id
         var created_contracts = this.get_all_sorted_objects(this.props.app_state.my_created_contracts)
         for(var i = 0; i < created_contracts.length; i++){
             var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
-            // console.log('---------------------get_contract_items------------------------')
-            // console.log(this.props.app_state.user_account_id)
-            // console.log(created_contracts[i]['e5'])
-
             var myid = this.props.app_state.user_account_id[created_contracts[i]['e5']] 
             if(myid == null){
                 myid = 1
             }
-            if(post_author.toString() == myid.toString()){
-                // if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
-                //     my_contracts.push(this.props.app_state.created_contracts[i])
-                // }else{
-                //     if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
-                //     }
-                // }
+            const contract_type = created_contracts[i]['ipfs'].contract_type
+            if(post_author.toString() == myid.toString() && contract_type == 'work'){
                 my_contracts.push(created_contracts[i])
             }
         }

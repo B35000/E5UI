@@ -339,7 +339,9 @@ class AudioDetailSection extends Component {
                     {this.render_detail_item('3', item['purchase_recipient'])}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
+                    </div>
                     <div style={{height: 10}}/>
 
                     {this.render_taken_down_message_if_post_is_down(object)}
@@ -416,6 +418,11 @@ class AudioDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    add_to_contacts2(object){
+        if(this.is_post_anonymous(object)) return;
+        this.props.add_id_to_contacts(object['author'], object)
     }
 
     render_ratings_if_any(object){

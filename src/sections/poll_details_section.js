@@ -154,7 +154,10 @@ class PollDetailsSection extends Component {
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
                     {this.render_post_state(object)}
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
+                    
+                    <div onClick={() => this.add_to_contacts2(object)}>
+                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['a2527g']/* 'Poster' */, 'size':'l'})}
+                    </div>
                     <div style={{height: 10}}/>
 
                     {this.render_taken_down_message_if_post_is_down(object)}
@@ -208,6 +211,10 @@ class PollDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    add_to_contacts2(object){
+        this.props.add_id_to_contacts(object['author'], object)
     }
 
     render_post_state(object){
