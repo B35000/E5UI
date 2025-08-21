@@ -31800,9 +31800,9 @@ class App extends Component {
     }
 
     if(all_final_elements.length != 0 && this.state.beacon_node_enabled == true){
-      var arg_obj = {tags: all_final_elements, target_type: target_type, language: this.state.device_language}
+      var arg_obj = {tags: all_final_elements, target_type: target_type, language: this.state.device_language, state: this.hash_data_with_randomizer(this.state.device_country)}
       const params = new URLSearchParams({
-        arg_string: JSON.stringify(arg_obj)
+        arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify(arg_obj))
       });
       var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tags')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
       try{
@@ -36747,7 +36747,7 @@ class App extends Component {
           beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
         }
         const searched_tags = id.includes('"') ? this.extract_quoted_words(id) : id.trim().split(/\s+/).filter(word => word.length >= 3)
-        var arg_obj = {tags: searched_tags, target_type: 0, language: this.state.device_language}
+        var arg_obj = {tags: searched_tags, target_type: 0, language: this.state.device_language, state:this.hash_data_with_randomizer(this.state.device_country) }
 
         const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify(arg_obj))
         const params = new URLSearchParams({
@@ -37535,9 +37535,10 @@ class App extends Component {
   }
 
   record_key_in_nitro_node = async (marco_obj, link, object, nitro_link_directory) => {
-    const user_key_data = this.generate_my_box_keys(this.makeid(53));
+    const root_identifier = this.generate_id_for_nitro_node_key(link)
+    const user_key_data = this.generate_my_box_keys(root_identifier);
     const user_temp_hash = user_key_data.my_node_server_public_key
-    const user_temp_encryption_key = this.makeid(35)
+    const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
     const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'], user_key_data.keypair)
     
     if(encrypted_user_temp_encryption_key == null){
@@ -37568,7 +37569,7 @@ class App extends Component {
       var data = await response.text();
       var obj = JSON.parse(data);
       var success = obj.success
-      if(success == true){
+      if(success == true || obj.existing == true){
         marco_obj['user_temp_hash'] = user_temp_hash
         marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
 
@@ -37595,6 +37596,23 @@ class App extends Component {
       clone[object['e5_id']] = 'unavailable'
       this.setState({nitro_node_details:clone})
     }
+  }
+
+  generate_id_for_nitro_node_key(link){
+    if(this.state.has_wallet_been_set || this.state.has_account_been_loaded_from_storage){
+      const my_address = this.state.accounts['E25'].privateKey.toString()
+      const current_hour = this.start_of_current_hour()
+      return this.hash_data_with_randomizer(my_address+ link + current_hour)
+    }
+    else{
+      return this.makeid(53) 
+    }
+  }
+
+  start_of_current_hour() {
+    const now = new Date();
+    now.setMinutes(0, 0, 0); // reset minutes, seconds, milliseconds
+    return now.getTime(); // timestamp in ms
   }
 
   generate_my_box_keys(identifier){

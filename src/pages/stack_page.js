@@ -5072,7 +5072,7 @@ class StackPage extends Component {
 
                     all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
                     
-                    obj['tags'][t.id] = {'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting}
+                    obj['tags'][t.id] = { 'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country) }
                     ipfs_index_array.push({'id':t.id, 'data':t})
 
                     if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
@@ -5231,7 +5231,7 @@ class StackPage extends Component {
                     
                     all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
                     
-                    obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting}
+                    obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country)}
                     ipfs_index_array.push({'id':data.id, 'data':data})
 
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */){
