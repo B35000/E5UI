@@ -238,7 +238,7 @@ class StackPage extends Component {
 
         // var theme_stage = 'all-available'
         var final_array = obj[theme_stage]
-        if(theme_stage == 'all-available' && !this.do_i_have_an_account()){
+        if(theme_stage == 'all-available' && !this.props.do_i_have_an_account()){
             final_array = obj['lightcolor-available']
         }
 
@@ -250,18 +250,6 @@ class StackPage extends Component {
                 ['xor','',0], final_array, [this.get_light_dark_option(final_array)]
             ],
         };
-    }
-
-    do_i_have_an_account(){
-        for(var i=0; i<this.state.e5s['data'].length; i++){
-          var e5 = this.state.e5s['data'][i]
-          if(this.state.e5s[e5].active == true){
-              if(this.state.user_account_id[e5] != null || this.state.user_account_id[e5] > 1000){
-                return true;
-              }
-          }
-        }
-        return false
     }
 
     get_254_state_colors(theme){
@@ -1378,7 +1366,7 @@ class StackPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593bz']/* 'Transaction Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_pric/10**9), 'number':(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63} decimal_count={9}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63} decimal_count={9} pick_with_text_area={true}/>
                     
                     <div style={{height:10}}/>
                     {this.render_gas_price_options()}
@@ -3472,6 +3460,10 @@ class StackPage extends Component {
                             variant_images.push(item.selected_variant['image_data']['data']['images'][0])
                         }
                         bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images })
+
+                        if(!newly_participated_objects.includes(item.storefront_item['e5_id'])){
+                            newly_participated_objects.push(item.storefront_item['e5_id'])
+                        }
                     });
 
                     var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location  }
@@ -3516,6 +3508,10 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(message_obj.depth)
+                    }
+                    
+                    if(!newly_participated_objects.includes(txs[i].storefront_item['e5_id'])){
+                        newly_participated_objects.push(txs[i].storefront_item['e5_id'])
                     }
 
                     strs.push(message_obj.str)
@@ -3603,6 +3599,10 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
                     var now = parseInt(now.toString() + i)
                     var message_obj = await this.format_job_request_object(txs[i], calculate_gas, now, ipfs_index)
+
+                    if(!newly_participated_objects.includes(txs[i].contractor_item['e5_id'])){
+                        newly_participated_objects.push(txs[i].contractor_item['e5_id'])
+                    }
                     
                     strs.push(message_obj.str)
                     adds.push([])
@@ -4930,9 +4930,12 @@ class StackPage extends Component {
                         Object.keys(item.ecid_encryption_passwords).forEach(key => {
                             ecid_encryption_passwords[key] = item.ecid_encryption_passwords[key]
                         });
+                        if(!newly_participated_objects.includes(item.storefront_item['e5_id'])){
+                            newly_participated_objects.push(item.storefront_item['e5_id'])
+                        }
                     });
 
-                    var final_bag_object = { 
+                    var final_bag_object = {
                         'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time, ecid_encryption_passwords: ecid_encryption_passwords
                     }
 
@@ -4955,6 +4958,10 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                     var t = txs[i]
                     var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups)}
+
+                    if(!newly_participated_objects.includes(t.storefront_item['e5_id'])){
+                        newly_participated_objects.push(t.storefront_item['e5_id'])
+                    }
 
                     ipfs_index_object[t.id] = purchase_object
                     ipfs_index_array.push({'id':t.id, 'data':purchase_object})
@@ -5003,6 +5010,10 @@ class StackPage extends Component {
                     var key_data = await this.get_encrypted_job_request_key(t)
                     var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data}
 
+                    if(!newly_participated_objects.includes(t.contractor_item['e5_id'])){
+                        newly_participated_objects.push(t.contractor_item['e5_id'])
+                    }
+
                     ipfs_index_object[t.id] = application_obj
                     ipfs_index_array.push({'id':t.id, 'data':application_obj})
                 }
@@ -5023,8 +5034,14 @@ class StackPage extends Component {
                             // console.log('key_data',t.messages_to_deliver[m]['key_data'], private_key_to_use)
                             var focused_encrypted_key = t.messages_to_deliver[m]['key_data'][my_unique_crosschain_identifier]
                             if(focused_encrypted_key != null){
-                                var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
-                                var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+                                var encryptor_pub_key = t.messages_to_deliver[m]['key_data']['encryptor_pub_key']
+                                var my_key = null;
+                                if(encryptor_pub_key != null){
+                                    my_key = this.props.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+                                }else{
+                                    var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
+                                    my_key = await ecies.decrypt(private_key_to_use, uint8array)
+                                }
                                 var encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(message_obj), my_key.toString())
                                 message_obj = {'encrypted_data':encrypted_obj}
                             }
@@ -5077,15 +5094,16 @@ class StackPage extends Component {
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
                     
-                    const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
+                    // const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
 
                     const all_final_elements = []
                     for(var te=0; te<all_elements.length; te++){
                         const word = all_elements[te]
-                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+                        // all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+                        all_final_elements.push(this.props.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     }
 
-                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+                    all_final_elements.push(this.props.encrypt_string_using_crypto_js(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     
                     obj['tags'][t.id] = { 'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country) }
                     ipfs_index_array.push({'id':t.id, 'data':t})
@@ -5237,15 +5255,18 @@ class StackPage extends Component {
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
                     
-                    const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
+                    // const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
                     const all_final_elements = []
                     for(var te=0; te<all_elements.length; te++){
                         const word = all_elements[te]
-                        all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+
+                        // all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+                        all_final_elements.push(this.props.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     }
                     
-                    all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
-                    
+                    // all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+                    all_final_elements.push(this.props.encrypt_string_using_crypto_js(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY)) 
+
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country)}
                     ipfs_index_array.push({'id':data.id, 'data':data})
 
@@ -7606,10 +7627,11 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
-        var int_data = Date.now()
+        var int_data = 1
 
         // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
-        var string_data = t.alias //it doesnt make sense to store alias data as hashes when the alias character limit is less than hash size.
+        // var string_data = t.alias
+        var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -7630,10 +7652,11 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
-        var int_data = Date.now()
+        var int_data = 1
 
         // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
-        var string_data = t.alias
+        // var string_data = t.alias
+        var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -7654,10 +7677,11 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
-        var int_data = Date.now()
+        var int_data = 1
 
         // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
-        var string_data = t.alias
+        // var string_data = t.alias
+        var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -10811,6 +10835,10 @@ class StackPage extends Component {
             this.props.notify(this.props.app_state.loc['1593hq']/* 'You need an account to change this setting.' */, 4300)
             return;
         }
+        else if(!this.props.do_i_have_a_minimum_number_of_txs_in_account()){
+            this.props.notify(this.props.app_state.loc['1593iv']/* 'You need to make a few more transactions to change this setting.' */, 4300)
+            return;
+        }
         this.setState({get_disable_moderation_setting_object: tag_obj})
         var selected_item = this.get_selected_item(this.state.get_disable_moderation_setting_object, 'e')
         this.props.when_disable_moderation_changed(selected_item)
@@ -11247,6 +11275,9 @@ class StackPage extends Component {
                 
                 <div style={{height: 10}}/>
                 {this.render_message_if_stack_not_empty()}
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593it']/* 'Please Note ⚠️' */, 'details':this.props.app_state.loc['1979s']/* 'If you didnt know to keep these provided details private, or dont know why they should remain private, kindly stop using this webapp.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
                 
                 <div style={{'padding':'0px 5px 0px 5px'}}>
                     {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}

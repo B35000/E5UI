@@ -66,7 +66,7 @@ class ConfigureNitroNodePage extends Component {
 
         default_free_storage:0, selected_e5: this.props.app_state.selected_e5, storage_price_data:{},
 
-        added_rpc_urls:[],
+        added_rpc_urls:[], picked_wei_amount:0
     };
 
 
@@ -174,6 +174,8 @@ class ConfigureNitroNodePage extends Component {
         this.setState({get_configure_nitro_node_title_tags_object: tag_obj})
         
         var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        var selected_item2 = this.get_selected_item(this.state.reconfigure_storage_title_tags_object, this.state.reconfigure_storage_title_tags_object['i'].active)
+
         if(selected_item == this.props.app_state.loc['3043']/* 'new-E5' */){
             this.setState({added_rpc_urls: []})
         }
@@ -189,6 +191,9 @@ class ConfigureNitroNodePage extends Component {
                     this.setState({added_rpc_urls: []})
                 }
             }
+        }
+        else if(selected_item == this.props.app_state.loc['3049']/* 'reconfigure-storage' */ && selected_item2 == this.props.app_state.loc['3054ck']/* 'Price' */){
+            this.set_storage_price_data()
         }
     }
 
@@ -1563,9 +1568,9 @@ class ConfigureNitroNodePage extends Component {
 
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']/* 'Free Basic Storage' */, 'details':this.props.app_state.loc['3054ct']/* 'If set to enabled, users will be able to store post metadata in your node for free.' */, 'size':'l'})}
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']'Free Basic Storage', 'details':this.props.app_state.loc['3054ct']'If set to enabled, users will be able to store post metadata in your node for free.', 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
                 
             </div>
         )
@@ -1580,7 +1585,10 @@ class ConfigureNitroNodePage extends Component {
 
                 {this.render_set_token_and_amount_part()}
                 
-                {this.render_detail_item('0')} 
+                {this.render_detail_item('0')}
+
+                {this.render_default_free_storage_minimum_ether_amounts()}
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3054dn']/* 'Set Price Data.' */, 'details':this.props.app_state.loc['3054do']/* 'Set the specified account and price data for your selected E5.' */, 'size':'l'})}
                 <div style={{height:10}}/>
@@ -1645,6 +1653,7 @@ class ConfigureNitroNodePage extends Component {
     constructor(props) {
         super(props);
         this.amount_picker = React.createRef();
+        this.free_storage_picker = React.createRef();
     }
 
     get_power_limit_for_exchange(exchange){
@@ -1799,6 +1808,7 @@ class ConfigureNitroNodePage extends Component {
         var set_prices = this.state.price_data
         var selected_e5 = this.state.selected_e5
         var typed_account_id = this.state.recipient_id.toString().trim()
+        var picked_wei_amount = this.state.picked_wei_amount
 
         if(set_prices.length == 0){
             this.props.notify(this.props.app_state.loc['3054dq']/* 'You need to set some prices per megabyte first.' */, 5000)
@@ -1808,9 +1818,10 @@ class ConfigureNitroNodePage extends Component {
         }
         else{
             var clone = structuredClone(this.state.storage_price_data)
-            clone[selected_e5] = {'set_prices': set_prices, 'recipient': typed_account_id}
-            this.setState({storage_price_data: clone, price_data:[], recipient_id:''})
+            clone[selected_e5] = {'set_prices': set_prices, 'recipient': typed_account_id, 'minimum_balance':picked_wei_amount}
+            this.setState({storage_price_data: clone, price_data:[], recipient_id:'', picked_wei_amount:0})
             this.props.notify(this.props.app_state.loc['3054dv']/* 'Price data added..' */, 1200)
+            this.reset_free_storage_picker()
         }
     }
 
@@ -1862,6 +1873,43 @@ class ConfigureNitroNodePage extends Component {
         this.setState({storage_price_data: clone})
     }
 
+
+
+    render_default_free_storage_minimum_ether_amounts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054dy']/* Default Free Storage Qualifiers */, 'details':this.props.app_state.loc['3054dz']/* You can set a minimum ether balance requirement for new addresses storing files without purchasing storage space. If unset, the default value used is 1 wei. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <NumberPicker ref={this.free_storage_picker} clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_ether_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} pick_with_text_area={true}/>
+            </div>
+        )
+    }
+
+    reset_free_storage_picker(){
+        var me = this;
+        setTimeout(function() {
+            if(me.free_storage_picker.current != null){
+                me.free_storage_picker.current.reset_number_picker()
+            }
+        }, (1 * 1000)); 
+    }
+
+    render_ether_balance_item(item){
+        var image = this.props.app_state.e5s[item].ether_image
+        var token_name = this.props.app_state.e5s[item].token
+        return(
+            <div>
+                {this.render_coin_item({'title':token_name, 'image':image, 'details':item, 'size':'s', 'img_size':30})}
+            </div>
+        )
+    }
+
+    when_minimum_ether_number_picker_value_changed(amount){
+        this.setState({picked_wei_amount: amount})
+    }
+
+
     when_boot_storage_tapped(){
         var entered_backup_text = this.state.entered_backup_text
         var max_buyable_capacity = this.state.max_buyable_capacity
@@ -1883,6 +1931,7 @@ class ConfigureNitroNodePage extends Component {
         else{
             const price_per_megabyte = {}
             const target_storage_recipient_accounts = {}
+            const target_minimum_balance_amounts = {}
             Object.keys(storage_price_data).forEach(storage_e5 => {
                 storage_price_data[storage_e5]['set_prices'].forEach(item => {
                     if(price_per_megabyte[storage_e5] == null){
@@ -1891,9 +1940,10 @@ class ConfigureNitroNodePage extends Component {
                     price_per_megabyte[storage_e5].push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
                 });
                 target_storage_recipient_accounts[storage_e5] = storage_price_data[storage_e5]['recipient']
+                target_minimum_balance_amounts[storage_e5] = storage_price_data[storage_e5]['minimum_balance']
             });
 
-            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, this.state.nitro_object, default_free_storage)
+            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, this.state.nitro_object, default_free_storage, target_minimum_balance_amounts)
         }
     }
 
@@ -1964,20 +2014,7 @@ class ConfigureNitroNodePage extends Component {
 
         var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
         if(selected_item == this.props.app_state.loc['3054ck']/* 'Price' */){
-            var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
-
-            // const clone = {}
-            // Object.keys(node_details['price_per_megabyte']).forEach(set_e5 => {
-            //     const set_prices = []
-            //     node_details['price_per_megabyte'][set_e5].forEach(item => {
-            //         set_prices.push({'exchange':parseInt(item['exchange']),'amount': bigInt(item['amount']) })
-            //     });
-            //     const set_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][set_e5]
-                
-            //     clone[set_e5] = {'set_prices': set_prices, 'recipient': set_recipient}
-            // });
-
-            // this.setState({storage_price_data: clone, price_data:[], recipient_id:''})
+            this.set_storage_price_data()
         }
         else if(selected_item == this.props.app_state.loc['3054cu']/* 'free-storage' */){
             var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
@@ -1989,6 +2026,27 @@ class ConfigureNitroNodePage extends Component {
             var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
             this.setState({max_buyable_capacity: node_details['max_buyable_capacity']})
         }
+    }
+
+    set_storage_price_data(){
+        var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
+        if(node_details['target_storage_recipient_accounts'] == null){
+            return;
+        }
+        const clone = {}
+        Object.keys(node_details['price_per_megabyte']).forEach(set_e5 => {
+            const set_prices = []
+            node_details['price_per_megabyte'][set_e5].forEach(item => {
+                set_prices.push({'exchange':parseInt(item['exchange']),'amount': bigInt(item['amount']) })
+            });
+            const set_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][set_e5]
+
+            const minimum_balance = node_details['target_minimum_balance_amounts'] == null ? 0 : node_details['target_minimum_balance_amounts'][set_e5]
+            
+            clone[set_e5] = {'set_prices': set_prices, 'recipient': set_recipient, 'minimum_balance': minimum_balance}
+        });
+
+        this.setState({storage_price_data: clone, price_data:[], recipient_id:'', picked_wei_amount:0})
     }
 
 
@@ -2095,7 +2153,9 @@ class ConfigureNitroNodePage extends Component {
                 <div style={{height:10}}/>
 
                 {this.render_set_token_and_amount_part()}
-                
+                {this.render_detail_item('0')} 
+
+                {this.render_default_free_storage_minimum_ether_amounts()}
                 {this.render_detail_item('0')} 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3054dn']/* 'Set Price Data.' */, 'details':this.props.app_state.loc['3054do']/* 'Set the specified account and price data for your selected E5.' */, 'size':'l'})}
@@ -2127,6 +2187,7 @@ class ConfigureNitroNodePage extends Component {
         else{
             const price_per_megabyte = {}
             const target_storage_recipient_accounts = {}
+            const target_minimum_balance_amounts = {}
             Object.keys(storage_price_data).forEach(storage_e5 => {
                 storage_price_data[storage_e5]['set_prices'].forEach(item => {
                     if(price_per_megabyte[storage_e5] == null){
@@ -2135,9 +2196,10 @@ class ConfigureNitroNodePage extends Component {
                     price_per_megabyte[storage_e5].push({'exchange':item['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}),'amount': item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}) })
                 });
                 target_storage_recipient_accounts[storage_e5] = storage_price_data[storage_e5]['recipient']
+                target_minimum_balance_amounts[storage_e5] = storage_price_data[storage_e5]['minimum_balance']
             });
 
-            this.props.update_storage_config(entered_backup_text, 'price_per_megabyte', {price_per_megabyte, target_storage_recipient_accounts}, selected_e5, this.state.nitro_object)
+            this.props.update_storage_config(entered_backup_text, 'price_per_megabyte', {price_per_megabyte, target_storage_recipient_accounts, target_minimum_balance_amounts}, selected_e5, this.state.nitro_object)
         }
     }
 

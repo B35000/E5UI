@@ -872,7 +872,7 @@ class App extends Component {
   // }
 
   state = {
-    version:'3.0', os: getOS(),
+    version:'4.0', os: getOS(),
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -960,7 +960,7 @@ class App extends Component {
 
     is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
 
-    gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false,
+    gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3,
   };
 
   get_static_assets(){
@@ -7288,7 +7288,7 @@ class App extends Component {
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
-      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} add_moderator_note={this.add_moderator_note.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)}
+      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} add_moderator_note={this.add_moderator_note.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)}
       
       />
     )
@@ -7978,7 +7978,7 @@ class App extends Component {
 
   remove_followed_account(item, index){
     var e5 = item.split(':')[0]
-    if(primary_following.includes(item) && !this.do_i_have_an_account()){
+    if(primary_following.includes(item) && (!this.do_i_have_an_account() || !this.do_i_have_a_minimum_number_of_txs_in_account())){
       this.prompt_top_notification(this.getLocale()['1593dp']/* 'First make a transaction to remove that account.' */, 6300)
       return;
     }
@@ -8000,6 +8000,18 @@ class App extends Component {
           if(this.state.user_account_id[e5] != null || this.state.user_account_id[e5] > 1000){
             return true;
           }
+      }
+    }
+    return false
+  }
+
+  do_i_have_a_minimum_number_of_txs_in_account(){
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      if(this.state.e5s[e5].active == true){
+        if(this.state.E5_runs[e5] != null || this.state.E5_runs[e5].length >= this.state.minimum_run_count_for_valid_account){
+          return true;
+        }
       }
     }
     return false
@@ -17012,7 +17024,7 @@ class App extends Component {
     }
   }
 
-  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, nitro_object, default_free_storage) => {
+  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, nitro_object, default_free_storage, target_minimum_balance_amounts) => {
     this.prompt_top_notification(this.getLocale()['3054ci']/* Attempting to enable storage with your specified configuration... */, 1200)
     var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
@@ -17025,7 +17037,8 @@ class App extends Component {
       target_account_e5: selected_e5,
       target_storage_recipient_accounts: target_storage_recipient_accounts,
       unlimited_basic_storage: selected_basic_storage_setting,
-      free_default_storage: default_free_storage
+      free_default_storage: default_free_storage,
+      target_minimum_balance_amounts: target_minimum_balance_amounts,
     }
 
     var body = {
@@ -22494,6 +22507,9 @@ class App extends Component {
 
         const document_title = root_data.get_document_title_object == null ? 'e(Beta)': this.get_selected_item(root_data.get_document_title_object, 'e')
         document.title = document_title
+        if(this.state.os == 'iOS'){
+          this.changeFavicon('/ios_app_icon.png')
+        }
 
         const my_language = this.get_language() == null ? 'en' : this.get_language()
         if(my_language != 'en' && all_locales[my_language] != null){
@@ -22563,6 +22579,16 @@ class App extends Component {
         }, (1 * 500));
       }
     }
+  }
+
+  changeFavicon(iconURL) {
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.getElementsByTagName("head")[0].appendChild(link);
+    }
+    link.href = iconURL;
   }
 
 
@@ -23304,9 +23330,14 @@ class App extends Component {
     var is_first_time = this.state.my_alias_events[e5] == null
     for(var i=0; i<alias_events.length; i++){
       var alias_string = alias_events[i].returnValues.p4
-      if(alias_string.length > 23){
-        alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
-      } 
+      if(alias_events[i].returnValues.p5/* int_data */ == 1){
+        alias_string = this.decrypt_string_using_crypto_js(alias_string, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+      }else{
+        if(alias_string.length > 23){
+          alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
+        }
+      }
+      
       var alias_sender = alias_events[i].returnValues.p2/* owner */
       var alias_time = alias_events[i].returnValues.p6/* timestamp */
 
@@ -31863,11 +31894,11 @@ class App extends Component {
     }
     all_unhashed_tags = all_unhashed_tags.concat(searched_tags_including_prioritized_tags)
 
-    const final_key = await this.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
+    // const final_key = await this.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
     const all_final_elements = []
     for(var t=0; t<all_unhashed_tags.length; t++){
       const word = all_unhashed_tags[t]
-      all_final_elements.push(await this.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+      all_final_elements.push(this.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
     }
 
     var prioritized_accounts = []
@@ -34164,6 +34195,26 @@ class App extends Component {
     );
     const decoder = new TextDecoder();
     return decoder.decode(decrypted)
+  }
+
+  encrypt_string_using_crypto_js(data, key){
+    var ciphertext = CryptoJS.AES.encrypt(data, key).toString();
+    return ciphertext
+  }
+
+  decrypt_string_using_crypto_js(data, key){
+    try{
+      var bytes  = CryptoJS.AES.decrypt(data, key);
+      if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        return originalText
+      } else {
+        return data
+      }
+    }
+    catch(e){
+      return data
+    }
   }
 
 
@@ -36804,7 +36855,14 @@ class App extends Component {
           beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
         }
         const searched_tags = id.includes('"') ? this.extract_quoted_words(id) : id.trim().split(/\s+/).filter(word => word.length >= 3)
-        var arg_obj = {tags: searched_tags, target_type: 0, language: this.state.device_language, state:this.hash_data_with_randomizer(this.state.device_country) }
+
+        const all_final_elements = []
+        for(var te=0; te<searched_tags.length; te++){
+          const word = searched_tags[te]
+          all_final_elements.push(this.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+        }
+
+        var arg_obj = {tags: all_final_elements, target_type: 0, language: this.state.device_language, state:this.hash_data_with_randomizer(this.state.device_country) }
 
         const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify(arg_obj))
         const params = new URLSearchParams({

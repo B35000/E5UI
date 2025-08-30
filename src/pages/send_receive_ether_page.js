@@ -735,7 +735,7 @@ class SendReceiveEtherPage extends Component {
         var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} pick_with_text_area={true}/>
             </div>
         )
     }
@@ -745,7 +745,7 @@ class SendReceiveEtherPage extends Component {
         var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={9}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={9} pick_with_text_area={true}/>
             </div>
         )
     }

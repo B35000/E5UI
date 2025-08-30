@@ -315,7 +315,7 @@ class ChannelDetailsSection extends Component {
 
     show_moderator_note_if_any(object){
         if(this.props.app_state.moderator_notes_by_my_following.length == 0  || this.props.app_state.user_account_id[object['e5']] == object['author']) return;
-        var note_to_apply = null
+        var note_to_apply = []
         for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
             const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
             var hit_count = 0
@@ -373,23 +373,38 @@ class ChannelDetailsSection extends Component {
                 }
             }
 
-            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
-                note_to_apply = focused_note
-                break;
-            }
-            else if(focused_note['type'] == 'one' && hit_count != 0){
-                note_to_apply = focused_note;
+            if((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)){
+                note_to_apply.push(focused_note)
                 break;
             }
         }
-        if(note_to_apply != null){
+        if(note_to_apply.length != 0){
+            const identifier = object['e5_id']
+            const note_index = this.state.note_index == null || this.state.note_index[identifier] == null ? 0 : this.state.note_index[identifier];
+            const note_count_message = `(${note_index+1}/${note_to_apply.length})`
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                    <div onClick={() => this.update_note_object_index(note_to_apply, identifier)}>
+                        {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* '⚠️ Moderator Note $' */.replace('$', note_count_message), 'details':note_to_apply[note_index]['message']})}
+                    </div>
                     <div style={{height:10}}/>
                 </div>
             )
         }
+    }
+
+    update_note_object_index(note_to_apply, identifier){
+        var clone = this.state.note_index == null ? {} : structuredClone(this.state.note_index)
+        if(clone[identifier] == null){
+            clone[identifier] = 0
+        }
+        if(clone[identifier] + 1 == note_to_apply.length){
+            clone[identifier] = 0
+        }
+        else{
+            clone[identifier] ++
+        }
+        this.setState({note_index: clone})
     }
 
     add_to_contacts2(object){
@@ -1766,7 +1781,7 @@ class ChannelDetailsSection extends Component {
 
     show_moderator_note_for_comment_if_any(item){
         if(this.props.app_state.moderator_notes_by_my_following.length == 0 || item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]) return;
-        var note_to_apply = null
+        var note_to_apply = []
         for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
             const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
             var hit_count = 0
@@ -1781,22 +1796,41 @@ class ChannelDetailsSection extends Component {
             }
 
             if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
-                note_to_apply = focused_note
+                note_to_apply.push(focused_note)
                 break;
             }
             else if(focused_note['type'] == 'one' && hit_count != 0){
-                note_to_apply = focused_note;
+                note_to_apply.push(focused_note)
                 break;
             }
         }
-        if(note_to_apply != null){
+        if(note_to_apply.length != 0){
+            const identifier = item['message_id']
+            const note_index = this.state.note_index == null || this.state.note_index[identifier] == null ? 0 : this.state.note_index[identifier];
+            const note_count_message = `(${note_index+1}/${note_to_apply.length})`
             return(
                 <div>
                     <div style={{height:5}}/>
-                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
+                    <div onClick={() => this.update_note_index(note_to_apply, identifier)}>
+                        {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* '⚠️ Moderator Note $' */.replace('$', note_count_message), 'details':note_to_apply[note_index]['message']})}
+                    </div>
                 </div>
             )
         }
+    }
+
+    update_note_index(note_to_apply, identifier){
+        var clone = this.state.note_index == null ? {} : structuredClone(this.state.note_index)
+        if(clone[identifier] == null){
+            clone[identifier] = 0
+        }
+        if(clone[identifier] + 1 == note_to_apply.length){
+            clone[identifier] = 0
+        }
+        else{
+            clone[identifier] ++
+        }
+        this.setState({note_index: clone})
     }
 
     split_text(text){
