@@ -312,14 +312,14 @@ class GiveAwardPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1166']/* 'Total Amount' */, 'details':this.props.app_state.loc['1167']/* 'The total amount of SPEND youll be including in the award' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'number':award_amount, 'relativepower':'SPEND'})}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'number':award_amount, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                 </div>
 
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1169']/* 'Your Spend Balance' */, 'number':spend_token_balance, 'relativepower':'SPEND'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1169']/* 'Your Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1169']/* 'Your Spend Balance' */, 'number':spend_token_balance, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1169']/* 'Your Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                 </div>
 
                 {this.render_detail_item('0')}
@@ -680,8 +680,8 @@ class GiveAwardPage extends Component {
 
     get_suggested_tokens(target_type){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         var me = this;

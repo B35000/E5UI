@@ -606,12 +606,12 @@ class SearchedAccountPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['377']/* 'End Balance' */, 'number':item['end_balance'], 'relativepower':'END'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(item['end_balance']), 'barwidth':this.calculate_bar_width(item['end_balance']), 'number':this.format_account_balance_figure(item['end_balance']), 'relativepower':'END'})}
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['377']/* 'End Balance' */, 'number':item['end_balance'], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(item['end_balance']), 'barwidth':this.calculate_bar_width(item['end_balance']), 'number':this.format_account_balance_figure(item['end_balance']), 'relativepower':this.props.app_state.loc['3078']/* END */})}
                     </div>
 
-                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'number':item['spend_balance'], 'relativepower':'SPEND'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(item['spend_balance']), 'barwidth':this.calculate_bar_width(item['spend_balance']), 'number':this.format_account_balance_figure(item['spend_balance']), 'relativepower':'SPEND'})}
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'number':item['spend_balance'], 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(item['spend_balance']), 'barwidth':this.calculate_bar_width(item['spend_balance']), 'number':this.format_account_balance_figure(item['spend_balance']), 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}
                     </div>
                 </div>
 

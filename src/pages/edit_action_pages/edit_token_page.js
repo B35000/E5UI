@@ -1297,10 +1297,10 @@ class NewTokenPage extends Component {
         else if(title.length > 20){
             this.props.notify(this.props.app_state.loc['748']/* 'that name is too long' */, 3700)
         }
-        else if(title.includes(' ') || title == 'END' || title == 'SPEND' || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(title))){
+        else if(title.includes(' ') || title == this.props.app_state.loc['3078']/* END */ || title == this.props.app_state.loc['3079']/* SPEND */ || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(title))){
             this.props.notify(this.props.app_state.loc['749']/* 'that name is invalid' */, 3700)
         }
-        else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND' || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(symbol)) ){
+        else if(symbol.includes(' ') || symbol == this.props.app_state.loc['3078']/* END */ || symbol == this.props.app_state.loc['3079']/* SPEND */ || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(symbol)) ){
             this.props.notify(this.props.app_state.loc['750']/* 'that symbol is invalid' */, 3700)
         }
         else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null && this.state.existing_symbol != symbol){

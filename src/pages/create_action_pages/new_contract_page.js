@@ -1144,8 +1144,8 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['198'], 'details':this.props.app_state.loc['199'], 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.state.default_minimum_end_vote_bounty_amount, 'title':this.props.app_state.loc['200'], 'relativepower':'END'})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['200'], 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':'END', })}
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.state.default_minimum_end_vote_bounty_amount, 'title':this.props.app_state.loc['200'], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['200'], 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
                     </div>
 
                     <div style={{height:2}}/>
@@ -1161,8 +1161,8 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['201'], 'details':this.props.app_state.loc['202'], 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['203'], 'number':this.state.default_minimum_spend_vote_bounty_amount, 'relativepower':'SPEND'})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['203'], 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['203'], 'number':this.state.default_minimum_spend_vote_bounty_amount, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['203'], 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                     </div>
 
                     <div style={{height:2}}/>
@@ -1840,12 +1840,12 @@ class NewContractPage extends Component {
                 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['239'], 'subtitle':this.format_power_figure(minimum_end_amount), 'barwidth':this.calculate_bar_width(minimum_end_amount), 'number':this.format_account_balance_figure(minimum_end_amount), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['239'], 'subtitle':this.format_power_figure(minimum_end_amount), 'barwidth':this.calculate_bar_width(minimum_end_amount), 'number':this.format_account_balance_figure(minimum_end_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['240'], 'subtitle':this.format_power_figure(minimum_spend_amount), 'barwidth':this.calculate_bar_width(minimum_spend_amount), 'number':this.format_account_balance_figure(minimum_spend_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['240'], 'subtitle':this.format_power_figure(minimum_spend_amount), 'barwidth':this.calculate_bar_width(minimum_spend_amount), 'number':this.format_account_balance_figure(minimum_spend_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                 </div>
 
                 {this.render_detail_item('0')}
@@ -2061,8 +2061,8 @@ class NewContractPage extends Component {
 
     get_suggested_tokens(target_type){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         if(exchanges_from_sync == null) exchanges_from_sync = []

@@ -2288,8 +2288,8 @@ return data['data']
 
    get_suggested_tokens(target_type){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':this.state.e5, 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].end_image, 'img_size':30}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':this.state.e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].spend_image, 'img_size':30}},
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.state.e5, 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.state.e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         if(exchanges_from_sync == null) exchanges_from_sync = []
@@ -2455,11 +2455,31 @@ return data['data']
             this.props.notify(this.props.app_state.loc['759']/* 'that title is too long' */, 2700)
         }
         else{
-            this.props.when_add_edit_object_to_stack(this.state)
+            this.setState({entered_title_text: this.normalizeText(this.state.entered_title_text)});
+
+            setTimeout(function() {
+                me.props.when_add_edit_object_to_stack(me.state)
+            }, (1 * 1000));
 
             // this.setState({ id: makeid(32), type:'job', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[] })
             this.props.notify(this.props.app_state.loc['18']/* transaction added to stack' */, 1700);
         }
+    }
+
+    normalizeText(input) {
+        return input
+            // replace common leetspeak numbers
+            .replace(/0/g, "o")
+            .replace(/1/g, "i")
+            .replace(/3/g, "e")
+            .replace(/4/g, "a")
+            .replace(/5/g, "s")
+            .replace(/7/g, "t")
+            // remove unwanted punctuation inside words
+            .replace(/[._,-]+/g, "")
+            // collapse multiple spaces
+            .replace(/\s+/g, " ")
+            .trim();
     }
 
 }

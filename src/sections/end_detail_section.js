@@ -1003,7 +1003,7 @@ class EndDetailSection extends Component {
         var selected_obj_ratio_config = selected_object['data'][2];
 
         var type = selected_obj_root_config[3] == 3 ? this.props.app_state.loc['1808']/* 'Capped' */ : this.props.app_state.loc['1809']/* 'Uncapped' */
-        var spend_type = selected_object['data'][0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
+        var spend_type = selected_object['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
         var is_auth_main_contract = selected_obj_config[9] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: selected_obj_config[9]
         var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: (selected_obj_config[10] == 0 ? this.props.app_state.loc['2374']/* '0 (Burn Account)' */: selected_obj_config[10])
 

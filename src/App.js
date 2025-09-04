@@ -699,6 +699,7 @@ var primary_following = []
 const root_e5 = 'E25'
 const root_account = 1002
 const default_nitro_option = '1479E25'
+const originalConsole = { ...console };
 
 
 
@@ -20065,6 +20066,7 @@ class App extends Component {
     await this.load_root_config()
     await this.wait(500)
     if(this.is_allowed_in_e5()){
+      this.enableConsole()
       if(this.state.device_country == null || this.state.device_city == null){
         this.prompt_top_notification(this.getLocale()['2738al']/* 'e cant seem to access your general location info.' */, 100000)
         return;
@@ -20072,6 +20074,7 @@ class App extends Component {
  
       this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
+      document.title = this.state.document_title
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
@@ -20085,7 +20088,21 @@ class App extends Component {
       }
     }else{
       this.prompt_top_notification(me.getLocale()['2738']/* 'Not available in your region yet.' */, 100000)
+      document.title = '??(Beta?)'
+      this.disableConsole()
     }
+  }
+
+  disableConsole() {
+    for (let method in console) {
+      if (typeof console[method] === "function") {
+        console[method] = function () {};
+      }
+    }
+  }
+
+  enableConsole() {
+    Object.assign(console, originalConsole);
   }
 
   check_and_set_default_rpc = async () => {
@@ -22506,7 +22523,7 @@ class App extends Component {
         const upload_object_size_limit = root_data.data['upload_object_size_limit'] == null ? this.state.upload_object_size_limit : root_data.data['upload_object_size_limit']
 
         const document_title = root_data.get_document_title_object == null ? 'e(Beta)': this.get_selected_item(root_data.get_document_title_object, 'e')
-        document.title = document_title
+        // document.title = document_title
         if(this.state.os == 'iOS'){
           this.changeFavicon('/ios_app_icon.png')
         }
@@ -26704,11 +26721,11 @@ class App extends Component {
       var token_id = created_tokens[i]
 
       if(token_id == 3){
-        token_name = 'END'
+        token_name = this.getLocale()['3078']/* END */
         token_title = e5
       } 
       if(token_id == 5) {
-        token_name = 'SPEND'
+        token_name = this.getLocale()['3079']/* SPEND */
         token_title = e5.replace('E','3')
       }
       token_symbol_directory[token_id] = token_name;
@@ -34589,7 +34606,7 @@ class App extends Component {
   }
 
   decrypt_data_string = async (data, key) => {
-    return await this.encrypt_secure_data(data, key);
+    return await this.decrypt_secure_data(data, key);
     // const bytes = CryptoJS.AES.decrypt(data, key);
     // const originalText = bytes.toString(CryptoJS.enc.Utf8);
     // return originalText
@@ -34779,8 +34796,9 @@ class App extends Component {
         if(ipfs_message['encrypted_data'] != null){
           //channel message was encrypted
           const key_used = object['unencrypted_keys'][parseInt(ipfs_message['key_index'])]
-          var bytes = CryptoJS.AES.decrypt(ipfs_message['encrypted_data'], key_used.toString());
-          var originalText = bytes.toString(CryptoJS.enc.Utf8);
+          // var bytes = CryptoJS.AES.decrypt(ipfs_message['encrypted_data'], key_used.toString());
+          // var originalText = bytes.toString(CryptoJS.enc.Utf8);
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], key_used.toString())
           ipfs_message = JSON.parse(JSON.parse(originalText));
         }
         ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
@@ -34910,12 +34928,19 @@ class App extends Component {
       // await this.fetch_multiple_cids_from_nitro(application_responses, 0, 'p4')
     }
 
+    const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     var messages = []
     var is_first_time = this.state.job_responses[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
 
-      // console.log('foundd', 'ipfs', id, ipfs_message)
+      if(ipfs_message['encrypted_data'] != null){
+        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+        convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+        ipfs_message = JSON.parse(JSON.parse(originalText));
+      }
       
       if(ipfs_message != null && ipfs_message['picked_contract_id'] != null){
         // var data = await this.load_contract_item(e5, ipfs_message['picked_contract_id'])
@@ -34988,10 +35013,17 @@ class App extends Component {
 
     var direct_purchases = structuredClone(this.state.direct_purchases)
     var is_first_time_for_direct_purchases = this.state.direct_purchases[id] == null ? true: false
+    const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     for(var j=0; j<created_awward_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_awward_data[j].returnValues.p4)
       if(ipfs_message != null){
-        console.log('direct_purchase', ipfs_message)
+        if(ipfs_message['encrypted_data'] != null){
+          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+          convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          ipfs_message = JSON.parse(JSON.parse(originalText));
+        }
         ipfs_message['purchase_id'] = created_awward_data[j].returnValues.p4
         if(direct_purchases[id] == null){
           direct_purchases[id] = []
@@ -35071,6 +35103,13 @@ class App extends Component {
     var is_first_time = this.state.contractor_applications[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
+      if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
+        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+        convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, E5, encryptor_pub_key)
+        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+        ipfs_message = JSON.parse(JSON.parse(originalText));
+      }
       if(ipfs_message != null && ipfs_message['job_request_id'] != null){
         ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
         ipfs_message['contractor_post_id'] = id;
@@ -35159,12 +35198,12 @@ class App extends Component {
       if(ipfs_message != null){
         if(ipfs_message['encrypted_data'] != null){
           //channel message was encrypted
-          console.log('apppage', 'message is encrypted, decrypting...')
-          console.log('apppage', 'key used: ', convo_key)
-          var bytes = CryptoJS.AES.decrypt(ipfs_message['encrypted_data'], convo_key.toString());
-          var originalText = bytes.toString(CryptoJS.enc.Utf8);
+          // var bytes = CryptoJS.AES.decrypt(ipfs_message['encrypted_data'], convo_key.toString());
+          // var originalText = bytes.toString(CryptoJS.enc.Utf8);
+          // ipfs_message = JSON.parse(JSON.parse(originalText));
+
+          ipfs_message = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
           ipfs_message = JSON.parse(JSON.parse(originalText));
-          console.log('apppage', 'parsed object: ', ipfs_message)
         }
         ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)

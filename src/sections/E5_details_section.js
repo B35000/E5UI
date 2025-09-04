@@ -227,23 +227,23 @@ class E5DetailsSection extends Component {
 
                     {this.render_detail_item('0')}
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['377']/* 'End Balance' */, 'number':this.props.app_state.end_balance_of_E5[e5], 'relativepower':'END'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_E5[e5]), 'relativepower':'END'})}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['377']/* 'End Balance' */, 'number':this.props.app_state.end_balance_of_E5[e5], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_E5[e5]), 'relativepower':this.props.app_state.loc['3078']/* END */})}
                     </div>
 
                     <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['378']/* Spend Balance' */, 'number':this.props.app_state.spend_balance_of_E5[e5], 'relativepower':'SPEND'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* Spend Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.spend_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.spend_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.spend_balance_of_E5[e5]), 'relativepower':'SPEND'})}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['378']/* Spend Balance' */, 'number':this.props.app_state.spend_balance_of_E5[e5], 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* Spend Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.spend_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.spend_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.spend_balance_of_E5[e5]), 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}
                     </div>
                     <div style={{height:10}}/>
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'number':this.props.app_state.end_balance_of_burn_account[e5], 'relativepower':'END'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':'END'})}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'number':this.props.app_state.end_balance_of_burn_account[e5], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':this.props.app_state.loc['3078']/* END */})}
                     </div>
                     <div style={{height:10}}/>
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'number':spent_end, 'relativepower':'END'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'subtitle':this.format_power_figure(spent_end), 'barwidth':this.calculate_bar_width(spent_end), 'number':this.format_account_balance_figure(spent_end), 'relativepower':'END'})}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'number':spent_end, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'subtitle':this.format_power_figure(spent_end), 'barwidth':this.calculate_bar_width(spent_end), 'number':this.format_account_balance_figure(spent_end), 'relativepower':this.props.app_state.loc['3078']/* END */})}
                     </div>
                     <div style={{height:10}}/>
 
@@ -1664,7 +1664,7 @@ class E5DetailsSection extends Component {
                 
                 {this.render_detail_item('6', {'dataPoints':this.get_deflation_amount_data_points(data), 'interval':110, 'hide_label': true})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+'END', 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                 {this.render_detail_item('0')}
             </div>
         )

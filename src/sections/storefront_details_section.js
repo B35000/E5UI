@@ -2098,7 +2098,7 @@ class StorefrontDetailsSection extends Component {
             });
             var text = this.props.app_state.loc['2509i']/* From $ SPEND */
             text = text.replace('$', this.format_account_balance_figure(spend_price))
-            text = text.replace('SPEND', this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[id])
+            text = text.replace(this.props.app_state.loc['3079']/* SPEND */, this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[id])
             
             return(
                 <div>

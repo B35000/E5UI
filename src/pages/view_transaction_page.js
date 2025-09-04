@@ -1290,7 +1290,7 @@ class ViewTransactionPage extends Component {
         var halfing_type = selected_obj_config[15] == 0 ? this.props.app_state.loc['1811']/* 'Fixed' */ : this.props.app_state.loc['1812']/* 'Spread' */
 
         if(title == 5){
-            title = 'SPEND'
+            title = this.props.app_state.loc['3079']/* SPEND */
         }
 
         var item = selected_object;
@@ -6235,8 +6235,8 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1975']/* 'message:' */, 'details':''+transaction_item.entered_message_text, 'size':'l'})}
                 {this.render_detail_item('0')}
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1976']/* 'Total amount of spend' */, 'number':award_amount, 'relativepower':'SPEND'})}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1976']/* 'Total amount of spend' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1976']/* 'Total amount of spend' */, 'number':award_amount, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1976']/* 'Total amount of spend' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                 </div>
                 <div style={{height: 10}}/>
                 

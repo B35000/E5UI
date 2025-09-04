@@ -2108,7 +2108,7 @@ class PostListSection extends Component {
         var object_array = object['data']
         var token_id = object['id']
         var item = object
-        var type = object_array[0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
+        var type = object_array[0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
         var img = EndImg
@@ -2877,7 +2877,7 @@ class PostListSection extends Component {
             });
             var text = this.props.app_state.loc['2509i']/* From $ SPEND */
             text = text.replace('$', this.format_account_balance_figure(spend_price))
-            text = text.replace('SPEND', this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[id])
+            text = text.replace(this.props.app_state.loc['3079']/* SPEND */, this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[id])
             
             return(
                 <div>
@@ -4901,7 +4901,7 @@ return data['data']
     }
 
     get_exchanges_data(object_array, token_id, img, item){
-        var type = object_array[0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
+        var type = object_array[0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
         var supply = object_array[2][2/* <2>token_exchange_liquidity/total_supply */]
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text

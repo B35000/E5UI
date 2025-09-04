@@ -2750,9 +2750,9 @@ return data['data']
             <div>
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['end_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['end_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['end_balance']), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['end_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['end_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['end_balance']), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['spend_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['spend_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['spend_balance']), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['spend_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['spend_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['spend_balance']), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
 
                 </div>
 
@@ -4012,23 +4012,23 @@ return data['data']
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['421']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(minimum_spend_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_spend_bounty_amount), 'number':this.format_account_balance_figure(minimum_spend_bounty_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['421']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(minimum_spend_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_spend_bounty_amount), 'number':this.format_account_balance_figure(minimum_spend_bounty_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['422']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(minimum_end_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_end_bounty_amount), 'number':this.format_account_balance_figure(minimum_end_bounty_amount), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['422']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(minimum_end_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_end_bounty_amount), 'number':this.format_account_balance_figure(minimum_end_bounty_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
                 </div>
 
                 <div style={{height:20}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'number':spend_token_balance, 'relativepower':'SPEND'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'number':spend_token_balance, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                 </div>
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.props.app_state.loc['424']/* 'End Balance' */, 'number':end_token_balance, 'relativepower':'END'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':'END', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.props.app_state.loc['424']/* 'End Balance' */, 'number':end_token_balance, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
                 </div>
 
                 {this.render_detail_item('0')}

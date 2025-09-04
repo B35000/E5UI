@@ -28,6 +28,7 @@ import sublogo_dark_cracked2 from './../assets/sublogo_dark_cracked2.png'
 import sublogo_dark_cracked3 from './../assets/sublogo_dark_cracked3.png'
 import sublogo_dark_cracked4 from './../assets/sublogo_dark_cracked4.png'
 import sublogo_dark_cracked5 from './../assets/sublogo_dark_cracked5.png'
+import not_available_image from './../assets/not_available_synch_icon.png'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -78,8 +79,12 @@ class synchronizing_page extends Component {
 
         img = obj[logo_title]
         
-        if(logo_title === 'E5' && selected_dark_emblem_country === my_state){
+        if(logo_title == 'E5' && selected_dark_emblem_country === my_state){
             img = sublogo_dark
+        }
+
+        if(this.is_allowed_in_e5() != true){
+            img = not_available_image
         }
 
         return img

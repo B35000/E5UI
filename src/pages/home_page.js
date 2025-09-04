@@ -2439,8 +2439,9 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264bf']/* 'E-Tokens 📈' */){
             var all_tokens = this.get_exchange_tokens(3, all)
+            const current_e5 = this.props.app_state.selected_e5
             var e_tokens = all_tokens.filter(function (object) {
-                return (object['ipfs'] != null && object['ipfs'].token_type == 'e')
+                return (object['ipfs'] != null && object['ipfs'].token_type == 'e' && object['e5'] == current_e5)
             })
             return this.sortByAttributeDescending(e_tokens, 'spend_balance')
         }
@@ -3447,11 +3448,11 @@ class home_page extends Component {
             var entered_symbol_text = '';
             if(object['id'] == 3){
                 entered_title_text = object['e5']
-                entered_symbol_text = 'END'
+                entered_symbol_text = this.props.app_state.loc['3078']/* END */
             }
             if(object['id'] == 5){
                 entered_title_text = object['e5'].replace('E', '3')
-                entered_symbol_text = 'SPEND'
+                entered_symbol_text = this.props.app_state.loc['3079']/* SPEND */
             }
 
             var is_valid_video_or_audiopost = false;
@@ -3542,11 +3543,11 @@ class home_page extends Component {
             var entered_symbol_text = ''
             if(object['id'] == 3){
                 entered_title_text = object['e5']
-                entered_symbol_text = 'END'
+                entered_symbol_text = this.props.app_state.loc['3078']/* END */
             }
             if(object['id'] == 5){
                 entered_title_text = object['e5'].replace('E', '3')
-                entered_symbol_text = 'SPEND'
+                entered_symbol_text = this.props.app_state.loc['3079']/* SPEND */
             }
             var obj_tags = object['ipfs'] == null ? [] : [object['e5'], entered_title_text, entered_symbol_text ].concat(object['ipfs'].entered_indexing_tags)
             if(!obj_tags.includes(tag)){

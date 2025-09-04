@@ -3240,7 +3240,7 @@ return data['data']
         var object_array = object['data']
         var token_id = object['id']
         var item = object
-        var type = object_array[0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
+        var type = object_array[0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
         var img = EndImg

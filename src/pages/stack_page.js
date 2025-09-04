@@ -4886,10 +4886,17 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
                     const t = txs[i]
+                    const job_author = t.job_item['author']
+                    const job_author_e5 = t.job_item['e5']
+                    const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
+
                     const job_response = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application', 'custom_specifications':t.custom_specifications}
 
-                    ipfs_index_object[t.id] = job_response
-                    ipfs_index_array.push({'id':t.id, 'data':job_response})
+                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(job_response), key_data.key.toString())
+                    const encrypted_job_response_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+                    ipfs_index_object[t.id] = encrypted_job_response_object
+                    ipfs_index_array.push({'id':t.id, 'data':encrypted_job_response_object})
                 }
                 else if(txs[i].type == this.props.app_state.loc['1514']/* 'job-messages' */){
                     var t = txs[i]
@@ -4944,10 +4951,19 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['1497']/* 'bag-response' */){
                     var t = txs[i]
+
+                    const job_author = t.bag_item['author']
+                    const job_author_e5 = t.bag_item['e5']
+                    const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
+
                     var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
 
-                    ipfs_index_object[t.id] = application_obj 
-                    ipfs_index_array.push({'id':t.id, 'data':application_obj})
+
+                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(application_obj), key_data.key.toString())
+                    const encrypted_bag_response_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+                    ipfs_index_object[t.id] = encrypted_bag_response_object 
+                    ipfs_index_array.push({'id':t.id, 'data':encrypted_bag_response_object})
                 }
                 else if(txs[i].type == this.props.app_state.loc['1498']/* 'accept-bag-application' */){
                     var t = txs[i]
@@ -4957,14 +4973,21 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                     var t = txs[i]
+                    const job_author = t.storefront_item['author']
+                    const job_author_e5 = t.storefront_item['e5']
+                    const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
+
                     var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups)}
 
                     if(!newly_participated_objects.includes(t.storefront_item['e5_id'])){
                         newly_participated_objects.push(t.storefront_item['e5_id'])
                     }
 
-                    ipfs_index_object[t.id] = purchase_object
-                    ipfs_index_array.push({'id':t.id, 'data':purchase_object})
+                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(purchase_object), key_data.key.toString())
+                    const encrypted_direct_purchase_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+                    ipfs_index_object[t.id] = encrypted_direct_purchase_object
+                    ipfs_index_array.push({'id':t.id, 'data':encrypted_direct_purchase_object})
                 }
                 else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
                     var t = txs[i]
@@ -5007,15 +5030,18 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
                     var t = txs[i]
                     var now = parseInt(now.toString() + i)
-                    var key_data = await this.get_encrypted_job_request_key(t)
-                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data}
+                    const key_data = await this.get_encrypted_job_request_key(t)
+                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data.key_data}
 
                     if(!newly_participated_objects.includes(t.contractor_item['e5_id'])){
                         newly_participated_objects.push(t.contractor_item['e5_id'])
                     }
 
-                    ipfs_index_object[t.id] = application_obj
-                    ipfs_index_array.push({'id':t.id, 'data':application_obj})
+                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(application_obj), key_data.key.toString())
+                    const encrypted_job_request_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+                    ipfs_index_object[t.id] = encrypted_job_request_object
+                    ipfs_index_array.push({'id':t.id, 'data':encrypted_job_request_object})
                 }
                 else if(txs[i].type == this.props.app_state.loc['1504']/* 'accept-job-request' */){
                     var t = txs[i]
@@ -5646,7 +5672,26 @@ class StackPage extends Component {
         key_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
         key_data['encryptor_pub_key'] = this.props.uint8ToBase64(uint8array)
 
-        return key_data
+        return { key_data, key }
+    }
+
+    get_encrypted_response_to_job_key = async (recipient, job_author_e5) => {
+        var key = makeid(35)
+        // var recipient = t.contractor_item['author']
+        // var author_e5 = t.contractor_item['e5']
+        var key_data = {}
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, job_author_e5)
+        if(recipients_pub_key_hash != ''){
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(recipients_pub_key_hash))
+
+            key_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+        }
+        var uint8array = await this.props.get_account_raw_public_key() 
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(uint8array))
+        key_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+        key_data['encryptor_pub_key'] = this.props.uint8ToBase64(uint8array)
+
+        return { key_data, key }
     }
 
     get_device_color(){
@@ -10454,15 +10499,28 @@ class StackPage extends Component {
 
 
 
+                {this.render_disable_moderation_setting()}
 
+            </div>
+        )
+    }
 
+    render_disable_moderation_setting(){
+        const is_setting_enabled = this.get_selected_item(this.state.get_audiplayer_position_setting_object, 'e') == this.props.app_state.loc['1593hp']/* 'disable' */
+        if(!this.props.do_i_have_an_account() && !is_setting_enabled){
+            return;
+        }
+        else if(!this.props.do_i_have_a_minimum_number_of_txs_in_account() && !is_setting_enabled){
+            return;
+        }
+        return(
+            <div>
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hn']/* 'Disable All Moderation.' */, 'details':this.props.app_state.loc['1593ho']/* 'Show all the hidden posts and content by your chosen moderators.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disable_moderation_setting_object} tag_size={'l'} when_tags_updated={this.when_get_disable_moderation_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                 {this.render_detail_item('0')}
-
             </div>
         )
     }
@@ -13263,18 +13321,13 @@ class StackPage extends Component {
 
                 if(node_details != null && node_details != 'unavailable'){
                     var available_space = parseFloat(node_details['acquired_space']) - parseFloat(node_details['utilized_space'])
-                    // if(available_space > 5){
-                    //     available_space -= 5
-                    // }
                     max_size = (available_space * 1024 * 1024)
                 }
                 else if(state != null && state != 'unavailable' && state['free_default_storage'] != 0){
-                    var my_balance = this.props.app_state.account_balance[state['target_account_e5']]
-                    if(my_balance != null && bigInt(my_balance).greater(bigInt(0))){
+                    const my_balance = this.props.app_state.account_balance[state['target_account_e5']]
+                    const minimum_balance = state['target_minimum_balance_amounts'][this.props.app_state.selected_e5] || 1
+                    if(my_balance != null && bigInt(my_balance).greaterOrEquals(bigInt(minimum_balance))){
                         var free_storage_amount = state['free_default_storage']
-                        // if(free_storage_amount > 5){
-                        //     free_storage_amount -= 5
-                        // }
                         max_size = (free_storage_amount  * 1024 * 1024)
                     }
                 }

@@ -326,8 +326,8 @@ class VoteProposalPage extends Component {
         var object = this.state.proposal_item
         return(
             <div>
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['812']/* 'End Bounty Balance' */, 'number':object['end_balance'], 'relativepower':'END'})}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['812']/* 'End Bounty Balance' */, 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':'END', })}
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['812']/* 'End Bounty Balance' */, 'number':object['end_balance'], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['812']/* 'End Bounty Balance' */, 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
                 </div>
 
                 <div style={{height:10}}/>
@@ -480,8 +480,8 @@ class VoteProposalPage extends Component {
 
     get_suggested_exchange_accounts(type){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['268']/* 'Account 3' */, 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['269']/* 'Account 5' */, 'size':'s'}},
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.loc['268']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.loc['269']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.proposal_item['e5']]
         var sorted_token_exchange_data = []
