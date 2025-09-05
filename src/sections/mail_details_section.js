@@ -263,9 +263,8 @@ class MailDetailsSection extends Component {
                 }
             }
 
-            if((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)){
+            if(((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)) && focused_note['visibility_end_time'] >= (Date.now()/1000)){
                 note_to_apply.push(focused_note)
-                break;
             }
         }
         if(note_to_apply.length != 0){
@@ -805,7 +804,7 @@ class MailDetailsSection extends Component {
     }
 
     append_divider_between_old_messages_and_new_ones(items){
-        if(items.length == 0) return;
+        if(items.length == 0) return [];
         const last_login_time = this.props.app_state.last_login_time
         const newElement = 'e';
         let closestIndex = 0;
@@ -1076,13 +1075,8 @@ class MailDetailsSection extends Component {
                 }
             }
 
-            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
+            if(((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)) && focused_note['visibility_end_time'] >= (Date.now()/1000)){
                 note_to_apply.push(focused_note)
-                break;
-            }
-            else if(focused_note['type'] == 'one' && hit_count != 0){
-                note_to_apply.push(focused_note)
-                break;
             }
         }
         if(note_to_apply.length != 0){

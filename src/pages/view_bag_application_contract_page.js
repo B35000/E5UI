@@ -497,13 +497,8 @@ class ViewBagApplicationContractPage extends Component {
                 }
             }
 
-            if(focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length){
-                note_to_apply = focused_note
-                break;
-            }
-            else if(focused_note['type'] == 'one' && hit_count != 0){
-                note_to_apply = focused_note;
-                break;
+            if(((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)) && focused_note['visibility_end_time'] >= (Date.now()/1000)){
+                note_to_apply.push(focused_note)
             }
         }
         if(note_to_apply != null){

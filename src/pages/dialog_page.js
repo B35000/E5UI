@@ -26,6 +26,12 @@ import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import ReactJson from 'react-json-view'
 
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
@@ -68,12 +74,45 @@ class DialogPage extends Component {
         ignored_nitro_files_items:[],
         made_id:makeid(8),
         selected_e5_renewal_items:[this.props.app_state.selected_e5],
+
+        get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'', moderator_note_id:'', visibility_end_time: ((Date.now()/1000) + 60*60*24)
     };
 
 
-    set_data(data, id){
-        this.setState({data: data, id: id})
+
+
+    get_keyword_target_type_object(type){
+        const set_type = (type != null && type == 'all') ? 1 : 2
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593ij']/* 'all-words' */, this.props.app_state.loc['1593ik']/* 'one-word' */], [set_type]
+            ], 
+        }
     }
+
+
+    set_data(data, id){
+        if(id == 'create_moderator_note' && Object.keys(data).length > 0){
+            const item = data['item']
+            const moderator_note_message = item['message']
+            const staged_keywords_for_new_note = item['keywords']
+            const type_object = this.get_keyword_target_type_object(item['type'])
+            const note_id = item['id']
+            const note_visibility_end_time = item['visibility_end_time']
+            
+            this.setState({data: data, id: id, staged_keywords_for_new_note: staged_keywords_for_new_note, moderator_note_message: moderator_note_message, moderator_note_id: note_id, get_keyword_target_type_object: type_object, visibility_end_time: note_visibility_end_time})
+        }else{
+            this.setState({data: data, id: id})
+        }
+    }
+
+
+
+
+
 
 
     render(){
@@ -266,6 +305,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_confirm_new_wallet_ui()}
+                </div>
+            )
+        }
+        else if(option == 'create_moderator_note'){
+            return(
+                <div>
+                    {this.render_create_edit_moderator_note_ui()}
                 </div>
             )
         }
@@ -6290,6 +6336,236 @@ return data['data']
             </div>
         )
     }
+
+
+
+
+
+
+
+
+
+    render_create_edit_moderator_note_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_create_edit_moderator_note_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_create_edit_moderator_note_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_create_edit_moderator_note_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_create_edit_moderator_note_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_create_edit_moderator_note_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_create_edit_moderator_note_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_create_edit_moderator_note_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ia']/* Activation 'Keywords' */, 'details':this.props.app_state.loc['1593ib']/* 'Specify one or more keywords or phrases that should activate the note.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593ic']/* 'Keyword or Phrase...' */} when_text_input_field_changed={this.when_note_keyword_input_field_changed.bind(this)} text={this.state.keyword_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_keyword_to_staged_note()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}}/>
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_staged_keywords()}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ie']/* Note Message.' */, 'details':this.props.app_state.loc['1593if']/* 'Specify the message to display in posts containing the keywords specified above.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1593ig']/* 'Message...' */} when_text_input_field_changed={this.when_moderator_note_message_input_field_changed.bind(this)} text={this.state.moderator_note_message} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.moderator_note_max_length - this.state.moderator_note_message.length)})}
+                
+
+
+
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593il']/* Application Filter' */, 'details':this.props.app_state.loc['1593im']/* 'With all-words, the note will show when all the specified keywords are present, and one-word, at least one keyword should exist in the post.' */, 'size':'l'})}
+                
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_keyword_target_type_object} tag_size={'l'} when_tags_updated={this.get_keyword_target_type_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+            </div>
+        )
+    }
+
+    render_create_edit_moderator_note_data2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ef']/* Application Time.' */, 'details':this.props.app_state.loc['3055eg']/* 'Set the time after which the note will be no longer visible.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.visibility_end_time - Date.now()/1000), 'details':this.props.app_state.loc['3055eh']/* 'Set Note Expiry Time.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <div onClick={()=>this.set_maximum_time()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593iz']/* 'Set Maximum Time.' */, 'action': ''})}
+                </div>
+
+                {this.render_detail_item('0')}
+                <div onClick={() => this.add_moderator_note()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593ih']/* 'Add Note' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_new_dat_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({visibility_end_time: timeInSeconds})
+    }
+
+    set_maximum_time(){
+        const forever_time = Date.now() + (1000*60*60*24*365*10000)
+        this.setState({visibility_end_time: forever_time})
+    }
+
+    when_note_keyword_input_field_changed(text){
+        this.setState({keyword_text: text})
+    }
+
+    add_keyword_to_staged_note(){
+        var keyword_text = this.state.keyword_text.trim()
+
+        if(keyword_text == ''){
+            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
+        }
+        else if(this.state.staged_keywords_for_new_note.includes(keyword_text)){
+            this.props.notify(this.props.app_state.loc['1593id']/* 'Youve already staged that keyword or phrase.' */, 4000)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword_text) /* || /\p{Emoji}/u.test(typed_word) */){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else{
+            var clone = this.state.staged_keywords_for_new_note.slice()
+            clone.push(keyword_text)
+            this.setState({staged_keywords_for_new_note: clone, keyword_text:'' })
+        }
+    }
+
+    render_staged_keywords(){
+        var items = [].concat(this.state.staged_keywords_for_new_note)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.remove_staged_keyword(item)}>
+                                {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})} 
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    remove_staged_keyword(item){
+        var clone = this.state.staged_keywords_for_new_note.slice()
+        const index = clone.indexOf(item)
+        if(index != -1){
+            clone.splice(index, 1)
+            this.setState({staged_keywords_for_new_note: clone})
+        }
+    }
+
+    when_moderator_note_message_input_field_changed(text){
+        if(text.length <= this.props.app_state.moderator_note_max_length) this.setState({moderator_note_message: text});
+    }
+
+    get_keyword_target_type_object_updated(tag_obj){
+        this.setState({get_keyword_target_type_object: tag_obj})
+    }
+
+    add_moderator_note(){
+        const moderator_note_message = this.state.moderator_note_message.trim()
+        const keywords = this.state.staged_keywords_for_new_note
+        const application_type = this.get_selected_item(this.state.get_keyword_target_type_object, 'e') == this.props.app_state.loc['1593ij']/* 'all-words' */ ? 'all': 'one'
+        const note_id = this.state.moderator_note_id == '' ? makeid(16) : this.state.moderator_note_id
+        const visibility_end_time = this.state.visibility_end_time
+
+        if(moderator_note_message == ''){
+            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
+        }
+        else if(keywords.length == 0){
+            this.props.notify(this.props.app_state.loc['1593ii']/* 'You need to specify your targeted keywords.' */, 4000)
+        }
+        else if(visibility_end_time < (Date.now()/1000)+(60*60)){
+            this.props.notify(this.props.app_state.loc['1593iy']/* 'You cant set a visibility expiry time thats less than an hour from now.' */, 4000)
+        }
+        else{
+            const creator = this.props.app_state.selected_e5+':'+this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+            const note_obj = {
+                'message':moderator_note_message,
+                'keywords':keywords,
+                'type':application_type, 
+                'id':note_id,
+                'author':creator,
+                'visibility_end_time':visibility_end_time,
+            }
+            this.props.add_moderator_note(note_obj)
+            this.props.notify(this.props.app_state.loc['1593in']/* 'The note will be shown after your next run.' */, 2000)
+            this.setState({moderator_note_message: '', staged_keywords_for_new_note:[], moderator_note_id:'', get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:''})
+        }
+    }
+
+
 
 
 

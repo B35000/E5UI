@@ -7289,7 +7289,7 @@ class App extends Component {
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
-      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} add_moderator_note={this.add_moderator_note.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)}
+      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)}
       
       />
     )
@@ -7983,10 +7983,17 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['1593dp']/* 'First make a transaction to remove that account.' */, 6300)
       return;
     }
-
     var clone = this.state.followed_accounts.slice()
     clone.splice(index, 1);
-    this.setState({followed_accounts: clone, should_update_followed_accounts: true})
+
+    const updated_clone = []
+    this.state.moderator_notes_by_my_following.forEach(note => {
+      if(note['author'] != item){
+        updated_clone.push(note)
+      }
+    });
+
+    this.setState({followed_accounts: clone, should_update_followed_accounts: true, moderator_notes_by_my_following: updated_clone})
     this.prompt_top_notification(this.getLocale()['1593do']/* 'Account removed from your following list.' */, 2300)
     var me = this;
     setTimeout(function() {
@@ -8022,16 +8029,6 @@ class App extends Component {
     var clone = this.state.censored_keyword_phrases.slice()
     clone.push(word_phrase)
     this.setState({censored_keyword_phrases: clone, should_update_censored_keyword_phrases: true})
-    var me = this;
-    setTimeout(function() {
-      me.set_cookies()
-    }, (1 * 1000));
-  }
-
-  add_moderator_note(note_object){
-    var clone = this.state.my_created_moderator_notes.slice()
-    clone.push(note_object)
-    this.setState({my_created_moderator_notes: clone, should_update_censored_keyword_phrases: true})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -8157,6 +8154,11 @@ class App extends Component {
 
 
 
+
+
+
+
+  
 
   set_can_switch_e5_value(value){
     this.setState({can_switch_e5s: value})
@@ -15191,6 +15193,8 @@ class App extends Component {
         delete_nitro_file={this.delete_nitro_file.bind(this)} set_new_wallet={this.set_new_wallet.bind(this)} 
         
         show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_downloaded.bind(this)} when_pdf_file_opened={this.when_pdf_file_accessed.bind(this)} play_individual_track={this.when_audio_file_opened.bind(this)} play_individual_video={this.when_video_file_opened.bind(this)} filter_by_selected_account={this.filter_by_selected_account.bind(this)}
+
+        add_moderator_note={this.add_moderator_note.bind(this)}
         
         />
       </div>
@@ -15252,7 +15256,8 @@ class App extends Component {
       'renew_nitro_uploads':600,
       'view_bid_item':550,
       'manual_transaction_broadcast':350,
-      'confirm_new_wallet': 200
+      'confirm_new_wallet': 200,
+      'create_moderator_note':600,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -16026,6 +16031,23 @@ class App extends Component {
     const user_temp_encryption_key = data['user_temp_encryption_key']
     const encrypted_nitro_privacy_signature = await this.encrypt_data_string(target_data, user_temp_encryption_key)
     return user_temp_hash+'|'+encrypted_nitro_privacy_signature;
+  }
+
+  add_moderator_note(note_object){
+    this.open_dialog_bottomsheet()
+    var clone = this.state.my_created_moderator_notes.slice()
+    const index = clone.findIndex(obj => obj['id'] === note_object['id'])
+    if(index != -1){
+      clone.push(note_object)
+    }
+    else{
+      clone[index] = note_object
+    }
+    this.setState({my_created_moderator_notes: clone, should_update_censored_keyword_phrases: true})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
 
@@ -34937,7 +34959,7 @@ class App extends Component {
       if(ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
         var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
         ipfs_message = JSON.parse(JSON.parse(originalText));
       }
@@ -35020,7 +35042,7 @@ class App extends Component {
         if(ipfs_message['encrypted_data'] != null){
           var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
           var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-          convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
           var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
           ipfs_message = JSON.parse(JSON.parse(originalText));
         }
@@ -35098,7 +35120,7 @@ class App extends Component {
       await this.fetch_multiple_cids_from_nitro(created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
       loaded_target = created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
-
+    const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     var messages = []
     var is_first_time = this.state.contractor_applications[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
@@ -35106,7 +35128,7 @@ class App extends Component {
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, E5, encryptor_pub_key)
+        var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, E5, encryptor_pub_key)
         var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
         ipfs_message = JSON.parse(JSON.parse(originalText));
       }
@@ -35202,7 +35224,7 @@ class App extends Component {
           // var originalText = bytes.toString(CryptoJS.enc.Utf8);
           // ipfs_message = JSON.parse(JSON.parse(originalText));
 
-          ipfs_message = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
           ipfs_message = JSON.parse(JSON.parse(originalText));
         }
         ipfs_message['time'] = all_object_comment_events[j].returnValues.p6

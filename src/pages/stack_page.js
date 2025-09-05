@@ -110,7 +110,6 @@ class StackPage extends Component {
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
-        get_keyword_target_type_object:this.get_keyword_target_type_object(),
 
         typed_word:'',added_tags:[],set_salt: 0,
         run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
@@ -125,7 +124,7 @@ class StackPage extends Component {
 
         default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true, 
         
-        keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'',
+        
     };
 
     get_stack_page_tags_object(){
@@ -200,16 +199,7 @@ class StackPage extends Component {
         }
     }
 
-    get_keyword_target_type_object(){
-        return{
-           'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['1593ij']/* 'all-words' */, this.props.app_state.loc['1593ik']/* 'one-word' */], [1]
-            ], 
-        }
-    }
+    
 
 
 
@@ -5057,13 +5047,12 @@ class StackPage extends Component {
                     for(var m=0; m<t.messages_to_deliver.length; m++){
                         var message_obj = t.messages_to_deliver[m]
                         if(t.messages_to_deliver[m]['key_data'] != null && t.messages_to_deliver[m]['key_data'][my_unique_crosschain_identifier] != null){
-                            // console.log('key_data',t.messages_to_deliver[m]['key_data'], private_key_to_use)
                             var focused_encrypted_key = t.messages_to_deliver[m]['key_data'][my_unique_crosschain_identifier]
                             if(focused_encrypted_key != null){
                                 var encryptor_pub_key = t.messages_to_deliver[m]['key_data']['encryptor_pub_key']
                                 var my_key = null;
                                 if(encryptor_pub_key != null){
-                                    my_key = this.props.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+                                    my_key = this.props.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, t.messages_to_deliver[m]['e5'], encryptor_pub_key)
                                 }else{
                                     var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
                                     my_key = await ecies.decrypt(private_key_to_use, uint8array)
@@ -15734,7 +15723,7 @@ class StackPage extends Component {
             return(
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeLeft={{
@@ -16135,8 +16124,6 @@ class StackPage extends Component {
             return(
                 <div>
                     {this.render_moderator_notes_data()}
-                    {this.render_detail_item('0')}
-                    {this.render_my_moderator_notes()}
                 </div>
             )
         }
@@ -16147,7 +16134,7 @@ class StackPage extends Component {
                         {this.render_moderator_notes_data()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_my_moderator_notes()}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -16160,7 +16147,7 @@ class StackPage extends Component {
                         {this.render_moderator_notes_data()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_my_moderator_notes()}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -16172,134 +16159,24 @@ class StackPage extends Component {
         return(
             <div style={{'padding': '0px 0px 0px 10px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593hy']/* 'Moderator Notes.' */, 'details':this.props.app_state.loc['1593hz']/* 'Display custom notes when certain keywords or phrases are used by posts show to the accounts you moderate.' */, 'size':'l'})}
+                <div style={{height:10}}/>
 
+                <div onClick={() => this.open_create_moderator_note_ui()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593iw']/* 'Create note' */, 'action':''})}
+                </div>
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ia']/* Activation 'Keywords' */, 'details':this.props.app_state.loc['1593ib']/* 'Specify one or more keywords or phrases that should activate the note.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <div className="row" style={{width:'100%'}}>
-                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593ic']/* 'Keyword or Phrase...' */} when_text_input_field_changed={this.when_note_keyword_input_field_changed.bind(this)} text={this.state.keyword_text} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_keyword_to_staged_note()}>
-                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
-                        </div>
-                    </div>
-                </div>
-                <div style={{height:10}}/>
-
-                {this.render_staged_keywords()}
-                <div style={{height:20}}/>
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ie']/* Note Message.' */, 'details':this.props.app_state.loc['1593if']/* 'Specify the message to display in posts containing the keywords specified above.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593ig']/* 'Message...' */} when_text_input_field_changed={this.when_moderator_note_message_input_field_changed.bind(this)} text={this.state.moderator_note_message} theme={this.props.theme}/>
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.moderator_note_max_length - this.state.moderator_note_message.length)})}
-                
-                
-                <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593il']/* Application Filter' */, 'details':this.props.app_state.loc['1593im']/* 'With all-words, the note will show when all the specified keywords are present, and one-word, at least one keyword should exist in the post.' */, 'size':'l'})}
-                
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_keyword_target_type_object} tag_size={'l'} when_tags_updated={this.get_keyword_target_type_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                <div style={{height:10}}/>
-                <div onClick={() => this.add_moderator_note()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593ih']/* 'Add Note' */, 'action':''})}
-                </div>
+                {this.render_my_moderator_notes()}
             </div>
         )
     }
 
-    when_note_keyword_input_field_changed(text){
-        this.setState({keyword_text: text})
-    }
-
-    add_keyword_to_staged_note(){
-        var keyword_text = this.state.keyword_text.trim()
-
-        if(keyword_text == ''){
-            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
+    open_create_moderator_note_ui(){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['1593hq']/* 'You need an account to change this setting.' */, 4300)
+            return;
         }
-        else if(this.state.staged_keywords_for_new_note.includes(keyword_text)){
-            this.props.notify(this.props.app_state.loc['1593id']/* 'Youve already staged that keyword or phrase.' */, 4000)
-        }
-        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword_text) /* || /\p{Emoji}/u.test(typed_word) */){
-            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
-        }
-        else{
-            var clone = this.state.staged_keywords_for_new_note.slice()
-            clone.push(keyword_text)
-            this.setState({staged_keywords_for_new_note: clone, keyword_text:'' })
-        }
-    }
-
-    render_staged_keywords(){
-        var items = [].concat(this.state.staged_keywords_for_new_note)
-        if(items.length == 0){
-            items = [1, 2, 3]
-            return(
-                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_empty_horizontal_list_item2()}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.remove_staged_keyword(item)}>
-                                {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})} 
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    remove_staged_keyword(item){
-        var clone = this.state.staged_keywords_for_new_note.slice()
-        const index = clone.indexOf(item)
-        if(index != -1){
-            clone.splice(index, 1)
-            this.setState({staged_keywords_for_new_note: clone})
-        }
-    }
-
-    when_moderator_note_message_input_field_changed(text){
-        if(text.length <= this.props.app_state.moderator_note_max_length) this.setState({moderator_note_message: text});
-    }
-
-    get_keyword_target_type_object_updated(tag_obj){
-        this.setState({get_keyword_target_type_object: tag_obj})
-    }
-
-    add_moderator_note(){
-        const moderator_note_message = this.state.moderator_note_message.trim()
-        const keywords = this.state.staged_keywords_for_new_note
-        const application_type = this.get_selected_item(this.state.get_keyword_target_type_object, 'e') == this.props.app_state.loc['1593ij']/* 'all-words' */ ? 'all': 'one'
-
-        if(moderator_note_message == ''){
-            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
-        }
-        else if(keywords.length == 0){
-            this.props.notify(this.props.app_state.loc['1593ii']/* 'You need to specify your targeted keywords.' */, 4000)
-        }
-        else{
-            const note_obj = { 'message':moderator_note_message, 'keywords':keywords, 'type':application_type, 'id':makeid(16) }
-            this.props.add_moderator_note(note_obj)
-            this.props.notify(this.props.app_state.loc['1593in']/* 'The note will be shown after your next run.' */, 2000)
-            this.setState({moderator_note_message: '', staged_keywords_for_new_note:[]})
-        }
+        this.props.show_dialog_bottomsheet({}, 'create_moderator_note')
     }
 
     render_my_moderator_notes(){
@@ -16330,9 +16207,14 @@ class StackPage extends Component {
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeLeft={{
-                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593io']/* Remove */}</p>,
-                                    action: () =>this.props.remove_moderator_note(item, index)
-                                    }}>
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593io']/* Remove */}</p>,
+                                        action: () =>this.props.remove_moderator_note(item, index)
+                                    }}
+                                    swipeRight={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593ix']/* Edit */}</p>,
+                                        action: () =>this.edit_moderator_note(item, index)
+                                    }}
+                                    >
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '2px'}}>
                                             {this.render_moderator_note_item(item)}
@@ -16345,6 +16227,14 @@ class StackPage extends Component {
                 </div>
             )
         }
+    }
+
+    edit_moderator_note(item){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['1593hq']/* 'You need an account to change this setting.' */, 4300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({'item':item}, 'create_moderator_note')
     }
 
     render_moderator_note_item(item){

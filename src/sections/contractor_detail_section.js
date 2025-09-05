@@ -295,9 +295,8 @@ class ContractorDetailsSection extends Component {
                 }
             }
 
-            if((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)){
+            if(((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)) && focused_note['visibility_end_time'] >= (Date.now()/1000)){
                 note_to_apply.push(focused_note)
-                break;
             }
         }
         if(note_to_apply.length != 0){
@@ -916,7 +915,8 @@ class ContractorDetailsSection extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.get_job_details_responses(object))
+        var loaded_items = [].concat(this.get_job_details_responses(object))
+        var items = this.append_divider_between_old_messages_and_new_ones(loaded_items)
 
         if(items.length == 0){
             items = [0,1]
@@ -954,6 +954,27 @@ class ContractorDetailsSection extends Component {
         }
     }
 
+    append_divider_between_old_messages_and_new_ones(items){
+        if(items.length == 0) return [];
+        const last_login_time = this.props.app_state.last_login_time
+        const newElement = 'e';
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        items.forEach((obj, i) => {
+            const diff = Math.abs((obj['application_expiry_time']*1000) - last_login_time);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIndex = i;
+            }
+        });
+        if(closestIndex == items.length - 1){
+            return items
+        }
+        const clone = items.slice()
+        clone.splice(closestIndex + 1, 0, newElement);
+        return clone;
+    }
+
     get_job_details_responses(object){
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
@@ -975,6 +996,13 @@ class ContractorDetailsSection extends Component {
 
 
     render_job_response_item(item, object){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['2117w']/* new */})}
+                </div>
+            )
+        }
         var is_application_accepted = item['is_response_accepted'];
 
         if(is_application_accepted){
