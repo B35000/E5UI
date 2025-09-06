@@ -547,7 +547,7 @@ class DirectPurchasetPage extends Component {
             return(
                 <div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1058l']/* 'Some purchasing options have been specified. Please set at your discretion.' */})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1058l']/* 'Some purchasing options have been specified. Please set as specified.' */})}
                     <div style={{height:10}}/>
                     {items.map((item, index) => (
                         <div style={{'padding': '0px 0px 0px 0px'}}>

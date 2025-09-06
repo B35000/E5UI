@@ -361,12 +361,16 @@ class StorefrontDetailsSection extends Component {
 
                     {this.render_edit_object_button(object)}
 
+                    {this.render_export_direct_purchases_button(object)}
+
                     {this.render_detail_item('0')}
                     {this.render_chatroom_enabled_message(object)}
                     {this.render_message_if_blocked_by_sender(object)}
                     {this.render_pin_storefront_button(object)}
 
                     {this.render_block_post_button(object)}
+
+                    
 
                     {this.render_follow_unfollow_author_button(object)}
                     
@@ -1207,6 +1211,28 @@ class StorefrontDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_export_direct_purchases_button(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+        var direct_purchases = this.props.app_state.direct_purchases[object['id']] || []
+        if(object['event'].returnValues.p5 == my_account.toString() && direct_purchases.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2642v']/* 'Export Direct Purchase Info.' */, 'details':this.props.app_state.loc['2642w']/* 'Export all the direct purchase information from a certain date and time.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_export_direct_purchase_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2642x']/* 'Export' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_export_direct_purchase_ui(object){
+        this.props.show_dialog_bottomsheet({'object':object}, 'export_direct_purchases')
     }
 
 

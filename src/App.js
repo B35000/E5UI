@@ -15225,7 +15225,7 @@ class App extends Component {
         
         show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_downloaded.bind(this)} when_pdf_file_opened={this.when_pdf_file_accessed.bind(this)} play_individual_track={this.when_audio_file_opened.bind(this)} play_individual_video={this.when_video_file_opened.bind(this)} filter_by_selected_account={this.filter_by_selected_account.bind(this)}
 
-        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)}
         
         />
       </div>
@@ -15289,6 +15289,7 @@ class App extends Component {
       'manual_transaction_broadcast':350,
       'confirm_new_wallet': 200,
       'create_moderator_note':800,
+      'export_direct_purchases':500,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -16079,6 +16080,103 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+  }
+
+  export_direct_purchases = async (storefront_object, start_time) => {
+    this.open_dialog_bottomsheet()
+    const id = storefront_object['id']
+    const oldest_direct_purchase_timestamp = this.direct_purchase_last_purchase_time[id] || 0
+    const direct_purchases = this.state.direct_purchases[id] || []
+    if(direct_purchases.length > 0){
+      this.prompt_top_notification(this.getLocale()['2642bc']/* The export should begin shortly.. */, 3000)
+      await this.wait(3500)
+
+      const oldest_loaded_direct_purchase_time = direct_purchases[direct_purchases.length -1]['time']
+      if(oldest_loaded_direct_purchase_time != oldest_direct_purchase_timestamp){
+        //e hasnt finished loading everything yet
+        if(oldest_loaded_direct_purchase_time > start_time){
+          //if e hasnt finished loading all the targeted direct purchases
+          await this.wait(5000)
+          this.export_direct_purchases(storefront_object, start_time)
+        }
+        else{
+          //proceed with export
+          const filtered_purchases = direct_purchases.filter(obj => obj['time'] >= start_time);
+          this.start_export_of_purchase_data(filtered_purchases, storefront_object)
+        }
+      }else{
+        //proceed with export
+        const filtered_purchases = direct_purchases.filter(obj => obj['time'] >= start_time);
+        this.start_export_of_purchase_data(filtered_purchases, storefront_object)
+      }
+    }
+  }
+
+  start_export_of_purchase_data(direct_purchases, object){
+    if(direct_purchases.length == 0){
+      this.prompt_top_notification(this.getLocale()['2642bd']/* Your selected filter left nothing to export.. */, 3000)
+      return;
+    }
+    const signature = this.state.direct_purchase_fulfilments[object['id']]
+    const export_obj = []
+    direct_purchases.forEach(item => {
+      const obj = {}
+      obj[this.getLocale()['2642bh']/* 'timestamp' */] = new Date(item['time']*1000)
+      obj[this.getLocale()['1948']/* 'Shipping Details' */] = item['shipping_detail']
+      obj[this.getLocale()/* 'variant_description' */] = this.get_variant_from_id(item['variant_id'], object)['variant_description']
+      obj[this.getLocale()['1114c']/* 'custom_specifications ' */] = item['custom_specifications']
+      obj[this.getLocale()['2642bi']/* 'quantity' */] = item['purchase_unit_count']
+      obj[this.getLocale()['2642bj']/* 'author' */] = item['sender_account']
+
+      const options = item['options']
+      if(options != null){
+        const options_obj = {}
+        var storefront_options = object['storefront_options']
+        options.forEach((option, index)=> {
+          const selected_array = option['e'][2]
+          const selelcted_items = []
+          selected_array.forEach(selected_item => {
+            const item_name = option['e'][1][selected_item]
+            selelcted_items.push(item_name)
+          });
+          options_obj[storefront_options[index]['title']] = selelcted_items
+        });
+        obj['selected_options'] = options_obj
+      }
+      if(signature != null && signature[item['signature_data']] != null){
+        signature = signature[item['signature_data']]
+        obj[this.getLocale()['2642be']/* 'fulfilment_signature'*/] = signature['signature']
+        obj[this.getLocale()['2642bf']/* 'signature_data'*/] = signature['signature_data']
+        obj[this.getLocale()['2642bg']/* 'signature_author'*/] = signature['sender_address']
+      }
+      export_obj.push(obj)
+    });
+
+    const file_name = new Date()+'.json'
+    this.download_file(export_obj, file_name)
+  }
+
+  get_variant_from_id(variant_id, object){
+    for(var i=0; i<object['ipfs'].variants.length; i++){
+      if(object['ipfs'].variants[i]['variant_id'] == variant_id){
+        return object['ipfs'].variants[i]
+      }
+    }
+  }
+
+  download_file(data, filename) {
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
 
@@ -35100,6 +35198,12 @@ class App extends Component {
       loaded_target = created_awward_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
+    if(this.direct_purchase_last_purchase_time == null){
+      this.direct_purchase_last_purchase_time = {}
+    }
+
+    this.direct_purchase_last_purchase_time[id] = created_awward_data[created_awward_data.length -1].returnValues.p6/* timestamp */
+
     var direct_purchases = structuredClone(this.state.direct_purchases)
     var is_first_time_for_direct_purchases = this.state.direct_purchases[id] == null ? true: false
     const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
@@ -35114,6 +35218,7 @@ class App extends Component {
           ipfs_message = JSON.parse(JSON.parse(originalText));
         }
         ipfs_message['purchase_id'] = created_awward_data[j].returnValues.p4
+        ipfs_message['time'] = created_awward_data[j].returnValues.p6
         if(direct_purchases[id] == null){
           direct_purchases[id] = []
         }

@@ -76,6 +76,8 @@ class DialogPage extends Component {
         selected_e5_renewal_items:[this.props.app_state.selected_e5],
 
         get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'', moderator_note_id:'', visibility_end_time: ((Date.now()/1000) + 60*60*24), entered_file_objects: [], entered_video_object_dimensions: {}, ecid_encryption_passwords:{},
+
+        export_start_time:0,
     };
 
 
@@ -322,6 +324,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_create_edit_moderator_note_ui()}
+                </div>
+            )
+        }
+        else if(option == 'export_direct_purchases'){
+            return(
+                <div>
+                    {this.render_export_direct_purchases_ui()}
                 </div>
             )
         }
@@ -2134,7 +2143,8 @@ return data['data']
             <div>
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1979a']/* Order Details. */}</h4>
-
+                    {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff(item['time'] - Date.now()/1000)})}
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':item['shipping_detail']})}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
@@ -6825,6 +6835,104 @@ return data['data']
             this.setState({moderator_note_message: '', staged_keywords_for_new_note:[], moderator_note_id:'', get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', entered_file_objects: [], entered_video_object_dimensions: {}, ecid_encryption_passwords:{},})
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_export_direct_purchases_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_export_direct_purchases_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_export_direct_purchases_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_export_direct_purchases_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+
+    render_export_direct_purchases_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642v']/* 'Export Direct Purchase Info.' */, 'details':this.props.app_state.loc['2642w']/* 'Export all the direct purchase information from a certain date and time.' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642y']/* Filter Time.' */, 'details':this.props.app_state.loc['2642z']/* 'Set the date and time after which a given direct purchase event will be included in the export.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_export_date_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.export_start_time - Date.now()/1000), 'details':this.props.app_state.loc['2642ba']/* 'Filter Start Time.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_export_direct_purchases()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055dx']/* 'Copy Hex' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_new_export_date_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({export_start_time: timeInSeconds})
+    }
+
+    when_export_direct_purchases(){
+        const storefront_item = this.state.data['object']
+        const export_start_time = this.state.export_start_time
+
+        if(export_start_time > (Date.now()/1000) - (60*5)){
+            this.props.notify(this.props.app_state.loc['2642bb']/* You can only filter for before 5 minutes or more. */, 4000)
+        }
+        else{
+            this.props.export_direct_purchases(storefront_item, export_start_time)
+        }
+    }
+
 
 
 
