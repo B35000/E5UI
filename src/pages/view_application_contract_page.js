@@ -33,6 +33,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 30) {
+    return str.substr(0, 20) + '...' + str.substr(str.length-10, str.length);
+  }
+  return str;
+}
+
 function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -488,7 +495,7 @@ class ViewApplicationContractPage extends Component {
 
     show_moderator_note_if_any(object){
         if(this.props.app_state.moderator_notes_by_my_following.length == 0 || this.props.app_state.user_account_id[object['e5']] == object['author']) return;
-        var note_to_apply = null
+        var note_to_apply = []
         for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
             const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
             var hit_count = 0
@@ -509,15 +516,262 @@ class ViewApplicationContractPage extends Component {
                 note_to_apply.push(focused_note)
             }
         }
-        if(note_to_apply != null){
+        if(note_to_apply.length != 0){
+            const identifier = object['e5_id']
+            const note_index = this.state.note_index == null || this.state.note_index[identifier] == null ? 0 : this.state.note_index[identifier];
+            const note_count_message = `(${note_index+1}/${note_to_apply.length})`
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1593is']/* 'Moderator Note ⚠️' */, 'details':note_to_apply['message']})}
-                    <div style={{height:10}}/>
+                    <div onClick={() => this.update_note_object_index(note_to_apply, identifier)}>
+                        {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* '⚠️ Moderator Note $' */.replace('$', note_count_message), 'details':note_to_apply[note_index]['message']})}
+                        {this.render_files_part(note_to_apply[note_index]['entered_file_objects'])}
+                    </div>
                 </div>
             )
         }
     }
+
+    update_note_object_index(note_to_apply, identifier){
+        var clone = this.state.note_index == null ? {} : structuredClone(this.state.note_index)
+        if(clone[identifier] == null){
+            clone[identifier] = 0
+        }
+        if(clone[identifier] + 1 == note_to_apply.length){
+            clone[identifier] = 0
+        }
+        else{
+            clone[identifier] ++
+        }
+        this.setState({note_index: clone})
+    }
+
+    render_files_part(entered_file_objects){
+        var items = [].concat(entered_file_objects)
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'7px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_file_item_clicked(item, index)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_file_item_clicked(item, index){
+        this.props.when_file_link_tapped(item)
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        const minified = false;
+        
+        if(data != null){
+            if(data['type'] == 'image'){
+                var img = data['data']
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var size = 'l'
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':img, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'audio'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = data['data']
+                var font_size = ['15px', '12px', 19];
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var video_height = "50"
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    font_size = ['12px', '10px', 16];
+                    video_height = "40"
+                }
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['zip_file']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'lyric'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['lyric_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['subtitle_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+        }
+    }
+
+    format_data_size(size){
+        if(bigInt(size).greater(bigInt(1024).pow(8))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(7))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(6))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(5))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
+        }
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
+        }
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
+        }
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
+        }
+        else if(size > 1024){
+            return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+
 
     render_post_state(object){
         const country_data = this.props.app_state.country_data

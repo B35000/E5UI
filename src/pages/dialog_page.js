@@ -75,7 +75,7 @@ class DialogPage extends Component {
         made_id:makeid(8),
         selected_e5_renewal_items:[this.props.app_state.selected_e5],
 
-        get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'', moderator_note_id:'', visibility_end_time: ((Date.now()/1000) + 60*60*24)
+        get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'', moderator_note_id:'', visibility_end_time: ((Date.now()/1000) + 60*60*24), entered_file_objects: [], entered_video_object_dimensions: {}, ecid_encryption_passwords:{},
     };
 
 
@@ -103,7 +103,17 @@ class DialogPage extends Component {
             const note_id = item['id']
             const note_visibility_end_time = item['visibility_end_time']
             
-            this.setState({data: data, id: id, staged_keywords_for_new_note: staged_keywords_for_new_note, moderator_note_message: moderator_note_message, moderator_note_id: note_id, get_keyword_target_type_object: type_object, visibility_end_time: note_visibility_end_time})
+            this.setState({
+                data: data, id: id, 
+                staged_keywords_for_new_note: staged_keywords_for_new_note, 
+                moderator_note_message: moderator_note_message, 
+                moderator_note_id: note_id, 
+                get_keyword_target_type_object: type_object, 
+                visibility_end_time: note_visibility_end_time,
+                entered_file_objects: item['entered_file_objects'], 
+                entered_video_object_dimensions: item['entered_video_object_dimensions'], 
+                ecid_encryption_passwords: item['ecid_encryption_passwords'],
+            })
         }else{
             this.setState({data: data, id: id})
         }
@@ -6420,6 +6430,13 @@ return data['data']
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_keyword_target_type_object} tag_size={'l'} when_tags_updated={this.get_keyword_target_type_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ei']/* Attach File.' */, 'details':this.props.app_state.loc['3055ej']/* 'You can also attach one or more files to be shown below the note.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_add_media_ui_buttons_part()}
+                <div style={{height:5}}/>
+                {this.render_files_part()}
             </div>
         )
     }
@@ -6533,12 +6550,253 @@ return data['data']
         this.setState({get_keyword_target_type_object: tag_obj})
     }
 
+    render_add_media_ui_buttons_part(){
+        return(
+            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_image', 10**16)}/>
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['pdf_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['music_label']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('audio', 'create_audio_pick_audio_file', 10**16)}/>
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['video_label']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('video', 'create_video_pick_video_file', 10**16)}/>
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['zip_file']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('zip', 'create_zip', 10**16)}/>
+                </div>
+
+            </div>
+        )
+    }
+
+    when_files_picked = async (files) => {
+        var clonedArray = this.state.entered_file_objects == null ? [] : this.state.entered_file_objects.slice();
+        var clone = structuredClone(this.state.entered_video_object_dimensions)
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        files.forEach(file => {
+            if(!clonedArray.includes(file)){
+                clonedArray.push(file);
+
+                var ecid_obj = this.get_cid_split(file)
+                if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null){
+                    var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                    if(data['width'] != null && data['height'] != null){
+                        clone[file] = {'width': data['width'], 'height': data['height']}
+                    }
+                }
+            }
+        });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
+        this.setState({entered_file_objects: clonedArray, entered_video_object_dimensions: clone, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
+    }
+
+    render_files_part(){
+        var items = [].concat(this.state.entered_file_objects)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_file_item_clicked(item, index)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_file_item_clicked(item, index){
+        var cloned_array = this.state.entered_file_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+
+        this.setState({entered_file_objects: cloned_array})
+    }
+
+    render_uploaded_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        const minified = false;
+        
+        if(data != null){
+            if(data['type'] == 'image'){
+                var img = data['data']
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var size = 'l'
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':img, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'audio'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = data['data']
+                var font_size = ['15px', '12px', 19];
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var video_height = "50"
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    font_size = ['12px', '10px', 16];
+                    video_height = "40"
+                }
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['zip_file']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'lyric'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['lyric_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['subtitle_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+        }
+    }
+
     add_moderator_note(){
         const moderator_note_message = this.state.moderator_note_message.trim()
         const keywords = this.state.staged_keywords_for_new_note
         const application_type = this.get_selected_item(this.state.get_keyword_target_type_object, 'e') == this.props.app_state.loc['1593ij']/* 'all-words' */ ? 'all': 'one'
         const note_id = this.state.moderator_note_id == '' ? makeid(16) : this.state.moderator_note_id
         const visibility_end_time = this.state.visibility_end_time
+        const entered_file_objects = this.state.entered_file_objects
+        const entered_video_object_dimensions = this.state.entered_video_object_dimensions
+        const ecid_encryption_passwords = this.state.ecid_encryption_passwords
 
         if(moderator_note_message == ''){
             this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
@@ -6558,10 +6816,13 @@ return data['data']
                 'id':note_id,
                 'author':creator,
                 'visibility_end_time':visibility_end_time,
+                'entered_file_objects':entered_file_objects,
+                'entered_video_object_dimensions':entered_video_object_dimensions,
+                'ecid_encryption_passwords':ecid_encryption_passwords,
             }
             this.props.add_moderator_note(note_obj)
             this.props.notify(this.props.app_state.loc['1593in']/* 'The note will be shown after your next run.' */, 2000)
-            this.setState({moderator_note_message: '', staged_keywords_for_new_note:[], moderator_note_id:'', get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:''})
+            this.setState({moderator_note_message: '', staged_keywords_for_new_note:[], moderator_note_id:'', get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', entered_file_objects: [], entered_video_object_dimensions: {}, ecid_encryption_passwords:{},})
         }
     }
 

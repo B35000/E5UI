@@ -1887,8 +1887,34 @@ class StackPage extends Component {
                     {this.render_detail_item('5', {'text':button_text, 'action':''})}
                 </div>
                 <div style={{height:7}}/>
+                {this.show_e5_locked_message_if_locked()}
             </div>
         )
+    }
+
+    show_e5_locked_message_if_locked(){
+        const currrent_e5 = this.props.app_state.selected_e5
+        const contract_obj = this.props.app_state.created_contract_mapping[currrent_e5][2]
+
+        if(contract_obj['primary_account'] != null && contract_obj['primary_account_tx_period'] != null){
+            const time_diff = (Date.now()/1000) - contract_obj['primary_account_last_tx_time']
+            if(time_diff > contract_obj['primary_account_tx_period']){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ja']/* Your transaction will be Reverted' */, 'details':this.props.app_state.loc['1593jb']/* 'Function e has locked itself, because it has detected transaction censorship on the network. Kindly wait.' */, 'size':'l'})}
+                        <div style={{height:7}}/>
+                    </div>
+                )
+            }
+            else if(time_diff < (60*60*24*3)){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593jc']/* Upcoming Lock Time.' */, 'details':(this.get_time_diff(time_diff)), 'size':'l'})}
+                        <div style={{height:7}}/>
+                    </div>
+                )
+            }
+        }
     }
 
     get_e5_run_limit(e5){

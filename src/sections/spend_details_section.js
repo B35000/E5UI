@@ -484,6 +484,7 @@ class SpendDetailSection extends Component {
                 <div>
                     <div onClick={() => this.update_note_object_index(note_to_apply, identifier)}>
                         {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* '⚠️ Moderator Note $' */.replace('$', note_count_message), 'details':note_to_apply[note_index]['message']})}
+                        {this.props.render_files_part(note_to_apply[note_index]['entered_file_objects'])}
                     </div>
                     <div style={{height:10}}/>
                 </div>

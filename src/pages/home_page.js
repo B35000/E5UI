@@ -3495,6 +3495,7 @@ class home_page extends Component {
             var object_author = object['author'] == null ? '0' : object['author']
             if(
                 object['id'].toString() == (searched_input) || 
+                object['e5_id'].toString() == (searched_input) || 
                 entered_title_text.toLowerCase().includes(searched_input.toLowerCase()) || 
                 this.get_searched_input_account_id(searched_input) == object_author.toString() ||
                 entered_symbol_text.toLowerCase().includes(searched_input.toLowerCase()) ||
@@ -4850,7 +4851,7 @@ class home_page extends Component {
                 open_participate_in_auction={this.props.show_view_bid_in_auction_bottomsheet.bind(this)} get_direct_purchase_events={this.props.get_direct_purchase_events.bind(this)}
                 get_storefront_auction_bids={this.props.get_storefront_auction_bids.bind(this)}
 
-                get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)}
+                get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} when_file_link_tapped={this.props.when_file_link_tapped.bind(this)}
                 />
             </div>
         )
